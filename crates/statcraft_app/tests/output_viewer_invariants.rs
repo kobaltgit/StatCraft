@@ -409,7 +409,7 @@ fn test_exhaustive_enum_payloads_render_without_panics() {
         // One-Way ANOVA with empty results
         OutputItem {
             id: state.alloc_id(),
-            title_key: "output-anova-oneway-title",
+            title_key: "output-anova-title",
             custom_title: None,
             kind: OutputItemKind::OneWayAnova {
                 results: vec![],

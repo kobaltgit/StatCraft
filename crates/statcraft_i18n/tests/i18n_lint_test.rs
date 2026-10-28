@@ -130,6 +130,24 @@ fn scan_for_used_i18n_keys(dir: &Path, used_keys: &mut HashSet<(String, usize, S
                                 break;
                             }
                         }
+
+                        // Scan for title_key: "..." in output models
+                        let mut tk_start = 0;
+                        while let Some(pos) = line[tk_start..].find("title_key: \"") {
+                            let match_idx = tk_start + pos;
+                            let key_start = match_idx + 12;
+                            if let Some(quote_end) = line[key_start..].find('"') {
+                                let key = &line[key_start..key_start + quote_end];
+                                used_keys.insert((
+                                    path.file_name().unwrap().to_string_lossy().to_string(),
+                                    line_idx + 1,
+                                    key.to_string(),
+                                ));
+                                tk_start = key_start + quote_end + 1;
+                            } else {
+                                break;
+                            }
+                        }
                     }
                 }
             }

@@ -320,6 +320,7 @@ stat-skewness = Асимметрия
 stat-kurtosis = Эксцесс
 
 output-descriptives-title = Описательные статистики
+output-descriptives-table = Описательные статистики
 output-descriptives-executed = Процедура «Описательные статистики» выполнена для { $count } переменной(ых).
 output-col-variable = Переменная
 output-col-n = N
@@ -336,6 +337,7 @@ output-table-valid-n = N валидных (по списку)
 dialog-frequencies-title = Частоты
 dialog-frequencies-display-tables = Выводить таблицы частот
 output-frequencies-title = Таблица частот: { $name }
+output-frequencies-table = Таблица частот
 output-frequencies-executed = Процедура «Частоты» выполнена для { $count } переменной(ых).
 output-col-value = Значение
 output-col-frequency = Частота

@@ -320,6 +320,7 @@ stat-skewness = Skewness
 stat-kurtosis = Kurtosis
 
 output-descriptives-title = Descriptive Statistics
+output-descriptives-table = Descriptive Statistics
 output-descriptives-executed = Descriptives executed for { $count } variable(s).
 output-col-variable = Variable
 output-col-n = N
@@ -336,6 +337,7 @@ output-table-valid-n = Valid N (listwise)
 dialog-frequencies-title = Frequencies
 dialog-frequencies-display-tables = Display frequency tables
 output-frequencies-title = Frequency Table: { $name }
+output-frequencies-table = Frequencies Table
 output-frequencies-executed = Frequencies executed for { $count } variable(s).
 output-col-value = Value
 output-col-frequency = Frequency

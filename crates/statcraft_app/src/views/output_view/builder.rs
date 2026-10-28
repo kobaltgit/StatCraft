@@ -391,7 +391,7 @@ impl OutputViewerState {
 
         let proc = OutputProcedure {
             id: proc_id,
-            title_key: "output-anova-oneway-title",
+            title_key: "output-anova-title",
             custom_title: None,
             is_expanded: true,
             items: vec![
@@ -409,7 +409,7 @@ impl OutputViewerState {
                 },
                 OutputItem {
                     id: item_id,
-                    title_key: "output-anova-oneway-title",
+                    title_key: "output-anova-title",
                     custom_title: None,
                     kind: OutputItemKind::OneWayAnova { results, ci },
                 },
