@@ -624,3 +624,28 @@ Eliminated long-standing visual and architectural dialog inconsistencies: mismat
    - `cargo fmt --check` — clean;
    - Clean release build `cargo build --package statcraft_app --release -j 1` — succeeded (1m 14s).
 
+---
+
+### Phase 6.7: Hybrid Localization System — Embedded Catalogs and Dynamic External .ftl Discovery
+*Time: October 28, 2026, 18:45 (~25 minutes)*
+
+Implemented a hybrid internationalization (i18n) architecture blending the canonical single-binary portability of the ArtCraft ecosystem with the flexibility of user-contributed translations:
+1. **Guaranteed Base (Zero-Dependency Single Binary):**
+   - Official `ru.ftl` and `en.ftl` catalogs remain embedded in the executable via `include_str!`. StatCraft is 100% self-contained, launches from any location, and never fails when external folders are missing.
+2. **Dynamic Locale Discovery (`discover_and_load_locales`):**
+   - On startup, the engine scans external paths: `STATCRAFT_LOCALES_DIR` environment variable, `locales/` directory adjacent to the binary (`current_exe()`), and the working `./locales` directory.
+   - Any discovered `.ftl` file (e.g. `de.ftl`, `es.ftl`, `fr.ftl`) is registered at runtime and immediately surfaces in the `View -> Language` menu without recompiling the application.
+3. **Seamless Key Overriding (Resource Overriding):**
+   - When a user supplies an existing language file (e.g. custom `ru.ftl`), external keys override defaults via `add_resource_overriding` without losing untranslated embedded strings.
+4. **Intelligent Language Display Name (`language_name`):**
+   - Native autonym is read from the language bundle itself (`lang-name-{lang}` or `lang-name`, e.g. `Deutsch`, `Español`);
+   - Falls back to active language / English translation;
+   - Final fallback displays the uppercase language code (`DE`, `ES`). Completely prevents raw keys such as `[lang-name-xx]`.
+5. **Release Workflow Automation (`.github/workflows/release.yml`):**
+   - Windows release ZIP `statcraft-windows-x64.zip` now packages the `locales/` directory alongside `statcraft_app.exe`.
+6. **Testing & Definition of Done:**
+   - Authored end-to-end integration test `crates/statcraft_app/tests/i18n_external_locales_test.rs`;
+   - Added 4 new unit tests in `crates/statcraft_i18n/src/lib.rs`;
+   - Full test and static analysis pass via `cargo run -p xtask -j 1 -- ci` (`ALL CI QUALITY GATES PASSED!`);
+   - Clean release build `cargo build --package statcraft_app --release -j 1` succeeded in 1m 08s.
+

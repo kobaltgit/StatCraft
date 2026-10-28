@@ -44,16 +44,19 @@ impl I18nCatalog {
             format!("Failed to parse FTL for '{}': {:?}", lang_code, errors)
         })?;
 
-        let mut bundle = FluentBundle::new_concurrent(vec![lang_id]);
-        bundle.set_use_isolating(false);
-        bundle.add_resource(res).map_err(|errors| {
-            format!(
-                "Failed to add resource to bundle for '{}': {:?}",
-                lang_code, errors
-            )
-        })?;
-
-        self.bundles.insert(lang_code.to_string(), bundle);
+        if let Some(bundle) = self.bundles.get_mut(lang_code) {
+            bundle.add_resource_overriding(res);
+        } else {
+            let mut bundle = FluentBundle::new_concurrent(vec![lang_id]);
+            bundle.set_use_isolating(false);
+            bundle.add_resource(res).map_err(|errors| {
+                format!(
+                    "Failed to add resource to bundle for '{}': {:?}",
+                    lang_code, errors
+                )
+            })?;
+            self.bundles.insert(lang_code.to_string(), bundle);
+        }
         Ok(())
     }
 
@@ -129,14 +132,90 @@ impl I18nCatalog {
         // 3. Fallback to raw key
         format!("[{}]", key)
     }
+
+    pub fn language_display_name(&self, lang_code: &str) -> String {
+        // 1. Try finding native self-name in bundle for lang_code (e.g. lang-name-de or lang-name)
+        if let Some(bundle) = self.bundles.get(lang_code) {
+            let specific_key = format!("lang-name-{}", lang_code);
+            let pattern = bundle
+                .get_message(&specific_key)
+                .or_else(|| bundle.get_message("lang-name"))
+                .and_then(|m| m.value());
+            if let Some(pat) = pattern {
+                let mut errors = vec![];
+                let val = bundle.format_pattern(pat, None, &mut errors);
+                if errors.is_empty() && !val.trim().is_empty() {
+                    return val.to_string();
+                }
+            }
+        }
+
+        // 2. Try translating "lang-name-{lang_code}" in current language or English fallback
+        let key = format!("lang-name-{}", lang_code);
+        let tr_val = self.translate(&key, None);
+        if !tr_val.starts_with('[') && !tr_val.ends_with(']') {
+            return tr_val;
+        }
+
+        // 3. Fallback: uppercase code (e.g. "DE", "ES", "FR")
+        lang_code.to_uppercase()
+    }
+
+    pub fn discover_and_load_locales(&mut self) -> usize {
+        let mut count = 0;
+
+        // 1. Environment variable override
+        if let Ok(env_dir) = std::env::var("STATCRAFT_LOCALES_DIR") {
+            if let Ok(loaded) = self.load_from_dir(Path::new(&env_dir)) {
+                count += loaded;
+            }
+        }
+
+        // 2. Folder adjacent to current executable (for portable .exe releases)
+        if let Ok(exe_path) = std::env::current_exe() {
+            if let Some(exe_dir) = exe_path.parent() {
+                let locales_path = exe_dir.join("locales");
+                if let Ok(loaded) = self.load_from_dir(&locales_path) {
+                    count += loaded;
+                }
+            }
+        }
+
+        // 3. Current working directory ./locales (for cargo run and terminal launches)
+        let local_locales = Path::new("locales");
+        if let Ok(loaded) = self.load_from_dir(local_locales) {
+            count += loaded;
+        }
+
+        count
+    }
 }
 
 pub fn init_i18n() -> Result<(), String> {
-    let catalog = I18nCatalog::new_with_defaults()?;
+    let mut catalog = I18nCatalog::new_with_defaults()?;
+    catalog.discover_and_load_locales();
     let mut lock = GLOBAL_I18N.write();
     *lock = Some(catalog);
     INITIALIZED.store(true, Ordering::SeqCst);
     Ok(())
+}
+
+pub fn language_name(lang_code: &str) -> String {
+    let lock = GLOBAL_I18N.read();
+    if let Some(catalog) = lock.as_ref() {
+        catalog.language_display_name(lang_code)
+    } else {
+        lang_code.to_uppercase()
+    }
+}
+
+pub fn reload_locales() -> Result<usize, String> {
+    let mut lock = GLOBAL_I18N.write();
+    if let Some(catalog) = lock.as_mut() {
+        Ok(catalog.discover_and_load_locales())
+    } else {
+        Err("I18nCatalog is not initialized".to_string())
+    }
 }
 
 pub fn set_language(lang_code: &str) -> bool {
@@ -283,5 +362,73 @@ mod tests {
         let langs = catalog.available_languages();
         assert!(langs.contains(&"en".to_string()));
         assert!(langs.contains(&"ru".to_string()));
+    }
+
+    #[test]
+    fn test_external_bundle_overrides_existing_keys() {
+        let mut catalog = I18nCatalog::new_with_defaults().unwrap();
+        // Override one key in Russian
+        catalog
+            .load_bundle_from_str("ru", "menu-file = Документ")
+            .unwrap();
+        catalog.set_language("ru");
+
+        // Overridden key returns new value
+        assert_eq!(catalog.translate("menu-file", None), "Документ");
+        // Non-overridden key still returns original embedded translation
+        assert_eq!(catalog.translate("menu-edit", None), "Правка");
+    }
+
+    #[test]
+    fn test_external_bundle_adds_new_language() {
+        let mut catalog = I18nCatalog::new_with_defaults().unwrap();
+        catalog
+            .load_bundle_from_str("es", "lang-name-es = Español\nmenu-file = Archivo")
+            .unwrap();
+
+        assert!(catalog.available_languages().contains(&"es".to_string()));
+        catalog.set_language("es");
+        assert_eq!(catalog.translate("menu-file", None), "Archivo");
+        // Unset key falls back to English
+        assert_eq!(catalog.translate("menu-edit", None), "Edit");
+    }
+
+    #[test]
+    fn test_language_display_name_resolution() {
+        let mut catalog = I18nCatalog::new_with_defaults().unwrap();
+        assert_eq!(catalog.language_display_name("ru"), "Русский");
+        assert_eq!(catalog.language_display_name("en"), "English");
+
+        // Custom language with native self-name
+        catalog
+            .load_bundle_from_str("de", "lang-name-de = Deutsch")
+            .unwrap();
+        assert_eq!(catalog.language_display_name("de"), "Deutsch");
+
+        // Custom language without self-name falls back to uppercase code
+        catalog
+            .load_bundle_from_str("it", "menu-file = File")
+            .unwrap();
+        assert_eq!(catalog.language_display_name("it"), "IT");
+    }
+
+    #[test]
+    fn test_load_from_directory_structure() {
+        let temp_dir =
+            std::env::temp_dir().join(format!("statcraft_test_locales_{}", std::process::id()));
+        let _ = fs::create_dir_all(&temp_dir);
+        let test_file = temp_dir.join("fr.ftl");
+        let _ = fs::write(&test_file, "lang-name-fr = Français\nmenu-file = Fichier");
+
+        let mut catalog = I18nCatalog::new_with_defaults().unwrap();
+        let loaded = catalog.load_from_dir(&temp_dir).unwrap();
+        assert!(loaded >= 1);
+        assert!(catalog.available_languages().contains(&"fr".to_string()));
+        assert_eq!(catalog.language_display_name("fr"), "Français");
+
+        catalog.set_language("fr");
+        assert_eq!(catalog.translate("menu-file", None), "Fichier");
+
+        let _ = fs::remove_dir_all(&temp_dir);
     }
 }

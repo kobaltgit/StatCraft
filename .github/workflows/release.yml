@@ -34,6 +34,7 @@ jobs:
         run: |
           New-Item -ItemType Directory -Force -Path dist
           Copy-Item target/release/statcraft_app.exe dist/
+          Copy-Item -Recurse locales dist/locales
           Copy-Item README.md dist/
           Copy-Item README.ru.md dist/
           Copy-Item LICENSE-MIT dist/

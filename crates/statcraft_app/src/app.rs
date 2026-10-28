@@ -22,7 +22,7 @@ use egui::{CentralPanel, SidePanel, TopBottomPanel, Ui};
 use egui_dock::{DockArea, DockState, NodeIndex, TabViewer};
 use serde_json::json;
 use statcraft_core::DataSet;
-use statcraft_i18n::{available_languages, current_language, set_language, t};
+use statcraft_i18n::{available_languages, current_language, language_name, set_language, t};
 use statcraft_syntax::CommandBus;
 use std::fs;
 
@@ -346,8 +346,7 @@ impl StatCraftApp {
                     ui.menu_button(t!("menu-view-language"), |ui| {
                         let cur_lang = current_language();
                         for lang in available_languages() {
-                            let key = format!("lang-name-{}", lang);
-                            let label = statcraft_i18n::tr(&key);
+                            let label = language_name(&lang);
                             let is_active = cur_lang == lang;
                             if ui.selectable_label(is_active, label).clicked() {
                                 set_language(&lang);
