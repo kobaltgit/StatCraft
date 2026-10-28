@@ -1,0 +1,9 @@
+/target
+/dist
+Cargo.lock
+**/*.rs.bk
+*.spv
+*.sav
+*.zsav
+.DS_Store
+Thumbs.db

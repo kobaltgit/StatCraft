@@ -1,0 +1,26 @@
+[workspace]
+members = [
+    "crates/statcraft_i18n",
+    "crates/statcraft_core",
+    "crates/statcraft_io",
+    "crates/statcraft_algo",
+    "crates/statcraft_syntax",
+    "crates/statcraft_app",
+    "xtask",
+]
+resolver = "2"
+
+[workspace.package]
+version = "0.1.0"
+edition = "2021"
+license = "MIT OR Apache-2.0"
+authors = ["StatCraft Contributors"]
+
+[profile.dev]
+opt-level = 1
+codegen-units = 1
+
+[profile.release]
+opt-level = 3
+codegen-units = 1
+lto = "thin"

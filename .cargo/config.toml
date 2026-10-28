@@ -1,0 +1,9 @@
+[build]
+jobs = 1
+
+[alias]
+xtask = "run --package xtask --"
+
+[rustflags]
+"-D" = "warnings"
+

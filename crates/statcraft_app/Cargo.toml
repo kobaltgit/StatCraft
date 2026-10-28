@@ -1,0 +1,23 @@
+[package]
+name = "statcraft_app"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+
+[dependencies]
+statcraft_core = { path = "../statcraft_core" }
+statcraft_io = { path = "../statcraft_io" }
+statcraft_syntax = { path = "../statcraft_syntax" }
+statcraft_algo = { path = "../statcraft_algo" }
+statcraft_i18n = { path = "../statcraft_i18n" }
+eframe = "0.29"
+egui = "0.29"
+egui_extras = { version = "0.29", features = ["svg"] }
+egui_dock = "0.14"
+rfd = "0.15"
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+image = { version = "0.25", default-features = false, features = ["png"] }
+
+[build-dependencies]
+winres = "0.1"

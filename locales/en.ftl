@@ -1,0 +1,520 @@
+# StatCraft English Localization Catalog
+
+# Application Header & Menus
+app-title = StatCraft
+
+# Common Menu Status & Badges
+menu-badge-dev = [dev]
+menu-item-in-dev-tooltip = In development (planned in Roadmap)
+menu-item-requires-dataset = Requires an open dataset
+menu-overflow = »
+caption-minimize = Minimize
+caption-maximize = Maximize
+caption-restore = Restore
+caption-close = Close
+
+# 1. File Menu
+menu-file = File
+menu-file-new = New
+menu-file-new-project = New Project
+menu-file-new-dataset = New Dataset
+menu-file-new-syntax = Syntax File
+menu-file-open-project = Open Project...
+menu-file-open-data = Open Data...
+menu-file-open-csv = Open CSV...
+menu-file-import-data = Import Data
+menu-file-import-spss = SPSS Data File (*.sav, *.zsav)...
+menu-file-import-csv = Text / Delimited File (*.csv, *.tsv)...
+menu-file-import-excel = Excel Spreadsheet (*.xlsx)...
+menu-file-recent = Recent Files
+menu-file-save = Save Project
+menu-file-save-as = Save Project As...
+menu-file-save-data-as = Save Data As...
+menu-file-export = Export
+menu-file-export-output = Export Output Report...
+menu-file-export-data = Export Data to CSV / Excel...
+menu-file-close-project = Close Project
+menu-file-exit = Exit
+
+# 2. Edit Menu
+menu-edit = Edit
+menu-edit-undo = Undo
+menu-edit-redo = Redo
+menu-edit-cut = Cut
+menu-edit-copy = Copy
+menu-edit-copy-names = Copy with Variable Names
+menu-edit-paste = Paste
+menu-edit-clear = Clear
+menu-edit-find = Find...
+menu-edit-replace = Replace...
+menu-edit-goto-case = Go to Case...
+menu-edit-goto-var = Go to Variable...
+menu-edit-insert-case = Insert Case
+menu-edit-insert-var = Insert Variable
+menu-edit-preferences = Preferences...
+
+# 3. View Menu
+menu-view = View
+menu-view-data = Data View
+menu-view-variables = Variable View
+menu-view-output = Output Viewer
+menu-view-status-bar = Status Bar
+menu-view-toolbars = Toolbars
+menu-view-value-labels = Value Labels
+menu-view-grid-lines = Grid Lines
+menu-view-zoom-in = Zoom In
+menu-view-zoom-out = Zoom Out
+menu-view-zoom-reset = Reset Zoom
+menu-view-theme = Theme
+menu-view-theme-light = Classic Light
+menu-view-theme-dark = Dark Pro
+menu-view-theme-system = System Auto
+menu-view-language = Language
+
+lang-name-en = English
+lang-name-ru = Russian
+
+# 4. Data Menu
+menu-data = Data
+menu-data-sort-cases = Sort Cases...
+menu-data-sort-vars = Sort Variables...
+menu-data-transpose = Transpose...
+menu-data-merge-files = Merge Files
+menu-data-merge-cases = Add Cases...
+menu-data-merge-vars = Add Variables...
+menu-data-restructure = Restructure...
+menu-data-aggregate = Aggregate...
+menu-data-split-file = Split File...
+menu-data-filter = Select Cases...
+menu-data-weight-cases = Weight Cases...
+
+# 5. Transform Menu
+menu-transform = Transform
+menu-transform-compute = Compute Variable...
+menu-transform-shift = Shift Values (Lead / Lag)...
+menu-transform-recode = Recode
+menu-transform-recode-diff = Recode into Different Variables...
+menu-transform-recode-same = Recode into Same Variables...
+menu-transform-auto-recode = Automatic Recode...
+menu-transform-dummy = Create Dummy Variables...
+menu-transform-visual-binning = Visual Binning...
+menu-transform-optimal-binning = Optimal Binning...
+menu-transform-adp = Prepare Data for Modeling (ADP)...
+menu-transform-rank-cases = Rank Cases...
+menu-transform-date-time = Date and Time Wizard...
+menu-transform-time-series = Create Time Series...
+menu-transform-missing-values = Replace Missing Values...
+menu-transform-random-seed = Set Random Number Seed...
+menu-transform-count-values = Count Values within Cases...
+menu-transform-programmability = Programmability Transformations...
+
+# 6. Analyze Menu
+menu-analyze = Analyze
+menu-analyze-reports = Reports
+menu-analyze-reports-codebook = Codebook...
+menu-analyze-reports-case-summaries = Case Summaries...
+menu-analyze-descriptive-stats = Descriptive Statistics
+menu-analyze-frequencies = Frequencies...
+menu-analyze-descriptives = Descriptives...
+menu-analyze-explore = Explore...
+menu-analyze-crosstabs = Crosstabs...
+menu-analyze-compare-means = Compare Means
+menu-analyze-ttest = Independent-Samples T-Test...
+menu-analyze-ttest-one-sample = One-Sample T Test...
+menu-analyze-ttest-indep = Independent-Samples T Test...
+menu-analyze-ttest-paired = Paired-Samples T Test...
+menu-analyze-anova-oneway = One-Way ANOVA...
+menu-analyze-glm = General Linear Model
+menu-analyze-glm-univariate = Univariate (ANCOVA)...
+menu-analyze-glm-multivariate = Multivariate (MANOVA)...
+menu-analyze-glm-repeated = Repeated Measures...
+menu-analyze-correlate = Correlate
+menu-analyze-correlate-bivariate = Bivariate...
+menu-analyze-correlate-partial = Partial...
+menu-analyze-regression = Regression
+menu-analyze-regression-linear = Linear...
+menu-analyze-regression-binary = Binary Logistic...
+menu-analyze-regression-multinomial = Multinomial Logistic...
+menu-analyze-regression-curve = Curve Estimation...
+menu-analyze-nonparametric = Nonparametric Tests
+menu-analyze-nonparam-independent = Independent Samples (Mann-Whitney / Kruskal-Wallis)...
+menu-analyze-nonparam-related = Related Samples (Wilcoxon / Friedman)...
+menu-analyze-dimension = Dimension Reduction & Classify
+menu-analyze-factor = Factor Analysis / PCA...
+menu-analyze-cluster = Cluster Analysis (K-Means / Hierarchical)...
+menu-analyze-scale = Scale
+menu-analyze-reliability = Reliability Analysis (Cronbach's Alpha)...
+menu-analyze-survival = Survival
+menu-analyze-survival-life-tables = Life Tables...
+menu-analyze-survival-kaplan-meier = Kaplan-Meier...
+menu-analyze-survival-cox = Cox Regression...
+
+# 7. Direct Marketing Menu
+menu-direct-marketing = Direct Marketing
+menu-dm-rfm = RFM Analysis (Recency, Frequency, Monetary)...
+menu-dm-cluster = Cluster Analysis for Segmentation...
+menu-dm-profile = Profile Potential Contacts...
+menu-dm-control-package = Control Package Test (A/B Test)...
+menu-dm-response-rate = Postal Code Response Rate...
+
+# 8. Graphs Menu
+menu-graphs = Graphs
+menu-graphs-chart-builder = Chart Builder...
+menu-graphs-legacy = Legacy Dialogs
+menu-graphs-bar = Bar Chart...
+menu-graphs-line = Line Chart...
+menu-graphs-pie = Pie Chart...
+menu-graphs-boxplot = Boxplot...
+menu-graphs-error-bar = Error Bar...
+menu-graphs-scatter = Scatter / Dot Plot...
+menu-graphs-histogram = Histogram...
+menu-graphs-pyramid = Population Pyramid...
+
+# 9. Utilities Menu
+menu-utilities = Utilities
+menu-utilities-variables = Variables / Quick Inspector...
+menu-utilities-oms = Variable Sets (Define & Use)...
+menu-utilities-comments = Data File Comments...
+menu-utilities-codebook = Codebook Generator...
+
+# 10. Extensions Menu
+menu-extensions = Extensions
+menu-extensions-hub = Extension Hub...
+menu-extensions-install = Install Local Extension (.scpl)...
+menu-extensions-dialog-builder = Custom Dialog Builder...
+menu-extensions-mcp-bridge = AI MCP Hub & Socket Bridge...
+menu-extensions-scripting = Python & R Bridge Settings...
+
+# 11. Window Menu
+menu-window = Window
+menu-window-reset-layout = Reset Workspace Layout
+menu-window-presets = Layout Presets
+menu-window-preset-split = Analytical Split View
+menu-window-preset-classic = Classic SPSS Maximize
+menu-window-preset-syntax = Syntax & Data Split
+menu-window-data-editor = Data View
+menu-window-variable-view = Variable View
+menu-window-output-viewer = Output Viewer
+menu-window-syntax-editor = Syntax Editor
+menu-window-ai-copilot = AI Copilot Console
+menu-window-minimize-all = Minimize All
+
+# 12. Help Menu
+menu-help = Help
+menu-help-coach = Statistics Coach & AI Guide...
+menu-help-algorithms = Algorithm Reference...
+menu-help-syntax = Syntax Reference...
+menu-help-sample-data = Sample Datasets
+menu-help-sample-iris = Fisher's Iris
+menu-help-sample-trial = Clinical Trial (Blood Pressure)
+menu-help-sample-survey = Customer Survey
+menu-help-check-updates = Check for Updates...
+menu-help-about = About StatCraft...
+
+# Variable View Headers
+header-row = Row
+header-name = Name
+header-type = Type
+header-width = Width
+header-decimals = Decimals
+header-label = Label
+header-values = Values
+header-missing = Missing
+header-columns = Columns
+header-align = Align
+header-measure = Measure
+header-role = Role
+
+# Measure Levels
+measure-scale = Scale
+measure-ordinal = Ordinal
+measure-nominal = Nominal
+
+# Data Types
+type-numeric = Numeric
+type-comma = Comma
+type-dot = Dot
+type-scientific = Scientific notation
+type-date = Date
+type-dollar = Dollar
+type-custom-currency = Custom currency
+type-string = String
+type-restricted-numeric = Restricted numeric
+
+# Alignments
+align-left = Left
+align-right = Right
+align-center = Center
+
+# Roles
+role-input = Input
+role-target = Target
+role-both = Both
+role-none = None
+role-partition = Partition
+role-split = Split
+
+# Toolbar & Status
+status-ready = Ready
+status-error = Error
+status-rows-count = Rows: { $count }
+status-cols-count = Variables: { $count }
+status-cell-edited = Cell ({ $row }, { $col }) updated.
+toolbar-toggle-labels = Toggle Labels
+toolbar-open = Open Data Document (Ctrl+O)
+toolbar-save = Save This Document (Ctrl+S)
+toolbar-print = Print (Ctrl+P)
+toolbar-recall-dialogs = Recall Recently Used Dialogs
+toolbar-undo = Undo (Ctrl+Z)
+toolbar-redo = Redo (Ctrl+Y)
+toolbar-goto-case = Go to Case...
+toolbar-goto-var = Go to Variable...
+toolbar-var-info = Variables...
+toolbar-find = Find in Data (Ctrl+F)
+toolbar-insert-case = Insert Case
+toolbar-insert-var = Insert Variable
+toolbar-split-file = Split File...
+toolbar-select-cases = Select Cases...
+toolbar-weight-cases = Weight Cases...
+toolbar-value-labels = Value Labels (1/A)
+toolbar-descriptives = Descriptives...
+toolbar-frequencies = Frequencies...
+menu-view-toolbar-top = Top Toolbar
+menu-view-toolbar-left = Left Toolbar
+menu-view-toolbar-hidden = Hide Toolbar
+
+# Dialogs & Output
+dialog-open-csv-title = Select CSV or TSV Dataset
+output-title = Output Viewer
+output-log = Log
+output-dataset-imported = Dataset imported successfully: { $name } ({ $rows } rows, { $cols } variables).
+output-no-analysis = No analysis has been performed yet. Choose a procedure from the Analyze menu.
+
+# Descriptives Dialog & Procedure
+dialog-descriptives-title = Descriptives
+dialog-variables-source = Variables:
+dialog-variables-target = Variable(s):
+dialog-stats-options = Options...
+dialog-btn-ok = OK
+dialog-btn-paste = Paste
+dialog-btn-reset = Reset
+dialog-btn-cancel = Cancel
+dialog-btn-continue = Continue
+dialog-btn-options = Options...
+dialog-btn-statistics = Statistics...
+dialog-btn-charts = Charts...
+dialog-btn-define-groups = Define Groups...
+dialog-desc-options-title = Descriptives: Options
+dialog-freq-statistics-title = Frequencies: Statistics
+dialog-btn-move-right = >
+dialog-btn-move-left = <
+
+stat-mean = Mean
+stat-std-dev = Std. deviation
+stat-variance = Variance
+stat-min = Minimum
+stat-max = Maximum
+stat-range = Range
+stat-se-mean = S.E. mean
+stat-skewness = Skewness
+stat-kurtosis = Kurtosis
+
+output-descriptives-title = Descriptive Statistics
+output-descriptives-executed = Descriptives executed for { $count } variable(s).
+output-col-variable = Variable
+output-col-n = N
+output-col-min = Minimum
+output-col-max = Maximum
+output-col-mean = Mean
+output-col-std = Std. Deviation
+output-col-var = Variance
+output-col-skew = Skewness
+output-col-kurt = Kurtosis
+output-table-valid-n = Valid N (listwise)
+
+# Frequencies Procedure & Dialog
+dialog-frequencies-title = Frequencies
+dialog-frequencies-display-tables = Display frequency tables
+output-frequencies-title = Frequency Table: { $name }
+output-frequencies-executed = Frequencies executed for { $count } variable(s).
+output-col-value = Value
+output-col-frequency = Frequency
+output-col-percent = Percent
+output-col-valid-percent = Valid Percent
+output-col-cum-percent = Cumulative Percent
+output-row-total-valid = Total Valid
+output-row-system-missing = System Missing
+output-row-total = Total
+stat-q1 = 25th (Q1)
+stat-median = 50th (Median)
+stat-q3 = 75th (Q3)
+stat-quartiles-title = Percentiles
+
+# Value Labels Dialog
+dialog-value-labels-title = Value Labels: { $name }
+dialog-value-labels-value = Value:
+dialog-value-labels-label = Label:
+dialog-value-labels-btn-add = Add
+dialog-value-labels-btn-change = Change
+dialog-value-labels-btn-remove = Remove
+dialog-value-labels-list-title = Assigned Labels:
+dialog-btn-close = Close
+
+# Missing Values Dialog
+dialog-missing-values-title = Missing Values: { $name }
+dialog-missing-none = No missing values
+dialog-missing-discrete = Discrete missing values
+dialog-missing-range = Range plus one optional discrete value
+dialog-missing-low = Low:
+dialog-missing-high = High:
+dialog-missing-discrete-extra = Discrete value:
+
+# Variable View & Data View Summaries
+values-none = None
+values-count = { $count } labels
+missing-none = None
+missing-discrete-count = { $count } discrete
+missing-range-summary = Range { $low } - { $high }
+
+# Variable Type Dialog
+dialog-var-type-title = Variable Type: { $name }
+dialog-var-type-width = Width:
+dialog-var-type-decimals = Decimal Places:
+dialog-var-type-characters = Characters:
+dialog-var-type-date-format = Date format:
+dialog-var-type-currency = Currency:
+dialog-btn-help = Help
+
+# Context Menus & Actions
+menu-insert-variable = Insert Variable
+menu-delete-variable = Clear / Delete Variable
+menu-insert-case = Insert Case
+menu-delete-case = Delete Case
+variable-new-placeholder = New variable...
+
+# Output Viewer & Outline
+output-outline-root = Output
+output-outline-log = Log
+output-outline-notes = Notes
+output-outline-title = Title
+output-outline-warnings = Warnings
+output-notes-active-dataset = Active Dataset: { $name }
+output-notes-n-cases = Number of Cases: { $count }
+output-notes-missing-handling = Missing Values: { $rule }
+output-toolbar-clear = Clear All
+output-toolbar-expand-all = Expand All
+output-toolbar-collapse-all = Collapse All
+output-menu-copy-tsv = Copy Table (TSV)
+output-menu-copied = Copied (TSV)
+output-menu-delete = Delete
+output-copied-toast = Table copied to clipboard (TSV)
+output-dataset-imported-title = Dataset Imported
+output-dataset-summary = Dataset Summary
+output-syntax-title = Syntax
+output-notes-title = Notes
+output-warning-title = Warning
+output-missing-exclude-listwise = Exclude cases listwise
+output-missing-user-and-sys = User-defined and system-missing treated as missing
+output-missing-none-detected = None
+output-menu-copy-text = Copy as Text
+output-menu-copy-selected = Copy Selected
+output-notes-timestamp = Executed At: { $time }
+output-notes-variables = Number of Variables: { $count }
+output-log-executed-at = Executed At: { $time }
+output-root = Output
+output-log-syntax = Log
+output-notes = Notes
+output-warnings = Warnings
+output-btn-clear-all = Clear All
+output-btn-expand-all = Expand All
+output-btn-collapse-all = Collapse All
+output-notes-dataset = Dataset: { $name }
+output-notes-rows = Cases: { $count }
+
+# One-Sample T Test Dialog & Output
+dialog-ttest-onesample-title = One-Sample T Test
+dialog-ttest-test-variables = Test Variable(s):
+dialog-ttest-test-value = Test Value:
+dialog-ttest-ci-percentage = Confidence Interval (%):
+output-ttest-onesample-title = One-Sample T Test
+output-ttest-executed = One-Sample T Test executed for { $count } variable(s).
+output-ttest-stats-title = One-Sample Statistics
+output-ttest-test-title = One-Sample Test (Test Value = { $val })
+output-col-t = t
+output-col-df = df
+output-col-sig-2tailed = Sig. (2-tailed)
+output-col-mean-diff = Mean Difference
+output-col-ci-lower = Lower
+output-col-ci-upper = Upper
+output-col-ci-header = { $level }% Confidence Interval of the Difference
+
+# Independent-Samples T Test Dialog & Output
+dialog-ttest-indep-title = Independent-Samples T Test
+dialog-ttest-indep-grouping-var = Grouping Variable:
+dialog-ttest-indep-define-groups-btn = Define Groups...
+dialog-ttest-indep-define-groups-title = Define Groups
+dialog-ttest-indep-group1 = Group 1:
+dialog-ttest-indep-group2 = Group 2:
+dialog-ttest-indep-continue = Continue
+output-ttest-indep-title = Independent Samples Test
+output-ttest-indep-executed = Independent-Samples T Test executed for { $count } variable(s).
+output-ttest-group-stats-title = Group Statistics
+output-ttest-indep-test-title = Independent Samples Test
+output-ttest-indep-levene-title = Levene's Test for Equality of Variances
+output-ttest-indep-t-title = t-test for Equality of Means
+output-col-levene-f = F
+output-col-levene-sig = Sig.
+output-col-se-diff = Std. Error Difference
+output-row-equal-var-assumed = Equal variances assumed
+output-row-equal-var-not-assumed = Equal variances not assumed
+output-col-group = Group
+output-col-variances-assumed = Variances
+output-quartiles-title = Percentiles: { $name }
+
+# Paired-Samples T Test Dialog & Output
+dialog-ttest-paired-title = Paired-Samples T Test
+dialog-ttest-paired-current-selections = Current Selections:
+dialog-ttest-paired-var1 = Variable 1:
+dialog-ttest-paired-var2 = Variable 2:
+dialog-ttest-paired-pairs-list = Paired Variables:
+dialog-ttest-paired-pair-prefix = Pair { $num }:
+output-ttest-paired-title = Paired-Samples T Test
+output-ttest-paired-executed = Paired-Samples T Test executed for { $count } pair(s).
+output-ttest-paired-stats-title = Paired Samples Statistics
+output-ttest-paired-corr-title = Paired Samples Correlations
+output-ttest-paired-test-title = Paired Samples Test
+output-ttest-paired-diff-super = Paired Differences
+output-col-pair = Pair
+output-col-correlation = Correlation
+output-col-sig = Sig.
+
+# One-Way ANOVA Dialog & Output
+dialog-anova-oneway-title = One-Way ANOVA
+dialog-anova-dependent-list = Dependent List:
+dialog-anova-factor = Factor:
+dialog-anova-options-title = Options
+dialog-anova-descriptives = Descriptives
+dialog-anova-homogeneity = Homogeneity of variance test
+dialog-anova-ci-level = Confidence Interval:
+output-anova-title = ANOVA
+output-anova-descriptives-title = Descriptives
+output-anova-homogeneity-title = Test of Homogeneity of Variances
+output-anova-executed = One-Way ANOVA executed for { $count } variable(s).
+output-col-between-groups = Between Groups
+output-col-within-groups = Within Groups
+output-col-total = Total
+output-col-sum-of-squares = Sum of Squares
+output-col-mean-square = Mean Square
+output-col-f = F
+output-col-levene-statistic = Levene Statistic
+output-col-df1 = df1
+output-col-df2 = df2
+output-col-std-error = Std. Error
+status-anova-executed = One-Way ANOVA executed for { $count } variable(s).
+
+
+
+
+
+
+
