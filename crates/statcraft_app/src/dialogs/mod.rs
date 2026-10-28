@@ -5,6 +5,8 @@ pub mod crosstabs_dialog;
 pub mod descriptives_dialog;
 pub mod frequencies_dialog;
 pub mod missing_values_dialog;
+pub mod nonparam_define_groups;
+pub mod nonparam_twosample_dialog;
 pub mod ttest_indep_define_groups;
 pub mod ttest_indep_dialog;
 pub mod ttest_onesample_dialog;
@@ -29,6 +31,9 @@ pub use frequencies_dialog::{
 };
 pub use missing_values_dialog::{
     render_missing_values_dialog, MissingValuesDialogAction, MissingValuesDialogState,
+};
+pub use nonparam_twosample_dialog::{
+    render_nonparam_twosample_dialog, NonparamTwoSampleDialogAction, NonparamTwoSampleDialogState,
 };
 pub use ttest_indep_dialog::{
     render_ttest_indep_dialog, IndependentSamplesTTestDialogAction,

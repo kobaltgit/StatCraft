@@ -2,12 +2,12 @@ use super::app::{StatCraftApp, StatusMessage};
 use super::dialogs::{
     render_anova_oneway_dialog, render_correlations_dialog, render_crosstabs_dialog,
     render_descriptives_dialog, render_frequencies_dialog, render_missing_values_dialog,
-    render_ttest_indep_dialog, render_ttest_onesample_dialog, render_ttest_paired_dialog,
-    render_value_labels_dialog, render_variable_type_dialog, CorrelationsDialogAction,
-    CrosstabsDialogAction, DescriptivesDialogAction, FrequenciesDialogAction,
-    IndependentSamplesTTestDialogAction, MissingValuesDialogAction, OneSampleTTestDialogAction,
-    OneWayAnovaDialogAction, PairedSamplesTTestDialogAction, ValueLabelsDialogAction,
-    VariableTypeDialogAction,
+    render_nonparam_twosample_dialog, render_ttest_indep_dialog, render_ttest_onesample_dialog,
+    render_ttest_paired_dialog, render_value_labels_dialog, render_variable_type_dialog,
+    CorrelationsDialogAction, CrosstabsDialogAction, DescriptivesDialogAction,
+    FrequenciesDialogAction, IndependentSamplesTTestDialogAction, MissingValuesDialogAction,
+    NonparamTwoSampleDialogAction, OneSampleTTestDialogAction, OneWayAnovaDialogAction,
+    PairedSamplesTTestDialogAction, ValueLabelsDialogAction, VariableTypeDialogAction,
 };
 use serde_json::json;
 use statcraft_i18n::t;
@@ -473,6 +473,67 @@ impl StatCraftApp {
             if let Some(ds) = &mut self.dataset {
                 let _ = ds.set_variable_type(col_index, var_type, width, decimals);
             }
+        }
+
+        // 11. Two Independent Samples Nonparametric Dialog
+        let npar_action = render_nonparam_twosample_dialog(
+            ctx,
+            self.dataset.as_ref(),
+            &mut self.nonparam_twosample_dialog_state,
+        );
+
+        match npar_action {
+            NonparamTwoSampleDialogAction::Run {
+                vars,
+                grouping_var,
+                group1,
+                group2,
+            } => {
+                let params = json!({
+                    "vars": vars,
+                    "grouping_var": grouping_var,
+                    "group1": group1,
+                    "group2": group2,
+                });
+                match self
+                    .command_bus
+                    .execute("stat.npar.mann_whitney", &mut self.dataset, params)
+                {
+                    Ok(result_value) => {
+                        if let Ok(results) = serde_json::from_value::<
+                            Vec<statcraft_algo::MannWhitneyResult>,
+                        >(result_value)
+                        {
+                            let count = results.len();
+                            self.output_view_state.add_mann_whitney(
+                                results,
+                                &grouping_var,
+                                &group1,
+                                &group2,
+                            );
+                            self.status_message = StatusMessage::MannWhitneyExecuted { count };
+                        }
+                    }
+                    Err(e) => {
+                        self.status_message = StatusMessage::Error(e.to_string());
+                    }
+                }
+            }
+            NonparamTwoSampleDialogAction::Paste {
+                vars,
+                grouping_var,
+                group1,
+                group2,
+            } => {
+                let sps = statcraft_syntax::commands::MannWhitneyCommand::to_sps(
+                    &vars,
+                    &grouping_var,
+                    &group1,
+                    &group2,
+                );
+                self.output_view_state.add_entry(t!("output-log"), sps);
+            }
+            NonparamTwoSampleDialogAction::None => {}
         }
     }
 }

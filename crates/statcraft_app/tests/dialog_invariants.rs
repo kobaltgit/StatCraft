@@ -2,12 +2,13 @@ use statcraft_app::dialogs::common::{DialogSize, SubdialogSidebar};
 use statcraft_app::dialogs::{
     render_anova_oneway_dialog, render_correlations_dialog, render_crosstabs_dialog,
     render_descriptives_dialog, render_frequencies_dialog, render_missing_values_dialog,
-    render_ttest_indep_dialog, render_ttest_onesample_dialog, render_ttest_paired_dialog,
-    render_value_labels_dialog, render_variable_type_dialog, CorrelationsDialogAction,
-    CorrelationsDialogState, CrosstabsDialogAction, CrosstabsDialogState, DescriptivesDialogAction,
-    DescriptivesDialogState, FrequenciesDialogAction, FrequenciesDialogState,
-    IndependentSamplesTTestDialogAction, IndependentSamplesTTestDialogState,
-    MissingValuesDialogAction, MissingValuesDialogState, OneSampleTTestDialogAction,
+    render_nonparam_twosample_dialog, render_ttest_indep_dialog, render_ttest_onesample_dialog,
+    render_ttest_paired_dialog, render_value_labels_dialog, render_variable_type_dialog,
+    CorrelationsDialogAction, CorrelationsDialogState, CrosstabsDialogAction, CrosstabsDialogState,
+    DescriptivesDialogAction, DescriptivesDialogState, FrequenciesDialogAction,
+    FrequenciesDialogState, IndependentSamplesTTestDialogAction,
+    IndependentSamplesTTestDialogState, MissingValuesDialogAction, MissingValuesDialogState,
+    NonparamTwoSampleDialogAction, NonparamTwoSampleDialogState, OneSampleTTestDialogAction,
     OneSampleTTestDialogState, OneWayAnovaDialogAction, OneWayAnovaDialogState,
     PairedSamplesTTestDialogAction, PairedSamplesTTestDialogState, ValueLabelsDialogAction,
     ValueLabelsDialogState, VariableTypeDialogAction, VariableTypeDialogState,
@@ -306,4 +307,28 @@ fn test_headless_render_correlations_dialog() {
 
     assert!(state.is_open);
     assert_eq!(state.selected_vars.len(), 2);
+}
+
+#[test]
+fn test_headless_render_nonparam_twosample_dialog() {
+    let ds = create_test_dataset();
+    let ctx = egui::Context::default();
+    let mut state = NonparamTwoSampleDialogState {
+        is_open: true,
+        selected_vars: vec!["salary".to_string()],
+        grouping_var: Some("gender".to_string()),
+        group1_val: "1".to_string(),
+        group2_val: "2".to_string(),
+        is_define_groups_open: true,
+        ..Default::default()
+    };
+
+    let _ = ctx.run(Default::default(), |ctx| {
+        let action = render_nonparam_twosample_dialog(ctx, Some(&ds), &mut state);
+        assert!(matches!(action, NonparamTwoSampleDialogAction::None));
+    });
+
+    assert!(state.is_open);
+    assert_eq!(state.selected_vars.len(), 1);
+    assert_eq!(state.grouping_var.as_deref(), Some("gender"));
 }

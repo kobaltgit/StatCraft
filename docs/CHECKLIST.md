@@ -217,6 +217,17 @@
 - [x] L6 `statcraft_app`: активация пункта меню `Analyze -> Correlate -> Bivariate...`
 - [x] 100% покрытие локализацией (`locales/en.ftl`, `locales/ru.ftl`), 100% прохождение полного CI gate `cargo run -p xtask -j 1 -- ci` (100 тестов воркспейса, `file-guard`, `design-guard`, `layers`, `parity`, `clippy -D warnings`, `cargo fmt --check`)
 
+## 23. Этап 7.3: Непараметрические критерии для двух выборок (Mann-Whitney $U$ и Wilcoxon $W$)
+- [x] L2 `statcraft_algo`: модули `nonparam_twosample.rs` и `nonparam_twosample_types.rs` — объединенное ранжирование с дробными средними рангами (mid-ranks), поправка на связки $\sum(t_i^3 - t_i)$, расчет сумм и средних рангов, статистик $U$ Манна-Уитни, $W$ Вилкоксона, математического ожидания, скорректированной дисперсии, $Z$-оценки и двустороннего асимптотического $p$-value через регуляризованную неполную гамма-функцию
+- [x] L2 `statcraft_algo`: модуль `nonparam_twosample.rs` — критерий знаковых рангов Вилкоксона для связанных выборок с ранжированием $|d_i|$, исключением нулевых связок и оценкой $Z$
+- [x] L2 `statcraft_algo`: модуль тестов `nonparam_twosample_tests.rs` — сверка Golden Oracle с эталоном SciPy (`mannwhitneyu`, `wilcoxon`) и точными SPSS-бенчмарками
+- [x] L5 `statcraft_syntax`: команда `MannWhitneyCommand` (`stat.npar.mann_whitney`) со спецификацией `specs()` и генерацией канонического синтаксиса `NPAR TESTS /M-W= vars BY grp(1 2) /MISSING=ANALYSIS.`
+- [x] L6 `statcraft_app`: диалог `NonparamTwoSampleDialog` ($560 \times 430$ px) на базе `DialogKit` (`DialogShell::standard`, `TransferButton`, `SubdialogSidebar`, `SubdialogActionBar`, `DialogActionBar`, `GroupBox`), поддиалог `Define Groups...`
+- [x] L6 `statcraft_app`: модуль вывода `output_view/tables_nonparam.rs` — аутентичные таблицы SPSS `Ranks` ($N$, Mean Rank, Sum of Ranks) и `Test Statistics` (Mann-Whitney U, Wilcoxon W, Z, Asymp. Sig. 2-tailed), сноска группирующей переменной, TSV-экспорт и интеграция в Outline Pane
+- [x] L6 `statcraft_app`: активация пункта меню `Analyze -> Nonparametric Tests -> Two Independent Samples...`
+- [x] 100% покрытие локализацией (`locales/en.ftl`, `locales/ru.ftl`), 100% прохождение полного CI gate `cargo run -p xtask -j 1 -- ci` (105 тестов воркспейса, `file-guard`, `design-guard`, `layers`, `parity`, `clippy -D warnings`, `cargo fmt --check`)
+
+
 
 
 

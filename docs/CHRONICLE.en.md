@@ -702,6 +702,52 @@ Implemented the fundamental procedure for analyzing categorical and discrete rel
 
 ---
 
+### Phase 7.3: Nonparametric Tests for Two Samples (Mann-Whitney $U$ and Wilcoxon $W$)
+*Time: October 28, 2026, 22:15 (~45 minutes)*
+
+Implemented the fundamental nonparametric framework for comparing two groups on ordinal scales or non-normally distributed continuous variables — **Two-Independent-Samples Tests** (`Analyze -> Nonparametric Tests -> Two Independent Samples...`):
+1. **Mathematical Engine L2 (`statcraft_algo::nonparam_twosample` & `nonparam_twosample_types`):**
+   - Combined ranking algorithm with fractional mid-ranks and tie sum $T = \sum (t_i^3 - t_i)$;
+   - Calculation of rank sums ($W_1, W_2$) and mean ranks ($\bar{R}_1, \bar{R}_2$) for both groups;
+   - Mann-Whitney test statistic $U = \min(U_1, U_2)$, where $U_1 = W_1 - \frac{n_1(n_1 + 1)}{2}$;
+   - Wilcoxon $W$ statistic definition adhering to the IBM SPSS Statistics standard (rank sum of the group with the smaller mean rank);
+   - Expected value $\mu_U = \frac{n_1 n_2}{2}$ and tie-corrected variance $\sigma_U^2 = \frac{n_1 n_2}{12}\left[ (N + 1) - \frac{\sum (t_i^3 - t_i)}{N(N - 1)} \right]$;
+   - Asymptotic $Z$-statistic and two-tailed significance derived from the regularized upper incomplete gamma function $Q(0.5, Z^2 / 2)$;
+   - Wilcoxon Signed-Rank Test for paired observations with ranking of absolute differences $|d_i|$, exclusion of zero-ties, and $W = \min(W^+, W^-)$;
+   - **Never Crash** protection: graceful handling of small sample sizes ($N < 2$), degenerate zero-variance rank distributions, and flexible numeric/string group codes via `matches_group` on 100% safe Rust;
+   - **Golden Oracle:** Test suite `nonparam_twosample_tests.rs` validating ranks, $U$, $W$, $Z$, and $p$-value against Python `scipy.stats` (`mannwhitneyu`, `wilcoxon`) and manual SPSS benchmarks with $\le 10^{-6}$ precision.
+2. **Command Bus & Syntax L5 (`statcraft_syntax::commands::nonparam_twosample_cmd`):**
+   - Typed engine command `MannWhitneyCommand` (`stat.npar.mann_whitney`) with JSON parameter specs for external AI agents;
+   - Canonical IBM SPSS Statistics syntax emission:
+     ```text
+     NPAR TESTS
+       /M-W= salary age BY gender(1 2)
+       /MISSING=ANALYSIS.
+     ```
+3. **User Interface L6 (`statcraft_app::dialogs::nonparam_twosample_dialog`):**
+   - Modal dialog `Two-Independent-Samples Tests` ($560 \times 430$ px) built with `DialogKit`:
+     * Source variables list (`VariablePicker`) with scale measurement icons;
+     * Vector transfer button (`TransferButton`) for test variables and grouping variable;
+     * Target variables list `Test Variable List:`;
+     * Selected grouping variable display `Grouping Variable:` with `var(val1 val2)` syntax;
+     * Right sidebar (`SubdialogSidebar`) with `[ Define Groups... ]` button;
+     * Modal subdialog `Define Groups` based on `DialogShell::subdialog` with validation of non-empty, non-identical group values;
+     * `Test Type` group with checkboxes `[x] Mann-Whitney U`, `[ ] Wilcoxon W`, `[ ] Kolmogorov-Smirnov Z`;
+     * Standard bottom action bar `DialogActionBar` (`[ OK ] [ Paste ] [ Reset ] [ Cancel ] [ Help ]`).
+4. **Summary Pivot Tables in Output Viewer (`tables_nonparam.rs`):**
+   - **Ranks Table:** Variable, Group, $N$, Mean Rank, Sum of Ranks, Total row;
+   - **Test Statistics Table:** Canonical multi-column matrix (Mann-Whitney U, Wilcoxon W, Z, Asymp. Sig. 2-tailed) with grouping variable footnote;
+   - TSV clipboard export and Outline Pane integration.
+5. **Quality Control & Definition of Done:**
+   - Full automated CI gate passed (`cargo run -p xtask -j 1 -- ci` — 100% OK);
+   - 105 workspace unit and integration tests passing with 0 failures;
+   - Architectural linters (`design-guard`, `file-guard`, `layers`, `parity`) reporting 0 violations;
+   - Strict compiler linter `cargo clippy --workspace --all-targets -j 1 -- -D warnings` — 0 warnings;
+   - Code formatting `cargo fmt --check` — completely clean.
+
+
+---
+
 ### Phase 7.2: Bivariate Correlations (Pearson $r$, Spearman $\rho$, Kendall $\tau$-b)
 *Time: October 28, 2026, 21:30 (~35 minutes)*
 

@@ -7,6 +7,7 @@ pub mod tables_correlations;
 pub mod tables_crosstabs;
 pub mod tables_descriptives;
 pub mod tables_frequencies;
+pub mod tables_nonparam;
 pub mod tables_ttest_indep;
 pub mod tables_ttest_onesample;
 pub mod tables_ttest_paired;
@@ -20,6 +21,7 @@ pub use tables_correlations::{correlations_to_tsv, render_spss_correlations_tabl
 pub use tables_crosstabs::{crosstabs_to_tsv, render_crosstabs_item};
 pub use tables_descriptives::{descriptives_to_tsv, render_spss_descriptives_pivot_table};
 pub use tables_frequencies::{frequencies_to_tsv, render_spss_frequencies_tables};
+pub use tables_nonparam::{mann_whitney_to_tsv, render_spss_mann_whitney_tables};
 pub use tables_ttest_indep::{indep_ttest_to_tsv, render_spss_indep_ttest_tables};
 pub use tables_ttest_onesample::{onesample_ttest_to_tsv, render_spss_onesample_ttest_tables};
 pub use tables_ttest_paired::{paired_ttest_to_tsv, render_spss_paired_ttest_tables};
@@ -38,6 +40,10 @@ pub fn extract_item_tsv(kind: &OutputItemKind) -> Option<String> {
         OutputItemKind::OneWayAnova { results, .. } => Some(anova_to_tsv(results)),
         OutputItemKind::Crosstabs(results) => results.first().map(crosstabs_to_tsv),
         OutputItemKind::Correlations(res) => Some(correlations_to_tsv(res)),
+        OutputItemKind::MannWhitney {
+            results,
+            grouping_var,
+        } => Some(mann_whitney_to_tsv(results, grouping_var)),
         _ => None,
     }
 }
@@ -244,6 +250,12 @@ pub fn render_output_view(ui: &mut Ui, state: &mut OutputViewerState) {
                                     }
                                     OutputItemKind::Correlations(res) => {
                                         render_spss_correlations_tables(ui, res);
+                                    }
+                                    OutputItemKind::MannWhitney {
+                                        results,
+                                        grouping_var,
+                                    } => {
+                                        render_spss_mann_whitney_tables(ui, results, grouping_var);
                                     }
                                     OutputItemKind::Warning(msg) => {
                                         ui.colored_label(Tokens::CAPTION_CLOSE_HOVER, msg);

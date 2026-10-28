@@ -3,13 +3,14 @@ use statcraft_algo::{
     BivariateCorrelationsOptions, BivariateCorrelationsResult, ChiSquareTestRow, CrosstabCategory,
     CrosstabCell, CrosstabOptions, CrosstabResult, CrosstabRow, DescriptivesResult,
     FrequencyCategory, FrequencyResult, GroupStats, IndepTTestResult, LeveneResult,
-    OneSampleTTestResult, OneWayAnovaResult, PairedCorrelation, PairedDifferences,
-    PairedTTestResult, PairedVarStats, TTestTwoGroupDetails,
+    MannWhitneyResult, OneSampleTTestResult, OneWayAnovaResult, PairedCorrelation,
+    PairedDifferences, PairedTTestResult, PairedVarStats, RankGroupStats, TTestTwoGroupDetails,
 };
 use statcraft_app::views::output_view::{
     anova_to_tsv, correlations_to_tsv, crosstabs_to_tsv, descriptives_to_tsv, frequencies_to_tsv,
-    indep_ttest_to_tsv, onesample_ttest_to_tsv, paired_ttest_to_tsv, render_output_view,
-    OutputItem, OutputItemKind, OutputNotes, OutputProcedure, OutputViewerState, SelectedTarget,
+    indep_ttest_to_tsv, mann_whitney_to_tsv, onesample_ttest_to_tsv, paired_ttest_to_tsv,
+    render_output_view, OutputItem, OutputItemKind, OutputNotes, OutputProcedure,
+    OutputViewerState, SelectedTarget,
 };
 
 fn sample_descriptives() -> DescriptivesResult {
@@ -755,4 +756,51 @@ fn test_outline_tree_navigation_integrity() {
         "Targeted procedure should be deleted"
     );
     assert_eq!(state.procedures[0].items[0].title(), "Log 1");
+}
+
+#[test]
+fn test_mann_whitney_output_and_tsv_integrity() {
+    let ctx = egui::Context::default();
+    let mut state = OutputViewerState::new();
+
+    let sample_mw = MannWhitneyResult {
+        variable: "salary".to_string(),
+        grouping_var: "gender".to_string(),
+        group1_stats: RankGroupStats {
+            group_val: "1".to_string(),
+            n: 5,
+            mean_rank: 4.0,
+            sum_ranks: 20.0,
+        },
+        group2_stats: RankGroupStats {
+            group_val: "2".to_string(),
+            n: 5,
+            mean_rank: 7.0,
+            sum_ranks: 35.0,
+        },
+        total_n: 10,
+        mann_whitney_u: 5.0,
+        wilcoxon_w: 20.0,
+        z_stat: -1.59598,
+        asymp_sig_2tailed: 0.11049,
+    };
+
+    state.add_mann_whitney(vec![sample_mw.clone()], "gender", "1", "2");
+    assert_eq!(state.procedures.len(), 1);
+    assert_eq!(state.procedures[0].items.len(), 3);
+
+    // Headless render
+    let _ = ctx.run(Default::default(), |ctx| {
+        egui::CentralPanel::default().show(ctx, |ui| {
+            render_output_view(ui, &mut state);
+        });
+    });
+
+    let tsv = mann_whitney_to_tsv(&[sample_mw], "gender");
+    assert!(tsv.contains("Ranks\n"));
+    assert!(tsv.contains("salary\t1\t5\t4.00\t20.00\n"));
+    assert!(tsv.contains("Test Statistics\n"));
+    assert!(tsv.contains("Mann-Whitney U\t5.0000\n"));
+    assert!(tsv.contains("Wilcoxon W\t20.0000\n"));
+    assert!(tsv.contains("a. Grouping Variable: gender\n"));
 }

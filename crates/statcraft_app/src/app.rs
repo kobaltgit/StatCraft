@@ -1,8 +1,8 @@
 use crate::dialogs::{
     CorrelationsDialogState, CrosstabsDialogState, DescriptivesDialogState, FrequenciesDialogState,
-    IndependentSamplesTTestDialogState, MissingValuesDialogState, OneSampleTTestDialogState,
-    OneWayAnovaDialogState, PairedSamplesTTestDialogState, ValueLabelsDialogState,
-    VariableTypeDialogState,
+    IndependentSamplesTTestDialogState, MissingValuesDialogState, NonparamTwoSampleDialogState,
+    OneSampleTTestDialogState, OneWayAnovaDialogState, PairedSamplesTTestDialogState,
+    ValueLabelsDialogState, VariableTypeDialogState,
 };
 use crate::views::{
     render_data_view, render_output_view, render_variable_view, DataViewState, OutputViewerState,
@@ -59,6 +59,9 @@ pub enum StatusMessage {
     CorrelationsExecuted {
         count: usize,
     },
+    MannWhitneyExecuted {
+        count: usize,
+    },
     Error(String),
 }
 
@@ -98,6 +101,9 @@ impl StatusMessage {
             StatusMessage::CorrelationsExecuted { count } => {
                 t!("output-correlations-executed", count = *count)
             }
+            StatusMessage::MannWhitneyExecuted { count } => {
+                t!("output-npar-mann-whitney-executed", count = *count)
+            }
             StatusMessage::Error(e) => format!("{}: {}", t!("status-error"), e),
         }
     }
@@ -114,6 +120,7 @@ pub struct StatCraftApp {
     pub frequencies_dialog_state: FrequenciesDialogState,
     pub crosstabs_dialog_state: CrosstabsDialogState,
     pub correlations_dialog_state: CorrelationsDialogState,
+    pub nonparam_twosample_dialog_state: NonparamTwoSampleDialogState,
     pub ttest_onesample_dialog_state: OneSampleTTestDialogState,
     pub ttest_indep_dialog_state: IndependentSamplesTTestDialogState,
     pub ttest_paired_dialog_state: PairedSamplesTTestDialogState,
@@ -145,6 +152,7 @@ impl StatCraftApp {
             frequencies_dialog_state: FrequenciesDialogState::default(),
             crosstabs_dialog_state: CrosstabsDialogState::default(),
             correlations_dialog_state: CorrelationsDialogState::default(),
+            nonparam_twosample_dialog_state: NonparamTwoSampleDialogState::default(),
             ttest_onesample_dialog_state: OneSampleTTestDialogState::default(),
             ttest_indep_dialog_state: IndependentSamplesTTestDialogState::default(),
             ttest_paired_dialog_state: PairedSamplesTTestDialogState::default(),
@@ -580,6 +588,16 @@ impl StatCraftApp {
                         );
                     });
                     ui.menu_button(t!("menu-analyze-nonparametric"), |ui| {
+                        if render_menu_item(
+                            ui,
+                            t!("menu-analyze-nonparam-two-indep"),
+                            requires_dataset_status,
+                        )
+                        .clicked()
+                        {
+                            self.nonparam_twosample_dialog_state.is_open = true;
+                            ui.close_menu();
+                        }
                         render_menu_item(
                             ui,
                             t!("menu-analyze-nonparam-independent"),

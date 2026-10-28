@@ -9,6 +9,10 @@ mod crosstabs_tests;
 pub mod crosstabs_types;
 pub mod descriptives;
 pub mod frequencies;
+pub mod nonparam_twosample;
+#[cfg(test)]
+mod nonparam_twosample_tests;
+pub mod nonparam_twosample_types;
 pub mod ttest_indep;
 pub mod ttest_onesample;
 pub mod ttest_paired;
@@ -32,6 +36,13 @@ pub use descriptives::{compute_descriptives, DescriptivesOptions, DescriptivesRe
 pub use frequencies::{
     compute_frequencies, compute_frequencies_detailed, compute_percentile, compute_quartiles,
     FrequencyCategory, FrequencyInputItem, FrequencyResult, FrequencyTable,
+};
+pub use nonparam_twosample::{
+    compute_mann_whitney, compute_mann_whitney_from_slices, compute_midranks_with_ties,
+    compute_wilcoxon_signed_rank, compute_wilcoxon_signed_rank_from_slices,
+};
+pub use nonparam_twosample_types::{
+    MannWhitneyResult, RankGroupStats, WilcoxonRanksSummary, WilcoxonSignedRankResult,
 };
 pub use ttest_indep::{
     compute_indep_ttest, compute_indep_ttest_from_slices, GroupStats, IndepTTestOptions,

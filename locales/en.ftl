@@ -137,6 +137,7 @@ menu-analyze-regression-binary = Binary Logistic...
 menu-analyze-regression-multinomial = Multinomial Logistic...
 menu-analyze-regression-curve = Curve Estimation...
 menu-analyze-nonparametric = Nonparametric Tests
+menu-analyze-nonparam-two-indep = Two Independent Samples...
 menu-analyze-nonparam-independent = Independent Samples (Mann-Whitney / Kruskal-Wallis)...
 menu-analyze-nonparam-related = Related Samples (Wilcoxon / Friedman)...
 menu-analyze-dimension = Dimension Reduction & Classify
@@ -600,6 +601,33 @@ output-correlations-footnote-sig05-2t = *. Correlation is significant at the 0.0
 output-correlations-footnote-sig01-2t = **. Correlation is significant at the 0.01 level (2-tailed).
 output-correlations-footnote-sig05-1t = *. Correlation is significant at the 0.05 level (1-tailed).
 output-correlations-footnote-sig01-1t = **. Correlation is significant at the 0.01 level (1-tailed).
+
+# Two Independent Samples (Mann-Whitney U) Dialog
+dialog-npar-two-indep-title = Two-Independent-Samples Tests
+dialog-npar-test-variables = Test Variable List:
+dialog-npar-grouping-var = Grouping Variable:
+dialog-npar-define-groups-btn = Define Groups...
+dialog-npar-define-groups-title = Two Independent Samples: Define Groups
+dialog-npar-group1 = Group 1:
+dialog-npar-group2 = Group 2:
+dialog-npar-test-type = Test Type
+dialog-npar-test-mann-whitney = Mann-Whitney U
+dialog-npar-test-wilcoxon = Wilcoxon W
+dialog-npar-test-ks = Kolmogorov-Smirnov Z
+
+# Two Independent Samples Output Tables
+output-npar-mann-whitney-title = NPar Tests: Mann-Whitney Test
+output-npar-mann-whitney-executed = Mann-Whitney U test executed for { $count } variable(s).
+output-npar-ranks-title = Ranks
+output-npar-test-stats-title = Test Statistics
+output-col-mean-rank = Mean Rank
+output-col-sum-ranks = Sum of Ranks
+output-row-mann-whitney-u = Mann-Whitney U
+output-row-wilcoxon-w = Wilcoxon W
+output-row-z = Z
+output-row-asymp-sig = Asymp. Sig. (2-tailed)
+output-row-grouping-var = Grouping Variable
+
 
 
 

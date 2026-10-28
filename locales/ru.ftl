@@ -137,6 +137,7 @@ menu-analyze-regression-binary = Бинарная логистическая...
 menu-analyze-regression-multinomial = Мультиномиальная логистическая...
 menu-analyze-regression-curve = Оценка кривых...
 menu-analyze-nonparametric = Непараметрические критерии
+menu-analyze-nonparam-two-indep = Две независимые выборки...
 menu-analyze-nonparam-independent = Независимые выборки (Манна-Уитни / Краскела-Уоллиса)...
 menu-analyze-nonparam-related = Связанные выборки (Вилкоксона / Фридмана)...
 menu-analyze-dimension = Снижение размерности и классификация
@@ -600,6 +601,33 @@ output-correlations-footnote-sig05-2t = *. Корреляция значима �
 output-correlations-footnote-sig01-2t = **. Корреляция значима на уровне 0.01 (двусторонняя).
 output-correlations-footnote-sig05-1t = *. Корреляция значима на уровне 0.05 (односторонняя).
 output-correlations-footnote-sig01-1t = **. Корреляция значима на уровне 0.01 (односторонняя).
+
+# Диалог двух независимых выборок (Манна-Уитни)
+dialog-npar-two-indep-title = Критерии для двух независимых выборок
+dialog-npar-test-variables = Список тестируемых переменных:
+dialog-npar-grouping-var = Группирующая переменная:
+dialog-npar-define-groups-btn = Задать группы...
+dialog-npar-define-groups-title = Две независимые выборки: Задать группы
+dialog-npar-group1 = Группа 1:
+dialog-npar-group2 = Группа 2:
+dialog-npar-test-type = Тип критерия
+dialog-npar-test-mann-whitney = U Манна-Уитни
+dialog-npar-test-wilcoxon = W Вилкоксона
+dialog-npar-test-ks = Z Колмогорова-Смирнова
+
+# Вывод критерия Манна-Уитни в Output Viewer
+output-npar-mann-whitney-title = Непараметрические критерии: Критерий Манна-Уитни
+output-npar-mann-whitney-executed = U-критерий Манна-Уитни выполнен для { $count } перем.
+output-npar-ranks-title = Ранги
+output-npar-test-stats-title = Статистика критерия
+output-col-mean-rank = Средний ранг
+output-col-sum-ranks = Сумма рангов
+output-row-mann-whitney-u = U Манна-Уитни
+output-row-wilcoxon-w = W Вилкоксона
+output-row-z = Z
+output-row-asymp-sig = Асимпт. знач. (2-сторонняя)
+output-row-grouping-var = Группирующая переменная
+
 
 
 

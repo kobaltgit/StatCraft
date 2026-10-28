@@ -2,7 +2,7 @@ use crate::command::{CommandError, EngineCommand};
 use crate::commands::{
     CellEditCommand, CorrelationsCommand, CrosstabsCommand, DataAddRowCommand,
     DataDeleteRowCommand, DescriptivesCommand, FrequenciesCommand, ImportCsvCommand,
-    IndependentSamplesTTestCommand, OneSampleTTestCommand, OneWayAnovaCommand,
+    IndependentSamplesTTestCommand, MannWhitneyCommand, OneSampleTTestCommand, OneWayAnovaCommand,
     PairedSamplesTTestCommand, SetLabelCommand, SetMeasureCommand, VarAddCommand, VarDeleteCommand,
     VarRenameCommand, VarSetAlignCommand, VarSetDecimalsCommand, VarSetMissingValuesCommand,
     VarSetTypeCommand, VarSetValueLabelsCommand, VarSetWidthCommand,
@@ -52,6 +52,7 @@ impl CommandBus {
         bus.register(Box::new(OneWayAnovaCommand));
         bus.register(Box::new(CrosstabsCommand));
         bus.register(Box::new(CorrelationsCommand));
+        bus.register(Box::new(MannWhitneyCommand));
         bus.register(Box::new(VarSetValueLabelsCommand::new()));
         bus.register(Box::new(VarSetMissingValuesCommand::new()));
         bus.register(Box::new(VarRenameCommand));
