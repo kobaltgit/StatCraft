@@ -1,16 +1,16 @@
 use statcraft_app::dialogs::common::{DialogSize, SubdialogSidebar};
 use statcraft_app::dialogs::{
-    render_anova_oneway_dialog, render_crosstabs_dialog, render_descriptives_dialog,
-    render_frequencies_dialog, render_missing_values_dialog, render_ttest_indep_dialog,
-    render_ttest_onesample_dialog, render_ttest_paired_dialog, render_value_labels_dialog,
-    render_variable_type_dialog, CrosstabsDialogAction, CrosstabsDialogState,
-    DescriptivesDialogAction, DescriptivesDialogState, FrequenciesDialogAction,
-    FrequenciesDialogState, IndependentSamplesTTestDialogAction,
-    IndependentSamplesTTestDialogState, MissingValuesDialogAction, MissingValuesDialogState,
-    OneSampleTTestDialogAction, OneSampleTTestDialogState, OneWayAnovaDialogAction,
-    OneWayAnovaDialogState, PairedSamplesTTestDialogAction, PairedSamplesTTestDialogState,
-    ValueLabelsDialogAction, ValueLabelsDialogState, VariableTypeDialogAction,
-    VariableTypeDialogState,
+    render_anova_oneway_dialog, render_correlations_dialog, render_crosstabs_dialog,
+    render_descriptives_dialog, render_frequencies_dialog, render_missing_values_dialog,
+    render_ttest_indep_dialog, render_ttest_onesample_dialog, render_ttest_paired_dialog,
+    render_value_labels_dialog, render_variable_type_dialog, CorrelationsDialogAction,
+    CorrelationsDialogState, CrosstabsDialogAction, CrosstabsDialogState, DescriptivesDialogAction,
+    DescriptivesDialogState, FrequenciesDialogAction, FrequenciesDialogState,
+    IndependentSamplesTTestDialogAction, IndependentSamplesTTestDialogState,
+    MissingValuesDialogAction, MissingValuesDialogState, OneSampleTTestDialogAction,
+    OneSampleTTestDialogState, OneWayAnovaDialogAction, OneWayAnovaDialogState,
+    PairedSamplesTTestDialogAction, PairedSamplesTTestDialogState, ValueLabelsDialogAction,
+    ValueLabelsDialogState, VariableTypeDialogAction, VariableTypeDialogState,
 };
 use statcraft_core::{DataSet, DataType, Measure, MissingValues};
 use std::collections::BTreeMap;
@@ -286,4 +286,24 @@ fn test_headless_render_crosstabs_dialog() {
     assert!(state.is_open);
     assert_eq!(state.row_vars.len(), 1);
     assert_eq!(state.col_vars.len(), 1);
+}
+
+#[test]
+fn test_headless_render_correlations_dialog() {
+    let ds = create_test_dataset();
+    let ctx = egui::Context::default();
+    let mut state = CorrelationsDialogState {
+        is_open: true,
+        selected_vars: vec!["salary".to_string(), "pre_score".to_string()],
+        show_options: true,
+        ..Default::default()
+    };
+
+    let _ = ctx.run(Default::default(), |ctx| {
+        let action = render_correlations_dialog(ctx, Some(&ds), &mut state);
+        assert!(matches!(action, CorrelationsDialogAction::None));
+    });
+
+    assert!(state.is_open);
+    assert_eq!(state.selected_vars.len(), 2);
 }

@@ -1,14 +1,15 @@
 use statcraft_algo::{
-    AnovaTableRow, AssociationMeasure, ChiSquareTestRow, CrosstabCategory, CrosstabCell,
-    CrosstabOptions, CrosstabResult, CrosstabRow, DescriptivesResult, FrequencyCategory,
-    FrequencyResult, GroupStats, IndepTTestResult, LeveneResult, OneSampleTTestResult,
-    OneWayAnovaResult, PairedCorrelation, PairedDifferences, PairedTTestResult, PairedVarStats,
-    TTestTwoGroupDetails,
+    compute_bivariate_correlations, AnovaTableRow, AssociationMeasure,
+    BivariateCorrelationsOptions, BivariateCorrelationsResult, ChiSquareTestRow, CrosstabCategory,
+    CrosstabCell, CrosstabOptions, CrosstabResult, CrosstabRow, DescriptivesResult,
+    FrequencyCategory, FrequencyResult, GroupStats, IndepTTestResult, LeveneResult,
+    OneSampleTTestResult, OneWayAnovaResult, PairedCorrelation, PairedDifferences,
+    PairedTTestResult, PairedVarStats, TTestTwoGroupDetails,
 };
 use statcraft_app::views::output_view::{
-    anova_to_tsv, crosstabs_to_tsv, descriptives_to_tsv, frequencies_to_tsv, indep_ttest_to_tsv,
-    onesample_ttest_to_tsv, paired_ttest_to_tsv, render_output_view, OutputItem, OutputItemKind,
-    OutputNotes, OutputProcedure, OutputViewerState, SelectedTarget,
+    anova_to_tsv, correlations_to_tsv, crosstabs_to_tsv, descriptives_to_tsv, frequencies_to_tsv,
+    indep_ttest_to_tsv, onesample_ttest_to_tsv, paired_ttest_to_tsv, render_output_view,
+    OutputItem, OutputItemKind, OutputNotes, OutputProcedure, OutputViewerState, SelectedTarget,
 };
 
 fn sample_descriptives() -> DescriptivesResult {
@@ -251,6 +252,22 @@ fn sample_crosstabs() -> CrosstabResult {
         }],
         options: CrosstabOptions::default(),
     }
+}
+
+fn sample_correlations() -> BivariateCorrelationsResult {
+    let opts = BivariateCorrelationsOptions {
+        descriptives: true,
+        cross_prod_cov: true,
+        ..Default::default()
+    };
+    compute_bivariate_correlations(
+        &[
+            ("salary", &[Some(50000.0), Some(60000.0), Some(70000.0)]),
+            ("educ", &[Some(12.0), Some(14.0), Some(16.0)]),
+        ],
+        &opts,
+    )
+    .unwrap()
 }
 
 #[test]
@@ -502,6 +519,13 @@ fn test_exhaustive_enum_payloads_render_without_panics() {
                 content: "Detailed syntax execution log".to_string(),
             },
         },
+        // Correlations
+        OutputItem {
+            id: state.alloc_id(),
+            title_key: "output-correlations-title",
+            custom_title: None,
+            kind: OutputItemKind::Correlations(sample_correlations()),
+        },
     ];
 
     let proc_id = state.alloc_id();
@@ -522,7 +546,7 @@ fn test_exhaustive_enum_payloads_render_without_panics() {
 
     // Asserts: 0 panics, state remains intact
     assert_eq!(state.procedures.len(), 1);
-    assert_eq!(state.procedures[0].items.len(), 11);
+    assert_eq!(state.procedures[0].items.len(), 12);
 }
 
 #[test]
@@ -675,6 +699,25 @@ fn test_tsv_export_golden_headers() {
         crosstabs_tsv.contains("Phi"),
         "Crosstabs TSV must contain 'Phi':\n{}",
         crosstabs_tsv
+    );
+
+    // 8. Correlations
+    let sample_corr = sample_correlations();
+    let corr_tsv = correlations_to_tsv(&sample_corr);
+    assert!(
+        corr_tsv.contains("Correlations (Pearson)"),
+        "Correlations TSV must contain table header:\n{}",
+        corr_tsv
+    );
+    assert!(
+        corr_tsv.contains("salary"),
+        "Correlations TSV must contain variable 'salary':\n{}",
+        corr_tsv
+    );
+    assert!(
+        corr_tsv.contains("Correlation"),
+        "Correlations TSV must contain 'Correlation':\n{}",
+        corr_tsv
     );
 }
 

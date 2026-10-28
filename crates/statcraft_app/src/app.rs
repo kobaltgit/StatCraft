@@ -1,5 +1,5 @@
 use crate::dialogs::{
-    CrosstabsDialogState, DescriptivesDialogState, FrequenciesDialogState,
+    CorrelationsDialogState, CrosstabsDialogState, DescriptivesDialogState, FrequenciesDialogState,
     IndependentSamplesTTestDialogState, MissingValuesDialogState, OneSampleTTestDialogState,
     OneWayAnovaDialogState, PairedSamplesTTestDialogState, ValueLabelsDialogState,
     VariableTypeDialogState,
@@ -56,6 +56,9 @@ pub enum StatusMessage {
     CrosstabsExecuted {
         count: usize,
     },
+    CorrelationsExecuted {
+        count: usize,
+    },
     Error(String),
 }
 
@@ -92,6 +95,9 @@ impl StatusMessage {
             StatusMessage::CrosstabsExecuted { count } => {
                 t!("output-crosstabs-executed", count = *count)
             }
+            StatusMessage::CorrelationsExecuted { count } => {
+                t!("output-correlations-executed", count = *count)
+            }
             StatusMessage::Error(e) => format!("{}: {}", t!("status-error"), e),
         }
     }
@@ -107,6 +113,7 @@ pub struct StatCraftApp {
     pub descriptives_dialog_state: DescriptivesDialogState,
     pub frequencies_dialog_state: FrequenciesDialogState,
     pub crosstabs_dialog_state: CrosstabsDialogState,
+    pub correlations_dialog_state: CorrelationsDialogState,
     pub ttest_onesample_dialog_state: OneSampleTTestDialogState,
     pub ttest_indep_dialog_state: IndependentSamplesTTestDialogState,
     pub ttest_paired_dialog_state: PairedSamplesTTestDialogState,
@@ -137,6 +144,7 @@ impl StatCraftApp {
             descriptives_dialog_state: DescriptivesDialogState::default(),
             frequencies_dialog_state: FrequenciesDialogState::default(),
             crosstabs_dialog_state: CrosstabsDialogState::default(),
+            correlations_dialog_state: CorrelationsDialogState::default(),
             ttest_onesample_dialog_state: OneSampleTTestDialogState::default(),
             ttest_indep_dialog_state: IndependentSamplesTTestDialogState::default(),
             ttest_paired_dialog_state: PairedSamplesTTestDialogState::default(),
@@ -533,11 +541,16 @@ impl StatCraftApp {
                         );
                     });
                     ui.menu_button(t!("menu-analyze-correlate"), |ui| {
-                        render_menu_item(
+                        if render_menu_item(
                             ui,
                             t!("menu-analyze-correlate-bivariate"),
-                            MenuItemStatus::InDev,
-                        );
+                            requires_dataset_status,
+                        )
+                        .clicked()
+                        {
+                            self.correlations_dialog_state.is_open = true;
+                            ui.close_menu();
+                        }
                         render_menu_item(
                             ui,
                             t!("menu-analyze-correlate-partial"),

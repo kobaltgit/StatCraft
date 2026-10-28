@@ -1,12 +1,13 @@
 use super::app::{StatCraftApp, StatusMessage};
 use super::dialogs::{
-    render_anova_oneway_dialog, render_crosstabs_dialog, render_descriptives_dialog,
-    render_frequencies_dialog, render_missing_values_dialog, render_ttest_indep_dialog,
-    render_ttest_onesample_dialog, render_ttest_paired_dialog, render_value_labels_dialog,
-    render_variable_type_dialog, CrosstabsDialogAction, DescriptivesDialogAction,
-    FrequenciesDialogAction, IndependentSamplesTTestDialogAction, MissingValuesDialogAction,
-    OneSampleTTestDialogAction, OneWayAnovaDialogAction, PairedSamplesTTestDialogAction,
-    ValueLabelsDialogAction, VariableTypeDialogAction,
+    render_anova_oneway_dialog, render_correlations_dialog, render_crosstabs_dialog,
+    render_descriptives_dialog, render_frequencies_dialog, render_missing_values_dialog,
+    render_ttest_indep_dialog, render_ttest_onesample_dialog, render_ttest_paired_dialog,
+    render_value_labels_dialog, render_variable_type_dialog, CorrelationsDialogAction,
+    CrosstabsDialogAction, DescriptivesDialogAction, FrequenciesDialogAction,
+    IndependentSamplesTTestDialogAction, MissingValuesDialogAction, OneSampleTTestDialogAction,
+    OneWayAnovaDialogAction, PairedSamplesTTestDialogAction, ValueLabelsDialogAction,
+    VariableTypeDialogAction,
 };
 use serde_json::json;
 use statcraft_i18n::t;
@@ -361,6 +362,55 @@ impl StatCraftApp {
                 self.output_view_state.add_entry(t!("output-log"), sps);
             }
             OneWayAnovaDialogAction::None => {}
+        }
+
+        // Bivariate Correlations Dialog
+        let corr_action = render_correlations_dialog(
+            ctx,
+            self.dataset.as_ref(),
+            &mut self.correlations_dialog_state,
+        );
+
+        match corr_action {
+            CorrelationsDialogAction::Run { vars, options } => {
+                let params = json!({
+                    "vars": vars,
+                    "pearson": options.pearson,
+                    "spearman": options.spearman,
+                    "kendall": options.kendall,
+                    "two_tailed": options.significance == statcraft_algo::SignificanceTest::TwoTailed,
+                    "flag_significant": options.flag_significant,
+                    "descriptives": options.descriptives,
+                    "cross_prod_cov": options.cross_prod_cov,
+                    "missing": match options.missing {
+                        statcraft_algo::MissingHandling::Listwise => "listwise",
+                        _ => "pairwise",
+                    },
+                });
+                match self
+                    .command_bus
+                    .execute("stat.correlations", &mut self.dataset, params)
+                {
+                    Ok(result_value) => {
+                        if let Ok(res) = serde_json::from_value::<
+                            statcraft_algo::BivariateCorrelationsResult,
+                        >(result_value)
+                        {
+                            let count = vars.len();
+                            self.output_view_state.add_correlations(res, &vars);
+                            self.status_message = StatusMessage::CorrelationsExecuted { count };
+                        }
+                    }
+                    Err(e) => {
+                        self.status_message = StatusMessage::Error(e.to_string());
+                    }
+                }
+            }
+            CorrelationsDialogAction::Paste { vars, options } => {
+                let sps = statcraft_syntax::commands::CorrelationsCommand::to_sps(&vars, &options);
+                self.output_view_state.add_entry(t!("output-log"), sps);
+            }
+            CorrelationsDialogAction::None => {}
         }
 
         // 8. Value Labels Dialog

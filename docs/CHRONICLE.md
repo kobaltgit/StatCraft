@@ -280,3 +280,42 @@
    - Линтеры `design-guard`, `file-guard`, `layers`, `parity` — 0 нарушений;
    - Линтер `cargo clippy --workspace --all-targets -j 1 -- -D warnings` — 0 предупреждений;
    - Форматирование `cargo fmt --check` — чисто.
+
+---
+
+### Этап 7.2: Парные корреляции (Bivariate Correlations: Pearson $r$, Spearman $\rho$, Kendall $\tau$-b)
+*Время: 28 октября 2026, 21:30 (~35 минут)*
+
+Реализован ключевой статистический аппарат для анализа взаимосвязей количественных и порядковых переменных — **Парные корреляции** (*Bivariate Correlations*, пункт меню `Анализ -> Корреляции -> Парные...`):
+1. **Математическое ядро L2 (`statcraft_algo::correlations` и `correlations_types`):**
+   - Расчет линейной корреляции Пирсона ($r = \frac{\sum (x_i - \bar{x})(y_i - \bar{y})}{\sqrt{\sum (x_i - \bar{x})^2 \sum (y_i - \bar{y})^2}}$), сумм квадратов отклонений ($SS_{xy}$) и несмещенной выборочной ковариации ($Cov(x, y)$);
+   - Расчет ранговой корреляции Спирмена ($\rho$) с дробным усреднением совпадающих рангов (fractional ranking);
+   - Расчет ранговой корреляции Кендалла ($\tau$-b) с подсчетом конкордантных ($P$) и дискордантных ($Q$) пар и аналитической поправкой на связки $T_x, T_y$;
+   - Точный расчет $p$-value для двусторонних (2-tailed) и односторонних (1-tailed) критериев через функцию выживания распределения Стьюдента (Пирсон и Спирмен) и асимптотическую $Z$-статистику (Кендалл);
+   - Автоматическая маркировка значимости звёздочками в ячейках (`*` при $p < 0.05$, `**` при $p < 0.01$);
+   - Обработка пропущенных значений: попарное (*Pairwise*) и полное (*Listwise*) исключение;
+   - Защита **Never Crash**: безопасная обработка нулевых дисперсий, одинаковых константных векторов и малых выборок ($N < 2$) на 100% safe Rust;
+   - **Golden Oracle:** Модуль тестов `correlations_tests.rs` со сверкой матриц и $p$-value с SciPy (`scipy.stats.pearsonr`, `spearmanr`, `kendalltau`) с точностью $\le 10^{-6}$.
+2. **Командная шина и синтаксис L5 (`statcraft_syntax::commands::correlations_cmd`):**
+   - Команда `CorrelationsCommand` (`stat.correlations`) с JSON-спецификацией параметров для ИИ-агентов;
+   - Генерация аутентичного синтаксиса IBM SPSS Statistics (`CORRELATIONS /VARIABLES=... /PRINT=TWOTAIL SIG /STATISTICS DESCRIPTIVES XPROD /MISSING=PAIRWISE.` и `NONPAR CORR`).
+3. **Графический интерфейс L6 (`statcraft_app::dialogs::correlations_dialog`):**
+   - Модальный диалог `CorrelationsDialog` ($560 \times 430$ px) на базе дизайн-системы `DialogKit`:
+     * Левый список `VariablePicker` с иконками шкал измерения;
+     * Векторная кнопка переноса `TransferButton`;
+     * Центральный список переменных `Variables:`;
+     * Блок чекбоксов `Correlation Coefficients` (Pearson, Kendall's tau-b, Spearman);
+     * Блок `Test of Significance` (радиокнопки Two-tailed / One-tailed) и чекбокс `Flag significant correlations`;
+     * Боковая панель `SubdialogSidebar`: кнопка `[ Параметры... ]` (`Options...`);
+     * Модальный поддиалог `Options` (Statistics: Means and standard deviations, Cross-product deviations and covariances; Missing Values: Exclude cases pairwise / listwise) с `SubdialogActionBar`;
+     * Нижний ряд `DialogActionBar` (`[ OK ] [ Paste ] [ Reset ] [ Cancel ] [ Help ]`).
+4. **Сводные таблицы в Output Viewer (`tables_correlations.rs`):**
+   - **Descriptive Statistics:** переменная, среднее, стандартное отклонение, $N$;
+   - **Correlations Matrix Table:** каноническая многоуровневая сетка $K \times K$ со строками коэффициента со звездочками, $p$-value, $N$, суммами квадратов отклонений, ковариациями и сносками значимости;
+   - Экспорт таблиц в TSV и отображение в Outline Pane.
+5. **Контроль качества (Definition of Done):**
+   - Прогон полного пайплайна качества `cargo run -p xtask -j 1 -- ci` — 100% OK;
+   - 100 модульных и интеграционных тестов воркспейса завершились успешно (0 сбоев);
+   - Линтеры архитектуры, дизайна и размера файлов (`design-guard`, `file-guard`, `layers`, `parity`) — 0 замечаний;
+   - Линтер компилятора `cargo clippy --workspace --all-targets -j 1 -- -D warnings` — 0 предупреждений;
+   - Форматирование `cargo fmt --check` — чисто.

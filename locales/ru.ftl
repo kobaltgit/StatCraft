@@ -563,6 +563,45 @@ output-crosstabs-nominal-by-nominal = Номинальная с номиналь
 output-crosstabs-phi = Фи
 output-crosstabs-cramer-v = V Крамера
 
+# Bivariate Correlations Dialog & Output
+dialog-correlations-title = Парные корреляции
+dialog-correlations-vars = Переменные:
+dialog-correlations-coeff-group = Коэффициенты корреляции
+dialog-correlations-pearson = Пирсон
+dialog-correlations-kendall = тау-b Кендалла
+dialog-correlations-spearman = Спирмен
+dialog-correlations-sig-test-group = Критерий значимости
+dialog-correlations-two-tailed = Двусторонний
+dialog-correlations-one-tailed = Односторонний
+dialog-correlations-flag-sig = Помечать значимые корреляции
+dialog-correlations-btn-options = Параметры...
+dialog-correlations-options-title = Парные корреляции: Параметры
+dialog-correlations-stats-group = Статистики
+dialog-correlations-stat-means = Средние и стандартные отклонения
+dialog-correlations-stat-cov = Суммы квадратов отклонений и ковариации
+dialog-correlations-missing-group = Пропущенные значения
+dialog-correlations-missing-pairwise = Исключать наблюдения попарно
+dialog-correlations-missing-listwise = Исключать наблюдения целиком
+
+output-correlations-title = Корреляции
+output-correlations-nonpar-title = Непараметрические корреляции
+output-correlations-executed = Анализ корреляций выполнен для { $count } переменной(ых).
+output-correlations-table-title = Корреляции
+output-correlations-descriptives-title = Описательные статистики
+output-correlations-pearson-r = Корреляция Пирсона
+output-correlations-sig-2tailed = Знач. (2-сторон)
+output-correlations-sig-1tailed = Знач. (1-сторон)
+output-correlations-ss-cross = Сумма квадратов отклонений
+output-correlations-covariance = Ковариация
+output-correlations-n = N
+output-correlations-kendall-tau = тау_b Кендалла
+output-correlations-spearman-rho = ро Спирмена
+output-correlations-footnote-sig05-2t = *. Корреляция значима на уровне 0.05 (двусторонняя).
+output-correlations-footnote-sig01-2t = **. Корреляция значима на уровне 0.01 (двусторонняя).
+output-correlations-footnote-sig05-1t = *. Корреляция значима на уровне 0.05 (односторонняя).
+output-correlations-footnote-sig01-1t = **. Корреляция значима на уровне 0.01 (односторонняя).
+
+
 
 
 

@@ -207,6 +207,17 @@
 - [x] L6 `statcraft_app`: активация пункта меню `Analyze -> Descriptive Statistics -> Crosstabs...`
 - [x] Полная двуязычная локализация (`locales/en.ftl`, `locales/ru.ftl`), 100% прохождение всех тестов воркспейса с `-j 1` (96 тестов), `design-guard`, `file-guard`, `layers`, `parity`, `clippy -D warnings`, `cargo fmt --check`
 
+## 22. Этап 7.2: Парные корреляции (Bivariate Correlations: Pearson $r$, Spearman $\rho$, Kendall $\tau$-b)
+- [x] L2 `statcraft_algo`: модуль `correlations.rs` и `correlations_types.rs` — линейная корреляция Пирсона ($r$), ранговая корреляция Спирмена ($\rho$) с дробным ранжированием, ранговая корреляция Кендалла ($\tau$-b) с поправкой на связки, суммы квадратов отклонений и ковариации
+- [x] L2 `statcraft_algo`: точные $p$-value для двусторонних (2-tailed) и односторонних (1-tailed) критериев значимости, маркировка уровней значимости звёздочками (`*` при $p < 0.05$, `**` при $p < 0.01$), попарное (Pairwise) и полное (Listwise) исключение пропусков
+- [x] L2 `statcraft_algo`: модуль тестов `correlations_tests.rs` — сверка Golden Oracle с эталоном SciPy (`pearsonr`, `spearmanr`, `kendalltau`) с точностью $\le 10^{-6}$
+- [x] L5 `statcraft_syntax`: команда `CorrelationsCommand` (`stat.correlations`) со спецификацией `specs()` и генерацией канонического синтаксиса `CORRELATIONS /VARIABLES=... /PRINT=TWOTAIL SIG /STATISTICS DESCRIPTIVES XPROD /MISSING=PAIRWISE.` и `NONPAR CORR`
+- [x] L6 `statcraft_app`: диалог `CorrelationsDialog` ($560 \times 430$ px) на базе `DialogKit` (`DialogShell::standard`, `TransferButton`, `SubdialogSidebar`, `SubdialogActionBar`, `DialogActionBar`, `GroupBox`), модальный поддиалог `Options...` (Descriptives, Cross-product deviations and covariances, Pairwise/Listwise missing)
+- [x] L6 `statcraft_app`: модуль вывода `output_view/tables_correlations.rs` — Descriptive Statistics, аутентичные корреляционные матрицы $K \times K$ со звездочками, уровнями значимости, $N$, ковариациями и сносками значимости, TSV-экспорт и интеграция в Outline Pane
+- [x] L6 `statcraft_app`: активация пункта меню `Analyze -> Correlate -> Bivariate...`
+- [x] 100% покрытие локализацией (`locales/en.ftl`, `locales/ru.ftl`), 100% прохождение полного CI gate `cargo run -p xtask -j 1 -- ci` (100 тестов воркспейса, `file-guard`, `design-guard`, `layers`, `parity`, `clippy -D warnings`, `cargo fmt --check`)
+
+
 
 
 

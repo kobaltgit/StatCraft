@@ -563,6 +563,45 @@ output-crosstabs-nominal-by-nominal = Nominal by Nominal
 output-crosstabs-phi = Phi
 output-crosstabs-cramer-v = Cramer's V
 
+# Bivariate Correlations Dialog & Output
+dialog-correlations-title = Bivariate Correlations
+dialog-correlations-vars = Variables:
+dialog-correlations-coeff-group = Correlation Coefficients
+dialog-correlations-pearson = Pearson
+dialog-correlations-kendall = Kendall's tau-b
+dialog-correlations-spearman = Spearman
+dialog-correlations-sig-test-group = Test of Significance
+dialog-correlations-two-tailed = Two-tailed
+dialog-correlations-one-tailed = One-tailed
+dialog-correlations-flag-sig = Flag significant correlations
+dialog-correlations-btn-options = Options...
+dialog-correlations-options-title = Bivariate Correlations: Options
+dialog-correlations-stats-group = Statistics
+dialog-correlations-stat-means = Means and standard deviations
+dialog-correlations-stat-cov = Cross-product deviations and covariances
+dialog-correlations-missing-group = Missing Values
+dialog-correlations-missing-pairwise = Exclude cases pairwise
+dialog-correlations-missing-listwise = Exclude cases listwise
+
+output-correlations-title = Correlations
+output-correlations-nonpar-title = Nonparametric Correlations
+output-correlations-executed = Correlations executed for { $count } variable(s).
+output-correlations-table-title = Correlations
+output-correlations-descriptives-title = Descriptive Statistics
+output-correlations-pearson-r = Pearson Correlation
+output-correlations-sig-2tailed = Sig. (2-tailed)
+output-correlations-sig-1tailed = Sig. (1-tailed)
+output-correlations-ss-cross = Cross-product deviations
+output-correlations-covariance = Covariance
+output-correlations-n = N
+output-correlations-kendall-tau = Kendall's tau_b
+output-correlations-spearman-rho = Spearman's rho
+output-correlations-footnote-sig05-2t = *. Correlation is significant at the 0.05 level (2-tailed).
+output-correlations-footnote-sig01-2t = **. Correlation is significant at the 0.01 level (2-tailed).
+output-correlations-footnote-sig05-1t = *. Correlation is significant at the 0.05 level (1-tailed).
+output-correlations-footnote-sig01-1t = **. Correlation is significant at the 0.01 level (1-tailed).
+
+
 
 
 

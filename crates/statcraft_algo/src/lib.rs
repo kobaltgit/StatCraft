@@ -1,4 +1,8 @@
 pub mod anova_oneway;
+pub mod correlations;
+#[cfg(test)]
+mod correlations_tests;
+pub mod correlations_types;
 pub mod crosstabs;
 #[cfg(test)]
 mod crosstabs_tests;
@@ -13,6 +17,11 @@ pub use anova_oneway::{
     compute_oneway_anova, compute_oneway_anova_from_slices, f_distribution_sf, AlgoError,
     AnovaGroupDescriptives, AnovaHomogeneityTest, AnovaTableRow, OneWayAnovaOptions,
     OneWayAnovaResult,
+};
+pub use correlations::{
+    compute_bivariate_correlations, BivariateCorrelationsOptions, BivariateCorrelationsResult,
+    CorrelationCell, CorrelationMatrixResult, CorrelationType, MissingHandling, SignificanceFlag,
+    SignificanceTest, VarDescriptives, VariableInput,
 };
 pub use crosstabs::{chi_square_sf, compute_crosstabs, fisher_exact_2x2};
 pub use crosstabs_types::{

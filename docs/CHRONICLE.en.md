@@ -699,3 +699,42 @@ Implemented the fundamental procedure for analyzing categorical and discrete rel
    - Static linters `design-guard`, `file-guard`, `layers`, and `parity` reporting 0 violations;
    - Compiler linter `cargo clippy --workspace --all-targets -j 1 -- -D warnings` — 0 warnings;
    - Format validation `cargo fmt --check` — completely clean.
+
+---
+
+### Phase 7.2: Bivariate Correlations (Pearson $r$, Spearman $\rho$, Kendall $\tau$-b)
+*Time: October 28, 2026, 21:30 (~35 minutes)*
+
+Implemented the fundamental bivariate relationship analysis procedure — **Bivariate Correlations** (`Analyze -> Correlate -> Bivariate...`):
+1. **Mathematical Engine L2 (`statcraft_algo::correlations` & `correlations_types`):**
+   - Pearson linear correlation coefficient calculation ($r = \frac{\sum (x_i - \bar{x})(y_i - \bar{y})}{\sqrt{\sum (x_i - \bar{x})^2 \sum (y_i - \bar{y})^2}}$), cross-product sum of squares ($SS_{xy}$), and unbiased sample covariance ($Cov(x, y)$);
+   - Spearman rank correlation ($\rho$) with fractional average ranking for tied observations;
+   - Kendall rank correlation ($\tau$-b) with concordant ($P$) and discordant ($Q$) pair computation and analytical tie adjustments $T_x, T_y$;
+   - Rigorous $p$-value derivation for two-tailed and one-tailed hypotheses via Student's $t$ survival function (Pearson and Spearman) and asymptotic normal $Z$ statistics (Kendall);
+   - Automatic significance flag annotations in matrix cells (`*` at $p < 0.05$, `**` at $p < 0.01$);
+   - Missing value handling: pairwise and listwise case exclusions;
+   - **Never Crash** protection: safe handling of zero-variance constants, degenerate pairs, and small sample edge cases ($N < 2$) on 100% safe Rust;
+   - **Golden Oracle:** Test suite `correlations_tests.rs` verifying correlation matrices and significance values against Python `scipy.stats` (`pearsonr`, `spearmanr`, `kendalltau`) within $\le 10^{-6}$ precision.
+2. **Command Bus & Syntax L5 (`statcraft_syntax::commands::correlations_cmd`):**
+   - Typed engine command `CorrelationsCommand` (`stat.correlations`) with JSON parameter specs for external AI agents;
+   - Canonical IBM SPSS Statistics syntax emission (`CORRELATIONS /VARIABLES=... /PRINT=TWOTAIL SIG /STATISTICS DESCRIPTIVES XPROD /MISSING=PAIRWISE.` and `NONPAR CORR`).
+3. **User Interface L6 (`statcraft_app::dialogs::correlations_dialog`):**
+   - Modal dialog `CorrelationsDialog` ($560 \times 430$ px) built with `DialogKit`:
+     * Source variables picker (`VariablePicker`) with scale measurement icons;
+     * Vector transfer button (`TransferButton`);
+     * Target variables list `Variables:`;
+     * `Correlation Coefficients` checkboxes (Pearson, Kendall's tau-b, Spearman);
+     * `Test of Significance` radio group (Two-tailed / One-tailed) and `Flag significant correlations` checkbox;
+     * Right sidebar (`SubdialogSidebar`) with `[ Options... ]` button;
+     * Modal subdialog `Options` (Statistics: Means and standard deviations, Cross-product deviations and covariances; Missing Values: Exclude cases pairwise / listwise) with `SubdialogActionBar`;
+     * Standard bottom action bar `DialogActionBar` (`[ OK ] [ Paste ] [ Reset ] [ Cancel ] [ Help ]`).
+4. **Summary Pivot Tables in Output Viewer (`tables_correlations.rs`):**
+   - **Descriptive Statistics:** Variable, Mean, Std. Deviation, $N$;
+   - **Correlations Matrix Table:** multi-level $K \times K$ grid presenting correlation coefficients with asterisks, exact significance, $N$, optional cross-product deviations, sample covariances, and footnote legends;
+   - TSV clipboard export for spreadsheet workflows and Outline Pane integration.
+5. **Quality Control & Definition of Done:**
+   - Full automated CI gate passed (`cargo run -p xtask -j 1 -- ci` — 100% OK);
+   - 100 workspace unit and integration tests passing with 0 failures;
+   - Architectural linters (`design-guard`, `file-guard`, `layers`, `parity`) reporting 0 violations;
+   - Strict compiler linter `cargo clippy --workspace --all-targets -j 1 -- -D warnings` — 0 warnings;
+   - Code formatting `cargo fmt --check` — completely clean.
