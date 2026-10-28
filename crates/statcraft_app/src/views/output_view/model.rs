@@ -1,6 +1,6 @@
 use statcraft_algo::{
-    DescriptivesResult, FrequencyResult, IndepTTestResult, OneSampleTTestResult, OneWayAnovaResult,
-    PairedTTestResult,
+    CrosstabResult, DescriptivesResult, FrequencyResult, IndepTTestResult, OneSampleTTestResult,
+    OneWayAnovaResult, PairedTTestResult,
 };
 use statcraft_i18n::t;
 
@@ -50,6 +50,7 @@ pub enum OutputItemKind {
         results: Vec<OneWayAnovaResult>,
         ci: f64,
     },
+    Crosstabs(Vec<CrosstabResult>),
     Warning(String),
     CustomText {
         title: String,

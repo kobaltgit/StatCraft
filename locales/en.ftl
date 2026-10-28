@@ -514,6 +514,56 @@ output-col-df2 = df2
 output-col-std-error = Std. Error
 status-anova-executed = One-Way ANOVA executed for { $count } variable(s).
 
+# Crosstabs Dialog & Output
+dialog-crosstabs-title = Crosstabs
+dialog-crosstabs-rows = Row(s):
+dialog-crosstabs-cols = Column(s):
+dialog-crosstabs-btn-cells = Cells...
+dialog-crosstabs-btn-statistics = Statistics...
+dialog-crosstabs-cells-title = Crosstabs: Cell Display
+dialog-crosstabs-group-counts = Counts
+dialog-crosstabs-count-observed = Observed
+dialog-crosstabs-count-expected = Expected
+dialog-crosstabs-count-residuals = Residuals
+dialog-crosstabs-group-percentages = Percentages
+dialog-crosstabs-pct-row = Row
+dialog-crosstabs-pct-column = Column
+dialog-crosstabs-pct-total = Total
+dialog-crosstabs-stats-title = Crosstabs: Statistics
+dialog-crosstabs-stat-chisq = Chi-square
+dialog-crosstabs-stat-phi-cramer = Phi and Cramer's V
+
+output-crosstabs-title = Crosstabs
+output-crosstabs-executed = Crosstabs executed for { $count } table(s).
+output-crosstabs-summary-title = Case Processing Summary
+output-crosstabs-table-title = { $row } * { $col } Crosstabulation
+output-crosstabs-chisq-title = Chi-Square Tests
+output-crosstabs-symmetric-title = Symmetric Measures
+output-crosstabs-cases = Cases
+output-crosstabs-valid = Valid
+output-crosstabs-missing = Missing
+output-crosstabs-total = Total
+output-crosstabs-count = Count
+output-crosstabs-expected-count = Expected Count
+output-crosstabs-pct-within-row = % within { $var }
+output-crosstabs-pct-within-col = % within { $var }
+output-crosstabs-pct-of-total = % of Total
+output-crosstabs-residual = Residual
+output-crosstabs-value = Value
+output-crosstabs-df = df
+output-crosstabs-asymp-sig = Asymptotic Significance (2-sided)
+output-crosstabs-exact-sig = Exact Significance (2-sided)
+output-crosstabs-approx-sig = Approximate Significance
+output-crosstabs-pearson-chisq = Pearson Chi-Square
+output-crosstabs-continuity-corr = Continuity Correction
+output-crosstabs-likelihood-ratio = Likelihood Ratio
+output-crosstabs-fisher-exact = Fisher's Exact Test
+output-crosstabs-n-valid-cases = N of Valid Cases
+output-crosstabs-nominal-by-nominal = Nominal by Nominal
+output-crosstabs-phi = Phi
+output-crosstabs-cramer-v = Cramer's V
+
+
 
 
 

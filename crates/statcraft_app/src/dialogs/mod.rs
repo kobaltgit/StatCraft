@@ -1,5 +1,6 @@
 pub mod anova_oneway_dialog;
 pub mod common;
+pub mod crosstabs_dialog;
 pub mod descriptives_dialog;
 pub mod frequencies_dialog;
 pub mod missing_values_dialog;
@@ -12,6 +13,9 @@ pub mod variable_type_dialog;
 
 pub use anova_oneway_dialog::{
     render_anova_oneway_dialog, OneWayAnovaDialogAction, OneWayAnovaDialogState,
+};
+pub use crosstabs_dialog::{
+    render_crosstabs_dialog, CrosstabsDialogAction, CrosstabsDialogState, CrosstabsTargetList,
 };
 pub use descriptives_dialog::{
     render_descriptives_dialog, DescriptivesDialogAction, DescriptivesDialogState,

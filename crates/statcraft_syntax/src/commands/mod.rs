@@ -1,5 +1,6 @@
 pub mod anova_oneway_cmd;
 pub mod cell_edit;
+pub mod crosstabs_cmd;
 pub mod dataset_cmds;
 pub mod descriptives_cmd;
 pub mod frequencies_cmd;
@@ -13,6 +14,7 @@ pub mod var_metadata_cmds;
 
 pub use anova_oneway_cmd::OneWayAnovaCommand;
 pub use cell_edit::CellEditCommand;
+pub use crosstabs_cmd::CrosstabsCommand;
 pub use dataset_cmds::{DataAddRowCommand, DataDeleteRowCommand, VarAddCommand, VarDeleteCommand};
 pub use descriptives_cmd::DescriptivesCommand;
 pub use frequencies_cmd::FrequenciesCommand;

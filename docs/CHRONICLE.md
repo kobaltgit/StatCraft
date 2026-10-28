@@ -230,3 +230,53 @@
    - Сборка релизного бинарника `cargo build --package statcraft_app --release -j 1` — успешно (1m 08s).
 
 
+
+---
+
+### Этап 7.1: Таблицы сопряжённости (Crosstabs) и критерий независимости Хи-квадрат Пирсона ($\chi^2$)
+*Время: 28 октября 2026, 20:55 (~35 минут)*
+
+Реализована фундаментальная процедура анализа категориальных и дискретных данных — **Таблицы сопряжённости** (*Crosstabs / Contingency Tables*) со статистиками связи и критерием независимости Хи-квадрат Пирсона ($\chi^2$, пункт меню `Анализ -> Описательные статистики -> Таблицы сопряжённости...`):
+1. **Математическое ядро L2 (`statcraft_algo::crosstabs` и `crosstabs_types`):**
+   - Расчет категориальной сетки $R \times C$ с поддержкой строковых и числовых меток значений;
+   - Вычисление наблюдаемых ($O_{ij}$) и ожидаемых частот ($E_{ij} = \frac{R_i \cdot C_j}{N}$), остатков ($O_{ij} - E_{ij}$) и процентных долей (по строкам, столбцам и от общего итога таблицы);
+   - Критерий независимости Хи-квадрат Пирсона: $\chi^2 = \sum \frac{(O_{ij} - E_{ij})^2}{E_{ij}}$ при $df = (R - 1)(C - 1)$;
+   - Отношение правдоподобия (Likelihood Ratio): $G^2 = 2 \sum O_{ij} \ln(O_{ij} / E_{ij})$ для $O_{ij} > 0$;
+   - Точный расчет $p$-value функции выживания $\chi^2$-распределения через верхнюю регуляризованную гамма-функцию $Q(a, x)$ без внешних зависимостей и без паник;
+   - Для таблиц $2 \times 2$:
+     * Поправка Йейтса на непрерывность (Continuity Correction): $\chi^2_{Yates} = \frac{N (|ad - bc| - N/2)^2}{(a+b)(c+d)(a+c)(b+d)}$;
+     * Двусторонний точный критерий Фишера (Fisher's Exact Test) с логарифмированием факториалов через `ln_gamma` и суммированием гипергеометрических вероятностей $P(k) \le P(a) + 10^{-11}$;
+   - Меры связи для номинальных шкал: $\phi = \sqrt{\chi^2 / N}$ и $V$ Крамера с расчетом приближенной значимости;
+   - **Golden Oracle:** Unit-тесты со сверкой эталонных матриц с Python `scipy.stats` (`chi2_contingency`, `fisher_exact`) с точностью $\le 10^{-6}$.
+2. **Командная шина и синтаксис L5 (`statcraft_syntax::commands::crosstabs_cmd`):**
+   - Типизированная команда `CrosstabsCommand` (`stat.crosstabs`) с JSON-схемой параметров для внешних ИИ-агентов;
+   - Трансляция в канонический синтаксис SPSS:
+     ```text
+     CROSSTABS
+       /TABLES=gender BY jobcat
+       /STATISTICS=CHISQ PHI
+       /CELLS=COUNT EXPECTED ROW COLUMN TOTAL RESID.
+     ```
+3. **Графический интерфейс L6 (`statcraft_app::dialogs::crosstabs_dialog`):**
+   - Полнофункциональный диалог `CrosstabsDialog` ($560 \times 430$ px) строго на переиспользуемых примитивах `DialogKit`:
+     * Исходный список `VariablePicker` слева;
+     * Целевые списки строк (`Row(s)`) и столбцов (`Column(s)`) по центру с адаптивными кнопками переноса `TransferButton`;
+     * Боковая колонка `SubdialogSidebar`: кнопки `[ Ячейки... ]` (`Cells...`) и `[ Статистики... ]` (`Statistics...`);
+     * Модальные поддиалоги `Cells` (Counts: Observed, Expected, Residuals; Percentages: Row, Column, Total) и `Statistics` (Chi-square, Phi and Cramér's V) с `SubdialogActionBar`;
+     * Нижний ряд `DialogActionBar` (`[ OK ] [ Paste ] [ Reset ] [ Cancel ] [ Help ]`).
+4. **Архитектурная декомпозиция координатора (`app_dialogs.rs`):**
+   - Чтобы не превысить жесткий лимит 1500 строк на `app.rs`, все обработчики модальных окон вынесены в `app_dialogs.rs`;
+   - Размер `app.rs` снижен с 1485 до 1138 строк (запас более 350 строк).
+5. **Отображение в Output Viewer (`tables_crosstabs.rs`):**
+   - Четыре аутентичные сводные таблицы SPSS:
+     1. **Case Processing Summary:** сводка наблюдений (валидные, пропущенные, всего с процентами);
+     2. **Crosstabulation Table:** многослойная матрица $R \times C$ со всеми запрошенными слоями ячеек и итоговыми строками/столбцами;
+     3. **Chi-Square Tests:** Pearson Chi-Square, Continuity Correction, Likelihood Ratio, Fisher's Exact Test, N of Valid Cases;
+     4. **Symmetric Measures:** Phi, Cramér's V и приближенная значимость;
+   - Полноценный экспорт в TSV для каждой таблицы и бесшовная навигация в Outline Pane.
+6. **Контроль качества (Definition of Done):**
+   - Прогон полного пайплайна качества `cargo run -p xtask -j 1 -- ci` — 100% OK;
+   - Все 96 тестов воркспейса завершились успешно;
+   - Линтеры `design-guard`, `file-guard`, `layers`, `parity` — 0 нарушений;
+   - Линтер `cargo clippy --workspace --all-targets -j 1 -- -D warnings` — 0 предупреждений;
+   - Форматирование `cargo fmt --check` — чисто.

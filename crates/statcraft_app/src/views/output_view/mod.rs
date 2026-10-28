@@ -3,6 +3,7 @@ pub mod model;
 pub mod outline;
 pub mod tables_anova;
 pub mod tables_common;
+pub mod tables_crosstabs;
 pub mod tables_descriptives;
 pub mod tables_frequencies;
 pub mod tables_ttest_indep;
@@ -14,6 +15,7 @@ pub use model::{
 };
 pub use outline::render_outline_pane;
 pub use tables_anova::{anova_to_tsv, render_spss_oneway_anova_tables};
+pub use tables_crosstabs::{crosstabs_to_tsv, render_crosstabs_item};
 pub use tables_descriptives::{descriptives_to_tsv, render_spss_descriptives_pivot_table};
 pub use tables_frequencies::{frequencies_to_tsv, render_spss_frequencies_tables};
 pub use tables_ttest_indep::{indep_ttest_to_tsv, render_spss_indep_ttest_tables};
@@ -32,6 +34,7 @@ pub fn extract_item_tsv(kind: &OutputItemKind) -> Option<String> {
         OutputItemKind::IndepTTest { results, .. } => Some(indep_ttest_to_tsv(results)),
         OutputItemKind::PairedTTest { results, .. } => Some(paired_ttest_to_tsv(results)),
         OutputItemKind::OneWayAnova { results, .. } => Some(anova_to_tsv(results)),
+        OutputItemKind::Crosstabs(results) => results.first().map(crosstabs_to_tsv),
         _ => None,
     }
 }
@@ -232,6 +235,9 @@ pub fn render_output_view(ui: &mut Ui, state: &mut OutputViewerState) {
                                     }
                                     OutputItemKind::OneWayAnova { results, ci } => {
                                         render_spss_oneway_anova_tables(ui, results, *ci);
+                                    }
+                                    OutputItemKind::Crosstabs(results) => {
+                                        render_crosstabs_item(ui, results, is_selected);
                                     }
                                     OutputItemKind::Warning(msg) => {
                                         ui.colored_label(Tokens::CAPTION_CLOSE_HOVER, msg);

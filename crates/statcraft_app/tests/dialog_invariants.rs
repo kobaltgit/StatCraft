@@ -1,8 +1,9 @@
 use statcraft_app::dialogs::common::{DialogSize, SubdialogSidebar};
 use statcraft_app::dialogs::{
-    render_anova_oneway_dialog, render_descriptives_dialog, render_frequencies_dialog,
-    render_missing_values_dialog, render_ttest_indep_dialog, render_ttest_onesample_dialog,
-    render_ttest_paired_dialog, render_value_labels_dialog, render_variable_type_dialog,
+    render_anova_oneway_dialog, render_crosstabs_dialog, render_descriptives_dialog,
+    render_frequencies_dialog, render_missing_values_dialog, render_ttest_indep_dialog,
+    render_ttest_onesample_dialog, render_ttest_paired_dialog, render_value_labels_dialog,
+    render_variable_type_dialog, CrosstabsDialogAction, CrosstabsDialogState,
     DescriptivesDialogAction, DescriptivesDialogState, FrequenciesDialogAction,
     FrequenciesDialogState, IndependentSamplesTTestDialogAction,
     IndependentSamplesTTestDialogState, MissingValuesDialogAction, MissingValuesDialogState,
@@ -262,4 +263,27 @@ fn test_descriptives_reset_defaults() {
     assert!(state.options.std_dev);
     assert!(state.options.min);
     assert!(state.options.max);
+}
+
+#[test]
+fn test_headless_render_crosstabs_dialog() {
+    let ds = create_test_dataset();
+    let ctx = egui::Context::default();
+    let mut state = CrosstabsDialogState {
+        is_open: true,
+        row_vars: vec!["gender".to_string()],
+        col_vars: vec!["educ".to_string()],
+        show_cells: true,
+        show_stats: true,
+        ..Default::default()
+    };
+
+    let _ = ctx.run(Default::default(), |ctx| {
+        let action = render_crosstabs_dialog(ctx, Some(&ds), &mut state);
+        assert!(matches!(action, CrosstabsDialogAction::None));
+    });
+
+    assert!(state.is_open);
+    assert_eq!(state.row_vars.len(), 1);
+    assert_eq!(state.col_vars.len(), 1);
 }

@@ -1,13 +1,7 @@
 use crate::dialogs::{
-    render_anova_oneway_dialog, render_descriptives_dialog, render_frequencies_dialog,
-    render_missing_values_dialog, render_ttest_indep_dialog, render_ttest_onesample_dialog,
-    render_ttest_paired_dialog, render_value_labels_dialog, render_variable_type_dialog,
-    DescriptivesDialogAction, DescriptivesDialogState, FrequenciesDialogAction,
-    FrequenciesDialogState, IndependentSamplesTTestDialogAction,
-    IndependentSamplesTTestDialogState, MissingValuesDialogAction, MissingValuesDialogState,
-    OneSampleTTestDialogAction, OneSampleTTestDialogState, OneWayAnovaDialogAction,
-    OneWayAnovaDialogState, PairedSamplesTTestDialogAction, PairedSamplesTTestDialogState,
-    ValueLabelsDialogAction, ValueLabelsDialogState, VariableTypeDialogAction,
+    CrosstabsDialogState, DescriptivesDialogState, FrequenciesDialogState,
+    IndependentSamplesTTestDialogState, MissingValuesDialogState, OneSampleTTestDialogState,
+    OneWayAnovaDialogState, PairedSamplesTTestDialogState, ValueLabelsDialogState,
     VariableTypeDialogState,
 };
 use crate::views::{
@@ -59,6 +53,9 @@ pub enum StatusMessage {
     AnovaExecuted {
         count: usize,
     },
+    CrosstabsExecuted {
+        count: usize,
+    },
     Error(String),
 }
 
@@ -92,6 +89,9 @@ impl StatusMessage {
             StatusMessage::AnovaExecuted { count } => {
                 t!("output-anova-executed", count = *count)
             }
+            StatusMessage::CrosstabsExecuted { count } => {
+                t!("output-crosstabs-executed", count = *count)
+            }
             StatusMessage::Error(e) => format!("{}: {}", t!("status-error"), e),
         }
     }
@@ -106,6 +106,7 @@ pub struct StatCraftApp {
     pub output_view_state: OutputViewerState,
     pub descriptives_dialog_state: DescriptivesDialogState,
     pub frequencies_dialog_state: FrequenciesDialogState,
+    pub crosstabs_dialog_state: CrosstabsDialogState,
     pub ttest_onesample_dialog_state: OneSampleTTestDialogState,
     pub ttest_indep_dialog_state: IndependentSamplesTTestDialogState,
     pub ttest_paired_dialog_state: PairedSamplesTTestDialogState,
@@ -135,6 +136,7 @@ impl StatCraftApp {
             output_view_state: OutputViewerState::new(),
             descriptives_dialog_state: DescriptivesDialogState::default(),
             frequencies_dialog_state: FrequenciesDialogState::default(),
+            crosstabs_dialog_state: CrosstabsDialogState::default(),
             ttest_onesample_dialog_state: OneSampleTTestDialogState::default(),
             ttest_indep_dialog_state: IndependentSamplesTTestDialogState::default(),
             ttest_paired_dialog_state: PairedSamplesTTestDialogState::default(),
@@ -460,7 +462,16 @@ impl StatCraftApp {
                             ui.close_menu();
                         }
                         render_menu_item(ui, t!("menu-analyze-explore"), MenuItemStatus::InDev);
-                        render_menu_item(ui, t!("menu-analyze-crosstabs"), MenuItemStatus::InDev);
+                        if render_menu_item(
+                            ui,
+                            t!("menu-analyze-crosstabs"),
+                            requires_dataset_status,
+                        )
+                        .clicked()
+                        {
+                            self.crosstabs_dialog_state.is_open = true;
+                            ui.close_menu();
+                        }
                     });
                     ui.menu_button(t!("menu-analyze-compare-means"), |ui| {
                         if render_menu_item(
@@ -1122,364 +1133,6 @@ impl eframe::App for StatCraftApp {
         }
 
         // 5. Modal Dialogs
-        // 5.1. Descriptives Dialog
-        let desc_action = render_descriptives_dialog(
-            ctx,
-            self.dataset.as_ref(),
-            &mut self.descriptives_dialog_state,
-        );
-
-        match desc_action {
-            DescriptivesDialogAction::Run { vars, options } => {
-                let params = json!({
-                    "vars": vars,
-                    "options": options
-                });
-                match self
-                    .command_bus
-                    .execute("stat.descriptives", &mut self.dataset, params)
-                {
-                    Ok(result_value) => {
-                        if let Ok(results) = serde_json::from_value::<
-                            Vec<statcraft_algo::DescriptivesResult>,
-                        >(result_value)
-                        {
-                            let count = results.len();
-                            self.output_view_state.add_descriptives(results);
-                            self.status_message = StatusMessage::DescriptivesExecuted { count };
-                        }
-                    }
-                    Err(e) => {
-                        self.status_message = StatusMessage::Error(e.to_string());
-                    }
-                }
-            }
-            DescriptivesDialogAction::Paste { vars } => {
-                let sps = statcraft_syntax::commands::DescriptivesCommand::to_sps(&vars);
-                self.output_view_state.add_entry(t!("output-log"), sps);
-            }
-            DescriptivesDialogAction::None => {}
-        }
-
-        // 5.2. Frequencies Dialog
-        let freq_action = render_frequencies_dialog(
-            ctx,
-            self.dataset.as_ref(),
-            &mut self.frequencies_dialog_state,
-        );
-
-        match freq_action {
-            FrequenciesDialogAction::Run {
-                vars,
-                display_tables,
-            } => {
-                let params = json!({
-                    "vars": vars,
-                    "display_tables": display_tables
-                });
-                match self
-                    .command_bus
-                    .execute("stat.frequencies", &mut self.dataset, params)
-                {
-                    Ok(result_value) => {
-                        if let Ok(results) = serde_json::from_value::<
-                            Vec<statcraft_algo::FrequencyResult>,
-                        >(result_value)
-                        {
-                            let count = results.len();
-                            if display_tables {
-                                self.output_view_state.add_frequencies(results);
-                            }
-                            self.status_message = StatusMessage::FrequenciesExecuted { count };
-                        }
-                    }
-                    Err(e) => {
-                        self.status_message = StatusMessage::Error(e.to_string());
-                    }
-                }
-            }
-            FrequenciesDialogAction::Paste { vars } => {
-                let sps = statcraft_syntax::commands::FrequenciesCommand::to_sps(&vars);
-                self.output_view_state.add_entry(t!("output-log"), sps);
-            }
-            FrequenciesDialogAction::None => {}
-        }
-
-        // 5.3. One-Sample T-Test Dialog
-        let ttest_action = render_ttest_onesample_dialog(
-            ctx,
-            self.dataset.as_ref(),
-            &mut self.ttest_onesample_dialog_state,
-        );
-
-        match ttest_action {
-            OneSampleTTestDialogAction::Run {
-                vars,
-                test_value,
-                ci,
-            } => {
-                let params = json!({
-                    "vars": vars,
-                    "test_value": test_value,
-                    "ci": ci,
-                });
-                match self
-                    .command_bus
-                    .execute("stat.ttest.onesample", &mut self.dataset, params)
-                {
-                    Ok(result_value) => {
-                        if let Ok(results) = serde_json::from_value::<
-                            Vec<statcraft_algo::OneSampleTTestResult>,
-                        >(result_value)
-                        {
-                            let count = results.len();
-                            self.output_view_state
-                                .add_onesample_ttest(results, test_value, ci);
-                            self.status_message = StatusMessage::TTestExecuted { count };
-                        }
-                    }
-                    Err(e) => {
-                        self.status_message = StatusMessage::Error(e.to_string());
-                    }
-                }
-            }
-            OneSampleTTestDialogAction::Paste {
-                vars,
-                test_value,
-                ci,
-            } => {
-                let sps = statcraft_syntax::commands::OneSampleTTestCommand::to_sps(
-                    &vars, test_value, ci,
-                );
-                self.output_view_state.add_entry(t!("output-log"), sps);
-            }
-            OneSampleTTestDialogAction::None => {}
-        }
-
-        // 5.4. Independent-Samples T-Test Dialog
-        let indep_action = render_ttest_indep_dialog(
-            ctx,
-            self.dataset.as_ref(),
-            &mut self.ttest_indep_dialog_state,
-        );
-
-        match indep_action {
-            IndependentSamplesTTestDialogAction::Run {
-                vars,
-                grouping_var,
-                group1,
-                group2,
-                ci,
-            } => {
-                let params = json!({
-                    "vars": vars,
-                    "grouping_var": grouping_var,
-                    "group1": group1,
-                    "group2": group2,
-                    "ci": ci,
-                });
-                match self
-                    .command_bus
-                    .execute("stat.ttest.indep", &mut self.dataset, params)
-                {
-                    Ok(result_value) => {
-                        if let Ok(results) = serde_json::from_value::<
-                            Vec<statcraft_algo::IndepTTestResult>,
-                        >(result_value)
-                        {
-                            let count = results.len();
-                            self.output_view_state.add_indep_ttest(
-                                results,
-                                &grouping_var,
-                                &group1,
-                                &group2,
-                                ci,
-                            );
-                            self.status_message = StatusMessage::IndepTTestExecuted { count };
-                        }
-                    }
-                    Err(e) => {
-                        self.status_message = StatusMessage::Error(e.to_string());
-                    }
-                }
-            }
-            IndependentSamplesTTestDialogAction::Paste {
-                vars,
-                grouping_var,
-                group1,
-                group2,
-                ci,
-            } => {
-                let sps = statcraft_syntax::commands::IndependentSamplesTTestCommand::to_sps(
-                    &vars,
-                    &grouping_var,
-                    &group1,
-                    &group2,
-                    ci,
-                );
-                self.output_view_state.add_entry(t!("output-log"), sps);
-            }
-            IndependentSamplesTTestDialogAction::None => {}
-        }
-
-        // 5.5. Paired-Samples T-Test Dialog
-        let paired_action = render_ttest_paired_dialog(
-            ctx,
-            self.dataset.as_ref(),
-            &mut self.ttest_paired_dialog_state,
-        );
-
-        match paired_action {
-            PairedSamplesTTestDialogAction::Run { pairs, ci } => {
-                let params = json!({
-                    "pairs": pairs,
-                    "ci": ci,
-                });
-                match self
-                    .command_bus
-                    .execute("stat.ttest.paired", &mut self.dataset, params)
-                {
-                    Ok(result_value) => {
-                        if let Ok(results) = serde_json::from_value::<
-                            Vec<statcraft_algo::PairedTTestResult>,
-                        >(result_value)
-                        {
-                            let count = results.len();
-                            self.output_view_state.add_paired_ttest(results, &pairs, ci);
-                            self.status_message = StatusMessage::PairedTTestExecuted { count };
-                        }
-                    }
-                    Err(e) => {
-                        self.status_message = StatusMessage::Error(e.to_string());
-                    }
-                }
-            }
-            PairedSamplesTTestDialogAction::Paste { pairs, ci } => {
-                let sps = statcraft_syntax::commands::PairedSamplesTTestCommand::to_sps(&pairs, ci);
-                self.output_view_state.add_entry(t!("output-log"), sps);
-            }
-            PairedSamplesTTestDialogAction::None => {}
-        }
-
-        // 5.6. One-Way ANOVA Dialog
-        let anova_action = render_anova_oneway_dialog(
-            ctx,
-            self.dataset.as_ref(),
-            &mut self.anova_oneway_dialog_state,
-        );
-
-        match anova_action {
-            OneWayAnovaDialogAction::Run {
-                dependent_vars,
-                factor_var,
-                descriptives,
-                homogeneity,
-                ci,
-            } => {
-                let params = json!({
-                    "dependent_vars": dependent_vars,
-                    "factor_var": factor_var,
-                    "descriptives": descriptives,
-                    "homogeneity": homogeneity,
-                    "ci": ci,
-                });
-                match self
-                    .command_bus
-                    .execute("stat.anova.oneway", &mut self.dataset, params)
-                {
-                    Ok(result_value) => {
-                        if let Ok(results) = serde_json::from_value::<
-                            Vec<statcraft_algo::OneWayAnovaResult>,
-                        >(result_value)
-                        {
-                            let count = results.len();
-                            self.output_view_state.add_oneway_anova(results, ci);
-                            self.status_message = StatusMessage::AnovaExecuted { count };
-                        }
-                    }
-                    Err(e) => {
-                        self.status_message = StatusMessage::Error(e.to_string());
-                    }
-                }
-            }
-            OneWayAnovaDialogAction::Paste {
-                dependent_vars,
-                factor_var,
-                descriptives,
-                homogeneity,
-                ..
-            } => {
-                let sps = statcraft_syntax::commands::OneWayAnovaCommand::to_sps(
-                    &dependent_vars,
-                    &factor_var,
-                    descriptives,
-                    homogeneity,
-                );
-                self.output_view_state.add_entry(t!("output-log"), sps);
-            }
-            OneWayAnovaDialogAction::None => {}
-        }
-
-        // 5.4. Value Labels Dialog
-        let val_action = render_value_labels_dialog(ctx, &mut self.value_labels_dialog_state);
-        if let ValueLabelsDialogAction::Apply { col_index, mapping } = val_action {
-            let params = json!({
-                "col_index": col_index,
-                "labels": mapping
-            });
-            match self
-                .command_bus
-                .execute("var.set_value_labels", &mut self.dataset, params)
-            {
-                Ok(_) => {
-                    self.status_message = StatusMessage::Ready;
-                }
-                Err(e) => {
-                    self.status_message = StatusMessage::Error(e.to_string());
-                }
-            }
-        }
-
-        // 5.4. Missing Values Dialog
-        let miss_action = render_missing_values_dialog(ctx, &mut self.missing_values_dialog_state);
-        if let MissingValuesDialogAction::Apply {
-            col_index,
-            discrete,
-            range,
-        } = miss_action
-        {
-            let mut params_map = serde_json::Map::new();
-            params_map.insert("col_index".to_string(), json!(col_index));
-            params_map.insert("discrete".to_string(), json!(discrete));
-            if let Some((low, high)) = range {
-                params_map.insert("range".to_string(), json!([low, high]));
-            }
-            match self.command_bus.execute(
-                "var.set_missing_values",
-                &mut self.dataset,
-                serde_json::Value::Object(params_map),
-            ) {
-                Ok(_) => {
-                    self.status_message = StatusMessage::Ready;
-                }
-                Err(e) => {
-                    self.status_message = StatusMessage::Error(e.to_string());
-                }
-            }
-        }
-
-        // 5.5. Variable Type Dialog
-        let type_action = render_variable_type_dialog(ctx, &mut self.variable_type_dialog_state);
-        if let VariableTypeDialogAction::Apply {
-            col_index,
-            var_type,
-            width,
-            decimals,
-        } = type_action
-        {
-            if let Some(ds) = &mut self.dataset {
-                let _ = ds.set_variable_type(col_index, var_type, width, decimals);
-            }
-        }
+        self.handle_dialogs(ctx);
     }
 }

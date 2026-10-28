@@ -649,3 +649,53 @@ Implemented a hybrid internationalization (i18n) architecture blending the canon
    - Full test and static analysis pass via `cargo run -p xtask -j 1 -- ci` (`ALL CI QUALITY GATES PASSED!`);
    - Clean release build `cargo build --package statcraft_app --release -j 1` succeeded in 1m 08s.
 
+
+---
+
+### Phase 7.1: Contingency Tables (Crosstabs) and Pearson's Chi-Square Test of Independence ($\chi^2$)
+*Time: October 28, 2026, 20:55 (~35 minutes)*
+
+Implemented the fundamental procedure for analyzing categorical and discrete relationships — **Contingency Tables** (*Crosstabs*), association measures, and Pearson's Chi-Square Test of Independence ($\chi^2$, menu item `Analyze -> Descriptive Statistics -> Crosstabs...`):
+1. **Mathematical Core L2 (`statcraft_algo::crosstabs` & `crosstabs_types`):**
+   - Construction of categorical $R \times C$ cross-classification grid supporting string categories and numeric value labels;
+   - Computation of observed frequencies ($O_{ij}$), expected frequencies ($E_{ij} = \frac{R_i \cdot C_j}{N}$), residuals ($O_{ij} - E_{ij}$), and cell percentage breakdowns (row %, column %, and % of total table);
+   - Pearson Chi-Square test: $\chi^2 = \sum \frac{(O_{ij} - E_{ij})^2}{E_{ij}}$ with degrees of freedom $df = (R - 1)(C - 1)$;
+   - Likelihood Ratio test ($G^2$): $2 \sum O_{ij} \ln(O_{ij} / E_{ij})$ for cells with $O_{ij} > 0$;
+   - Double-precision $p$-value computation of the $\chi^2$ distribution survival function via regularized upper incomplete gamma function $Q(a, x)$ without external dependencies and with zero panics;
+   - For $2 \times 2$ fourfold tables:
+     * Yates' Continuity Correction: $\chi^2_{Yates} = \frac{N (|ad - bc| - N/2)^2}{(a+b)(c+d)(a+c)(b+d)}$;
+     * Two-sided Fisher's Exact Test computing exact hypergeometric probabilities via log-gamma functions and summing extreme outcomes $P(k) \le P(a) + 10^{-11}$;
+   - Symmetric measures of association: $\phi = \sqrt{\chi^2 / N}$ and Cramér's $V$ with approximate asymptotic significance;
+   - **Golden Oracle:** Unit test verification comparing contingency tables and test statistics against Python `scipy.stats` (`chi2_contingency`, `fisher_exact`) with precision $\le 10^{-6}$.
+2. **Command Bus & Syntax L5 (`statcraft_syntax::commands::crosstabs_cmd`):**
+   - Typed engine command `CrosstabsCommand` (`stat.crosstabs`) equipped with JSON parameter specs for external AI agents;
+   - Generates authentic IBM SPSS syntax:
+     ```text
+     CROSSTABS
+       /TABLES=gender BY jobcat
+       /STATISTICS=CHISQ PHI
+       /CELLS=COUNT EXPECTED ROW COLUMN TOTAL RESID.
+     ```
+3. **User Interface L6 (`statcraft_app::dialogs::crosstabs_dialog`):**
+   - Fully unified `CrosstabsDialog` ($560 \times 430$ px) built exclusively with `DialogKit` design primitives:
+     * Source variables picker (`VariablePicker`) on the left;
+     * Target `Row(s)` and `Column(s)` list pickers in the center with vector `TransferButton`;
+     * Right sidebar (`SubdialogSidebar`) hosting `[ Cells... ]` and `[ Statistics... ]` subdialog buttons;
+     * Modal subdialogs for `Cells` (Counts: Observed, Expected, Residuals; Percentages: Row, Column, Total) and `Statistics` (Chi-square, Phi and Cramér's V) using `SubdialogActionBar`;
+     * Canonical bottom action bar `DialogActionBar` (`[ OK ] [ Paste ] [ Reset ] [ Cancel ] [ Help ]`).
+4. **Architectural Coordinator Decomposition (`app_dialogs.rs`):**
+   - Extracted all modal dialog rendering and execution dispatching out of `app.rs` into `app_dialogs.rs`;
+   - Reduced `app.rs` from 1485 lines down to 1138 lines, safely below the 1500-line architectural ceiling.
+5. **Output Viewer Representation (`tables_crosstabs.rs`):**
+   - Four authentic SPSS Pivot Tables:
+     1. **Case Processing Summary:** valid, missing, total cases and percentages;
+     2. **Crosstabulation Table:** multi-tier $R \times C$ matrix displaying all selected cell layers, row totals, and column totals;
+     3. **Chi-Square Tests:** Pearson Chi-Square, Continuity Correction, Likelihood Ratio, Fisher's Exact Test, N of Valid Cases;
+     4. **Symmetric Measures:** Phi, Cramér's V, and approximate significance;
+   - TSV clipboard export for spreadsheet workflows and Outline Pane navigation.
+6. **Quality Control & Definition of Done:**
+   - Full automated CI gate passed (`cargo run -p xtask -j 1 -- ci` — 100% OK);
+   - All 96 workspace tests completed with 0 failures;
+   - Static linters `design-guard`, `file-guard`, `layers`, and `parity` reporting 0 violations;
+   - Compiler linter `cargo clippy --workspace --all-targets -j 1 -- -D warnings` — 0 warnings;
+   - Format validation `cargo fmt --check` — completely clean.

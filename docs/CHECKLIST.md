@@ -196,6 +196,18 @@
 - [x] Нормативное закрепление требований DialogKit в Разделе 13 `AGENTS.md` и `.agents/rules/AGENTS.md`
 - [x] 100% прохождение всех тестов воркспейса с `-j 1` (93 теста), `design-guard`, `file-guard`, `layers`, `parity`, `clippy -D warnings`, `cargo fmt --check`
 
+## 21. Этап 7.1: Таблицы сопряжённости (Crosstabs) и критерий независимости Хи-квадрат Пирсона ($\chi^2$)
+- [x] L2 `statcraft_algo`: модули `crosstabs.rs` и `crosstabs_types.rs` — расчет таблицы сопряженности $R \times C$, наблюдаемых и ожидаемых частот ($O_{ij}, E_{ij}$), остатков и процентов (по строкам, столбцам, от общего итога)
+- [x] L2 `statcraft_algo`: расчет критерия Хи-квадрат Пирсона ($\chi^2$), отношения правдоподобия (Likelihood Ratio $G^2$), точного $p$-value через верхнюю регуляризованную гамма-функцию $Q(a, x)$, поправки Йейтса на непрерывность и двустороннего точного критерия Фишера для таблиц $2 \times 2$, а также симметричных мер связи ($\phi$ и $V$ Крамера) на 100% safe Rust без паник
+- [x] L2 `statcraft_algo`: модуль тестов `crosstabs_tests.rs` — сверка Golden Oracle с эталоном SciPy (`chi2_contingency`, `fisher_exact`) с точностью $\le 10^{-6}$
+- [x] L5 `statcraft_syntax`: команда `CrosstabsCommand` (`stat.crosstabs`) со спецификацией параметров `specs()` и генерацией канонического синтаксиса `CROSSTABS /TABLES=rows BY cols /STATISTICS=CHISQ PHI /CELLS=COUNT EXPECTED ROW COLUMN TOTAL RESID.`
+- [x] L6 `statcraft_app`: диалог `CrosstabsDialog` ($560 \times 430$ px) на базе `DialogKit` (`DialogShell::standard`, `TransferButton`, `SubdialogSidebar`, `SubdialogActionBar`, `DialogActionBar`, `GroupBox`), модальные поддиалоги `Cells...` и `Statistics...`
+- [x] L6 `statcraft_app`: архитектурный вынос обработчиков модальных окон в `app_dialogs.rs`, снизивший объем координатора `app.rs` с 1485 до 1138 строк (с запасом до лимита в 1500 строк)
+- [x] L6 `statcraft_app`: модуль вывода `output_view/tables_crosstabs.rs` — Case Processing Summary, аутентичная матрица сопряженности Crosstabulation, таблица критериев Chi-Square Tests и симметричных мер связи, TSV-экспорт и интеграция в Outline
+- [x] L6 `statcraft_app`: активация пункта меню `Analyze -> Descriptive Statistics -> Crosstabs...`
+- [x] Полная двуязычная локализация (`locales/en.ftl`, `locales/ru.ftl`), 100% прохождение всех тестов воркспейса с `-j 1` (96 тестов), `design-guard`, `file-guard`, `layers`, `parity`, `clippy -D warnings`, `cargo fmt --check`
+
+
 
 
 

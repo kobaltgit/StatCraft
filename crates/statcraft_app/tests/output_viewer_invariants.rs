@@ -1,10 +1,12 @@
 use statcraft_algo::{
-    AnovaTableRow, DescriptivesResult, FrequencyCategory, FrequencyResult, GroupStats,
-    IndepTTestResult, LeveneResult, OneSampleTTestResult, OneWayAnovaResult, PairedCorrelation,
-    PairedDifferences, PairedTTestResult, PairedVarStats, TTestTwoGroupDetails,
+    AnovaTableRow, AssociationMeasure, ChiSquareTestRow, CrosstabCategory, CrosstabCell,
+    CrosstabOptions, CrosstabResult, CrosstabRow, DescriptivesResult, FrequencyCategory,
+    FrequencyResult, GroupStats, IndepTTestResult, LeveneResult, OneSampleTTestResult,
+    OneWayAnovaResult, PairedCorrelation, PairedDifferences, PairedTTestResult, PairedVarStats,
+    TTestTwoGroupDetails,
 };
 use statcraft_app::views::output_view::{
-    anova_to_tsv, descriptives_to_tsv, frequencies_to_tsv, indep_ttest_to_tsv,
+    anova_to_tsv, crosstabs_to_tsv, descriptives_to_tsv, frequencies_to_tsv, indep_ttest_to_tsv,
     onesample_ttest_to_tsv, paired_ttest_to_tsv, render_output_view, OutputItem, OutputItemKind,
     OutputNotes, OutputProcedure, OutputViewerState, SelectedTarget,
 };
@@ -190,6 +192,67 @@ fn sample_anova() -> OneWayAnovaResult {
     }
 }
 
+fn sample_crosstabs() -> CrosstabResult {
+    CrosstabResult {
+        row_var: "gender".to_string(),
+        col_var: "jobcat".to_string(),
+        n_valid: 100,
+        n_missing: 5,
+        col_categories: vec![
+            CrosstabCategory {
+                value: "1".to_string(),
+                label: Some("Clerical".to_string()),
+            },
+            CrosstabCategory {
+                value: "2".to_string(),
+                label: Some("Custodial".to_string()),
+            },
+        ],
+        rows: vec![CrosstabRow {
+            category: CrosstabCategory {
+                value: "1".to_string(),
+                label: Some("Female".to_string()),
+            },
+            cells: vec![
+                CrosstabCell {
+                    observed: 40,
+                    expected: Some(30.0),
+                    row_pct: Some(80.0),
+                    col_pct: Some(66.7),
+                    total_pct: Some(40.0),
+                    residual: Some(10.0),
+                },
+                CrosstabCell {
+                    observed: 10,
+                    expected: Some(20.0),
+                    row_pct: Some(20.0),
+                    col_pct: Some(25.0),
+                    total_pct: Some(10.0),
+                    residual: Some(-10.0),
+                },
+            ],
+            row_total: 50,
+            row_total_pct: Some(50.0),
+        }],
+        col_totals: vec![60, 40],
+        col_total_pcts: Some(vec![60.0, 40.0]),
+        grand_total: 100,
+        chi_square_tests: vec![ChiSquareTestRow {
+            name: "Pearson Chi-Square".to_string(),
+            value: 8.333,
+            df: Some(1),
+            asymp_sig: Some(0.004),
+            exact_sig: None,
+        }],
+        association_measures: vec![AssociationMeasure {
+            name: "Phi".to_string(),
+            value: 0.289,
+            approx_sig: Some(0.004),
+        }],
+        options: CrosstabOptions::default(),
+    }
+}
+
 #[test]
 fn test_continuous_history_accumulation() {
     let mut state = OutputViewerState::new();
@@ -224,8 +287,14 @@ fn test_continuous_history_accumulation() {
     state.add_oneway_anova(vec![sample_anova()], 0.95);
     assert_eq!(state.procedures.len(), 6);
 
+    // 7. Crosstabs
+    let sample_c = sample_crosstabs();
+    let opts = sample_c.options.clone();
+    state.add_crosstabs(vec![sample_c], opts);
+    assert_eq!(state.procedures.len(), 7);
+
     // Invariant: IDs strictly increasing
-    for i in 0..5 {
+    for i in 0..6 {
         assert!(
             state.procedures[i].id < state.procedures[i + 1].id,
             "Procedure IDs must be strictly monotonic"
@@ -582,6 +651,30 @@ fn test_tsv_export_golden_headers() {
         anova_tsv.contains("Sig."),
         "ANOVA TSV must contain 'Sig.':\n{}",
         anova_tsv
+    );
+
+    // 7. Crosstabs
+    let sample_c = sample_crosstabs();
+    let crosstabs_tsv = crosstabs_to_tsv(&sample_c);
+    assert!(
+        crosstabs_tsv.contains("gender * jobcat Crosstabulation"),
+        "Crosstabs TSV must contain table header:\n{}",
+        crosstabs_tsv
+    );
+    assert!(
+        crosstabs_tsv.contains("Count"),
+        "Crosstabs TSV must contain 'Count':\n{}",
+        crosstabs_tsv
+    );
+    assert!(
+        crosstabs_tsv.contains("Pearson Chi-Square"),
+        "Crosstabs TSV must contain 'Pearson Chi-Square':\n{}",
+        crosstabs_tsv
+    );
+    assert!(
+        crosstabs_tsv.contains("Phi"),
+        "Crosstabs TSV must contain 'Phi':\n{}",
+        crosstabs_tsv
     );
 }
 

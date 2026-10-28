@@ -1,10 +1,11 @@
 use crate::command::{CommandError, EngineCommand};
 use crate::commands::{
-    CellEditCommand, DataAddRowCommand, DataDeleteRowCommand, DescriptivesCommand,
-    FrequenciesCommand, ImportCsvCommand, IndependentSamplesTTestCommand, OneSampleTTestCommand,
-    OneWayAnovaCommand, PairedSamplesTTestCommand, SetLabelCommand, SetMeasureCommand,
-    VarAddCommand, VarDeleteCommand, VarRenameCommand, VarSetAlignCommand, VarSetDecimalsCommand,
-    VarSetMissingValuesCommand, VarSetTypeCommand, VarSetValueLabelsCommand, VarSetWidthCommand,
+    CellEditCommand, CrosstabsCommand, DataAddRowCommand, DataDeleteRowCommand,
+    DescriptivesCommand, FrequenciesCommand, ImportCsvCommand, IndependentSamplesTTestCommand,
+    OneSampleTTestCommand, OneWayAnovaCommand, PairedSamplesTTestCommand, SetLabelCommand,
+    SetMeasureCommand, VarAddCommand, VarDeleteCommand, VarRenameCommand, VarSetAlignCommand,
+    VarSetDecimalsCommand, VarSetMissingValuesCommand, VarSetTypeCommand, VarSetValueLabelsCommand,
+    VarSetWidthCommand,
 };
 use serde::{Deserialize, Serialize};
 use serde_json::{json, Value};
@@ -49,6 +50,7 @@ impl CommandBus {
         bus.register(Box::new(IndependentSamplesTTestCommand));
         bus.register(Box::new(PairedSamplesTTestCommand));
         bus.register(Box::new(OneWayAnovaCommand));
+        bus.register(Box::new(CrosstabsCommand));
         bus.register(Box::new(VarSetValueLabelsCommand::new()));
         bus.register(Box::new(VarSetMissingValuesCommand::new()));
         bus.register(Box::new(VarRenameCommand));

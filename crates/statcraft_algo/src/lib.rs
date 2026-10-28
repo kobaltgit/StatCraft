@@ -1,4 +1,8 @@
 pub mod anova_oneway;
+pub mod crosstabs;
+#[cfg(test)]
+mod crosstabs_tests;
+pub mod crosstabs_types;
 pub mod descriptives;
 pub mod frequencies;
 pub mod ttest_indep;
@@ -9,6 +13,11 @@ pub use anova_oneway::{
     compute_oneway_anova, compute_oneway_anova_from_slices, f_distribution_sf, AlgoError,
     AnovaGroupDescriptives, AnovaHomogeneityTest, AnovaTableRow, OneWayAnovaOptions,
     OneWayAnovaResult,
+};
+pub use crosstabs::{chi_square_sf, compute_crosstabs, fisher_exact_2x2};
+pub use crosstabs_types::{
+    AssociationMeasure, ChiSquareTestRow, CrosstabCategory, CrosstabCell, CrosstabOptions,
+    CrosstabResult, CrosstabRow, RawCrosstabItem,
 };
 pub use descriptives::{compute_descriptives, DescriptivesOptions, DescriptivesResult};
 pub use frequencies::{

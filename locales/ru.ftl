@@ -514,6 +514,56 @@ output-col-df2 = df2
 output-col-std-error = Стандартная ошибка
 status-anova-executed = Однофакторный дисперсионный анализ выполнен для { $count } перем.
 
+# Crosstabs Dialog & Output
+dialog-crosstabs-title = Таблицы сопряжённости
+dialog-crosstabs-rows = Строки:
+dialog-crosstabs-cols = Столбцы:
+dialog-crosstabs-btn-cells = Ячейки...
+dialog-crosstabs-btn-statistics = Статистики...
+dialog-crosstabs-cells-title = Таблицы сопряжённости: Отображение ячеек
+dialog-crosstabs-group-counts = Частоты
+dialog-crosstabs-count-observed = Наблюдаемые
+dialog-crosstabs-count-expected = Ожидаемые
+dialog-crosstabs-count-residuals = Остатки
+dialog-crosstabs-group-percentages = Проценты
+dialog-crosstabs-pct-row = По строкам
+dialog-crosstabs-pct-column = По столбцам
+dialog-crosstabs-pct-total = От общего итога
+dialog-crosstabs-stats-title = Таблицы сопряжённости: Статистики
+dialog-crosstabs-stat-chisq = Хи-квадрат
+dialog-crosstabs-stat-phi-cramer = Фи и V Крамера
+
+output-crosstabs-title = Таблицы сопряжённости
+output-crosstabs-executed = Таблицы сопряжённости построены для { $count } таблиц(ы).
+output-crosstabs-summary-title = Сводка обработки наблюдений
+output-crosstabs-table-title = Таблица сопряжённости { $row } * { $col }
+output-crosstabs-chisq-title = Критерии хи-квадрат
+output-crosstabs-symmetric-title = Симметричные меры
+output-crosstabs-cases = Наблюдения
+output-crosstabs-valid = Валидные
+output-crosstabs-missing = Пропущенные
+output-crosstabs-total = Всего
+output-crosstabs-count = Количество
+output-crosstabs-expected-count = Ожидаемое количество
+output-crosstabs-pct-within-row = % в { $var }
+output-crosstabs-pct-within-col = % в { $var }
+output-crosstabs-pct-of-total = % от общего
+output-crosstabs-residual = Остаток
+output-crosstabs-value = Значение
+output-crosstabs-df = ст.св.
+output-crosstabs-asymp-sig = Асимпт. знач. (двусторонняя)
+output-crosstabs-exact-sig = Точная знач. (двусторонняя)
+output-crosstabs-approx-sig = Приближенная значимость
+output-crosstabs-pearson-chisq = Хи-квадрат Пирсона
+output-crosstabs-continuity-corr = Поправка на непрерывность
+output-crosstabs-likelihood-ratio = Отношение правдоподобия
+output-crosstabs-fisher-exact = Точный критерий Фишера
+output-crosstabs-n-valid-cases = Количество валидных наблюдений
+output-crosstabs-nominal-by-nominal = Номинальная с номинальной
+output-crosstabs-phi = Фи
+output-crosstabs-cramer-v = V Крамера
+
+
 
 
 
