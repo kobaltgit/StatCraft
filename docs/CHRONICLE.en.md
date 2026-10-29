@@ -1071,3 +1071,47 @@ Implemented the canonical data grouping, discretization, and cleaning tool — *
    - Strict adherence to `file-guard` ($\le 500$ lines per file), `design-guard`, `layers`, and `parity` (31 commands);
    - Synchronous bilingual localization (`locales/en.ftl`, `locales/ru.ftl`);
    - Clean compilation: `cargo clippy --workspace --all-targets -j 1 -- -D warnings` — 0 warnings.
+
+---
+
+### Phase 8.3: Sort Cases Procedure (`SORT CASES`)
+*Time: October 29, 2026, 11:15 (~35 minutes)*
+
+Implemented the canonical case ordering procedure in StatCraft — menu action `Data -> Sort Cases...` (`data.sort_cases` command / `SORT CASES BY ... (A|D)` syntax):
+1. **Low-Level Row Permutation L0/L1 (`statcraft_io` & `statcraft_core`):**
+   - `RawTable::reorder_rows` in `crates/statcraft_io/src/csv_loader.rs` and `DataSet::reorder_cases` in `crates/statcraft_core/src/dataset.rs`;
+   - Fast, panic-free rearrangement of all column values according to row permutation index arrays;
+   - Strict bounds validation (`IndexOutOfBounds`), preserving `VariableDictionary`, metadata, labels, and missing values intact.
+2. **Mathematical Engine L2 (`statcraft_algo::sort_cases`):**
+   - `SortKeySpec` specification with `SortDirection` (`Ascending` / `Descending`);
+   - Canonical missing value handling adhering to IBM SPSS Statistics standards:
+     * System-missing values (`SYSMIS`, `RawValue::Null`, `NaN`) are treated as smallest possible negative values ($-\infty$);
+     * In ascending sorts (`Ascending`, `(A)`), missing values appear **first**;
+     * In descending sorts (`Descending`, `(D)`), missing values appear **last**;
+   - Multi-key stable sorting: ties on primary keys are resolved by subsequent keys while preserving the relative original order of identical cases;
+   - `invert_permutation` helper for instantaneous undo calculation;
+   - 100% safe Rust without `unwrap()` or `expect()`.
+3. **Command Bus L5 (`statcraft_syntax::commands::sort_cases_cmd`):**
+   - Strongly-typed `SortCasesCommand` (`data.sort_cases`) with parameter `specs()` for AI agents;
+   - Full `Undo` (`Ctrl+Z`) support via an inverse permutation history stack;
+   - Canonical SPSS syntax generator:
+     ```text
+     SORT CASES BY dept (A) salary (D).
+     ```
+4. **User Interface on DialogKit L6 (`statcraft_app::dialogs`):**
+   - Centered `SortCasesDialog` modal ($560 \times 430$ px, `DialogShell::standard`);
+   - Left source `VariablePicker` panel with measurement scale icons and `TransferButton` (`->` / `<-`);
+   - Target keys list `Sort by:` with directional suffixes (e.g. `dept (A)`, `salary (D)`);
+   - Reordering buttons `Move Up` and `Move Down`;
+   - `Sort Order` radio group (`(o) Ascending`, `( ) Descending`) updating key directions in real-time;
+   - Canonical `DialogActionBar` (`[ OK ] [ Paste ] [ Reset ] [ Cancel ] [ Help ]`).
+5. **Integration & Reactivity:**
+   - Activated menu item `Data -> Sort Cases...`;
+   - Instant re-rendering of reordered rows in `Data View`;
+   - Syntax logged to `Output Viewer` (Log) and status line notification `StatusMessage::SortCasesExecuted`.
+6. **Quality Control & Definition of Done:**
+   - Full automated CI quality gate passed (`cargo run -p xtask -j 1 -- ci` — 100% OK);
+   - 100% workspace tests passing with 0 failures;
+   - Strict adherence to `file-guard`, `design-guard`, `layers`, and `parity` (32 commands);
+   - Synchronous trilingual localization (`locales/en.ftl`, `locales/ru.ftl`, `C:\StatCraft\locales\fr.ftl`);
+   - Clean compilation: `cargo clippy --workspace --all-targets -j 1 -- -D warnings` — 0 warnings.

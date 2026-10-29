@@ -564,3 +564,47 @@
    - Полное соблюдение `file-guard` ($\le 500$ строк на файл), `design-guard`, `layers`, `parity` (31 команда);
    - Синхронная локализация (`locales/en.ftl`, `locales/ru.ftl`);
    - `cargo clippy --workspace --all-targets -j 1 -- -D warnings` — 0 предупреждений.
+
+---
+
+### Этап 8.3: Сортировка наблюдений (Sort Cases: `SORT CASES`)
+*Время: 29 октября 2026, 11:15 (~35 минут)*
+
+Реализована каноническая процедура упорядочивания наблюдений датасета в StatCraft — пункт меню `Данные -> Сортировать наблюдения...` (`Data -> Sort Cases...`, команда `data.sort_cases` / синтаксис `SORT CASES BY ... (A|D)`):
+1. **Низкоуровневая перестановка строк L0/L1 (`statcraft_io` & `statcraft_core`):**
+   - Метод `RawTable::reorder_rows` в `crates/statcraft_io/src/csv_loader.rs` и `DataSet::reorder_cases` в `crates/statcraft_core/src/dataset.rs`;
+   - Быстрая и безопасная перестановка всех колонок таблицы без паник по вектору перестановок индексов строк;
+   - Строгая валидация границ (`IndexOutOfBounds`), сохранение словаря переменных (`VariableDictionary`), метаданных, меток и пропусков без изменений.
+2. **Алгоритмический движок L2 (`statcraft_algo::sort_cases`):**
+   - Спецификация ключа сортировки `SortKeySpec` с направлением `SortDirection` (`Ascending` / `Descending`);
+   - Каноническая обработка пропусков по стандарту IBM SPSS Statistics:
+     * Системные пропуски (`SYSMIS` / `Null` / `NaN`) трактуются как наименьшие отрицательные ($-\infty$);
+     * При сортировке по возрастанию (`Ascending`, `(A)`) пропуски идут **первыми**;
+     * При сортировке по убыванию (`Descending`, `(D)`) пропуски идут **последними**;
+   - Многоуровневая стабильная сортировка: при совпадении первичного ключа порядок определяется вторичным ключом с сохранением относительного исходного порядка равных наблюдений;
+   - Утилита вычисления обратной перестановки `invert_permutation` для мгновенного отката;
+   - 100% safe Rust без `unwrap()` / `expect()`.
+3. **Командная шина L5 (`statcraft_syntax::commands::sort_cases_cmd`):**
+   - Типизированная команда `SortCasesCommand` (`data.sort_cases`) со спецификацией `specs()` для чтения AI-агентами;
+   - Полная поддержка стека отката `Undo` (`Ctrl+Z`) через историю обратных перестановок `inv_permutation`;
+   - Генератор канонического синтаксиса SPSS:
+     ```text
+     SORT CASES BY dept (A) salary (D).
+     ```
+4. **Пользовательский интерфейс на DialogKit L6 (`statcraft_app::dialogs`):**
+   - Центрированный диалог `SortCasesDialog` ($560 \times 430$ px, `DialogShell::standard`);
+   - Левая панель выбора доступных переменных `VariablePicker` с иконками шкал и кнопками переноса `TransferButton` (`->` / `<-`);
+   - Список целевых ключей `Sort by:` с отображением направлений (например, `dept (A)`, `salary (D)`);
+   - Кнопки изменения приоритета ключей `Move Up` и `Move Down`;
+   - Группа переключателей направления `Sort Order` (`(o) Ascending`, `( ) Descending`), мгновенно меняющая направление выбранного ключа;
+   - Нижний ряд `DialogActionBar` (`[ OK ] [ Paste ] [ Reset ] [ Cancel ] [ Help ]`).
+5. **Интеграция и реактивность:**
+   - Активирован пункт меню `Data -> Sort Cases...`;
+   - Мгновенное переупорядочивание строк в сетке `Data View`;
+   - Логирование канонического синтаксиса `SORT CASES BY ...` в журнал `Output Viewer` (Log) и вывод информационного статуса `StatusMessage::SortCasesExecuted`.
+6. **Контроль качества (Definition of Done):**
+   - Прогон полного пайплайна качества `cargo run -p xtask -j 1 -- ci` — 100% OK;
+   - Все тесты воркспейса завершились успешно;
+   - Соблюдение дифференцированных лимитов строк `file-guard`, стандарта верстки `design-guard`, слоев `layers` и паритета `parity`;
+   - Синхронная локализация (`locales/en.ftl`, `locales/ru.ftl`, `C:\StatCraft\locales\fr.ftl`);
+   - `cargo clippy --workspace --all-targets -j 1 -- -D warnings` — 0 предупреждений.

@@ -3,14 +3,14 @@ use super::dialogs::{
     render_anova_oneway_dialog, render_compute_dialog, render_correlations_dialog,
     render_crosstabs_dialog, render_descriptives_dialog, render_frequencies_dialog,
     render_kruskal_wallis_dialog, render_missing_values_dialog, render_nonparam_related_dialog,
-    render_nonparam_twosample_dialog, render_recode_dialog, render_ttest_indep_dialog,
-    render_ttest_onesample_dialog, render_ttest_paired_dialog, render_value_labels_dialog,
-    render_variable_type_dialog, ComputeDialogAction, CorrelationsDialogAction,
-    CrosstabsDialogAction, DescriptivesDialogAction, FrequenciesDialogAction,
-    IndependentSamplesTTestDialogAction, KruskalWallisDialogAction, MissingValuesDialogAction,
-    NonparamRelatedDialogAction, NonparamTwoSampleDialogAction, OneSampleTTestDialogAction,
-    OneWayAnovaDialogAction, PairedSamplesTTestDialogAction, RecodeDialogAction,
-    ValueLabelsDialogAction, VariableTypeDialogAction,
+    render_nonparam_twosample_dialog, render_recode_dialog, render_sort_cases_dialog,
+    render_ttest_indep_dialog, render_ttest_onesample_dialog, render_ttest_paired_dialog,
+    render_value_labels_dialog, render_variable_type_dialog, ComputeDialogAction,
+    CorrelationsDialogAction, CrosstabsDialogAction, DescriptivesDialogAction,
+    FrequenciesDialogAction, IndependentSamplesTTestDialogAction, KruskalWallisDialogAction,
+    MissingValuesDialogAction, NonparamRelatedDialogAction, NonparamTwoSampleDialogAction,
+    OneSampleTTestDialogAction, OneWayAnovaDialogAction, PairedSamplesTTestDialogAction,
+    RecodeDialogAction, SortCasesDialogAction, ValueLabelsDialogAction, VariableTypeDialogAction,
 };
 use serde_json::json;
 use statcraft_i18n::t;
@@ -794,6 +794,55 @@ impl StatCraftApp {
                 self.output_view_state.add_entry(t!("output-log"), sps);
             }
             RecodeDialogAction::None => {}
+        }
+
+        // 17. Sort Cases Dialog
+        let sort_action = render_sort_cases_dialog(
+            ctx,
+            self.dataset.as_ref(),
+            &mut self.sort_cases_dialog_state,
+        );
+
+        match sort_action {
+            SortCasesDialogAction::Run(keys) => {
+                let serialized_keys: Vec<serde_json::Value> = keys
+                    .iter()
+                    .map(|k| {
+                        let dir_str = match k.direction {
+                            statcraft_algo::SortDirection::Ascending => "ascending",
+                            statcraft_algo::SortDirection::Descending => "descending",
+                        };
+                        json!({
+                            "column_name": k.column_name,
+                            "direction": dir_str,
+                        })
+                    })
+                    .collect();
+
+                let params = json!({
+                    "keys": serialized_keys,
+                });
+
+                match self
+                    .command_bus
+                    .execute("data.sort_cases", &mut self.dataset, params)
+                {
+                    Ok(_) => {
+                        let sps = statcraft_syntax::commands::SortCasesCommand::to_sps(&keys);
+                        self.output_view_state.add_entry(t!("output-log"), sps);
+                        self.status_message =
+                            StatusMessage::SortCasesExecuted { count: keys.len() };
+                    }
+                    Err(e) => {
+                        self.status_message = StatusMessage::Error(e.to_string());
+                    }
+                }
+            }
+            SortCasesDialogAction::Paste(keys) => {
+                let sps = statcraft_syntax::commands::SortCasesCommand::to_sps(&keys);
+                self.output_view_state.add_entry(t!("output-log"), sps);
+            }
+            SortCasesDialogAction::None => {}
         }
     }
 }

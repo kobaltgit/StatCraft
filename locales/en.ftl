@@ -77,6 +77,13 @@ lang-name-ru = Russian
 # 4. Data Menu
 menu-data = Data
 menu-data-sort-cases = Sort Cases...
+dialog-sort-cases-title = Sort Cases
+dialog-sort-cases-sort-by = Sort by:
+dialog-sort-cases-order-group = Sort Order
+dialog-sort-cases-order-ascending = Ascending
+dialog-sort-cases-order-descending = Descending
+dialog-sort-cases-move-up = Move Up
+dialog-sort-cases-move-down = Move Down
 menu-data-sort-vars = Sort Variables...
 menu-data-transpose = Transpose...
 menu-data-merge-files = Merge Files
@@ -711,6 +718,7 @@ dialog-recode-btn-add = Add
 dialog-recode-btn-remove = Remove
 dialog-recode-old-new-mappings-title = Old -> New:
 output-recode-executed = Recode executed successfully for { $count } variable(s).
+output-sort-cases-executed = Sorted cases by { $count } variable(s).
 
 
 

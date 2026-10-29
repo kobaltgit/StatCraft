@@ -265,6 +265,14 @@
 - [x] L6 `statcraft_app`: активация пунктов меню `Transform -> Recode into Different Variables...` и `Transform -> Recode into Same Variables...`, реактивное обновление `Data View`, `Variable View` и логирование в `Output Viewer`
 - [x] 100% покрытие локализацией (`locales/en.ftl`, `locales/ru.ftl`, `C:\StatCraft\locales\fr.ftl`), 100% прохождение полного CI gate `cargo run -p xtask -j 1 -- ci`
 
+## 28. Этап 8.3: Сортировка наблюдений (Sort Cases: `SORT CASES`)
+- [x] L0 `statcraft_io` & L1 `statcraft_core`: методы `RawTable::reorder_rows` и `DataSet::reorder_cases` — безопасная перестановка строк всех колонок таблицы по массиву индексов без паник с сохранением словаря переменных и метаданных
+- [x] L2 `statcraft_algo`: модуль `sort_cases.rs` — спецификация ключей `SortKeySpec` (`Ascending` / `Descending`), каноническая обработка пропусков по стандарту SPSS (системные пропуски `SYSMIS` / `Null` / `NaN` идут первыми при сортировке по возрастанию и последними при сортировке по убыванию), многоуровневая стабильная сортировка и утилита `invert_permutation`
+- [x] L5 `statcraft_syntax`: типизированная команда `SortCasesCommand` (`data.sort_cases`) со спецификацией параметров `specs()`, полным стеком отката `Undo` (`Ctrl+Z`) через обратную перестановку индексов и генерацией канонического синтаксиса `SORT CASES BY var1 (A) var2 (D).`
+- [x] L6 `statcraft_app`: центрированный диалог `SortCasesDialog` ($560 \times 430$ px, `DialogShell::standard`) на базе `DialogKit` (`render_variable_list_panel`, `TransferButton`, `GroupBox`, `DialogActionBar`), выбор ключей, кнопки изменения порядка `Move Up` / `Move Down`, радиокнопки направления `(o) Ascending` / `( ) Descending`
+- [x] L6 `statcraft_app`: активация пункта меню `Data -> Sort Cases...`, мгновенная реактивность переупорядочивания грида в `Data View`, логирование синтаксиса в `Output Viewer` и статусное сообщение в строке состояния
+- [x] 100% покрытие локализацией (`locales/en.ftl`, `locales/ru.ftl`, `C:\StatCraft\locales\fr.ftl`), 100% прохождение полного CI gate `cargo run -p xtask -j 1 -- ci`
+
 
 
 

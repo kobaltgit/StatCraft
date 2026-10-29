@@ -3,7 +3,7 @@ use crate::dialogs::{
     FrequenciesDialogState, IndependentSamplesTTestDialogState, KruskalWallisDialogState,
     MissingValuesDialogState, NonparamRelatedDialogState, NonparamTwoSampleDialogState,
     OneSampleTTestDialogState, OneWayAnovaDialogState, PairedSamplesTTestDialogState,
-    RecodeDialogState, ValueLabelsDialogState, VariableTypeDialogState,
+    RecodeDialogState, SortCasesDialogState, ValueLabelsDialogState, VariableTypeDialogState,
 };
 use crate::views::{
     render_data_view, render_output_view, render_variable_view, DataViewState, OutputViewerState,
@@ -76,6 +76,9 @@ pub enum StatusMessage {
     RecodeExecuted {
         count: usize,
     },
+    SortCasesExecuted {
+        count: usize,
+    },
     Error(String),
 }
 
@@ -134,6 +137,9 @@ impl StatusMessage {
             StatusMessage::RecodeExecuted { count } => {
                 t!("output-recode-executed", count = *count)
             }
+            StatusMessage::SortCasesExecuted { count } => {
+                t!("output-sort-cases-executed", count = *count)
+            }
             StatusMessage::Error(e) => format!("{}: {}", t!("status-error"), e),
         }
     }
@@ -162,6 +168,7 @@ pub struct StatCraftApp {
     pub variable_type_dialog_state: VariableTypeDialogState,
     pub compute_dialog_state: ComputeDialogState,
     pub recode_dialog_state: RecodeDialogState,
+    pub sort_cases_dialog_state: SortCasesDialogState,
     pub pending_variable_action: VariableViewAction,
     pub status_message: StatusMessage,
     pub toolbar_position: ToolbarPosition,
@@ -198,6 +205,7 @@ impl StatCraftApp {
             variable_type_dialog_state: VariableTypeDialogState::default(),
             compute_dialog_state: ComputeDialogState::default(),
             recode_dialog_state: RecodeDialogState::default(),
+            sort_cases_dialog_state: SortCasesDialogState::default(),
             pending_variable_action: VariableViewAction::None,
             status_message: StatusMessage::Ready,
             toolbar_position: ToolbarPosition::Top,
@@ -414,7 +422,12 @@ impl StatCraftApp {
             }
             3 => {
                 ui.menu_button(t!("menu-data"), |ui| {
-                    render_menu_item(ui, t!("menu-data-sort-cases"), requires_dataset_status);
+                    if render_menu_item(ui, t!("menu-data-sort-cases"), requires_dataset_status)
+                        .clicked()
+                    {
+                        self.sort_cases_dialog_state.is_open = true;
+                        ui.close_menu();
+                    }
                     render_menu_item(ui, t!("menu-data-sort-vars"), requires_dataset_status);
                     render_menu_item(ui, t!("menu-data-transpose"), requires_dataset_status);
                     ui.separator();

@@ -77,6 +77,13 @@ lang-name-ru = Русский
 # 4. Data Menu
 menu-data = Данные
 menu-data-sort-cases = Сортировать наблюдения...
+dialog-sort-cases-title = Сортировать наблюдения
+dialog-sort-cases-sort-by = Сортировать по:
+dialog-sort-cases-order-group = Порядок сортировки
+dialog-sort-cases-order-ascending = По возрастанию
+dialog-sort-cases-order-descending = По убыванию
+dialog-sort-cases-move-up = Вверх
+dialog-sort-cases-move-down = Вниз
 menu-data-sort-vars = Сортировать переменные...
 menu-data-transpose = Транспонировать...
 menu-data-merge-files = Слияние файлов
@@ -711,6 +718,7 @@ dialog-recode-btn-add = Добавить
 dialog-recode-btn-remove = Удалить
 dialog-recode-old-new-mappings-title = Старое -> Новое:
 output-recode-executed = Перекодирование успешно выполнено для { $count } переменных.
+output-sort-cases-executed = Наблюдения отсортированы по { $count } переменным.
 
 
 

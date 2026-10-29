@@ -303,6 +303,30 @@ impl DataSet {
         Ok(())
     }
 
+    pub fn reorder_cases(&mut self, permutation: &[usize]) -> Result<(), CoreError> {
+        if permutation.len() != self.row_count() {
+            return Err(CoreError::IndexOutOfBounds {
+                index: permutation.len(),
+                total: self.row_count(),
+            });
+        }
+        for &idx in permutation {
+            if idx >= self.row_count() {
+                return Err(CoreError::IndexOutOfBounds {
+                    index: idx,
+                    total: self.row_count(),
+                });
+            }
+        }
+        self.table
+            .reorder_rows(permutation)
+            .map_err(|_| CoreError::IndexOutOfBounds {
+                index: permutation.len(),
+                total: self.row_count(),
+            })?;
+        Ok(())
+    }
+
     pub fn undo(&mut self) -> bool {
         if let Some(edit) = self.delta.undo_stack.pop() {
             let row = edit.coord.row;
@@ -512,6 +536,22 @@ mod tests {
 
         ds.remove_row(1).unwrap();
         assert_eq!(ds.row_count(), 2);
+    }
+
+    #[test]
+    fn test_dataset_reorder_cases() {
+        let mut ds = DataSet::blank(3, 1).unwrap();
+        ds.set_cell(0, 0, RawValue::Number(10.0)).unwrap();
+        ds.set_cell(1, 0, RawValue::Number(20.0)).unwrap();
+        ds.set_cell(2, 0, RawValue::Number(30.0)).unwrap();
+
+        ds.reorder_cases(&[2, 0, 1]).unwrap();
+        assert_eq!(ds.get_cell(0, 0), Some(&RawValue::Number(30.0)));
+        assert_eq!(ds.get_cell(1, 0), Some(&RawValue::Number(10.0)));
+        assert_eq!(ds.get_cell(2, 0), Some(&RawValue::Number(20.0)));
+
+        assert!(ds.reorder_cases(&[0, 1]).is_err());
+        assert!(ds.reorder_cases(&[0, 1, 99]).is_err());
     }
 
     #[test]

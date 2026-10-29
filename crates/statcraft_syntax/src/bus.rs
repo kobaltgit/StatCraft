@@ -5,9 +5,9 @@ use crate::commands::{
     ImportCsvCommand, IndependentSamplesTTestCommand, KruskalWallisCommand, MannWhitneyCommand,
     OneSampleTTestCommand, OneWayAnovaCommand, PairedSamplesTTestCommand,
     RecodeIntoDifferentCommand, RecodeIntoSameCommand, RelatedSamplesTestCommand, SetLabelCommand,
-    SetMeasureCommand, VarAddCommand, VarDeleteCommand, VarRenameCommand, VarSetAlignCommand,
-    VarSetDecimalsCommand, VarSetMissingValuesCommand, VarSetTypeCommand, VarSetValueLabelsCommand,
-    VarSetWidthCommand,
+    SetMeasureCommand, SortCasesCommand, VarAddCommand, VarDeleteCommand, VarRenameCommand,
+    VarSetAlignCommand, VarSetDecimalsCommand, VarSetMissingValuesCommand, VarSetTypeCommand,
+    VarSetValueLabelsCommand, VarSetWidthCommand,
 };
 use serde::{Deserialize, Serialize};
 use serde_json::{json, Value};
@@ -71,6 +71,7 @@ impl CommandBus {
         bus.register(Box::new(ComputeVariableCommand::new()));
         bus.register(Box::new(RecodeIntoDifferentCommand::new()));
         bus.register(Box::new(RecodeIntoSameCommand::new()));
+        bus.register(Box::new(SortCasesCommand::new()));
         bus
     }
 

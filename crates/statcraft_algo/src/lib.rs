@@ -22,6 +22,7 @@ pub mod nonparam_twosample;
 mod nonparam_twosample_tests;
 pub mod nonparam_twosample_types;
 pub mod recode;
+pub mod sort_cases;
 pub mod ttest_indep;
 pub mod ttest_onesample;
 pub mod ttest_paired;
@@ -64,6 +65,9 @@ pub use nonparam_twosample::{
 };
 pub use nonparam_twosample_types::{MannWhitneyResult, RankGroupStats};
 pub use recode::{apply_recode, NewValueSpec, OldValueRule, RecodeMapping, RecodePlan};
+pub use sort_cases::{
+    compare_raw_values, compute_sort_permutation, invert_permutation, SortDirection, SortKeySpec,
+};
 pub use ttest_indep::{
     compute_indep_ttest, compute_indep_ttest_from_slices, GroupStats, IndepTTestOptions,
     IndepTTestResult, LeveneResult, TTestTwoGroupDetails,

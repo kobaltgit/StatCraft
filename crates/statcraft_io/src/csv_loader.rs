@@ -155,6 +155,29 @@ impl RawTable {
         }
         false
     }
+
+    pub fn reorder_rows(&mut self, permutation: &[usize]) -> Result<(), IoError> {
+        if permutation.len() != self.row_count {
+            return Err(IoError::MalformedRow {
+                line: 0,
+                expected: self.row_count,
+                found: permutation.len(),
+            });
+        }
+        for col in &mut self.columns {
+            let old_values = std::mem::take(&mut col.values);
+            let mut new_values = Vec::with_capacity(permutation.len());
+            for &idx in permutation {
+                if idx < old_values.len() {
+                    new_values.push(old_values[idx].clone());
+                } else {
+                    new_values.push(RawValue::Null);
+                }
+            }
+            col.values = new_values;
+        }
+        Ok(())
+    }
 }
 
 #[derive(Debug, Clone)]
