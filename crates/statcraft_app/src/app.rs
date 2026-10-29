@@ -1,11 +1,11 @@
 use crate::dialogs::{
     ComputeDialogState, CorrelationsDialogState, CrosstabsDialogState, DescriptivesDialogState,
-    FrequenciesDialogState, IndependentSamplesTTestDialogState, KruskalWallisDialogState,
-    LinearRegressionDialogState, MissingValuesDialogState, NonparamRelatedDialogState,
-    NonparamTwoSampleDialogState, OneSampleTTestDialogState, OneWayAnovaDialogState,
-    PairedSamplesTTestDialogState, RecodeDialogState, ReliabilityDialogState,
-    SelectCasesDialogState, SortCasesDialogState, SplitFileDialogState, ValueLabelsDialogState,
-    VariableTypeDialogState, WeightCasesDialogState,
+    FactorDialogState, FrequenciesDialogState, IndependentSamplesTTestDialogState,
+    KruskalWallisDialogState, LinearRegressionDialogState, MissingValuesDialogState,
+    NonparamRelatedDialogState, NonparamTwoSampleDialogState, OneSampleTTestDialogState,
+    OneWayAnovaDialogState, PairedSamplesTTestDialogState, RecodeDialogState,
+    ReliabilityDialogState, SelectCasesDialogState, SortCasesDialogState, SplitFileDialogState,
+    ValueLabelsDialogState, VariableTypeDialogState, WeightCasesDialogState,
 };
 use crate::views::{
     render_data_view, render_output_view, render_variable_view, DataViewState, OutputViewerState,
@@ -99,6 +99,10 @@ pub enum StatusMessage {
         scale: String,
         count: usize,
     },
+    FactorExecuted {
+        count: usize,
+        factors: usize,
+    },
     Error(String),
 }
 
@@ -191,6 +195,9 @@ impl StatusMessage {
                     count = *count
                 )
             }
+            StatusMessage::FactorExecuted { count, factors } => {
+                t!("output-factor-executed", count = *count, factors = *factors)
+            }
             StatusMessage::Error(e) => format!("{}: {}", t!("status-error"), e),
         }
     }
@@ -225,6 +232,7 @@ pub struct StatCraftApp {
     pub weight_cases_dialog_state: WeightCasesDialogState,
     pub linear_regression_dialog_state: LinearRegressionDialogState,
     pub reliability_dialog_state: ReliabilityDialogState,
+    pub factor_dialog_state: FactorDialogState,
     pub pending_variable_action: VariableViewAction,
     pub status_message: StatusMessage,
     pub toolbar_position: ToolbarPosition,
@@ -267,6 +275,7 @@ impl StatCraftApp {
             weight_cases_dialog_state: WeightCasesDialogState::default(),
             linear_regression_dialog_state: LinearRegressionDialogState::default(),
             reliability_dialog_state: ReliabilityDialogState::default(),
+            factor_dialog_state: FactorDialogState::default(),
             pending_variable_action: VariableViewAction::None,
             status_message: StatusMessage::Ready,
             toolbar_position: ToolbarPosition::Top,
@@ -772,7 +781,12 @@ impl StatCraftApp {
                         }
                     });
                     ui.menu_button(t!("menu-analyze-dimension"), |ui| {
-                        render_menu_item(ui, t!("menu-analyze-factor"), MenuItemStatus::InDev);
+                        if render_menu_item(ui, t!("menu-analyze-factor"), requires_dataset_status)
+                            .clicked()
+                        {
+                            self.factor_dialog_state.is_open = true;
+                            ui.close_menu();
+                        }
                         render_menu_item(ui, t!("menu-analyze-cluster"), MenuItemStatus::InDev);
                     });
                     ui.menu_button(t!("menu-analyze-scale"), |ui| {

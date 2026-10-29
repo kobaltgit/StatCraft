@@ -842,3 +842,44 @@ output-reliability-col-corr-r = Скорректированная коррел�
 output-reliability-col-alpha-if-del = Альфа Кронбаха при исключении пункта
 output-reliability-scale-stats-title = Статистика шкалы
 output-reliability-executed = Рассчитан анализ надежности для {$scale} ({$count} пунктов)
+
+# Factor Analysis Dialog
+dialog-factor-title = Факторный анализ
+dialog-factor-descriptives-title = Факторный анализ: Описательные
+dialog-factor-correlation-matrix-group = Матрица корреляций
+dialog-factor-kmo-and-bartlett = КМО и критерий сферичности Бартлетта
+dialog-factor-extraction-title = Факторный анализ: Метод выделения
+dialog-factor-method-group = Метод
+dialog-factor-method-pca = Метод главных компонент
+dialog-factor-extract-group = Выделение
+dialog-factor-based-on-eigen = На основе собственных значений >
+dialog-factor-number-of-factors = Фиксированное число факторов:
+dialog-factor-variables-label = Переменные:
+dialog-factor-descriptives-btn = Описательные...
+dialog-factor-extraction-btn = Выделение...
+
+# Factor Analysis Output
+output-factor-title = Факторный анализ
+output-factor-table-title = Результаты факторного анализа
+output-factor-kmo-title = КМО и критерий Бартлетта
+output-factor-kmo-measure-col = Мера адекватности выборки Кайзера-Мейера-Олкина.
+output-factor-value-col = Значение
+output-factor-kmo-stat = Мера адекватности выборки Кайзера-Мейера-Олкина
+output-factor-bartlett-approx-chi = Приближенный хи-квадрат критерия Бартлетта
+output-factor-bartlett-df = ст.св.
+output-factor-bartlett-sig = Знач.
+output-factor-communalities-title = Общности
+output-factor-variable-col = Переменная
+output-factor-initial-col = Начальные
+output-factor-extraction-col = Выделенные
+output-factor-total-variance-title = Полная объясненная дисперсия
+output-factor-component-col = Компонента
+output-factor-initial-total-col = Начальный итог
+output-factor-initial-pct-col = % дисперсии
+output-factor-initial-cum-col = Кумулятивный %
+output-factor-extract-total-col = Итог выделения
+output-factor-extract-pct-col = % дисперсии
+output-factor-extract-cum-col = Кумулятивный %
+output-factor-component-matrix-title = Матрица компонент
+output-factor-comp-col = Компонента
+output-factor-executed = Рассчитан факторный анализ для {$count} наблюдений, выделено {$factors} компонент

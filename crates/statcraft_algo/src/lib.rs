@@ -9,6 +9,10 @@ mod crosstabs_tests;
 pub mod crosstabs_types;
 pub mod descriptives;
 pub mod expr_eval;
+pub mod factor;
+#[cfg(test)]
+mod factor_tests;
+pub mod factor_types;
 pub mod frequencies;
 pub mod kruskal_wallis;
 #[cfg(test)]
@@ -55,6 +59,11 @@ pub use descriptives::{
     compute_descriptives, compute_descriptives_weighted, DescriptivesOptions, DescriptivesResult,
 };
 pub use expr_eval::{CompiledExpr, EvalError, EvalNode, Op};
+pub use factor::{compute_factor_analysis, jacobi_eigen_symmetric};
+pub use factor_types::{
+    CommunalityRow, ComponentMatrixRow, FactorAnalysisResult, FactorExtractionCriteria,
+    FactorExtractionMethod, FactorOptions, KmoBartlettResult, VarianceExplainedRow,
+};
 pub use frequencies::{
     compute_frequencies, compute_frequencies_detailed, compute_percentile, compute_quartiles,
     FrequencyCategory, FrequencyInputItem, FrequencyResult, FrequencyTable,

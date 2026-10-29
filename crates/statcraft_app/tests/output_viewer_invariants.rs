@@ -1,22 +1,23 @@
 #[allow(unused_imports)]
 use statcraft_algo::{
     compute_bivariate_correlations, AnovaTableRow, AssociationMeasure,
-    BivariateCorrelationsOptions, BivariateCorrelationsResult, ChiSquareTestRow, CrosstabCategory,
-    CrosstabCell, CrosstabOptions, CrosstabResult, CrosstabRow, DescriptivesResult,
-    FrequencyCategory, FrequencyResult, GroupStats, IndepTTestResult, KruskalWallisGroupStats,
-    KruskalWallisResult, LeveneResult, LinearRegressionOptions, LinearRegressionResult,
-    MannWhitneyResult, OneSampleTTestResult, OneWayAnovaResult, PairedCorrelation,
-    PairedDifferences, PairedTTestResult, PairedVarStats, RankGroupStats, RegressionAnova,
-    RegressionAnovaRow, RegressionCoefficient, RelatedPairTestResult, ReliabilityModel,
-    ReliabilityResult, SignTestDifferences, SignTestResult, TTestTwoGroupDetails,
+    BivariateCorrelationsOptions, BivariateCorrelationsResult, ChiSquareTestRow, CommunalityRow,
+    ComponentMatrixRow, CrosstabCategory, CrosstabCell, CrosstabOptions, CrosstabResult,
+    CrosstabRow, DescriptivesResult, FactorAnalysisResult, FrequencyCategory, FrequencyResult,
+    GroupStats, IndepTTestResult, KmoBartlettResult, KruskalWallisGroupStats, KruskalWallisResult,
+    LeveneResult, LinearRegressionOptions, LinearRegressionResult, MannWhitneyResult,
+    OneSampleTTestResult, OneWayAnovaResult, PairedCorrelation, PairedDifferences,
+    PairedTTestResult, PairedVarStats, RankGroupStats, RegressionAnova, RegressionAnovaRow,
+    RegressionCoefficient, RelatedPairTestResult, ReliabilityModel, ReliabilityResult,
+    SignTestDifferences, SignTestResult, TTestTwoGroupDetails, VarianceExplainedRow,
     WilcoxonRanksSummary, WilcoxonSignedRankResult,
 };
 use statcraft_app::views::output_view::{
-    anova_to_tsv, correlations_to_tsv, crosstabs_to_tsv, descriptives_to_tsv, frequencies_to_tsv,
-    indep_ttest_to_tsv, kruskal_wallis_to_tsv, mann_whitney_to_tsv, onesample_ttest_to_tsv,
-    paired_ttest_to_tsv, regression_to_tsv, related_samples_to_tsv, reliability_to_tsv,
-    render_output_view, OutputItem, OutputItemKind, OutputNotes, OutputProcedure,
-    OutputViewerState, SelectedTarget,
+    anova_to_tsv, correlations_to_tsv, crosstabs_to_tsv, descriptives_to_tsv, factor_to_tsv,
+    frequencies_to_tsv, indep_ttest_to_tsv, kruskal_wallis_to_tsv, mann_whitney_to_tsv,
+    onesample_ttest_to_tsv, paired_ttest_to_tsv, regression_to_tsv, related_samples_to_tsv,
+    reliability_to_tsv, render_output_view, OutputItem, OutputItemKind, OutputNotes,
+    OutputProcedure, OutputViewerState, SelectedTarget,
 };
 
 #[path = "output_viewer_invariants/fixtures.rs"]
@@ -873,4 +874,87 @@ fn test_reliability_output_and_tsv_integrity() {
     assert!(tsv.contains("Scale Statistics"));
     assert!(tsv.contains("0.854"));
     assert!(tsv.contains("0.862"));
+}
+
+#[test]
+fn test_factor_output_and_tsv_integrity() {
+    let ctx = egui::Context::default();
+    let mut state = OutputViewerState::new();
+
+    let sample_factor = FactorAnalysisResult {
+        variables: vec!["v1".to_string(), "v2".to_string()],
+        n_cases: 15,
+        n_total: 15,
+        kmo_bartlett: Some(KmoBartlettResult {
+            kmo: 0.785,
+            bartlett_approx_chi_square: 24.567,
+            bartlett_df: 1,
+            bartlett_sig: 0.001,
+        }),
+        communalities: vec![
+            CommunalityRow {
+                variable: "v1".to_string(),
+                initial: 1.0,
+                extraction: 0.820,
+            },
+            CommunalityRow {
+                variable: "v2".to_string(),
+                initial: 1.0,
+                extraction: 0.820,
+            },
+        ],
+        total_variance_explained: vec![
+            VarianceExplainedRow {
+                component: 1,
+                initial_total: 1.640,
+                initial_pct_variance: 82.0,
+                initial_cumulative_pct: 82.0,
+                extraction_total: Some(1.640),
+                extraction_pct_variance: Some(82.0),
+                extraction_cumulative_pct: Some(82.0),
+            },
+            VarianceExplainedRow {
+                component: 2,
+                initial_total: 0.360,
+                initial_pct_variance: 18.0,
+                initial_cumulative_pct: 100.0,
+                extraction_total: None,
+                extraction_pct_variance: None,
+                extraction_cumulative_pct: None,
+            },
+        ],
+        component_matrix: vec![
+            ComponentMatrixRow {
+                variable: "v1".to_string(),
+                loadings: vec![0.906],
+            },
+            ComponentMatrixRow {
+                variable: "v2".to_string(),
+                loadings: vec![0.906],
+            },
+        ],
+        n_components_extracted: 1,
+    };
+
+    state.add_factor(
+        sample_factor.clone(),
+        vec!["v1".to_string(), "v2".to_string()],
+    );
+    assert_eq!(state.procedures.len(), 1);
+    assert_eq!(state.procedures[0].items.len(), 3);
+
+    // Headless render
+    let _ = ctx.run(Default::default(), |ctx| {
+        egui::CentralPanel::default().show(ctx, |ui| {
+            render_output_view(ui, &mut state);
+        });
+    });
+
+    let tsv = factor_to_tsv(&sample_factor);
+    assert!(tsv.contains("KMO and Bartlett's Test"));
+    assert!(tsv.contains("Communalities"));
+    assert!(tsv.contains("Total Variance Explained"));
+    assert!(tsv.contains("Component Matrix"));
+    assert!(tsv.contains("0.785"));
+    assert!(tsv.contains("24.567"));
 }

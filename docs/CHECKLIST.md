@@ -320,6 +320,17 @@
 - [x] L6 `statcraft_app`: активация пункта главного меню `Analyze -> Scale -> Reliability Analysis...` (`Анализ -> Шкала -> Анализ надежности...`)
 - [x] 100% покрытие локализацией (`locales/en.ftl`, `locales/ru.ftl`, `C:\StatCraft\locales\fr.ftl`), 100% прохождение полного CI gate `cargo run -p xtask -j 1 -- ci` (`file-guard`, `design-guard`, `layers`, `parity`, `clippy -D warnings`, `cargo fmt --check`)
 
+## 34. Этап 11.1: Факторный анализ / Метод главных компонент (Factor Analysis / PCA: `FACTOR`)
+- [x] L2 `statcraft_algo`: модули `factor.rs`, `factor_types.rs` и `factor_tests.rs` — спектральное разложение симметричной матрицы корреляций через циклический метод Якоби (`jacobi_eigen_symmetric`), извлечение главных компонент (PCA), правило Кайзера ($\lambda \ge 1.0$) и отбор заданного числа факторов на 100% safe Rust без паник
+- [x] L2 `statcraft_algo`: расчет мер применимости факторизации — Kaiser-Meyer-Olkin (KMO) Measure of Sampling Adequacy через обращение матрицы корреляций и антиобразные частные корреляции, критерий сферичности Бартлетта (Bartlett's Test of Sphericity: Approx. Chi-Square, df, Sig через неполную гамма-функцию)
+- [x] L2 `statcraft_algo`: расчет общностей (*Communalities*: Initial $1.0$, Extraction), объясненной дисперсии (*Total Variance Explained*: Initial Eigenvalues, % of Variance, Cumulative %, Extraction Sums of Squared Loadings) и матрицы факторных нагрузок (*Component Matrix*)
+- [x] L2 `statcraft_algo`: сверка Golden Oracle с эталонами Python (`scipy.linalg.eigh`, `factor_analyzer`), инварианты Never Crash при нулевых дисперсиях, малом $n < 2$ и сингулярных матрицах
+- [x] L5 `statcraft_syntax`: типизированная команда `FactorCommand` (`stat.factor`) со спецификацией `specs()`, фильтрацией `active_row_indices()`, весами `row_weight(r)` и генератором канонического синтаксиса `FACTOR /VARIABLES ... /MISSING LISTWISE /ANALYSIS ... /PRINT INITIAL EXTRACTION KMO /CRITERIA MINEIGEN(1) /EXTRACTION PC /ROTATION NOROTATE.`
+- [x] L6 `statcraft_app`: модальный диалог `FactorDialog` ($560 \times 430$ px, `DialogShell::standard`) на базе `DialogKit` (`VariablePicker`, `TransferButton`, `SubdialogSidebar`, `SubdialogActionBar`, `DialogActionBar`, `GroupBox`), модальные поддиалоги `[ Descriptives... ]` (KMO и Бартлетт) и `[ Extraction... ]` (PCA, собственные значения > 1.0 / число факторов)
+- [x] L6 `statcraft_app`: модуль вывода `output_view/tables_factor.rs` — 4 аутентичные таблицы SPSS (*KMO and Bartlett's Test, Communalities, Total Variance Explained, Component Matrix*), TSV-экспорт для буфера обмена и интеграция в Outline Tree
+- [x] L6 `statcraft_app`: активация пункта главного меню `Analyze -> Dimension Reduction -> Factor...` (`Анализ -> Снижение размерности -> Факторный анализ...`)
+- [x] 100% покрытие локализацией (`locales/en.ftl`, `locales/ru.ftl`, `C:\StatCraft\locales\fr.ftl`), 100% прохождение полного CI gate `cargo run -p xtask -j 1 -- ci` (`file-guard`, `design-guard`, `layers`, `parity`, `clippy -D warnings`, `cargo fmt --check`)
+
 
 
 

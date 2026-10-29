@@ -891,3 +891,73 @@
    - Полная синхронная локализация на трех языках (`locales/en.ftl`, `locales/ru.ftl`, `C:\StatCraft\locales\fr.ftl`);
    - `cargo clippy --workspace --all-targets -j 1 -- -D warnings` — 0 предупреждений;
    - Сборка и развертывание релизного бинарника `C:\StatCraft\statcraft_app.exe`.
+
+---
+
+### Этап 11.1: Факторный анализ и метод главных компонент (Factor Analysis / PCA: `FACTOR`)
+*Время: 29 октября 2026, 18:25 (~35 минут)*
+
+Реализован ключевой компонент блока снижения размерности (Dimension Reduction) экосистемы IBM SPSS Statistics — **Факторный анализ / Метод главных компонент** (`Analyze -> Dimension Reduction -> Factor...` / `Анализ -> Снижение размерности -> Факторный анализ...`), дополняющий анализ надежности шкалы (Cronbach's Alpha) для комплексной психометрической и многомерной валидизации:
+
+1. **Математическое ядро L2 (`statcraft_algo::factor`, `factor_types`, `factor_tests`):**
+   - Построчное исключение пропусков (Listwise missing deletion) и поддержка весов наблюдений (`row_weight`);
+   - Расчет парных коэффициентов корреляции Пирсона и взвешенной корреляционной матрицы $R$ ($p \times p$);
+   - Расчет мер факторизуемости и выборочной адекватности:
+     * **Kaiser-Meyer-Olkin (KMO) Measure of Sampling Adequacy**: вычисление антиобразных частных корреляций $a_{ij} = -s_{ij} / \sqrt{s_{ii} s_{jj}}$ через численное обращение матрицы $S = R^{-1}$ и расчет критерия $\text{KMO} = \frac{\sum_{i \ne j} r_{ij}^2}{\sum_{i \ne j} r_{ij}^2 + \sum_{i \ne j} a_{ij}^2}$;
+     * **Bartlett's Test of Sphericity**: критерий сферичности Бартлетта $\chi^2 = -(n - 1 - (2p + 5)/6) \ln |R|$ при $df = p(p - 1)/2$ с расчетом точного $p$-value через функцию выживания распределения хи-квадрат;
+   - Метод выделения главных компонент (**PCA**):
+     * Спектральное разложение вещественной симметричной матрицы $R$ через циклический метод Якоби со сдвигами на 100% safe Rust без внешних зависимостей (`jacobi_eigen_symmetric`);
+     * Каноническое правило Кайзера (Kaiser criterion: отбор компонент с собственными значениями $\lambda \ge 1.0$) либо фиксированное число факторов;
+     * Каноническая ориентация знаков факторных нагрузок для положительной доминантности;
+     * Расчет факторных нагрузок $l_{ik} = \sqrt{\lambda_k} \cdot v_{ik}$;
+     * Общности (*Communalities*): начальные $1.0$ для всех переменных, выделенные $h_i^2 = \sum_{k=1}^m l_{ik}^2$;
+     * Полная объясненная дисперсия (*Total Variance Explained*): начальные собственные значения, процент дисперсии, кумулятивный процент и суммы квадратов нагрузок извлечения;
+     * Матрица компонент (*Component Matrix*);
+   - **Golden Oracle:** Тесты `factor_tests.rs` со сверкой собственных значений, дисперсий, факторных нагрузок, KMO и критерия Бартлетта против Python `scipy.linalg.eigh` и `factor_analyzer` с аналитической точностью $\le 10^{-6}$;
+   - Защита **Never Crash**: безопасная обработка сингулярных матриц, малого $n < 2$, вырожденных нулевых дисперсий и пропусков.
+
+2. **Командная шина и синтаксис L5 (`statcraft_syntax::commands::factor_cmd`):**
+   - Типизированная команда `FactorCommand` (`stat.factor`) со спецификацией параметров `specs()` для внешних ИИ-агентов;
+   - Генератор и парсер канонического синтаксиса IBM SPSS Statistics:
+     ```text
+     FACTOR
+       /VARIABLES q1 q2 q3 q4 q5
+       /MISSING LISTWISE
+       /ANALYSIS q1 q2 q3 q4 q5
+       /PRINT INITIAL EXTRACTION KMO
+       /CRITERIA MINEIGEN(1)
+       /EXTRACTION PC
+       /ROTATION NOROTATE.
+     ```
+   - Полная поддержка `Undo` / `Redo`.
+
+3. **Графический интерфейс на DialogKit L6 (`statcraft_app::dialogs::factor_dialog`):**
+   - Центрированный диалог $560 \times 430$ px на базе `DialogShell::standard`;
+   - Двухпанельный выбор `VariablePicker` со шкалами измерения и векторными кнопками переноса `TransferButton` (`->` / `<-`);
+   - Список `Variables:` (минимум 2 переменные для активности кнопки `[ OK ]`);
+   - Боковая панель `SubdialogSidebar` с вызовами настроек:
+     * `[ Descriptives... ]`: модальный поддиалог с чекбоксом `[x] KMO and Bartlett's test of sphericity`;
+     * `[ Extraction... ]`: модальный поддиалог выбора метода (PCA) и критерия отсечения факторов (Eigenvalues over 1.0 / Fixed number of factors);
+     * Нижний ряд кнопок `SubdialogActionBar` (`[ Continue ] [ Cancel ] [ Help ]`);
+   - Нижний ряд действий `DialogActionBar` (`[ OK ] [ Paste ] [ Reset ] [ Cancel ] [ Help ]`).
+
+4. **Сводные таблицы в Output Viewer (`tables_factor.rs`):**
+   - Таблица **KMO and Bartlett's Test:** Kaiser-Meyer-Olkin Measure of Sampling Adequacy, Bartlett's Test of Sphericity (Approx. Chi-Square, df, Sig.);
+   - Таблица **Communalities:** Variable, Initial (1.000), Extraction;
+   - Таблица **Total Variance Explained:** Component, Initial Eigenvalues (Total, % of Variance, Cumulative %), Extraction Sums of Squared Loadings;
+   - Таблица **Component Matrix:** переменные $\times$ компоненты;
+   - Экспорт таблиц в TSV (буфер обмена для Excel/Sheets) и навигация в Outline Tree.
+
+5. **Реактивность, меню и статусная строка:**
+   - Активирован пункт главного меню `Analyze -> Dimension Reduction -> Factor...` (`Анализ -> Снижение размерности -> Факторный анализ...`);
+   - Журналирование синтаксиса в Output Viewer (Log);
+   - Уведомление в строке состояния (`Factor analysis computed for <n> case(s), <m> component(s) extracted`).
+
+6. **Контроль качества (Definition of Done):**
+   - Полный CI-пайплайн `cargo run -p xtask -j 1 -- ci` — 100% OK;
+   - Соблюдение дифференцированных лимитов строк (`file-guard` $\le 500$ строк на функциональный модуль);
+   - Соблюдение стандартов дизайна (`design-guard` — 100% DialogKit);
+   - Проверка архитектурных слоев `layers` и паритета `parity` (38 документированных процедур) — 0 нарушений;
+   - Полная синхронная локализация без хардкода строк (`locales/en.ftl`, `locales/ru.ftl`);
+   - Компиляция `cargo clippy --workspace --all-targets -j 1 -- -D warnings` — 0 предупреждений;
+   - Сборка и развертывание бинарника в `C:\StatCraft\statcraft_app.exe`.

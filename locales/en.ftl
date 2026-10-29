@@ -842,3 +842,44 @@ output-reliability-col-corr-r = Corrected Item-Total Correlation
 output-reliability-col-alpha-if-del = Cronbach's Alpha if Item Deleted
 output-reliability-scale-stats-title = Scale Statistics
 output-reliability-executed = Reliability analysis computed for {$scale} ({$count} item(s))
+
+# Factor Analysis Dialog
+dialog-factor-title = Factor Analysis
+dialog-factor-descriptives-title = Factor Analysis: Descriptives
+dialog-factor-correlation-matrix-group = Correlation Matrix
+dialog-factor-kmo-and-bartlett = KMO and Bartlett's test of sphericity
+dialog-factor-extraction-title = Factor Analysis: Extraction
+dialog-factor-method-group = Method
+dialog-factor-method-pca = Principal components
+dialog-factor-extract-group = Extract
+dialog-factor-based-on-eigen = Based on eigenvalue >
+dialog-factor-number-of-factors = Fixed number of factors:
+dialog-factor-variables-label = Variables:
+dialog-factor-descriptives-btn = Descriptives...
+dialog-factor-extraction-btn = Extraction...
+
+# Factor Analysis Output
+output-factor-title = Factor Analysis
+output-factor-table-title = Factor Analysis Results
+output-factor-kmo-title = KMO and Bartlett's Test
+output-factor-kmo-measure-col = Kaiser-Meyer-Olkin Measure of Sampling Adequacy.
+output-factor-value-col = Value
+output-factor-kmo-stat = Kaiser-Meyer-Olkin Measure of Sampling Adequacy
+output-factor-bartlett-approx-chi = Bartlett's Test Approx. Chi-Square
+output-factor-bartlett-df = df
+output-factor-bartlett-sig = Sig.
+output-factor-communalities-title = Communalities
+output-factor-variable-col = Variable
+output-factor-initial-col = Initial
+output-factor-extraction-col = Extraction
+output-factor-total-variance-title = Total Variance Explained
+output-factor-component-col = Component
+output-factor-initial-total-col = Initial Total
+output-factor-initial-pct-col = % of Variance
+output-factor-initial-cum-col = Cumulative %
+output-factor-extract-total-col = Extraction Total
+output-factor-extract-pct-col = % of Variance
+output-factor-extract-cum-col = Cumulative %
+output-factor-component-matrix-title = Component Matrix
+output-factor-comp-col = Component
+output-factor-executed = Factor analysis computed for {$count} case(s), {$factors} component(s) extracted

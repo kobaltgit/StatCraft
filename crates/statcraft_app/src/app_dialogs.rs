@@ -1,11 +1,11 @@
 use super::app::{StatCraftApp, StatusMessage};
 use super::dialogs::{
     render_anova_oneway_dialog, render_correlations_dialog, render_crosstabs_dialog,
-    render_descriptives_dialog, render_frequencies_dialog, render_kruskal_wallis_dialog,
-    render_linear_regression_dialog, render_nonparam_related_dialog,
+    render_descriptives_dialog, render_factor_dialog, render_frequencies_dialog,
+    render_kruskal_wallis_dialog, render_linear_regression_dialog, render_nonparam_related_dialog,
     render_nonparam_twosample_dialog, render_reliability_dialog, render_ttest_indep_dialog,
     render_ttest_onesample_dialog, render_ttest_paired_dialog, CorrelationsDialogAction,
-    CrosstabsDialogAction, DescriptivesDialogAction, FrequenciesDialogAction,
+    CrosstabsDialogAction, DescriptivesDialogAction, FactorDialogAction, FrequenciesDialogAction,
     IndependentSamplesTTestDialogAction, KruskalWallisDialogAction, LinearRegressionDialogAction,
     NonparamRelatedDialogAction, NonparamTwoSampleDialogAction, OneSampleTTestDialogAction,
     OneWayAnovaDialogAction, PairedSamplesTTestDialogAction, ReliabilityDialogAction,
@@ -712,7 +712,56 @@ impl StatCraftApp {
             ReliabilityDialogAction::None => {}
         }
 
-        // 14. Data and Variable Management Dialogs
+        // 14. Factor Analysis Dialog
+        let factor_action =
+            render_factor_dialog(ctx, self.dataset.as_ref(), &mut self.factor_dialog_state);
+
+        match factor_action {
+            FactorDialogAction::Run { variables, options } => {
+                let params = json!({
+                    "variables": variables,
+                    "extraction": match options.extraction {
+                        statcraft_algo::FactorExtractionMethod::PC => "pc",
+                    },
+                    "mineigen": match options.criteria {
+                        statcraft_algo::FactorExtractionCriteria::Mineigen(val) => Some(val),
+                        _ => None,
+                    },
+                    "nfactors": match options.criteria {
+                        statcraft_algo::FactorExtractionCriteria::Factors(k) => Some(k),
+                        _ => None,
+                    },
+                    "kmo_bartlett": options.kmo_bartlett,
+                });
+                match self
+                    .command_bus
+                    .execute("stat.factor", &mut self.dataset, params)
+                {
+                    Ok(result_value) => {
+                        if let Ok(result) = serde_json::from_value::<
+                            statcraft_algo::FactorAnalysisResult,
+                        >(result_value)
+                        {
+                            let count = result.n_cases;
+                            let factors = result.n_components_extracted;
+                            let var_names = result.variables.clone();
+                            self.output_view_state.add_factor(result, var_names);
+                            self.status_message = StatusMessage::FactorExecuted { count, factors };
+                        }
+                    }
+                    Err(e) => {
+                        self.status_message = StatusMessage::Error(e.to_string());
+                    }
+                }
+            }
+            FactorDialogAction::Paste { variables, options } => {
+                let sps = statcraft_syntax::commands::FactorCommand::to_sps(&variables, &options);
+                self.output_view_state.add_entry(t!("output-log"), sps);
+            }
+            FactorDialogAction::None => {}
+        }
+
+        // 15. Data and Variable Management Dialogs
         self.handle_data_dialogs(ctx);
     }
 }

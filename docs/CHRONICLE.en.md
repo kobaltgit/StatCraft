@@ -1228,8 +1228,6 @@ Implemented one of the foundational predictive modeling frameworks in IBM SPSS S
    - Compiler linter `cargo clippy --workspace --all-targets -j 1 -- -D warnings` — 0 warnings;
    - Release binary built and deployed to `C:\StatCraft\statcraft_app.exe`.
 
-
-
 ---
 
 ### Phase 8.5: Split File Procedure (`SPLIT FILE`)
@@ -1329,6 +1327,76 @@ Implemented one of the most critical analytical mechanisms of IBM SPSS Statistic
 
 ---
 
+### Phase 11.1: Factor Analysis / Principal Component Analysis (Factor Analysis / PCA: `FACTOR`)
+*Time: October 29, 2026, 18:25 (~35 minutes)*
+
+Implemented the fundamental dimension reduction procedure of IBM SPSS Statistics — **Factor Analysis / Principal Component Analysis** (`Analyze -> Dimension Reduction -> Factor...`), complementing Reliability Analysis (Cronbach's Alpha) for comprehensive psychometric and multivariate validation:
+
+1. **Mathematical Engine L2 (`statcraft_algo::factor`, `factor_types`, `factor_tests`):**
+   - Listwise missing case deletion and observation weighting (`row_weight`) support;
+   - Computation of pairwise Pearson correlations and weighted correlation matrix $R$ ($p \times p$);
+   - Factorability and sampling adequacy diagnostics:
+     * **Kaiser-Meyer-Olkin (KMO) Measure of Sampling Adequacy**: anti-image partial correlation calculation $a_{ij} = -s_{ij} / \sqrt{s_{ii} s_{jj}}$ via numerical inversion of $S = R^{-1}$ and $\text{KMO} = \frac{\sum_{i \ne j} r_{ij}^2}{\sum_{i \ne j} r_{ij}^2 + \sum_{i \ne j} a_{ij}^2}$;
+     * **Bartlett's Test of Sphericity**: $\chi^2 = -(n - 1 - (2p + 5)/6) \ln |R|$ at $df = p(p - 1)/2$ with exact $p$-value from Chi-square survival function;
+   - Principal Component Analysis (**PCA**) Extraction:
+     * Spectral decomposition of real symmetric matrix $R$ via cyclic Jacobi rotations on 100% safe Rust without external linear algebra dependencies (`jacobi_eigen_symmetric`);
+     * Kaiser criterion ($\lambda \ge 1.0$) or fixed factor count extraction;
+     * Deterministic sign convention for positive dominant loadings;
+     * Factor loadings $l_{ik} = \sqrt{\lambda_k} \cdot v_{ik}$;
+     * Communalities (*Communalities*): initial 1.000 for PCA, extraction $h_i^2 = \sum_{k=1}^m l_{ik}^2$;
+     * Total Variance Explained (*Total Variance Explained*): initial eigenvalues, % of variance, cumulative %, and extraction sums of squared loadings;
+     * Component Matrix (*Component Matrix*);
+   - **Golden Oracle:** `factor_tests.rs` unit tests verified against Python `scipy.linalg.eigh` and `factor_analyzer` with precision $\le 10^{-6}$;
+   - **Never Crash** protection against singular matrices, $n < 2$, zero-variance variables, and missing cases.
+
+2. **Command Bus & Syntax L5 (`statcraft_syntax::commands::factor_cmd`):**
+   - Typed engine command `FactorCommand` (`stat.factor`) with JSON parameter specs for external AI agents;
+   - Canonical IBM SPSS Statistics syntax generator and parser:
+     ```text
+     FACTOR
+       /VARIABLES q1 q2 q3 q4 q5
+       /MISSING LISTWISE
+       /ANALYSIS q1 q2 q3 q4 q5
+       /PRINT INITIAL EXTRACTION KMO
+       /CRITERIA MINEIGEN(1)
+       /EXTRACTION PC
+       /ROTATION NOROTATE.
+     ```
+   - Full `Undo` / `Redo` lifecycle support.
+
+3. **DialogKit Desktop User Interface L6 (`statcraft_app::dialogs::factor_dialog`):**
+   - Centered canonical modal dialog ($560 \times 430$ px, `DialogShell::standard`);
+   - Two-panel `VariablePicker` with measurement scale icons and vector transfer buttons `TransferButton` (`->` / `<-`);
+   - `Variables:` target list (requires at least 2 items to enable `[ OK ]`);
+   - Right sidebar `SubdialogSidebar` with modal configuration triggers:
+     * `[ Descriptives... ]`: subdialog with `[x] KMO and Bartlett's test of sphericity`;
+     * `[ Extraction... ]`: subdialog with PCA method and factor retention criteria (Eigenvalues over 1.0 / Fixed number of factors);
+     * Action row `SubdialogActionBar` (`[ Continue ] [ Cancel ] [ Help ]`);
+   - Canonical bottom action bar `DialogActionBar` (`[ OK ] [ Paste ] [ Reset ] [ Cancel ] [ Help ]`).
+
+4. **Summary Pivot Tables in Output Viewer (`tables_factor.rs`):**
+   - **KMO and Bartlett's Test:** Kaiser-Meyer-Olkin Measure of Sampling Adequacy, Bartlett's Test of Sphericity (Approx. Chi-Square, df, Sig.);
+   - **Communalities:** Variable, Initial (1.000), Extraction;
+   - **Total Variance Explained:** Component, Initial Eigenvalues (Total, % of Variance, Cumulative %), Extraction Sums of Squared Loadings;
+   - **Component Matrix:** variables $\times$ components;
+   - TSV clipboard export and Outline Tree integration.
+
+5. **Reactivity, Menu & Status Bar:**
+   - Activated main menu item `Analyze -> Dimension Reduction -> Factor...`;
+   - Canonical syntax automatically recorded to Output Viewer (Log);
+   - Status bar feedback notification (`Factor analysis computed for <n> case(s), <m> component(s) extracted`).
+
+6. **Quality Control & Definition of Done:**
+   - Full automated CI quality gate passed (`cargo run -p xtask -j 1 -- ci` — 100% OK);
+   - Strict adherence to file size limits (`file-guard` $\le 500$ lines on leaf modules);
+   - Strict adherence to DialogKit standards (`design-guard` — 100% compliant);
+   - Architectural and parity linters (`layers`, `parity` — 38 documented procedures) reporting 0 violations;
+   - Synchronous localization without string hardcoding (`locales/en.ftl`, `locales/ru.ftl`);
+   - Compiler linter `cargo clippy --workspace --all-targets -j 1 -- -D warnings` — 0 warnings;
+   - Release binary built and deployed to `C:\StatCraft\statcraft_app.exe`.
+
+---
+
 ### Phase 9.1: Multiple Linear Regression (`REGRESSION`)
 *Time: October 29, 2026, 16:30 (~45 minutes)*
 
@@ -1389,6 +1457,76 @@ Implemented one of the foundational predictive modeling frameworks in IBM SPSS S
    - Strict adherence to file size limits (`file-guard` $\le 500$ lines on leaf modules, test fixtures modularized in `output_viewer_invariants/fixtures.rs`);
    - Architectural linters (`design-guard`, `layers`, `parity` — 36 documented procedures) reporting 0 violations;
    - Synchronous trilingual localization across all supported languages (`locales/en.ftl`, `locales/ru.ftl`, `C:\StatCraft\locales\fr.ftl`);
+   - Compiler linter `cargo clippy --workspace --all-targets -j 1 -- -D warnings` — 0 warnings;
+   - Release binary built and deployed to `C:\StatCraft\statcraft_app.exe`.
+
+---
+
+### Phase 11.1: Factor Analysis / Principal Component Analysis (Factor Analysis / PCA: `FACTOR`)
+*Time: October 29, 2026, 18:25 (~35 minutes)*
+
+Implemented the fundamental dimension reduction procedure of IBM SPSS Statistics — **Factor Analysis / Principal Component Analysis** (`Analyze -> Dimension Reduction -> Factor...`), complementing Reliability Analysis (Cronbach's Alpha) for comprehensive psychometric and multivariate validation:
+
+1. **Mathematical Engine L2 (`statcraft_algo::factor`, `factor_types`, `factor_tests`):**
+   - Listwise missing case deletion and observation weighting (`row_weight`) support;
+   - Computation of pairwise Pearson correlations and weighted correlation matrix $R$ ($p \times p$);
+   - Factorability and sampling adequacy diagnostics:
+     * **Kaiser-Meyer-Olkin (KMO) Measure of Sampling Adequacy**: anti-image partial correlation calculation $a_{ij} = -s_{ij} / \sqrt{s_{ii} s_{jj}}$ via numerical inversion of $S = R^{-1}$ and $\text{KMO} = \frac{\sum_{i \ne j} r_{ij}^2}{\sum_{i \ne j} r_{ij}^2 + \sum_{i \ne j} a_{ij}^2}$;
+     * **Bartlett's Test of Sphericity**: $\chi^2 = -(n - 1 - (2p + 5)/6) \ln |R|$ at $df = p(p - 1)/2$ with exact $p$-value from Chi-square survival function;
+   - Principal Component Analysis (**PCA**) Extraction:
+     * Spectral decomposition of real symmetric matrix $R$ via cyclic Jacobi rotations on 100% safe Rust without external linear algebra dependencies (`jacobi_eigen_symmetric`);
+     * Kaiser criterion ($\lambda \ge 1.0$) or fixed factor count extraction;
+     * Deterministic sign convention for positive dominant loadings;
+     * Factor loadings $l_{ik} = \sqrt{\lambda_k} \cdot v_{ik}$;
+     * Communalities (*Communalities*): initial 1.000 for PCA, extraction $h_i^2 = \sum_{k=1}^m l_{ik}^2$;
+     * Total Variance Explained (*Total Variance Explained*): initial eigenvalues, % of variance, cumulative %, and extraction sums of squared loadings;
+     * Component Matrix (*Component Matrix*);
+   - **Golden Oracle:** `factor_tests.rs` unit tests verified against Python `scipy.linalg.eigh` and `factor_analyzer` with precision $\le 10^{-6}$;
+   - **Never Crash** protection against singular matrices, $n < 2$, zero-variance variables, and missing cases.
+
+2. **Command Bus & Syntax L5 (`statcraft_syntax::commands::factor_cmd`):**
+   - Typed engine command `FactorCommand` (`stat.factor`) with JSON parameter specs for external AI agents;
+   - Canonical IBM SPSS Statistics syntax generator and parser:
+     ```text
+     FACTOR
+       /VARIABLES q1 q2 q3 q4 q5
+       /MISSING LISTWISE
+       /ANALYSIS q1 q2 q3 q4 q5
+       /PRINT INITIAL EXTRACTION KMO
+       /CRITERIA MINEIGEN(1)
+       /EXTRACTION PC
+       /ROTATION NOROTATE.
+     ```
+   - Full `Undo` / `Redo` lifecycle support.
+
+3. **DialogKit Desktop User Interface L6 (`statcraft_app::dialogs::factor_dialog`):**
+   - Centered canonical modal dialog ($560 \times 430$ px, `DialogShell::standard`);
+   - Two-panel `VariablePicker` with measurement scale icons and vector transfer buttons `TransferButton` (`->` / `<-`);
+   - `Variables:` target list (requires at least 2 items to enable `[ OK ]`);
+   - Right sidebar `SubdialogSidebar` with modal configuration triggers:
+     * `[ Descriptives... ]`: subdialog with `[x] KMO and Bartlett's test of sphericity`;
+     * `[ Extraction... ]`: subdialog with PCA method and factor retention criteria (Eigenvalues over 1.0 / Fixed number of factors);
+     * Action row `SubdialogActionBar` (`[ Continue ] [ Cancel ] [ Help ]`);
+   - Canonical bottom action bar `DialogActionBar` (`[ OK ] [ Paste ] [ Reset ] [ Cancel ] [ Help ]`).
+
+4. **Summary Pivot Tables in Output Viewer (`tables_factor.rs`):**
+   - **KMO and Bartlett's Test:** Kaiser-Meyer-Olkin Measure of Sampling Adequacy, Bartlett's Test of Sphericity (Approx. Chi-Square, df, Sig.);
+   - **Communalities:** Variable, Initial (1.000), Extraction;
+   - **Total Variance Explained:** Component, Initial Eigenvalues (Total, % of Variance, Cumulative %), Extraction Sums of Squared Loadings;
+   - **Component Matrix:** variables $\times$ components;
+   - TSV clipboard export and Outline Tree integration.
+
+5. **Reactivity, Menu & Status Bar:**
+   - Activated main menu item `Analyze -> Dimension Reduction -> Factor...`;
+   - Canonical syntax automatically recorded to Output Viewer (Log);
+   - Status bar feedback notification (`Factor analysis computed for <n> case(s), <m> component(s) extracted`).
+
+6. **Quality Control & Definition of Done:**
+   - Full automated CI quality gate passed (`cargo run -p xtask -j 1 -- ci` — 100% OK);
+   - Strict adherence to file size limits (`file-guard` $\le 500$ lines on leaf modules);
+   - Strict adherence to DialogKit standards (`design-guard` — 100% compliant);
+   - Architectural and parity linters (`layers`, `parity` — 38 documented procedures) reporting 0 violations;
+   - Synchronous localization without string hardcoding (`locales/en.ftl`, `locales/ru.ftl`);
    - Compiler linter `cargo clippy --workspace --all-targets -j 1 -- -D warnings` — 0 warnings;
    - Release binary built and deployed to `C:\StatCraft\statcraft_app.exe`.
 
@@ -1465,5 +1603,75 @@ Implemented the fundamental psychometric, survey, and applied statistical measur
    - Strict adherence to DialogKit standards (`design-guard` — 100% compliant);
    - Architectural and parity linters (`layers`, `parity` — 37 documented procedures) reporting 0 violations;
    - Synchronous trilingual localization across all supported languages (`locales/en.ftl`, `locales/ru.ftl`, `C:\StatCraft\locales\fr.ftl`);
+   - Compiler linter `cargo clippy --workspace --all-targets -j 1 -- -D warnings` — 0 warnings;
+   - Release binary built and deployed to `C:\StatCraft\statcraft_app.exe`.
+
+---
+
+### Phase 11.1: Factor Analysis / Principal Component Analysis (Factor Analysis / PCA: `FACTOR`)
+*Time: October 29, 2026, 18:25 (~35 minutes)*
+
+Implemented the fundamental dimension reduction procedure of IBM SPSS Statistics — **Factor Analysis / Principal Component Analysis** (`Analyze -> Dimension Reduction -> Factor...`), complementing Reliability Analysis (Cronbach's Alpha) for comprehensive psychometric and multivariate validation:
+
+1. **Mathematical Engine L2 (`statcraft_algo::factor`, `factor_types`, `factor_tests`):**
+   - Listwise missing case deletion and observation weighting (`row_weight`) support;
+   - Computation of pairwise Pearson correlations and weighted correlation matrix $R$ ($p \times p$);
+   - Factorability and sampling adequacy diagnostics:
+     * **Kaiser-Meyer-Olkin (KMO) Measure of Sampling Adequacy**: anti-image partial correlation calculation $a_{ij} = -s_{ij} / \sqrt{s_{ii} s_{jj}}$ via numerical inversion of $S = R^{-1}$ and $\text{KMO} = \frac{\sum_{i \ne j} r_{ij}^2}{\sum_{i \ne j} r_{ij}^2 + \sum_{i \ne j} a_{ij}^2}$;
+     * **Bartlett's Test of Sphericity**: $\chi^2 = -(n - 1 - (2p + 5)/6) \ln |R|$ at $df = p(p - 1)/2$ with exact $p$-value from Chi-square survival function;
+   - Principal Component Analysis (**PCA**) Extraction:
+     * Spectral decomposition of real symmetric matrix $R$ via cyclic Jacobi rotations on 100% safe Rust without external linear algebra dependencies (`jacobi_eigen_symmetric`);
+     * Kaiser criterion ($\lambda \ge 1.0$) or fixed factor count extraction;
+     * Deterministic sign convention for positive dominant loadings;
+     * Factor loadings $l_{ik} = \sqrt{\lambda_k} \cdot v_{ik}$;
+     * Communalities (*Communalities*): initial 1.000 for PCA, extraction $h_i^2 = \sum_{k=1}^m l_{ik}^2$;
+     * Total Variance Explained (*Total Variance Explained*): initial eigenvalues, % of variance, cumulative %, and extraction sums of squared loadings;
+     * Component Matrix (*Component Matrix*);
+   - **Golden Oracle:** `factor_tests.rs` unit tests verified against Python `scipy.linalg.eigh` and `factor_analyzer` with precision $\le 10^{-6}$;
+   - **Never Crash** protection against singular matrices, $n < 2$, zero-variance variables, and missing cases.
+
+2. **Command Bus & Syntax L5 (`statcraft_syntax::commands::factor_cmd`):**
+   - Typed engine command `FactorCommand` (`stat.factor`) with JSON parameter specs for external AI agents;
+   - Canonical IBM SPSS Statistics syntax generator and parser:
+     ```text
+     FACTOR
+       /VARIABLES q1 q2 q3 q4 q5
+       /MISSING LISTWISE
+       /ANALYSIS q1 q2 q3 q4 q5
+       /PRINT INITIAL EXTRACTION KMO
+       /CRITERIA MINEIGEN(1)
+       /EXTRACTION PC
+       /ROTATION NOROTATE.
+     ```
+   - Full `Undo` / `Redo` lifecycle support.
+
+3. **DialogKit Desktop User Interface L6 (`statcraft_app::dialogs::factor_dialog`):**
+   - Centered canonical modal dialog ($560 \times 430$ px, `DialogShell::standard`);
+   - Two-panel `VariablePicker` with measurement scale icons and vector transfer buttons `TransferButton` (`->` / `<-`);
+   - `Variables:` target list (requires at least 2 items to enable `[ OK ]`);
+   - Right sidebar `SubdialogSidebar` with modal configuration triggers:
+     * `[ Descriptives... ]`: subdialog with `[x] KMO and Bartlett's test of sphericity`;
+     * `[ Extraction... ]`: subdialog with PCA method and factor retention criteria (Eigenvalues over 1.0 / Fixed number of factors);
+     * Action row `SubdialogActionBar` (`[ Continue ] [ Cancel ] [ Help ]`);
+   - Canonical bottom action bar `DialogActionBar` (`[ OK ] [ Paste ] [ Reset ] [ Cancel ] [ Help ]`).
+
+4. **Summary Pivot Tables in Output Viewer (`tables_factor.rs`):**
+   - **KMO and Bartlett's Test:** Kaiser-Meyer-Olkin Measure of Sampling Adequacy, Bartlett's Test of Sphericity (Approx. Chi-Square, df, Sig.);
+   - **Communalities:** Variable, Initial (1.000), Extraction;
+   - **Total Variance Explained:** Component, Initial Eigenvalues (Total, % of Variance, Cumulative %), Extraction Sums of Squared Loadings;
+   - **Component Matrix:** variables $\times$ components;
+   - TSV clipboard export and Outline Tree integration.
+
+5. **Reactivity, Menu & Status Bar:**
+   - Activated main menu item `Analyze -> Dimension Reduction -> Factor...`;
+   - Canonical syntax automatically recorded to Output Viewer (Log);
+   - Status bar feedback notification (`Factor analysis computed for <n> case(s), <m> component(s) extracted`).
+
+6. **Quality Control & Definition of Done:**
+   - Full automated CI quality gate passed (`cargo run -p xtask -j 1 -- ci` — 100% OK);
+   - Strict adherence to file size limits (`file-guard` $\le 500$ lines on leaf modules);
+   - Strict adherence to DialogKit standards (`design-guard` — 100% compliant);
+   - Architectural and parity linters (`layers`, `parity` — 38 documented procedures) reporting 0 violations;
+   - Synchronous localization without string hardcoding (`locales/en.ftl`, `locales/ru.ftl`);
    - Compiler linter `cargo clippy --workspace --all-targets -j 1 -- -D warnings` — 0 warnings;
    - Release binary built and deployed to `C:\StatCraft\statcraft_app.exe`.

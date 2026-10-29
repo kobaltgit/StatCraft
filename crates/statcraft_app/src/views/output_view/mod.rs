@@ -1,3 +1,4 @@
+pub mod blocks;
 pub mod builder;
 pub mod model;
 pub mod outline;
@@ -6,6 +7,7 @@ pub mod tables_common;
 pub mod tables_correlations;
 pub mod tables_crosstabs;
 pub mod tables_descriptives;
+pub mod tables_factor;
 pub mod tables_frequencies;
 pub mod tables_kruskal;
 pub mod tables_nonparam;
@@ -16,6 +18,7 @@ pub mod tables_ttest_indep;
 pub mod tables_ttest_onesample;
 pub mod tables_ttest_paired;
 
+pub use blocks::{render_item_context_menu, render_log_block, render_notes_block};
 pub use model::{
     OutputItem, OutputItemKind, OutputNotes, OutputProcedure, OutputViewerState, SelectedTarget,
 };
@@ -24,6 +27,7 @@ pub use tables_anova::{anova_to_tsv, render_spss_oneway_anova_tables};
 pub use tables_correlations::{correlations_to_tsv, render_spss_correlations_tables};
 pub use tables_crosstabs::{crosstabs_to_tsv, render_crosstabs_item};
 pub use tables_descriptives::{descriptives_to_tsv, render_spss_descriptives_pivot_table};
+pub use tables_factor::{factor_to_tsv, render_spss_factor};
 pub use tables_frequencies::{frequencies_to_tsv, render_spss_frequencies_tables};
 pub use tables_kruskal::{kruskal_wallis_to_tsv, render_spss_kruskal_wallis_tables};
 pub use tables_nonparam::{mann_whitney_to_tsv, render_spss_mann_whitney_tables};
@@ -59,6 +63,7 @@ pub fn extract_item_tsv(kind: &OutputItemKind) -> Option<String> {
         OutputItemKind::TwoRelatedSamples(results) => Some(related_samples_to_tsv(results)),
         OutputItemKind::LinearRegression(res) => Some(regression_to_tsv(res)),
         OutputItemKind::Reliability(res) => Some(reliability_to_tsv(res)),
+        OutputItemKind::Factor(res) => Some(factor_to_tsv(res)),
         _ => None,
     }
 }
@@ -292,6 +297,9 @@ pub fn render_output_view(ui: &mut Ui, state: &mut OutputViewerState) {
                                     OutputItemKind::Reliability(res) => {
                                         render_spss_reliability(ui, res);
                                     }
+                                    OutputItemKind::Factor(res) => {
+                                        render_spss_factor(ui, res);
+                                    }
                                     OutputItemKind::Warning(msg) => {
                                         ui.colored_label(Tokens::CAPTION_CLOSE_HOVER, msg);
                                     }
@@ -388,105 +396,4 @@ pub fn render_output_view(ui: &mut Ui, state: &mut OutputViewerState) {
                 });
             });
     });
-}
-
-fn render_log_block(ui: &mut Ui, sps: &str) {
-    let block_w = (ui.available_width() - 16.0).max(200.0);
-    let lines_count = sps.lines().count().max(1);
-    let height = (lines_count as f32 * 16.0 + 12.0).max(24.0);
-
-    let (rect, _) = ui.allocate_exact_size(vec2(block_w, height), Sense::hover());
-    ui.painter().rect_filled(rect, 2.0_f32, Tokens::BG_ROW_EVEN);
-    ui.painter()
-        .rect_stroke(rect, 2.0_f32, Stroke::new(1.0_f32, Tokens::BORDER));
-
-    let mut y = rect.min.y + 6.0;
-    for line in sps.lines() {
-        ui.painter().text(
-            pos2(rect.min.x + 8.0, y),
-            Align2::LEFT_TOP,
-            line,
-            FontId::monospace(11.0),
-            Tokens::TEXT_PRIMARY,
-        );
-        y += 16.0;
-    }
-}
-
-fn render_notes_block(ui: &mut Ui, notes: &OutputNotes) {
-    let row_h = 20.0_f32;
-    let label_w = 160.0_f32;
-    let val_w = 260.0_f32;
-    let _total_w = label_w + val_w;
-
-    let rows: [(&str, String); 4] = [
-        ("Output Created", notes.timestamp.clone()),
-        ("Active Dataset", notes.dataset_name.clone()),
-        ("N of Active Cases", notes.active_cases.to_string()),
-        ("N of Variables", notes.active_vars.to_string()),
-    ];
-
-    ui.vertical(|ui| {
-        for (label, val) in &rows {
-            ui.horizontal(|ui| {
-                ui.spacing_mut().item_spacing = vec2(0.0, 0.0);
-
-                let (r1, _) = ui.allocate_exact_size(vec2(label_w, row_h), Sense::hover());
-                ui.painter().rect_filled(r1, 0.0_f32, Tokens::BG_HEADER);
-                ui.painter()
-                    .rect_stroke(r1, 0.0_f32, Stroke::new(1.0_f32, Tokens::BORDER));
-                ui.painter().text(
-                    pos2(r1.min.x + 6.0, r1.center().y),
-                    Align2::LEFT_CENTER,
-                    *label,
-                    FontId::proportional(11.0),
-                    Tokens::TEXT_MUTED,
-                );
-
-                let (r2, _) = ui.allocate_exact_size(vec2(val_w, row_h), Sense::hover());
-                ui.painter().rect_filled(r2, 0.0_f32, Tokens::BG_ROW_EVEN);
-                ui.painter()
-                    .rect_stroke(r2, 0.0_f32, Stroke::new(1.0_f32, Tokens::BORDER));
-                ui.painter().text(
-                    pos2(r2.min.x + 6.0, r2.center().y),
-                    Align2::LEFT_CENTER,
-                    val,
-                    FontId::proportional(11.0),
-                    Tokens::TEXT_PRIMARY,
-                );
-            });
-        }
-    });
-}
-
-fn render_item_context_menu(
-    ui: &mut Ui,
-    item: &OutputItem,
-    maybe_tsv: &Option<String>,
-    is_copied: bool,
-    coords: (usize, usize),
-    item_copied: &mut Option<usize>,
-    item_to_delete: &mut Option<(usize, usize)>,
-) {
-    if let Some(tsv_data) = maybe_tsv {
-        let label = if is_copied {
-            t!("output-menu-copied")
-        } else {
-            t!("output-menu-copy-tsv")
-        };
-        if ui.button(label).clicked() {
-            ui.ctx().output_mut(|o| o.copied_text = tsv_data.clone());
-            *item_copied = Some(item.id);
-            ui.close_menu();
-        }
-    }
-    if ui.button(t!("output-menu-copy-text")).clicked() {
-        ui.ctx().output_mut(|o| o.copied_text = item.title());
-        ui.close_menu();
-    }
-    ui.separator();
-    if ui.button(t!("output-menu-delete")).clicked() {
-        *item_to_delete = Some(coords);
-        ui.close_menu();
-    }
 }

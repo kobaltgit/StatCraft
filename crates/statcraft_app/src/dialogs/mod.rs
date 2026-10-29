@@ -4,6 +4,7 @@ pub mod compute_dialog;
 pub mod correlations_dialog;
 pub mod crosstabs_dialog;
 pub mod descriptives_dialog;
+pub mod factor_dialog;
 pub mod frequencies_dialog;
 pub mod kruskal_define_range;
 pub mod kruskal_wallis_dialog;
@@ -42,6 +43,7 @@ pub use crosstabs_dialog::{
 pub use descriptives_dialog::{
     render_descriptives_dialog, DescriptivesDialogAction, DescriptivesDialogState,
 };
+pub use factor_dialog::{render_factor_dialog, FactorDialogAction, FactorDialogState};
 pub use frequencies_dialog::{
     render_frequencies_dialog, FrequenciesDialogAction, FrequenciesDialogState,
 };
