@@ -68,18 +68,40 @@ impl DescriptivesOptions {
 /// Computes descriptive statistics for a slice of floating point numbers.
 /// Any NaN or infinite values are treated as missing.
 pub fn compute_descriptives(var_name: &str, values: &[Option<f64>]) -> DescriptivesResult {
-    let mut valid_values: Vec<f64> = Vec::with_capacity(values.len());
+    compute_descriptives_weighted(var_name, values, &[])
+}
+
+/// Computes weighted descriptive statistics for a slice of floating point numbers and weights.
+/// If `weights` is empty, uniform unit weights (`1.0`) are assumed for all observations.
+/// Non-positive or non-finite weights cause the observation to be skipped.
+pub fn compute_descriptives_weighted(
+    var_name: &str,
+    values: &[Option<f64>],
+    weights: &[f64],
+) -> DescriptivesResult {
+    let mut valid_pairs: Vec<(f64, f64)> = Vec::with_capacity(values.len());
     let mut n_missing = 0_usize;
 
-    for v in values {
+    for (i, v) in values.iter().enumerate() {
+        let w = if weights.is_empty() {
+            1.0
+        } else {
+            weights.get(i).copied().unwrap_or(0.0)
+        };
+
+        if w <= 0.0 || !w.is_finite() {
+            continue;
+        }
+
+        let w_rounded = w.round() as usize;
+
         match v {
-            Some(x) if x.is_finite() => valid_values.push(*x),
-            _ => n_missing += 1,
+            Some(x) if x.is_finite() => valid_pairs.push((*x, w)),
+            _ => n_missing += w_rounded,
         }
     }
 
-    let n = valid_values.len();
-    if n == 0 {
+    if valid_pairs.is_empty() {
         return DescriptivesResult {
             variable: var_name.to_string(),
             n_valid: 0,
@@ -99,12 +121,15 @@ pub fn compute_descriptives(var_name: &str, values: &[Option<f64>]) -> Descripti
         };
     }
 
-    let sum: f64 = valid_values.iter().sum();
-    let mean = sum / (n as f64);
+    let w_sum: f64 = valid_pairs.iter().map(|&(_, w)| w).sum();
+    let n_valid = w_sum.round() as usize;
 
-    let mut min = valid_values[0];
-    let mut max = valid_values[0];
-    for &x in &valid_values[1..] {
+    let sum: f64 = valid_pairs.iter().map(|&(x, w)| w * x).sum();
+    let mean = sum / w_sum;
+
+    let mut min = valid_pairs[0].0;
+    let mut max = valid_pairs[0].0;
+    for &(x, _) in &valid_pairs[1..] {
         if x < min {
             min = x;
         }
@@ -114,18 +139,21 @@ pub fn compute_descriptives(var_name: &str, values: &[Option<f64>]) -> Descripti
     }
     let range = max - min;
 
-    let (variance, std_dev, se_mean) = if n >= 2 {
-        let sum_sq_diff: f64 = valid_values.iter().map(|&x| (x - mean).powi(2)).sum();
-        let var = sum_sq_diff / ((n - 1) as f64);
+    let (variance, std_dev, se_mean) = if w_sum >= 2.0 {
+        let sum_sq_diff: f64 = valid_pairs
+            .iter()
+            .map(|&(x, w)| w * (x - mean).powi(2))
+            .sum();
+        let var = sum_sq_diff / (w_sum - 1.0);
         let sd = var.sqrt();
-        let se = sd / (n as f64).sqrt();
+        let se = sd / w_sum.sqrt();
         (Some(var), Some(sd), Some(se))
     } else {
         (None, None, None)
     };
 
     // Skewness calculation (SPSS / SciPy bias=False formula)
-    let (skewness, se_skewness) = if n >= 3 {
+    let (skewness, se_skewness) = if w_sum >= 3.0 {
         let sd = match std_dev {
             Some(s) if s > 0.0 => s,
             _ => 0.0,
@@ -134,12 +162,15 @@ pub fn compute_descriptives(var_name: &str, values: &[Option<f64>]) -> Descripti
         if sd == 0.0 {
             (Some(0.0), None)
         } else {
-            let nf = n as f64;
-            let sum_cubed_diff: f64 = valid_values.iter().map(|&x| (x - mean).powi(3)).sum();
-            let factor = nf / ((nf - 1.0) * (nf - 2.0));
+            let sum_cubed_diff: f64 = valid_pairs
+                .iter()
+                .map(|&(x, w)| w * (x - mean).powi(3))
+                .sum();
+            let factor = w_sum / ((w_sum - 1.0) * (w_sum - 2.0));
             let skew = factor * (sum_cubed_diff / sd.powi(3));
 
-            let se_skew_var = (6.0 * nf * (nf - 1.0)) / ((nf - 2.0) * (nf + 1.0) * (nf + 3.0));
+            let se_skew_var =
+                (6.0 * w_sum * (w_sum - 1.0)) / ((w_sum - 2.0) * (w_sum + 1.0) * (w_sum + 3.0));
             let se_skew = if se_skew_var > 0.0 {
                 Some(se_skew_var.sqrt())
             } else {
@@ -153,7 +184,7 @@ pub fn compute_descriptives(var_name: &str, values: &[Option<f64>]) -> Descripti
     };
 
     // Kurtosis calculation (SPSS / SciPy Fisher excess kurtosis, bias=False)
-    let (kurtosis, se_kurtosis) = if n >= 4 {
+    let (kurtosis, se_kurtosis) = if w_sum >= 4.0 {
         let sd = match std_dev {
             Some(s) if s > 0.0 => s,
             _ => 0.0,
@@ -162,26 +193,25 @@ pub fn compute_descriptives(var_name: &str, values: &[Option<f64>]) -> Descripti
         if sd == 0.0 {
             (Some(0.0), None)
         } else {
-            let nf = n as f64;
-            let m2 = valid_values
+            let m2 = valid_pairs
                 .iter()
-                .map(|&x| (x - mean).powi(2))
+                .map(|&(x, w)| w * (x - mean).powi(2))
                 .sum::<f64>()
-                / nf;
-            let m4 = valid_values
+                / w_sum;
+            let m4 = valid_pairs
                 .iter()
-                .map(|&x| (x - mean).powi(4))
+                .map(|&(x, w)| w * (x - mean).powi(4))
                 .sum::<f64>()
-                / nf;
+                / w_sum;
 
             if m2 > 0.0 {
-                let term1 = (nf + 1.0) * (m4 / (m2 * m2));
-                let term2 = 3.0 * (nf - 1.0);
-                let multiplier = (nf - 1.0) / ((nf - 2.0) * (nf - 3.0));
+                let term1 = (w_sum + 1.0) * (m4 / (m2 * m2));
+                let term2 = 3.0 * (w_sum - 1.0);
+                let multiplier = (w_sum - 1.0) / ((w_sum - 2.0) * (w_sum - 3.0));
                 let kurt = multiplier * (term1 - term2);
 
                 let se_kurt = se_skewness.and_then(|se_s| {
-                    let se_kurt_factor = (nf * nf - 1.0) / ((nf - 3.0) * (nf + 5.0));
+                    let se_kurt_factor = (w_sum * w_sum - 1.0) / ((w_sum - 3.0) * (w_sum + 5.0));
                     if se_kurt_factor > 0.0 {
                         Some(2.0 * se_s * se_kurt_factor.sqrt())
                     } else {
@@ -200,7 +230,7 @@ pub fn compute_descriptives(var_name: &str, values: &[Option<f64>]) -> Descripti
 
     DescriptivesResult {
         variable: var_name.to_string(),
-        n_valid: n,
+        n_valid,
         n_missing,
         mean: Some(mean),
         se_mean,
@@ -332,5 +362,47 @@ mod tests {
         assert_eq!(result.max, Some(42.0));
         assert_eq!(result.variance, None); // N < 2
         assert_eq!(result.skewness, None); // N < 3
+    }
+
+    #[test]
+    fn test_descriptives_weighted() {
+        // [10.0, 20.0] with weights [1.0, 3.0]
+        // Equivalent sample: [10.0, 20.0, 20.0, 20.0]
+        // mean = (10 + 60) / 4 = 17.5
+        // variance = ((10-17.5)^2 + 3*(20-17.5)^2) / 3 = (56.25 + 18.75) / 3 = 75 / 3 = 25.0
+        let values = vec![Some(10.0), Some(20.0), Some(999.0), None];
+        let weights = vec![1.0, 3.0, 0.0, 2.0]; // 999.0 has weight 0.0 (skipped), None has weight 2.0 (missing)
+
+        let result = compute_descriptives_weighted("score", &values, &weights);
+
+        assert_eq!(result.variable, "score");
+        assert_eq!(result.n_valid, 4);
+        assert_eq!(result.n_missing, 2);
+
+        let epsilon = 1e-6;
+        let mean = result.mean.expect("Mean should be present");
+        assert!((mean - 17.5).abs() < epsilon, "mean error: {}", mean);
+
+        let var = result.variance.expect("Variance should be present");
+        assert!((var - 25.0).abs() < epsilon, "variance error: {}", var);
+
+        let std_dev = result.std_dev.expect("Std dev should be present");
+        assert!(
+            (std_dev - 5.0).abs() < epsilon,
+            "std_dev error: {}",
+            std_dev
+        );
+
+        let se_mean = result.se_mean.expect("SE mean should be present");
+        assert!(
+            (se_mean - 2.5).abs() < epsilon,
+            "se_mean error: {}",
+            se_mean
+        );
+
+        assert_eq!(result.min, Some(10.0));
+        assert_eq!(result.max, Some(20.0));
+        assert_eq!(result.range, Some(10.0));
+        assert_eq!(result.sum, Some(70.0));
     }
 }

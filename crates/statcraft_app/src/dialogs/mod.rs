@@ -22,6 +22,7 @@ pub mod ttest_onesample_dialog;
 pub mod ttest_paired_dialog;
 pub mod value_labels_dialog;
 pub mod variable_type_dialog;
+pub mod weight_cases_dialog;
 
 pub use anova_oneway_dialog::{
     render_anova_oneway_dialog, OneWayAnovaDialogAction, OneWayAnovaDialogState,
@@ -85,4 +86,7 @@ pub use value_labels_dialog::{
 };
 pub use variable_type_dialog::{
     render_variable_type_dialog, VariableTypeDialogAction, VariableTypeDialogState,
+};
+pub use weight_cases_dialog::{
+    render_weight_cases_dialog, WeightCasesDialogAction, WeightCasesDialogState,
 };

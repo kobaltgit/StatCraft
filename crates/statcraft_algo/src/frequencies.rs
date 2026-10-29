@@ -38,6 +38,7 @@ pub struct FrequencyInputItem {
     pub label: Option<String>,
     pub is_missing: bool,
     pub numeric_value: Option<f64>,
+    pub weight: f64,
 }
 
 /// Computes quartiles (Q1 = 25%, Q2 = 50% / Median, Q3 = 75%)
@@ -96,6 +97,7 @@ pub fn compute_frequencies(var_name: &str, values: &[Option<String>]) -> Frequen
                     label: None,
                     is_missing: false,
                     numeric_value: num,
+                    weight: 1.0,
                 });
             }
             _ => {
@@ -104,6 +106,7 @@ pub fn compute_frequencies(var_name: &str, values: &[Option<String>]) -> Frequen
                     label: None,
                     is_missing: true,
                     numeric_value: None,
+                    weight: 1.0,
                 });
             }
         }
@@ -117,32 +120,46 @@ pub fn compute_frequencies_detailed(
     var_name: &str,
     items: &[FrequencyInputItem],
 ) -> FrequencyResult {
-    let mut counts: BTreeMap<String, usize> = BTreeMap::new();
+    let mut counts: BTreeMap<String, f64> = BTreeMap::new();
     let mut labels: BTreeMap<String, Option<String>> = BTreeMap::new();
     let mut valid_numbers: Vec<f64> = Vec::new();
     let mut n_missing = 0_usize;
-    let mut n_valid = 0_usize;
+    let mut sum_valid_weight = 0.0_f64;
+    let mut sum_missing_weight = 0.0_f64;
+    let mut has_non_numeric = false;
 
     for item in items {
+        if item.weight <= 0.0 || item.weight.is_nan() {
+            continue;
+        }
+
+        let w_rounded = item.weight.round() as usize;
+
         if item.is_missing || item.value.trim().is_empty() {
-            n_missing += 1;
+            n_missing += w_rounded;
+            sum_missing_weight += item.weight;
         } else {
             let key = item.value.trim().to_string();
-            *counts.entry(key.clone()).or_insert(0) += 1;
+            *counts.entry(key.clone()).or_insert(0.0) += item.weight;
             labels.entry(key).or_insert_with(|| item.label.clone());
-            n_valid += 1;
+            sum_valid_weight += item.weight;
 
             if let Some(num) = item.numeric_value {
                 if num.is_finite() {
-                    valid_numbers.push(num);
+                    for _ in 0..w_rounded {
+                        valid_numbers.push(num);
+                    }
+                } else {
+                    has_non_numeric = true;
                 }
+            } else {
+                has_non_numeric = true;
             }
         }
     }
 
-    let n_total = items.len();
-    let n_total_f = n_total as f64;
-    let n_valid_f = n_valid as f64;
+    let n_valid = sum_valid_weight.round() as usize;
+    let sum_total_weight = sum_valid_weight + sum_missing_weight;
 
     // Sort categories: numerically if both are parseable as floats, otherwise lexically
     let mut sorted_keys: Vec<String> = counts.keys().cloned().collect();
@@ -155,17 +172,18 @@ pub fn compute_frequencies_detailed(
     let mut running_cum_percent = 0.0_f64;
 
     for key in sorted_keys {
-        let count = counts.get(&key).copied().unwrap_or(0);
+        let cat_weight = counts.get(&key).copied().unwrap_or(0.0);
+        let count = cat_weight.round() as usize;
         let label = labels.get(&key).cloned().flatten();
 
-        let percent = if n_total > 0 {
-            (count as f64 / n_total_f) * 100.0
+        let percent = if sum_total_weight > 0.0 {
+            (cat_weight / sum_total_weight) * 100.0
         } else {
             0.0
         };
 
-        let valid_percent = if n_valid > 0 {
-            Some((count as f64 / n_valid_f) * 100.0)
+        let valid_percent = if sum_valid_weight > 0.0 {
+            Some((cat_weight / sum_valid_weight) * 100.0)
         } else {
             None
         };
@@ -190,7 +208,7 @@ pub fn compute_frequencies_detailed(
 
     // Compute quartiles if all valid values are numeric
     valid_numbers.sort_by(|a, b| a.partial_cmp(b).unwrap_or(std::cmp::Ordering::Equal));
-    let quartiles = if !valid_numbers.is_empty() && valid_numbers.len() == n_valid {
+    let quartiles = if !valid_numbers.is_empty() && !has_non_numeric {
         compute_quartiles(&valid_numbers)
     } else {
         None
@@ -263,36 +281,42 @@ mod tests {
                 label: None,
                 is_missing: false,
                 numeric_value: Some(50.0),
+                weight: 1.0,
             },
             FrequencyInputItem {
                 value: "10".to_string(),
                 label: None,
                 is_missing: false,
                 numeric_value: Some(10.0),
+                weight: 1.0,
             },
             FrequencyInputItem {
                 value: "20".to_string(),
                 label: None,
                 is_missing: false,
                 numeric_value: Some(20.0),
+                weight: 1.0,
             },
             FrequencyInputItem {
                 value: "40".to_string(),
                 label: None,
                 is_missing: false,
                 numeric_value: Some(40.0),
+                weight: 1.0,
             },
             FrequencyInputItem {
                 value: "30".to_string(),
                 label: None,
                 is_missing: false,
                 numeric_value: Some(30.0),
+                weight: 1.0,
             },
             FrequencyInputItem {
                 value: "99".to_string(),
                 label: Some("Missing".to_string()),
                 is_missing: true,
                 numeric_value: Some(99.0),
+                weight: 1.0,
             },
         ];
 
@@ -318,5 +342,64 @@ mod tests {
         assert!((q1 - 15.0).abs() < 1e-6);
         assert!((q2 - 30.0).abs() < 1e-6);
         assert!((q3 - 45.0).abs() < 1e-6);
+    }
+
+    #[test]
+    fn test_frequency_weighted() {
+        let items = vec![
+            FrequencyInputItem {
+                value: "A".to_string(),
+                label: None,
+                is_missing: false,
+                numeric_value: None,
+                weight: 10.0,
+            },
+            FrequencyInputItem {
+                value: "B".to_string(),
+                label: None,
+                is_missing: false,
+                numeric_value: None,
+                weight: 20.0,
+            },
+            FrequencyInputItem {
+                value: "C".to_string(),
+                label: None,
+                is_missing: false,
+                numeric_value: None,
+                weight: 0.0, // Should be skipped (SPSS canon)
+            },
+            FrequencyInputItem {
+                value: "D".to_string(),
+                label: None,
+                is_missing: false,
+                numeric_value: None,
+                weight: -5.0, // Should be skipped (SPSS canon)
+            },
+            FrequencyInputItem {
+                value: "".to_string(),
+                label: None,
+                is_missing: true,
+                numeric_value: None,
+                weight: 5.0, // Missing with weight 5
+            },
+        ];
+
+        let result = compute_frequencies_detailed("group", &items);
+
+        assert_eq!(result.n_valid, 30);
+        assert_eq!(result.n_missing, 5);
+        assert_eq!(result.categories.len(), 2);
+
+        let cat_a = &result.categories[0];
+        assert_eq!(cat_a.value, "A");
+        assert_eq!(cat_a.count, 10);
+        assert!((cat_a.percent - (10.0 / 35.0 * 100.0)).abs() < 1e-6);
+        assert!((cat_a.valid_percent.unwrap_or(0.0) - (10.0 / 30.0 * 100.0)).abs() < 1e-6);
+
+        let cat_b = &result.categories[1];
+        assert_eq!(cat_b.value, "B");
+        assert_eq!(cat_b.count, 20);
+        assert!((cat_b.percent - (20.0 / 35.0 * 100.0)).abs() < 1e-6);
+        assert!((cat_b.valid_percent.unwrap_or(0.0) - (20.0 / 30.0 * 100.0)).abs() < 1e-6);
     }
 }

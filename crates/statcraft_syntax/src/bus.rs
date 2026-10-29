@@ -8,6 +8,7 @@ use crate::commands::{
     SelectCasesCommand, SetLabelCommand, SetMeasureCommand, SortCasesCommand, SplitFileCommand,
     VarAddCommand, VarDeleteCommand, VarRenameCommand, VarSetAlignCommand, VarSetDecimalsCommand,
     VarSetMissingValuesCommand, VarSetTypeCommand, VarSetValueLabelsCommand, VarSetWidthCommand,
+    WeightCasesCommand,
 };
 use serde::{Deserialize, Serialize};
 use serde_json::{json, Value};
@@ -74,6 +75,7 @@ impl CommandBus {
         bus.register(Box::new(SortCasesCommand::new()));
         bus.register(Box::new(SelectCasesCommand::new()));
         bus.register(Box::new(SplitFileCommand::new()));
+        bus.register(Box::new(WeightCasesCommand::new()));
         bus
     }
 

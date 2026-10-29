@@ -24,6 +24,7 @@
 | Data > Sort Cases | `data.sort_cases` | Done | Multi-column sort (A/D), SPSS sysmis rules, DialogKit dialog, Undo/Redo |
 | Data > Select Cases | `data.select_cases` | Done | Filter/Delete cases, filter_$ variable, relational & logical expression builder, slash across excluded rows, status bar indicator, Undo/Redo |
 | Data > Split File | `data.split_file` | Done | Segment analysis by sub-groups (Compare groups / Organize output), SPSS SPLIT FILE BY / OFF syntax, status bar indicator, DialogKit dialog, Undo/Redo |
+| Data > Weight Cases | `data.weight_cases` | Done | Frequency & sampling weighting, SPSS WEIGHT BY / WEIGHT OFF syntax, status bar indicator, DialogKit dialog, Undo/Redo |
 | Transform > Compute Variable | `transform.compute` | Done | Expression evaluator, DialogKit calculator dialog, undo support |
 | Transform > Recode into Different Variables | `transform.recode.diff` | Done | Mapping engine (exact, ranges, sysmis, else), DialogKit dialog & Old and New Values subdialog, undo support |
 | Transform > Recode into Same Variables | `transform.recode.same` | Done | In-place recode, DialogKit dialog & Old and New Values subdialog, undo support |

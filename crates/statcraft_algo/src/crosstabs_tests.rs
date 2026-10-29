@@ -80,6 +80,7 @@ mod tests {
                 col_value: "0".to_string(),
                 col_label: Some("Control".to_string()),
                 is_missing: false,
+                weight: 1.0,
             });
         }
         // 30 cases of (0, 1)
@@ -90,6 +91,7 @@ mod tests {
                 col_value: "1".to_string(),
                 col_label: Some("Active".to_string()),
                 is_missing: false,
+                weight: 1.0,
             });
         }
         // 40 cases of (1, 0)
@@ -100,6 +102,7 @@ mod tests {
                 col_value: "0".to_string(),
                 col_label: Some("Control".to_string()),
                 is_missing: false,
+                weight: 1.0,
             });
         }
         // 10 cases of (1, 1)
@@ -110,6 +113,7 @@ mod tests {
                 col_value: "1".to_string(),
                 col_label: Some("Active".to_string()),
                 is_missing: false,
+                weight: 1.0,
             });
         }
         // 5 missing cases
@@ -120,6 +124,7 @@ mod tests {
                 col_value: "".to_string(),
                 col_label: None,
                 is_missing: true,
+                weight: 1.0,
             });
         }
 
@@ -204,6 +209,7 @@ mod tests {
                         col_value: format!("C{}", c_idx + 1),
                         col_label: None,
                         is_missing: false,
+                        weight: 1.0,
                     });
                 }
             }
@@ -231,5 +237,99 @@ mod tests {
             .find(|m| m.name == "Cramer's V")
             .unwrap();
         assert!(cramer.value > 0.0);
+    }
+
+    #[test]
+    fn test_crosstabs_weighted() {
+        // Construct weighted contingency table using observation weights:
+        // Male (0), Control (0): weight 20.0
+        // Male (0), Active (1): weight 30.0
+        // Female (1), Control (0): weight 40.0
+        // Female (1), Active (1): weight 10.0
+        // Ignored zero/negative weights
+        // Missing with weight 5.0
+        let items = vec![
+            RawCrosstabItem {
+                row_value: "0".to_string(),
+                row_label: Some("Male".to_string()),
+                col_value: "0".to_string(),
+                col_label: Some("Control".to_string()),
+                is_missing: false,
+                weight: 20.0,
+            },
+            RawCrosstabItem {
+                row_value: "0".to_string(),
+                row_label: Some("Male".to_string()),
+                col_value: "1".to_string(),
+                col_label: Some("Active".to_string()),
+                is_missing: false,
+                weight: 30.0,
+            },
+            RawCrosstabItem {
+                row_value: "1".to_string(),
+                row_label: Some("Female".to_string()),
+                col_value: "0".to_string(),
+                col_label: Some("Control".to_string()),
+                is_missing: false,
+                weight: 40.0,
+            },
+            RawCrosstabItem {
+                row_value: "1".to_string(),
+                row_label: Some("Female".to_string()),
+                col_value: "1".to_string(),
+                col_label: Some("Active".to_string()),
+                is_missing: false,
+                weight: 10.0,
+            },
+            RawCrosstabItem {
+                row_value: "0".to_string(),
+                row_label: Some("Male".to_string()),
+                col_value: "0".to_string(),
+                col_label: Some("Control".to_string()),
+                is_missing: false,
+                weight: 0.0, // Skipped
+            },
+            RawCrosstabItem {
+                row_value: "1".to_string(),
+                row_label: Some("Female".to_string()),
+                col_value: "1".to_string(),
+                col_label: Some("Active".to_string()),
+                is_missing: false,
+                weight: -3.0, // Skipped
+            },
+            RawCrosstabItem {
+                row_value: "0".to_string(),
+                row_label: Some("Male".to_string()),
+                col_value: "".to_string(),
+                col_label: None,
+                is_missing: true,
+                weight: 5.0, // Missing
+            },
+        ];
+
+        let opts = CrosstabOptions::default();
+        let res = compute_crosstabs("gender", "treatment", &items, &opts)
+            .expect("Crosstabs weighted computation must succeed");
+
+        assert_eq!(res.n_valid, 100);
+        assert_eq!(res.n_missing, 5);
+        assert_eq!(res.grand_total, 100);
+        assert_eq!(res.rows.len(), 2);
+        assert_eq!(res.col_categories.len(), 2);
+
+        // Row 0 checks:
+        assert_eq!(res.rows[0].row_total, 50);
+        assert_eq!(res.rows[0].cells[0].observed, 20);
+        assert_eq!(res.rows[0].cells[1].observed, 30);
+        assert_eq!(res.rows[1].row_total, 50);
+        assert_eq!(res.rows[1].cells[0].observed, 40);
+        assert_eq!(res.rows[1].cells[1].observed, 10);
+
+        let p_test = res
+            .chi_square_tests
+            .iter()
+            .find(|t| t.name == "Pearson Chi-Square")
+            .expect("Pearson test exists");
+        assert!((p_test.value - 16.6666667).abs() < 1e-5);
     }
 }

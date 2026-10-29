@@ -2,10 +2,10 @@ use super::app::{StatCraftApp, StatusMessage};
 use super::dialogs::{
     render_compute_dialog, render_missing_values_dialog, render_recode_dialog,
     render_select_cases_dialog, render_sort_cases_dialog, render_split_file_dialog,
-    render_value_labels_dialog, render_variable_type_dialog, ComputeDialogAction,
-    DialogCasesAction, DialogSelectMode, MissingValuesDialogAction, RecodeDialogAction,
-    SelectCasesDialogAction, SortCasesDialogAction, SplitFileDialogAction, ValueLabelsDialogAction,
-    VariableTypeDialogAction,
+    render_value_labels_dialog, render_variable_type_dialog, render_weight_cases_dialog,
+    ComputeDialogAction, DialogCasesAction, DialogSelectMode, MissingValuesDialogAction,
+    RecodeDialogAction, SelectCasesDialogAction, SortCasesDialogAction, SplitFileDialogAction,
+    ValueLabelsDialogAction, VariableTypeDialogAction, WeightCasesDialogAction,
 };
 use serde_json::json;
 use statcraft_i18n::t;
@@ -423,6 +423,44 @@ impl StatCraftApp {
                 self.output_view_state.add_entry(t!("output-log"), sps);
             }
             SplitFileDialogAction::None => {}
+        }
+
+        // 9. Weight Cases Dialog
+        let weight_action = render_weight_cases_dialog(
+            ctx,
+            self.dataset.as_ref(),
+            &mut self.weight_cases_dialog_state,
+        );
+
+        match weight_action {
+            WeightCasesDialogAction::Run { weight_var } => {
+                let params = json!({
+                    "variable": weight_var,
+                });
+
+                match self
+                    .command_bus
+                    .execute("data.weight_cases", &mut self.dataset, params)
+                {
+                    Ok(_) => {
+                        let sps = statcraft_syntax::commands::WeightCasesCommand::to_sps(
+                            weight_var.as_deref(),
+                        );
+                        self.output_view_state.add_entry(t!("output-log"), sps);
+                        self.status_message =
+                            StatusMessage::WeightCasesExecuted { var: weight_var };
+                    }
+                    Err(e) => {
+                        self.status_message = StatusMessage::Error(e.to_string());
+                    }
+                }
+            }
+            WeightCasesDialogAction::Paste { weight_var } => {
+                let sps =
+                    statcraft_syntax::commands::WeightCasesCommand::to_sps(weight_var.as_deref());
+                self.output_view_state.add_entry(t!("output-log"), sps);
+            }
+            WeightCasesDialogAction::None => {}
         }
     }
 }

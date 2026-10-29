@@ -1,6 +1,6 @@
 use crate::command::{CommandError, EngineCommand};
 use serde_json::{json, Value};
-use statcraft_algo::{compute_descriptives, DescriptivesResult};
+use statcraft_algo::{compute_descriptives_weighted, DescriptivesResult};
 use statcraft_core::DataSet;
 
 pub struct DescriptivesCommand;
@@ -87,8 +87,9 @@ impl EngineCommand for DescriptivesCommand {
                         reason: format!("Variable '{}' not found in dataset", var_name),
                     })?;
 
-            // Extract numeric values for this column
+            // Extract numeric values and weights for this column
             let mut values: Vec<Option<f64>> = Vec::with_capacity(active_rows.len());
+            let mut weights: Vec<f64> = Vec::with_capacity(active_rows.len());
             for &r in &active_rows {
                 let cell_str = ds.get_cell_display(r, col_idx, false);
                 let val = if cell_str.trim().is_empty() || cell_str == "." || cell_str == "NA" {
@@ -97,9 +98,10 @@ impl EngineCommand for DescriptivesCommand {
                     cell_str.parse::<f64>().ok()
                 };
                 values.push(val);
+                weights.push(ds.row_weight(r));
             }
 
-            let res = compute_descriptives(var_name, &values);
+            let res = compute_descriptives_weighted(var_name, &values, &weights);
             results.push(res);
         }
 

@@ -213,6 +213,7 @@ impl EngineCommand for CrosstabsCommand {
                         col_value: c_val_str,
                         col_label: c_label,
                         is_missing: r_is_missing || c_is_missing,
+                        weight: ds.row_weight(r),
                     });
                 }
 

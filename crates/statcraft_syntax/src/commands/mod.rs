@@ -21,6 +21,7 @@ pub mod ttest_paired_cmd;
 pub mod var_cmds;
 pub mod var_format_cmds;
 pub mod var_metadata_cmds;
+pub mod weight_cases_cmd;
 
 pub use anova_oneway_cmd::OneWayAnovaCommand;
 pub use cell_edit::CellEditCommand;
@@ -47,3 +48,4 @@ pub use var_cmds::{
     VarSetDecimalsCommand, VarSetTypeCommand, VarSetWidthCommand,
 };
 pub use var_metadata_cmds::{VarSetMissingValuesCommand, VarSetValueLabelsCommand};
+pub use weight_cases_cmd::{WeightCasesCommand, WeightCasesUndoEntry};

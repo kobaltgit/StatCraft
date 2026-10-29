@@ -123,6 +123,7 @@ impl EngineCommand for FrequenciesCommand {
                     label,
                     is_missing,
                     numeric_value: num_val,
+                    weight: ds.row_weight(r),
                 });
             }
 

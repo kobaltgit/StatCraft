@@ -88,4 +88,5 @@ pub struct RawCrosstabItem {
     pub col_value: String,
     pub col_label: Option<String>,
     pub is_missing: bool,
+    pub weight: f64,
 }

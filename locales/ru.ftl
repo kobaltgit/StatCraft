@@ -749,14 +749,14 @@ dialog-split-sort-group = Порядок сортировки
 dialog-split-sort-by-variables = Сортировать файл по переменным группировки
 dialog-split-file-already-sorted = Файл уже отсортирован
 
-
-
-
-
-
-
-
-
-
-
-
+# Weight Cases
+dialog-weight-cases-title = Взвесить наблюдения
+dialog-weight-do-not-weight = Не взвешивать наблюдения
+dialog-weight-cases-by = Взвесить наблюдения по
+dialog-weight-frequency-var = Переменная веса (частоты):
+dialog-weight-current-status = Текущий статус
+dialog-weight-status-off = Не взвешивать наблюдения
+dialog-weight-status-on = Взвесить наблюдения по { $var }
+status-weight-on = Вес: Включен ({ $var })
+status-weight-executed = Взвешивание наблюдений: { $var }
+status-weight-off-executed = Взвешивание наблюдений отключено

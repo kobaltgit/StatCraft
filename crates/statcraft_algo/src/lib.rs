@@ -43,7 +43,9 @@ pub use crosstabs_types::{
     AssociationMeasure, ChiSquareTestRow, CrosstabCategory, CrosstabCell, CrosstabOptions,
     CrosstabResult, CrosstabRow, RawCrosstabItem,
 };
-pub use descriptives::{compute_descriptives, DescriptivesOptions, DescriptivesResult};
+pub use descriptives::{
+    compute_descriptives, compute_descriptives_weighted, DescriptivesOptions, DescriptivesResult,
+};
 pub use expr_eval::{CompiledExpr, EvalError, EvalNode, Op};
 pub use frequencies::{
     compute_frequencies, compute_frequencies_detailed, compute_percentile, compute_quartiles,

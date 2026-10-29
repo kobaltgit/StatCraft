@@ -292,6 +292,14 @@
 - [x] L6 `statcraft_app`: векторный индикатор состояния `Split File: ON (var)` в строке состояния (Status Bar), активация пункта меню `Data -> Split File...`, логирование в `Output Viewer`
 - [x] 100% покрытие локализацией (`locales/en.ftl`, `locales/ru.ftl`, `C:\StatCraft\locales\fr.ftl`), 100% прохождение полного CI gate `cargo run -p xtask -j 1 -- ci` (`file-guard`, `design-guard`, `layers`, `parity`, `clippy -D warnings`, `cargo fmt --check`)
 
+## 31. Этап 8.6: Взвешивание наблюдений (Weight Cases: `WEIGHT BY`)
+- [x] L1 `statcraft_core`: поддержка переменной взвешивания в `DataSet` (`weight_var: Option<String>`, `set_weight_variable`, `weight_var`, `is_weighted`, `row_weight`), канонические правила SPSS ($\ge 0$, исключение пропусков и отрицательных весов, учет активного фильтра строк), автоматическая синхронизация при переименовании и удалении переменных
+- [x] L2 `statcraft_algo`: поддержка весов в процедурах частотного анализа (`frequencies.rs`: взвешенные частоты, проценты, кумулятивные проценты, взвешенные квартили), описательных статистиках (`descriptives.rs`: `compute_descriptives_weighted` — взвешенное среднее, несмещенная дисперсия, стандартное отклонение, стандартная ошибка среднего, асимметрия, эксцесс) и таблицах сопряженности (`crosstabs.rs`: накопление весов в ячейках)
+- [x] L5 `statcraft_syntax`: типизированная команда `WeightCasesCommand` (`data.weight_cases`), спецификация `specs()`, канонический синтаксис `WEIGHT BY var.` и `WEIGHT OFF.`, полный стек отката `Undo/Redo` (`Ctrl+Z`), проброс `ds.row_weight(r)` во все аналитические процедуры
+- [x] L6 `statcraft_app`: центрированный диалог `WeightCasesDialog` ($560 \times 430$ px, `DialogShell::standard`) на базе `DialogKit` (`VariablePicker`, `TransferButton`, `GroupBox`, `DialogActionBar`), режимы *Do not weight cases* и *Weight cases by*, отображение текущего статуса
+- [x] L6 `statcraft_app`: индикатор состояния `Weight: ON (var)` в строке состояния (Status Bar), активация пункта меню `Data -> Weight Cases...`, журналирование синтаксиса в `Output Viewer`
+- [x] 100% покрытие локализацией (`locales/en.ftl`, `locales/ru.ftl`, `C:\StatCraft\locales\fr.ftl`), 100% прохождение полного CI gate `cargo run -p xtask -j 1 -- ci` (`file-guard`, `design-guard`, `layers`, `parity`, `clippy -D warnings`, `cargo fmt --check`)
+
 
 
 

@@ -195,6 +195,9 @@ pub fn init_i18n() -> Result<(), String> {
     let mut catalog = I18nCatalog::new_with_defaults()?;
     catalog.discover_and_load_locales();
     let mut lock = GLOBAL_I18N.write();
+    if let Some(existing) = lock.as_ref() {
+        catalog.set_language(existing.current_language());
+    }
     *lock = Some(catalog);
     INITIALIZED.store(true, Ordering::SeqCst);
     Ok(())

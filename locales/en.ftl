@@ -749,14 +749,14 @@ dialog-split-sort-group = Sort Order
 dialog-split-sort-by-variables = Sort the file by grouping variables
 dialog-split-file-already-sorted = File is already sorted
 
-
-
-
-
-
-
-
-
-
-
-
+# Weight Cases
+dialog-weight-cases-title = Weight Cases
+dialog-weight-do-not-weight = Do not weight cases
+dialog-weight-cases-by = Weight cases by
+dialog-weight-frequency-var = Frequency Variable:
+dialog-weight-current-status = Current Status
+dialog-weight-status-off = Do not weight cases
+dialog-weight-status-on = Weight cases by { $var }
+status-weight-on = Weight: ON ({ $var })
+status-weight-executed = Weight cases: { $var }
+status-weight-off-executed = Weight cases turned off

@@ -1163,6 +1163,7 @@ Implemented the canonical case selection and filtering mechanism in StatCraft �
    - Clean compilation: `cargo clippy --workspace --all-targets -j 1 -- -D warnings` — 0 warnings;
    - Release binary built and deployed to `C:\StatCraft\statcraft_app.exe`.
 
+
 ---
 
 ### Phase 8.5: Split File Procedure (`SPLIT FILE`)
@@ -1210,4 +1211,55 @@ Implemented the canonical segmented data analysis workflow in StatCraft — menu
    - Synchronous trilingual localization (`locales/en.ftl`, `locales/ru.ftl`, `C:\StatCraft\locales\fr.ftl`);
    - Clean compilation: `cargo clippy --workspace --all-targets -j 1 -- -D warnings` — 0 warnings;
    - Release binary built and deployed to `C:\StatCraft\statcraft_app.exe`.
+
+---
+
+### Phase 8.6: Weight Cases Procedure (`WEIGHT BY` / `WEIGHT OFF`)
+*Time: October 29, 2026, 14:05 (~40 minutes)*
+
+Implemented one of the most critical analytical mechanisms of IBM SPSS Statistics for sociology, polling, marketing research, and aggregated frequency data — the **Weight Cases** procedure (menu item `Data -> Weight Cases...`, engine command `data.weight_cases` / syntax `WEIGHT BY var.` / `WEIGHT OFF.`):
+
+1. **Weighting Model in DataSet L1 (`statcraft_core::dataset`):**
+   - Added `weight_var: Option<String>` to `DataSet` accompanied by `set_weight_variable()`, `weight_var()`, `is_weighted()`, and `row_weight(row_idx)`;
+   - Enforced strict canonical SPSS rules: case weights must be non-negative ($w_i \ge 0$), while cases with zero ($w_i = 0$), negative ($w_i < 0$), or missing values (`NaN` / `SYSMIS`) are systematically excluded from computations;
+   - Seamless synergy with `Select Cases`: when row filtering is active, weights are applied exclusively to active observations (`active_row_indices`), preventing statistical bias;
+   - Metadata synchronization: variable deletion (`remove_variable`) or renaming (`rename_variable`) safely updates or clears the weight state with zero panics.
+
+2. **Mathematical Core L2 (`statcraft_algo`):**
+   - **Frequencies (`frequencies.rs`):** weighted category frequencies ($f_w = \sum w_i$), weighted valid and cumulative percentages, and weighted percentile/quartile distribution analysis;
+   - **Descriptive Statistics (`descriptives.rs`):** `compute_descriptives_weighted` routine computing weighted mean $\bar{x}_w = \frac{\sum w_i x_i}{\sum w_i}$, weighted sample variance $s_w^2 = \frac{\sum w_i (x_i - \bar{x}_w)^2}{W - 1}$ (where $W = \sum w_i$), standard error of the mean, weighted skewness, and weighted kurtosis;
+   - **Crosstabs (`crosstabs.rs`):** weighted $R \times C$ contingency tables, marginal totals, and Pearson's Chi-Square test of independence incorporating frequency weights;
+   - 100% safe Rust, zero runtime overhead when weighting is disabled.
+
+3. **Command Bus & Syntax L5 (`statcraft_syntax::commands::weight_cases_cmd`):**
+   - Strongly-typed `WeightCasesCommand` (`data.weight_cases`) with parameter `specs()` for AI agents;
+   - Canonical SPSS syntax generator:
+     ```text
+     WEIGHT BY count.
+     ```
+     or `WEIGHT OFF.` upon deactivation;
+   - Full `Undo` / `Redo` (`Ctrl+Z` / `Ctrl+Y`) lifecycle restoring previous weighting state.
+
+4. **DialogKit Desktop User Interface L6 (`statcraft_app::dialogs`):**
+   - Centered `WeightCasesDialog` modal ($560 \times 430$ px, `DialogShell::standard`);
+   - Left `VariablePicker` panel displaying measurement scale icons and vector `TransferButton` (`->` / `<-`);
+   - Mode selection radio group:
+     1. *(o) Do not weight cases* (`WEIGHT OFF.`);
+     2. *( ) Weight cases by:* with frequency variable target field;
+   - Informative sample status display (`Current Status: Weight Off` / `Weight on by <var>`);
+   - Canonical bottom action bar `DialogActionBar` (`[ OK ] [ Paste ] [ Reset ] [ Cancel ] [ Help ]`).
+
+5. **Status Bar, Menu & Reactivity:**
+   - Dedicated vector status indicator: `Weight: ON (var)`;
+   - Activated main menu item `Data -> Weight Cases...`;
+   - Canonical syntax logged to `Output Viewer` (Log).
+
+6. **Quality Control & Definition of Done:**
+   - Full automated CI quality gate passed (`cargo run -p xtask -j 1 -- ci` — 149 Rust files verified in `file-guard`, `design-guard`, `layers`, and `parity` — 35 commands);
+   - 100% workspace tests passing with 0 failures;
+   - Synchronous trilingual localization (`locales/ru.ftl`, `locales/en.ftl`, `C:\StatCraft\locales\fr.ftl`);
+   - Compiler linter `cargo clippy --workspace --all-targets -j 1 -- -D warnings` — 0 warnings;
+   - Release binary built and deployed to `C:\StatCraft\statcraft_app.exe`.
+
+
 

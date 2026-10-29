@@ -6,19 +6,20 @@ use statcraft_app::dialogs::{
     render_nonparam_twosample_dialog, render_recode_dialog, render_select_cases_dialog,
     render_sort_cases_dialog, render_split_file_dialog, render_ttest_indep_dialog,
     render_ttest_onesample_dialog, render_ttest_paired_dialog, render_value_labels_dialog,
-    render_variable_type_dialog, ComputeDialogAction, ComputeDialogState, CorrelationsDialogAction,
-    CorrelationsDialogState, CrosstabsDialogAction, CrosstabsDialogState, DescriptivesDialogAction,
-    DescriptivesDialogState, DialogCasesAction, DialogSelectMode, FrequenciesDialogAction,
-    FrequenciesDialogState, IndependentSamplesTTestDialogAction,
-    IndependentSamplesTTestDialogState, KruskalWallisDialogAction, KruskalWallisDialogState,
-    MissingValuesDialogAction, MissingValuesDialogState, NonparamRelatedDialogAction,
-    NonparamRelatedDialogState, NonparamTwoSampleDialogAction, NonparamTwoSampleDialogState,
-    OneSampleTTestDialogAction, OneSampleTTestDialogState, OneWayAnovaDialogAction,
-    OneWayAnovaDialogState, PairedSamplesTTestDialogAction, PairedSamplesTTestDialogState,
-    RecodeDialogAction, RecodeDialogState, RecodeMode, RecodePair, SelectCasesDialogAction,
-    SelectCasesDialogState, SortCasesDialogAction, SortCasesDialogState, SplitFileDialogAction,
-    SplitFileDialogState, ValueLabelsDialogAction, ValueLabelsDialogState,
-    VariableTypeDialogAction, VariableTypeDialogState,
+    render_variable_type_dialog, render_weight_cases_dialog, ComputeDialogAction,
+    ComputeDialogState, CorrelationsDialogAction, CorrelationsDialogState, CrosstabsDialogAction,
+    CrosstabsDialogState, DescriptivesDialogAction, DescriptivesDialogState, DialogCasesAction,
+    DialogSelectMode, FrequenciesDialogAction, FrequenciesDialogState,
+    IndependentSamplesTTestDialogAction, IndependentSamplesTTestDialogState,
+    KruskalWallisDialogAction, KruskalWallisDialogState, MissingValuesDialogAction,
+    MissingValuesDialogState, NonparamRelatedDialogAction, NonparamRelatedDialogState,
+    NonparamTwoSampleDialogAction, NonparamTwoSampleDialogState, OneSampleTTestDialogAction,
+    OneSampleTTestDialogState, OneWayAnovaDialogAction, OneWayAnovaDialogState,
+    PairedSamplesTTestDialogAction, PairedSamplesTTestDialogState, RecodeDialogAction,
+    RecodeDialogState, RecodeMode, RecodePair, SelectCasesDialogAction, SelectCasesDialogState,
+    SortCasesDialogAction, SortCasesDialogState, SplitFileDialogAction, SplitFileDialogState,
+    ValueLabelsDialogAction, ValueLabelsDialogState, VariableTypeDialogAction,
+    VariableTypeDialogState, WeightCasesDialogAction, WeightCasesDialogState,
 };
 use statcraft_core::{DataSet, DataType, Measure, MissingValues, SplitFileMode};
 use std::collections::BTreeMap;
@@ -522,4 +523,25 @@ fn test_headless_render_split_file_dialog() {
     assert!(state.is_open);
     assert_eq!(state.selected_vars, vec!["gender".to_string()]);
     assert_eq!(state.mode, SplitFileMode::CompareGroups);
+}
+
+#[test]
+fn test_headless_render_weight_cases_dialog() {
+    let ds = create_test_dataset();
+    let ctx = egui::Context::default();
+    let mut state = WeightCasesDialogState {
+        is_open: true,
+        weight_active: true,
+        selected_var: Some("salary".to_string()),
+        ..Default::default()
+    };
+
+    let _ = ctx.run(Default::default(), |ctx| {
+        let action = render_weight_cases_dialog(ctx, Some(&ds), &mut state);
+        assert!(matches!(action, WeightCasesDialogAction::None));
+    });
+
+    assert!(state.is_open);
+    assert_eq!(state.selected_var, Some("salary".to_string()));
+    assert!(state.weight_active);
 }

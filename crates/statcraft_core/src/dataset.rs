@@ -44,6 +44,7 @@ pub struct DataSet {
     pub delta: DeltaBuffer,
     pub active_filter_var: Option<String>,
     pub split_file: Option<SplitFileConfig>,
+    pub weight_var: Option<String>,
 }
 
 impl DataSet {
@@ -54,6 +55,7 @@ impl DataSet {
             delta: DeltaBuffer::new(),
             active_filter_var: None,
             split_file: None,
+            weight_var: None,
         }
     }
 
@@ -74,6 +76,7 @@ impl DataSet {
             delta: DeltaBuffer::new(),
             active_filter_var: None,
             split_file: None,
+            weight_var: None,
         })
     }
 
@@ -96,6 +99,7 @@ impl DataSet {
             delta: DeltaBuffer::new(),
             active_filter_var: None,
             split_file: None,
+            weight_var: None,
         })
     }
 
@@ -119,6 +123,52 @@ impl DataSet {
 
     pub fn active_filter_var(&self) -> Option<&str> {
         self.active_filter_var.as_deref()
+    }
+
+    pub fn set_weight_variable(&mut self, var_name: Option<String>) -> Result<(), CoreError> {
+        if let Some(ref name) = var_name {
+            let idx = self
+                .dictionary
+                .find_index(name)
+                .ok_or_else(|| CoreError::VariableNotFound(name.clone()))?;
+            let meta = self
+                .dictionary
+                .get(idx)
+                .ok_or_else(|| CoreError::VariableNotFound(name.clone()))?;
+            if !meta.var_type.is_numeric() {
+                return Err(CoreError::TypeMismatch(format!(
+                    "Weight variable '{name}' must be numeric"
+                )));
+            }
+        }
+        self.weight_var = var_name;
+        Ok(())
+    }
+
+    pub fn weight_var(&self) -> Option<&str> {
+        self.weight_var.as_deref()
+    }
+
+    pub fn is_weighted(&self) -> bool {
+        self.weight_var.is_some()
+    }
+
+    pub fn row_weight(&self, row_idx: usize) -> f64 {
+        if !self.is_row_active(row_idx) {
+            return 0.0;
+        }
+        let var_name = match &self.weight_var {
+            Some(name) => name,
+            None => return 1.0,
+        };
+        let col_idx = match self.dictionary.find_index(var_name) {
+            Some(idx) => idx,
+            None => return 1.0,
+        };
+        match self.get_cell(row_idx, col_idx) {
+            Some(RawValue::Number(n)) if !n.is_nan() && *n > 0.0 => *n,
+            _ => 0.0,
+        }
     }
 
     pub fn set_split_file(&mut self, config: Option<SplitFileConfig>) -> Result<(), CoreError> {
@@ -419,6 +469,15 @@ impl DataSet {
                 }
             }
         }
+        if let Some(removed_meta) = self.dictionary.get(col_idx) {
+            let is_weight = self
+                .weight_var
+                .as_ref()
+                .is_some_and(|w| w.eq_ignore_ascii_case(&removed_meta.name));
+            if is_weight {
+                self.weight_var = None;
+            }
+        }
         if let Some(ref mut split_cfg) = self.split_file {
             if let Some(removed_meta) = self.dictionary.get(col_idx) {
                 split_cfg.variables.retain(|v| v != &removed_meta.name);
@@ -438,6 +497,15 @@ impl DataSet {
                 if old_meta.name == *filter_var {
                     self.active_filter_var = Some(new_name.to_string());
                 }
+            }
+        }
+        if let Some(old_meta) = self.dictionary.get(col_idx) {
+            let is_weight = self
+                .weight_var
+                .as_ref()
+                .is_some_and(|w| w.eq_ignore_ascii_case(&old_meta.name));
+            if is_weight {
+                self.weight_var = Some(new_name.to_string());
             }
         }
         if let Some(ref mut split_cfg) = self.split_file {
@@ -834,5 +902,72 @@ mod tests {
         // Delete variable: split_file should be cleared
         ds.remove_variable(0).unwrap();
         assert_eq!(ds.split_file(), None);
+    }
+
+    #[test]
+    fn test_dataset_weighting() {
+        let mut ds = DataSet::blank(5, 1).unwrap();
+        ds.add_variable(
+            "str_var",
+            DataType::String { max_len: 20 },
+            Measure::Nominal,
+        )
+        .unwrap();
+        ds.add_variable(
+            "filter_col",
+            DataType::Numeric { decimals: 0 },
+            Measure::Scale,
+        )
+        .unwrap();
+
+        assert!(!ds.is_weighted());
+        assert_eq!(ds.weight_var(), None);
+        assert_eq!(ds.row_weight(0), 1.0);
+
+        let err_missing = ds.set_weight_variable(Some("missing".to_string()));
+        assert!(matches!(err_missing, Err(CoreError::VariableNotFound(_))));
+
+        let err_str = ds.set_weight_variable(Some("str_var".to_string()));
+        assert!(matches!(err_str, Err(CoreError::TypeMismatch(_))));
+
+        ds.set_weight_variable(Some("VAR00001".to_string()))
+            .unwrap();
+        assert!(ds.is_weighted());
+        assert_eq!(ds.weight_var(), Some("VAR00001"));
+
+        ds.set_cell(0, 0, RawValue::Number(2.5)).unwrap();
+        ds.set_cell(1, 0, RawValue::Number(0.0)).unwrap();
+        ds.set_cell(2, 0, RawValue::Number(-3.0)).unwrap();
+        ds.set_cell(3, 0, RawValue::Number(f64::NAN)).unwrap();
+        ds.set_cell(4, 0, RawValue::Null).unwrap();
+
+        assert_eq!(ds.row_weight(0), 2.5);
+        assert_eq!(ds.row_weight(1), 0.0);
+        assert_eq!(ds.row_weight(2), 0.0);
+        assert_eq!(ds.row_weight(3), 0.0);
+        assert_eq!(ds.row_weight(4), 0.0);
+
+        ds.set_cell(0, 2, RawValue::Number(1.0)).unwrap();
+        ds.set_cell(1, 2, RawValue::Number(1.0)).unwrap();
+        ds.set_cell(2, 2, RawValue::Number(0.0)).unwrap();
+        ds.set_filter_variable(Some("filter_col".to_string()))
+            .unwrap();
+
+        assert_eq!(ds.row_weight(0), 2.5);
+        assert_eq!(ds.row_weight(1), 0.0);
+        ds.set_cell(2, 0, RawValue::Number(10.0)).unwrap();
+        assert_eq!(ds.row_weight(2), 0.0); // Inactive row -> 0.0
+
+        ds.set_filter_variable(None).unwrap();
+        assert_eq!(ds.row_weight(2), 10.0);
+
+        ds.rename_variable(0, "w_cases").unwrap();
+        assert_eq!(ds.weight_var(), Some("w_cases"));
+        assert_eq!(ds.row_weight(0), 2.5);
+
+        ds.remove_variable(0).unwrap();
+        assert!(!ds.is_weighted());
+        assert_eq!(ds.weight_var(), None);
+        assert_eq!(ds.row_weight(0), 1.0);
     }
 }

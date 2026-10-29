@@ -151,9 +151,15 @@ pub fn compute_crosstabs(
 
     let mut row_cat_map: BTreeMap<String, Option<String>> = BTreeMap::new();
     let mut col_cat_map: BTreeMap<String, Option<String>> = BTreeMap::new();
-    let mut valid_items: Vec<(String, String)> = Vec::new();
+    let mut valid_items: Vec<(String, String, usize)> = Vec::new();
 
     for it in items {
+        if it.weight <= 0.0 || it.weight.is_nan() {
+            continue;
+        }
+
+        let w_rounded = it.weight.round() as usize;
+
         if it.is_missing
             || it.row_value.is_empty()
             || it.col_value.is_empty()
@@ -162,18 +168,18 @@ pub fn compute_crosstabs(
             || it.row_value == "NA"
             || it.col_value == "NA"
         {
-            n_missing += 1;
+            n_missing += w_rounded;
             continue;
         }
 
-        n_valid += 1;
+        n_valid += w_rounded;
         row_cat_map
             .entry(it.row_value.clone())
             .or_insert_with(|| it.row_label.clone());
         col_cat_map
             .entry(it.col_value.clone())
             .or_insert_with(|| it.col_label.clone());
-        valid_items.push((it.row_value.clone(), it.col_value.clone()));
+        valid_items.push((it.row_value.clone(), it.col_value.clone(), w_rounded));
     }
 
     if n_valid == 0 {
@@ -207,9 +213,9 @@ pub fn compute_crosstabs(
         .collect();
 
     let mut obs_matrix = vec![vec![0usize; num_cols]; num_rows];
-    for (r_val, c_val) in valid_items {
+    for (r_val, c_val, w) in valid_items {
         if let (Some(&r_i), Some(&c_j)) = (row_index.get(&r_val), col_index.get(&c_val)) {
-            obs_matrix[r_i][c_j] += 1;
+            obs_matrix[r_i][c_j] += w;
         }
     }
 
