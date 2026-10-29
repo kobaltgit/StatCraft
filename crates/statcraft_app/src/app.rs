@@ -1,11 +1,11 @@
 use crate::dialogs::{
     ComputeDialogState, CorrelationsDialogState, CrosstabsDialogState, DescriptivesDialogState,
     FactorDialogState, FrequenciesDialogState, IndependentSamplesTTestDialogState,
-    KruskalWallisDialogState, LinearRegressionDialogState, MissingValuesDialogState,
-    NonparamRelatedDialogState, NonparamTwoSampleDialogState, OneSampleTTestDialogState,
-    OneWayAnovaDialogState, PairedSamplesTTestDialogState, RecodeDialogState,
-    ReliabilityDialogState, SelectCasesDialogState, SortCasesDialogState, SplitFileDialogState,
-    ValueLabelsDialogState, VariableTypeDialogState, WeightCasesDialogState,
+    KruskalWallisDialogState, LinearRegressionDialogState, MeansDialogState,
+    MissingValuesDialogState, NonparamRelatedDialogState, NonparamTwoSampleDialogState,
+    OneSampleTTestDialogState, OneWayAnovaDialogState, PairedSamplesTTestDialogState,
+    RecodeDialogState, ReliabilityDialogState, SelectCasesDialogState, SortCasesDialogState,
+    SplitFileDialogState, ValueLabelsDialogState, VariableTypeDialogState, WeightCasesDialogState,
 };
 use crate::views::{
     render_data_view, render_output_view, render_variable_view, DataViewState, OutputViewerState,
@@ -19,7 +19,9 @@ use egui::{CentralPanel, SidePanel, TopBottomPanel, Ui};
 use egui_dock::{DockArea, DockState, NodeIndex, TabViewer};
 use serde_json::json;
 use statcraft_core::DataSet;
-use statcraft_i18n::{available_languages, current_language, language_name, set_language, t};
+use statcraft_i18n::{
+    available_languages, current_language, language_name, reload_locales, set_language, t,
+};
 use statcraft_syntax::CommandBus;
 use std::fs;
 
@@ -102,6 +104,10 @@ pub enum StatusMessage {
     FactorExecuted {
         count: usize,
         factors: usize,
+    },
+    MeansExecuted {
+        tables: usize,
+        cases: usize,
     },
     Error(String),
 }
@@ -198,6 +204,9 @@ impl StatusMessage {
             StatusMessage::FactorExecuted { count, factors } => {
                 t!("output-factor-executed", count = *count, factors = *factors)
             }
+            StatusMessage::MeansExecuted { tables, cases } => {
+                t!("output-means-executed", tables = *tables, cases = *cases)
+            }
             StatusMessage::Error(e) => format!("{}: {}", t!("status-error"), e),
         }
     }
@@ -233,6 +242,7 @@ pub struct StatCraftApp {
     pub linear_regression_dialog_state: LinearRegressionDialogState,
     pub reliability_dialog_state: ReliabilityDialogState,
     pub factor_dialog_state: FactorDialogState,
+    pub means_dialog_state: MeansDialogState,
     pub pending_variable_action: VariableViewAction,
     pub status_message: StatusMessage,
     pub toolbar_position: ToolbarPosition,
@@ -276,6 +286,7 @@ impl StatCraftApp {
             linear_regression_dialog_state: LinearRegressionDialogState::default(),
             reliability_dialog_state: ReliabilityDialogState::default(),
             factor_dialog_state: FactorDialogState::default(),
+            means_dialog_state: MeansDialogState::default(),
             pending_variable_action: VariableViewAction::None,
             status_message: StatusMessage::Ready,
             toolbar_position: ToolbarPosition::Top,
@@ -478,6 +489,7 @@ impl StatCraftApp {
                     ui.separator();
                     // Language Submenu
                     ui.menu_button(t!("menu-view-language"), |ui| {
+                        let _ = reload_locales();
                         let cur_lang = current_language();
                         for lang in available_languages() {
                             let label = language_name(&lang);
@@ -646,6 +658,12 @@ impl StatCraftApp {
                         }
                     });
                     ui.menu_button(t!("menu-analyze-compare-means"), |ui| {
+                        if render_menu_item(ui, t!("menu-analyze-means"), requires_dataset_status)
+                            .clicked()
+                        {
+                            self.means_dialog_state.is_open = true;
+                            ui.close_menu();
+                        }
                         if render_menu_item(
                             ui,
                             t!("menu-analyze-ttest-one-sample"),

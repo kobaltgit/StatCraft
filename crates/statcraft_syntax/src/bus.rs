@@ -3,12 +3,13 @@ use crate::commands::{
     CellEditCommand, ComputeVariableCommand, CorrelationsCommand, CrosstabsCommand,
     DataAddRowCommand, DataDeleteRowCommand, DescriptivesCommand, FactorCommand,
     FrequenciesCommand, ImportCsvCommand, IndependentSamplesTTestCommand, KruskalWallisCommand,
-    LinearRegressionCommand, MannWhitneyCommand, OneSampleTTestCommand, OneWayAnovaCommand,
-    PairedSamplesTTestCommand, RecodeIntoDifferentCommand, RecodeIntoSameCommand,
-    RelatedSamplesTestCommand, ReliabilityCommand, SelectCasesCommand, SetLabelCommand,
-    SetMeasureCommand, SortCasesCommand, SplitFileCommand, VarAddCommand, VarDeleteCommand,
-    VarRenameCommand, VarSetAlignCommand, VarSetDecimalsCommand, VarSetMissingValuesCommand,
-    VarSetTypeCommand, VarSetValueLabelsCommand, VarSetWidthCommand, WeightCasesCommand,
+    LinearRegressionCommand, MannWhitneyCommand, MeansCommand, OneSampleTTestCommand,
+    OneWayAnovaCommand, PairedSamplesTTestCommand, RecodeIntoDifferentCommand,
+    RecodeIntoSameCommand, RelatedSamplesTestCommand, ReliabilityCommand, SelectCasesCommand,
+    SetLabelCommand, SetMeasureCommand, SortCasesCommand, SplitFileCommand, VarAddCommand,
+    VarDeleteCommand, VarRenameCommand, VarSetAlignCommand, VarSetDecimalsCommand,
+    VarSetMissingValuesCommand, VarSetTypeCommand, VarSetValueLabelsCommand, VarSetWidthCommand,
+    WeightCasesCommand,
 };
 use serde::{Deserialize, Serialize};
 use serde_json::{json, Value};
@@ -53,6 +54,7 @@ impl CommandBus {
         bus.register(Box::new(IndependentSamplesTTestCommand));
         bus.register(Box::new(PairedSamplesTTestCommand));
         bus.register(Box::new(OneWayAnovaCommand));
+        bus.register(Box::new(MeansCommand));
         bus.register(Box::new(CrosstabsCommand));
         bus.register(Box::new(CorrelationsCommand));
         bus.register(Box::new(LinearRegressionCommand));

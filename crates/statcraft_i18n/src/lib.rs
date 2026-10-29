@@ -49,12 +49,7 @@ impl I18nCatalog {
         } else {
             let mut bundle = FluentBundle::new_concurrent(vec![lang_id]);
             bundle.set_use_isolating(false);
-            bundle.add_resource(res).map_err(|errors| {
-                format!(
-                    "Failed to add resource to bundle for '{}': {:?}",
-                    lang_code, errors
-                )
-            })?;
+            bundle.add_resource_overriding(res);
             self.bundles.insert(lang_code.to_string(), bundle);
         }
         Ok(())
@@ -74,10 +69,11 @@ impl I18nCatalog {
             let path = entry.path();
             if path.extension().and_then(|s| s.to_str()) == Some("ftl") {
                 if let Some(stem) = path.file_stem().and_then(|s| s.to_str()) {
-                    let content = fs::read_to_string(&path)
-                        .map_err(|e| format!("Failed to read {}: {}", path.display(), e))?;
-                    self.load_bundle_from_str(stem, &content)?;
-                    count += 1;
+                    if let Ok(content) = fs::read_to_string(&path) {
+                        if let Ok(()) = self.load_bundle_from_str(stem, &content) {
+                            count += 1;
+                        }
+                    }
                 }
             }
         }
@@ -433,5 +429,21 @@ mod tests {
         assert_eq!(catalog.translate("menu-file", None), "Fichier");
 
         let _ = fs::remove_dir_all(&temp_dir);
+    }
+
+    #[test]
+    fn test_duplicate_keys_in_bundle_do_not_fail() {
+        let mut catalog = I18nCatalog::new_with_defaults().unwrap();
+        // Brand new language with duplicate keys inside the file
+        let content = "lang-name-it = Italiano\nmenu-file = File\nmenu-file = Archivio\n";
+        let res = catalog.load_bundle_from_str("it", content);
+        assert!(
+            res.is_ok(),
+            "Loading bundle with duplicate keys must not fail: {:?}",
+            res
+        );
+        catalog.set_language("it");
+        // Must use the overriding (last) definition
+        assert_eq!(catalog.translate("menu-file", None), "Archivio");
     }
 }

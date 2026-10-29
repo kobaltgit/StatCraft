@@ -17,6 +17,10 @@ pub mod frequencies;
 pub mod kruskal_wallis;
 #[cfg(test)]
 mod kruskal_wallis_tests;
+pub mod means;
+#[cfg(test)]
+mod means_tests;
+pub mod means_types;
 pub mod nonparam_related;
 #[cfg(test)]
 mod nonparam_related_tests;
@@ -71,6 +75,11 @@ pub use frequencies::{
 pub use kruskal_wallis::{
     compute_kruskal_wallis, compute_kruskal_wallis_from_groups, KruskalWallisGroupStats,
     KruskalWallisResult,
+};
+pub use means::compute_means_breakdown;
+pub use means_types::{
+    MeansAnovaRow, MeansAnovaTable, MeansAssociationMeasures, MeansCaseProcessingSummary,
+    MeansCellStats, MeansOptions, MeansProcedureResult, MeansTableResult,
 };
 pub use nonparam_related::{
     compute_related_samples, compute_sign_test, compute_sign_test_from_slices,

@@ -3,26 +3,26 @@ use statcraft_app::dialogs::{
     render_anova_oneway_dialog, render_compute_dialog, render_correlations_dialog,
     render_crosstabs_dialog, render_descriptives_dialog, render_factor_dialog,
     render_frequencies_dialog, render_kruskal_wallis_dialog, render_linear_regression_dialog,
-    render_missing_values_dialog, render_nonparam_related_dialog, render_nonparam_twosample_dialog,
-    render_recode_dialog, render_reliability_dialog, render_select_cases_dialog,
-    render_sort_cases_dialog, render_split_file_dialog, render_ttest_indep_dialog,
-    render_ttest_onesample_dialog, render_ttest_paired_dialog, render_value_labels_dialog,
-    render_variable_type_dialog, render_weight_cases_dialog, ComputeDialogAction,
-    ComputeDialogState, CorrelationsDialogAction, CorrelationsDialogState, CrosstabsDialogAction,
-    CrosstabsDialogState, DescriptivesDialogAction, DescriptivesDialogState, DialogCasesAction,
-    DialogSelectMode, FactorDialogAction, FactorDialogState, FrequenciesDialogAction,
-    FrequenciesDialogState, IndependentSamplesTTestDialogAction,
+    render_means_dialog, render_missing_values_dialog, render_nonparam_related_dialog,
+    render_nonparam_twosample_dialog, render_recode_dialog, render_reliability_dialog,
+    render_select_cases_dialog, render_sort_cases_dialog, render_split_file_dialog,
+    render_ttest_indep_dialog, render_ttest_onesample_dialog, render_ttest_paired_dialog,
+    render_value_labels_dialog, render_variable_type_dialog, render_weight_cases_dialog,
+    ComputeDialogAction, ComputeDialogState, CorrelationsDialogAction, CorrelationsDialogState,
+    CrosstabsDialogAction, CrosstabsDialogState, DescriptivesDialogAction, DescriptivesDialogState,
+    DialogCasesAction, DialogSelectMode, FactorDialogAction, FactorDialogState,
+    FrequenciesDialogAction, FrequenciesDialogState, IndependentSamplesTTestDialogAction,
     IndependentSamplesTTestDialogState, KruskalWallisDialogAction, KruskalWallisDialogState,
-    LinearRegressionDialogAction, LinearRegressionDialogState, MissingValuesDialogAction,
-    MissingValuesDialogState, NonparamRelatedDialogAction, NonparamRelatedDialogState,
-    NonparamTwoSampleDialogAction, NonparamTwoSampleDialogState, OneSampleTTestDialogAction,
-    OneSampleTTestDialogState, OneWayAnovaDialogAction, OneWayAnovaDialogState,
-    PairedSamplesTTestDialogAction, PairedSamplesTTestDialogState, RecodeDialogAction,
-    RecodeDialogState, RecodeMode, RecodePair, ReliabilityDialogAction, ReliabilityDialogState,
-    SelectCasesDialogAction, SelectCasesDialogState, SortCasesDialogAction, SortCasesDialogState,
-    SplitFileDialogAction, SplitFileDialogState, ValueLabelsDialogAction, ValueLabelsDialogState,
-    VariableTypeDialogAction, VariableTypeDialogState, WeightCasesDialogAction,
-    WeightCasesDialogState,
+    LinearRegressionDialogAction, LinearRegressionDialogState, MeansDialogAction, MeansDialogState,
+    MissingValuesDialogAction, MissingValuesDialogState, NonparamRelatedDialogAction,
+    NonparamRelatedDialogState, NonparamTwoSampleDialogAction, NonparamTwoSampleDialogState,
+    OneSampleTTestDialogAction, OneSampleTTestDialogState, OneWayAnovaDialogAction,
+    OneWayAnovaDialogState, PairedSamplesTTestDialogAction, PairedSamplesTTestDialogState,
+    RecodeDialogAction, RecodeDialogState, RecodeMode, RecodePair, ReliabilityDialogAction,
+    ReliabilityDialogState, SelectCasesDialogAction, SelectCasesDialogState, SortCasesDialogAction,
+    SortCasesDialogState, SplitFileDialogAction, SplitFileDialogState, ValueLabelsDialogAction,
+    ValueLabelsDialogState, VariableTypeDialogAction, VariableTypeDialogState,
+    WeightCasesDialogAction, WeightCasesDialogState,
 };
 use statcraft_core::{DataSet, DataType, Measure, MissingValues, SplitFileMode};
 use std::collections::BTreeMap;
@@ -617,4 +617,25 @@ fn test_headless_render_factor_dialog() {
     assert!(state.is_open);
     assert_eq!(state.selected_vars.len(), 3);
     assert!(state.kmo_bartlett);
+}
+
+#[test]
+fn test_headless_render_means_dialog() {
+    let ds = create_test_dataset();
+    let ctx = egui::Context::default();
+    let mut state = MeansDialogState {
+        is_open: true,
+        selected_deps: vec!["salary".to_string()],
+        selected_factors: vec!["gender".to_string()],
+        ..Default::default()
+    };
+
+    let _ = ctx.run(Default::default(), |ctx| {
+        let action = render_means_dialog(ctx, Some(&ds), &mut state);
+        assert!(matches!(action, MeansDialogAction::None));
+    });
+
+    assert!(state.is_open);
+    assert_eq!(state.selected_deps.len(), 1);
+    assert_eq!(state.selected_factors.len(), 1);
 }

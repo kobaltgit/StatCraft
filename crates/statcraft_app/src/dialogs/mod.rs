@@ -8,6 +8,7 @@ pub mod factor_dialog;
 pub mod frequencies_dialog;
 pub mod kruskal_define_range;
 pub mod kruskal_wallis_dialog;
+pub mod means_dialog;
 pub mod missing_values_dialog;
 pub mod nonparam_define_groups;
 pub mod nonparam_related_dialog;
@@ -50,6 +51,7 @@ pub use frequencies_dialog::{
 pub use kruskal_wallis_dialog::{
     render_kruskal_wallis_dialog, KruskalWallisDialogAction, KruskalWallisDialogState,
 };
+pub use means_dialog::{render_means_dialog, MeansDialogAction, MeansDialogState};
 pub use missing_values_dialog::{
     render_missing_values_dialog, MissingValuesDialogAction, MissingValuesDialogState,
 };

@@ -1,8 +1,8 @@
 use statcraft_algo::{
     BivariateCorrelationsResult, CrosstabResult, DescriptivesResult, FactorAnalysisResult,
     FrequencyResult, IndepTTestResult, KruskalWallisResult, LinearRegressionResult,
-    MannWhitneyResult, OneSampleTTestResult, OneWayAnovaResult, PairedTTestResult,
-    RelatedPairTestResult, ReliabilityResult,
+    MannWhitneyResult, MeansProcedureResult, OneSampleTTestResult, OneWayAnovaResult,
+    PairedTTestResult, RelatedPairTestResult, ReliabilityResult,
 };
 use statcraft_i18n::t;
 
@@ -66,6 +66,7 @@ pub enum OutputItemKind {
     LinearRegression(Box<LinearRegressionResult>),
     Reliability(Box<ReliabilityResult>),
     Factor(Box<FactorAnalysisResult>),
+    Means(Box<MeansProcedureResult>),
     Warning(String),
     CustomText {
         title: String,

@@ -961,3 +961,67 @@
    - Полная синхронная локализация без хардкода строк (`locales/en.ftl`, `locales/ru.ftl`);
    - Компиляция `cargo clippy --workspace --all-targets -j 1 -- -D warnings` — 0 предупреждений;
    - Сборка и развертывание бинарника в `C:\StatCraft\statcraft_app.exe`.
+
+---
+
+### Этап 12.1: Таблицы групповых средних и однофакторный дисперсионный анализ (Subgroup Means Breakdown: `MEANS`)
+*Время: 29 октября 2026, 19:40 (~45 минут)*
+
+Реализована базовая разведочная процедура для анализа подгрупп канонического блока **Compare Means** пакета IBM SPSS Statistics — **Таблицы групповых средних** (`Analyze -> Compare Means -> Means...` / `Анализ -> Сравнение средних -> Средние...`), объединяющая расчет расширенных дескриптивных статистик по уровням факторов, классический однофакторный дисперсионный анализ (ANOVA) и меры ассоциации:
+
+1. **Математическое ядро L2 (`statcraft_algo::means`, `means_types`, `means_tests`):**
+   - Построчное исключение пропусков (Listwise per table) и полная поддержка весов наблюдений (`row_weight`);
+   - Поддержка числовых и категориальных группирующих факторов с естественной сортировкой (числовой порядок для чисел, лексикографический для строк);
+   - Вычисление полного набора ячеечных статистик для каждой группы и сводной строки Total:
+     * Количество наблюдений ($N$), среднее взвешенное ($\bar{x}$), несмещенное стандартное отклонение ($s$), выборочная дисперсия ($s^2$);
+     * Медиана (с интерполяцией и учетом порядка), минимум ($\min$), максимум ($\max$), взвешенная сумма значений ($\sum x$);
+   - **Таблица однофакторного дисперсионного анализа (ANOVA Table):**
+     * Межгрупповая вариация (Between Groups): $SS_{between} = \sum n_j (\bar{x}_j - \bar{x})^2$, $df = k - 1$;
+     * Внутригрупповая вариация (Within Groups): $SS_{within} = \sum \sum (x_{ij} - \bar{x}_j)^2$, $df = N - k$;
+     * Общая вариация (Total): $SS_{total} = SS_{between} + SS_{within}$, $df = N - 1$;
+     * Средние квадраты ($MS$), критерий Фишера ($F = MS_{between} / MS_{within}$) и точное $p$-value через функцию выживания распределения Фишера (`f_distribution_sf`);
+   - **Меры ассоциации (Measures of Association):**
+     * Коэффициент детерминации $\eta^2 = SS_{between} / SS_{total}$ (доля объясненной дисперсии зависимой переменной фактором) и корреляционное отношение $\eta = \sqrt{\eta^2}$;
+   - **Golden Oracle:** Тесты `means_tests.rs` со сверкой ячеечных статистик, ANOVA и $\eta$ против аналитических эталонов и Python `scipy.stats.f_oneway` с точностью $\le 10^{-6}$;
+   - Защита **Never Crash**: безопасная обработка пустых выборок, групп размера $N < 2$, вырожденной нулевой дисперсии и пропущенных значений на 100% safe Rust.
+
+2. **Командная шина и синтаксис L5 (`statcraft_syntax::commands::means_cmd`):**
+   - Типизированная команда `MeansCommand` (`stat.means`) со спецификацией параметров `specs()` для внешних ИИ-агентов;
+   - Генератор канонического синтаксиса IBM SPSS Statistics:
+     ```text
+     MEANS TABLES=salary score BY educ
+       /CELLS=MEAN COUNT STDDEV VARIANCE MEDIAN MIN MAX SUM
+       /STATISTICS ANOVA.
+     ```
+   - Полная поддержка `Undo` / `Redo`.
+
+3. **Графический интерфейс на DialogKit L6 (`statcraft_app::dialogs::means_dialog`):**
+   - Центрированный диалог $560 \times 430$ px на базе `DialogShell::standard`;
+   - Источник переменных `VariablePicker` со значками шкал измерения;
+   - Адаптивные векторные стрелки переноса `TransferButton` (`->` / `<-`);
+   - Целевые списки `Dependent List:` (зависимые переменные) и `Layer 1 of 1:` (независимые группирующие переменные);
+   - Боковая панель `SubdialogSidebar` с кнопкой `[ Options... ]`:
+     * Модальный поддиалог со списком включаемых статистик (Mean, Number of Cases, Std. Deviation, Variance, Median, Minimum, Maximum, Sum) и чекбоксом `[x] Anova table and eta`;
+     * Нижний ряд кнопок `SubdialogActionBar` (`[ Continue ] [ Cancel ] [ Help ]`);
+   - Нижний ряд действий `DialogActionBar` (`[ OK ] [ Paste ] [ Reset ] [ Cancel ] [ Help ]`).
+
+4. **Сводные таблицы в Output Viewer (`tables_means.rs`):**
+   - Таблица **Case Processing Summary:** Зависимая $\times$ Группирующая, Included ($N$, %), Excluded ($N$, %), Total ($N$, %);
+   - Таблица **Report:** групповая разбивка уровней фактора со статистиками (Mean, N, Std. Deviation, Variance, Median, Minimum, Maximum, Sum) и итоговой строкой Total;
+   - Таблица **ANOVA Table:** Sum of Squares, df, Mean Square, F, Sig. для Between Groups, Within Groups и Total;
+   - Таблица **Measures of Association:** Eta, Eta Squared;
+   - Экспорт таблиц в TSV (буфер обмена для Excel/Sheets) и навигация в Outline Tree.
+
+5. **Реактивность, меню и статусная строка:**
+   - Активирован пункт главного меню `Analyze -> Compare Means -> Means...` (`Анализ -> Сравнение средних -> Средние...`);
+   - Журналирование канонического синтаксиса в Output Viewer (Log);
+   - Уведомление в строке состояния (`Means breakdown computed for <n> case(s)`).
+
+6. **Контроль качества (Definition of Done):**
+   - Полный CI-пайплайн `cargo run -p xtask -j 1 -- ci` — 100% OK;
+   - Соблюдение дифференцированных лимитов строк (`file-guard` $\le 500$ строк на функциональный модуль);
+   - Соблюдение стандартов дизайна (`design-guard` — 100% DialogKit);
+   - Проверка архитектурных слоев `layers` и паритета `parity` (39 документированных процедур) — 0 нарушений;
+   - Полная синхронная локализация без хардкода строк (`locales/en.ftl`, `locales/ru.ftl`, `C:\StatCraft\locales\fr.ftl`);
+   - Компиляция `cargo clippy --workspace --all-targets -j 1 -- -D warnings` — 0 предупреждений;
+   - Сборка и развертывание бинарника в `C:\StatCraft\statcraft_app.exe`.

@@ -247,3 +247,147 @@ pub fn sample_crosstabs() -> CrosstabResult {
         options: CrosstabOptions::default(),
     }
 }
+
+pub fn sample_factor() -> statcraft_algo::FactorAnalysisResult {
+    statcraft_algo::FactorAnalysisResult {
+        variables: vec!["v1".to_string(), "v2".to_string()],
+        n_cases: 15,
+        n_total: 15,
+        kmo_bartlett: Some(statcraft_algo::KmoBartlettResult {
+            kmo: 0.785,
+            bartlett_approx_chi_square: 24.567,
+            bartlett_df: 1,
+            bartlett_sig: 0.001,
+        }),
+        communalities: vec![
+            statcraft_algo::CommunalityRow {
+                variable: "v1".to_string(),
+                initial: 1.0,
+                extraction: 0.820,
+            },
+            statcraft_algo::CommunalityRow {
+                variable: "v2".to_string(),
+                initial: 1.0,
+                extraction: 0.820,
+            },
+        ],
+        total_variance_explained: vec![
+            statcraft_algo::VarianceExplainedRow {
+                component: 1,
+                initial_total: 1.640,
+                initial_pct_variance: 82.0,
+                initial_cumulative_pct: 82.0,
+                extraction_total: Some(1.640),
+                extraction_pct_variance: Some(82.0),
+                extraction_cumulative_pct: Some(82.0),
+            },
+            statcraft_algo::VarianceExplainedRow {
+                component: 2,
+                initial_total: 0.360,
+                initial_pct_variance: 18.0,
+                initial_cumulative_pct: 100.0,
+                extraction_total: None,
+                extraction_pct_variance: None,
+                extraction_cumulative_pct: None,
+            },
+        ],
+        component_matrix: vec![
+            statcraft_algo::ComponentMatrixRow {
+                variable: "v1".to_string(),
+                loadings: vec![0.906],
+            },
+            statcraft_algo::ComponentMatrixRow {
+                variable: "v2".to_string(),
+                loadings: vec![0.906],
+            },
+        ],
+        n_components_extracted: 1,
+    }
+}
+
+pub fn sample_means() -> statcraft_algo::MeansProcedureResult {
+    statcraft_algo::MeansProcedureResult {
+        tables: vec![statcraft_algo::MeansTableResult {
+            dep_var: "salary".to_string(),
+            factor_var: "jobcat".to_string(),
+            summary: statcraft_algo::MeansCaseProcessingSummary {
+                dep_var: "salary".to_string(),
+                factor_var: "jobcat".to_string(),
+                included_n: 100,
+                included_percent: 100.0,
+                excluded_n: 0,
+                excluded_percent: 0.0,
+                total_n: 100,
+                total_percent: 100.0,
+            },
+            cells: vec![
+                statcraft_algo::MeansCellStats {
+                    group_label: "Clerical".to_string(),
+                    count: 50,
+                    weighted_count: 50.0,
+                    mean: Some(25000.0),
+                    std_dev: Some(3000.0),
+                    variance: Some(9000000.0),
+                    median: Some(24500.0),
+                    min: Some(18000.0),
+                    max: Some(32000.0),
+                    sum: Some(1250000.0),
+                },
+                statcraft_algo::MeansCellStats {
+                    group_label: "Manager".to_string(),
+                    count: 50,
+                    weighted_count: 50.0,
+                    mean: Some(60000.0),
+                    std_dev: Some(8000.0),
+                    variance: Some(64000000.0),
+                    median: Some(59000.0),
+                    min: Some(45000.0),
+                    max: Some(85000.0),
+                    sum: Some(3000000.0),
+                },
+            ],
+            total: statcraft_algo::MeansCellStats {
+                group_label: "Total".to_string(),
+                count: 100,
+                weighted_count: 100.0,
+                mean: Some(42500.0),
+                std_dev: Some(18500.0),
+                variance: Some(342250000.0),
+                median: Some(35000.0),
+                min: Some(18000.0),
+                max: Some(85000.0),
+                sum: Some(4250000.0),
+            },
+            anova: Some(statcraft_algo::MeansAnovaTable {
+                between_groups: statcraft_algo::MeansAnovaRow {
+                    source: "Between Groups".to_string(),
+                    sum_of_squares: 30625000000.0,
+                    df: 1,
+                    mean_square: Some(30625000000.0),
+                    f_stat: Some(839.04),
+                    p_value: Some(0.0001),
+                },
+                within_groups: statcraft_algo::MeansAnovaRow {
+                    source: "Within Groups".to_string(),
+                    sum_of_squares: 3577000000.0,
+                    df: 98,
+                    mean_square: Some(36500000.0),
+                    f_stat: None,
+                    p_value: None,
+                },
+                total: statcraft_algo::MeansAnovaRow {
+                    source: "Total".to_string(),
+                    sum_of_squares: 34202000000.0,
+                    df: 99,
+                    mean_square: None,
+                    f_stat: None,
+                    p_value: None,
+                },
+            }),
+            association: Some(statcraft_algo::MeansAssociationMeasures {
+                eta: 0.946,
+                eta_squared: 0.895,
+            }),
+        }],
+    }
+}

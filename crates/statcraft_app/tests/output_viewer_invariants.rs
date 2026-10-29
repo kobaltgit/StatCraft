@@ -15,9 +15,9 @@ use statcraft_algo::{
 use statcraft_app::views::output_view::{
     anova_to_tsv, correlations_to_tsv, crosstabs_to_tsv, descriptives_to_tsv, factor_to_tsv,
     frequencies_to_tsv, indep_ttest_to_tsv, kruskal_wallis_to_tsv, mann_whitney_to_tsv,
-    onesample_ttest_to_tsv, paired_ttest_to_tsv, regression_to_tsv, related_samples_to_tsv,
-    reliability_to_tsv, render_output_view, OutputItem, OutputItemKind, OutputNotes,
-    OutputProcedure, OutputViewerState, SelectedTarget,
+    means_to_tsv, onesample_ttest_to_tsv, paired_ttest_to_tsv, regression_to_tsv,
+    related_samples_to_tsv, reliability_to_tsv, render_output_view, OutputItem, OutputItemKind,
+    OutputNotes, OutputProcedure, OutputViewerState, SelectedTarget,
 };
 
 #[path = "output_viewer_invariants/fixtures.rs"]
@@ -313,6 +313,12 @@ fn test_exhaustive_enum_payloads_render_without_panics() {
                 grouping_var: "group".to_string(),
             },
         },
+        OutputItem {
+            id: state.alloc_id(),
+            title_key: "output-means-title",
+            custom_title: None,
+            kind: OutputItemKind::Means(Box::new(sample_means())),
+        },
     ];
 
     let proc_id = state.alloc_id();
@@ -333,7 +339,7 @@ fn test_exhaustive_enum_payloads_render_without_panics() {
 
     // Asserts: 0 panics, state remains intact
     assert_eq!(state.procedures.len(), 1);
-    assert_eq!(state.procedures[0].items.len(), 14);
+    assert_eq!(state.procedures[0].items.len(), 15);
 }
 
 #[test]
@@ -881,60 +887,7 @@ fn test_factor_output_and_tsv_integrity() {
     let ctx = egui::Context::default();
     let mut state = OutputViewerState::new();
 
-    let sample_factor = FactorAnalysisResult {
-        variables: vec!["v1".to_string(), "v2".to_string()],
-        n_cases: 15,
-        n_total: 15,
-        kmo_bartlett: Some(KmoBartlettResult {
-            kmo: 0.785,
-            bartlett_approx_chi_square: 24.567,
-            bartlett_df: 1,
-            bartlett_sig: 0.001,
-        }),
-        communalities: vec![
-            CommunalityRow {
-                variable: "v1".to_string(),
-                initial: 1.0,
-                extraction: 0.820,
-            },
-            CommunalityRow {
-                variable: "v2".to_string(),
-                initial: 1.0,
-                extraction: 0.820,
-            },
-        ],
-        total_variance_explained: vec![
-            VarianceExplainedRow {
-                component: 1,
-                initial_total: 1.640,
-                initial_pct_variance: 82.0,
-                initial_cumulative_pct: 82.0,
-                extraction_total: Some(1.640),
-                extraction_pct_variance: Some(82.0),
-                extraction_cumulative_pct: Some(82.0),
-            },
-            VarianceExplainedRow {
-                component: 2,
-                initial_total: 0.360,
-                initial_pct_variance: 18.0,
-                initial_cumulative_pct: 100.0,
-                extraction_total: None,
-                extraction_pct_variance: None,
-                extraction_cumulative_pct: None,
-            },
-        ],
-        component_matrix: vec![
-            ComponentMatrixRow {
-                variable: "v1".to_string(),
-                loadings: vec![0.906],
-            },
-            ComponentMatrixRow {
-                variable: "v2".to_string(),
-                loadings: vec![0.906],
-            },
-        ],
-        n_components_extracted: 1,
-    };
+    let sample_factor = sample_factor();
 
     state.add_factor(
         sample_factor.clone(),
@@ -957,4 +910,38 @@ fn test_factor_output_and_tsv_integrity() {
     assert!(tsv.contains("Component Matrix"));
     assert!(tsv.contains("0.785"));
     assert!(tsv.contains("24.567"));
+}
+
+#[test]
+fn test_means_output_and_tsv_integrity() {
+    let ctx = egui::Context::default();
+    let mut state = OutputViewerState::new();
+    let sample = sample_means();
+
+    state.add_means(
+        sample.clone(),
+        vec!["salary".to_string()],
+        vec!["jobcat".to_string()],
+        &statcraft_algo::MeansOptions::default(),
+    );
+    assert_eq!(state.procedures.len(), 1);
+    assert_eq!(state.procedures[0].items.len(), 3);
+
+    // Headless render
+    let _ = ctx.run(Default::default(), |ctx| {
+        egui::CentralPanel::default().show(ctx, |ui| {
+            render_output_view(ui, &mut state);
+        });
+    });
+
+    let tsv = means_to_tsv(&sample);
+    assert!(tsv.contains("Case Processing Summary"));
+    assert!(tsv.contains("Report (salary)"));
+    assert!(tsv.contains("ANOVA Table"));
+    assert!(tsv.contains("Measures of Association"));
+    assert!(tsv.contains("Clerical"));
+    assert!(tsv.contains("Manager"));
+    assert!(tsv.contains("Total"));
+    assert!(tsv.contains("839.040"));
+    assert!(tsv.contains("0.946"));
 }

@@ -1,4 +1,4 @@
-# StatCraft — Development Chronicle
+﻿# StatCraft — Development Chronicle
 
 ### Project Kickoff: Architectural Canon and Groundwork
 *Time: October 27, 2026, 16:40 (~45 minutes)*
@@ -1673,5 +1673,68 @@ Implemented the fundamental dimension reduction procedure of IBM SPSS Statistics
    - Strict adherence to DialogKit standards (`design-guard` — 100% compliant);
    - Architectural and parity linters (`layers`, `parity` — 38 documented procedures) reporting 0 violations;
    - Synchronous localization without string hardcoding (`locales/en.ftl`, `locales/ru.ftl`);
+   - Compiler linter `cargo clippy --workspace --all-targets -j 1 -- -D warnings` — 0 warnings;
+   - Release binary built and deployed to `C:\StatCraft\statcraft_app.exe`.
+
+---
+
+### Phase 12.1: Subgroup Means Breakdown and One-Way ANOVA (Subgroup Means Breakdown: `MEANS`)
+*Time: October 29, 2026, 19:40 (~45 minutes)*
+
+Implemented the classical exploratory procedure for subgroup analysis of IBM SPSS Statistics — **Subgroup Means Breakdown** (`Analyze -> Compare Means -> Means...`), combining detailed cell-level summary statistics across factor levels, one-way analysis of variance (ANOVA), and measures of association:
+
+1. **Mathematical Engine L2 (`statcraft_algo::means`, `means_types`, `means_tests`):**
+   - Listwise missing case deletion per table and full support for observation weights (`row_weight`);
+   - Natural sorting of group categories (numeric ordering for numeric groups, lexicographic for strings);
+   - Complete set of cell statistics per group and for the overall Total row:
+     * Case count ($N$), weighted mean ($\bar{x}$), unbiased standard deviation ($s$), sample variance ($s^2$);
+     * Median (with proper linear interpolation), minimum ($\min$), maximum ($\max$), weighted sum of values ($\sum x$);
+   - **One-Way ANOVA Table (ANOVA Table):**
+     * Between Groups variation: $SS_{between} = \sum n_j (\bar{x}_j - \bar{x})^2$, $df = k - 1$;
+     * Within Groups variation: $SS_{within} = \sum \sum (x_{ij} - \bar{x}_j)^2$, $df = N - k$;
+     * Total variation: $SS_{total} = SS_{between} + SS_{within}$, $df = N - 1$;
+     * Mean Squares ($MS$), Fisher's $F$-test ($F = MS_{between} / MS_{within}$), and exact $p$-value from Fisher distribution survival function (`f_distribution_sf`);
+   - **Measures of Association:**
+     * Coefficient of determination $\eta^2 = SS_{between} / SS_{total}$ (proportion of variance explained) and correlation ratio $\eta = \sqrt{\eta^2}$;
+   - **Golden Oracle:** `means_tests.rs` unit tests verified against analytical standards and Python `scipy.stats.f_oneway` with precision $\le 10^{-6}$;
+   - **Never Crash** resilience against empty samples, single-case groups ($N < 2$), zero within-group variance, and missing data on 100% safe Rust.
+
+2. **Command Bus & Syntax L5 (`statcraft_syntax::commands::means_cmd`):**
+   - Typed engine command `MeansCommand` (`stat.means`) with JSON parameter specs for external AI agents;
+   - Canonical IBM SPSS Statistics syntax generator:
+     ```text
+     MEANS TABLES=salary score BY educ
+       /CELLS=MEAN COUNT STDDEV VARIANCE MEDIAN MIN MAX SUM
+       /STATISTICS ANOVA.
+     ```
+   - Full `Undo` / `Redo` lifecycle support.
+
+3. **DialogKit Desktop User Interface L6 (`statcraft_app::dialogs::means_dialog`):**
+   - Centered canonical modal dialog ($560 \times 430$ px, `DialogShell::standard`);
+   - Two-panel `VariablePicker` with measurement scale icons and adaptive vector transfer buttons `TransferButton` (`->` / `<-`);
+   - Target lists `Dependent List:` and `Layer 1 of 1:` (independent factor variables);
+   - Right sidebar `SubdialogSidebar` with `[ Options... ]` button:
+     * Modal subdialog for selecting statistics (Mean, Number of Cases, Std. Deviation, Variance, Median, Minimum, Maximum, Sum) and checkbox `[x] Anova table and eta`;
+     * Action row `SubdialogActionBar` (`[ Continue ] [ Cancel ] [ Help ]`);
+   - Canonical bottom action bar `DialogActionBar` (`[ OK ] [ Paste ] [ Reset ] [ Cancel ] [ Help ]`).
+
+4. **Summary Pivot Tables in Output Viewer (`tables_means.rs`):**
+   - **Case Processing Summary:** Dependent $\times$ Grouping, Included ($N$, %), Excluded ($N$, %), Total ($N$, %);
+   - **Report:** factor level breakdown with statistics (Mean, N, Std. Deviation, Variance, Median, Minimum, Maximum, Sum) and summary Total row;
+   - **ANOVA Table:** Sum of Squares, df, Mean Square, F, Sig. for Between Groups, Within Groups, and Total;
+   - **Measures of Association:** Eta, Eta Squared;
+   - TSV clipboard export and Outline Tree integration.
+
+5. **Reactivity, Menu & Status Bar:**
+   - Activated main menu item `Analyze -> Compare Means -> Means...`;
+   - Canonical syntax automatically recorded to Output Viewer (Log);
+   - Status bar feedback notification (`Means breakdown computed for <n> case(s)`).
+
+6. **Quality Control & Definition of Done:**
+   - Full automated CI quality gate passed (`cargo run -p xtask -j 1 -- ci` — 100% OK);
+   - Strict adherence to file size limits (`file-guard` $\le 500$ lines on leaf modules);
+   - Strict adherence to DialogKit standards (`design-guard` — 100% compliant);
+   - Architectural and parity linters (`layers`, `parity` — 39 documented procedures) reporting 0 violations;
+   - Synchronous trilingual localization without string hardcoding (`locales/en.ftl`, `locales/ru.ftl`, `C:\StatCraft\locales\fr.ftl`);
    - Compiler linter `cargo clippy --workspace --all-targets -j 1 -- -D warnings` — 0 warnings;
    - Release binary built and deployed to `C:\StatCraft\statcraft_app.exe`.

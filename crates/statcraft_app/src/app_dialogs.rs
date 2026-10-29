@@ -2,13 +2,14 @@ use super::app::{StatCraftApp, StatusMessage};
 use super::dialogs::{
     render_anova_oneway_dialog, render_correlations_dialog, render_crosstabs_dialog,
     render_descriptives_dialog, render_factor_dialog, render_frequencies_dialog,
-    render_kruskal_wallis_dialog, render_linear_regression_dialog, render_nonparam_related_dialog,
-    render_nonparam_twosample_dialog, render_reliability_dialog, render_ttest_indep_dialog,
-    render_ttest_onesample_dialog, render_ttest_paired_dialog, CorrelationsDialogAction,
-    CrosstabsDialogAction, DescriptivesDialogAction, FactorDialogAction, FrequenciesDialogAction,
-    IndependentSamplesTTestDialogAction, KruskalWallisDialogAction, LinearRegressionDialogAction,
-    NonparamRelatedDialogAction, NonparamTwoSampleDialogAction, OneSampleTTestDialogAction,
-    OneWayAnovaDialogAction, PairedSamplesTTestDialogAction, ReliabilityDialogAction,
+    render_kruskal_wallis_dialog, render_linear_regression_dialog, render_means_dialog,
+    render_nonparam_related_dialog, render_nonparam_twosample_dialog, render_reliability_dialog,
+    render_ttest_indep_dialog, render_ttest_onesample_dialog, render_ttest_paired_dialog,
+    CorrelationsDialogAction, CrosstabsDialogAction, DescriptivesDialogAction, FactorDialogAction,
+    FrequenciesDialogAction, IndependentSamplesTTestDialogAction, KruskalWallisDialogAction,
+    LinearRegressionDialogAction, MeansDialogAction, NonparamRelatedDialogAction,
+    NonparamTwoSampleDialogAction, OneSampleTTestDialogAction, OneWayAnovaDialogAction,
+    PairedSamplesTTestDialogAction, ReliabilityDialogAction,
 };
 use serde_json::json;
 use statcraft_i18n::t;
@@ -761,7 +762,73 @@ impl StatCraftApp {
             FactorDialogAction::None => {}
         }
 
-        // 15. Data and Variable Management Dialogs
+        // 15. Means Dialog
+        let means_action =
+            render_means_dialog(ctx, self.dataset.as_ref(), &mut self.means_dialog_state);
+
+        match means_action {
+            MeansDialogAction::Run {
+                dependent_vars,
+                factor_vars,
+                options,
+            } => {
+                let params = json!({
+                    "dependent_vars": dependent_vars,
+                    "factor_vars": factor_vars,
+                    "cell_mean": options.cell_mean,
+                    "cell_count": options.cell_count,
+                    "cell_stddev": options.cell_stddev,
+                    "cell_variance": options.cell_variance,
+                    "cell_median": options.cell_median,
+                    "cell_min": options.cell_min,
+                    "cell_max": options.cell_max,
+                    "anova": options.anova,
+                });
+                match self
+                    .command_bus
+                    .execute("stat.means", &mut self.dataset, params)
+                {
+                    Ok(result_value) => {
+                        if let Ok(result) = serde_json::from_value::<
+                            statcraft_algo::MeansProcedureResult,
+                        >(result_value)
+                        {
+                            let tables = result.tables.len();
+                            let cases = result
+                                .tables
+                                .first()
+                                .map(|t| t.summary.total_n)
+                                .unwrap_or(0);
+                            self.output_view_state.add_means(
+                                result,
+                                dependent_vars,
+                                factor_vars,
+                                &options,
+                            );
+                            self.status_message = StatusMessage::MeansExecuted { tables, cases };
+                        }
+                    }
+                    Err(e) => {
+                        self.status_message = StatusMessage::Error(e.to_string());
+                    }
+                }
+            }
+            MeansDialogAction::Paste {
+                dependent_vars,
+                factor_vars,
+                options,
+            } => {
+                let sps = statcraft_syntax::commands::MeansCommand::to_sps(
+                    &dependent_vars,
+                    &factor_vars,
+                    &options,
+                );
+                self.output_view_state.add_entry(t!("output-log"), sps);
+            }
+            MeansDialogAction::None => {}
+        }
+
+        // 16. Data and Variable Management Dialogs
         self.handle_data_dialogs(ctx);
     }
 }

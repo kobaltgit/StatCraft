@@ -26,6 +26,20 @@ fn test_all_catalog_keys_match_between_en_and_ru() {
 }
 
 #[test]
+fn test_no_duplicate_keys_in_embedded_catalogs() {
+    let mut dups = find_duplicate_ftl_keys(statcraft_i18n::EMBEDDED_EN, "en.ftl");
+    dups.extend(find_duplicate_ftl_keys(
+        statcraft_i18n::EMBEDDED_RU,
+        "ru.ftl",
+    ));
+    assert!(
+        dups.is_empty(),
+        "Duplicate keys found in embedded localization catalogs:\n{}",
+        dups.join("\n")
+    );
+}
+
+#[test]
 fn test_zero_raw_cyrillic_in_app_source() {
     let workspace_root = Path::new(env!("CARGO_MANIFEST_DIR"))
         .parent()
@@ -167,6 +181,29 @@ fn extract_ftl_keys(content: &str) -> HashSet<String> {
         }
     }
     keys
+}
+
+fn find_duplicate_ftl_keys(content: &str, catalog_name: &str) -> Vec<String> {
+    let mut seen = HashSet::new();
+    let mut duplicates = Vec::new();
+    for (line_idx, line) in content.lines().enumerate() {
+        let trimmed = line.trim();
+        if trimmed.is_empty() || trimmed.starts_with('#') {
+            continue;
+        }
+        if let Some((key, _)) = trimmed.split_once('=') {
+            let key = key.trim().to_string();
+            if !seen.insert(key.clone()) {
+                duplicates.push(format!(
+                    "{}:{}: Duplicate key '{}'",
+                    catalog_name,
+                    line_idx + 1,
+                    key
+                ));
+            }
+        }
+    }
+    duplicates
 }
 
 fn scan_for_raw_cyrillic(dir: &Path, violations: &mut Vec<String>) {

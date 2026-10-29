@@ -331,6 +331,16 @@
 - [x] L6 `statcraft_app`: активация пункта главного меню `Analyze -> Dimension Reduction -> Factor...` (`Анализ -> Снижение размерности -> Факторный анализ...`)
 - [x] 100% покрытие локализацией (`locales/en.ftl`, `locales/ru.ftl`, `C:\StatCraft\locales\fr.ftl`), 100% прохождение полного CI gate `cargo run -p xtask -j 1 -- ci` (`file-guard`, `design-guard`, `layers`, `parity`, `clippy -D warnings`, `cargo fmt --check`)
 
+## 35. Этап 12.1: Сравнение средних по подгруппам (Means Breakdown: `MEANS`)
+- [x] L2 `statcraft_algo`: модули `means.rs`, `means_types.rs` и `means_tests.rs` — расчет описательных статистик ячеек (Mean, Count, Std. Deviation, Variance, Median, Min, Max, Sum) в разрезе категориальных факторов с поддержкой весов `row_weight(r)` и числовой/лексической сортировкой групп
+- [x] L2 `statcraft_algo`: расчет таблицы однофакторного дисперсионного анализа (ANOVA: Between Groups, Within Groups, Total Sum of Squares, df, Mean Square, F-критерий и p-значение) и мер связи $\eta$ (Eta) и $\eta^2$ (Eta Squared)
+- [x] L2 `statcraft_algo`: сверка Golden Oracle с эталонами SciPy / SPSS с точностью $\le 10^{-6}$, строгая защита Never Crash при пустых группах, $n=1$ и нулевых дисперсиях
+- [x] L5 `statcraft_syntax`: типизированная команда `MeansCommand` (`stat.means`) со спецификацией параметров `specs()`, фильтрацией `active_row_indices()`, весами `row_weight(r)` и генератором канонического синтаксиса `MEANS TABLES=... BY ... /CELLS=MEAN COUNT STDDEV MEDIAN /STATISTICS ANOVA.`
+- [x] L6 `statcraft_app`: центрированный диалог `MeansDialog` ($560 \times 430$ px, `DialogShell::standard`) на базе `DialogKit` (`VariablePicker`, две целевые панели `Dependent List:` и `Layer 1 of 1 / Independent List:`, адаптивные `TransferButton`, `SubdialogSidebar`, модальный поддиалог `[ Options... ]`, `SubdialogActionBar`, `DialogActionBar`)
+- [x] L6 `statcraft_app`: модуль вывода `output_view/tables_means.rs` — аутентичные таблицы SPSS (*Case Processing Summary, Report, ANOVA Table, Measures of Association*), TSV-экспорт для буфера обмена и интеграция в Outline Tree
+- [x] L6 `statcraft_app`: активация пункта меню `Analyze -> Compare Means -> Means...` (`Анализ -> Сравнение средних -> Средние...`)
+- [x] 100% покрытие локализацией (`locales/en.ftl`, `locales/ru.ftl`, `C:\StatCraft\locales\fr.ftl`), 100% прохождение полного CI gate `cargo run -p xtask -j 1 -- ci` (`file-guard`, `design-guard`, `layers`, `parity`, `clippy -D warnings`, `cargo fmt --check`)
+
 
 
 

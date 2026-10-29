@@ -10,6 +10,7 @@ pub mod tables_descriptives;
 pub mod tables_factor;
 pub mod tables_frequencies;
 pub mod tables_kruskal;
+pub mod tables_means;
 pub mod tables_nonparam;
 pub mod tables_nonparam_related;
 pub mod tables_regression;
@@ -30,6 +31,7 @@ pub use tables_descriptives::{descriptives_to_tsv, render_spss_descriptives_pivo
 pub use tables_factor::{factor_to_tsv, render_spss_factor};
 pub use tables_frequencies::{frequencies_to_tsv, render_spss_frequencies_tables};
 pub use tables_kruskal::{kruskal_wallis_to_tsv, render_spss_kruskal_wallis_tables};
+pub use tables_means::{means_to_tsv, render_spss_means};
 pub use tables_nonparam::{mann_whitney_to_tsv, render_spss_mann_whitney_tables};
 pub use tables_nonparam_related::{related_samples_to_tsv, render_spss_related_samples_tables};
 pub use tables_regression::{regression_to_tsv, render_spss_linear_regression};
@@ -64,6 +66,7 @@ pub fn extract_item_tsv(kind: &OutputItemKind) -> Option<String> {
         OutputItemKind::LinearRegression(res) => Some(regression_to_tsv(res)),
         OutputItemKind::Reliability(res) => Some(reliability_to_tsv(res)),
         OutputItemKind::Factor(res) => Some(factor_to_tsv(res)),
+        OutputItemKind::Means(res) => Some(means_to_tsv(res)),
         _ => None,
     }
 }
@@ -299,6 +302,9 @@ pub fn render_output_view(ui: &mut Ui, state: &mut OutputViewerState) {
                                     }
                                     OutputItemKind::Factor(res) => {
                                         render_spss_factor(ui, res);
+                                    }
+                                    OutputItemKind::Means(res) => {
+                                        render_spss_means(ui, res);
                                     }
                                     OutputItemKind::Warning(msg) => {
                                         ui.colored_label(Tokens::CAPTION_CLOSE_HOVER, msg);

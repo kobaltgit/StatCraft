@@ -31,6 +31,7 @@
 | Analyze > Descriptive Statistics > Frequencies | `stat.frequencies` | Done | Frequency tables, percentiles, quartiles, dialog & SPSS tables |
 | Analyze > Descriptive Statistics > Descriptives | `stat.descriptives` | Done | Mean, StdDev, Variance, Min, Max, Range, Skewness, Kurtosis, SE Mean, Dialog & Pivot Table |
 | Analyze > Descriptive Statistics > Crosstabs | `stat.crosstabs` | Done | Contingency tables, Pearson Chi-Square, Fisher's Exact, Continuity Correction, Likelihood Ratio, Phi & Cramér's V, DialogKit dialog & 4 authentic SPSS Pivot Tables |
+| Analyze > Compare Means > Means | `stat.means` | Done | Subgroup means breakdown, cell statistics (Mean, N, StdDev, Variance, Median, Min, Max), ANOVA table (Between, Within, Total), Measures of Association (Eta, Eta Squared), DialogKit dialog & SPSS TABLES BY syntax |
 | Analyze > Compare Means > One-Sample T Test | `stat.ttest.onesample` | Done | Student's One-Sample t-test, test value, df, p-value, mean diff, 95% CI, dialog & SPSS Pivot Tables |
 | Analyze > Compare Means > Independent-Samples T Test | `stat.ttest.indep` | Done | Independent-Samples t-test, Levene test (F, Sig), Student's t (equal var) & Welch's t (unequal var), df, p-value, 95% CI, Define Groups dialog & two-tier SPSS Pivot Tables |
 | Analyze > Compare Means > Paired-Samples T Test | `stat.ttest.paired` | Done | Paired-Samples t-test, Paired Descriptives (Mean, StdDev, SE), Pearson Correlation & Sig, Paired Differences (Mean, StdDev, SE, 95% CI, t, df, Sig), Paired Variables Dialog & 3 SPSS Pivot Tables |
