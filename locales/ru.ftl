@@ -804,3 +804,41 @@ output-regression-col-beta = Бета
 output-regression-col-tol = Толерантность
 output-regression-col-vif = VIF
 output-regression-executed = Рассчитана линейная регрессия для {$dep} с {$count} предиктором(-ами)
+
+
+# Reliability Analysis Dialog
+dialog-reliability-title = Анализ надежности
+dialog-reliability-stats-title = Анализ надежности: Статистики
+dialog-reliability-items = Пункты:
+dialog-reliability-btn-stats = Статистики...
+dialog-reliability-model-label = Модель:
+dialog-reliability-model-alpha = Альфа
+dialog-reliability-scale-label = Метка шкалы:
+dialog-reliability-descriptives-for-group = Описательные для
+dialog-reliability-stat-item = Пункта
+dialog-reliability-stat-scale = Шкалы
+dialog-reliability-stat-scale-if-deleted = Шкалы при исключении пункта
+
+# Reliability Analysis Output
+output-reliability-title = Анализ надежности
+output-reliability-table-title = Статистика надежности шкалы
+output-reliability-case-processing-title = Сводка обработки наблюдений
+output-col-cases = Наблюдения
+output-col-item = Пункт
+output-col-variance = Дисперсия
+output-col-std-dev = Станд. отклонение
+output-reliability-row-valid = Валидные
+output-reliability-row-excluded = Исключенные
+output-reliability-listwise-note = Построчное исключение на основе всех переменных в процедуре.
+output-reliability-stats-title = Статистика надежности
+output-reliability-col-alpha = Альфа Кронбаха
+output-reliability-col-alpha-std = Альфа Кронбаха на основе стандартизованных пунктов
+output-reliability-col-n-items = Количество пунктов
+output-reliability-item-stats-title = Статистика пунктов
+output-reliability-item-total-stats-title = Статистика пункта и шкалы
+output-reliability-col-mean-if-del = Среднее шкалы при исключении пункта
+output-reliability-col-var-if-del = Дисперсия шкалы при исключении пункта
+output-reliability-col-corr-r = Скорректированная корреляция пункта с общим баллом
+output-reliability-col-alpha-if-del = Альфа Кронбаха при исключении пункта
+output-reliability-scale-stats-title = Статистика шкалы
+output-reliability-executed = Рассчитан анализ надежности для {$scale} ({$count} пунктов)

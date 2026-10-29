@@ -819,3 +819,75 @@
    - Сборка и развертывание релизного бинарника `C:\StatCraft\statcraft_app.exe`.
 
 
+
+
+---
+
+### Этап 10.1: Анализ надежности шкалы (Reliability Analysis: `RELIABILITY`)
+*Время: 29 октября 2026, 17:35 (~40 минут)*
+
+Реализована фундаментальная процедура психометрического, социологического и прикладного статистического анализа шкал и опросников — **Анализ надежности** (*Reliability Analysis*, пункт меню `Анализ -> Шкала -> Анализ надежности...` / `Analyze -> Scale -> Reliability Analysis...`, команда движка `stat.scale.reliability` / синтаксис `RELIABILITY /VARIABLES=... /SCALE('ALL VARIABLES') ALL /MODEL=ALPHA`):
+
+1. **Математическое ядро L2 (`statcraft_algo::reliability` и `reliability_types`):**
+   - Расчет коэффициента внутренней согласованности $\alpha$ Кронбаха: $\alpha = \frac{k}{k - 1} \left( 1 - \frac{\sum s_i^2}{s_{total}^2} \right)$;
+   - Расчет стандартизованного коэффициента $\alpha$ на основе средней межпунктовой корреляции $\bar{r}$: $\alpha_{std} = \frac{k \bar{r}}{1 + (k - 1) \bar{r}}$;
+   - Построчное исключение пропущенных данных (Listwise deletion) по всем пунктам шкалы;
+   - Сводка обработки наблюдений (*Case Processing Summary*): валидные ($N, \%$), исключенные ($N, \%$) и всего ($N, 100.0\%$);
+   - Статистика пунктов (*Item Statistics*): среднее ($\bar{x}_i$), стандартное отклонение ($s_i$), валидное число наблюдений ($N$);
+   - Статистика пункта и шкалы (*Item-Total Statistics*):
+     * Среднее шкалы при исключении пункта: $\mu_{-i} = \mu_{total} - \bar{x}_i$;
+     * Дисперсия шкалы при исключении пункта: $s_{-i}^2 = s_{total}^2 + s_i^2 - 2 \text{Cov}(X_i, X_{total})$;
+     * Скорректированная корреляция пункта с общим баллом: $r_{i(total - i)} = \frac{\text{Cov}(X_i, X_{total}) - s_i^2}{\sqrt{s_i^2 \cdot s_{-i}^2}}$;
+     * Альфа Кронбаха при исключении пункта: $\alpha_{-i} = \frac{k - 1}{k - 2} \left( 1 - \frac{\sum_{j \neq i} s_j^2}{s_{-i}^2} \right)$ при $k > 2$;
+   - Статистика суммарной шкалы (*Scale Statistics*): среднее, дисперсия, стандартное отклонение, число пунктов;
+   - Полная поддержка взвешенных наблюдений (`row_weight`) и фильтров (`active_row_indices`);
+   - **Golden Oracle:** Набор тестов `reliability_tests.rs` со сверкой формул против эталонов с аналитической точностью $\le 10^{-6}$;
+   - Защита **Never Crash**: безопасная обработка $k < 2$, вырожденных нулевых дисперсий, константных ответов и пропусков на 100% safe Rust без паник.
+
+2. **Командная шина и синтаксис L5 (`statcraft_syntax::commands::reliability_cmd`):**
+   - Типизированная команда `ReliabilityCommand` (`stat.scale.reliability`) со спецификацией `specs()` для внешних ИИ-агентов;
+   - Генератор канонического синтаксиса IBM SPSS Statistics:
+     ```text
+     RELIABILITY
+       /VARIABLES=q1 q2 q3 q4
+       /SCALE('ALL VARIABLES') ALL
+       /MODEL=ALPHA
+       /STATISTICS=DESCRIPTIVES SCALE
+       /SUMMARY=TOTAL.
+     ```
+   - Полная поддержка `Undo` / `Redo`.
+
+3. **Графический интерфейс на DialogKit L6 (`statcraft_app::dialogs::reliability_dialog`):**
+   - Центрированный диалог $560 \times 430$ px на базе `DialogShell::standard`;
+   - Двухпанельный `VariablePicker` со шкалами измерения и векторными кнопками переноса `TransferButton` (`->` / `<-`);
+   - Список анализируемых пунктов `Items:` (минимум 2 переменные для активации кнопки `[ OK ]`);
+   - Выпадающий список выбора модели: `Model: Alpha`;
+   - Поле ввода метки шкалы: `Scale label:` (по умолчанию `ALL VARIABLES`);
+   - Боковая панель `SubdialogSidebar` с кнопкой `[ Statistics... ]` (`[ Статистика... ]`);
+   - Модальный поддиалог настроек статистики ($360 \times 300$ px, `DialogShell::subdialog`):
+     * Чекбоксы `[x] Item` (Пункта), `[x] Scale` (Шкалы), `[x] Scale if item deleted` (Шкалы при исключении пункта);
+     * Нижний ряд кнопок `SubdialogActionBar` (`[ Continue ] [ Cancel ] [ Help ]`);
+   - Нижний ряд действий `DialogActionBar` (`[ OK ] [ Paste ] [ Reset ] [ Cancel ] [ Help ]`).
+
+4. **Сводные таблицы в Output Viewer (`tables_reliability.rs`):**
+   - Таблица **Case Processing Summary:** Cases (Valid, Excluded, Total) с $N$ и $\%$, примечание о построчном исключении;
+   - Таблица **Reliability Statistics:** Cronbach's Alpha, Cronbach's Alpha Based on Standardized Items, N of Items;
+   - Таблица **Item Statistics:** Item, Mean, Std. Deviation, N;
+   - Таблица **Item-Total Statistics:** Item, Scale Mean if Item Deleted, Scale Variance if Item Deleted, Corrected Item-Total Correlation, Cronbach's Alpha if Item Deleted;
+   - Таблица **Scale Statistics:** Mean, Variance, Std. Deviation, N of Items;
+   - TSV-экспорт в буфер обмена и интеграция в Outline Tree.
+
+5. **Реактивность, меню и статусная строка:**
+   - Активирован пункт меню `Analyze -> Scale -> Reliability Analysis...` (`Анализ -> Шкала -> Анализ надежности...`);
+   - Автоматическая запись синтаксиса в журнал Output Viewer;
+   - Уведомление в строке состояния (`Reliability analysis calculated for <scale> (<n> items)`).
+
+6. **Контроль качества (Definition of Done):**
+   - Полный CI-пайплайн `cargo run -p xtask -j 1 -- ci` — 100% OK;
+   - 160+ тестов воркспейса завершились успешно (0 сбоев);
+   - Соблюдение предельных размеров файлов (`file-guard` $\le 500$ строк на файл);
+   - Соблюдение стандартов дизайна (`design-guard` — 100% канонический DialogKit);
+   - Проверка слоев `layers` и паритета `parity` (37 документированных процедур) — 0 нарушений;
+   - Полная синхронная локализация на трех языках (`locales/en.ftl`, `locales/ru.ftl`, `C:\StatCraft\locales\fr.ftl`);
+   - `cargo clippy --workspace --all-targets -j 1 -- -D warnings` — 0 предупреждений;
+   - Сборка и развертывание релизного бинарника `C:\StatCraft\statcraft_app.exe`.

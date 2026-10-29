@@ -310,6 +310,17 @@
 - [x] L6 `statcraft_app`: активация пункта меню `Analyze -> Regression -> Linear...`
 - [x] 100% покрытие локализацией (`locales/en.ftl`, `locales/ru.ftl`, `C:\StatCraft\locales\fr.ftl`), 100% прохождение полного CI gate `cargo run -p xtask -j 1 -- ci` (`file-guard`, `design-guard`, `layers`, `parity`, `clippy -D warnings`, `cargo fmt --check`)
 
+## 33. Этап 10.1: Анализ надежности шкалы (Reliability Analysis: `RELIABILITY`)
+- [x] L2 `statcraft_algo`: модули `reliability.rs`, `reliability_types.rs` и `reliability_tests.rs` — расчет коэффициента надежности $\alpha$ Кронбаха и $\alpha$ на основе стандартизованных пунктов, построчное исключение пропущенных данных (Listwise deletion), поддержка весов наблюдений на 100% safe Rust без паник
+- [x] L2 `statcraft_algo`: расчет статистик пунктов (*Item Statistics*: Mean, Std. Dev, $N$) и характеристик при удалении пунктов (*Item-Total Statistics*: Scale Mean if Item Deleted, Scale Variance if Item Deleted, Corrected Item-Total Correlation, Cronbach's Alpha if Item Deleted), а также описательных статистик шкалы (*Scale Statistics*)
+- [x] L2 `statcraft_algo`: сверка Golden Oracle с эталонами Python (`pingouin` / матричные формулы SPSS) с точностью $\le 10^{-6}$, защита Never Crash при $k < 2$, вырожденных нулевых дисперсиях и сингулярных матрицах
+- [x] L5 `statcraft_syntax`: типизированная команда `ReliabilityCommand` (`stat.scale.reliability`) со спецификацией параметров `specs()`, фильтрацией `active_row_indices()`, весами `row_weight(r)` и генератором канонического синтаксиса `RELIABILITY /VARIABLES=... /SCALE('ALL VARIABLES') ALL /MODEL=ALPHA /STATISTICS=DESCRIPTIVES SCALE /SUMMARY=TOTAL.`
+- [x] L6 `statcraft_app`: модальный диалог `ReliabilityDialog` ($560 \times 430$ px, `DialogShell::standard`) на базе `DialogKit` (`VariablePicker`, `TransferButton`, `SubdialogSidebar`, `SubdialogActionBar`, `DialogActionBar`, `GroupBox`), модальный поддиалог `[ Statistics... ]`
+- [x] L6 `statcraft_app`: модуль вывода `output_view/tables_reliability.rs` — 4–5 аутентичных таблиц SPSS (*Case Processing Summary, Reliability Statistics, Item Statistics, Item-Total Statistics, Scale Statistics*), TSV-экспорт для буфера обмена и интеграция в Outline Tree
+- [x] L6 `statcraft_app`: активация пункта главного меню `Analyze -> Scale -> Reliability Analysis...` (`Анализ -> Шкала -> Анализ надежности...`)
+- [x] 100% покрытие локализацией (`locales/en.ftl`, `locales/ru.ftl`, `C:\StatCraft\locales\fr.ftl`), 100% прохождение полного CI gate `cargo run -p xtask -j 1 -- ci` (`file-guard`, `design-guard`, `layers`, `parity`, `clippy -D warnings`, `cargo fmt --check`)
+
+
 
 
 

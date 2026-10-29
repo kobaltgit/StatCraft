@@ -804,3 +804,41 @@ output-regression-col-beta = Beta
 output-regression-col-tol = Tolerance
 output-regression-col-vif = VIF
 output-regression-executed = Linear regression computed for {$dep} with {$count} predictor(s)
+
+
+# Reliability Analysis Dialog
+dialog-reliability-title = Reliability Analysis
+dialog-reliability-stats-title = Reliability Analysis: Statistics
+dialog-reliability-items = Items:
+dialog-reliability-btn-stats = Statistics...
+dialog-reliability-model-label = Model:
+dialog-reliability-model-alpha = Alpha
+dialog-reliability-scale-label = Scale label:
+dialog-reliability-descriptives-for-group = Descriptives for
+dialog-reliability-stat-item = Item
+dialog-reliability-stat-scale = Scale
+dialog-reliability-stat-scale-if-deleted = Scale if item deleted
+
+# Reliability Analysis Output
+output-reliability-title = Reliability Analysis
+output-reliability-table-title = Scale Reliability Statistics
+output-reliability-case-processing-title = Case Processing Summary
+output-col-cases = Cases
+output-col-item = Item
+output-col-variance = Variance
+output-col-std-dev = Std. Deviation
+output-reliability-row-valid = Valid
+output-reliability-row-excluded = Excluded
+output-reliability-listwise-note = Listwise deletion based on all variables in the procedure.
+output-reliability-stats-title = Reliability Statistics
+output-reliability-col-alpha = Cronbach's Alpha
+output-reliability-col-alpha-std = Cronbach's Alpha Based on Standardized Items
+output-reliability-col-n-items = N of Items
+output-reliability-item-stats-title = Item Statistics
+output-reliability-item-total-stats-title = Item-Total Statistics
+output-reliability-col-mean-if-del = Scale Mean if Item Deleted
+output-reliability-col-var-if-del = Scale Variance if Item Deleted
+output-reliability-col-corr-r = Corrected Item-Total Correlation
+output-reliability-col-alpha-if-del = Cronbach's Alpha if Item Deleted
+output-reliability-scale-stats-title = Scale Statistics
+output-reliability-executed = Reliability analysis computed for {$scale} ({$count} item(s))

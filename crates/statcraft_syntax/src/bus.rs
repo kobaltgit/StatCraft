@@ -5,10 +5,10 @@ use crate::commands::{
     ImportCsvCommand, IndependentSamplesTTestCommand, KruskalWallisCommand,
     LinearRegressionCommand, MannWhitneyCommand, OneSampleTTestCommand, OneWayAnovaCommand,
     PairedSamplesTTestCommand, RecodeIntoDifferentCommand, RecodeIntoSameCommand,
-    RelatedSamplesTestCommand, SelectCasesCommand, SetLabelCommand, SetMeasureCommand,
-    SortCasesCommand, SplitFileCommand, VarAddCommand, VarDeleteCommand, VarRenameCommand,
-    VarSetAlignCommand, VarSetDecimalsCommand, VarSetMissingValuesCommand, VarSetTypeCommand,
-    VarSetValueLabelsCommand, VarSetWidthCommand, WeightCasesCommand,
+    RelatedSamplesTestCommand, ReliabilityCommand, SelectCasesCommand, SetLabelCommand,
+    SetMeasureCommand, SortCasesCommand, SplitFileCommand, VarAddCommand, VarDeleteCommand,
+    VarRenameCommand, VarSetAlignCommand, VarSetDecimalsCommand, VarSetMissingValuesCommand,
+    VarSetTypeCommand, VarSetValueLabelsCommand, VarSetWidthCommand, WeightCasesCommand,
 };
 use serde::{Deserialize, Serialize};
 use serde_json::{json, Value};
@@ -56,6 +56,7 @@ impl CommandBus {
         bus.register(Box::new(CrosstabsCommand));
         bus.register(Box::new(CorrelationsCommand));
         bus.register(Box::new(LinearRegressionCommand));
+        bus.register(Box::new(ReliabilityCommand));
         bus.register(Box::new(MannWhitneyCommand));
         bus.register(Box::new(KruskalWallisCommand));
         bus.register(Box::new(RelatedSamplesTestCommand));

@@ -1395,3 +1395,75 @@ Implemented one of the foundational predictive modeling frameworks in IBM SPSS S
 
 
 
+
+
+---
+
+### Phase 10.1: Scale Reliability Analysis (Reliability Analysis: `RELIABILITY`)
+*Time: October 29, 2026, 17:35 (~40 minutes)*
+
+Implemented the fundamental psychometric, survey, and applied statistical measurement procedure — **Reliability Analysis** (`Analyze -> Scale -> Reliability Analysis...`, engine command `stat.scale.reliability` / syntax `RELIABILITY /VARIABLES=... /SCALE('ALL VARIABLES') ALL /MODEL=ALPHA`):
+
+1. **Mathematical Engine L2 (`statcraft_algo::reliability` & `reliability_types`):**
+   - Internal consistency estimation via Cronbach's Alpha: $\alpha = \frac{k}{k - 1} \left( 1 - \frac{\sum s_i^2}{s_{total}^2} \right)$;
+   - Standardized Alpha based on average inter-item correlation $\bar{r}$: $\alpha_{std} = \frac{k \bar{r}}{1 + (k - 1) \bar{r}}$;
+   - Listwise missing data deletion across all analyzed scale items;
+   - Case Processing Summary: Valid ($N, \%$), Excluded ($N, \%$), and Total ($N, 100.0\%$);
+   - Item Statistics: Mean ($\bar{x}_i$), Standard Deviation ($s_i$), Valid Sample Count ($N$);
+   - Item-Total Statistics:
+     * Scale Mean if Item Deleted: $\mu_{-i} = \mu_{total} - \bar{x}_i$;
+     * Scale Variance if Item Deleted: $s_{-i}^2 = s_{total}^2 + s_i^2 - 2 \text{Cov}(X_i, X_{total})$;
+     * Corrected Item-Total Correlation: $r_{i(total - i)} = \frac{\text{Cov}(X_i, X_{total}) - s_i^2}{\sqrt{s_i^2 \cdot s_{-i}^2}}$;
+     * Cronbach's Alpha if Item Deleted: $\alpha_{-i} = \frac{k - 1}{k - 2} \left( 1 - \frac{\sum_{j \neq i} s_j^2}{s_{-i}^2} \right)$ for $k > 2$;
+   - Summary Scale Statistics: Mean, Variance, Standard Deviation, Item Count;
+   - Seamless synergy with active sample filtering (`Select Cases`) and frequency weighting (`Weight Cases`);
+   - **Golden Oracle:** Unit and validation tests in `reliability_tests.rs` with analytical precision $\le 10^{-6}$;
+   - **Never Crash** protection: safe handling of $k < 2$, zero-variance degenerate scales, identical survey responses, and missing values on 100% safe Rust.
+
+2. **Command Bus & Syntax L5 (`statcraft_syntax::commands::reliability_cmd`):**
+   - Strongly-typed `ReliabilityCommand` (`stat.scale.reliability`) with parameter `specs()` for external AI agents;
+   - Canonical IBM SPSS Statistics syntax generator:
+     ```text
+     RELIABILITY
+       /VARIABLES=q1 q2 q3 q4
+       /SCALE('ALL VARIABLES') ALL
+       /MODEL=ALPHA
+       /STATISTICS=DESCRIPTIVES SCALE
+       /SUMMARY=TOTAL.
+     ```
+   - Full `Undo` / `Redo` lifecycle support.
+
+3. **DialogKit Desktop User Interface L6 (`statcraft_app::dialogs::reliability_dialog`):**
+   - Centered canonical modal dialog ($560 \times 430$ px, `DialogShell::standard`);
+   - Two-panel `VariablePicker` with measurement scale icons and vector transfer buttons `TransferButton` (`->` / `<-`);
+   - `Items:` target list (requires at least 2 items to enable `[ OK ]`);
+   - Model selector dropdown: `Model: Alpha`;
+   - Text input for scale identifier: `Scale label:` (default `ALL VARIABLES`);
+   - Right sidebar `SubdialogSidebar` with `[ Statistics... ]` button;
+   - Modal statistics subdialog ($360 \times 300$ px, `DialogShell::subdialog`):
+     * Checkboxes `[x] Item`, `[x] Scale`, `[x] Scale if item deleted`;
+     * Bottom action row `SubdialogActionBar` (`[ Continue ] [ Cancel ] [ Help ]`);
+   - Canonical bottom action bar `DialogActionBar` (`[ OK ] [ Paste ] [ Reset ] [ Cancel ] [ Help ]`).
+
+4. **Summary Pivot Tables in Output Viewer (`tables_reliability.rs`):**
+   - **Case Processing Summary:** Cases (Valid, Excluded, Total) with $N$ and $\%$, listwise note footnote;
+   - **Reliability Statistics:** Cronbach's Alpha, Cronbach's Alpha Based on Standardized Items, N of Items;
+   - **Item Statistics:** Item, Mean, Std. Deviation, N;
+   - **Item-Total Statistics:** Item, Scale Mean if Item Deleted, Scale Variance if Item Deleted, Corrected Item-Total Correlation, Cronbach's Alpha if Item Deleted;
+   - **Scale Statistics:** Mean, Variance, Std. Deviation, N of Items;
+   - TSV clipboard export and Outline Tree integration.
+
+5. **Reactivity, Menu & Status Bar:**
+   - Activated main menu item `Analyze -> Scale -> Reliability Analysis...`;
+   - Canonical syntax automatically recorded to `Output Viewer` (Log);
+   - Status bar feedback notification (`Reliability analysis computed for <scale> (<n> items)`).
+
+6. **Quality Control & Definition of Done:**
+   - Full automated CI quality gate passed (`cargo run -p xtask -j 1 -- ci` — 100% OK);
+   - 160+ workspace unit and integration tests passing with 0 failures;
+   - Strict adherence to file size limits (`file-guard` $\le 500$ lines on leaf modules);
+   - Strict adherence to DialogKit standards (`design-guard` — 100% compliant);
+   - Architectural and parity linters (`layers`, `parity` — 37 documented procedures) reporting 0 violations;
+   - Synchronous trilingual localization across all supported languages (`locales/en.ftl`, `locales/ru.ftl`, `C:\StatCraft\locales\fr.ftl`);
+   - Compiler linter `cargo clippy --workspace --all-targets -j 1 -- -D warnings` — 0 warnings;
+   - Release binary built and deployed to `C:\StatCraft\statcraft_app.exe`.

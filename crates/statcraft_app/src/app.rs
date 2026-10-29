@@ -3,8 +3,9 @@ use crate::dialogs::{
     FrequenciesDialogState, IndependentSamplesTTestDialogState, KruskalWallisDialogState,
     LinearRegressionDialogState, MissingValuesDialogState, NonparamRelatedDialogState,
     NonparamTwoSampleDialogState, OneSampleTTestDialogState, OneWayAnovaDialogState,
-    PairedSamplesTTestDialogState, RecodeDialogState, SelectCasesDialogState, SortCasesDialogState,
-    SplitFileDialogState, ValueLabelsDialogState, VariableTypeDialogState, WeightCasesDialogState,
+    PairedSamplesTTestDialogState, RecodeDialogState, ReliabilityDialogState,
+    SelectCasesDialogState, SortCasesDialogState, SplitFileDialogState, ValueLabelsDialogState,
+    VariableTypeDialogState, WeightCasesDialogState,
 };
 use crate::views::{
     render_data_view, render_output_view, render_variable_view, DataViewState, OutputViewerState,
@@ -94,6 +95,10 @@ pub enum StatusMessage {
         dep_var: String,
         indep_count: usize,
     },
+    ReliabilityExecuted {
+        scale: String,
+        count: usize,
+    },
     Error(String),
 }
 
@@ -179,6 +184,13 @@ impl StatusMessage {
                     count = *indep_count
                 )
             }
+            StatusMessage::ReliabilityExecuted { scale, count } => {
+                t!(
+                    "output-reliability-executed",
+                    scale = scale.as_str(),
+                    count = *count
+                )
+            }
             StatusMessage::Error(e) => format!("{}: {}", t!("status-error"), e),
         }
     }
@@ -212,6 +224,7 @@ pub struct StatCraftApp {
     pub split_file_dialog_state: SplitFileDialogState,
     pub weight_cases_dialog_state: WeightCasesDialogState,
     pub linear_regression_dialog_state: LinearRegressionDialogState,
+    pub reliability_dialog_state: ReliabilityDialogState,
     pub pending_variable_action: VariableViewAction,
     pub status_message: StatusMessage,
     pub toolbar_position: ToolbarPosition,
@@ -253,6 +266,7 @@ impl StatCraftApp {
             split_file_dialog_state: SplitFileDialogState::default(),
             weight_cases_dialog_state: WeightCasesDialogState::default(),
             linear_regression_dialog_state: LinearRegressionDialogState::default(),
+            reliability_dialog_state: ReliabilityDialogState::default(),
             pending_variable_action: VariableViewAction::None,
             status_message: StatusMessage::Ready,
             toolbar_position: ToolbarPosition::Top,
@@ -762,7 +776,16 @@ impl StatCraftApp {
                         render_menu_item(ui, t!("menu-analyze-cluster"), MenuItemStatus::InDev);
                     });
                     ui.menu_button(t!("menu-analyze-scale"), |ui| {
-                        render_menu_item(ui, t!("menu-analyze-reliability"), MenuItemStatus::InDev);
+                        if render_menu_item(
+                            ui,
+                            t!("menu-analyze-reliability"),
+                            requires_dataset_status,
+                        )
+                        .clicked()
+                        {
+                            self.reliability_dialog_state.is_open = true;
+                            ui.close_menu();
+                        }
                     });
                     ui.menu_button(t!("menu-analyze-survival"), |ui| {
                         render_menu_item(

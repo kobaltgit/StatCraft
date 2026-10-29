@@ -7,14 +7,16 @@ use statcraft_algo::{
     KruskalWallisResult, LeveneResult, LinearRegressionOptions, LinearRegressionResult,
     MannWhitneyResult, OneSampleTTestResult, OneWayAnovaResult, PairedCorrelation,
     PairedDifferences, PairedTTestResult, PairedVarStats, RankGroupStats, RegressionAnova,
-    RegressionAnovaRow, RegressionCoefficient, RelatedPairTestResult, SignTestDifferences,
-    SignTestResult, TTestTwoGroupDetails, WilcoxonRanksSummary, WilcoxonSignedRankResult,
+    RegressionAnovaRow, RegressionCoefficient, RelatedPairTestResult, ReliabilityModel,
+    ReliabilityResult, SignTestDifferences, SignTestResult, TTestTwoGroupDetails,
+    WilcoxonRanksSummary, WilcoxonSignedRankResult,
 };
 use statcraft_app::views::output_view::{
     anova_to_tsv, correlations_to_tsv, crosstabs_to_tsv, descriptives_to_tsv, frequencies_to_tsv,
     indep_ttest_to_tsv, kruskal_wallis_to_tsv, mann_whitney_to_tsv, onesample_ttest_to_tsv,
-    paired_ttest_to_tsv, regression_to_tsv, related_samples_to_tsv, render_output_view, OutputItem,
-    OutputItemKind, OutputNotes, OutputProcedure, OutputViewerState, SelectedTarget,
+    paired_ttest_to_tsv, regression_to_tsv, related_samples_to_tsv, reliability_to_tsv,
+    render_output_view, OutputItem, OutputItemKind, OutputNotes, OutputProcedure,
+    OutputViewerState, SelectedTarget,
 };
 
 #[path = "output_viewer_invariants/fixtures.rs"]
@@ -800,4 +802,75 @@ fn test_output_viewer_linear_regression_item_and_tsv() {
     assert!(tsv.contains("Coefficients"));
     assert!(tsv.contains("0.9974"));
     assert!(tsv.contains("916.8100"));
+}
+
+#[test]
+fn test_reliability_output_and_tsv_integrity() {
+    let ctx = egui::Context::default();
+    let mut state = OutputViewerState::new();
+
+    let sample_rel = ReliabilityResult {
+        scale_name: "SCALE_1".to_string(),
+        model: ReliabilityModel::Alpha,
+        case_processing: statcraft_algo::CaseProcessingSummary {
+            n_valid: 20,
+            percent_valid: 80.0,
+            n_excluded: 5,
+            percent_excluded: 20.0,
+            n_total: 25,
+            percent_total: 100.0,
+        },
+        reliability_stats: statcraft_algo::ReliabilityStatistics {
+            cronbach_alpha: Some(0.854),
+            cronbach_alpha_standardized: Some(0.862),
+            n_of_items: 3,
+        },
+        item_stats: vec![
+            statcraft_algo::ItemStatistic {
+                item_name: "q1".to_string(),
+                mean: 3.5,
+                std_dev: 1.1,
+                n: 20,
+            },
+            statcraft_algo::ItemStatistic {
+                item_name: "q2".to_string(),
+                mean: 3.8,
+                std_dev: 1.0,
+                n: 20,
+            },
+        ],
+        item_total_stats: vec![statcraft_algo::ItemTotalStatistic {
+            item_name: "q1".to_string(),
+            scale_mean_if_deleted: 3.8,
+            scale_variance_if_deleted: 1.0,
+            corrected_item_total_correlation: Some(0.72),
+            cronbach_alpha_if_deleted: Some(0.81),
+        }],
+        scale_stats: Some(statcraft_algo::ScaleStatistics {
+            mean: 7.3,
+            variance: 3.5,
+            std_dev: 1.87,
+            n_of_items: 2,
+        }),
+    };
+
+    state.add_reliability(sample_rel.clone(), vec!["q1".to_string(), "q2".to_string()]);
+    assert_eq!(state.procedures.len(), 1);
+    assert_eq!(state.procedures[0].items.len(), 3);
+
+    // Headless render
+    let _ = ctx.run(Default::default(), |ctx| {
+        egui::CentralPanel::default().show(ctx, |ui| {
+            render_output_view(ui, &mut state);
+        });
+    });
+
+    let tsv = reliability_to_tsv(&sample_rel);
+    assert!(tsv.contains("Case Processing Summary"));
+    assert!(tsv.contains("Reliability Statistics"));
+    assert!(tsv.contains("Item Statistics"));
+    assert!(tsv.contains("Item-Total Statistics"));
+    assert!(tsv.contains("Scale Statistics"));
+    assert!(tsv.contains("0.854"));
+    assert!(tsv.contains("0.862"));
 }

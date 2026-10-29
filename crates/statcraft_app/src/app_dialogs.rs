@@ -3,12 +3,12 @@ use super::dialogs::{
     render_anova_oneway_dialog, render_correlations_dialog, render_crosstabs_dialog,
     render_descriptives_dialog, render_frequencies_dialog, render_kruskal_wallis_dialog,
     render_linear_regression_dialog, render_nonparam_related_dialog,
-    render_nonparam_twosample_dialog, render_ttest_indep_dialog, render_ttest_onesample_dialog,
-    render_ttest_paired_dialog, CorrelationsDialogAction, CrosstabsDialogAction,
-    DescriptivesDialogAction, FrequenciesDialogAction, IndependentSamplesTTestDialogAction,
-    KruskalWallisDialogAction, LinearRegressionDialogAction, NonparamRelatedDialogAction,
-    NonparamTwoSampleDialogAction, OneSampleTTestDialogAction, OneWayAnovaDialogAction,
-    PairedSamplesTTestDialogAction,
+    render_nonparam_twosample_dialog, render_reliability_dialog, render_ttest_indep_dialog,
+    render_ttest_onesample_dialog, render_ttest_paired_dialog, CorrelationsDialogAction,
+    CrosstabsDialogAction, DescriptivesDialogAction, FrequenciesDialogAction,
+    IndependentSamplesTTestDialogAction, KruskalWallisDialogAction, LinearRegressionDialogAction,
+    NonparamRelatedDialogAction, NonparamTwoSampleDialogAction, OneSampleTTestDialogAction,
+    OneWayAnovaDialogAction, PairedSamplesTTestDialogAction, ReliabilityDialogAction,
 };
 use serde_json::json;
 use statcraft_i18n::t;
@@ -645,7 +645,74 @@ impl StatCraftApp {
             LinearRegressionDialogAction::None => {}
         }
 
-        // 13. Data and Variable Management Dialogs
+        // 13. Scale Reliability Dialog
+        let rel_action = render_reliability_dialog(
+            ctx,
+            self.dataset.as_ref(),
+            &mut self.reliability_dialog_state,
+        );
+
+        match rel_action {
+            ReliabilityDialogAction::Run {
+                variables,
+                scale_name,
+                model,
+                options,
+            } => {
+                let params = json!({
+                    "variables": variables,
+                    "scale_name": scale_name,
+                    "model": match model {
+                        statcraft_algo::ReliabilityModel::Alpha => "alpha",
+                    },
+                    "item_statistics": options.item_statistics,
+                    "scale_statistics": options.scale_statistics,
+                    "scale_if_item_deleted": options.scale_if_item_deleted,
+                });
+                match self
+                    .command_bus
+                    .execute("stat.scale.reliability", &mut self.dataset, params)
+                {
+                    Ok(result_value) => {
+                        if let Ok(result) = serde_json::from_value::<
+                            statcraft_algo::ReliabilityResult,
+                        >(result_value)
+                        {
+                            let scale = result.scale_name.clone();
+                            let count = result.reliability_stats.n_of_items;
+                            let var_names = result
+                                .item_stats
+                                .iter()
+                                .map(|s| s.item_name.clone())
+                                .collect::<Vec<_>>();
+                            self.output_view_state.add_reliability(result, var_names);
+                            self.status_message =
+                                StatusMessage::ReliabilityExecuted { scale, count };
+                        }
+                    }
+                    Err(e) => {
+                        self.status_message = StatusMessage::Error(e.to_string());
+                    }
+                }
+            }
+            ReliabilityDialogAction::Paste {
+                variables,
+                scale_name,
+                model,
+                options,
+            } => {
+                let sps = statcraft_syntax::commands::ReliabilityCommand::to_sps(
+                    &variables,
+                    &scale_name,
+                    model,
+                    &options,
+                );
+                self.output_view_state.add_entry(t!("output-log"), sps);
+            }
+            ReliabilityDialogAction::None => {}
+        }
+
+        // 14. Data and Variable Management Dialogs
         self.handle_data_dialogs(ctx);
     }
 }
