@@ -1,5 +1,6 @@
 pub mod anova_oneway_dialog;
 pub mod common;
+pub mod compute_dialog;
 pub mod correlations_dialog;
 pub mod crosstabs_dialog;
 pub mod descriptives_dialog;
@@ -19,6 +20,10 @@ pub mod variable_type_dialog;
 
 pub use anova_oneway_dialog::{
     render_anova_oneway_dialog, OneWayAnovaDialogAction, OneWayAnovaDialogState,
+};
+pub use common::*;
+pub use compute_dialog::{
+    render_compute_dialog, ComputeDialogAction, ComputeDialogState, FuncGroup,
 };
 pub use correlations_dialog::{
     render_correlations_dialog, CorrelationsDialogAction, CorrelationsDialogState,

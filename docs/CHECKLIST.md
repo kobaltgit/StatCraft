@@ -238,6 +238,14 @@
 - [x] L6 `statcraft_app`: активация пункта меню `Analyze -> Nonparametric Tests -> Related Samples (Wilcoxon / Friedman)...`
 - [x] 100% покрытие локализацией (`locales/en.ftl`, `locales/ru.ftl`), 100% прохождение полного CI gate `cargo run -p xtask -j 1 -- ci` (`file-guard`, `design-guard`, `layers`, `parity`, `clippy -D warnings`, `cargo fmt --check`)
 
+## 26. Этап 8.1: Вычисление переменных (Compute Variable: `COMPUTE`)
+- [x] L2 `statcraft_algo`: модульный пакет `expr_eval/` (`types.rs`, `lexer.rs`, `parser.rs`, `eval.rs`, `mod.rs`, `tests.rs`) — токенизация, алгоритм сортировочной станции Дейкстры (Shunting-yard) для построения обратной польской записи (RPN), построчный вычислитель с поддержкой арифметических операций (`+`, `-`, `*`, `/`, `**`, `^`, унарные `+`/`-`), скобок и функций одного/многих аргументов (`ABS`, `EXP`, `LN`, `LOG10`, `RND`, `SQRT`, `TRUNC`, `SUM`, `MEAN`, `MIN`, `MAX`)
+- [x] L2 `statcraft_algo`: строгая защита **Never Crash** и работа с пропусками — деление на ноль, корень из отрицательного и пропуски в данных возвращают системный пропуск (`NaN` / `SYSMIS`) без паник
+- [x] L5 `statcraft_syntax`: типизированная команда `ComputeVariableCommand` (`transform.compute`) с параметрами `specs()`, созданием новой колонки или перезаписью существующей, поддержкой отката Undo (`Ctrl+Z`) и генерацией канонического синтаксиса `COMPUTE target = expression. \n VARIABLE LABELS ... \n EXECUTE.`
+- [x] L6 `statcraft_app`: центрированный диалог `ComputeVariableDialog` ($620 \times 480$ px) на базе `DialogKit` (`DialogShell::compute`, `render_variable_list_panel`, `TransferButton`, `DialogActionBar`) с многострочным редактором выражений, виртуальной клавиатурой калькулятора (`7 8 9`, `4 5 6`, `1 2 3`, `0 . C`, операторы) и списком функций с группировкой (*All, Arithmetic, Statistical*)
+- [x] L6 `statcraft_app`: активация пункта меню `Transform -> Compute Variable...`, мгновенная реактивность и обновление `Data View` и `Variable View`
+- [x] 100% покрытие локализацией (`locales/en.ftl`, `locales/ru.ftl`), 100% прохождение полного CI gate `cargo run -p xtask -j 1 -- ci` (`file-guard`, `design-guard`, `layers`, `parity`, `clippy -D warnings`, `cargo fmt --check`)
+
 ## 25. Исправление навигационной панели (Outline Overflow Fix) и Этап 7.5: Критерий Крускала-Уоллиса для K независимых выборок (Kruskal-Wallis H Test)
 - [x] L6 `statcraft_app`: исправление выезда текста в Outline View (`output_view/mod.rs` и `outline.rs`) — расширение панели до 230 px, установка жесткого рубежа отсечения `ui.set_clip_rect(left_rect)`, посимвольная утилита усечения `truncate_text_to_width` с многоточием `...`, отрисовка внутри `painter.with_clip_rect` и всплывающие подсказки полного заголовка `.on_hover_text(...)`
 - [x] L2 `statcraft_algo`: модули `kruskal_wallis.rs` и `kruskal_wallis_tests.rs` — расчет сумм и средних рангов по $k$ группам, статистика $H$, поправка на совпадающие ранги (Tie correction) $\sum(t_j^3 - t_j) / (N^3 - N)$, степени свободы $df = k - 1$, точный асимптотический $p$-value через $\chi^2$ распределение (`chi_square_sf`)
@@ -246,6 +254,14 @@
 - [x] L6 `statcraft_app`: диалог `KruskalWallisDialog` ($560 \times 430$ px) на базе `DialogKit` (`DialogShell::standard`, `VariablePicker`, `TransferButton`, `SubdialogSidebar`, `SubdialogActionBar`, `DialogActionBar`, `GroupBox`), модальный поддиалог `Define Range...` (Min/Max коды групп)
 - [x] L6 `statcraft_app`: модуль вывода `output_view/tables_kruskal.rs` — аутентичные таблицы SPSS `Ranks` ($N$, Mean Rank, Total) и `Test Statistics` (Kruskal-Wallis H, df, Asymp. Sig.), сноски критерия и группирующей переменной, TSV-экспорт и интеграция в Outline Pane
 - [x] L6 `statcraft_app`: активация пункта меню `Analyze -> Nonparametric Tests -> K Independent Samples...`
+- [x] 100% покрытие локализацией (`locales/en.ftl`, `locales/ru.ftl`), 100% прохождение полного CI gate `cargo run -p xtask -j 1 -- ci` (`file-guard`, `design-guard`, `layers`, `parity`, `clippy -D warnings`, `cargo fmt --check`)
+
+## 26. Этап 8.1: Вычисление переменных (Compute Variable: `COMPUTE`)
+- [x] L2 `statcraft_algo`: модульный пакет `expr_eval/` (`types.rs`, `lexer.rs`, `parser.rs`, `eval.rs`, `mod.rs`, `tests.rs`) — токенизация, алгоритм сортировочной станции Дейкстры (Shunting-yard) для построения обратной польской записи (RPN), построчный вычислитель с поддержкой арифметических операций (`+`, `-`, `*`, `/`, `**`, `^`, унарные `+`/`-`), скобок и функций одного/многих аргументов (`ABS`, `EXP`, `LN`, `LOG10`, `RND`, `SQRT`, `TRUNC`, `SUM`, `MEAN`, `MIN`, `MAX`)
+- [x] L2 `statcraft_algo`: строгая защита **Never Crash** и работа с пропусками — деление на ноль, корень из отрицательного и пропуски в данных возвращают системный пропуск (`NaN` / `SYSMIS`) без паник
+- [x] L5 `statcraft_syntax`: типизированная команда `ComputeVariableCommand` (`transform.compute`) с параметрами `specs()`, созданием новой колонки или перезаписью существующей, поддержкой отката Undo (`Ctrl+Z`) и генерацией канонического синтаксиса `COMPUTE target = expression. \n VARIABLE LABELS ... \n EXECUTE.`
+- [x] L6 `statcraft_app`: центрированный диалог `ComputeVariableDialog` ($620 \times 480$ px) на базе `DialogKit` (`DialogShell::compute`, `render_variable_list_panel`, `TransferButton`, `DialogActionBar`) с многострочным редактором выражений, виртуальной клавиатурой калькулятора (`7 8 9`, `4 5 6`, `1 2 3`, `0 . C`, операторы) и списком функций с группировкой (*All, Arithmetic, Statistical*)
+- [x] L6 `statcraft_app`: активация пункта меню `Transform -> Compute Variable...`, мгновенная реактивность и обновление `Data View` и `Variable View`
 - [x] 100% покрытие локализацией (`locales/en.ftl`, `locales/ru.ftl`), 100% прохождение полного CI gate `cargo run -p xtask -j 1 -- ci` (`file-guard`, `design-guard`, `layers`, `parity`, `clippy -D warnings`, `cargo fmt --check`)
 
 

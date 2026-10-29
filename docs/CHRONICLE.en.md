@@ -972,3 +972,45 @@ Completed two major objectives: resolved the navigation title text overflow defe
    - Architecture, design, and file-guard linters reporting 0 violations;
    - Compiler linter `cargo clippy --workspace --all-targets -j 1 -- -D warnings` — 0 warnings;
    - Code formatting `cargo fmt --check` — completely clean.
+
+
+---
+
+### Phase 8.1: Compute Variable (`COMPUTE`)
+*Time: October 29, 2026, 09:25 (~35 minutes)*
+
+Implemented the fundamental data transformation mechanism — **Compute Variable** (`COMPUTE`, menu item `Transform -> Compute Variable...`):
+1. **Mathematical Engine L2 (`statcraft_algo::expr_eval`):**
+   - Architectural decomposition into modular package `expr_eval/` (`types.rs`, `lexer.rs`, `parser.rs`, `eval.rs`, `mod.rs`, `tests.rs`) strictly respecting `file-guard` limits ($\le 500$ lines per file);
+   - Robust tokenizer for mathematical expressions: numbers, variable/function identifiers, operators, parentheses, commas, correctly resolving unary `+` and `-`;
+   - Dijkstra's Shunting-yard algorithm for infix-to-RPN compilation respecting precedence and right-associativity of power operators (`**`, `^`);
+   - Case-by-case row evaluator supporting arithmetic operations (`+`, `-`, `*`, `/`, `**`), single-argument mathematical functions (`ABS`, `EXP`, `LN`, `LOG10`, `RND`, `SQRT`, `TRUNC`), and multi-argument statistical functions (`SUM`, `MEAN`, `MIN`, `MAX`);
+   - **Never Crash** resilience: division by zero, negative roots, and missing values safely evaluate to system missing (`NaN` / `SYSMIS`) without halting case processing;
+   - 100% unit test coverage for operator precedences, functions, and edge cases.
+2. **Command Bus & Syntax L5 (`statcraft_syntax::commands::compute_cmd`):**
+   - Typed engine command `ComputeVariableCommand` (`transform.compute`) with JSON parameter specs for external AI agents;
+   - Creating new numeric columns (`DataType::Numeric { decimals: 2 }`, `Measure::Scale`) or overwriting existing variables;
+   - Full `Undo` (`Ctrl+Z`) support: automatically deleting created columns or restoring previous values and metadata for overwritten variables;
+   - Canonical IBM SPSS Statistics syntax generator:
+     ```text
+     COMPUTE bmi = weight / ((height / 100) ** 2).
+     VARIABLE LABELS bmi "Body Mass Index".
+     EXECUTE.
+     ```
+3. **User Interface L6 (`statcraft_app::dialogs::compute_dialog`):**
+   - Canonical calculator dialog $620 \times 480$ px built with `DialogKit` (`DialogShell::compute`, `render_variable_list_panel`, `TransferButton`, `DialogActionBar`);
+   - Top section: `Target Variable:` and `Label:` inputs;
+   - Left panel: available variables list with measurement scale icons and adaptive `TransferButton`;
+   - Center panel: multiline monospace expression editor `Numeric Expression:` and virtual calculator keypad (`+`, `-`, `*`, `/`, `**`, `(`, `)`, `0..9`, `.`, `C`);
+   - Right panel: function group selector (*All, Arithmetic, Statistical*) and scrollable function list with syntax snippets;
+   - Bottom action bar `DialogActionBar` (`[ OK ] [ Paste ] [ Reset ] [ Cancel ] [ Help ]`).
+4. **Integration & Instant Reactivity:**
+   - Activated menu item `Transform -> Compute Variable...` with data availability predicate;
+   - Upon execution, the target variable immediately reflects in both `Data View` grid and `Variable View` dictionary;
+   - Generated syntax is appended to the `Output Viewer` Log.
+5. **Quality Control & Definition of Done:**
+   - Full automated CI gate passed (`cargo run -p xtask -j 1 -- ci` — 100% OK);
+   - 120+ workspace unit and integration tests passing;
+   - `file-guard`, `design-guard`, `layers`, and `parity` linters report 0 violations;
+   - Full bilingual localization (`locales/en.ftl`, `locales/ru.ftl`);
+   - Compiler linter `cargo clippy --workspace --all-targets -j 1 -- -D warnings` — 0 warnings.

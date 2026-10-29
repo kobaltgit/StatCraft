@@ -57,6 +57,10 @@ impl DialogShell {
         Self::new(title, DialogSize::Properties)
     }
 
+    pub fn compute(title: impl Into<String>) -> Self {
+        Self::new(title, DialogSize::Compute)
+    }
+
     pub fn id(mut self, id: Id) -> Self {
         self.id = Some(id);
         self

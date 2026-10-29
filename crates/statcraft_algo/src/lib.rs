@@ -8,6 +8,7 @@ pub mod crosstabs;
 mod crosstabs_tests;
 pub mod crosstabs_types;
 pub mod descriptives;
+pub mod expr_eval;
 pub mod frequencies;
 pub mod kruskal_wallis;
 #[cfg(test)]
@@ -40,6 +41,7 @@ pub use crosstabs_types::{
     CrosstabResult, CrosstabRow, RawCrosstabItem,
 };
 pub use descriptives::{compute_descriptives, DescriptivesOptions, DescriptivesResult};
+pub use expr_eval::{CompiledExpr, EvalError, EvalNode, Op};
 pub use frequencies::{
     compute_frequencies, compute_frequencies_detailed, compute_percentile, compute_quartiles,
     FrequencyCategory, FrequencyInputItem, FrequencyResult, FrequencyTable,

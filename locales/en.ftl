@@ -670,6 +670,19 @@ output-row-kruskal-wallis-h = Kruskal-Wallis H
 output-row-df = df
 output-footnote-kruskal-a = a. Kruskal Wallis Test
 
+# Compute Variable Dialog & Transform
+dialog-compute-title = Compute Variable
+dialog-compute-target-var = Target Variable:
+dialog-compute-type-label = Type & Label...
+dialog-compute-label = Label:
+dialog-compute-expression = Numeric Expression:
+dialog-compute-func-group = Function group:
+dialog-compute-functions = Functions and Special Variables:
+dialog-compute-group-all = All
+dialog-compute-group-arithmetic = Arithmetic
+dialog-compute-group-statistical = Statistical
+output-compute-executed = Compute Variable '{ $target }' executed successfully ({ $rows } cases).
+
 
 
 

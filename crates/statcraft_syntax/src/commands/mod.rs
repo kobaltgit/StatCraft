@@ -1,5 +1,6 @@
 pub mod anova_oneway_cmd;
 pub mod cell_edit;
+pub mod compute_cmd;
 pub mod correlations_cmd;
 pub mod crosstabs_cmd;
 pub mod dataset_cmds;
@@ -18,6 +19,7 @@ pub mod var_metadata_cmds;
 
 pub use anova_oneway_cmd::OneWayAnovaCommand;
 pub use cell_edit::CellEditCommand;
+pub use compute_cmd::ComputeVariableCommand;
 pub use correlations_cmd::CorrelationsCommand;
 pub use crosstabs_cmd::CrosstabsCommand;
 pub use dataset_cmds::{DataAddRowCommand, DataDeleteRowCommand, VarAddCommand, VarDeleteCommand};

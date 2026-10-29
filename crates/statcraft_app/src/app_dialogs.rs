@@ -1,15 +1,15 @@
 use super::app::{StatCraftApp, StatusMessage};
 use super::dialogs::{
-    render_anova_oneway_dialog, render_correlations_dialog, render_crosstabs_dialog,
-    render_descriptives_dialog, render_frequencies_dialog, render_kruskal_wallis_dialog,
-    render_missing_values_dialog, render_nonparam_related_dialog, render_nonparam_twosample_dialog,
-    render_ttest_indep_dialog, render_ttest_onesample_dialog, render_ttest_paired_dialog,
-    render_value_labels_dialog, render_variable_type_dialog, CorrelationsDialogAction,
-    CrosstabsDialogAction, DescriptivesDialogAction, FrequenciesDialogAction,
-    IndependentSamplesTTestDialogAction, KruskalWallisDialogAction, MissingValuesDialogAction,
-    NonparamRelatedDialogAction, NonparamTwoSampleDialogAction, OneSampleTTestDialogAction,
-    OneWayAnovaDialogAction, PairedSamplesTTestDialogAction, ValueLabelsDialogAction,
-    VariableTypeDialogAction,
+    render_anova_oneway_dialog, render_compute_dialog, render_correlations_dialog,
+    render_crosstabs_dialog, render_descriptives_dialog, render_frequencies_dialog,
+    render_kruskal_wallis_dialog, render_missing_values_dialog, render_nonparam_related_dialog,
+    render_nonparam_twosample_dialog, render_ttest_indep_dialog, render_ttest_onesample_dialog,
+    render_ttest_paired_dialog, render_value_labels_dialog, render_variable_type_dialog,
+    ComputeDialogAction, CorrelationsDialogAction, CrosstabsDialogAction, DescriptivesDialogAction,
+    FrequenciesDialogAction, IndependentSamplesTTestDialogAction, KruskalWallisDialogAction,
+    MissingValuesDialogAction, NonparamRelatedDialogAction, NonparamTwoSampleDialogAction,
+    OneSampleTTestDialogAction, OneWayAnovaDialogAction, PairedSamplesTTestDialogAction,
+    ValueLabelsDialogAction, VariableTypeDialogAction,
 };
 use serde_json::json;
 use statcraft_i18n::t;
@@ -649,6 +649,62 @@ impl StatCraftApp {
                 self.output_view_state.add_entry(t!("output-log"), sps);
             }
             KruskalWallisDialogAction::None => {}
+        }
+
+        // 15. Compute Variable Dialog
+        let compute_action =
+            render_compute_dialog(ctx, self.dataset.as_ref(), &mut self.compute_dialog_state);
+
+        match compute_action {
+            ComputeDialogAction::Run {
+                target,
+                expression,
+                label,
+            } => {
+                let params = json!({
+                    "target": target,
+                    "expression": expression,
+                    "label": label,
+                });
+                match self
+                    .command_bus
+                    .execute("transform.compute", &mut self.dataset, params)
+                {
+                    Ok(result_value) => {
+                        let target_name = result_value["target"]
+                            .as_str()
+                            .unwrap_or(&target)
+                            .to_string();
+                        let rows = result_value["rows"].as_u64().unwrap_or(0) as usize;
+                        let sps = statcraft_syntax::commands::ComputeVariableCommand::to_sps(
+                            &target,
+                            &expression,
+                            label.as_deref(),
+                        );
+                        self.output_view_state.add_entry(t!("output-log"), sps);
+                        self.status_message = StatusMessage::ComputeExecuted {
+                            target: target_name,
+                            rows,
+                        };
+                    }
+                    Err(e) => {
+                        self.status_message = StatusMessage::Error(e.to_string());
+                    }
+                }
+            }
+            ComputeDialogAction::Paste {
+                target,
+                expression,
+                label,
+            } => {
+                let sps = statcraft_syntax::commands::ComputeVariableCommand::to_sps(
+                    &target,
+                    &expression,
+                    label.as_deref(),
+                );
+                self.output_view_state.add_entry(t!("output-log"), sps);
+            }
+            ComputeDialogAction::None => {}
         }
     }
 }

@@ -1,9 +1,9 @@
 use crate::dialogs::{
-    CorrelationsDialogState, CrosstabsDialogState, DescriptivesDialogState, FrequenciesDialogState,
-    IndependentSamplesTTestDialogState, KruskalWallisDialogState, MissingValuesDialogState,
-    NonparamRelatedDialogState, NonparamTwoSampleDialogState, OneSampleTTestDialogState,
-    OneWayAnovaDialogState, PairedSamplesTTestDialogState, ValueLabelsDialogState,
-    VariableTypeDialogState,
+    ComputeDialogState, CorrelationsDialogState, CrosstabsDialogState, DescriptivesDialogState,
+    FrequenciesDialogState, IndependentSamplesTTestDialogState, KruskalWallisDialogState,
+    MissingValuesDialogState, NonparamRelatedDialogState, NonparamTwoSampleDialogState,
+    OneSampleTTestDialogState, OneWayAnovaDialogState, PairedSamplesTTestDialogState,
+    ValueLabelsDialogState, VariableTypeDialogState,
 };
 use crate::views::{
     render_data_view, render_output_view, render_variable_view, DataViewState, OutputViewerState,
@@ -69,6 +69,10 @@ pub enum StatusMessage {
     RelatedSamplesExecuted {
         count: usize,
     },
+    ComputeExecuted {
+        target: String,
+        rows: usize,
+    },
     Error(String),
 }
 
@@ -117,6 +121,13 @@ impl StatusMessage {
             StatusMessage::RelatedSamplesExecuted { count } => {
                 t!("output-npar-related-executed", count = *count)
             }
+            StatusMessage::ComputeExecuted { target, rows } => {
+                t!(
+                    "output-compute-executed",
+                    target = target.as_str(),
+                    rows = *rows
+                )
+            }
             StatusMessage::Error(e) => format!("{}: {}", t!("status-error"), e),
         }
     }
@@ -143,6 +154,7 @@ pub struct StatCraftApp {
     pub value_labels_dialog_state: ValueLabelsDialogState,
     pub missing_values_dialog_state: MissingValuesDialogState,
     pub variable_type_dialog_state: VariableTypeDialogState,
+    pub compute_dialog_state: ComputeDialogState,
     pub pending_variable_action: VariableViewAction,
     pub status_message: StatusMessage,
     pub toolbar_position: ToolbarPosition,
@@ -177,6 +189,7 @@ impl StatCraftApp {
             value_labels_dialog_state: ValueLabelsDialogState::default(),
             missing_values_dialog_state: MissingValuesDialogState::default(),
             variable_type_dialog_state: VariableTypeDialogState::default(),
+            compute_dialog_state: ComputeDialogState::default(),
             pending_variable_action: VariableViewAction::None,
             status_message: StatusMessage::Ready,
             toolbar_position: ToolbarPosition::Top,
@@ -411,7 +424,12 @@ impl StatCraftApp {
             }
             4 => {
                 ui.menu_button(t!("menu-transform"), |ui| {
-                    render_menu_item(ui, t!("menu-transform-compute"), requires_dataset_status);
+                    if render_menu_item(ui, t!("menu-transform-compute"), requires_dataset_status)
+                        .clicked()
+                    {
+                        self.compute_dialog_state.is_open = true;
+                        ui.close_menu();
+                    }
                     render_menu_item(ui, t!("menu-transform-shift"), MenuItemStatus::InDev);
                     ui.menu_button(t!("menu-transform-recode"), |ui| {
                         render_menu_item(

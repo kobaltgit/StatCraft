@@ -670,6 +670,19 @@ output-row-kruskal-wallis-h = H Крускала-Уоллиса
 output-row-df = ст.св.
 output-footnote-kruskal-a = a. Критерий Крускала-Уоллиса
 
+# Compute Variable Dialog & Transform
+dialog-compute-title = Вычислить переменную
+dialog-compute-target-var = Целевая переменная:
+dialog-compute-type-label = Тип и метка...
+dialog-compute-label = Метка:
+dialog-compute-expression = Численное выражение:
+dialog-compute-func-group = Группа функций:
+dialog-compute-functions = Функции и спец. переменные:
+dialog-compute-group-all = Все
+dialog-compute-group-arithmetic = Арифметика
+dialog-compute-group-statistical = Статистические
+output-compute-executed = Вычисление переменной '{ $target }' успешно выполнено ({ $rows } наблюдений).
+
 
 
 
