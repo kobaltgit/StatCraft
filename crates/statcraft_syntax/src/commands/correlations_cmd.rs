@@ -130,7 +130,7 @@ impl EngineCommand for CorrelationsCommand {
             missing,
         };
 
-        let total_rows = ds.row_count();
+        let active_rows = ds.active_row_indices();
         let mut var_data: Vec<(&str, Vec<Option<f64>>)> = Vec::with_capacity(var_names.len());
 
         for var_name in &var_names {
@@ -142,8 +142,8 @@ impl EngineCommand for CorrelationsCommand {
                         reason: format!("Variable '{}' not found in dataset", var_name),
                     })?;
 
-            let mut vals: Vec<Option<f64>> = Vec::with_capacity(total_rows);
-            for r in 0..total_rows {
+            let mut vals: Vec<Option<f64>> = Vec::with_capacity(active_rows.len());
+            for &r in &active_rows {
                 let cell_str = ds.get_cell_display(r, col_idx, false);
                 let v = if cell_str.trim().is_empty() || cell_str == "." || cell_str == "NA" {
                     None

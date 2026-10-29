@@ -42,8 +42,49 @@ pub fn tokenize(input: &str) -> Result<Vec<Token>, EvalError> {
                 i += 1;
             }
             let ident: String = chars[start..i].iter().collect();
-            tokens.push(Token::Ident(ident));
-            can_be_unary = false;
+            let upper = ident.to_ascii_uppercase();
+            match upper.as_str() {
+                "AND" => {
+                    tokens.push(Token::BinaryOp(Op::And));
+                    can_be_unary = true;
+                }
+                "OR" => {
+                    tokens.push(Token::BinaryOp(Op::Or));
+                    can_be_unary = true;
+                }
+                "NOT" => {
+                    tokens.push(Token::Not);
+                    can_be_unary = true;
+                }
+                "EQ" => {
+                    tokens.push(Token::BinaryOp(Op::Eq));
+                    can_be_unary = true;
+                }
+                "NE" => {
+                    tokens.push(Token::BinaryOp(Op::Ne));
+                    can_be_unary = true;
+                }
+                "LT" => {
+                    tokens.push(Token::BinaryOp(Op::Lt));
+                    can_be_unary = true;
+                }
+                "LE" => {
+                    tokens.push(Token::BinaryOp(Op::Le));
+                    can_be_unary = true;
+                }
+                "GT" => {
+                    tokens.push(Token::BinaryOp(Op::Gt));
+                    can_be_unary = true;
+                }
+                "GE" => {
+                    tokens.push(Token::BinaryOp(Op::Ge));
+                    can_be_unary = true;
+                }
+                _ => {
+                    tokens.push(Token::Ident(ident));
+                    can_be_unary = false;
+                }
+            }
             continue;
         }
 
@@ -79,6 +120,57 @@ pub fn tokenize(input: &str) -> Result<Vec<Token>, EvalError> {
             }
             '^' => {
                 tokens.push(Token::BinaryOp(Op::Pow));
+                can_be_unary = true;
+            }
+            '=' => {
+                if i + 1 < len && chars[i + 1] == '=' {
+                    i += 1;
+                }
+                tokens.push(Token::BinaryOp(Op::Eq));
+                can_be_unary = true;
+            }
+            '<' => {
+                if i + 1 < len && chars[i + 1] == '=' {
+                    tokens.push(Token::BinaryOp(Op::Le));
+                    i += 1;
+                } else if i + 1 < len && chars[i + 1] == '>' {
+                    tokens.push(Token::BinaryOp(Op::Ne));
+                    i += 1;
+                } else {
+                    tokens.push(Token::BinaryOp(Op::Lt));
+                }
+                can_be_unary = true;
+            }
+            '>' => {
+                if i + 1 < len && chars[i + 1] == '=' {
+                    tokens.push(Token::BinaryOp(Op::Ge));
+                    i += 1;
+                } else {
+                    tokens.push(Token::BinaryOp(Op::Gt));
+                }
+                can_be_unary = true;
+            }
+            '&' => {
+                if i + 1 < len && chars[i + 1] == '&' {
+                    i += 1;
+                }
+                tokens.push(Token::BinaryOp(Op::And));
+                can_be_unary = true;
+            }
+            '|' => {
+                if i + 1 < len && chars[i + 1] == '|' {
+                    i += 1;
+                }
+                tokens.push(Token::BinaryOp(Op::Or));
+                can_be_unary = true;
+            }
+            '~' | '!' => {
+                if i + 1 < len && chars[i + 1] == '=' {
+                    tokens.push(Token::BinaryOp(Op::Ne));
+                    i += 1;
+                } else {
+                    tokens.push(Token::Not);
+                }
                 can_be_unary = true;
             }
             '(' => {

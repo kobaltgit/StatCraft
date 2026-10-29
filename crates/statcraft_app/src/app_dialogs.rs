@@ -3,14 +3,16 @@ use super::dialogs::{
     render_anova_oneway_dialog, render_compute_dialog, render_correlations_dialog,
     render_crosstabs_dialog, render_descriptives_dialog, render_frequencies_dialog,
     render_kruskal_wallis_dialog, render_missing_values_dialog, render_nonparam_related_dialog,
-    render_nonparam_twosample_dialog, render_recode_dialog, render_sort_cases_dialog,
-    render_ttest_indep_dialog, render_ttest_onesample_dialog, render_ttest_paired_dialog,
-    render_value_labels_dialog, render_variable_type_dialog, ComputeDialogAction,
-    CorrelationsDialogAction, CrosstabsDialogAction, DescriptivesDialogAction,
-    FrequenciesDialogAction, IndependentSamplesTTestDialogAction, KruskalWallisDialogAction,
-    MissingValuesDialogAction, NonparamRelatedDialogAction, NonparamTwoSampleDialogAction,
-    OneSampleTTestDialogAction, OneWayAnovaDialogAction, PairedSamplesTTestDialogAction,
-    RecodeDialogAction, SortCasesDialogAction, ValueLabelsDialogAction, VariableTypeDialogAction,
+    render_nonparam_twosample_dialog, render_recode_dialog, render_select_cases_dialog,
+    render_sort_cases_dialog, render_ttest_indep_dialog, render_ttest_onesample_dialog,
+    render_ttest_paired_dialog, render_value_labels_dialog, render_variable_type_dialog,
+    ComputeDialogAction, CorrelationsDialogAction, CrosstabsDialogAction, DescriptivesDialogAction,
+    DialogCasesAction, DialogSelectMode, FrequenciesDialogAction,
+    IndependentSamplesTTestDialogAction, KruskalWallisDialogAction, MissingValuesDialogAction,
+    NonparamRelatedDialogAction, NonparamTwoSampleDialogAction, OneSampleTTestDialogAction,
+    OneWayAnovaDialogAction, PairedSamplesTTestDialogAction, RecodeDialogAction,
+    SelectCasesDialogAction, SortCasesDialogAction, ValueLabelsDialogAction,
+    VariableTypeDialogAction,
 };
 use serde_json::json;
 use statcraft_i18n::t;
@@ -843,6 +845,108 @@ impl StatCraftApp {
                 self.output_view_state.add_entry(t!("output-log"), sps);
             }
             SortCasesDialogAction::None => {}
+        }
+
+        // 18. Select Cases Dialog
+        let select_action = render_select_cases_dialog(
+            ctx,
+            self.dataset.as_ref(),
+            &mut self.select_cases_dialog_state,
+        );
+
+        match select_action {
+            SelectCasesDialogAction::Run {
+                mode,
+                action,
+                condition,
+                filter_var,
+            } => {
+                let mode_str = match mode {
+                    DialogSelectMode::All => "all",
+                    DialogSelectMode::Condition => "condition",
+                    DialogSelectMode::FilterVar => "variable",
+                };
+                let action_str = match action {
+                    DialogCasesAction::Filtered => "filter",
+                    DialogCasesAction::Deleted => "delete",
+                };
+
+                let params = json!({
+                    "mode": mode_str,
+                    "action": action_str,
+                    "condition": condition,
+                    "filter_var": filter_var.clone().unwrap_or_default(),
+                });
+
+                let sps_mode = match mode {
+                    DialogSelectMode::All => statcraft_syntax::commands::SelectCasesMode::All,
+                    DialogSelectMode::Condition => {
+                        statcraft_syntax::commands::SelectCasesMode::Condition(condition)
+                    }
+                    DialogSelectMode::FilterVar => {
+                        statcraft_syntax::commands::SelectCasesMode::FilterVar(
+                            filter_var.unwrap_or_default(),
+                        )
+                    }
+                };
+                let sps_action = match action {
+                    DialogCasesAction::Filtered => {
+                        statcraft_syntax::commands::SelectCasesAction::Filter
+                    }
+                    DialogCasesAction::Deleted => {
+                        statcraft_syntax::commands::SelectCasesAction::Delete
+                    }
+                };
+
+                match self
+                    .command_bus
+                    .execute("data.select_cases", &mut self.dataset, params)
+                {
+                    Ok(_) => {
+                        let sps = statcraft_syntax::commands::SelectCasesCommand::to_sps(
+                            &sps_mode,
+                            &sps_action,
+                        );
+                        self.output_view_state.add_entry(t!("output-log"), sps);
+                        self.status_message = StatusMessage::SelectCasesExecuted {
+                            mode: mode_str.to_string(),
+                        };
+                    }
+                    Err(e) => {
+                        self.status_message = StatusMessage::Error(e.to_string());
+                    }
+                }
+            }
+            SelectCasesDialogAction::Paste {
+                mode,
+                action,
+                condition,
+                filter_var,
+            } => {
+                let sps_mode = match mode {
+                    DialogSelectMode::All => statcraft_syntax::commands::SelectCasesMode::All,
+                    DialogSelectMode::Condition => {
+                        statcraft_syntax::commands::SelectCasesMode::Condition(condition)
+                    }
+                    DialogSelectMode::FilterVar => {
+                        statcraft_syntax::commands::SelectCasesMode::FilterVar(
+                            filter_var.unwrap_or_default(),
+                        )
+                    }
+                };
+                let sps_action = match action {
+                    DialogCasesAction::Filtered => {
+                        statcraft_syntax::commands::SelectCasesAction::Filter
+                    }
+                    DialogCasesAction::Deleted => {
+                        statcraft_syntax::commands::SelectCasesAction::Delete
+                    }
+                };
+                let sps =
+                    statcraft_syntax::commands::SelectCasesCommand::to_sps(&sps_mode, &sps_action);
+                self.output_view_state.add_entry(t!("output-log"), sps);
+            }
+            SelectCasesDialogAction::None => {}
         }
     }
 }

@@ -107,7 +107,7 @@ impl EngineCommand for RelatedSamplesTestCommand {
             });
         }
 
-        let total_rows = ds.row_count();
+        let active_rows = ds.active_row_indices();
         let mut results: Vec<RelatedPairTestResult> = Vec::with_capacity(pairs.len());
 
         for (var1, var2) in &pairs {
@@ -126,9 +126,10 @@ impl EngineCommand for RelatedSamplesTestCommand {
                         reason: format!("Variable '{}' not found in dataset", var2),
                     })?;
 
-            let mut paired_data: Vec<(Option<f64>, Option<f64>)> = Vec::with_capacity(total_rows);
+            let mut paired_data: Vec<(Option<f64>, Option<f64>)> =
+                Vec::with_capacity(active_rows.len());
 
-            for r in 0..total_rows {
+            for &r in &active_rows {
                 let cell1 = ds.get_cell_display(r, col1_idx, false);
                 let val1 = if cell1.trim().is_empty() || cell1 == "." || cell1 == "NA" {
                     None

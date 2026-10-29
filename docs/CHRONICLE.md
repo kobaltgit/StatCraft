@@ -608,3 +608,50 @@
    - Соблюдение дифференцированных лимитов строк `file-guard`, стандарта верстки `design-guard`, слоев `layers` и паритета `parity`;
    - Синхронная локализация (`locales/en.ftl`, `locales/ru.ftl`, `C:\StatCraft\locales\fr.ftl`);
    - `cargo clippy --workspace --all-targets -j 1 -- -D warnings` — 0 предупреждений.
+
+---
+
+### Этап 8.4: Выборка наблюдений и фильтрация (Select Cases: `FILTER BY` / `SELECT IF`)
+*Время: 29 октября 2026, 12:20 (~50 минут)*
+
+Реализован канонический механизм фильтрации и выборки наблюдений в StatCraft — пункт меню `Данные -> Выбрать наблюдения...` (`Data -> Select Cases...`, команда `data.select_cases` / синтаксис `FILTER BY filter_$.` / `FILTER OFF.` / `SELECT IF (...)`):
+1. **Модель фильтрации в DataSet L1 (`statcraft_core::dataset`):**
+   - Добавлено поле `active_filter_var: Option<String>` в структуру `DataSet`;
+   - Методы `set_filter_variable`, `active_filter_var`, `is_row_active`, `is_row_filtered` и `active_row_indices`;
+   - Автоматическая синхронизация при удалении (`remove_variable`) или переименовании (`rename_variable`) фильтрующей переменной;
+   - Строгая валидация существования переменной через `CoreError::VariableNotFound`.
+2. **Расширение вычислителя выражений L2 (`statcraft_algo::expr_eval`):**
+   - Поддержка операторов сравнения: `=`, `==`, `<>`, `~=`, `!=`, `<`, `<=`, `>`, `>=`, а также ключевых слов `EQ`, `NE`, `LT`, `LE`, `GT`, `GE`;
+   - Поддержка логических связок: `&`, `&&`, `|`, `||`, `~`, `!`, `AND`, `OR`, `NOT`;
+   - Построчное вычисление логических условий через RPN с возвратом $1.0$ (True) или $0.0$ (False), безопасная обработка пропусков `NaN` / `SYSMIS` без паник.
+3. **Командная шина и Undo/Redo L5 (`statcraft_syntax::commands::select_cases_cmd`):**
+   - Типизированная команда `SelectCasesCommand` (`data.select_cases`) со спецификацией `specs()` для внешних AI-агентов;
+   - Поддержка 3 канонических режимов:
+     1. *All cases* (`FILTER OFF.`);
+     2. *If condition is satisfied* (вычисление выражения, создание системной переменной `filter_$` с метками `0 'Not Selected'` / `1 'Selected'`, установка `FILTER BY filter_$.`);
+     3. *Use filter variable* (`FILTER BY <var>.`);
+   - Поддержка действия для невыбранных наблюдений:
+     * *Filtered* — временное исключение из анализа без удаления данных;
+     * *Deleted* — каноническое удаление невыбранных строк (`SELECT IF (<cond>).`);
+   - Полный откат `Undo` (`Ctrl+Z`), восстанавливающий как состояние фильтра, так и удаленные наблюдения или созданные колонки.
+4. **Сквозная интеграция со всеми процедурами анализа L2/L5:**
+   - Все 11 аналитических процедур (`descriptives`, `frequencies`, `crosstabs`, `correlations`, `ttest_indep`, `ttest_paired`, `ttest_onesample`, `anova_oneway`, `nonparam_twosample`, `nonparam_related`, `kruskal_wallis`) переведены на выборку наблюдений через `ds.active_row_indices()`;
+   - Исключенные наблюдения автоматически игнорируются во всех расчетах, а при сбросе фильтра мгновенно возвращаются в анализ.
+5. **Пользовательский интерфейс на DialogKit L6 (`statcraft_app::dialogs`):**
+   - Центрированный диалог `SelectCasesDialog` ($560 \times 430$ px, `DialogShell::standard`);
+   - Левая панель выбора доступных переменных `VariablePicker` с иконками шкал и адаптивной кнопкой переноса `TransferButton`;
+   - Группа `Select` с радиокнопками режимов и кнопкой `[ If... ]`;
+   - Модальный поддиалог условия `Select Cases: If Condition` ($360 \times 300$ px, `DialogShell::subdialog`) с полем ввода и виртуальной клавиатурой операторов (`+ - * / ** ( ) = ~= < <= > >= & | ~`);
+   - Группа `Unselected Cases Are` (`(o) Filtered`, `( ) Deleted`);
+   - Нижняя строка `DialogActionBar` (`[ OK ] [ Paste ] [ Reset ] [ Cancel ] [ Help ]`).
+6. **Визуализация в Data View и строке состояния:**
+   - В сетке `Data View` номера строк исключенных наблюдений перечеркиваются диагональной векторной чертой (`ui.painter().line_segment`), точно повторяя канон IBM SPSS Statistics;
+   - В строке состояния (Status Bar) отображается индикатор активной фильтрации `Filter: ON (var_name)` / `Фильтр: Включен (var_name)`;
+   - Активирован пункт главного меню `Data -> Select Cases...`.
+7. **Контроль качества (Definition of Done):**
+   - Прогон полного пайплайна качества `cargo run -p xtask -j 1 -- ci` — 100% OK;
+   - Все тесты воркспейса завершились успешно;
+   - Соблюдение `file-guard` ($\le 500$ строк на файл), `design-guard`, `layers`, `parity` (33 команды);
+   - Синхронная локализация (`locales/en.ftl`, `locales/ru.ftl`, `C:\StatCraft\locales\fr.ftl`);
+   - `cargo clippy --workspace --all-targets -j 1 -- -D warnings` — 0 предупреждений;
+   - Чистая сборка и обновление релизного бинарника `C:\StatCraft\statcraft_app.exe`.

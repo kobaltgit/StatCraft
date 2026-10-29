@@ -116,7 +116,7 @@ impl EngineCommand for CrosstabsCommand {
                 .unwrap_or(true),
         };
 
-        let total_cases = ds.row_count();
+        let active_rows = ds.active_row_indices();
         let mut results: Vec<CrosstabResult> = Vec::new();
 
         for r_name in &rows {
@@ -143,9 +143,9 @@ impl EngineCommand for CrosstabsCommand {
                     CommandError::ExecutionFailed("Column metadata missing".to_string())
                 })?;
 
-                let mut items: Vec<RawCrosstabItem> = Vec::with_capacity(total_cases);
+                let mut items: Vec<RawCrosstabItem> = Vec::with_capacity(active_rows.len());
 
-                for r in 0..total_cases {
+                for &r in &active_rows {
                     let r_cell = ds.get_cell(r, r_col_idx);
                     let c_cell = ds.get_cell(r, c_col_idx);
 

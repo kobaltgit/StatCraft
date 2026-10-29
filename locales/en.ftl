@@ -719,6 +719,24 @@ dialog-recode-btn-remove = Remove
 dialog-recode-old-new-mappings-title = Old -> New:
 output-recode-executed = Recode executed successfully for { $count } variable(s).
 output-sort-cases-executed = Sorted cases by { $count } variable(s).
+output-select-cases-executed = Select cases executed ({ $mode }).
+status-filter-on = Filter: ON ({ $var })
+
+dialog-select-cases-title = Select Cases
+dialog-select-cases-select-group = Select
+dialog-select-cases-all = All cases
+dialog-select-cases-if = If condition is satisfied
+dialog-select-cases-if-btn = If...
+dialog-select-cases-condition-label = Condition
+dialog-select-cases-use-filter-var = Use filter variable:
+dialog-select-cases-none = none
+dialog-select-cases-unselected-group = Unselected Cases Are
+dialog-select-cases-action-filter = Filtered
+dialog-select-cases-action-delete = Deleted
+dialog-select-cases-condition-title = Select Cases: If Condition
+dialog-select-cases-enter-condition = Enter condition expression:
+dialog-select-cases-condition-hint = e.g. age >= 18 & salary > 30000
+dialog-select-cases-keypad = Calculator & Logical Operators:
 
 
 

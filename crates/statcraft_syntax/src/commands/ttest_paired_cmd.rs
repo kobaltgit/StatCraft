@@ -88,7 +88,7 @@ impl EngineCommand for PairedSamplesTTestCommand {
 
         let ci = params.get("ci").and_then(|v| v.as_f64()).unwrap_or(0.95);
 
-        let total_rows = ds.row_count();
+        let active_rows = ds.active_row_indices();
         let mut col_data_cache: std::collections::HashMap<String, Vec<Option<f64>>> =
             std::collections::HashMap::new();
 
@@ -103,8 +103,8 @@ impl EngineCommand for PairedSamplesTTestCommand {
                         }
                     })?;
 
-                    let mut values: Vec<Option<f64>> = Vec::with_capacity(total_rows);
-                    for r in 0..total_rows {
+                    let mut values: Vec<Option<f64>> = Vec::with_capacity(active_rows.len());
+                    for &r in &active_rows {
                         let cell = ds.get_cell_display(r, col_idx, false);
                         let val = if cell.trim().is_empty() || cell == "." || cell == "NA" {
                             None

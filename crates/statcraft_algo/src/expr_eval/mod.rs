@@ -51,6 +51,18 @@ impl CompiledExpr {
                     })?;
                     stack.push(if val.is_nan() { f64::NAN } else { -val });
                 }
+                EvalNode::Not => {
+                    let val = stack
+                        .pop()
+                        .ok_or_else(|| EvalError::SyntaxError("Missing operand for NOT".into()))?;
+                    if val.is_nan() {
+                        stack.push(f64::NAN);
+                    } else if val == 0.0 {
+                        stack.push(1.0);
+                    } else {
+                        stack.push(0.0);
+                    }
+                }
                 EvalNode::BinaryOp(op) => {
                     let b = stack
                         .pop()
@@ -81,6 +93,62 @@ impl CompiledExpr {
                                 f64::NAN
                             } else {
                                 p
+                            }
+                        }
+                        Op::Eq => {
+                            if (a - b).abs() < 1e-9 {
+                                1.0
+                            } else {
+                                0.0
+                            }
+                        }
+                        Op::Ne => {
+                            if (a - b).abs() >= 1e-9 {
+                                1.0
+                            } else {
+                                0.0
+                            }
+                        }
+                        Op::Lt => {
+                            if a < b {
+                                1.0
+                            } else {
+                                0.0
+                            }
+                        }
+                        Op::Le => {
+                            if a <= b {
+                                1.0
+                            } else {
+                                0.0
+                            }
+                        }
+                        Op::Gt => {
+                            if a > b {
+                                1.0
+                            } else {
+                                0.0
+                            }
+                        }
+                        Op::Ge => {
+                            if a >= b {
+                                1.0
+                            } else {
+                                0.0
+                            }
+                        }
+                        Op::And => {
+                            if a != 0.0 && b != 0.0 {
+                                1.0
+                            } else {
+                                0.0
+                            }
+                        }
+                        Op::Or => {
+                            if a != 0.0 || b != 0.0 {
+                                1.0
+                            } else {
+                                0.0
                             }
                         }
                     };

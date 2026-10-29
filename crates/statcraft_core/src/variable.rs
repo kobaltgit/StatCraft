@@ -14,6 +14,9 @@ pub enum CoreError {
     #[error("Variable '{0}' already exists in dictionary")]
     DuplicateVariableName(String),
 
+    #[error("Variable '{0}' not found in dictionary")]
+    VariableNotFound(String),
+
     #[error("Row {row} or column {col} out of dataset bounds")]
     CellOutOfBounds { row: usize, col: usize },
 

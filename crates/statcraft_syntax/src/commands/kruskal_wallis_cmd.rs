@@ -114,9 +114,9 @@ impl EngineCommand for KruskalWallisCommand {
                     reason: format!("Grouping variable '{grouping_var}' not found in dataset"),
                 })?;
 
-        let row_count = ds.row_count();
-        let mut group_values: Vec<Option<String>> = Vec::with_capacity(row_count);
-        for row_idx in 0..row_count {
+        let active_rows = ds.active_row_indices();
+        let mut group_values: Vec<Option<String>> = Vec::with_capacity(active_rows.len());
+        for &row_idx in &active_rows {
             let cell_str = ds.get_cell_display(row_idx, group_col_idx, false);
             let val = if cell_str.trim().is_empty() || cell_str == "." || cell_str == "NA" {
                 None
@@ -137,8 +137,8 @@ impl EngineCommand for KruskalWallisCommand {
                         reason: format!("Test variable '{var_name}' not found in dataset"),
                     })?;
 
-            let mut var_values: Vec<Option<f64>> = Vec::with_capacity(row_count);
-            for row_idx in 0..row_count {
+            let mut var_values: Vec<Option<f64>> = Vec::with_capacity(active_rows.len());
+            for &row_idx in &active_rows {
                 let cell_str = ds.get_cell_display(row_idx, var_col_idx, false);
                 let cell_num = if cell_str.trim().is_empty() || cell_str == "." || cell_str == "NA"
                 {

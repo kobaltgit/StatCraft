@@ -170,6 +170,15 @@ pub fn render_data_view(ui: &mut Ui, dataset: &mut Option<DataSet>, state: &mut 
                                 Tokens::TEXT_MUTED,
                             );
 
+                            if row_idx < total_rows && !ds.is_row_active(row_idx) {
+                                let stroke = Stroke::new(1.0_f32, Tokens::TEXT_MUTED);
+                                let slash_start =
+                                    egui::pos2(rect.center().x - 12.0, rect.center().y + 7.0);
+                                let slash_end =
+                                    egui::pos2(rect.center().x + 12.0, rect.center().y - 7.0);
+                                ui.painter().line_segment([slash_start, slash_end], stroke);
+                            }
+
                             if row_idx < total_rows {
                                 res.context_menu(|ui| {
                                     if ui.button(t!("menu-insert-case")).clicked() {

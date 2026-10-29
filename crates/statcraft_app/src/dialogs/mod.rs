@@ -13,6 +13,7 @@ pub mod nonparam_related_dialog;
 pub mod nonparam_twosample_dialog;
 pub mod recode_dialog;
 pub mod recode_old_new_dialog;
+pub mod select_cases_dialog;
 pub mod sort_cases_dialog;
 pub mod ttest_indep_define_groups;
 pub mod ttest_indep_dialog;
@@ -57,6 +58,10 @@ pub use recode_dialog::{
 };
 pub use recode_old_new_dialog::{
     render_recode_old_new_dialog, NewValueType, OldValueType, RecodeOldNewAction, RecodeOldNewState,
+};
+pub use select_cases_dialog::{
+    render_select_cases_dialog, DialogCasesAction, DialogSelectMode, SelectCasesDialogAction,
+    SelectCasesDialogState,
 };
 pub use sort_cases_dialog::{
     render_sort_cases_dialog, SortCasesDialogAction, SortCasesDialogState,

@@ -719,6 +719,24 @@ dialog-recode-btn-remove = Удалить
 dialog-recode-old-new-mappings-title = Старое -> Новое:
 output-recode-executed = Перекодирование успешно выполнено для { $count } переменных.
 output-sort-cases-executed = Наблюдения отсортированы по { $count } переменным.
+output-select-cases-executed = Выборка наблюдений выполнена ({ $mode }).
+status-filter-on = Фильтр: Включен ({ $var })
+
+dialog-select-cases-title = Выбрать наблюдения
+dialog-select-cases-select-group = Выбрать
+dialog-select-cases-all = Все наблюдения
+dialog-select-cases-if = Если удовлетворяется условие
+dialog-select-cases-if-btn = Если...
+dialog-select-cases-condition-label = Условие
+dialog-select-cases-use-filter-var = Использовать переменную-фильтр:
+dialog-select-cases-none = нет
+dialog-select-cases-unselected-group = Невыбранные наблюдения
+dialog-select-cases-action-filter = Отфильтровать
+dialog-select-cases-action-delete = Удалить
+dialog-select-cases-condition-title = Выбрать наблюдения: Условие
+dialog-select-cases-enter-condition = Введите логическое выражение:
+dialog-select-cases-condition-hint = напр. age >= 18 & salary > 30000
+dialog-select-cases-keypad = Калькулятор и логические операторы:
 
 
 

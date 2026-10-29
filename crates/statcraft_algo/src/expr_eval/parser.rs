@@ -5,15 +5,19 @@ pub enum OpStackEntry {
     Op(Op),
     UnaryMinus,
     UnaryPlus,
+    Not,
     LParen,
     Func { name: String, arg_count: usize },
 }
 
 pub fn op_precedence(op: Op) -> (u8, bool) {
     match op {
-        Op::Pow => (4, true), // right-associative
-        Op::Mul | Op::Div => (3, false),
-        Op::Add | Op::Sub => (2, false),
+        Op::Pow => (6, true), // right-associative
+        Op::Mul | Op::Div => (5, false),
+        Op::Add | Op::Sub => (4, false),
+        Op::Eq | Op::Ne | Op::Lt | Op::Le | Op::Gt | Op::Ge => (3, false),
+        Op::And => (2, false),
+        Op::Or => (1, false),
     }
 }
 
@@ -39,20 +43,24 @@ pub fn to_rpn(tokens: &[Token]) -> Result<Vec<EvalNode>, EvalError> {
             }
             Token::UnaryMinus => op_stack.push(OpStackEntry::UnaryMinus),
             Token::UnaryPlus => op_stack.push(OpStackEntry::UnaryPlus),
+            Token::Not => op_stack.push(OpStackEntry::Not),
             Token::BinaryOp(op) => {
                 let (prec, right_assoc) = op_precedence(*op);
                 while let Some(top) = op_stack.last() {
                     let top_prec = match top {
                         OpStackEntry::Op(top_op) => op_precedence(*top_op).0,
-                        OpStackEntry::UnaryMinus | OpStackEntry::UnaryPlus => 5,
+                        OpStackEntry::UnaryMinus | OpStackEntry::UnaryPlus | OpStackEntry::Not => 7,
                         _ => 0,
                     };
                     if top_prec > prec || (top_prec == prec && !right_assoc) {
-                        match op_stack.pop().unwrap() {
-                            OpStackEntry::Op(o) => output.push(EvalNode::BinaryOp(o)),
-                            OpStackEntry::UnaryMinus => output.push(EvalNode::UnaryMinus),
-                            OpStackEntry::UnaryPlus => output.push(EvalNode::UnaryPlus),
-                            _ => {}
+                        if let Some(entry) = op_stack.pop() {
+                            match entry {
+                                OpStackEntry::Op(o) => output.push(EvalNode::BinaryOp(o)),
+                                OpStackEntry::UnaryMinus => output.push(EvalNode::UnaryMinus),
+                                OpStackEntry::UnaryPlus => output.push(EvalNode::UnaryPlus),
+                                OpStackEntry::Not => output.push(EvalNode::Not),
+                                _ => {}
+                            }
                         }
                     } else {
                         break;
@@ -76,11 +84,14 @@ pub fn to_rpn(tokens: &[Token]) -> Result<Vec<EvalNode>, EvalError> {
                     if matches!(top, OpStackEntry::LParen | OpStackEntry::Func { .. }) {
                         break;
                     }
-                    match op_stack.pop().unwrap() {
-                        OpStackEntry::Op(o) => output.push(EvalNode::BinaryOp(o)),
-                        OpStackEntry::UnaryMinus => output.push(EvalNode::UnaryMinus),
-                        OpStackEntry::UnaryPlus => output.push(EvalNode::UnaryPlus),
-                        _ => {}
+                    if let Some(entry) = op_stack.pop() {
+                        match entry {
+                            OpStackEntry::Op(o) => output.push(EvalNode::BinaryOp(o)),
+                            OpStackEntry::UnaryMinus => output.push(EvalNode::UnaryMinus),
+                            OpStackEntry::UnaryPlus => output.push(EvalNode::UnaryPlus),
+                            OpStackEntry::Not => output.push(EvalNode::Not),
+                            _ => {}
+                        }
                     }
                 }
                 if let Some(count) = arg_count_stack.last_mut() {
@@ -94,11 +105,14 @@ pub fn to_rpn(tokens: &[Token]) -> Result<Vec<EvalNode>, EvalError> {
                     if matches!(top, OpStackEntry::LParen | OpStackEntry::Func { .. }) {
                         break;
                     }
-                    match op_stack.pop().unwrap() {
-                        OpStackEntry::Op(o) => output.push(EvalNode::BinaryOp(o)),
-                        OpStackEntry::UnaryMinus => output.push(EvalNode::UnaryMinus),
-                        OpStackEntry::UnaryPlus => output.push(EvalNode::UnaryPlus),
-                        _ => {}
+                    if let Some(entry) = op_stack.pop() {
+                        match entry {
+                            OpStackEntry::Op(o) => output.push(EvalNode::BinaryOp(o)),
+                            OpStackEntry::UnaryMinus => output.push(EvalNode::UnaryMinus),
+                            OpStackEntry::UnaryPlus => output.push(EvalNode::UnaryPlus),
+                            OpStackEntry::Not => output.push(EvalNode::Not),
+                            _ => {}
+                        }
                     }
                 }
 
@@ -132,6 +146,7 @@ pub fn to_rpn(tokens: &[Token]) -> Result<Vec<EvalNode>, EvalError> {
             OpStackEntry::Op(o) => output.push(EvalNode::BinaryOp(o)),
             OpStackEntry::UnaryMinus => output.push(EvalNode::UnaryMinus),
             OpStackEntry::UnaryPlus => output.push(EvalNode::UnaryPlus),
+            OpStackEntry::Not => output.push(EvalNode::Not),
             OpStackEntry::LParen | OpStackEntry::Func { .. } => {
                 return Err(EvalError::MismatchedParentheses)
             }

@@ -105,9 +105,9 @@ impl EngineCommand for MannWhitneyCommand {
                     reason: format!("Grouping variable '{}' not found in dataset", grouping_var),
                 })?;
 
-        let total_rows = ds.row_count();
-        let mut group_values: Vec<Option<String>> = Vec::with_capacity(total_rows);
-        for r in 0..total_rows {
+        let active_rows = ds.active_row_indices();
+        let mut group_values: Vec<Option<String>> = Vec::with_capacity(active_rows.len());
+        for &r in &active_rows {
             let cell_str = ds.get_cell_display(r, group_col_idx, false);
             let val = if cell_str.trim().is_empty() || cell_str == "." || cell_str == "NA" {
                 None
@@ -128,8 +128,8 @@ impl EngineCommand for MannWhitneyCommand {
                         reason: format!("Variable '{}' not found in dataset", var_name),
                     })?;
 
-            let mut var_values: Vec<Option<f64>> = Vec::with_capacity(total_rows);
-            for r in 0..total_rows {
+            let mut var_values: Vec<Option<f64>> = Vec::with_capacity(active_rows.len());
+            for &r in &active_rows {
                 let cell_str = ds.get_cell_display(r, col_idx, false);
                 let val = if cell_str.trim().is_empty() || cell_str == "." || cell_str == "NA" {
                     None

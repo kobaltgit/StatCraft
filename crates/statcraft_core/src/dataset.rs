@@ -41,6 +41,7 @@ pub struct DataSet {
     pub table: RawTable,
     pub dictionary: VariableDictionary,
     pub delta: DeltaBuffer,
+    pub active_filter_var: Option<String>,
 }
 
 impl DataSet {
@@ -49,6 +50,7 @@ impl DataSet {
             table: RawTable::empty(),
             dictionary: VariableDictionary::new(),
             delta: DeltaBuffer::new(),
+            active_filter_var: None,
         }
     }
 
@@ -67,6 +69,7 @@ impl DataSet {
             table,
             dictionary,
             delta: DeltaBuffer::new(),
+            active_filter_var: None,
         })
     }
 
@@ -87,6 +90,7 @@ impl DataSet {
             table,
             dictionary,
             delta: DeltaBuffer::new(),
+            active_filter_var: None,
         })
     }
 
@@ -96,6 +100,55 @@ impl DataSet {
 
     pub fn col_count(&self) -> usize {
         self.table.col_count()
+    }
+
+    pub fn set_filter_variable(&mut self, var_name: Option<String>) -> Result<(), CoreError> {
+        if let Some(ref name) = var_name {
+            if self.dictionary.find_index(name).is_none() {
+                return Err(CoreError::VariableNotFound(name.clone()));
+            }
+        }
+        self.active_filter_var = var_name;
+        Ok(())
+    }
+
+    pub fn active_filter_var(&self) -> Option<&str> {
+        self.active_filter_var.as_deref()
+    }
+
+    pub fn is_row_active(&self, row_idx: usize) -> bool {
+        if row_idx >= self.row_count() {
+            return false;
+        }
+        let filter_var = match &self.active_filter_var {
+            Some(v) => v,
+            None => return true,
+        };
+        let col_idx = match self.dictionary.find_index(filter_var) {
+            Some(idx) => idx,
+            None => return true,
+        };
+        match self.get_cell(row_idx, col_idx) {
+            Some(RawValue::Number(n)) => !n.is_nan() && *n != 0.0,
+            Some(RawValue::Text(s)) => {
+                let trimmed = s.trim();
+                trimmed == "1" || trimmed.eq_ignore_ascii_case("true")
+            }
+            Some(RawValue::Null) | None => false,
+        }
+    }
+
+    pub fn is_row_filtered(&self, row_idx: usize) -> bool {
+        self.is_row_active(row_idx)
+    }
+
+    pub fn active_row_indices(&self) -> Vec<usize> {
+        if self.active_filter_var.is_none() {
+            return (0..self.row_count()).collect();
+        }
+        (0..self.row_count())
+            .filter(|&r| self.is_row_active(r))
+            .collect()
     }
 
     pub fn get_cell(&self, row: usize, col: usize) -> Option<&RawValue> {
@@ -251,12 +304,26 @@ impl DataSet {
                 total,
             });
         }
+        if let Some(ref filter_var) = self.active_filter_var {
+            if let Some(removed_meta) = self.dictionary.get(col_idx) {
+                if removed_meta.name == *filter_var {
+                    self.active_filter_var = None;
+                }
+            }
+        }
         self.dictionary.remove(col_idx)?;
         self.table.remove_column(col_idx);
         Ok(())
     }
 
     pub fn rename_variable(&mut self, col_idx: usize, new_name: &str) -> Result<(), CoreError> {
+        if let Some(ref filter_var) = self.active_filter_var {
+            if let Some(old_meta) = self.dictionary.get(col_idx) {
+                if old_meta.name == *filter_var {
+                    self.active_filter_var = Some(new_name.to_string());
+                }
+            }
+        }
         self.dictionary.rename(col_idx, new_name)?;
         self.table.rename_column(col_idx, new_name);
         Ok(())
@@ -568,5 +635,35 @@ mod tests {
         assert_eq!(parse_number_loose("1,234.56"), Some(1234.56));
         assert_eq!(parse_number_loose("1.234,56"), Some(1234.56));
         assert_eq!(parse_number_loose("$ 999.00"), Some(999.0));
+    }
+
+    #[test]
+    fn test_dataset_filtering() {
+        let mut ds = DataSet::blank(4, 2).unwrap();
+        // col 0: VAR00001, col 1: VAR00002 (we use as filter)
+        ds.set_cell(0, 1, RawValue::Number(1.0)).unwrap();
+        ds.set_cell(1, 1, RawValue::Number(0.0)).unwrap();
+        ds.set_cell(2, 1, RawValue::Number(1.0)).unwrap();
+        ds.set_cell(3, 1, RawValue::Null).unwrap();
+
+        assert_eq!(ds.active_row_indices(), vec![0, 1, 2, 3]);
+        assert!(ds.is_row_active(1));
+
+        ds.set_filter_variable(Some("VAR00002".to_string()))
+            .unwrap();
+        assert_eq!(ds.active_filter_var(), Some("VAR00002"));
+        assert!(ds.is_row_active(0));
+        assert!(!ds.is_row_active(1));
+        assert!(ds.is_row_active(2));
+        assert!(!ds.is_row_active(3));
+        assert_eq!(ds.active_row_indices(), vec![0, 2]);
+
+        // Non-existent variable
+        assert!(ds.set_filter_variable(Some("NON_EXISTENT".into())).is_err());
+
+        // Clear filter
+        ds.set_filter_variable(None).unwrap();
+        assert_eq!(ds.active_filter_var(), None);
+        assert_eq!(ds.active_row_indices(), vec![0, 1, 2, 3]);
     }
 }

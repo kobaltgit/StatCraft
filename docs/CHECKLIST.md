@@ -273,6 +273,16 @@
 - [x] L6 `statcraft_app`: активация пункта меню `Data -> Sort Cases...`, мгновенная реактивность переупорядочивания грида в `Data View`, логирование синтаксиса в `Output Viewer` и статусное сообщение в строке состояния
 - [x] 100% покрытие локализацией (`locales/en.ftl`, `locales/ru.ftl`, `C:\StatCraft\locales\fr.ftl`), 100% прохождение полного CI gate `cargo run -p xtask -j 1 -- ci`
 
+## 29. Этап 8.4: Выборка наблюдений и фильтрация (Select Cases: `FILTER BY` / `SELECT IF`)
+- [x] L1 `statcraft_core`: поддержка фильтрации в `DataSet` (`active_filter_var`, `set_filter_variable`, `is_row_active`, `is_row_filtered`, `active_row_indices`), автоматическая синхронизация при переименовании и удалении переменных
+- [x] L2 `statcraft_algo`: расширение `expr_eval` поддержкой операторов сравнения (`=`, `==`, `<>`, `~=`, `!=`, `<`, `<=`, `>`, `>=`, `EQ`, `NE`, `LT`, `LE`, `GT`, `GE`), логических операторов (`&`, `&&`, `|`, `||`, `~`, `!`, `AND`, `OR`, `NOT`) и построчным вычислением логических условий
+- [x] L5 `statcraft_syntax`: типизированная команда `SelectCasesCommand` (`data.select_cases`) со спецификацией `specs()`, поддержкой 3 режимов (*All cases / If condition is satisfied / Use filter variable*), действий (*Filtered / Deleted*), генерацией канонического синтаксиса `FILTER BY filter_$.`, `FILTER OFF.`, `SELECT IF (...)` и полным стеком отката `Undo` (`Ctrl+Z`)
+- [x] L5 `statcraft_syntax`: автоматический учет активной маски фильтра во всех аналитических процедурах (`descriptives`, `frequencies`, `crosstabs`, `correlations`, `ttest_indep`, `ttest_paired`, `ttest_onesample`, `anova_oneway`, `nonparam_twosample`, `nonparam_related`, `kruskal_wallis`) через `ds.active_row_indices()`
+- [x] L6 `statcraft_app`: центрированный диалог `SelectCasesDialog` ($560 \times 430$ px, `DialogShell::standard`) на базе `DialogKit` (`VariablePicker`, `TransferButton`, `GroupBox`, `DialogActionBar`), модальный поддиалог условия `[ If... ]` с виртуальной клавиатурой операторов и `SubdialogActionBar`
+- [x] L6 `statcraft_app`: визуальное перечеркивание номеров исключенных наблюдений векторной чертой в `Data View` и индикатор `Filter: ON (var)` в строке состояния (Status Bar)
+- [x] L6 `statcraft_app`: активация пункта меню `Data -> Select Cases...`, журналирование синтаксиса в `Output Viewer`
+- [x] 100% покрытие локализацией (`locales/en.ftl`, `locales/ru.ftl`, `C:\StatCraft\locales\fr.ftl`), 100% прохождение полного CI gate `cargo run -p xtask -j 1 -- ci` (140 файлов, 0 предупреждений Clippy, все тесты пройдены)
+
 
 
 

@@ -32,6 +32,14 @@ pub enum Op {
     Mul,
     Div,
     Pow,
+    Eq,
+    Ne,
+    Lt,
+    Le,
+    Gt,
+    Ge,
+    And,
+    Or,
 }
 
 #[derive(Debug, Clone, PartialEq)]
@@ -41,6 +49,7 @@ pub enum Token {
     BinaryOp(Op),
     UnaryMinus,
     UnaryPlus,
+    Not,
     LParen,
     RParen,
     Comma,
@@ -52,6 +61,7 @@ pub enum EvalNode {
     Variable(String),
     UnaryMinus,
     UnaryPlus,
+    Not,
     BinaryOp(Op),
     Function { name: String, arg_count: usize },
 }

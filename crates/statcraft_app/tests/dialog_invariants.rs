@@ -3,19 +3,20 @@ use statcraft_app::dialogs::{
     render_anova_oneway_dialog, render_compute_dialog, render_correlations_dialog,
     render_crosstabs_dialog, render_descriptives_dialog, render_frequencies_dialog,
     render_kruskal_wallis_dialog, render_missing_values_dialog, render_nonparam_related_dialog,
-    render_nonparam_twosample_dialog, render_recode_dialog, render_sort_cases_dialog,
-    render_ttest_indep_dialog, render_ttest_onesample_dialog, render_ttest_paired_dialog,
-    render_value_labels_dialog, render_variable_type_dialog, ComputeDialogAction,
-    ComputeDialogState, CorrelationsDialogAction, CorrelationsDialogState, CrosstabsDialogAction,
-    CrosstabsDialogState, DescriptivesDialogAction, DescriptivesDialogState,
-    FrequenciesDialogAction, FrequenciesDialogState, IndependentSamplesTTestDialogAction,
-    IndependentSamplesTTestDialogState, KruskalWallisDialogAction, KruskalWallisDialogState,
-    MissingValuesDialogAction, MissingValuesDialogState, NonparamRelatedDialogAction,
-    NonparamRelatedDialogState, NonparamTwoSampleDialogAction, NonparamTwoSampleDialogState,
-    OneSampleTTestDialogAction, OneSampleTTestDialogState, OneWayAnovaDialogAction,
-    OneWayAnovaDialogState, PairedSamplesTTestDialogAction, PairedSamplesTTestDialogState,
-    RecodeDialogAction, RecodeDialogState, RecodeMode, RecodePair, SortCasesDialogAction,
-    SortCasesDialogState, ValueLabelsDialogAction, ValueLabelsDialogState,
+    render_nonparam_twosample_dialog, render_recode_dialog, render_select_cases_dialog,
+    render_sort_cases_dialog, render_ttest_indep_dialog, render_ttest_onesample_dialog,
+    render_ttest_paired_dialog, render_value_labels_dialog, render_variable_type_dialog,
+    ComputeDialogAction, ComputeDialogState, CorrelationsDialogAction, CorrelationsDialogState,
+    CrosstabsDialogAction, CrosstabsDialogState, DescriptivesDialogAction, DescriptivesDialogState,
+    DialogCasesAction, DialogSelectMode, FrequenciesDialogAction, FrequenciesDialogState,
+    IndependentSamplesTTestDialogAction, IndependentSamplesTTestDialogState,
+    KruskalWallisDialogAction, KruskalWallisDialogState, MissingValuesDialogAction,
+    MissingValuesDialogState, NonparamRelatedDialogAction, NonparamRelatedDialogState,
+    NonparamTwoSampleDialogAction, NonparamTwoSampleDialogState, OneSampleTTestDialogAction,
+    OneSampleTTestDialogState, OneWayAnovaDialogAction, OneWayAnovaDialogState,
+    PairedSamplesTTestDialogAction, PairedSamplesTTestDialogState, RecodeDialogAction,
+    RecodeDialogState, RecodeMode, RecodePair, SelectCasesDialogAction, SelectCasesDialogState,
+    SortCasesDialogAction, SortCasesDialogState, ValueLabelsDialogAction, ValueLabelsDialogState,
     VariableTypeDialogAction, VariableTypeDialogState,
 };
 use statcraft_core::{DataSet, DataType, Measure, MissingValues};
@@ -477,4 +478,25 @@ fn test_headless_render_sort_cases_dialog() {
 
     assert!(state.is_open);
     assert!(state.selected_keys.is_empty());
+}
+
+#[test]
+fn test_headless_render_select_cases_dialog() {
+    let ds = create_test_dataset();
+    let ctx = egui::Context::default();
+    let mut state = SelectCasesDialogState {
+        is_open: true,
+        mode: DialogSelectMode::Condition,
+        action: DialogCasesAction::Filtered,
+        condition: "salary > 30000".to_string(),
+        ..Default::default()
+    };
+
+    let _ = ctx.run(Default::default(), |ctx| {
+        let action = render_select_cases_dialog(ctx, Some(&ds), &mut state);
+        assert!(matches!(action, SelectCasesDialogAction::None));
+    });
+
+    assert!(state.is_open);
+    assert_eq!(state.condition, "salary > 30000");
 }

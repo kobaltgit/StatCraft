@@ -68,7 +68,7 @@ impl EngineCommand for FrequenciesCommand {
         }
 
         let mut results: Vec<FrequencyResult> = Vec::new();
-        let total_rows = ds.row_count();
+        let active_rows = ds.active_row_indices();
 
         for var_name in &var_names {
             let col_idx =
@@ -84,9 +84,9 @@ impl EngineCommand for FrequenciesCommand {
                 .get(col_idx)
                 .ok_or_else(|| CommandError::ExecutionFailed("Metadata missing".to_string()))?;
 
-            let mut items: Vec<FrequencyInputItem> = Vec::with_capacity(total_rows);
+            let mut items: Vec<FrequencyInputItem> = Vec::with_capacity(active_rows.len());
 
-            for r in 0..total_rows {
+            for &r in &active_rows {
                 let cell_val = ds.get_cell(r, col_idx);
                 let (value_str, is_missing, num_val) = match cell_val {
                     Some(RawValue::Number(n)) => {

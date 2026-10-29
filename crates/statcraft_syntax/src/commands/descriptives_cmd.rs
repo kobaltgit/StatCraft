@@ -76,7 +76,7 @@ impl EngineCommand for DescriptivesCommand {
         }
 
         let mut results: Vec<DescriptivesResult> = Vec::new();
-        let total_rows = ds.row_count();
+        let active_rows = ds.active_row_indices();
 
         for var_name in &var_names {
             let col_idx =
@@ -88,8 +88,8 @@ impl EngineCommand for DescriptivesCommand {
                     })?;
 
             // Extract numeric values for this column
-            let mut values: Vec<Option<f64>> = Vec::with_capacity(total_rows);
-            for r in 0..total_rows {
+            let mut values: Vec<Option<f64>> = Vec::with_capacity(active_rows.len());
+            for &r in &active_rows {
                 let cell_str = ds.get_cell_display(r, col_idx, false);
                 let val = if cell_str.trim().is_empty() || cell_str == "." || cell_str == "NA" {
                     None

@@ -3,7 +3,8 @@ use crate::dialogs::{
     FrequenciesDialogState, IndependentSamplesTTestDialogState, KruskalWallisDialogState,
     MissingValuesDialogState, NonparamRelatedDialogState, NonparamTwoSampleDialogState,
     OneSampleTTestDialogState, OneWayAnovaDialogState, PairedSamplesTTestDialogState,
-    RecodeDialogState, SortCasesDialogState, ValueLabelsDialogState, VariableTypeDialogState,
+    RecodeDialogState, SelectCasesDialogState, SortCasesDialogState, ValueLabelsDialogState,
+    VariableTypeDialogState,
 };
 use crate::views::{
     render_data_view, render_output_view, render_variable_view, DataViewState, OutputViewerState,
@@ -79,6 +80,9 @@ pub enum StatusMessage {
     SortCasesExecuted {
         count: usize,
     },
+    SelectCasesExecuted {
+        mode: String,
+    },
     Error(String),
 }
 
@@ -140,6 +144,9 @@ impl StatusMessage {
             StatusMessage::SortCasesExecuted { count } => {
                 t!("output-sort-cases-executed", count = *count)
             }
+            StatusMessage::SelectCasesExecuted { mode } => {
+                t!("output-select-cases-executed", mode = mode.as_str())
+            }
             StatusMessage::Error(e) => format!("{}: {}", t!("status-error"), e),
         }
     }
@@ -169,6 +176,7 @@ pub struct StatCraftApp {
     pub compute_dialog_state: ComputeDialogState,
     pub recode_dialog_state: RecodeDialogState,
     pub sort_cases_dialog_state: SortCasesDialogState,
+    pub select_cases_dialog_state: SelectCasesDialogState,
     pub pending_variable_action: VariableViewAction,
     pub status_message: StatusMessage,
     pub toolbar_position: ToolbarPosition,
@@ -206,6 +214,7 @@ impl StatCraftApp {
             compute_dialog_state: ComputeDialogState::default(),
             recode_dialog_state: RecodeDialogState::default(),
             sort_cases_dialog_state: SortCasesDialogState::default(),
+            select_cases_dialog_state: SelectCasesDialogState::default(),
             pending_variable_action: VariableViewAction::None,
             status_message: StatusMessage::Ready,
             toolbar_position: ToolbarPosition::Top,
@@ -439,7 +448,12 @@ impl StatCraftApp {
                     render_menu_item(ui, t!("menu-data-aggregate"), MenuItemStatus::InDev);
                     ui.separator();
                     render_menu_item(ui, t!("menu-data-split-file"), MenuItemStatus::InDev);
-                    render_menu_item(ui, t!("menu-data-filter"), requires_dataset_status);
+                    if render_menu_item(ui, t!("menu-data-filter"), requires_dataset_status)
+                        .clicked()
+                    {
+                        self.select_cases_dialog_state.is_open = true;
+                        ui.close_menu();
+                    }
                     render_menu_item(ui, t!("menu-data-weight-cases"), MenuItemStatus::InDev);
                 });
             }
@@ -1118,6 +1132,10 @@ impl eframe::App for StatCraftApp {
                         ui.label(t!("status-cols-count", count = ds.col_count()));
                         ui.separator();
                         ui.label(t!("status-rows-count", count = ds.row_count()));
+                        if let Some(filter_var) = ds.active_filter_var() {
+                            ui.separator();
+                            ui.label(t!("status-filter-on", var = filter_var));
+                        }
                     } else {
                         ui.label(t!("status-ready"));
                     }

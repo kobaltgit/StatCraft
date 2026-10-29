@@ -1115,3 +1115,50 @@ Implemented the canonical case ordering procedure in StatCraft — menu action `
    - Strict adherence to `file-guard`, `design-guard`, `layers`, and `parity` (32 commands);
    - Synchronous trilingual localization (`locales/en.ftl`, `locales/ru.ftl`, `C:\StatCraft\locales\fr.ftl`);
    - Clean compilation: `cargo clippy --workspace --all-targets -j 1 -- -D warnings` — 0 warnings.
+
+---
+
+### Phase 8.4: Select Cases Procedure (`FILTER BY` / `SELECT IF`)
+*Time: October 29, 2026, 12:20 (~50 minutes)*
+
+Implemented the canonical case selection and filtering mechanism in StatCraft — menu action `Data -> Select Cases...` (`data.select_cases` command / `FILTER BY filter_$.` / `FILTER OFF.` / `SELECT IF (...)` syntax):
+1. **Filtering Model in DataSet L1 (`statcraft_core::dataset`):**
+   - Added `active_filter_var: Option<String>` to `DataSet`;
+   - Implemented `set_filter_variable`, `active_filter_var`, `is_row_active`, `is_row_filtered`, and `active_row_indices`;
+   - Automatic synchronization on variable removal (`remove_variable`) and renaming (`rename_variable`);
+   - Explicit dictionary validation returning typed `CoreError::VariableNotFound`.
+2. **Expression Evaluator Extensions L2 (`statcraft_algo::expr_eval`):**
+   - Relational comparison operators: `=`, `==`, `<>`, `~=`, `!=`, `<`, `<=`, `>`, `>=`, plus text keywords `EQ`, `NE`, `LT`, `LE`, `GT`, `GE`;
+   - Boolean logical operators: `&`, `&&`, `|`, `||`, `~`, `!`, `AND`, `OR`, `NOT`;
+   - Row-wise evaluation via RPN yielding $1.0$ (True) or $0.0$ (False), safe missing value handling (`NaN` / `SYSMIS`) without panics.
+3. **Command Bus & Undo/Redo L5 (`statcraft_syntax::commands::select_cases_cmd`):**
+   - Strongly-typed `SelectCasesCommand` (`data.select_cases`) with parameter `specs()` for AI agents;
+   - Supported 3 canonical modes:
+     1. *All cases* (`FILTER OFF.`);
+     2. *If condition is satisfied* (condition evaluation, auto-generating `filter_$` column with labels `0 'Not Selected'` / `1 'Selected'`, setting `FILTER BY filter_$.`);
+     3. *Use filter variable* (`FILTER BY <var>.`);
+   - Actions for unselected cases:
+     * *Filtered* — temporary exclusion from statistics without data loss;
+     * *Deleted* — canonical case deletion (`SELECT IF (<cond>).`);
+   - Full `Undo` (`Ctrl+Z`) support restoring filter state, deleted rows, and auto-created columns.
+4. **End-to-End Integration Across All Analytical Procedures L2/L5:**
+   - All 11 statistical procedures (`descriptives`, `frequencies`, `crosstabs`, `correlations`, `ttest_indep`, `ttest_paired`, `ttest_onesample`, `anova_oneway`, `nonparam_twosample`, `nonparam_related`, `kruskal_wallis`) now iterate rows through `ds.active_row_indices()`;
+   - Excluded cases are automatically omitted from computations and reinstated as soon as filters are disabled.
+5. **DialogKit Desktop User Interface L6 (`statcraft_app::dialogs`):**
+   - Centered `SelectCasesDialog` modal ($560 \times 430$ px, `DialogShell::standard`);
+   - Left source `VariablePicker` panel with measurement scale icons and adaptive `TransferButton`;
+   - `Select` radio group with `[ If... ]` condition button;
+   - Modal subdialog `Select Cases: If Condition` ($360 \times 300$ px, `DialogShell::subdialog`) featuring a calculator & operator keypad (`+ - * / ** ( ) = ~= < <= > >= & | ~`);
+   - `Unselected Cases Are` radio group (`(o) Filtered`, `( ) Deleted`);
+   - Bottom `DialogActionBar` (`[ OK ] [ Paste ] [ Reset ] [ Cancel ] [ Help ]`).
+6. **Data View & Status Bar Visualization:**
+   - Row numbers of excluded cases in `Data View` are rendered with a diagonal vector slash (`ui.painter().line_segment`), perfectly matching IBM SPSS Statistics behavior;
+   - Bottom status bar displays active filter indicator: `Filter: ON (var_name)`;
+   - Activated main menu item `Data -> Select Cases...`.
+7. **Quality Control & Definition of Done:**
+   - Full automated CI quality gate passed (`cargo run -p xtask -j 1 -- ci` — 100% OK);
+   - 100% workspace tests passing with 0 failures;
+   - Strict adherence to `file-guard`, `design-guard`, `layers`, and `parity` (33 commands);
+   - Synchronous trilingual localization (`locales/en.ftl`, `locales/ru.ftl`, `C:\StatCraft\locales\fr.ftl`);
+   - Clean compilation: `cargo clippy --workspace --all-targets -j 1 -- -D warnings` — 0 warnings;
+   - Release binary built and deployed to `C:\StatCraft\statcraft_app.exe`.

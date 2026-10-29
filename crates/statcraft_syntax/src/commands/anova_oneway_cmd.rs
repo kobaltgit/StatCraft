@@ -115,9 +115,9 @@ impl EngineCommand for OneWayAnovaCommand {
             confidence_level: ci,
         };
 
-        let total_rows = ds.row_count();
-        let mut factor_values: Vec<Option<String>> = Vec::with_capacity(total_rows);
-        for r in 0..total_rows {
+        let active_rows = ds.active_row_indices();
+        let mut factor_values: Vec<Option<String>> = Vec::with_capacity(active_rows.len());
+        for &r in &active_rows {
             let cell = ds.get_cell_display(r, factor_col_idx, false);
             let val = if cell.trim().is_empty() || cell == "." || cell == "NA" {
                 None
@@ -138,8 +138,8 @@ impl EngineCommand for OneWayAnovaCommand {
                         reason: format!("Variable '{}' not found in dataset", dep_name),
                     })?;
 
-            let mut dep_values: Vec<Option<f64>> = Vec::with_capacity(total_rows);
-            for r in 0..total_rows {
+            let mut dep_values: Vec<Option<f64>> = Vec::with_capacity(active_rows.len());
+            for &r in &active_rows {
                 let cell_str = ds.get_cell_display(r, col_idx, false);
                 let val = if cell_str.trim().is_empty() || cell_str == "." || cell_str == "NA" {
                     None
