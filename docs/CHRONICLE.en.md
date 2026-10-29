@@ -1163,6 +1163,72 @@ Implemented the canonical case selection and filtering mechanism in StatCraft �
    - Clean compilation: `cargo clippy --workspace --all-targets -j 1 -- -D warnings` — 0 warnings;
    - Release binary built and deployed to `C:\StatCraft\statcraft_app.exe`.
 
+---
+
+### Phase 9.1: Multiple Linear Regression (`REGRESSION`)
+*Time: October 29, 2026, 16:30 (~45 minutes)*
+
+Implemented one of the foundational predictive modeling frameworks in IBM SPSS Statistics — **Multiple Linear Regression** (`Analyze -> Regression -> Linear...`, engine command `stat.regression.linear` / syntax `REGRESSION /DEPENDENT=... /METHOD=ENTER ...`):
+
+1. **Mathematical Core L2 (`statcraft_algo::regression` & `regression_types`):**
+   - Ordinary Least Squares (OLS) and Weighted Least Squares (WLS) natively incorporating frequency weights (`row_weight`) and active filters (`active_row_indices`);
+   - Numerically stable normal equations matrix solver $(X^T W X)^{-1}$ utilizing Gauss-Jordan elimination with partial pivoting (`invert_matrix`) in 100% safe Rust without external C dependencies;
+   - Parameter vector estimation $\mathbf{B} = (X^T W X)^{-1} X^T W \mathbf{Y}$ and standard errors $SE(B_j) = s_e \sqrt{c_{jj}}$;
+   - Standardized beta coefficients $\beta_j = B_j \frac{s_{X_j}}{s_Y}$;
+   - Student's $t$-statistic $t_j = B_j / SE(B_j)$ and two-tailed significance levels via the regularized incomplete beta function;
+   - Configurable confidence intervals for coefficients $B$ with customizable confidence level (default: 95%);
+   - Complete Analysis of Variance (ANOVA) table: sums of squares $SS_{reg}, SS_{resid}, SS_{total}$, degrees of freedom $df_{reg} = p, df_{resid} = N - p - 1, df_{total} = N - 1$, mean squares $MS$, $F$-test statistic, and asymptotic $p$-value;
+   - Model Summary: $R = \sqrt{R^2}$, $R^2 = SS_{reg} / SS_{total}$, Adjusted $R^2_{adj} = 1 - \frac{MS_{resid}}{MS_{total}}$, standard error of the estimate $s_e = \sqrt{MS_{resid}}$;
+   - Collinearity diagnostics: Tolerance ($Tolerance_j = 1 / r^{jj}$) and Variance Inflation Factor ($VIF_j = 1 / Tolerance_j$) computed from the inverted predictor correlation matrix $R_{xx}^{-1}$;
+   - **Golden Oracle:** Test suite `regression_tests.rs` verifying regression coefficients, $t$-statistics, $R^2$, ANOVA $F$, Tolerance, and VIF against Python `scipy.stats` and `numpy.linalg.lstsq` benchmarks with $\le 10^{-6}$ precision;
+   - **Never Crash** protection: graceful handling of singular matrices, multicollinearity, small samples ($N \le p + 1$), zero predictor variance, and missing values in 100% safe Rust with zero panics.
+
+2. **Command Bus & Syntax L5 (`statcraft_syntax::commands::regression_linear_cmd`):**
+   - Strongly-typed `LinearRegressionCommand` (`stat.regression.linear`) with parameter `specs()` for external AI agents;
+   - Listwise missing value deletion across all specified dependent and independent variables;
+   - Seamless synergy with active sample filtering (`Select Cases`) and frequency weighting (`Weight Cases`);
+   - Canonical IBM SPSS Statistics syntax generator:
+     ```text
+     REGRESSION
+       /DEPENDENT=salary
+       /METHOD=ENTER educ salbegin
+       /STATISTICS=COEFF CI(95) R ANOVA COLLIN.
+     ```
+   - Full `Undo` / `Redo` lifecycle support.
+
+3. **DialogKit Desktop User Interface L6 (`statcraft_app::dialogs::regression_dialog`):**
+   - Centered canonical modal dialog ($560 \times 430$ px, `DialogShell::standard`);
+   - `VariablePicker` panel with measurement scale icons and vector transfer buttons `TransferButton` (`->` / `<-`);
+   - Target slots: `Dependent:` (single response variable) and `Independent(s):` (predictor variables list);
+   - Method selector dropdown: `Method: Enter`;
+   - Right sidebar `SubdialogSidebar` with `[ Statistics... ]` button;
+   - Modal statistics subdialog ($360 \times 300$ px, `DialogShell::subdialog`):
+     * Checkboxes `[x] Estimates`, `[x] Confidence intervals` (with configurable 95% level), `[x] Model fit`, `[x] Collinearity diagnostics`;
+     * Bottom action row `SubdialogActionBar` (`[ Continue ] [ Cancel ] [ Help ]`);
+   - Canonical bottom action bar `DialogActionBar` (`[ OK ] [ Paste ] [ Reset ] [ Cancel ] [ Help ]`).
+
+4. **Summary Pivot Tables in Output Viewer (`tables_regression.rs`):**
+   - **Variables Entered/Removed:** Model, Variables Entered, Variables Removed, Method;
+   - **Model Summary:** Model, $R$, $R$ Square, Adjusted $R$ Square, Std. Error of the Estimate;
+   - **ANOVA:** Model, Regression / Residual / Total ($SS, df, MS, F$, Sig.);
+   - **Coefficients:** Model, Unstandardized Coefficients ($B, Std. Error$), Standardized Coefficients ($Beta$), $t$, Sig., 95.0% Confidence Interval for $B$ (Lower / Upper Bound), Collinearity Statistics ($Tolerance, VIF$);
+   - TSV clipboard export and Outline Pane integration with procedural icons.
+
+5. **Reactivity, Menu & Status Bar:**
+   - Activated main menu item `Analyze -> Regression -> Linear...`;
+   - Canonical syntax automatically recorded to `Output Viewer` (Log);
+   - Status bar feedback notification (`Linear regression executed: <var>`).
+
+6. **Quality Control & Definition of Done:**
+   - Full automated CI quality gate passed (`cargo run -p xtask -j 1 -- ci` — 100% OK);
+   - 150+ workspace unit and integration tests passing with 0 failures;
+   - Strict adherence to file size limits (`file-guard` $\le 500$ lines on leaf modules, test fixtures modularized in `output_viewer_invariants/fixtures.rs`);
+   - Architectural linters (`design-guard`, `layers`, `parity` — 36 documented procedures) reporting 0 violations;
+   - Synchronous trilingual localization across all supported languages (`locales/en.ftl`, `locales/ru.ftl`, `C:\StatCraft\locales\fr.ftl`);
+   - Compiler linter `cargo clippy --workspace --all-targets -j 1 -- -D warnings` — 0 warnings;
+   - Release binary built and deployed to `C:\StatCraft\statcraft_app.exe`.
+
+
 
 ---
 
@@ -1260,6 +1326,72 @@ Implemented one of the most critical analytical mechanisms of IBM SPSS Statistic
    - Synchronous trilingual localization (`locales/ru.ftl`, `locales/en.ftl`, `C:\StatCraft\locales\fr.ftl`);
    - Compiler linter `cargo clippy --workspace --all-targets -j 1 -- -D warnings` — 0 warnings;
    - Release binary built and deployed to `C:\StatCraft\statcraft_app.exe`.
+
+---
+
+### Phase 9.1: Multiple Linear Regression (`REGRESSION`)
+*Time: October 29, 2026, 16:30 (~45 minutes)*
+
+Implemented one of the foundational predictive modeling frameworks in IBM SPSS Statistics — **Multiple Linear Regression** (`Analyze -> Regression -> Linear...`, engine command `stat.regression.linear` / syntax `REGRESSION /DEPENDENT=... /METHOD=ENTER ...`):
+
+1. **Mathematical Core L2 (`statcraft_algo::regression` & `regression_types`):**
+   - Ordinary Least Squares (OLS) and Weighted Least Squares (WLS) natively incorporating frequency weights (`row_weight`) and active filters (`active_row_indices`);
+   - Numerically stable normal equations matrix solver $(X^T W X)^{-1}$ utilizing Gauss-Jordan elimination with partial pivoting (`invert_matrix`) in 100% safe Rust without external C dependencies;
+   - Parameter vector estimation $\mathbf{B} = (X^T W X)^{-1} X^T W \mathbf{Y}$ and standard errors $SE(B_j) = s_e \sqrt{c_{jj}}$;
+   - Standardized beta coefficients $\beta_j = B_j \frac{s_{X_j}}{s_Y}$;
+   - Student's $t$-statistic $t_j = B_j / SE(B_j)$ and two-tailed significance levels via the regularized incomplete beta function;
+   - Configurable confidence intervals for coefficients $B$ with customizable confidence level (default: 95%);
+   - Complete Analysis of Variance (ANOVA) table: sums of squares $SS_{reg}, SS_{resid}, SS_{total}$, degrees of freedom $df_{reg} = p, df_{resid} = N - p - 1, df_{total} = N - 1$, mean squares $MS$, $F$-test statistic, and asymptotic $p$-value;
+   - Model Summary: $R = \sqrt{R^2}$, $R^2 = SS_{reg} / SS_{total}$, Adjusted $R^2_{adj} = 1 - \frac{MS_{resid}}{MS_{total}}$, standard error of the estimate $s_e = \sqrt{MS_{resid}}$;
+   - Collinearity diagnostics: Tolerance ($Tolerance_j = 1 / r^{jj}$) and Variance Inflation Factor ($VIF_j = 1 / Tolerance_j$) computed from the inverted predictor correlation matrix $R_{xx}^{-1}$;
+   - **Golden Oracle:** Test suite `regression_tests.rs` verifying regression coefficients, $t$-statistics, $R^2$, ANOVA $F$, Tolerance, and VIF against Python `scipy.stats` and `numpy.linalg.lstsq` benchmarks with $\le 10^{-6}$ precision;
+   - **Never Crash** protection: graceful handling of singular matrices, multicollinearity, small samples ($N \le p + 1$), zero predictor variance, and missing values in 100% safe Rust with zero panics.
+
+2. **Command Bus & Syntax L5 (`statcraft_syntax::commands::regression_linear_cmd`):**
+   - Strongly-typed `LinearRegressionCommand` (`stat.regression.linear`) with parameter `specs()` for external AI agents;
+   - Listwise missing value deletion across all specified dependent and independent variables;
+   - Seamless synergy with active sample filtering (`Select Cases`) and frequency weighting (`Weight Cases`);
+   - Canonical IBM SPSS Statistics syntax generator:
+     ```text
+     REGRESSION
+       /DEPENDENT=salary
+       /METHOD=ENTER educ salbegin
+       /STATISTICS=COEFF CI(95) R ANOVA COLLIN.
+     ```
+   - Full `Undo` / `Redo` lifecycle support.
+
+3. **DialogKit Desktop User Interface L6 (`statcraft_app::dialogs::regression_dialog`):**
+   - Centered canonical modal dialog ($560 \times 430$ px, `DialogShell::standard`);
+   - `VariablePicker` panel with measurement scale icons and vector transfer buttons `TransferButton` (`->` / `<-`);
+   - Target slots: `Dependent:` (single response variable) and `Independent(s):` (predictor variables list);
+   - Method selector dropdown: `Method: Enter`;
+   - Right sidebar `SubdialogSidebar` with `[ Statistics... ]` button;
+   - Modal statistics subdialog ($360 \times 300$ px, `DialogShell::subdialog`):
+     * Checkboxes `[x] Estimates`, `[x] Confidence intervals` (with configurable 95% level), `[x] Model fit`, `[x] Collinearity diagnostics`;
+     * Bottom action row `SubdialogActionBar` (`[ Continue ] [ Cancel ] [ Help ]`);
+   - Canonical bottom action bar `DialogActionBar` (`[ OK ] [ Paste ] [ Reset ] [ Cancel ] [ Help ]`).
+
+4. **Summary Pivot Tables in Output Viewer (`tables_regression.rs`):**
+   - **Variables Entered/Removed:** Model, Variables Entered, Variables Removed, Method;
+   - **Model Summary:** Model, $R$, $R$ Square, Adjusted $R$ Square, Std. Error of the Estimate;
+   - **ANOVA:** Model, Regression / Residual / Total ($SS, df, MS, F$, Sig.);
+   - **Coefficients:** Model, Unstandardized Coefficients ($B, Std. Error$), Standardized Coefficients ($Beta$), $t$, Sig., 95.0% Confidence Interval for $B$ (Lower / Upper Bound), Collinearity Statistics ($Tolerance, VIF$);
+   - TSV clipboard export and Outline Pane integration with procedural icons.
+
+5. **Reactivity, Menu & Status Bar:**
+   - Activated main menu item `Analyze -> Regression -> Linear...`;
+   - Canonical syntax automatically recorded to `Output Viewer` (Log);
+   - Status bar feedback notification (`Linear regression executed: <var>`).
+
+6. **Quality Control & Definition of Done:**
+   - Full automated CI quality gate passed (`cargo run -p xtask -j 1 -- ci` — 100% OK);
+   - 150+ workspace unit and integration tests passing with 0 failures;
+   - Strict adherence to file size limits (`file-guard` $\le 500$ lines on leaf modules, test fixtures modularized in `output_viewer_invariants/fixtures.rs`);
+   - Architectural linters (`design-guard`, `layers`, `parity` — 36 documented procedures) reporting 0 violations;
+   - Synchronous trilingual localization across all supported languages (`locales/en.ftl`, `locales/ru.ftl`, `C:\StatCraft\locales\fr.ftl`);
+   - Compiler linter `cargo clippy --workspace --all-targets -j 1 -- -D warnings` — 0 warnings;
+   - Release binary built and deployed to `C:\StatCraft\statcraft_app.exe`.
+
 
 
 

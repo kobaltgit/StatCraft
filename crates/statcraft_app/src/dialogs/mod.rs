@@ -13,6 +13,7 @@ pub mod nonparam_related_dialog;
 pub mod nonparam_twosample_dialog;
 pub mod recode_dialog;
 pub mod recode_old_new_dialog;
+pub mod regression_dialog;
 pub mod select_cases_dialog;
 pub mod sort_cases_dialog;
 pub mod split_file_dialog;
@@ -60,6 +61,9 @@ pub use recode_dialog::{
 };
 pub use recode_old_new_dialog::{
     render_recode_old_new_dialog, NewValueType, OldValueType, RecodeOldNewAction, RecodeOldNewState,
+};
+pub use regression_dialog::{
+    render_linear_regression_dialog, LinearRegressionDialogAction, LinearRegressionDialogState,
 };
 pub use select_cases_dialog::{
     render_select_cases_dialog, DialogCasesAction, DialogSelectMode, SelectCasesDialogAction,

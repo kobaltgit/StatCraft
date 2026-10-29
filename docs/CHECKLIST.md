@@ -300,6 +300,17 @@
 - [x] L6 `statcraft_app`: индикатор состояния `Weight: ON (var)` в строке состояния (Status Bar), активация пункта меню `Data -> Weight Cases...`, журналирование синтаксиса в `Output Viewer`
 - [x] 100% покрытие локализацией (`locales/en.ftl`, `locales/ru.ftl`, `C:\StatCraft\locales\fr.ftl`), 100% прохождение полного CI gate `cargo run -p xtask -j 1 -- ci` (`file-guard`, `design-guard`, `layers`, `parity`, `clippy -D warnings`, `cargo fmt --check`)
 
+## 32. Этап 9.1: Линейная регрессия (Linear Regression: `REGRESSION`)
+- [x] L2 `statcraft_algo`: модули `regression.rs`, `regression_types.rs` и `regression_tests.rs` — МНК (OLS) и взвешенный МНК (WLS) через метод Гаусса-Жордана с частичным выбором главного элемента, обращение матрицы $A = X^T W X$ на 100% safe Rust без паник
+- [x] L2 `statcraft_algo`: расчет коэффициента множественной корреляции ($R$), коэффициента детерминации ($R^2$), скорректированного $R^2$, стандартной ошибки оценки, ANOVA (Regression, Residual, Total sums of squares, df, Mean Squares, $F$-критерий, $p$-value), коэффициентов ($B$, Std. Error, $\beta$, $t$, Sig, 95% CI) и диагностик коллинеарности (Tolerance и VIF)
+- [x] L2 `statcraft_algo`: сверка Golden Oracle с эталоном SciPy / NumPy с точностью $\le 10^{-6}$ (множественная и взвешенная линейная регрессия)
+- [x] L5 `statcraft_syntax`: типизированная команда `LinearRegressionCommand` (`stat.regression.linear`) со спецификацией `specs()`, фильтрацией `active_row_indices()`, весами `row_weight(r)` и генерацией канонического синтаксиса `REGRESSION /MISSING LISTWISE /STATISTICS COEFF OUTS R ANOVA COLLIN /CRITERIA=PIN(.05) POUT(.10) /NOORIGIN /DEPENDENT ... /METHOD=ENTER ...`
+- [x] L6 `statcraft_app`: диалог `LinearRegressionDialog` ($560 \times 430$ px, `DialogShell::standard`) на базе `DialogKit` (`VariablePicker`, `TransferButton`, `SubdialogSidebar`, `SubdialogActionBar`, `DialogActionBar`, `GroupBox`), модальный поддиалог `[ Statistics... ]`
+- [x] L6 `statcraft_app`: модуль вывода `output_view/tables_regression.rs` — 4 аутентичные таблицы SPSS (*Variables Entered/Removed, Model Summary, ANOVA, Coefficients*), TSV-экспорт для буфера обмена и интеграция в Outline Tree
+- [x] L6 `statcraft_app`: активация пункта меню `Analyze -> Regression -> Linear...`
+- [x] 100% покрытие локализацией (`locales/en.ftl`, `locales/ru.ftl`, `C:\StatCraft\locales\fr.ftl`), 100% прохождение полного CI gate `cargo run -p xtask -j 1 -- ci` (`file-guard`, `design-guard`, `layers`, `parity`, `clippy -D warnings`, `cargo fmt --check`)
+
+
 
 
 

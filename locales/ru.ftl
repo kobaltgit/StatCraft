@@ -760,3 +760,47 @@ dialog-weight-status-on = Взвесить наблюдения по { $var }
 status-weight-on = Вес: Включен ({ $var })
 status-weight-executed = Взвешивание наблюдений: { $var }
 status-weight-off-executed = Взвешивание наблюдений отключено
+
+
+# Linear Regression Dialog
+dialog-regression-linear-title = Линейная регрессия
+dialog-regression-statistics-title = Линейная регрессия: Статистики
+dialog-regression-group-regression-coeffs = Коэффициенты регрессии
+dialog-regression-stat-collinearity = Диагностика коллинеарности
+dialog-regression-group-confidence-intervals = Доверительные интервалы
+dialog-regression-label-ci-level = Уровень:
+dialog-regression-label-dependent = Зависимая:
+dialog-regression-label-independents = Независимые:
+dialog-regression-placeholder-dep = Выберите зависимую переменную
+dialog-regression-label-method = Метод:
+dialog-regression-method-enter = Ввести (Enter)
+dialog-regression-btn-statistics = Статистики...
+
+# Linear Regression Output
+output-regression-title = Регрессия
+output-regression-table-title = Линейная регрессия
+output-col-model = Модель
+output-regression-variables-title = Введенные/удаленные переменные
+output-regression-vars-entered = Введенные переменные
+output-regression-vars-removed = Удаленные переменные
+output-regression-method = Метод
+output-regression-none = Нет
+output-regression-dep-var-note = Зависимая переменная
+output-regression-all-vars-note = Все запрошенные переменные введены.
+output-regression-model-summary-title = Сводка для модели
+output-regression-col-r = R
+output-regression-col-r-sq = R-квадрат
+output-regression-col-adj-r-sq = Скорректированный R-квадрат
+output-regression-col-se-est = Стандартная ошибка оценки
+output-regression-predictors-note = Предикторы
+output-regression-constant = (Константа)
+output-regression-anova-title = Дисперсионный анализ (ANOVA)
+output-regression-row-regression = Регрессия
+output-regression-row-residual = Остаток
+output-regression-coeffs-title = Коэффициенты
+output-regression-col-b = B
+output-regression-col-se = Станд. ошибка
+output-regression-col-beta = Бета
+output-regression-col-tol = Толерантность
+output-regression-col-vif = VIF
+output-regression-executed = Рассчитана линейная регрессия для {$dep} с {$count} предиктором(-ами)

@@ -2,10 +2,11 @@ use super::app::{StatCraftApp, StatusMessage};
 use super::dialogs::{
     render_anova_oneway_dialog, render_correlations_dialog, render_crosstabs_dialog,
     render_descriptives_dialog, render_frequencies_dialog, render_kruskal_wallis_dialog,
-    render_nonparam_related_dialog, render_nonparam_twosample_dialog, render_ttest_indep_dialog,
-    render_ttest_onesample_dialog, render_ttest_paired_dialog, CorrelationsDialogAction,
-    CrosstabsDialogAction, DescriptivesDialogAction, FrequenciesDialogAction,
-    IndependentSamplesTTestDialogAction, KruskalWallisDialogAction, NonparamRelatedDialogAction,
+    render_linear_regression_dialog, render_nonparam_related_dialog,
+    render_nonparam_twosample_dialog, render_ttest_indep_dialog, render_ttest_onesample_dialog,
+    render_ttest_paired_dialog, CorrelationsDialogAction, CrosstabsDialogAction,
+    DescriptivesDialogAction, FrequenciesDialogAction, IndependentSamplesTTestDialogAction,
+    KruskalWallisDialogAction, LinearRegressionDialogAction, NonparamRelatedDialogAction,
     NonparamTwoSampleDialogAction, OneSampleTTestDialogAction, OneWayAnovaDialogAction,
     PairedSamplesTTestDialogAction,
 };
@@ -586,7 +587,65 @@ impl StatCraftApp {
             }
             KruskalWallisDialogAction::None => {}
         }
-        // 12. Data and Variable Management Dialogs
+
+        // 12. Linear Regression Dialog
+        let reg_action = render_linear_regression_dialog(
+            ctx,
+            self.dataset.as_ref(),
+            &mut self.linear_regression_dialog_state,
+        );
+
+        match reg_action {
+            LinearRegressionDialogAction::Run {
+                dependent_var,
+                independent_vars,
+                ci,
+                collinearity,
+            } => {
+                let params = json!({
+                    "dependent_var": dependent_var,
+                    "independent_vars": independent_vars,
+                    "ci": ci,
+                    "collinearity": collinearity,
+                });
+                match self
+                    .command_bus
+                    .execute("stat.regression.linear", &mut self.dataset, params)
+                {
+                    Ok(result_value) => {
+                        if let Ok(result) = serde_json::from_value::<
+                            statcraft_algo::LinearRegressionResult,
+                        >(result_value)
+                        {
+                            let indep_count = result.indep_vars.len();
+                            let dep_var = result.dep_var.clone();
+                            self.output_view_state.add_linear_regression(result);
+                            self.status_message = StatusMessage::RegressionExecuted {
+                                dep_var,
+                                indep_count,
+                            };
+                        }
+                    }
+                    Err(e) => {
+                        self.status_message = StatusMessage::Error(e.to_string());
+                    }
+                }
+            }
+            LinearRegressionDialogAction::Paste {
+                dependent_var,
+                independent_vars,
+                ..
+            } => {
+                let sps = statcraft_syntax::commands::LinearRegressionCommand::to_sps(
+                    &dependent_var,
+                    &independent_vars,
+                );
+                self.output_view_state.add_entry(t!("output-log"), sps);
+            }
+            LinearRegressionDialogAction::None => {}
+        }
+
+        // 13. Data and Variable Management Dialogs
         self.handle_data_dialogs(ctx);
     }
 }

@@ -1,10 +1,10 @@
 use crate::dialogs::{
     ComputeDialogState, CorrelationsDialogState, CrosstabsDialogState, DescriptivesDialogState,
     FrequenciesDialogState, IndependentSamplesTTestDialogState, KruskalWallisDialogState,
-    MissingValuesDialogState, NonparamRelatedDialogState, NonparamTwoSampleDialogState,
-    OneSampleTTestDialogState, OneWayAnovaDialogState, PairedSamplesTTestDialogState,
-    RecodeDialogState, SelectCasesDialogState, SortCasesDialogState, SplitFileDialogState,
-    ValueLabelsDialogState, VariableTypeDialogState, WeightCasesDialogState,
+    LinearRegressionDialogState, MissingValuesDialogState, NonparamRelatedDialogState,
+    NonparamTwoSampleDialogState, OneSampleTTestDialogState, OneWayAnovaDialogState,
+    PairedSamplesTTestDialogState, RecodeDialogState, SelectCasesDialogState, SortCasesDialogState,
+    SplitFileDialogState, ValueLabelsDialogState, VariableTypeDialogState, WeightCasesDialogState,
 };
 use crate::views::{
     render_data_view, render_output_view, render_variable_view, DataViewState, OutputViewerState,
@@ -90,6 +90,10 @@ pub enum StatusMessage {
     WeightCasesExecuted {
         var: Option<String>,
     },
+    RegressionExecuted {
+        dep_var: String,
+        indep_count: usize,
+    },
     Error(String),
 }
 
@@ -165,6 +169,16 @@ impl StatusMessage {
                 Some(v) => t!("status-weight-executed", var = v.as_str()),
                 None => t!("status-weight-off-executed"),
             },
+            StatusMessage::RegressionExecuted {
+                dep_var,
+                indep_count,
+            } => {
+                t!(
+                    "output-regression-executed",
+                    dep = dep_var.as_str(),
+                    count = *indep_count
+                )
+            }
             StatusMessage::Error(e) => format!("{}: {}", t!("status-error"), e),
         }
     }
@@ -197,6 +211,7 @@ pub struct StatCraftApp {
     pub select_cases_dialog_state: SelectCasesDialogState,
     pub split_file_dialog_state: SplitFileDialogState,
     pub weight_cases_dialog_state: WeightCasesDialogState,
+    pub linear_regression_dialog_state: LinearRegressionDialogState,
     pub pending_variable_action: VariableViewAction,
     pub status_message: StatusMessage,
     pub toolbar_position: ToolbarPosition,
@@ -237,6 +252,7 @@ impl StatCraftApp {
             select_cases_dialog_state: SelectCasesDialogState::default(),
             split_file_dialog_state: SplitFileDialogState::default(),
             weight_cases_dialog_state: WeightCasesDialogState::default(),
+            linear_regression_dialog_state: LinearRegressionDialogState::default(),
             pending_variable_action: VariableViewAction::None,
             status_message: StatusMessage::Ready,
             toolbar_position: ToolbarPosition::Top,
@@ -683,11 +699,16 @@ impl StatCraftApp {
                         );
                     });
                     ui.menu_button(t!("menu-analyze-regression"), |ui| {
-                        render_menu_item(
+                        if render_menu_item(
                             ui,
                             t!("menu-analyze-regression-linear"),
-                            MenuItemStatus::InDev,
-                        );
+                            requires_dataset_status,
+                        )
+                        .clicked()
+                        {
+                            self.linear_regression_dialog_state.is_open = true;
+                            ui.close_menu();
+                        }
                         render_menu_item(
                             ui,
                             t!("menu-analyze-regression-binary"),

@@ -760,3 +760,47 @@ dialog-weight-status-on = Weight cases by { $var }
 status-weight-on = Weight: ON ({ $var })
 status-weight-executed = Weight cases: { $var }
 status-weight-off-executed = Weight cases turned off
+
+
+# Linear Regression Dialog
+dialog-regression-linear-title = Linear Regression
+dialog-regression-statistics-title = Linear Regression: Statistics
+dialog-regression-group-regression-coeffs = Regression Coefficients
+dialog-regression-stat-collinearity = Collinearity diagnostics
+dialog-regression-group-confidence-intervals = Confidence Intervals
+dialog-regression-label-ci-level = Level:
+dialog-regression-label-dependent = Dependent:
+dialog-regression-label-independents = Independent(s):
+dialog-regression-placeholder-dep = Select dependent variable
+dialog-regression-label-method = Method:
+dialog-regression-method-enter = Enter
+dialog-regression-btn-statistics = Statistics...
+
+# Linear Regression Output
+output-regression-title = Regression
+output-regression-table-title = Linear Regression
+output-col-model = Model
+output-regression-variables-title = Variables Entered/Removed
+output-regression-vars-entered = Variables Entered
+output-regression-vars-removed = Variables Removed
+output-regression-method = Method
+output-regression-none = None
+output-regression-dep-var-note = Dependent Variable
+output-regression-all-vars-note = All requested variables entered.
+output-regression-model-summary-title = Model Summary
+output-regression-col-r = R
+output-regression-col-r-sq = R Square
+output-regression-col-adj-r-sq = Adjusted R Square
+output-regression-col-se-est = Std. Error of the Estimate
+output-regression-predictors-note = Predictors
+output-regression-constant = (Constant)
+output-regression-anova-title = ANOVA
+output-regression-row-regression = Regression
+output-regression-row-residual = Residual
+output-regression-coeffs-title = Coefficients
+output-regression-col-b = B
+output-regression-col-se = Std. Error
+output-regression-col-beta = Beta
+output-regression-col-tol = Tolerance
+output-regression-col-vif = VIF
+output-regression-executed = Linear regression computed for {$dep} with {$count} predictor(s)

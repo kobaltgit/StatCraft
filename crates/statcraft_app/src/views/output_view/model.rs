@@ -1,7 +1,7 @@
 use statcraft_algo::{
     BivariateCorrelationsResult, CrosstabResult, DescriptivesResult, FrequencyResult,
-    IndepTTestResult, KruskalWallisResult, MannWhitneyResult, OneSampleTTestResult,
-    OneWayAnovaResult, PairedTTestResult, RelatedPairTestResult,
+    IndepTTestResult, KruskalWallisResult, LinearRegressionResult, MannWhitneyResult,
+    OneSampleTTestResult, OneWayAnovaResult, PairedTTestResult, RelatedPairTestResult,
 };
 use statcraft_i18n::t;
 
@@ -62,6 +62,7 @@ pub enum OutputItemKind {
         grouping_var: String,
     },
     TwoRelatedSamples(Vec<RelatedPairTestResult>),
+    LinearRegression(Box<LinearRegressionResult>),
     Warning(String),
     CustomText {
         title: String,

@@ -753,3 +753,69 @@
    - `cargo clippy --workspace --all-targets -j 1 -- -D warnings` — 0 предупреждений;
    - Сборка и развертывание релизного бинарника `C:\StatCraft\statcraft_app.exe`.
 
+---
+
+### Этап 9.1: Линейная множественная регрессия (Multiple Linear Regression: `REGRESSION`)
+*Время: 29 октября 2026, 16:30 (~45 минут)*
+
+Реализован один из фундаментальных математических аппаратов статистического моделирования — процедура **Множественной линейной регрессии** (*Multiple Linear Regression*, пункт меню `Анализ -> Регрессия -> Линейная...` / `Analyze -> Regression -> Linear...`, команда движка `stat.regression.linear` / синтаксис `REGRESSION /DEPENDENT=... /METHOD=ENTER ...`):
+
+1. **Математическое ядро L2 (`statcraft_algo::regression` и `regression_types`):**
+   - Обычный МНК (OLS) и взвешенный МНК (WLS) с поддержкой частотных весов (`row_weight`) и активных выборок (`active_row_indices`);
+   - Численно устойчивое обращение матриц нормальных уравнений $(X^T W X)$ методом Гаусса-Жордана с частичным выбором ведущего элемента (`invert_matrix`) на 100% safe Rust без внешних C-библиотек;
+   - Оценка вектора параметров $\mathbf{B} = (X^T W X)^{-1} X^T W \mathbf{Y}$ и стандартных ошибок $SE(B_j) = s_e \sqrt{c_{jj}}$;
+   - Стандартизованные коэффициенты бета: $\beta_j = B_j \frac{s_{X_j}}{s_Y}$;
+   - Статистика Стьюдента $t_j = B_j / SE(B_j)$ и двусторонние уровни значимости $p$ через регулярную неполную бета-функцию;
+   - Настраиваемые доверительные интервалы для коэффициентов $B$ с задаваемым уровнем (по умолчанию 95%);
+   - Полный дисперсионный анализ регрессии (ANOVA): суммы квадратов $SS_{reg}, SS_{resid}, SS_{total}$, степени свободы $df_{reg} = p, df_{resid} = N - p - 1, df_{total} = N - 1$, средние квадраты $MS$, критерий Фишера $F$ и его асимптотическая значимость;
+   - Сводка модели (Model Summary): $R = \sqrt{R^2}$, $R^2 = SS_{reg} / SS_{total}$, скорректированный $R^2_{adj} = 1 - \frac{MS_{resid}}{MS_{total}}$, стандартная ошибка оценки $s_e = \sqrt{MS_{resid}}$;
+   - Диагностика мультиколлинеарности: толерантность ($Tolerance_j = 1 / r^{jj}$) и коэффициент инфляции дисперсии ($VIF_j = 1 / Tolerance_j$) через обращение корреляционной матрицы предикторов $R_{xx}^{-1}$;
+   - **Golden Oracle:** Набор тестов `regression_tests.rs` с валидацией коэффициентов, $t$-статистик, $R^2$, ANOVA $F$, толерантности и VIF против эталонных вычислений Python `scipy.stats` и `numpy.linalg.lstsq` с точностью $\le 10^{-6}$;
+   - Защита **Never Crash**: безопасная обработка сингулярных матриц, мультиколлинеарности, малых выборок ($N \le p + 1$), нулевой дисперсии предикторов и пропущенных значений на 100% safe Rust без паник.
+
+2. **Командная шина и синтаксис L5 (`statcraft_syntax::commands::regression_linear_cmd`):**
+   - Типизированная команда `LinearRegressionCommand` (`stat.regression.linear`) со спецификацией параметров `specs()` для внешних ИИ-агентов;
+   - Построчное исключение наблюдений с пропусками (Listwise missing deletion) по всем зависимым и независимым переменным модели;
+   - Полная совместимость с фильтрацией `Select Cases` (`active_row_indices`) и взвешиванием `Weight Cases` (`row_weight`);
+   - Генератор канонического синтаксиса IBM SPSS Statistics:
+     ```text
+     REGRESSION
+       /DEPENDENT=salary
+       /METHOD=ENTER educ salbegin
+       /STATISTICS=COEFF CI(95) R ANOVA COLLIN.
+     ```
+   - Полная поддержка отката `Undo` / `Redo`.
+
+3. **Графический интерфейс на DialogKit L6 (`statcraft_app::dialogs::regression_dialog`):**
+   - Центрированный диалог $560 \times 430$ px на базе `DialogShell::standard`;
+   - Выбор переменных `VariablePicker` с иконками шкал и адаптивными векторными кнопками переноса `TransferButton` (`->` / `<-`);
+   - Целевые поля: `Dependent:` (1 зависимая переменная) и `Independent(s):` (список предикторов);
+   - Выпадающий список метода включения: `Method: Enter`;
+   - Боковая панель `SubdialogSidebar` с кнопкой `[ Statistics... ]` (`[ Статистика... ]`);
+   - Модальный поддиалог настроек статистики ($360 \times 300$ px, `DialogShell::subdialog`):
+     * Чекбоксы `[x] Estimates` (Оценки коэффициентов), `[x] Confidence intervals` (Доверительные интервалы с настраиваемым уровнем 95%), `[x] Model fit` (Качество модели), `[x] Collinearity diagnostics` (Диагностика коллинеарности);
+     * Нижний ряд кнопок `SubdialogActionBar` (`[ Continue ] [ Cancel ] [ Help ]`);
+   - Нижний ряд кнопок действий диалога `DialogActionBar` (`[ OK ] [ Paste ] [ Reset ] [ Cancel ] [ Help ]`).
+
+4. **Сводные таблицы в Output Viewer (`tables_regression.rs`):**
+   - Таблица **Variables Entered/Removed:** модель, введенные переменные, удаленные переменные, метод;
+   - Таблица **Model Summary:** Model, $R$, $R$ Square, Adjusted $R$ Square, Std. Error of the Estimate;
+   - Таблица **ANOVA:** Model, Regression / Residual / Total ($SS, df, MS, F$, Sig.);
+   - Таблица **Coefficients:** Model, Unstandardized Coefficients ($B, Std. Error$), Standardized Coefficients ($Beta$), $t$, Sig., 95.0% Confidence Interval for $B$ (Lower / Upper Bound), Collinearity Statistics ($Tolerance, VIF$);
+   - Экспорт таблиц в TSV и интеграция в Outline Pane со специальными процедурными иконками.
+
+5. **Реактивность, меню и статусная строка:**
+   - Активирован пункт главного меню `Analyze -> Regression -> Linear...` (`Анализ -> Регрессия -> Линейная...`);
+   - Автоматическое логирование канонического синтаксиса в журнал `Output Viewer` (Log);
+   - Информационное уведомление в строке состояния (`Linear regression executed: <var>`).
+
+6. **Контроль качества (Definition of Done):**
+   - Полный пайплайн качества `cargo run -p xtask -j 1 -- ci` — 100% OK;
+   - 150+ тестов воркспейса завершились успешно (0 сбоев);
+   - Все файлы воркспейса строго соблюдают дифференцированные лимиты строк (`file-guard` $\le 500$ строк для листовых модулей, декомпозиция тестовых данных в `output_viewer_invariants/fixtures.rs`);
+   - Линтеры дизайна и слоев (`design-guard`, `layers`, `parity` — 36 документированных процедур) — 0 замечаний;
+   - Полная синхронная локализация на трех языках (`locales/en.ftl`, `locales/ru.ftl`, `C:\StatCraft\locales\fr.ftl`);
+   - Компилятор и линтер `cargo clippy --workspace --all-targets -j 1 -- -D warnings` — 0 предупреждений;
+   - Сборка и развертывание релизного бинарника `C:\StatCraft\statcraft_app.exe`.
+
+

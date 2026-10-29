@@ -10,6 +10,7 @@ pub mod tables_frequencies;
 pub mod tables_kruskal;
 pub mod tables_nonparam;
 pub mod tables_nonparam_related;
+pub mod tables_regression;
 pub mod tables_ttest_indep;
 pub mod tables_ttest_onesample;
 pub mod tables_ttest_paired;
@@ -26,6 +27,7 @@ pub use tables_frequencies::{frequencies_to_tsv, render_spss_frequencies_tables}
 pub use tables_kruskal::{kruskal_wallis_to_tsv, render_spss_kruskal_wallis_tables};
 pub use tables_nonparam::{mann_whitney_to_tsv, render_spss_mann_whitney_tables};
 pub use tables_nonparam_related::{related_samples_to_tsv, render_spss_related_samples_tables};
+pub use tables_regression::{regression_to_tsv, render_spss_linear_regression};
 pub use tables_ttest_indep::{indep_ttest_to_tsv, render_spss_indep_ttest_tables};
 pub use tables_ttest_onesample::{onesample_ttest_to_tsv, render_spss_onesample_ttest_tables};
 pub use tables_ttest_paired::{paired_ttest_to_tsv, render_spss_paired_ttest_tables};
@@ -53,6 +55,7 @@ pub fn extract_item_tsv(kind: &OutputItemKind) -> Option<String> {
             grouping_var,
         } => Some(kruskal_wallis_to_tsv(results, grouping_var)),
         OutputItemKind::TwoRelatedSamples(results) => Some(related_samples_to_tsv(results)),
+        OutputItemKind::LinearRegression(res) => Some(regression_to_tsv(res)),
         _ => None,
     }
 }
@@ -279,6 +282,9 @@ pub fn render_output_view(ui: &mut Ui, state: &mut OutputViewerState) {
                                     }
                                     OutputItemKind::TwoRelatedSamples(results) => {
                                         render_spss_related_samples_tables(ui, results);
+                                    }
+                                    OutputItemKind::LinearRegression(res) => {
+                                        render_spss_linear_regression(ui, res);
                                     }
                                     OutputItemKind::Warning(msg) => {
                                         ui.colored_label(Tokens::CAPTION_CLOSE_HOVER, msg);
