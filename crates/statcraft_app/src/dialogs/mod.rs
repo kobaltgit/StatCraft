@@ -4,8 +4,11 @@ pub mod correlations_dialog;
 pub mod crosstabs_dialog;
 pub mod descriptives_dialog;
 pub mod frequencies_dialog;
+pub mod kruskal_define_range;
+pub mod kruskal_wallis_dialog;
 pub mod missing_values_dialog;
 pub mod nonparam_define_groups;
+pub mod nonparam_related_dialog;
 pub mod nonparam_twosample_dialog;
 pub mod ttest_indep_define_groups;
 pub mod ttest_indep_dialog;
@@ -29,8 +32,14 @@ pub use descriptives_dialog::{
 pub use frequencies_dialog::{
     render_frequencies_dialog, FrequenciesDialogAction, FrequenciesDialogState,
 };
+pub use kruskal_wallis_dialog::{
+    render_kruskal_wallis_dialog, KruskalWallisDialogAction, KruskalWallisDialogState,
+};
 pub use missing_values_dialog::{
     render_missing_values_dialog, MissingValuesDialogAction, MissingValuesDialogState,
+};
+pub use nonparam_related_dialog::{
+    render_nonparam_related_dialog, NonparamRelatedDialogAction, NonparamRelatedDialogState,
 };
 pub use nonparam_twosample_dialog::{
     render_nonparam_twosample_dialog, NonparamTwoSampleDialogAction, NonparamTwoSampleDialogState,

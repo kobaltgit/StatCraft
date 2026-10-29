@@ -227,6 +227,28 @@
 - [x] L6 `statcraft_app`: активация пункта меню `Analyze -> Nonparametric Tests -> Two Independent Samples...`
 - [x] 100% покрытие локализацией (`locales/en.ftl`, `locales/ru.ftl`), 100% прохождение полного CI gate `cargo run -p xtask -j 1 -- ci` (105 тестов воркспейса, `file-guard`, `design-guard`, `layers`, `parity`, `clippy -D warnings`, `cargo fmt --check`)
 
+## 24. Этап 7.4: Непараметрические критерии для двух связанных выборок (Wilcoxon Signed-Rank Test и Sign Test)
+- [x] L2 `statcraft_algo`: модули `nonparam_related.rs` и `nonparam_related_types.rs` — расчет разностей $D_i = Y_i - X_i$, учет нулевых разностей как связок (Ties), ранжирование $|D_i|$ с вычислением дробных средних рангов (mid-ranks), расчет сумм и средних отрицательных и положительных рангов
+- [x] L2 `statcraft_algo`: дисперсия с поправкой на связки $\sigma_W^2 = \frac{n(n+1)(2n+1)}{24} - \frac{\sum(t_j^3 - t_j)}{48}$, $Z$-оценка с непрерывной поправкой $\pm 0.5$, двусторонний асимптотический $p$-value через неполную гамма-функцию
+- [x] L2 `statcraft_algo`: критерий знаков (Sign Test) — подсчет отрицательных, положительных и нулевых разностей, точный двусторонний биномиальный критерий значимости через регуляризованную неполную бета-функцию $I_{0.5}(n - k, k + 1)$
+- [x] L2 `statcraft_algo`: модуль тестов `nonparam_related_tests.rs` — сверка Golden Oracle с эталонами SciPy и точными бенчмарками SPSS
+- [x] L5 `statcraft_syntax`: команда `RelatedSamplesTestCommand` (`stat.npar.related2`) со спецификацией `specs()` и генерацией канонического синтаксиса `NPAR TESTS /WILCOXON=... /SIGN=... /MISSING=ANALYSIS.`
+- [x] L6 `statcraft_app`: диалог `NonparamRelatedDialog` ($560 \times 430$ px) на базе `DialogKit` (`DialogShell::standard`, `VariablePicker`, `TransferButton`, `DialogActionBar`, `GroupBox`), выбор `Variable 1` и `Variable 2`, формирование списка `Test Pairs`, чекбоксы `[x] Wilcoxon`, `[ ] Sign`
+- [x] L6 `statcraft_app`: модуль вывода `output_view/tables_nonparam_related.rs` — аутентичные таблицы SPSS `Ranks` (Negative, Positive, Ties, Total), `Test Statistics` (Z, Asymp. Sig. 2-tailed, сноски направления рангов), `Frequencies` (Sign Test) и `Test Statistics` (Exact Sig. 2-tailed), экспорт в TSV и Outline Pane
+- [x] L6 `statcraft_app`: активация пункта меню `Analyze -> Nonparametric Tests -> Related Samples (Wilcoxon / Friedman)...`
+- [x] 100% покрытие локализацией (`locales/en.ftl`, `locales/ru.ftl`), 100% прохождение полного CI gate `cargo run -p xtask -j 1 -- ci` (`file-guard`, `design-guard`, `layers`, `parity`, `clippy -D warnings`, `cargo fmt --check`)
+
+## 25. Исправление навигационной панели (Outline Overflow Fix) и Этап 7.5: Критерий Крускала-Уоллиса для K независимых выборок (Kruskal-Wallis H Test)
+- [x] L6 `statcraft_app`: исправление выезда текста в Outline View (`output_view/mod.rs` и `outline.rs`) — расширение панели до 230 px, установка жесткого рубежа отсечения `ui.set_clip_rect(left_rect)`, посимвольная утилита усечения `truncate_text_to_width` с многоточием `...`, отрисовка внутри `painter.with_clip_rect` и всплывающие подсказки полного заголовка `.on_hover_text(...)`
+- [x] L2 `statcraft_algo`: модули `kruskal_wallis.rs` и `kruskal_wallis_tests.rs` — расчет сумм и средних рангов по $k$ группам, статистика $H$, поправка на совпадающие ранги (Tie correction) $\sum(t_j^3 - t_j) / (N^3 - N)$, степени свободы $df = k - 1$, точный асимптотический $p$-value через $\chi^2$ распределение (`chi_square_sf`)
+- [x] L2 `statcraft_algo`: модуль тестов `kruskal_wallis_tests.rs` — сверка Golden Oracle с эталоном SciPy (`scipy.stats.kruskal`) с точностью $\le 10^{-6}$
+- [x] L5 `statcraft_syntax`: команда `KruskalWallisCommand` (`stat.npar.kruskal_wallis`) со спецификацией `specs()` и генерацией канонического синтаксиса `NPAR TESTS /K-W= vars BY grp(min max) /MISSING=ANALYSIS.`
+- [x] L6 `statcraft_app`: диалог `KruskalWallisDialog` ($560 \times 430$ px) на базе `DialogKit` (`DialogShell::standard`, `VariablePicker`, `TransferButton`, `SubdialogSidebar`, `SubdialogActionBar`, `DialogActionBar`, `GroupBox`), модальный поддиалог `Define Range...` (Min/Max коды групп)
+- [x] L6 `statcraft_app`: модуль вывода `output_view/tables_kruskal.rs` — аутентичные таблицы SPSS `Ranks` ($N$, Mean Rank, Total) и `Test Statistics` (Kruskal-Wallis H, df, Asymp. Sig.), сноски критерия и группирующей переменной, TSV-экспорт и интеграция в Outline Pane
+- [x] L6 `statcraft_app`: активация пункта меню `Analyze -> Nonparametric Tests -> K Independent Samples...`
+- [x] 100% покрытие локализацией (`locales/en.ftl`, `locales/ru.ftl`), 100% прохождение полного CI gate `cargo run -p xtask -j 1 -- ci` (`file-guard`, `design-guard`, `layers`, `parity`, `clippy -D warnings`, `cargo fmt --check`)
+
+
 
 
 

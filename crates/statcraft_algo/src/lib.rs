@@ -9,6 +9,13 @@ mod crosstabs_tests;
 pub mod crosstabs_types;
 pub mod descriptives;
 pub mod frequencies;
+pub mod kruskal_wallis;
+#[cfg(test)]
+mod kruskal_wallis_tests;
+pub mod nonparam_related;
+#[cfg(test)]
+mod nonparam_related_tests;
+pub mod nonparam_related_types;
 pub mod nonparam_twosample;
 #[cfg(test)]
 mod nonparam_twosample_tests;
@@ -37,13 +44,22 @@ pub use frequencies::{
     compute_frequencies, compute_frequencies_detailed, compute_percentile, compute_quartiles,
     FrequencyCategory, FrequencyInputItem, FrequencyResult, FrequencyTable,
 };
-pub use nonparam_twosample::{
-    compute_mann_whitney, compute_mann_whitney_from_slices, compute_midranks_with_ties,
+pub use kruskal_wallis::{
+    compute_kruskal_wallis, compute_kruskal_wallis_from_groups, KruskalWallisGroupStats,
+    KruskalWallisResult,
+};
+pub use nonparam_related::{
+    compute_related_samples, compute_sign_test, compute_sign_test_from_slices,
     compute_wilcoxon_signed_rank, compute_wilcoxon_signed_rank_from_slices,
 };
-pub use nonparam_twosample_types::{
-    MannWhitneyResult, RankGroupStats, WilcoxonRanksSummary, WilcoxonSignedRankResult,
+pub use nonparam_related_types::{
+    RelatedPairTestResult, SignTestDifferences, SignTestResult, WilcoxonRanksSummary,
+    WilcoxonSignedRankResult,
 };
+pub use nonparam_twosample::{
+    compute_mann_whitney, compute_mann_whitney_from_slices, compute_midranks_with_ties,
+};
+pub use nonparam_twosample_types::{MannWhitneyResult, RankGroupStats};
 pub use ttest_indep::{
     compute_indep_ttest, compute_indep_ttest_from_slices, GroupStats, IndepTTestOptions,
     IndepTTestResult, LeveneResult, TTestTwoGroupDetails,

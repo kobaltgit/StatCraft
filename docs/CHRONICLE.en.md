@@ -745,6 +745,55 @@ Implemented the fundamental nonparametric framework for comparing two groups on 
    - Strict compiler linter `cargo clippy --workspace --all-targets -j 1 -- -D warnings` — 0 warnings;
    - Code formatting `cargo fmt --check` — completely clean.
 
+---
+
+### Phase 7.4: Nonparametric Tests for Two Related Samples (Wilcoxon Signed-Rank Test and Sign Test)
+*Time: October 29, 2026, 08:15 (~40 minutes)*
+
+Implemented the fundamental nonparametric framework for paired and repeated-measures analyses when normal distribution of differences is violated — **Two-Related-Samples Tests** (`Analyze -> Nonparametric Tests -> Related Samples (Wilcoxon / Friedman)...`):
+1. **Mathematical Engine L2 (`statcraft_algo::nonparam_related` & `nonparam_related_types`):**
+   - Paired difference computation $D_i = Y_i - X_i$ (`var2 - var1`);
+   - Zero-difference classification as Ties ($D_i = 0$), excluded from ranking per IBM SPSS Statistics standard;
+   - Sorting and ranking of absolute differences $|D_i|$ with mid-ranks calculation and tie sum $T = \sum (t_j^3 - t_j)$;
+   - Calculation of negative ($D_i < 0$) and positive ($D_i > 0$) rank sums and mean ranks;
+   - Tie-corrected variance formula: $\sigma_W^2 = \frac{n(n + 1)(2n + 1)}{24} - \frac{\sum (t_j^3 - t_j)}{48}$;
+   - Standardized $Z$-statistic with $\pm 0.5$ continuity correction and two-tailed asymptotic significance via regularized incomplete gamma function $Q(0.5, Z^2 / 2)$;
+   - Dynamic determination of test base (negative vs positive ranks) adhering to SPSS footnote convention;
+   - **Sign Test:** frequency counts of negative, positive, and zero differences, with exact two-tailed binomial significance calculated via regularized incomplete beta function $I_{0.5}(n - k, k + 1)$;
+   - **Never Crash** protection: robust handling of zero variance, identical pairs, and missing values on 100% safe Rust;
+   - **Golden Oracle:** Unit and oracle tests in `nonparam_related_tests.rs` validating ranks, $W$, $Z$, and $p$-value against SciPy and SPSS reference tables with $\le 10^{-6}$ precision.
+2. **Command Bus & Syntax L5 (`statcraft_syntax::commands::nonparam_related_cmd`):**
+   - Typed engine command `RelatedSamplesTestCommand` (`stat.npar.related2`) with JSON parameter specs for external AI agents;
+   - Canonical IBM SPSS Statistics syntax emission:
+     ```text
+     NPAR TESTS
+       /WILCOXON= pre WITH post (PAIRED)
+       /SIGN= pre WITH post (PAIRED)
+       /MISSING=ANALYSIS.
+     ```
+3. **User Interface L6 (`statcraft_app::dialogs::nonparam_related_dialog`):**
+   - Modal dialog `Two-Related-Samples Tests` ($560 \times 430$ px) built with `DialogKit`:
+     * Source variables list (`VariablePicker`) with scale measurement icons;
+     * Two-stage slot picker `Current Selections: Variable 1, Variable 2` with adaptive vector transfer buttons;
+     * Target pairs list `Test Pairs:`;
+     * `Test Type` group with checkboxes `[x] Wilcoxon`, `[ ] Sign`;
+     * Standard bottom action bar `DialogActionBar` (`[ OK ] [ Paste ] [ Reset ] [ Cancel ] [ Help ]`).
+4. **Summary Pivot Tables in Output Viewer (`tables_nonparam_related.rs`):**
+   - **Ranks Table (Wilcoxon):** Negative Ranks, Positive Ranks, Ties, Total ($N$, Mean Rank, Sum of Ranks) with difference direction footnotes;
+   - **Test Statistics Table (Wilcoxon):** $Z$-score, Asymp. Sig. (2-tailed), method and rank base footnotes;
+   - **Frequencies Table (Sign Test):** Negative Differences, Positive Differences, Ties, Total;
+   - **Test Statistics Table (Sign Test):** Exact Sig. (2-tailed);
+   - TSV clipboard export and Outline Pane integration.
+5. **Quality Control & Definition of Done:**
+   - Full automated CI gate passed (`cargo run -p xtask -j 1 -- ci` — 100% OK);
+   - All 110+ workspace unit and integration tests passing with 0 failures;
+   - Differential file size guard verified (`file-guard` $\le 500$ lines for leaf modules);
+   - Architectural linters (`design-guard`, `layers`, `parity`) reporting 0 violations;
+   - Synchronous dual-catalog localization (`locales/en.ftl`, `locales/ru.ftl`);
+   - Strict compiler linter `cargo clippy --workspace --all-targets -j 1 -- -D warnings` — 0 warnings;
+   - Code formatting `cargo fmt --check` — completely clean.
+
+
 
 ---
 
@@ -783,4 +832,143 @@ Implemented the fundamental bivariate relationship analysis procedure — **Biva
    - 100 workspace unit and integration tests passing with 0 failures;
    - Architectural linters (`design-guard`, `file-guard`, `layers`, `parity`) reporting 0 violations;
    - Strict compiler linter `cargo clippy --workspace --all-targets -j 1 -- -D warnings` — 0 warnings;
+   - Code formatting `cargo fmt --check` — completely clean.
+
+---
+
+### Phase 7.3: Two-Independent-Samples Nonparametric Tests (Mann-Whitney $U$ & Wilcoxon $W$)
+*Time: October 29, 2026, 07:35 (~35 minutes)*
+
+Implemented the fundamental distribution-free alternative to the independent-samples t-test for comparing two continuous distributions — **Two-Independent-Samples Tests** (`Analyze -> Nonparametric Tests -> Two Independent Samples...`):
+1. **Mathematical Engine L2 (`statcraft_algo::nonparam_twosample` & `nonparam_twosample_types`):**
+   - Pooled ranking with mid-ranks for tied values across all observations;
+   - Sum of ties calculation $\sum (t_i^3 - t_i)$ and tie-corrected variance $\sigma_U^2 = \frac{n_1 n_2}{12} \left( (n + 1) - \frac{\sum (t_i^3 - t_i)}{n(n - 1)} \right)$;
+   - Computation of Mann-Whitney $U$, Wilcoxon rank sum $W$, standardized $Z$-score, and asymptotic 2-tailed $p$-value via regularized incomplete gamma function $Q(0.5, Z^2 / 2)$;
+   - Support for string or numeric group identifiers (e.g., "1" / "2", "M" / "F");
+   - **Never Crash** protection for empty subsets and single-group edge cases on 100% safe Rust;
+   - **Golden Oracle:** Unit tests in `nonparam_twosample_tests.rs` verified against Python `scipy.stats.mannwhitneyu` and standard SPSS outputs with precision $\le 10^{-6}$.
+2. **Command Bus & Syntax L5 (`statcraft_syntax::commands::nonparam_twosample_cmd`):**
+   - Typed engine command `MannWhitneyCommand` (`stat.npar.mann_whitney`) with JSON parameter specs for external AI agents;
+   - Canonical SPSS syntax generator:
+     ```text
+     NPAR TESTS
+       /M-W= salary age BY gender(1 2)
+       /MISSING=ANALYSIS.
+     ```
+3. **User Interface L6 (`statcraft_app::dialogs::nonparam_twosample_dialog` & `nonparam_define_groups`):**
+   - Modal dialog `Two-Independent-Samples Tests` ($560 \times 430$ px) built with `DialogKit`:
+     * Source variables list `VariablePicker` with measurement scale icons;
+     * Adaptive vector transfer buttons `TransferButton`;
+     * `Test Variable List:` target list;
+     * `Grouping Variable:` display box showing `var(val1 val2)`;
+     * Right sidebar `SubdialogSidebar` with `[ Define Groups... ]` button;
+     * Modal subdialog `Define Groups` with non-empty distinct value checks;
+     * `Test Type` group box with `[x] Mann-Whitney U`, `[ ] Wilcoxon W`, `[ ] Kolmogorov-Smirnov Z` checkboxes;
+     * Bottom action bar `DialogActionBar` (`[ OK ] [ Paste ] [ Reset ] [ Cancel ] [ Help ]`).
+4. **Summary Pivot Tables in Output Viewer (`tables_nonparam.rs`):**
+   - **Ranks:** Variable, Group, $N$, Mean Rank, Sum of Ranks, Total row;
+   - **Test Statistics:** multi-variable matrix with Mann-Whitney U, Wilcoxon W, Z, Asymp. Sig. (2-tailed), and grouping variable footnote;
+   - TSV clipboard export and Outline Pane integration.
+5. **Quality Control & Definition of Done:**
+   - Full automated CI gate passed (`cargo run -p xtask -j 1 -- ci` — 100% OK);
+   - 105 workspace unit and integration tests passing;
+   - Architectural and design linters (`design-guard`, `file-guard`, `layers`, `parity`) reporting 0 violations;
+   - Compiler linter `cargo clippy --workspace --all-targets -j 1 -- -D warnings` — 0 warnings;
+   - Code formatting `cargo fmt --check` — completely clean.
+
+---
+
+### Phase 7.4: Two-Related-Samples Nonparametric Tests (Wilcoxon Signed-Ranks & Sign Test)
+*Time: October 29, 2026, 08:15 (~40 minutes)*
+
+Implemented the classical nonparametric toolkit for paired measurements — **Two-Related-Samples Tests** (`Analyze -> Nonparametric Tests -> Related Samples...`):
+1. **Mathematical Engine L2 (`statcraft_algo::nonparam_related` & `nonparam_related_types`):**
+   - Pairwise difference calculation $D_i = Y_i - X_i$;
+   - Classification of zero differences ($D_i = 0$) as ties and their exclusion from ranking per IBM SPSS Statistics canon;
+   - Absolute difference ranking $|D_i|$ with mid-ranks for tied values and tie sum computation $\sum (t_j^3 - t_j)$;
+   - Calculation of negative ($D_i < 0$) and positive ($D_i > 0$) rank sums and mean ranks;
+   - Tie-corrected variance $\sigma_W^2 = \frac{n(n + 1)(2n + 1)}{24} - \frac{\sum (t_j^3 - t_j)}{48}$;
+   - Continuous continuity correction $\pm 0.5$, standardized $Z$-score, and asymptotic 2-tailed $p$-value;
+   - Methodological rank direction assignment and footnote identification;
+   - Implementation of the **Sign Test**: negative, positive, and tie counting, exact two-tailed binomial significance via regularized incomplete beta function $I_{0.5}(n - k, k + 1)$;
+   - **Never Crash** resilience for all-tied samples, empty datasets, and zero variances on 100% safe Rust;
+   - **Golden Oracle:** Test suite `nonparam_related_tests.rs` verifying results against SciPy and SPSS reference tables with precision $\le 10^{-6}$.
+2. **Command Bus & Syntax L5 (`statcraft_syntax::commands::nonparam_related_cmd`):**
+   - Typed engine command `RelatedSamplesTestCommand` (`stat.npar.related2`) with JSON parameter specs for external AI agents;
+   - Canonical SPSS syntax generator:
+     ```text
+     NPAR TESTS
+       /WILCOXON= pre WITH post (PAIRED)
+       /SIGN= pre WITH post (PAIRED)
+       /MISSING=ANALYSIS.
+     ```
+3. **User Interface L6 (`statcraft_app::dialogs::nonparam_related_dialog`):**
+   - Modal dialog `Two-Related-Samples Tests` ($560 \times 430$ px) built with `DialogKit`:
+     * Source variables list `VariablePicker` with scale icons;
+     * Dual selection panel `Current Selections: Variable 1, Variable 2` with adaptive vector transfer buttons;
+     * Formed pairs list `Test Pairs:`;
+     * `Test Type` group box with `[x] Wilcoxon`, `[ ] Sign` checkboxes;
+     * Bottom action bar `DialogActionBar` (`[ OK ] [ Paste ] [ Reset ] [ Cancel ] [ Help ]`).
+4. **Summary Pivot Tables in Output Viewer (`tables_nonparam_related.rs`):**
+   - **Ranks (Wilcoxon):** Negative Ranks, Positive Ranks, Ties, Total rows ($N$, Mean Rank, Sum of Ranks) with direction footnotes;
+   - **Test Statistics (Wilcoxon):** Z-score, Asymp. Sig. (2-tailed), ranking direction footnotes;
+   - **Frequencies (Sign Test):** Negative, positive differences, ties, total count;
+   - **Test Statistics (Sign Test):** Exact Sig. (2-tailed);
+   - TSV clipboard export and Outline Pane integration.
+5. **Quality Control & Definition of Done:**
+   - Full automated CI gate passed (`cargo run -p xtask -j 1 -- ci` — 100% OK);
+   - 110+ workspace unit and integration tests passing;
+   - Architecture, design, and file-guard linters reporting 0 violations;
+   - Compiler linter `cargo clippy --workspace --all-targets -j 1 -- -D warnings` — 0 warnings;
+   - Code formatting `cargo fmt --check` — completely clean.
+
+---
+
+### Phase 7.5: Navigation Panel Overflow Fix & Kruskal-Wallis $H$ Test for $K$ Independent Samples
+*Time: October 29, 2026, 08:45 (~35 minutes)*
+
+Completed two major objectives: resolved the navigation title text overflow defect in the Output Viewer Outline Pane and implemented the nonparametric one-way ANOVA counterpart — **Kruskal-Wallis $H$ Test for Several Independent Samples** (`Analyze -> Nonparametric Tests -> K Independent Samples...`):
+1. **Outline Navigation Overflow Defect Fix:**
+   - Root Cause: low-level `ui.painter().text(...)` calls in `crates/statcraft_app/src/views/output_view/outline.rs` rendered text beyond boundaries without width clipping, and the parent container lacked clipping;
+   - Solution:
+     1. Increased navigation panel base width `outline_width` from 200.0 to 230.0 px for enhanced readability on high-DPI displays;
+     2. Enforced rigid clipping boundary `ui.set_clip_rect(left_rect)` on the tree viewport;
+     3. Implemented per-character ellipsis utility `truncate_text_to_width` using `ui.fonts` measurements to append `...` if text exceeds available width;
+     4. Enclosed text painting in `ui.painter().with_clip_rect(text_rect)`;
+     5. Added `.on_hover_text(...)` tooltips presenting complete untruncated titles on hover.
+2. **Mathematical Engine L2 (`statcraft_algo::kruskal_wallis` & `kruskal_wallis_tests`):**
+   - Numeric range filtering for grouping variable $[min, max]$ following SPSS canon `BY groupvar(min max)`;
+   - Combined ranking across all $N = \sum n_i$ cases with mid-ranks for ties;
+   - Group rank sums $R_i$ and mean ranks $\bar{R}_i = R_i / n_i$ across all $k$ groups;
+   - Raw Kruskal-Wallis statistic $H = \frac{12}{N(N+1)} \sum \frac{R_i^2}{n_i} - 3(N+1)$;
+   - Tie correction factor $C = 1 - \frac{\sum (t_j^3 - t_j)}{N^3 - N}$ and adjusted statistic $H_{adj} = H / C$;
+   - Degrees of freedom $df = k - 1$ and asymptotic 2-tailed $p$-value from $\chi^2$ distribution (`chi_square_sf(H_adj, df)`);
+   - **Golden Oracle:** Test suite `kruskal_wallis_tests.rs` verified against Python `scipy.stats.kruskal` to $\le 10^{-6}$ precision for both unique and tied distributions;
+   - **Never Crash** protection for empty datasets, single groups ($k < 2$), and degenerate cases on 100% safe Rust.
+3. **Command Bus & Syntax L5 (`statcraft_syntax::commands::kruskal_wallis_cmd`):**
+   - Typed engine command `KruskalWallisCommand` (`stat.npar.kruskal_wallis`) with JSON parameter specs for external AI agents;
+   - Canonical SPSS syntax generator:
+     ```text
+     NPAR TESTS
+       /K-W= salary age BY jobcat(1 3)
+       /MISSING=ANALYSIS.
+     ```
+4. **User Interface L6 (`statcraft_app::dialogs::kruskal_wallis_dialog` & `kruskal_define_range`):**
+   - Modal dialog `Tests for Several Independent Samples` ($560 \times 430$ px) built with `DialogKit`:
+     * Available variables list `VariablePicker` with scale icons;
+     * `Test Variable List:` target list and `Grouping Variable:` display box showing range `var(min max)`;
+     * Adaptive vector transfer buttons `TransferButton`;
+     * Right sidebar `SubdialogSidebar` with `[ Define Range... ]` button;
+     * Modal subdialog `Define Range` ($360 \times 300$ px) using `DialogShell::subdialog` with `Minimum:` and `Maximum:` fields;
+     * `Test Type` group box with `[x] Kruskal-Wallis H` checkbox;
+     * Bottom action bar `DialogActionBar` (`[ OK ] [ Paste ] [ Reset ] [ Cancel ] [ Help ]`).
+5. **Summary Pivot Tables in Output Viewer (`tables_kruskal.rs`):**
+   - **Ranks:** Variable, Group, $N$, Mean Rank, Total row;
+   - **Test Statistics:** canonical multi-variable matrix (Kruskal-Wallis H, df, Asymp. Sig.) with footnotes `a. Kruskal Wallis Test` and `b. Grouping Variable: ...`;
+   - TSV clipboard export and Outline Pane integration.
+6. **Quality Control & Definition of Done:**
+   - Full automated CI gate passed (`cargo run -p xtask -j 1 -- ci` — 100% OK);
+   - 115+ workspace unit and integration tests passing;
+   - Architecture, design, and file-guard linters reporting 0 violations;
+   - Compiler linter `cargo clippy --workspace --all-targets -j 1 -- -D warnings` — 0 warnings;
    - Code formatting `cargo fmt --check` — completely clean.

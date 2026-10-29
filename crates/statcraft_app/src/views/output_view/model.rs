@@ -1,7 +1,7 @@
 use statcraft_algo::{
     BivariateCorrelationsResult, CrosstabResult, DescriptivesResult, FrequencyResult,
-    IndepTTestResult, MannWhitneyResult, OneSampleTTestResult, OneWayAnovaResult,
-    PairedTTestResult,
+    IndepTTestResult, KruskalWallisResult, MannWhitneyResult, OneSampleTTestResult,
+    OneWayAnovaResult, PairedTTestResult, RelatedPairTestResult,
 };
 use statcraft_i18n::t;
 
@@ -57,6 +57,11 @@ pub enum OutputItemKind {
         results: Vec<MannWhitneyResult>,
         grouping_var: String,
     },
+    KruskalWallis {
+        results: Vec<KruskalWallisResult>,
+        grouping_var: String,
+    },
+    TwoRelatedSamples(Vec<RelatedPairTestResult>),
     Warning(String),
     CustomText {
         title: String,

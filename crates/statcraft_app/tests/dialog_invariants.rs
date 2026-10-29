@@ -1,13 +1,15 @@
 use statcraft_app::dialogs::common::{DialogSize, SubdialogSidebar};
 use statcraft_app::dialogs::{
     render_anova_oneway_dialog, render_correlations_dialog, render_crosstabs_dialog,
-    render_descriptives_dialog, render_frequencies_dialog, render_missing_values_dialog,
-    render_nonparam_twosample_dialog, render_ttest_indep_dialog, render_ttest_onesample_dialog,
-    render_ttest_paired_dialog, render_value_labels_dialog, render_variable_type_dialog,
-    CorrelationsDialogAction, CorrelationsDialogState, CrosstabsDialogAction, CrosstabsDialogState,
-    DescriptivesDialogAction, DescriptivesDialogState, FrequenciesDialogAction,
-    FrequenciesDialogState, IndependentSamplesTTestDialogAction,
-    IndependentSamplesTTestDialogState, MissingValuesDialogAction, MissingValuesDialogState,
+    render_descriptives_dialog, render_frequencies_dialog, render_kruskal_wallis_dialog,
+    render_missing_values_dialog, render_nonparam_related_dialog, render_nonparam_twosample_dialog,
+    render_ttest_indep_dialog, render_ttest_onesample_dialog, render_ttest_paired_dialog,
+    render_value_labels_dialog, render_variable_type_dialog, CorrelationsDialogAction,
+    CorrelationsDialogState, CrosstabsDialogAction, CrosstabsDialogState, DescriptivesDialogAction,
+    DescriptivesDialogState, FrequenciesDialogAction, FrequenciesDialogState,
+    IndependentSamplesTTestDialogAction, IndependentSamplesTTestDialogState,
+    KruskalWallisDialogAction, KruskalWallisDialogState, MissingValuesDialogAction,
+    MissingValuesDialogState, NonparamRelatedDialogAction, NonparamRelatedDialogState,
     NonparamTwoSampleDialogAction, NonparamTwoSampleDialogState, OneSampleTTestDialogAction,
     OneSampleTTestDialogState, OneWayAnovaDialogAction, OneWayAnovaDialogState,
     PairedSamplesTTestDialogAction, PairedSamplesTTestDialogState, ValueLabelsDialogAction,
@@ -331,4 +333,54 @@ fn test_headless_render_nonparam_twosample_dialog() {
     assert!(state.is_open);
     assert_eq!(state.selected_vars.len(), 1);
     assert_eq!(state.grouping_var.as_deref(), Some("gender"));
+}
+
+#[test]
+fn test_headless_render_nonparam_related_dialog() {
+    let ds = create_test_dataset();
+    let ctx = egui::Context::default();
+    let mut state = NonparamRelatedDialogState {
+        is_open: true,
+        paired_vars: vec![("pre_score".to_string(), "post_score".to_string())],
+        test_wilcoxon: true,
+        test_sign: true,
+        ..Default::default()
+    };
+
+    let _ = ctx.run(Default::default(), |ctx| {
+        let action = render_nonparam_related_dialog(ctx, Some(&ds), &mut state);
+        assert!(matches!(action, NonparamRelatedDialogAction::None));
+    });
+
+    assert!(state.is_open);
+    assert_eq!(state.paired_vars.len(), 1);
+    assert!(state.test_wilcoxon);
+    assert!(state.test_sign);
+}
+
+#[test]
+fn test_headless_render_kruskal_wallis_dialog() {
+    let ds = create_test_dataset();
+    let ctx = egui::Context::default();
+    let mut state = KruskalWallisDialogState {
+        is_open: true,
+        selected_vars: vec!["salary".to_string()],
+        grouping_var: Some("educ".to_string()),
+        min_range: 1.0,
+        max_range: 3.0,
+        is_range_defined: true,
+        is_define_range_open: true,
+        ..Default::default()
+    };
+
+    let _ = ctx.run(Default::default(), |ctx| {
+        let action = render_kruskal_wallis_dialog(ctx, Some(&ds), &mut state);
+        assert!(matches!(action, KruskalWallisDialogAction::None));
+    });
+
+    assert!(state.is_open);
+    assert_eq!(state.selected_vars.len(), 1);
+    assert_eq!(state.grouping_var.as_deref(), Some("educ"));
+    assert_eq!(state.min_range, 1.0);
+    assert_eq!(state.max_range, 3.0);
 }

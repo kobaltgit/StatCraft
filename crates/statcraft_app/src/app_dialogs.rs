@@ -1,13 +1,15 @@
 use super::app::{StatCraftApp, StatusMessage};
 use super::dialogs::{
     render_anova_oneway_dialog, render_correlations_dialog, render_crosstabs_dialog,
-    render_descriptives_dialog, render_frequencies_dialog, render_missing_values_dialog,
-    render_nonparam_twosample_dialog, render_ttest_indep_dialog, render_ttest_onesample_dialog,
-    render_ttest_paired_dialog, render_value_labels_dialog, render_variable_type_dialog,
-    CorrelationsDialogAction, CrosstabsDialogAction, DescriptivesDialogAction,
-    FrequenciesDialogAction, IndependentSamplesTTestDialogAction, MissingValuesDialogAction,
-    NonparamTwoSampleDialogAction, OneSampleTTestDialogAction, OneWayAnovaDialogAction,
-    PairedSamplesTTestDialogAction, ValueLabelsDialogAction, VariableTypeDialogAction,
+    render_descriptives_dialog, render_frequencies_dialog, render_kruskal_wallis_dialog,
+    render_missing_values_dialog, render_nonparam_related_dialog, render_nonparam_twosample_dialog,
+    render_ttest_indep_dialog, render_ttest_onesample_dialog, render_ttest_paired_dialog,
+    render_value_labels_dialog, render_variable_type_dialog, CorrelationsDialogAction,
+    CrosstabsDialogAction, DescriptivesDialogAction, FrequenciesDialogAction,
+    IndependentSamplesTTestDialogAction, KruskalWallisDialogAction, MissingValuesDialogAction,
+    NonparamRelatedDialogAction, NonparamTwoSampleDialogAction, OneSampleTTestDialogAction,
+    OneWayAnovaDialogAction, PairedSamplesTTestDialogAction, ValueLabelsDialogAction,
+    VariableTypeDialogAction,
 };
 use serde_json::json;
 use statcraft_i18n::t;
@@ -534,6 +536,119 @@ impl StatCraftApp {
                 self.output_view_state.add_entry(t!("output-log"), sps);
             }
             NonparamTwoSampleDialogAction::None => {}
+        }
+
+        // 12. Two Related Samples Nonparametric Dialog
+        let npar_related_action = render_nonparam_related_dialog(
+            ctx,
+            self.dataset.as_ref(),
+            &mut self.nonparam_related_dialog_state,
+        );
+
+        match npar_related_action {
+            NonparamRelatedDialogAction::Run {
+                pairs,
+                wilcoxon,
+                sign,
+            } => {
+                let params = json!({
+                    "pairs": pairs.iter().map(|(v1, v2)| vec![v1.clone(), v2.clone()]).collect::<Vec<_>>(),
+                    "wilcoxon": wilcoxon,
+                    "sign": sign,
+                });
+                match self
+                    .command_bus
+                    .execute("stat.npar.related2", &mut self.dataset, params)
+                {
+                    Ok(result_value) => {
+                        if let Ok(results) = serde_json::from_value::<
+                            Vec<statcraft_algo::RelatedPairTestResult>,
+                        >(result_value)
+                        {
+                            let count = results.len();
+                            self.output_view_state
+                                .add_related_samples(results, &pairs, wilcoxon, sign);
+                            self.status_message = StatusMessage::RelatedSamplesExecuted { count };
+                        }
+                    }
+                    Err(e) => {
+                        self.status_message = StatusMessage::Error(e.to_string());
+                    }
+                }
+            }
+            NonparamRelatedDialogAction::Paste {
+                pairs,
+                wilcoxon,
+                sign,
+            } => {
+                let sps = statcraft_syntax::commands::RelatedSamplesTestCommand::to_sps(
+                    &pairs, wilcoxon, sign,
+                );
+                self.output_view_state.add_entry(t!("output-log"), sps);
+            }
+            NonparamRelatedDialogAction::None => {}
+        }
+
+        // 13. K Independent Samples Nonparametric Dialog (Kruskal-Wallis)
+        let kruskal_action = render_kruskal_wallis_dialog(
+            ctx,
+            self.dataset.as_ref(),
+            &mut self.kruskal_wallis_dialog_state,
+        );
+
+        match kruskal_action {
+            KruskalWallisDialogAction::Run {
+                vars,
+                grouping_var,
+                min_range,
+                max_range,
+            } => {
+                let params = json!({
+                    "vars": vars,
+                    "grouping_var": grouping_var,
+                    "min_range": min_range,
+                    "max_range": max_range,
+                });
+                match self.command_bus.execute(
+                    "stat.npar.kruskal_wallis",
+                    &mut self.dataset,
+                    params,
+                ) {
+                    Ok(result_value) => {
+                        if let Ok(results) = serde_json::from_value::<
+                            Vec<statcraft_algo::KruskalWallisResult>,
+                        >(result_value)
+                        {
+                            let count = results.len();
+                            self.output_view_state.add_kruskal_wallis(
+                                results,
+                                &grouping_var,
+                                min_range,
+                                max_range,
+                            );
+                            self.status_message = StatusMessage::KruskalWallisExecuted { count };
+                        }
+                    }
+                    Err(e) => {
+                        self.status_message = StatusMessage::Error(e.to_string());
+                    }
+                }
+            }
+            KruskalWallisDialogAction::Paste {
+                vars,
+                grouping_var,
+                min_range,
+                max_range,
+            } => {
+                let sps = statcraft_syntax::commands::KruskalWallisCommand::to_sps(
+                    &vars,
+                    &grouping_var,
+                    min_range,
+                    max_range,
+                );
+                self.output_view_state.add_entry(t!("output-log"), sps);
+            }
+            KruskalWallisDialogAction::None => {}
         }
     }
 }

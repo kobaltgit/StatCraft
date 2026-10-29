@@ -23,22 +23,4 @@ pub struct MannWhitneyResult {
     pub asymp_sig_2tailed: f64,
 }
 
-/// Detailed rank counts for Wilcoxon signed-rank test.
-#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
-pub struct WilcoxonRanksSummary {
-    pub negative_ranks: RankGroupStats,
-    pub positive_ranks: RankGroupStats,
-    pub ties_count: usize,
-    pub total_n: usize,
-}
-
-/// Result of Wilcoxon signed-rank test for paired samples.
-#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
-pub struct WilcoxonSignedRankResult {
-    pub var1: String,
-    pub var2: String,
-    pub ranks: WilcoxonRanksSummary,
-    pub test_statistic_w: f64,
-    pub z_stat: f64,
-    pub asymp_sig_2tailed: f64,
-}
+pub use crate::nonparam_related_types::{WilcoxonRanksSummary, WilcoxonSignedRankResult};

@@ -138,6 +138,7 @@ menu-analyze-regression-multinomial = Multinomial Logistic...
 menu-analyze-regression-curve = Curve Estimation...
 menu-analyze-nonparametric = Nonparametric Tests
 menu-analyze-nonparam-two-indep = Two Independent Samples...
+menu-analyze-nonparam-k-indep = K Independent Samples...
 menu-analyze-nonparam-independent = Independent Samples (Mann-Whitney / Kruskal-Wallis)...
 menu-analyze-nonparam-related = Related Samples (Wilcoxon / Friedman)...
 menu-analyze-dimension = Dimension Reduction & Classify
@@ -627,6 +628,49 @@ output-row-wilcoxon-w = Wilcoxon W
 output-row-z = Z
 output-row-asymp-sig = Asymp. Sig. (2-tailed)
 output-row-grouping-var = Grouping Variable
+
+# Two Related Samples (Wilcoxon Signed Ranks / Sign Test) Dialog
+dialog-npar-two-related-title = Two-Related-Samples Tests
+dialog-npar-related-test-pairs = Test Pairs:
+dialog-npar-related-current-selections = Current Selections
+dialog-npar-related-var1 = Variable 1
+dialog-npar-related-var2 = Variable 2
+dialog-npar-related-wilcoxon = Wilcoxon
+dialog-npar-related-sign = Sign
+
+# Two Related Samples Output Tables
+output-npar-related-title = NPar Tests: Wilcoxon / Sign Test
+output-npar-related-executed = Two-related-samples tests executed for { $count } pair(s).
+output-npar-ranks-negative = Negative Ranks
+output-npar-ranks-positive = Positive Ranks
+output-npar-ranks-ties = Ties
+output-npar-footnote-wilcoxon = Wilcoxon Signed Ranks Test
+output-npar-footnote-based-negative = Based on negative ranks.
+output-npar-footnote-based-positive = Based on positive ranks.
+output-npar-sign-frequencies = Frequencies
+output-npar-sign-negative-diff = Negative Differences
+output-npar-sign-positive-diff = Positive Differences
+output-npar-sign-ties = Ties
+output-npar-exact-sig-2tailed = Exact Sig. (2-tailed)
+output-npar-footnote-sign = Sign Test
+
+# Tests for Several Independent Samples (Kruskal-Wallis H) Dialog
+dialog-npar-k-indep-title = Tests for Several Independent Samples
+dialog-npar-define-range-btn = Define Range...
+dialog-npar-define-range-title = Several Independent Samples: Define Range
+dialog-npar-range-group-box = Range for Grouping Variable
+dialog-npar-range-min = Minimum:
+dialog-npar-range-max = Maximum:
+dialog-npar-test-kruskal-wallis = Kruskal-Wallis H
+
+# Several Independent Samples Output Tables
+output-npar-kruskal-title = NPar Tests: Kruskal-Wallis Test
+output-npar-kruskal-executed = Kruskal-Wallis test executed for { $count } variable(s).
+output-row-kruskal-wallis-h = Kruskal-Wallis H
+output-row-df = df
+output-footnote-kruskal-a = a. Kruskal Wallis Test
+
+
 
 
 

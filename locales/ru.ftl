@@ -138,6 +138,7 @@ menu-analyze-regression-multinomial = Мультиномиальная логи�
 menu-analyze-regression-curve = Оценка кривых...
 menu-analyze-nonparametric = Непараметрические критерии
 menu-analyze-nonparam-two-indep = Две независимые выборки...
+menu-analyze-nonparam-k-indep = K независимых выборок...
 menu-analyze-nonparam-independent = Независимые выборки (Манна-Уитни / Краскела-Уоллиса)...
 menu-analyze-nonparam-related = Связанные выборки (Вилкоксона / Фридмана)...
 menu-analyze-dimension = Снижение размерности и классификация
@@ -627,6 +628,49 @@ output-row-wilcoxon-w = W Вилкоксона
 output-row-z = Z
 output-row-asymp-sig = Асимпт. знач. (2-сторонняя)
 output-row-grouping-var = Группирующая переменная
+
+# Two Related Samples (Wilcoxon Signed Ranks / Sign Test) Dialog
+dialog-npar-two-related-title = Критерии для двух связанных выборок
+dialog-npar-related-test-pairs = Пары переменных:
+dialog-npar-related-current-selections = Текущий выбор
+dialog-npar-related-var1 = Переменная 1
+dialog-npar-related-var2 = Переменная 2
+dialog-npar-related-wilcoxon = Вилкоксона
+dialog-npar-related-sign = Знаков
+
+# Two Related Samples Output Tables
+output-npar-related-title = Непараметрические критерии: критерий Вилкоксона / знаков
+output-npar-related-executed = Анализ двух связанных выборок выполнен для { $count } пар(ы).
+output-npar-ranks-negative = Отрицательные ранги
+output-npar-ranks-positive = Положительные ранги
+output-npar-ranks-ties = Совпадающие
+output-npar-footnote-wilcoxon = Критерий знаковых рангов Вилкоксона
+output-npar-footnote-based-negative = На основе отрицательных рангов.
+output-npar-footnote-based-positive = На основе положительных рангов.
+output-npar-sign-frequencies = Частоты
+output-npar-sign-negative-diff = Отрицательные разности
+output-npar-sign-positive-diff = Положительные разности
+output-npar-sign-ties = Совпадения
+output-npar-exact-sig-2tailed = Точн. знач. (2-сторонняя)
+output-npar-footnote-sign = Критерий знаков
+
+# Tests for Several Independent Samples (Kruskal-Wallis H) Dialog
+dialog-npar-k-indep-title = Критерии для K независимых выборок
+dialog-npar-define-range-btn = Задать диапазон...
+dialog-npar-define-range-title = Несколько независимых выборок: Задать диапазон
+dialog-npar-range-group-box = Диапазон для группирующей переменной
+dialog-npar-range-min = Минимум:
+dialog-npar-range-max = Максимум:
+dialog-npar-test-kruskal-wallis = H Крускала-Уоллиса
+
+# Several Independent Samples Output Tables
+output-npar-kruskal-title = Непараметрические критерии: Критерий Крускала-Уоллиса
+output-npar-kruskal-executed = H-критерий Крускала-Уоллиса выполнен для { $count } перем.
+output-row-kruskal-wallis-h = H Крускала-Уоллиса
+output-row-df = ст.св.
+output-footnote-kruskal-a = a. Критерий Крускала-Уоллиса
+
+
 
 
 

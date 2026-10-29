@@ -101,10 +101,10 @@ fn test_wilcoxon_signed_rank_oracle() {
     // y: [15, 16, 17, 25, 12]
     // diffs: +3, 0, +3, -3, +3
     // non-zero count = 4, absolute diffs = all 3.0 -> all tied at midrank 2.5
-    let x = [18.0, 16.0, 20.0, 22.0, 15.0];
-    let y = [15.0, 16.0, 17.0, 25.0, 12.0];
+    let pre = [15.0, 16.0, 17.0, 25.0, 12.0];
+    let post = [18.0, 16.0, 20.0, 22.0, 15.0];
 
-    let res = compute_wilcoxon_signed_rank_from_slices("post", "pre", &x, &y);
+    let res = compute_wilcoxon_signed_rank_from_slices("pre", "post", &pre, &post);
 
     assert_eq!(res.ranks.total_n, 5);
     assert_eq!(res.ranks.ties_count, 1);

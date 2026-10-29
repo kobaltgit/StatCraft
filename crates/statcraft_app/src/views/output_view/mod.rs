@@ -7,7 +7,9 @@ pub mod tables_correlations;
 pub mod tables_crosstabs;
 pub mod tables_descriptives;
 pub mod tables_frequencies;
+pub mod tables_kruskal;
 pub mod tables_nonparam;
+pub mod tables_nonparam_related;
 pub mod tables_ttest_indep;
 pub mod tables_ttest_onesample;
 pub mod tables_ttest_paired;
@@ -21,7 +23,9 @@ pub use tables_correlations::{correlations_to_tsv, render_spss_correlations_tabl
 pub use tables_crosstabs::{crosstabs_to_tsv, render_crosstabs_item};
 pub use tables_descriptives::{descriptives_to_tsv, render_spss_descriptives_pivot_table};
 pub use tables_frequencies::{frequencies_to_tsv, render_spss_frequencies_tables};
+pub use tables_kruskal::{kruskal_wallis_to_tsv, render_spss_kruskal_wallis_tables};
 pub use tables_nonparam::{mann_whitney_to_tsv, render_spss_mann_whitney_tables};
+pub use tables_nonparam_related::{related_samples_to_tsv, render_spss_related_samples_tables};
 pub use tables_ttest_indep::{indep_ttest_to_tsv, render_spss_indep_ttest_tables};
 pub use tables_ttest_onesample::{onesample_ttest_to_tsv, render_spss_onesample_ttest_tables};
 pub use tables_ttest_paired::{paired_ttest_to_tsv, render_spss_paired_ttest_tables};
@@ -44,6 +48,11 @@ pub fn extract_item_tsv(kind: &OutputItemKind) -> Option<String> {
             results,
             grouping_var,
         } => Some(mann_whitney_to_tsv(results, grouping_var)),
+        OutputItemKind::KruskalWallis {
+            results,
+            grouping_var,
+        } => Some(kruskal_wallis_to_tsv(results, grouping_var)),
+        OutputItemKind::TwoRelatedSamples(results) => Some(related_samples_to_tsv(results)),
         _ => None,
     }
 }
@@ -57,11 +66,12 @@ pub fn render_output_view(ui: &mut Ui, state: &mut OutputViewerState) {
     }
 
     let full_rect = ui.available_rect_before_wrap();
-    let outline_width = 200.0_f32;
+    let outline_width = 230.0_f32;
 
     // 1. Left outline tree panel
     let left_rect = Rect::from_min_size(full_rect.min, vec2(outline_width, full_rect.height()));
     ui.allocate_new_ui(egui::UiBuilder::new().max_rect(left_rect), |ui| {
+        ui.set_clip_rect(left_rect);
         render_outline_pane(ui, state);
     });
 
@@ -256,6 +266,19 @@ pub fn render_output_view(ui: &mut Ui, state: &mut OutputViewerState) {
                                         grouping_var,
                                     } => {
                                         render_spss_mann_whitney_tables(ui, results, grouping_var);
+                                    }
+                                    OutputItemKind::KruskalWallis {
+                                        results,
+                                        grouping_var,
+                                    } => {
+                                        render_spss_kruskal_wallis_tables(
+                                            ui,
+                                            results,
+                                            grouping_var,
+                                        );
+                                    }
+                                    OutputItemKind::TwoRelatedSamples(results) => {
+                                        render_spss_related_samples_tables(ui, results);
                                     }
                                     OutputItemKind::Warning(msg) => {
                                         ui.colored_label(Tokens::CAPTION_CLOSE_HOVER, msg);

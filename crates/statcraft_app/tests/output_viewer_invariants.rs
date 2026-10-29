@@ -2,15 +2,17 @@ use statcraft_algo::{
     compute_bivariate_correlations, AnovaTableRow, AssociationMeasure,
     BivariateCorrelationsOptions, BivariateCorrelationsResult, ChiSquareTestRow, CrosstabCategory,
     CrosstabCell, CrosstabOptions, CrosstabResult, CrosstabRow, DescriptivesResult,
-    FrequencyCategory, FrequencyResult, GroupStats, IndepTTestResult, LeveneResult,
-    MannWhitneyResult, OneSampleTTestResult, OneWayAnovaResult, PairedCorrelation,
-    PairedDifferences, PairedTTestResult, PairedVarStats, RankGroupStats, TTestTwoGroupDetails,
+    FrequencyCategory, FrequencyResult, GroupStats, IndepTTestResult, KruskalWallisGroupStats,
+    KruskalWallisResult, LeveneResult, MannWhitneyResult, OneSampleTTestResult, OneWayAnovaResult,
+    PairedCorrelation, PairedDifferences, PairedTTestResult, PairedVarStats, RankGroupStats,
+    RelatedPairTestResult, SignTestDifferences, SignTestResult, TTestTwoGroupDetails,
+    WilcoxonRanksSummary, WilcoxonSignedRankResult,
 };
 use statcraft_app::views::output_view::{
     anova_to_tsv, correlations_to_tsv, crosstabs_to_tsv, descriptives_to_tsv, frequencies_to_tsv,
-    indep_ttest_to_tsv, mann_whitney_to_tsv, onesample_ttest_to_tsv, paired_ttest_to_tsv,
-    render_output_view, OutputItem, OutputItemKind, OutputNotes, OutputProcedure,
-    OutputViewerState, SelectedTarget,
+    indep_ttest_to_tsv, kruskal_wallis_to_tsv, mann_whitney_to_tsv, onesample_ttest_to_tsv,
+    paired_ttest_to_tsv, related_samples_to_tsv, render_output_view, OutputItem, OutputItemKind,
+    OutputNotes, OutputProcedure, OutputViewerState, SelectedTarget,
 };
 
 fn sample_descriptives() -> DescriptivesResult {
@@ -527,6 +529,23 @@ fn test_exhaustive_enum_payloads_render_without_panics() {
             custom_title: None,
             kind: OutputItemKind::Correlations(sample_correlations()),
         },
+        // Two Related Samples
+        OutputItem {
+            id: state.alloc_id(),
+            title_key: "output-npar-related-title",
+            custom_title: None,
+            kind: OutputItemKind::TwoRelatedSamples(vec![]),
+        },
+        // Kruskal-Wallis
+        OutputItem {
+            id: state.alloc_id(),
+            title_key: "output-npar-kruskal-title",
+            custom_title: None,
+            kind: OutputItemKind::KruskalWallis {
+                results: vec![],
+                grouping_var: "group".to_string(),
+            },
+        },
     ];
 
     let proc_id = state.alloc_id();
@@ -547,7 +566,7 @@ fn test_exhaustive_enum_payloads_render_without_panics() {
 
     // Asserts: 0 panics, state remains intact
     assert_eq!(state.procedures.len(), 1);
-    assert_eq!(state.procedures[0].items.len(), 12);
+    assert_eq!(state.procedures[0].items.len(), 14);
 }
 
 #[test]
@@ -803,4 +822,129 @@ fn test_mann_whitney_output_and_tsv_integrity() {
     assert!(tsv.contains("Mann-Whitney U\t5.0000\n"));
     assert!(tsv.contains("Wilcoxon W\t20.0000\n"));
     assert!(tsv.contains("a. Grouping Variable: gender\n"));
+}
+
+#[test]
+fn test_related_samples_output_and_tsv_integrity() {
+    let ctx = egui::Context::default();
+    let mut state = OutputViewerState::new();
+
+    let sample_wilcoxon = WilcoxonSignedRankResult {
+        var1: "pre".to_string(),
+        var2: "post".to_string(),
+        ranks: WilcoxonRanksSummary {
+            negative_ranks: RankGroupStats {
+                group_val: "Negative Ranks".to_string(),
+                n: 1,
+                mean_rank: 2.5,
+                sum_ranks: 2.5,
+            },
+            positive_ranks: RankGroupStats {
+                group_val: "Positive Ranks".to_string(),
+                n: 3,
+                mean_rank: 2.5,
+                sum_ranks: 7.5,
+            },
+            ties_count: 1,
+            total_n: 5,
+        },
+        test_statistic_w: 2.5,
+        z_stat: -0.80,
+        asymp_sig_2tailed: 0.4237,
+        based_on_negative: true,
+    };
+
+    let sample_sign = SignTestResult {
+        var1: "pre".to_string(),
+        var2: "post".to_string(),
+        diffs: SignTestDifferences {
+            negative_count: 1,
+            positive_count: 3,
+            ties_count: 1,
+            total_n: 5,
+        },
+        exact_sig_2tailed: 0.625,
+    };
+
+    let sample_res = RelatedPairTestResult {
+        var1: "pre".to_string(),
+        var2: "post".to_string(),
+        wilcoxon: Some(sample_wilcoxon),
+        sign: Some(sample_sign),
+    };
+
+    let pairs = vec![("pre".to_string(), "post".to_string())];
+    state.add_related_samples(vec![sample_res.clone()], &pairs, true, true);
+    assert_eq!(state.procedures.len(), 1);
+    assert_eq!(state.procedures[0].items.len(), 3);
+
+    // Headless render
+    let _ = ctx.run(Default::default(), |ctx| {
+        egui::CentralPanel::default().show(ctx, |ui| {
+            render_output_view(ui, &mut state);
+        });
+    });
+
+    let tsv = related_samples_to_tsv(&[sample_res]);
+    assert!(tsv.contains("Ranks\n"));
+    assert!(tsv.contains("post - pre\tNegative Ranks\t1\t2.50\t2.50\n"));
+    assert!(tsv.contains("Test Statistics (Wilcoxon Signed Ranks)\n"));
+    assert!(tsv.contains("Z\t-0.800\n"));
+    assert!(tsv.contains("Frequencies (Sign Test)\n"));
+    assert!(tsv.contains("Exact Sig. (2-tailed)\t0.625\n"));
+}
+
+#[test]
+fn test_kruskal_wallis_output_and_tsv_integrity() {
+    let ctx = egui::Context::default();
+    let mut state = OutputViewerState::new();
+
+    let sample_kw = KruskalWallisResult {
+        variable: "salary".to_string(),
+        grouping_var: "jobcat".to_string(),
+        groups: vec![
+            KruskalWallisGroupStats {
+                group_val: "1".to_string(),
+                n: 5,
+                mean_rank: 4.2,
+                sum_ranks: 21.0,
+            },
+            KruskalWallisGroupStats {
+                group_val: "2".to_string(),
+                n: 5,
+                mean_rank: 8.5,
+                sum_ranks: 42.5,
+            },
+            KruskalWallisGroupStats {
+                group_val: "3".to_string(),
+                n: 5,
+                mean_rank: 14.8,
+                sum_ranks: 74.0,
+            },
+        ],
+        total_n: 15,
+        kruskal_wallis_h: 8.2998,
+        df: 2,
+        asymp_sig: 0.0158,
+    };
+
+    state.add_kruskal_wallis(vec![sample_kw.clone()], "jobcat", 1.0, 3.0);
+    assert_eq!(state.procedures.len(), 1);
+    assert_eq!(state.procedures[0].items.len(), 3);
+
+    // Headless render
+    let _ = ctx.run(Default::default(), |ctx| {
+        egui::CentralPanel::default().show(ctx, |ui| {
+            render_output_view(ui, &mut state);
+        });
+    });
+
+    let tsv = kruskal_wallis_to_tsv(&[sample_kw], "jobcat");
+    assert!(tsv.contains("Ranks\n"));
+    assert!(tsv.contains("salary\t1\t5\t4.20\n"));
+    assert!(tsv.contains("\t2\t5\t8.50\n"));
+    assert!(tsv.contains("\t3\t5\t14.80\n"));
+    assert!(tsv.contains("Test Statistics\n"));
+    assert!(tsv.contains("Kruskal-Wallis H\t8.2998\n"));
+    assert!(tsv.contains("df\t2\n"));
 }

@@ -6,6 +6,8 @@ pub mod dataset_cmds;
 pub mod descriptives_cmd;
 pub mod frequencies_cmd;
 pub mod import_csv;
+pub mod kruskal_wallis_cmd;
+pub mod nonparam_related_cmd;
 pub mod nonparam_twosample_cmd;
 pub mod ttest_indep_cmd;
 pub mod ttest_onesample_cmd;
@@ -22,6 +24,8 @@ pub use dataset_cmds::{DataAddRowCommand, DataDeleteRowCommand, VarAddCommand, V
 pub use descriptives_cmd::DescriptivesCommand;
 pub use frequencies_cmd::FrequenciesCommand;
 pub use import_csv::ImportCsvCommand;
+pub use kruskal_wallis_cmd::KruskalWallisCommand;
+pub use nonparam_related_cmd::RelatedSamplesTestCommand;
 pub use nonparam_twosample_cmd::MannWhitneyCommand;
 pub use ttest_indep_cmd::IndependentSamplesTTestCommand;
 pub use ttest_onesample_cmd::OneSampleTTestCommand;

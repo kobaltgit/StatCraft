@@ -149,13 +149,23 @@ pub fn render_outline_pane(ui: &mut Ui, state: &mut OutputViewerState) {
                             Tokens::TEXT_PRIMARY
                         };
 
-                        ui.painter().text(
+                        let title = proc.title();
+                        let display_title = truncate_text_to_width(
+                            ui,
+                            &title,
+                            &FontId::proportional(12.0),
+                            (text_rect.width() - 4.0).max(10.0),
+                        );
+
+                        ui.painter().with_clip_rect(text_rect).text(
                             pos2(text_rect.min.x + 2.0, text_rect.center().y),
                             Align2::LEFT_CENTER,
-                            proc.title(),
+                            display_title,
                             FontId::proportional(12.0),
                             text_color,
                         );
+
+                        let text_resp = text_resp.on_hover_text(title);
 
                         if text_resp.clicked() || text_resp.secondary_clicked() {
                             clicked_target = Some(SelectedTarget::Procedure(p_idx));
@@ -238,13 +248,23 @@ pub fn render_outline_pane(ui: &mut Ui, state: &mut OutputViewerState) {
                                     Tokens::TEXT_PRIMARY
                                 };
 
-                                ui.painter().text(
+                                let title = item.title();
+                                let display_title = truncate_text_to_width(
+                                    ui,
+                                    &title,
+                                    &FontId::proportional(11.5),
+                                    (text_rect.width() - 4.0).max(10.0),
+                                );
+
+                                ui.painter().with_clip_rect(text_rect).text(
                                     pos2(text_rect.min.x + 2.0, text_rect.center().y),
                                     Align2::LEFT_CENTER,
-                                    item.title(),
+                                    display_title,
                                     FontId::proportional(11.5),
                                     text_color,
                                 );
+
+                                let text_resp = text_resp.on_hover_text(title);
 
                                 if text_resp.clicked() || text_resp.secondary_clicked() {
                                     clicked_target = Some(SelectedTarget::Item {
@@ -322,4 +342,41 @@ pub fn render_outline_pane(ui: &mut Ui, state: &mut OutputViewerState) {
                 }
             });
     });
+}
+
+fn truncate_text_to_width(ui: &Ui, text: &str, font: &FontId, max_width: f32) -> String {
+    let full_width = ui.fonts(|f| {
+        f.layout_no_wrap(text.to_string(), font.clone(), egui::Color32::WHITE)
+            .size()
+            .x
+    });
+    if full_width <= max_width {
+        return text.to_string();
+    }
+    let ellipsis = "...";
+    let ellipsis_w = ui.fonts(|f| {
+        f.layout_no_wrap(ellipsis.to_string(), font.clone(), egui::Color32::WHITE)
+            .size()
+            .x
+    });
+    if ellipsis_w >= max_width {
+        return String::new();
+    }
+    let target_w = max_width - ellipsis_w;
+    let mut truncated = String::new();
+    for ch in text.chars() {
+        let mut test_s = truncated.clone();
+        test_s.push(ch);
+        let w = ui.fonts(|f| {
+            f.layout_no_wrap(test_s.clone(), font.clone(), egui::Color32::WHITE)
+                .size()
+                .x
+        });
+        if w > target_w {
+            break;
+        }
+        truncated = test_s;
+    }
+    truncated.push_str(ellipsis);
+    truncated
 }
