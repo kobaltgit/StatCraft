@@ -1,0 +1,315 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 640" width="1280" height="640">
+  <defs>
+    <!-- Background Gradient -->
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#040711" />
+      <stop offset="45%" stop-color="#081024" />
+      <stop offset="100%" stop-color="#0c1738" />
+    </linearGradient>
+
+    <!-- Radial Glows -->
+    <radialGradient id="glowBlue" cx="18%" cy="22%" r="45%">
+      <stop offset="0%" stop-color="#007AFF" stop-opacity="0.34" />
+      <stop offset="60%" stop-color="#007AFF" stop-opacity="0.06" />
+      <stop offset="100%" stop-color="#007AFF" stop-opacity="0" />
+    </radialGradient>
+
+    <radialGradient id="glowCyan" cx="82%" cy="28%" r="48%">
+      <stop offset="0%" stop-color="#00d2ff" stop-opacity="0.24" />
+      <stop offset="60%" stop-color="#007AFF" stop-opacity="0.06" />
+      <stop offset="100%" stop-color="#007AFF" stop-opacity="0" />
+    </radialGradient>
+
+    <radialGradient id="glowBottom" cx="50%" cy="92%" r="45%">
+      <stop offset="0%" stop-color="#007AFF" stop-opacity="0.16" />
+      <stop offset="100%" stop-color="#007AFF" stop-opacity="0" />
+    </radialGradient>
+
+    <!-- Text & Accent Gradients -->
+    <linearGradient id="titleGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#38bdf8" />
+      <stop offset="100%" stop-color="#007AFF" />
+    </linearGradient>
+
+    <linearGradient id="curveGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#38bdf8" stop-opacity="0.32" />
+      <stop offset="60%" stop-color="#007AFF" stop-opacity="0.08" />
+      <stop offset="100%" stop-color="#007AFF" stop-opacity="0.0" />
+    </linearGradient>
+
+    <linearGradient id="cardGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#111827" stop-opacity="0.94" />
+      <stop offset="100%" stop-color="#0f172a" stop-opacity="0.88" />
+    </linearGradient>
+
+    <!-- Subtle Tech Grid -->
+    <pattern id="grid" width="32" height="32" patternUnits="userSpaceOnUse">
+      <path d="M 32 0 L 0 0 0 32" fill="none" stroke="#1e293b" stroke-width="0.8" stroke-opacity="0.45" />
+      <circle cx="32" cy="32" r="1" fill="#38bdf8" fill-opacity="0.18" />
+    </pattern>
+
+    <!-- Drop Shadows -->
+    <filter id="shadow-logo" x="-20%" y="-20%" width="150%" height="150%">
+      <feDropShadow dx="0" dy="8" stdDeviation="16" flood-color="#007AFF" flood-opacity="0.5" />
+    </filter>
+
+    <filter id="shadow-card" x="-10%" y="-10%" width="125%" height="125%">
+      <feDropShadow dx="0" dy="6" stdDeviation="14" flood-color="#000000" flood-opacity="0.65" />
+    </filter>
+  </defs>
+
+  <style>
+    .font-sans { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; }
+    .font-mono { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', monospace; }
+  </style>
+
+  <!-- Background Base -->
+  <rect width="1280" height="640" rx="20" fill="url(#bgGrad)" />
+  <rect width="1280" height="640" rx="20" fill="url(#grid)" />
+  <rect width="1280" height="640" rx="20" fill="url(#glowBlue)" />
+  <rect width="1280" height="640" rx="20" fill="url(#glowCyan)" />
+  <rect width="1280" height="640" rx="20" fill="url(#glowBottom)" />
+
+  <!-- Outer Border -->
+  <rect x="2" y="2" width="1276" height="636" rx="18" fill="none" stroke="#1e293b" stroke-width="1.8" stroke-opacity="0.85" />
+
+  <!-- Ambient Mathematical Watermarks -->
+  <g class="font-mono" fill="#334155" fill-opacity="0.36" font-size="11.5">
+    <text x="65" y="32">// ARTCRAFT ECOSYSTEM STANDARD • 100% SAFE RUST • DETERMINISTIC SPSS ENGINE</text>
+    <text x="890" y="32">H₀: μ₁ = μ₂ (Two-Tailed p &lt; .05)</text>
+    <text x="1110" y="32">F = MS_b / MS_w</text>
+    <text x="65" y="492">r = Σ(x-x̄)(y-ȳ) / √(Σ(x-x̄)²Σ(y-ȳ)²)</text>
+    <text x="590" y="492">t = (x̄₁ - x̄₂) / (s_p √(2/n))</text>
+    <text x="960" y="492">Levene: F(1, 18) = 0.842, p = .412</text>
+  </g>
+
+  <!-- ================= TOP SECTION: HERO BRAND & PILLARS ================= -->
+  <!-- Left: Official StatCraft Logo Badge -->
+  <g filter="url(#shadow-logo)">
+    <svg x="65" y="48" width="112" height="112" viewBox="26 116 560 560">
+      <!-- Deep Blue Rounded Shield -->
+      <path fill="#000D2B" stroke="#007AFF" stroke-width="20" stroke-linejoin="round" stroke-miterlimit="9.5625" 
+            d="M143.4 128.2h267.8c7.6 0 14.9 3 20.3 8.4l133.9 133.9c5.4 5.4 8.4 12.7 8.4 20.3v267.8c0 58.1-47.1 105.2-105.2 105.2H143.4c-58.1 0-105.2-47.1-105.2-105.2V233.3C38.3 175.2 85.3 128.2 143.4 128.2z"/>
+      <!-- S Emblem -->
+      <path fill="#007AFF" 
+            d="M199.5 565.9c-18.3 0-35.5-1.4-51.4-4.3-16-2.9-31-7.3-44.9-13.1l5.1-38.9c16.8 6.8 33 12 48.8 15.5 15.7 3.5 31.1 5.2 46.2 5.2 24.2 0 42.2-4.2 54.1-12.6 11.9-8.4 17.8-21 17.8-37.9 0-21.7-10.9-37.9-32.8-48.4l-68-33c-20.2-9.6-35.6-21.1-46.3-34.4-10.7-13.3-16.1-29.8-16.1-49.3 0-28.5 8.5-50.4 25.4-65.6 16.9-15.2 41.3-22.8 73.3-22.8 21.6 0 40.8 3.3 57.8 9.8 17 6.5 33 16.8 48.1 31l-26.8 27c-14-11-27.3-19.1-39.9-24.3-12.6-5.2-25.6-7.8-39-7.8-19.1 0-33.6 4.2-43.6 12.7-10 8.5-15 21.1-15 37.8 0 11.2 3 20.4 9 27.8 6 7.4 14.8 13.8 26.4 19.4l59.8 29.6c22.3 10.7 39.3 23.1 50.7 37.2 11.5 14.1 17.2 31.7 17.2 52.6 0 29-9.6 50.8-28.7 65.3C267.5 558.7,238.5 565.9 199.5 565.9z"/>
+      <!-- t Emblem -->
+      <path fill="#007AFF" 
+            d="M359.4 397.5v-33.8h149.5v33.8H359.4zM415.7 561.2V363.6h36.7v197.6H415.7z"/>
+    </svg>
+  </g>
+
+  <!-- Typography Stack -->
+  <g transform="translate(195, 48)" class="font-sans">
+    <!-- Ecosystem Tag Capsule -->
+    <rect x="0" y="0" width="348" height="22" rx="11" fill="#007AFF" fill-opacity="0.15" stroke="#007AFF" stroke-opacity="0.5" stroke-width="1" />
+    <circle cx="12" cy="11" r="3.5" fill="#38bdf8" />
+    <text x="24" y="15" font-size="10" font-weight="700" letter-spacing="1.2" fill="#38bdf8">ARTCRAFT ECOSYSTEM • 100% SAFE RUST</text>
+
+    <!-- Main Title -->
+    <text x="0" y="58" font-size="48" font-weight="800" fill="#FFFFFF" letter-spacing="-0.5">Stat<tspan fill="url(#titleGrad)">Craft</tspan></text>
+
+    <!-- Subtitle -->
+    <text x="0" y="86" font-size="17" font-weight="600" fill="#cbd5e1">Next-Generation Statistical Analysis Package</text>
+
+    <!-- Value Proposition -->
+    <text x="0" y="108" font-size="12" fill="#94a3b8">Clean-Room SPSS Parity • Academic Rigor • Crash Immunity • Instant Native Launch</text>
+  </g>
+
+  <!-- Top Right: Rigor & Engine Badges Card -->
+  <g transform="translate(830, 48)" filter="url(#shadow-card)" class="font-sans">
+    <rect width="385" height="112" rx="10" fill="url(#cardGrad)" stroke="#334155" stroke-width="1.2" />
+
+    <!-- Feature 1 -->
+    <circle cx="22" cy="24" r="4.5" fill="#007AFF" />
+    <text x="36" y="27" font-size="11.5" font-weight="700" fill="#e2e8f0">100% Safe Rust Architecture</text>
+    <text x="36" y="42" font-size="10" fill="#94a3b8">Zero unsafe blocks • Zero panics/unwraps</text>
+
+    <!-- Feature 2 -->
+    <circle cx="22" cy="60" r="4.5" fill="#34d399" />
+    <text x="36" y="63" font-size="11.5" font-weight="700" fill="#e2e8f0">Golden Oracle Verified Math</text>
+    <text x="36" y="78" font-size="10" fill="#94a3b8">Reference accuracy vs SciPy &amp; PSPP (ε &lt; 10⁻⁶)</text>
+
+    <!-- Feature 3 -->
+    <circle cx="22" cy="94" r="4.5" fill="#a855f7" />
+    <text x="36" y="97" font-size="11.5" font-weight="700" fill="#e2e8f0">Agent-First AI Integration</text>
+    <text x="36" y="110" font-size="10" fill="#94a3b8">Model Context Protocol (MCP) &amp; Local IPC</text>
+  </g>
+
+  <!-- ================= MIDDLE SECTION: LIVE CODE & SPSS TABLES ================= -->
+  <!-- Middle Left: SPS Syntax & Pipeline Card -->
+  <g transform="translate(65, 180)" filter="url(#shadow-card)">
+    <rect width="490" height="295" rx="10" fill="url(#cardGrad)" stroke="#334155" stroke-width="1.2" />
+
+    <!-- Card Window Bar -->
+    <path d="M 0 10 C 0 4.5, 4.5 0, 10 0 L 480 0 C 485.5 0, 490 4.5, 490 10 L 490 32 L 0 32 Z" fill="#1e293b" />
+    <circle cx="16" cy="16" r="4.5" fill="#ef4444" />
+    <circle cx="30" cy="16" r="4.5" fill="#f59e0b" />
+    <circle cx="44" cy="16" r="4.5" fill="#10b981" />
+    <text x="64" y="20" class="font-mono" font-size="11.5" font-weight="600" fill="#94a3b8">pipeline_survey.sps</text>
+    
+    <rect x="382" y="7" width="96" height="18" rx="4" fill="#007AFF" fill-opacity="0.8" />
+    <text x="430" y="20" class="font-sans" font-size="9.5" font-weight="700" fill="#ffffff" text-anchor="middle">CommandBus ⚡</text>
+
+    <!-- Syntax Code Block -->
+    <g class="font-mono" font-size="11.5" xml:space="preserve">
+      <text x="18" y="56" fill="#64748b">* 1. Load dataset with zero allocations</text>
+      <text x="18" y="76"><tspan fill="#38bdf8" font-weight="700">GET DATA</tspan><tspan fill="#cbd5e1"> /TYPE=CSV /FILE='sample.csv'.</tspan></text>
+
+      <text x="18" y="106" fill="#64748b">* 2. Bivariate correlation matrix</text>
+      <text x="18" y="124"><tspan fill="#38bdf8" font-weight="700">CORRELATIONS</tspan></text>
+      <text x="18" y="142" fill="#cbd5e1">  /VARIABLES=age education salary</text>
+      <text x="18" y="160" fill="#cbd5e1">  /PRINT=TWOTAIL SIG /MISSING=PAIRWISE.</text>
+
+      <text x="18" y="190" fill="#64748b">* 3. Independent groups t-test</text>
+      <text x="18" y="208"><tspan fill="#38bdf8" font-weight="700">T-TEST</tspan><tspan fill="#cbd5e1"> GROUPS=gender(1, 2)</tspan></text>
+      <text x="18" y="226" fill="#cbd5e1">  /VARIABLES=salary /CRITERIA=CI(.95).</text>
+    </g>
+
+    <!-- Status Bar -->
+    <rect x="0" y="260" width="490" height="35" fill="#182234" />
+    <circle cx="18" cy="278" r="4" fill="#34d399" />
+    <text x="30" y="282" class="font-sans" font-size="10.5" font-weight="600" fill="#34d399">Deterministic Execution • Zero Panics • Arrow Buffers</text>
+  </g>
+
+  <!-- Middle Right: 1. SPSS Pivot Table Card -->
+  <g transform="translate(580, 180)" filter="url(#shadow-card)">
+    <rect width="635" height="152" rx="10" fill="url(#cardGrad)" stroke="#334155" stroke-width="1.2" />
+
+    <!-- Table Header Bar -->
+    <path d="M 0 10 C 0 4.5, 4.5 0, 10 0 L 625 0 C 630.5 0, 635 4.5, 635 10 L 635 32 L 0 32 Z" fill="#1e293b" />
+    <text x="16" y="21" class="font-sans" font-size="11.5" font-weight="700" fill="#93c5fd">Correlations (SPSS Pivot Table)</text>
+
+    <!-- TSV Copy Button -->
+    <rect x="495" y="6" width="128" height="20" rx="4" fill="#007AFF" />
+    <text x="559" y="20" class="font-sans" font-size="10" font-weight="700" fill="#ffffff" text-anchor="middle">Copy Table (TSV) 📋</text>
+
+    <!-- Subheaders -->
+    <rect x="0" y="32" width="635" height="22" fill="#182234" />
+    <text x="16" y="47" class="font-sans" font-size="10" font-weight="600" fill="#64748b">Measure</text>
+    <text x="235" y="47" class="font-sans" font-size="10" font-weight="600" fill="#64748b">age</text>
+    <text x="365" y="47" class="font-sans" font-size="10" font-weight="600" fill="#64748b">education</text>
+    <text x="500" y="47" class="font-sans" font-size="10" font-weight="600" fill="#64748b">salary</text>
+
+    <!-- Row 1: Pearson r -->
+    <rect x="0" y="54" width="635" height="24" fill="#111827" fill-opacity="0.7" />
+    <text x="16" y="70" class="font-sans" font-size="10" fill="#cbd5e1">Pearson Corr.</text>
+    <text x="235" y="70" class="font-mono" font-size="10" fill="#94a3b8">1.000</text>
+    <text x="365" y="70" class="font-mono" font-size="10" font-weight="700" fill="#34d399">0.507*</text>
+    <text x="500" y="70" class="font-mono" font-size="10" font-weight="700" fill="#34d399">0.642**</text>
+
+    <!-- Row 2: Sig. -->
+    <rect x="0" y="78" width="635" height="24" fill="#0d1424" fill-opacity="0.7" />
+    <text x="16" y="94" class="font-sans" font-size="10" fill="#cbd5e1">Sig. (2-tailed)</text>
+    <text x="235" y="94" class="font-mono" font-size="10" fill="#64748b">—</text>
+    <text x="365" y="94" class="font-mono" font-size="10" font-weight="600" fill="#38bdf8">0.023</text>
+    <text x="500" y="94" class="font-mono" font-size="10" font-weight="600" fill="#38bdf8">0.001</text>
+
+    <!-- Row 3: N -->
+    <rect x="0" y="102" width="635" height="22" fill="#111827" fill-opacity="0.7" />
+    <text x="16" y="117" class="font-sans" font-size="10" fill="#cbd5e1">N (active)</text>
+    <text x="235" y="117" class="font-mono" font-size="10" fill="#94a3b8">20</text>
+    <text x="365" y="117" class="font-mono" font-size="10" fill="#94a3b8">20</text>
+    <text x="500" y="117" class="font-mono" font-size="10" fill="#94a3b8">20</text>
+
+    <!-- Table Footnotes -->
+    <text x="16" y="139" class="font-sans" font-size="9" fill="#64748b">*. p &lt; .05  **. p &lt; .01 (Two-tailed significance)</text>
+  </g>
+
+  <!-- Middle Right: 2. Gaussian Normal Distribution Curve Card -->
+  <g transform="translate(580, 345)" filter="url(#shadow-card)">
+    <rect width="635" height="130" rx="10" fill="url(#cardGrad)" stroke="#334155" stroke-width="1.2" />
+
+    <!-- Bell Curve Shaded Area (Gaussian Integral) -->
+    <path d="M 40 92 
+             C 120 92, 185 88, 235 68 
+             C 275 52, 295 16, 330 16 
+             C 365 16, 385 52, 425 68 
+             C 475 88, 540 92, 595 92 
+             Z" 
+          fill="url(#curveGrad)" />
+
+    <!-- Curve Neon Stroke -->
+    <path d="M 40 92 
+             C 120 92, 185 88, 235 68 
+             C 275 52, 295 16, 330 16 
+             C 365 16, 385 52, 425 68 
+             C 475 88, 540 92, 595 92" 
+          fill="none" stroke="#38bdf8" stroke-width="2.5" />
+
+    <!-- Baseline Axis -->
+    <line x1="25" y1="92" x2="610" y2="92" stroke="#334155" stroke-width="1.2" />
+
+    <!-- Mean μ (Center Axis) -->
+    <line x1="330" y1="16" x2="330" y2="92" stroke="#60a5fa" stroke-width="1.5" stroke-dasharray="4,4" />
+    <circle cx="330" cy="16" r="4" fill="#38bdf8" />
+
+    <!-- Sigma Bounds -->
+    <line x1="260" y1="58" x2="260" y2="92" stroke="#475569" stroke-width="1.2" stroke-dasharray="3,3" />
+    <line x1="400" y1="58" x2="400" y2="92" stroke="#475569" stroke-width="1.2" stroke-dasharray="3,3" />
+
+    <!-- 95% Confidence Interval Tag -->
+    <rect x="290" y="68" width="80" height="18" rx="9" fill="#007AFF" fill-opacity="0.3" stroke="#38bdf8" stroke-width="1" />
+    <text x="330" y="81" class="font-sans" font-size="10" font-weight="700" fill="#7dd3fc" text-anchor="middle">95% CI</text>
+
+    <!-- Axis Labels -->
+    <text x="330" y="110" class="font-sans" font-size="10.5" font-weight="700" fill="#94a3b8" text-anchor="middle">μ (Mean)</text>
+    <text x="260" y="110" class="font-sans" font-size="10" fill="#64748b" text-anchor="middle">-1σ</text>
+    <text x="400" y="110" class="font-sans" font-size="10" fill="#64748b" text-anchor="middle">+1σ</text>
+
+    <!-- Side Metrics Labels -->
+    <g class="font-sans" font-size="9.5">
+      <text x="16" y="24" font-weight="700" fill="#cbd5e1">Two-Sample Student's t &amp; Welch Test</text>
+      <text x="16" y="38" fill="#64748b">Levene's Variance Test: F = 0.842 (p = .412)</text>
+      
+      <text x="475" y="24" font-weight="700" fill="#34d399">One-Way ANOVA</text>
+      <text x="475" y="38" fill="#64748b">Fisher's F &amp; Post-Hoc Tests</text>
+    </g>
+  </g>
+
+  <!-- ================= BOTTOM FEATURE STRIP (5 CARDS) ================= -->
+  <!-- Capsule 1: Safe Rust -->
+  <g transform="translate(65, 510)" class="font-sans">
+    <rect width="216" height="86" rx="10" fill="#111827" fill-opacity="0.8" stroke="#1e293b" stroke-width="1.2" />
+    <rect x="1" y="1" width="214" height="4" rx="2" fill="#007AFF" />
+    <text x="14" y="28" font-size="13" font-weight="700" fill="#e2e8f0">🛡️ 100% Safe Rust</text>
+    <text x="14" y="48" font-size="11" fill="#94a3b8">Zero unsafe • 0 panics</text>
+    <text x="14" y="68" font-size="10.5" fill="#64748b">Guaranteed crash immunity</text>
+  </g>
+
+  <!-- Capsule 2: Dual-View Grid -->
+  <g transform="translate(301, 510)" class="font-sans">
+    <rect width="216" height="86" rx="10" fill="#111827" fill-opacity="0.8" stroke="#1e293b" stroke-width="1.2" />
+    <rect x="1" y="1" width="214" height="4" rx="2" fill="#38bdf8" />
+    <text x="14" y="28" font-size="13" font-weight="700" fill="#e2e8f0">📊 Dual-View Grid</text>
+    <text x="14" y="48" font-size="11" fill="#94a3b8">Data &amp; Variable View</text>
+    <text x="14" y="68" font-size="10.5" fill="#64748b">SPSS metadata dictionary</text>
+  </g>
+
+  <!-- Capsule 3: Pivot Tables & TSV -->
+  <g transform="translate(537, 510)" class="font-sans">
+    <rect width="216" height="86" rx="10" fill="#111827" fill-opacity="0.8" stroke="#1e293b" stroke-width="1.2" />
+    <rect x="1" y="1" width="214" height="4" rx="2" fill="#34d399" />
+    <text x="14" y="28" font-size="13" font-weight="700" fill="#e2e8f0">📋 SPSS Pivot Tables</text>
+    <text x="14" y="48" font-size="11" fill="#94a3b8">Structured TSV for Excel</text>
+    <text x="14" y="68" font-size="10.5" fill="#64748b">Hierarchical Outline Tree</text>
+  </g>
+
+  <!-- Capsule 4: Headless CommandBus -->
+  <g transform="translate(773, 510)" class="font-sans">
+    <rect width="216" height="86" rx="10" fill="#111827" fill-opacity="0.8" stroke="#1e293b" stroke-width="1.2" />
+    <rect x="1" y="1" width="214" height="4" rx="2" fill="#fbbf24" />
+    <text x="14" y="28" font-size="13" font-weight="700" fill="#e2e8f0">⚡ Command Engine</text>
+    <text x="14" y="48" font-size="11" fill="#94a3b8">SPS syntax &amp; batching</text>
+    <text x="14" y="68" font-size="10.5" fill="#64748b">Non-destructive Undo/Redo</text>
+  </g>
+
+  <!-- Capsule 5: AI Bridge -->
+  <g transform="translate(1009, 510)" class="font-sans">
+    <rect width="216" height="86" rx="10" fill="#111827" fill-opacity="0.8" stroke="#1e293b" stroke-width="1.2" />
+    <rect x="1" y="1" width="214" height="4" rx="2" fill="#a855f7" />
+    <text x="14" y="28" font-size="13" font-weight="700" fill="#e2e8f0">🤖 AI-Agent Ready</text>
+    <text x="14" y="48" font-size="11" fill="#94a3b8">Model Context Protocol</text>
+    <text x="14" y="68" font-size="10.5" fill="#64748b">Headless IPC &amp; CLI tools</text>
+  </g>
+</svg>

@@ -15,6 +15,7 @@ pub mod recode_dialog;
 pub mod recode_old_new_dialog;
 pub mod select_cases_dialog;
 pub mod sort_cases_dialog;
+pub mod split_file_dialog;
 pub mod ttest_indep_define_groups;
 pub mod ttest_indep_dialog;
 pub mod ttest_onesample_dialog;
@@ -65,6 +66,9 @@ pub use select_cases_dialog::{
 };
 pub use sort_cases_dialog::{
     render_sort_cases_dialog, SortCasesDialogAction, SortCasesDialogState,
+};
+pub use split_file_dialog::{
+    render_split_file_dialog, SplitFileDialogAction, SplitFileDialogState,
 };
 pub use ttest_indep_dialog::{
     render_ttest_indep_dialog, IndependentSamplesTTestDialogAction,

@@ -1,3 +1,4 @@
+use crate::split::{SplitFileConfig, SplitFileMode, SplitKeyValue, SplitSubgroup};
 use crate::variable::{
     Alignment, CoreError, DataType, Measure, VariableDictionary, VariableMetadata,
 };
@@ -42,6 +43,7 @@ pub struct DataSet {
     pub dictionary: VariableDictionary,
     pub delta: DeltaBuffer,
     pub active_filter_var: Option<String>,
+    pub split_file: Option<SplitFileConfig>,
 }
 
 impl DataSet {
@@ -51,6 +53,7 @@ impl DataSet {
             dictionary: VariableDictionary::new(),
             delta: DeltaBuffer::new(),
             active_filter_var: None,
+            split_file: None,
         }
     }
 
@@ -70,6 +73,7 @@ impl DataSet {
             dictionary,
             delta: DeltaBuffer::new(),
             active_filter_var: None,
+            split_file: None,
         })
     }
 
@@ -91,6 +95,7 @@ impl DataSet {
             dictionary,
             delta: DeltaBuffer::new(),
             active_filter_var: None,
+            split_file: None,
         })
     }
 
@@ -114,6 +119,109 @@ impl DataSet {
 
     pub fn active_filter_var(&self) -> Option<&str> {
         self.active_filter_var.as_deref()
+    }
+
+    pub fn set_split_file(&mut self, config: Option<SplitFileConfig>) -> Result<(), CoreError> {
+        if let Some(ref cfg) = config {
+            if cfg.mode != SplitFileMode::Off {
+                for var_name in &cfg.variables {
+                    if self.dictionary.find_index(var_name).is_none() {
+                        return Err(CoreError::VariableNotFound(var_name.clone()));
+                    }
+                }
+            }
+        }
+        self.split_file = config;
+        Ok(())
+    }
+
+    pub fn split_file(&self) -> Option<&SplitFileConfig> {
+        self.split_file.as_ref()
+    }
+
+    pub fn split_groups(&self) -> Vec<SplitSubgroup> {
+        let active_rows = self.active_row_indices();
+        if active_rows.is_empty() {
+            return Vec::new();
+        }
+
+        let config = match &self.split_file {
+            Some(cfg) if cfg.is_active() => cfg,
+            _ => {
+                return vec![SplitSubgroup {
+                    keys: Vec::new(),
+                    label: String::new(),
+                    row_indices: active_rows,
+                }];
+            }
+        };
+
+        let mut col_indices = Vec::with_capacity(config.variables.len());
+        for var_name in &config.variables {
+            if let Some(idx) = self.dictionary.find_index(var_name) {
+                col_indices.push((var_name.clone(), idx));
+            }
+        }
+
+        if col_indices.is_empty() {
+            return vec![SplitSubgroup {
+                keys: Vec::new(),
+                label: String::new(),
+                row_indices: active_rows,
+            }];
+        }
+
+        let mut groups: Vec<SplitSubgroup> = Vec::new();
+
+        for r in active_rows {
+            let mut row_keys = Vec::with_capacity(col_indices.len());
+            let mut label_parts = Vec::with_capacity(col_indices.len());
+
+            for (var_name, col_idx) in &col_indices {
+                let raw_val = self
+                    .get_cell(r, *col_idx)
+                    .cloned()
+                    .unwrap_or(RawValue::Null);
+                let disp_val = self.get_cell_display(r, *col_idx, true);
+                let raw_str = self.get_cell_display(r, *col_idx, false);
+
+                let label_part = if !disp_val.is_empty() && disp_val != raw_str && raw_str != "." {
+                    format!("{var_name} = {raw_str} [{disp_val}]")
+                } else if disp_val.is_empty() || disp_val == "." {
+                    format!("{var_name} = .")
+                } else {
+                    format!("{var_name} = {disp_val}")
+                };
+
+                label_parts.push(label_part);
+                row_keys.push(SplitKeyValue {
+                    var_name: var_name.clone(),
+                    raw_value: raw_val,
+                    display_value: disp_val,
+                });
+            }
+
+            let full_label = label_parts.join(", ");
+
+            if let Some(last) = groups.last_mut() {
+                if last.keys == row_keys {
+                    last.row_indices.push(r);
+                    continue;
+                }
+            }
+
+            if let Some(existing) = groups.iter_mut().find(|g| g.keys == row_keys) {
+                existing.row_indices.push(r);
+            } else {
+                groups.push(SplitSubgroup {
+                    keys: row_keys,
+                    label: full_label,
+                    row_indices: vec![r],
+                });
+            }
+        }
+
+        groups
     }
 
     pub fn is_row_active(&self, row_idx: usize) -> bool {
@@ -311,6 +419,14 @@ impl DataSet {
                 }
             }
         }
+        if let Some(ref mut split_cfg) = self.split_file {
+            if let Some(removed_meta) = self.dictionary.get(col_idx) {
+                split_cfg.variables.retain(|v| v != &removed_meta.name);
+                if split_cfg.variables.is_empty() {
+                    self.split_file = None;
+                }
+            }
+        }
         self.dictionary.remove(col_idx)?;
         self.table.remove_column(col_idx);
         Ok(())
@@ -321,6 +437,15 @@ impl DataSet {
             if let Some(old_meta) = self.dictionary.get(col_idx) {
                 if old_meta.name == *filter_var {
                     self.active_filter_var = Some(new_name.to_string());
+                }
+            }
+        }
+        if let Some(ref mut split_cfg) = self.split_file {
+            if let Some(old_meta) = self.dictionary.get(col_idx) {
+                for var in &mut split_cfg.variables {
+                    if *var == old_meta.name {
+                        *var = new_name.to_string();
+                    }
                 }
             }
         }
@@ -665,5 +790,49 @@ mod tests {
         ds.set_filter_variable(None).unwrap();
         assert_eq!(ds.active_filter_var(), None);
         assert_eq!(ds.active_row_indices(), vec![0, 1, 2, 3]);
+    }
+
+    #[test]
+    fn test_dataset_split_file() {
+        let mut ds = DataSet::blank(4, 2).unwrap();
+        // Col 0: gender (1, 1, 2, 2)
+        // Col 1: salary (100, 200, 300, 400)
+        ds.dictionary.get_mut(0).unwrap().name = "gender".to_string();
+        ds.dictionary.get_mut(1).unwrap().name = "salary".to_string();
+        ds.table.columns[0].name = "gender".to_string();
+        ds.table.columns[1].name = "salary".to_string();
+
+        ds.set_cell(0, 0, RawValue::Number(1.0)).unwrap();
+        ds.set_cell(1, 0, RawValue::Number(1.0)).unwrap();
+        ds.set_cell(2, 0, RawValue::Number(2.0)).unwrap();
+        ds.set_cell(3, 0, RawValue::Number(2.0)).unwrap();
+
+        // Default: 1 group containing all rows
+        let groups = ds.split_groups();
+        assert_eq!(groups.len(), 1);
+        assert_eq!(groups[0].row_indices, vec![0, 1, 2, 3]);
+
+        // Enable split file
+        ds.set_split_file(Some(SplitFileConfig::new(
+            SplitFileMode::CompareGroups,
+            vec!["gender".to_string()],
+        )))
+        .unwrap();
+
+        assert!(ds.split_file().unwrap().is_active());
+        let groups = ds.split_groups();
+        assert_eq!(groups.len(), 2);
+        assert_eq!(groups[0].row_indices, vec![0, 1]);
+        assert_eq!(groups[1].row_indices, vec![2, 3]);
+        assert_eq!(groups[0].keys[0].var_name, "gender");
+        assert_eq!(groups[0].keys[0].raw_value, RawValue::Number(1.0));
+
+        // Rename variable: split_file should be updated
+        ds.rename_variable(0, "sex").unwrap();
+        assert_eq!(ds.split_file().unwrap().variables, vec!["sex".to_string()]);
+
+        // Delete variable: split_file should be cleared
+        ds.remove_variable(0).unwrap();
+        assert_eq!(ds.split_file(), None);
     }
 }

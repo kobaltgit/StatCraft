@@ -283,6 +283,16 @@
 - [x] L6 `statcraft_app`: активация пункта меню `Data -> Select Cases...`, журналирование синтаксиса в `Output Viewer`
 - [x] 100% покрытие локализацией (`locales/en.ftl`, `locales/ru.ftl`, `C:\StatCraft\locales\fr.ftl`), 100% прохождение полного CI gate `cargo run -p xtask -j 1 -- ci` (140 файлов, 0 предупреждений Clippy, все тесты пройдены)
 
+## 30. Этап 8.5: Расщепление файла на подгруппы (Split File: `SPLIT FILE`)
+- [x] L1 `statcraft_core`: поддержка расщепления файла в `DataSet` (`split_file: Option<SplitFileConfig>`, `set_split_file`, `split_file`, `split_groups`), типы `SplitFileMode` (*Off, CompareGroups, OrganizeOutput*), `SplitKeyValue`, `SplitSubgroup`, автоматическая синхронизация при переименовании и удалении переменных
+- [x] L2 `statcraft_algo`: модуль `split_groups.rs` — извлечение подгрупп наблюдений по набору группирующих переменных (`extract_split_groups`), поддержка составных ключей (multi-variable grouping), системных пропусков `SYSMIS` / `Null` / `NaN` и бесшовный учет активного фильтра `Select Cases` (`active_filter_var`)
+- [x] L5 `statcraft_syntax`: типизированная команда `SplitFileCommand` (`data.split_file`) со спецификацией параметров `specs()`, поддержкой автоматической сортировки (`sort: bool`), генерацией канонического синтаксиса `SPLIT FILE OFF.`, `SPLIT FILE LAYERED BY var1 var2.`, `SPLIT FILE SEPARATE BY var1 var2.` и полным стеком отката `Undo` (`Ctrl+Z`) с восстановлением предыдущей конфигурации и перестановки строк
+- [x] L6 `statcraft_app`: центрированный диалог `SplitFileDialog` ($560 \times 430$ px, `DialogShell::standard`) на базе `DialogKit` (`VariablePicker`, `TransferButton`, `GroupBox`, `DialogActionBar`), выбор режимов (*Analyze all cases / Compare groups / Organize output by groups*), опции сортировки (*Sort the file by grouping variables / File is already sorted*)
+- [x] L6 `statcraft_app`: архитектурная декомпозиция — выделение модуля `app_dialogs_data.rs` для сохранения жесткого лимита `file-guard` $\le 1000$ строк на файл в координаторах диалогов
+- [x] L6 `statcraft_app`: векторный индикатор состояния `Split File: ON (var)` в строке состояния (Status Bar), активация пункта меню `Data -> Split File...`, логирование в `Output Viewer`
+- [x] 100% покрытие локализацией (`locales/en.ftl`, `locales/ru.ftl`, `C:\StatCraft\locales\fr.ftl`), 100% прохождение полного CI gate `cargo run -p xtask -j 1 -- ci` (`file-guard`, `design-guard`, `layers`, `parity`, `clippy -D warnings`, `cargo fmt --check`)
+
+
 
 
 

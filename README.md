@@ -1,9 +1,8 @@
-<div align="center">
-  <img src="assets/icon-128.png" width="128" height="128" alt="StatCraft Logo" />
-  <h1>StatCraft</h1>
-  <p><strong>High-performance, memory-safe, and open-source statistical analysis package</strong></p>
-  <p><em>ArtCraft Ecosystem Standard | Built with 100% Safe Rust</em></p>
+<p align="center">
+  <img src="assets/banner.svg" alt="StatCraft Banner" width="100%" />
+</p>
 
+<div align="center">
   <p>
     <a href="README.md"><strong>English</strong></a> |
     <a href="README.ru.md">Русский</a>
@@ -26,6 +25,12 @@
 **StatCraft** is a free, modern, open-source statistical software package built entirely in **100% pure Safe Rust**. Designed as an uncompromising, clean-room alternative to proprietary statistical suites such as IBM SPSS Statistics, StatCraft combines academic precision, instantaneous launch times, and guaranteed crash immunity.
 
 Whether you are conducting psychological research, analyzing clinical trials, teaching university statistics, or manipulating enterprise datasets, StatCraft provides an intuitive graphical interface alongside a deterministic, syntax-driven analytical engine.
+
+<p align="center">
+  <img src="assets/screenshot.png" alt="StatCraft Graphical Interface" width="100%" />
+  <br>
+  <em>Interactive workspace: Variable View metadata dictionary, syntax execution log, and canonical SPSS-style Output Viewer with structured pivot tables.</em>
+</p>
 
 ---
 

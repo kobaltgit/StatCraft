@@ -1162,3 +1162,52 @@ Implemented the canonical case selection and filtering mechanism in StatCraft �
    - Synchronous trilingual localization (`locales/en.ftl`, `locales/ru.ftl`, `C:\StatCraft\locales\fr.ftl`);
    - Clean compilation: `cargo clippy --workspace --all-targets -j 1 -- -D warnings` — 0 warnings;
    - Release binary built and deployed to `C:\StatCraft\statcraft_app.exe`.
+
+---
+
+### Phase 8.5: Split File Procedure (`SPLIT FILE`)
+*Time: October 29, 2026, 13:10 (~45 minutes)*
+
+Implemented the canonical segmented data analysis workflow in StatCraft — menu action `Data -> Split File...` (`data.split_file` command / `SPLIT FILE BY ...` / `SPLIT FILE OFF.` syntax):
+1. **Subgroup Model in DataSet L1 (`statcraft_core::split` & `dataset`):**
+   - Added core types: `SplitFileMode` (*Off*, *CompareGroups*, *OrganizeOutput*), `SplitFileConfig`, `SplitKeyValue`, and `SplitSubgroup`;
+   - Embedded `split_file: Option<SplitFileConfig>` into `DataSet` with accessors `set_split_file()`, `split_file()`, and `split_groups()`;
+   - Automatic metadata synchronization when grouping variables are renamed (`rename_variable`) or deleted (`remove_variable`), gracefully reverting to unsplit mode if all grouping keys are removed.
+2. **Segmentation Algorithm L2 (`statcraft_algo::split_groups`):**
+   - `extract_split_groups` function extracting subgroup partitions across arbitrary combinations of grouping variables (composite keys);
+   - Canonical handling of missing values adhering to IBM SPSS Statistics standards (`cat = .`);
+   - Seamless integration with `Select Cases`: when an active filter is present, subgroups are computed exclusively over active rows (`active_row_indices`), preventing analytical skew;
+   - 100% safe Rust without panics.
+3. **Command Bus & Undo/Redo L5 (`statcraft_syntax::commands::split_file_cmd`):**
+   - Strongly-typed `SplitFileCommand` (`data.split_file`) with parameter `specs()` for AI agents;
+   - Automated pre-sorting of cases by grouping keys (`sort: bool`);
+   - Canonical SPSS syntax generator:
+     ```text
+     SORT CASES BY gender (A) dept (A).
+     SPLIT FILE LAYERED BY gender dept.
+     ```
+     or `SPLIT FILE OFF.` when clearing segmentation;
+   - Full `Undo` (`Ctrl+Z`) support restoring both prior split configuration and original case ordering upon undoing auto-sorted splits.
+4. **DialogKit Desktop User Interface L6 (`statcraft_app::dialogs`):**
+   - Centered `SplitFileDialog` modal ($560 \times 430$ px, `DialogShell::standard`);
+   - Analysis mode selector:
+     1. *(o) Analyze all cases, do not create groups* (`SPLIT FILE OFF.`);
+     2. *( ) Compare groups* (`SPLIT FILE LAYERED BY ...`);
+     3. *( ) Organize output by groups* (`SPLIT FILE SEPARATE BY ...`);
+   - `Groups Based on:` variable selector with `VariablePicker` and adaptive `TransferButton` (`->` / `<-`);
+   - Ordering options: `(o) Sort the file by grouping variables` / `( ) File is already sorted`;
+   - Standard bottom action bar `DialogActionBar` (`[ OK ] [ Paste ] [ Reset ] [ Cancel ] [ Help ]`).
+5. **Architectural Decomposition & File Size Limit Guard:**
+   - To uphold the strict `file-guard` $\le 1000$ line threshold in UI coordinators, decoupled `crates/statcraft_app/src/app_dialogs.rs` by extracting data manipulation dialogs into `app_dialogs_data.rs` (455 lines).
+6. **Integration, Status Bar & Reactivity:**
+   - Status bar displays vector indicator: `Split File: ON (var_name)`;
+   - Activated main menu item `Data -> Split File...`;
+   - Canonical syntax logged to `Output Viewer` (Log).
+7. **Quality Control & Definition of Done:**
+   - Full automated CI quality gate passed (`cargo run -p xtask -j 1 -- ci` — 100% OK);
+   - 100% workspace tests passing with 0 failures;
+   - Strict adherence to `file-guard`, `design-guard`, `layers`, and `parity` (34 commands);
+   - Synchronous trilingual localization (`locales/en.ftl`, `locales/ru.ftl`, `C:\StatCraft\locales\fr.ftl`);
+   - Clean compilation: `cargo clippy --workspace --all-targets -j 1 -- -D warnings` — 0 warnings;
+   - Release binary built and deployed to `C:\StatCraft\statcraft_app.exe`.
+

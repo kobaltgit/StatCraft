@@ -720,7 +720,9 @@ dialog-recode-old-new-mappings-title = Старое -> Новое:
 output-recode-executed = Перекодирование успешно выполнено для { $count } переменных.
 output-sort-cases-executed = Наблюдения отсортированы по { $count } переменным.
 output-select-cases-executed = Выборка наблюдений выполнена ({ $mode }).
+output-split-file-executed = Разделение файла выполнено ({ $mode }, переменных: { $count }).
 status-filter-on = Фильтр: Включен ({ $var })
+status-split-file-on = Файл разделен: ВКЛ ({ $vars })
 
 dialog-select-cases-title = Выбрать наблюдения
 dialog-select-cases-select-group = Выбрать
@@ -737,6 +739,15 @@ dialog-select-cases-condition-title = Выбрать наблюдения: Ус�
 dialog-select-cases-enter-condition = Введите логическое выражение:
 dialog-select-cases-condition-hint = напр. age >= 18 & salary > 30000
 dialog-select-cases-keypad = Калькулятор и логические операторы:
+
+dialog-split-file-title = Разделить файл
+dialog-split-mode-off = Анализировать все наблюдения, не создавать группы
+dialog-split-mode-compare = Сравнить группы
+dialog-split-mode-separate = Организовать вывод по группам
+dialog-split-groups-based-on = Группировать по:
+dialog-split-sort-group = Порядок сортировки
+dialog-split-sort-by-variables = Сортировать файл по переменным группировки
+dialog-split-file-already-sorted = Файл уже отсортирован
 
 
 

@@ -720,7 +720,9 @@ dialog-recode-old-new-mappings-title = Old -> New:
 output-recode-executed = Recode executed successfully for { $count } variable(s).
 output-sort-cases-executed = Sorted cases by { $count } variable(s).
 output-select-cases-executed = Select cases executed ({ $mode }).
+output-split-file-executed = Split file executed ({ $mode }, { $count } variable(s)).
 status-filter-on = Filter: ON ({ $var })
+status-split-file-on = Split File: ON ({ $vars })
 
 dialog-select-cases-title = Select Cases
 dialog-select-cases-select-group = Select
@@ -737,6 +739,15 @@ dialog-select-cases-condition-title = Select Cases: If Condition
 dialog-select-cases-enter-condition = Enter condition expression:
 dialog-select-cases-condition-hint = e.g. age >= 18 & salary > 30000
 dialog-select-cases-keypad = Calculator & Logical Operators:
+
+dialog-split-file-title = Split File
+dialog-split-mode-off = Analyze all cases, do not create groups
+dialog-split-mode-compare = Compare groups
+dialog-split-mode-separate = Organize output by groups
+dialog-split-groups-based-on = Groups Based on:
+dialog-split-sort-group = Sort Order
+dialog-split-sort-by-variables = Sort the file by grouping variables
+dialog-split-file-already-sorted = File is already sorted
 
 
 

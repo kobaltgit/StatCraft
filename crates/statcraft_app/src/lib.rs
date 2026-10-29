@@ -1,5 +1,6 @@
 pub mod app;
 pub mod app_dialogs;
+pub mod app_dialogs_data;
 pub mod dialogs;
 pub mod icon_data;
 pub mod icons;

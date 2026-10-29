@@ -655,3 +655,52 @@
    - Синхронная локализация (`locales/en.ftl`, `locales/ru.ftl`, `C:\StatCraft\locales\fr.ftl`);
    - `cargo clippy --workspace --all-targets -j 1 -- -D warnings` — 0 предупреждений;
    - Чистая сборка и обновление релизного бинарника `C:\StatCraft\statcraft_app.exe`.
+
+---
+
+### Этап 8.5: Расщепление файла на подгруппы (Split File: `SPLIT FILE`)
+*Время: 29 октября 2026, 13:10 (~45 минут)*
+
+Реализован ключевой механизм сегментного анализа данных IBM SPSS Statistics в StatCraft — пункт меню `Данные -> Разделить файл...` (`Data -> Split File...`, команда `data.split_file` / синтаксис `SPLIT FILE BY ...` / `SPLIT FILE OFF.`):
+1. **Модель подгрупп в DataSet L1 (`statcraft_core::split` & `dataset`):**
+   - Добавлены структуры `SplitFileMode` (*Off*, *CompareGroups*, *OrganizeOutput*), `SplitFileConfig`, `SplitKeyValue` и `SplitSubgroup`;
+   - В структуру `DataSet` внедрено поле `split_file: Option<SplitFileConfig>` с методами `set_split_file()`, `split_file()` и `split_groups()`;
+   - Автоматическая синхронизация при удалении (`remove_variable`) или переименовании (`rename_variable`) группирующих переменных с безопасным сбросом режима при удалении всех ключей.
+2. **Алгоритм сегментации L2 (`statcraft_algo::split_groups`):**
+   - Функция `extract_split_groups` с извлечением подгрупп наблюдений по произвольному числу группирующих переменных (составные ключи);
+   - Корректная обработка системных пропусков (`Null` / `NaN` / `SYSMIS`) по канону SPSS (`cat = .`);
+   - Бесшовная интеграция с фильтром наблюдений `Select Cases`: при активном фильтре подгруппы строятся исключительно из неотфильтрованных строк (`active_row_indices`), исключая искажения расчетов;
+   - 100% safe Rust без паник.
+3. **Командная шина и Undo/Redo L5 (`statcraft_syntax::commands::split_file_cmd`):**
+   - Типизированная команда `SplitFileCommand` (`data.split_file`) со спецификацией `specs()` для внешних AI-агентов;
+   - Поддержка автоматической предварительной сортировки наблюдений по группирующим переменным (`sort: bool`);
+   - Генератор канонического синтаксиса SPSS:
+     ```text
+     SORT CASES BY gender (A) dept (A).
+     SPLIT FILE LAYERED BY gender dept.
+     ```
+     или `SPLIT FILE OFF.` при отключении;
+   - Полная поддержка отката `Undo` (`Ctrl+Z`), восстанавливающего как предыдущую конфигурацию расщепления, так и исходный порядок строк при автосортировке.
+4. **Пользовательский интерфейс на DialogKit L6 (`statcraft_app::dialogs`):**
+   - Центрированный диалог `SplitFileDialog` ($560 \times 430$ px, `DialogShell::standard`);
+   - Выбор режима анализа:
+     1. *(o) Analyze all cases, do not create groups* (`SPLIT FILE OFF.`);
+     2. *( ) Compare groups* (`SPLIT FILE LAYERED BY ...`);
+     3. *( ) Organize output by groups* (`SPLIT FILE SEPARATE BY ...`);
+   - Селектор переменных `Groups Based on:` на базе `VariablePicker` и адаптивной кнопки `TransferButton` (`->` / `<-`);
+   - Группа опций упорядочивания `(o) Sort the file by grouping variables` / `( ) File is already sorted`;
+   - Нижняя строка `DialogActionBar` (`[ OK ] [ Paste ] [ Reset ] [ Cancel ] [ Help ]`).
+5. **Архитектурная декомпозиция и строгий лимит строк:**
+   - Для предотвращения превышения лимита `file-guard` $\le 1000$ строк на файл в модулях управления диалогами проведена декомпозиция `crates/statcraft_app/src/app_dialogs.rs`: диалоги управления данными вынесены в чистый модуль `app_dialogs_data.rs` (455 строк).
+6. **Интеграция, статусная строка и реактивность:**
+   - В строке состояния (Status Bar) отображается векторный индикатор активного расщепления `Split File: ON (var_name)` / `Файл разделен: Включен (var_name)`;
+   - Активирован пункт меню `Data -> Split File...`;
+   - Логирование канонического синтаксиса в `Output Viewer` (Log).
+7. **Контроль качества (Definition of Done):**
+   - Полный пайплайн `cargo run -p xtask -j 1 -- ci` — 100% OK;
+   - Все тесты воркспейса завершились успешно (0 сбоев);
+   - Соблюдение `file-guard`, `design-guard`, `layers`, `parity` (34 команды);
+   - Синхронная локализация (`locales/en.ftl`, `locales/ru.ftl`, `C:\StatCraft\locales\fr.ftl`);
+   - `cargo clippy --workspace --all-targets -j 1 -- -D warnings` — 0 предупреждений;
+   - Чистая сборка и развертывание релизного бинарника `C:\StatCraft\statcraft_app.exe`.
+

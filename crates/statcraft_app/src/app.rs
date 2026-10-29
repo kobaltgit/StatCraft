@@ -3,8 +3,8 @@ use crate::dialogs::{
     FrequenciesDialogState, IndependentSamplesTTestDialogState, KruskalWallisDialogState,
     MissingValuesDialogState, NonparamRelatedDialogState, NonparamTwoSampleDialogState,
     OneSampleTTestDialogState, OneWayAnovaDialogState, PairedSamplesTTestDialogState,
-    RecodeDialogState, SelectCasesDialogState, SortCasesDialogState, ValueLabelsDialogState,
-    VariableTypeDialogState,
+    RecodeDialogState, SelectCasesDialogState, SortCasesDialogState, SplitFileDialogState,
+    ValueLabelsDialogState, VariableTypeDialogState,
 };
 use crate::views::{
     render_data_view, render_output_view, render_variable_view, DataViewState, OutputViewerState,
@@ -83,6 +83,10 @@ pub enum StatusMessage {
     SelectCasesExecuted {
         mode: String,
     },
+    SplitFileExecuted {
+        mode: String,
+        count: usize,
+    },
     Error(String),
 }
 
@@ -147,6 +151,13 @@ impl StatusMessage {
             StatusMessage::SelectCasesExecuted { mode } => {
                 t!("output-select-cases-executed", mode = mode.as_str())
             }
+            StatusMessage::SplitFileExecuted { mode, count } => {
+                t!(
+                    "output-split-file-executed",
+                    mode = mode.as_str(),
+                    count = *count
+                )
+            }
             StatusMessage::Error(e) => format!("{}: {}", t!("status-error"), e),
         }
     }
@@ -177,6 +188,7 @@ pub struct StatCraftApp {
     pub recode_dialog_state: RecodeDialogState,
     pub sort_cases_dialog_state: SortCasesDialogState,
     pub select_cases_dialog_state: SelectCasesDialogState,
+    pub split_file_dialog_state: SplitFileDialogState,
     pub pending_variable_action: VariableViewAction,
     pub status_message: StatusMessage,
     pub toolbar_position: ToolbarPosition,
@@ -215,6 +227,7 @@ impl StatCraftApp {
             recode_dialog_state: RecodeDialogState::default(),
             sort_cases_dialog_state: SortCasesDialogState::default(),
             select_cases_dialog_state: SelectCasesDialogState::default(),
+            split_file_dialog_state: SplitFileDialogState::default(),
             pending_variable_action: VariableViewAction::None,
             status_message: StatusMessage::Ready,
             toolbar_position: ToolbarPosition::Top,
@@ -447,7 +460,12 @@ impl StatCraftApp {
                     render_menu_item(ui, t!("menu-data-restructure"), MenuItemStatus::InDev);
                     render_menu_item(ui, t!("menu-data-aggregate"), MenuItemStatus::InDev);
                     ui.separator();
-                    render_menu_item(ui, t!("menu-data-split-file"), MenuItemStatus::InDev);
+                    if render_menu_item(ui, t!("menu-data-split-file"), requires_dataset_status)
+                        .clicked()
+                    {
+                        self.split_file_dialog_state.is_open = true;
+                        ui.close_menu();
+                    }
                     if render_menu_item(ui, t!("menu-data-filter"), requires_dataset_status)
                         .clicked()
                     {
@@ -1135,6 +1153,13 @@ impl eframe::App for StatCraftApp {
                         if let Some(filter_var) = ds.active_filter_var() {
                             ui.separator();
                             ui.label(t!("status-filter-on", var = filter_var));
+                        }
+                        if let Some(split) = ds.split_file() {
+                            if split.is_active() {
+                                ui.separator();
+                                let vars_str = split.variables.join(", ");
+                                ui.label(t!("status-split-file-on", vars = vars_str.as_str()));
+                            }
                         }
                     } else {
                         ui.label(t!("status-ready"));
