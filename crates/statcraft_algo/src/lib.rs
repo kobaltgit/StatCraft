@@ -21,6 +21,7 @@ pub mod nonparam_twosample;
 #[cfg(test)]
 mod nonparam_twosample_tests;
 pub mod nonparam_twosample_types;
+pub mod recode;
 pub mod ttest_indep;
 pub mod ttest_onesample;
 pub mod ttest_paired;
@@ -62,6 +63,7 @@ pub use nonparam_twosample::{
     compute_mann_whitney, compute_mann_whitney_from_slices, compute_midranks_with_ties,
 };
 pub use nonparam_twosample_types::{MannWhitneyResult, RankGroupStats};
+pub use recode::{apply_recode, NewValueSpec, OldValueRule, RecodeMapping, RecodePlan};
 pub use ttest_indep::{
     compute_indep_ttest, compute_indep_ttest_from_slices, GroupStats, IndepTTestOptions,
     IndepTTestResult, LeveneResult, TTestTwoGroupDetails,

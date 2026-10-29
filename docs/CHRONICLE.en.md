@@ -1014,3 +1014,60 @@ Implemented the fundamental data transformation mechanism — **Compute Variable
    - `file-guard`, `design-guard`, `layers`, and `parity` linters report 0 violations;
    - Full bilingual localization (`locales/en.ftl`, `locales/ru.ftl`);
    - Compiler linter `cargo clippy --workspace --all-targets -j 1 -- -D warnings` — 0 warnings.
+
+
+---
+
+### Phase 8.2: Recode into Same / Different Variables (`RECODE`)
+*Time: October 29, 2026, 10:25 (~35 minutes)*
+
+Implemented the canonical data grouping, discretization, and cleaning tool — **Recode Values** (`RECODE`, menu items `Transform -> Recode into Different Variables...` and `Transform -> Recode into Same Variables...`):
+1. **Mathematical Rule Matching Engine L2 (`statcraft_algo::recode`):**
+   - Expressive old value specifications `OldValueRule`:
+     * Exact numeric value (`Exact(f64)`);
+     * System-missing (`SysMissing`);
+     * System- or user-missing (`SystemOrUserMissing`);
+     * Range from $A$ through $B$ inclusive (`Range(low, high)`);
+     * Range from lowest through $A$ (`RangeLowest(high)`);
+     * Range from $A$ through highest (`RangeHighest(low)`);
+     * All other values (`AllOther` / `ELSE`);
+   - Output value specifications `NewValueSpec`:
+     * New numeric value (`Value(f64)`);
+     * System-missing (`SysMissing`);
+     * Copy old value unchanged (`CopyOld`);
+   - Sequential rule priority (first matching rule wins), leaving values unchanged if unmatched (IBM SPSS canonical standard);
+   - **Never Crash** resilience: safe handling of `NaN`, missing values, and inverted ranges; 100% unit test coverage.
+2. **Command Bus L5 (`statcraft_syntax::commands::recode_diff_cmd` & `recode_same_cmd`):**
+   - `RecodeIntoDifferentCommand` (`transform.recode.diff`): recoding one or multiple `source -> target` pairs into new or existing columns;
+   - `RecodeIntoSameCommand` (`transform.recode.same`): in-place variable recoding;
+   - Full `Undo` (`Ctrl+Z`) and `Redo` support: automatic cleanup of newly created columns or restoration of value snapshots and metadata for overwritten columns;
+   - Canonical IBM SPSS Statistics syntax generator:
+     ```text
+     RECODE age (LOWEST THRU 18=1) (19 THRU 35=2) (36 THRU 60=3) (61 THRU HIGHEST=4) (ELSE=SYSMIS) INTO age_group.
+     VARIABLE LABELS age_group "Age Group Categories".
+     EXECUTE.
+     ```
+3. **Two-Stage User Interface on DialogKit L6 (`statcraft_app::dialogs`):**
+   - Primary dialog `RecodeDialog` ($560 \times 430$ px, `DialogShell::standard`):
+     * Dual-mode operation: *Different Variables* and *Same Variables*;
+     * Left source variable list `VariablePicker` with scale icons and adaptive `TransferButton`;
+     * Central mapping list `Numeric Variable -> Output Variable:`;
+     * Output Variable properties box (`Name:`, `Label:`, `Change` button);
+     * Modal launcher button `[ Old and New Values... (N) ]`;
+     * Bottom action bar `DialogActionBar` (`[ OK ] [ Paste ] [ Reset ] [ Cancel ] [ Help ]`);
+   - Modal subdialog `Old and New Values...` (`RecodeOldNewState`):
+     * Left `Old Value` group: radio buttons for exact value, system-missing, user-missing, ranges (with `LOWEST` and `HIGHEST`), and `All other values`;
+     * Right `New Value` group: radio buttons for value, system-missing, and copying old value;
+     * Action buttons `[ Add ]`, `[ Change ]`, `[ Remove ]`;
+     * Scrollable mapping list `Old -> New:`;
+     * Bottom action bar `SubdialogActionBar` (`[ Continue ] [ Cancel ] [ Help ]`).
+4. **Integration & Reactivity:**
+   - Activated menu items `Transform -> Recode into Different Variables...` and `Transform -> Recode into Same Variables...`;
+   - Recode results immediately reflect in the `Data View` table grid and `Variable View` dictionary;
+   - Syntax logged to `Output Viewer` (Log).
+5. **Quality Control & Definition of Done:**
+   - Full automated CI quality gate passed (`cargo run -p xtask -j 1 -- ci` — 100% OK);
+   - 125+ workspace tests passing with 0 failures;
+   - Strict adherence to `file-guard` ($\le 500$ lines per file), `design-guard`, `layers`, and `parity` (31 commands);
+   - Synchronous bilingual localization (`locales/en.ftl`, `locales/ru.ftl`);
+   - Clean compilation: `cargo clippy --workspace --all-targets -j 1 -- -D warnings` — 0 warnings.

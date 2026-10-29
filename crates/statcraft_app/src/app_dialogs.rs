@@ -3,12 +3,13 @@ use super::dialogs::{
     render_anova_oneway_dialog, render_compute_dialog, render_correlations_dialog,
     render_crosstabs_dialog, render_descriptives_dialog, render_frequencies_dialog,
     render_kruskal_wallis_dialog, render_missing_values_dialog, render_nonparam_related_dialog,
-    render_nonparam_twosample_dialog, render_ttest_indep_dialog, render_ttest_onesample_dialog,
-    render_ttest_paired_dialog, render_value_labels_dialog, render_variable_type_dialog,
-    ComputeDialogAction, CorrelationsDialogAction, CrosstabsDialogAction, DescriptivesDialogAction,
-    FrequenciesDialogAction, IndependentSamplesTTestDialogAction, KruskalWallisDialogAction,
-    MissingValuesDialogAction, NonparamRelatedDialogAction, NonparamTwoSampleDialogAction,
-    OneSampleTTestDialogAction, OneWayAnovaDialogAction, PairedSamplesTTestDialogAction,
+    render_nonparam_twosample_dialog, render_recode_dialog, render_ttest_indep_dialog,
+    render_ttest_onesample_dialog, render_ttest_paired_dialog, render_value_labels_dialog,
+    render_variable_type_dialog, ComputeDialogAction, CorrelationsDialogAction,
+    CrosstabsDialogAction, DescriptivesDialogAction, FrequenciesDialogAction,
+    IndependentSamplesTTestDialogAction, KruskalWallisDialogAction, MissingValuesDialogAction,
+    NonparamRelatedDialogAction, NonparamTwoSampleDialogAction, OneSampleTTestDialogAction,
+    OneWayAnovaDialogAction, PairedSamplesTTestDialogAction, RecodeDialogAction,
     ValueLabelsDialogAction, VariableTypeDialogAction,
 };
 use serde_json::json;
@@ -705,6 +706,94 @@ impl StatCraftApp {
                 self.output_view_state.add_entry(t!("output-log"), sps);
             }
             ComputeDialogAction::None => {}
+        }
+
+        // 16. Recode Dialog
+        let recode_action =
+            render_recode_dialog(ctx, self.dataset.as_ref(), &mut self.recode_dialog_state);
+
+        match recode_action {
+            RecodeDialogAction::RunDiff { pairs, mappings } => {
+                let serialized_pairs: Vec<serde_json::Value> = pairs
+                    .iter()
+                    .map(|p| {
+                        json!({
+                            "source": p.source,
+                            "target": p.target,
+                            "label": p.label,
+                        })
+                    })
+                    .collect();
+
+                let params = json!({
+                    "pairs": serialized_pairs,
+                    "mappings": mappings,
+                });
+
+                match self
+                    .command_bus
+                    .execute("transform.recode.diff", &mut self.dataset, params)
+                {
+                    Ok(_) => {
+                        let sps_pairs: Vec<(&str, &str, Option<&str>)> = pairs
+                            .iter()
+                            .map(|p| (p.source.as_str(), p.target.as_str(), Some(p.label.as_str())))
+                            .collect();
+                        let plan = statcraft_algo::RecodePlan::new(mappings);
+                        let sps = statcraft_syntax::commands::RecodeIntoDifferentCommand::to_sps(
+                            &sps_pairs, &plan,
+                        );
+                        self.output_view_state.add_entry(t!("output-log"), sps);
+                        self.status_message = StatusMessage::RecodeExecuted { count: pairs.len() };
+                    }
+                    Err(e) => {
+                        self.status_message = StatusMessage::Error(e.to_string());
+                    }
+                }
+            }
+            RecodeDialogAction::RunSame { vars, mappings } => {
+                let params = json!({
+                    "vars": vars,
+                    "mappings": mappings,
+                });
+
+                match self
+                    .command_bus
+                    .execute("transform.recode.same", &mut self.dataset, params)
+                {
+                    Ok(_) => {
+                        let var_refs: Vec<&str> = vars.iter().map(|s| s.as_str()).collect();
+                        let plan = statcraft_algo::RecodePlan::new(mappings);
+                        let sps = statcraft_syntax::commands::RecodeIntoSameCommand::to_sps(
+                            &var_refs, &plan,
+                        );
+                        self.output_view_state.add_entry(t!("output-log"), sps);
+                        self.status_message = StatusMessage::RecodeExecuted { count: vars.len() };
+                    }
+                    Err(e) => {
+                        self.status_message = StatusMessage::Error(e.to_string());
+                    }
+                }
+            }
+            RecodeDialogAction::PasteDiff { pairs, mappings } => {
+                let sps_pairs: Vec<(&str, &str, Option<&str>)> = pairs
+                    .iter()
+                    .map(|p| (p.source.as_str(), p.target.as_str(), Some(p.label.as_str())))
+                    .collect();
+                let plan = statcraft_algo::RecodePlan::new(mappings);
+                let sps = statcraft_syntax::commands::RecodeIntoDifferentCommand::to_sps(
+                    &sps_pairs, &plan,
+                );
+                self.output_view_state.add_entry(t!("output-log"), sps);
+            }
+            RecodeDialogAction::PasteSame { vars, mappings } => {
+                let var_refs: Vec<&str> = vars.iter().map(|s| s.as_str()).collect();
+                let plan = statcraft_algo::RecodePlan::new(mappings);
+                let sps =
+                    statcraft_syntax::commands::RecodeIntoSameCommand::to_sps(&var_refs, &plan);
+                self.output_view_state.add_entry(t!("output-log"), sps);
+            }
+            RecodeDialogAction::None => {}
         }
     }
 }

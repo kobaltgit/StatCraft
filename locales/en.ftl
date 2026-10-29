@@ -683,6 +683,35 @@ dialog-compute-group-arithmetic = Arithmetic
 dialog-compute-group-statistical = Statistical
 output-compute-executed = Compute Variable '{ $target }' executed successfully ({ $rows } cases).
 
+# Recode Variables Dialog & Transform
+dialog-recode-diff-title = Recode into Different Variables
+dialog-recode-same-title = Recode into Same Variables
+dialog-recode-vars-output-vars = Numeric Variable -> Output Variable:
+dialog-recode-output-var-group = Output Variable
+dialog-recode-output-name = Name:
+dialog-recode-output-label = Label:
+dialog-recode-btn-change = Change
+dialog-recode-btn-old-new = Old and New Values...
+dialog-recode-vars-list = Variables:
+dialog-recode-old-new-title = Recode: Old and New Values
+dialog-recode-old-val-group = Old Value
+dialog-recode-new-val-group = New Value
+dialog-recode-old-val = Value:
+dialog-recode-old-sysmis = System-missing
+dialog-recode-old-missing = System- or user-missing
+dialog-recode-old-range = Range:
+dialog-recode-through = through
+dialog-recode-old-range-lowest = Range, LOWEST through value:
+dialog-recode-old-range-highest = Range, value through HIGHEST:
+dialog-recode-old-all-other = All other values
+dialog-recode-new-val = Value:
+dialog-recode-new-sysmis = System-missing
+dialog-recode-new-copy = Copy old value(s)
+dialog-recode-btn-add = Add
+dialog-recode-btn-remove = Remove
+dialog-recode-old-new-mappings-title = Old -> New:
+output-recode-executed = Recode executed successfully for { $count } variable(s).
+
 
 
 

@@ -3,7 +3,7 @@ use crate::dialogs::{
     FrequenciesDialogState, IndependentSamplesTTestDialogState, KruskalWallisDialogState,
     MissingValuesDialogState, NonparamRelatedDialogState, NonparamTwoSampleDialogState,
     OneSampleTTestDialogState, OneWayAnovaDialogState, PairedSamplesTTestDialogState,
-    ValueLabelsDialogState, VariableTypeDialogState,
+    RecodeDialogState, ValueLabelsDialogState, VariableTypeDialogState,
 };
 use crate::views::{
     render_data_view, render_output_view, render_variable_view, DataViewState, OutputViewerState,
@@ -73,6 +73,9 @@ pub enum StatusMessage {
         target: String,
         rows: usize,
     },
+    RecodeExecuted {
+        count: usize,
+    },
     Error(String),
 }
 
@@ -128,6 +131,9 @@ impl StatusMessage {
                     rows = *rows
                 )
             }
+            StatusMessage::RecodeExecuted { count } => {
+                t!("output-recode-executed", count = *count)
+            }
             StatusMessage::Error(e) => format!("{}: {}", t!("status-error"), e),
         }
     }
@@ -155,6 +161,7 @@ pub struct StatCraftApp {
     pub missing_values_dialog_state: MissingValuesDialogState,
     pub variable_type_dialog_state: VariableTypeDialogState,
     pub compute_dialog_state: ComputeDialogState,
+    pub recode_dialog_state: RecodeDialogState,
     pub pending_variable_action: VariableViewAction,
     pub status_message: StatusMessage,
     pub toolbar_position: ToolbarPosition,
@@ -190,6 +197,7 @@ impl StatCraftApp {
             missing_values_dialog_state: MissingValuesDialogState::default(),
             variable_type_dialog_state: VariableTypeDialogState::default(),
             compute_dialog_state: ComputeDialogState::default(),
+            recode_dialog_state: RecodeDialogState::default(),
             pending_variable_action: VariableViewAction::None,
             status_message: StatusMessage::Ready,
             toolbar_position: ToolbarPosition::Top,
@@ -432,16 +440,26 @@ impl StatCraftApp {
                     }
                     render_menu_item(ui, t!("menu-transform-shift"), MenuItemStatus::InDev);
                     ui.menu_button(t!("menu-transform-recode"), |ui| {
-                        render_menu_item(
+                        if render_menu_item(
                             ui,
                             t!("menu-transform-recode-diff"),
-                            MenuItemStatus::InDev,
-                        );
-                        render_menu_item(
+                            requires_dataset_status,
+                        )
+                        .clicked()
+                        {
+                            self.recode_dialog_state.open_diff();
+                            ui.close_menu();
+                        }
+                        if render_menu_item(
                             ui,
                             t!("menu-transform-recode-same"),
-                            MenuItemStatus::InDev,
-                        );
+                            requires_dataset_status,
+                        )
+                        .clicked()
+                        {
+                            self.recode_dialog_state.open_same();
+                            ui.close_menu();
+                        }
                         render_menu_item(
                             ui,
                             t!("menu-transform-auto-recode"),

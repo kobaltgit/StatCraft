@@ -22,6 +22,8 @@
 | Data > Insert Case | `data.add_row` | Done | Insert case / empty row |
 | Data > Delete Case | `data.delete_row` | Done | Delete case / row |
 | Transform > Compute Variable | `transform.compute` | Done | Expression evaluator, DialogKit calculator dialog, undo support |
+| Transform > Recode into Different Variables | `transform.recode.diff` | Done | Mapping engine (exact, ranges, sysmis, else), DialogKit dialog & Old and New Values subdialog, undo support |
+| Transform > Recode into Same Variables | `transform.recode.same` | Done | In-place recode, DialogKit dialog & Old and New Values subdialog, undo support |
 | Analyze > Descriptive Statistics > Frequencies | `stat.frequencies` | Done | Frequency tables, percentiles, quartiles, dialog & SPSS tables |
 | Analyze > Descriptive Statistics > Descriptives | `stat.descriptives` | Done | Mean, StdDev, Variance, Min, Max, Range, Skewness, Kurtosis, SE Mean, Dialog & Pivot Table |
 | Analyze > Descriptive Statistics > Crosstabs | `stat.crosstabs` | Done | Contingency tables, Pearson Chi-Square, Fisher's Exact, Continuity Correction, Likelihood Ratio, Phi & Cramér's V, DialogKit dialog & 4 authentic SPSS Pivot Tables |

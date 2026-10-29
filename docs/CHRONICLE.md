@@ -507,3 +507,60 @@
    - Дифференцированные лимиты строк `file-guard`, правила верстки `design-guard`, архитектурные слои `layers` и матрица паритета `parity` — 0 замечаний;
    - Полная двуязычная локализация (`locales/en.ftl`, `locales/ru.ftl`);
    - `cargo clippy --workspace --all-targets -j 1 -- -D warnings` — 0 предупреждений.
+
+
+---
+
+### Этап 8.2: Перекодирование значений (Recode into Same / Different Variables: `RECODE`)
+*Время: 29 октября 2026, 10:25 (~35 минут)*
+
+Реализован ключевой аналитический инструмент группировки, дискретизации и очистки данных — **Перекодирование значений** (*Recode Values*, `RECODE`, пункты меню `Преобразование -> Перекодировать в другие переменные...` и `Преобразование -> Перекодировать в те же переменные...`):
+1. **Математический движок сопоставления правил L2 (`statcraft_algo::recode`):**
+   - Гибкие спецификации исходных значений `OldValueRule`:
+     * Точное числовое значение (`Exact(f64)`);
+     * Системный пропуск (`SysMissing`);
+     * Системные и пользовательские пропущенные значения (`SystemOrUserMissing`);
+     * Диапазон от $A$ до $B$ включительно (`Range(low, high)`);
+     * Диапазон от минимального до $A$ (`RangeLowest(high)`);
+     * Диапазон от $A$ до максимального (`RangeHighest(low)`);
+     * Все остальные значения (`AllOther` / `ELSE`);
+   - Спецификации новых значений `NewValueSpec`:
+     * Новое числовое значение (`Value(f64)`);
+     * Системный пропуск (`SysMissing`);
+     * Копирование исходного значения (`CopyOld`);
+   - Последовательное применение правил (первое совпадение побеждает), сохранение исходного значения без изменений при отсутствии совпадений (SPSS-канон);
+   - Защита **Never Crash**: безопасная обработка `NaN`, пропусков и краевых диапазонов; 100% покрытие тестами.
+2. **Командная шина L5 (`statcraft_syntax::commands::recode_diff_cmd` & `recode_same_cmd`):**
+   - Команда `RecodeIntoDifferentCommand` (`transform.recode.diff`): перекодирование одной или нескольких пар `source -> target` в новые или существующие переменные;
+   - Команда `RecodeIntoSameCommand` (`transform.recode.same`): перекодирование значений по месту (*in-place*);
+   - Полная поддержка `Undo` (`Ctrl+Z`) и `Redo`: автоматическое удаление созданных колонок либо восстановление снимков значений и метаданных для перезаписанных колонок;
+   - Генерация канонического синтаксиса IBM SPSS Statistics:
+     ```text
+     RECODE age (LOWEST THRU 18=1) (19 THRU 35=2) (36 THRU 60=3) (61 THRU HIGHEST=4) (ELSE=SYSMIS) INTO age_group.
+     VARIABLE LABELS age_group "Age Group Categories".
+     EXECUTE.
+     ```
+3. **Двухступенчатый интерфейс на DialogKit L6 (`statcraft_app::dialogs`):**
+   - Главный диалог `RecodeDialog` ($560 \times 430$ px, `DialogShell::standard`):
+     * Поддержка двух режимов: *Different Variables* и *Same Variables*;
+     * Левая панель выбора доступных переменных `VariablePicker` с иконками шкал и кнопками переноса `TransferButton`;
+     * Список сопоставлений `Numeric Variable -> Output Variable:`;
+     * Блок свойств целевой переменной `Output Variable` (`Name:`, `Label:`, кнопка `Change`);
+     * Кнопка вызова поддиалога `[ Old and New Values... (N) ]`;
+     * Нижний ряд `DialogActionBar` (`[ OK ] [ Paste ] [ Reset ] [ Cancel ] [ Help ]`);
+   - Модальный поддиалог `Old and New Values...` (`RecodeOldNewState`):
+     * Левый блок `Old Value`: радиокнопки точного значения, пропусков, диапазонов (включая `LOWEST` и `HIGHEST`), и `All other values`;
+     * Правый блок `New Value`: радиокнопки нового значения, пропуска и копирования старого;
+     * Кнопки редактирования списка сопоставлений `[ Add ]`, `[ Change ]`, `[ Remove ]`;
+     * Прокручиваемый список активных правил `Old -> New:`;
+     * Нижняя панель действий `SubdialogActionBar` (`[ Continue ] [ Cancel ] [ Help ]`).
+4. **Интеграция и реактивность:**
+   - Активированы пункты меню `Transform -> Recode into Different Variables...` и `Transform -> Recode into Same Variables...`;
+   - Результаты перекодирования мгновенно отражаются в таблице данных `Data View` и словаре `Variable View`;
+   - Журналирование синтаксиса `RECODE` в `Output Viewer` (Log).
+5. **Контроль качества (Definition of Done):**
+   - Прогон полного пайплайна качества `cargo run -p xtask -j 1 -- ci` — 100% OK;
+   - 125+ тестов воркспейса завершились успешно (0 сбоев);
+   - Полное соблюдение `file-guard` ($\le 500$ строк на файл), `design-guard`, `layers`, `parity` (31 команда);
+   - Синхронная локализация (`locales/en.ftl`, `locales/ru.ftl`);
+   - `cargo clippy --workspace --all-targets -j 1 -- -D warnings` — 0 предупреждений.

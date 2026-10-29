@@ -3,18 +3,19 @@ use statcraft_app::dialogs::{
     render_anova_oneway_dialog, render_compute_dialog, render_correlations_dialog,
     render_crosstabs_dialog, render_descriptives_dialog, render_frequencies_dialog,
     render_kruskal_wallis_dialog, render_missing_values_dialog, render_nonparam_related_dialog,
-    render_nonparam_twosample_dialog, render_ttest_indep_dialog, render_ttest_onesample_dialog,
-    render_ttest_paired_dialog, render_value_labels_dialog, render_variable_type_dialog,
-    ComputeDialogAction, ComputeDialogState, CorrelationsDialogAction, CorrelationsDialogState,
-    CrosstabsDialogAction, CrosstabsDialogState, DescriptivesDialogAction, DescriptivesDialogState,
-    FrequenciesDialogAction, FrequenciesDialogState, IndependentSamplesTTestDialogAction,
-    IndependentSamplesTTestDialogState, KruskalWallisDialogAction, KruskalWallisDialogState,
-    MissingValuesDialogAction, MissingValuesDialogState, NonparamRelatedDialogAction,
-    NonparamRelatedDialogState, NonparamTwoSampleDialogAction, NonparamTwoSampleDialogState,
-    OneSampleTTestDialogAction, OneSampleTTestDialogState, OneWayAnovaDialogAction,
-    OneWayAnovaDialogState, PairedSamplesTTestDialogAction, PairedSamplesTTestDialogState,
-    ValueLabelsDialogAction, ValueLabelsDialogState, VariableTypeDialogAction,
-    VariableTypeDialogState,
+    render_nonparam_twosample_dialog, render_recode_dialog, render_ttest_indep_dialog,
+    render_ttest_onesample_dialog, render_ttest_paired_dialog, render_value_labels_dialog,
+    render_variable_type_dialog, ComputeDialogAction, ComputeDialogState, CorrelationsDialogAction,
+    CorrelationsDialogState, CrosstabsDialogAction, CrosstabsDialogState, DescriptivesDialogAction,
+    DescriptivesDialogState, FrequenciesDialogAction, FrequenciesDialogState,
+    IndependentSamplesTTestDialogAction, IndependentSamplesTTestDialogState,
+    KruskalWallisDialogAction, KruskalWallisDialogState, MissingValuesDialogAction,
+    MissingValuesDialogState, NonparamRelatedDialogAction, NonparamRelatedDialogState,
+    NonparamTwoSampleDialogAction, NonparamTwoSampleDialogState, OneSampleTTestDialogAction,
+    OneSampleTTestDialogState, OneWayAnovaDialogAction, OneWayAnovaDialogState,
+    PairedSamplesTTestDialogAction, PairedSamplesTTestDialogState, RecodeDialogAction,
+    RecodeDialogState, RecodeMode, RecodePair, ValueLabelsDialogAction, ValueLabelsDialogState,
+    VariableTypeDialogAction, VariableTypeDialogState,
 };
 use statcraft_core::{DataSet, DataType, Measure, MissingValues};
 use std::collections::BTreeMap;
@@ -407,4 +408,54 @@ fn test_headless_render_compute_dialog() {
     assert_eq!(state.target_var, "diff");
     assert_eq!(state.expression, "post_score - pre_score");
     assert_eq!(state.label, "Score Difference");
+}
+
+#[test]
+fn test_headless_render_recode_dialog_diff() {
+    let ds = create_test_dataset();
+    let ctx = egui::Context::default();
+    let mut state = RecodeDialogState {
+        is_open: true,
+        mode: RecodeMode::Different,
+        pairs: vec![RecodePair {
+            source: "salary".to_string(),
+            target: "sal_cat".to_string(),
+            label: "Salary Categories".to_string(),
+        }],
+        output_name: "sal_cat".to_string(),
+        output_label: "Salary Categories".to_string(),
+        selected_pair_idx: Some(0),
+        ..Default::default()
+    };
+
+    let _ = ctx.run(Default::default(), |ctx| {
+        let action = render_recode_dialog(ctx, Some(&ds), &mut state);
+        assert!(matches!(action, RecodeDialogAction::None));
+    });
+
+    assert!(state.is_open);
+    assert_eq!(state.pairs.len(), 1);
+    assert_eq!(state.pairs[0].source, "salary");
+    assert_eq!(state.pairs[0].target, "sal_cat");
+}
+
+#[test]
+fn test_headless_render_recode_dialog_same() {
+    let ds = create_test_dataset();
+    let ctx = egui::Context::default();
+    let mut state = RecodeDialogState {
+        is_open: true,
+        mode: RecodeMode::Same,
+        selected_vars: vec!["salary".to_string(), "pre_score".to_string()],
+        selected_var_idx: Some(0),
+        ..Default::default()
+    };
+
+    let _ = ctx.run(Default::default(), |ctx| {
+        let action = render_recode_dialog(ctx, Some(&ds), &mut state);
+        assert!(matches!(action, RecodeDialogAction::None));
+    });
+
+    assert!(state.is_open);
+    assert_eq!(state.selected_vars.len(), 2);
 }

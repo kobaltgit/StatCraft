@@ -683,6 +683,35 @@ dialog-compute-group-arithmetic = Арифметика
 dialog-compute-group-statistical = Статистические
 output-compute-executed = Вычисление переменной '{ $target }' успешно выполнено ({ $rows } наблюдений).
 
+# Recode Variables Dialog & Transform
+dialog-recode-diff-title = Перекодировать в другие переменные
+dialog-recode-same-title = Перекодировать в те же переменные
+dialog-recode-vars-output-vars = Исходная переменная -> Выходная переменная:
+dialog-recode-output-var-group = Выходная переменная
+dialog-recode-output-name = Имя:
+dialog-recode-output-label = Метка:
+dialog-recode-btn-change = Изменить
+dialog-recode-btn-old-new = Старые и новые значения...
+dialog-recode-vars-list = Переменные:
+dialog-recode-old-new-title = Перекодирование: старые и новые значения
+dialog-recode-old-val-group = Старое значение
+dialog-recode-new-val-group = Новое значение
+dialog-recode-old-val = Значение:
+dialog-recode-old-sysmis = Системный пропуск
+dialog-recode-old-missing = Системные или пользовательские пропуски
+dialog-recode-old-range = Диапазон:
+dialog-recode-through = по
+dialog-recode-old-range-lowest = Диапазон: от НАИМЕНЬШЕГО по:
+dialog-recode-old-range-highest = Диапазон: от значения по НАИБОЛЬШЕЕ:
+dialog-recode-old-all-other = Все остальные значения
+dialog-recode-new-val = Значение:
+dialog-recode-new-sysmis = Системный пропуск
+dialog-recode-new-copy = Скопировать старые значения
+dialog-recode-btn-add = Добавить
+dialog-recode-btn-remove = Удалить
+dialog-recode-old-new-mappings-title = Старое -> Новое:
+output-recode-executed = Перекодирование успешно выполнено для { $count } переменных.
+
 
 
 

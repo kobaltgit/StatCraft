@@ -11,6 +11,8 @@ pub mod missing_values_dialog;
 pub mod nonparam_define_groups;
 pub mod nonparam_related_dialog;
 pub mod nonparam_twosample_dialog;
+pub mod recode_dialog;
+pub mod recode_old_new_dialog;
 pub mod ttest_indep_define_groups;
 pub mod ttest_indep_dialog;
 pub mod ttest_onesample_dialog;
@@ -48,6 +50,12 @@ pub use nonparam_related_dialog::{
 };
 pub use nonparam_twosample_dialog::{
     render_nonparam_twosample_dialog, NonparamTwoSampleDialogAction, NonparamTwoSampleDialogState,
+};
+pub use recode_dialog::{
+    render_recode_dialog, RecodeDialogAction, RecodeDialogState, RecodeMode, RecodePair,
+};
+pub use recode_old_new_dialog::{
+    render_recode_old_new_dialog, NewValueType, OldValueType, RecodeOldNewAction, RecodeOldNewState,
 };
 pub use ttest_indep_dialog::{
     render_ttest_indep_dialog, IndependentSamplesTTestDialogAction,
