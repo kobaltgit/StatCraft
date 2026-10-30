@@ -1,7 +1,9 @@
-name: Release
+name: Build & Release
 
 on:
   push:
+    branches:
+      - main
     tags:
       - 'v*'
   workflow_dispatch:
@@ -83,7 +85,16 @@ jobs:
           Compress-Archive -Path staging/* -DestinationPath dist/${{ matrix.archive_name }}
 
           # 2. Inno Setup Installer
-          & "C:\Program Files (x86)\Inno Setup 6\ISCC.exe" packaging/windows/installer.iss
+          if (Get-Command iscc -ErrorAction SilentlyContinue) {
+            iscc packaging/windows/installer.iss
+          } elseif (Test-Path "C:\Program Files (x86)\Inno Setup 6\ISCC.exe") {
+            & "C:\Program Files (x86)\Inno Setup 6\ISCC.exe" packaging/windows/installer.iss
+          } elseif (Test-Path "C:\Program Files\Inno Setup 6\ISCC.exe") {
+            & "C:\Program Files\Inno Setup 6\ISCC.exe" packaging/windows/installer.iss
+          } else {
+            choco install innosetup --no-progress -y
+            & "C:\Program Files (x86)\Inno Setup 6\ISCC.exe" packaging/windows/installer.iss
+          }
 
       - name: Package Linux Artifacts (Portable & .deb Installer)
         if: matrix.target_os == 'linux'
@@ -157,14 +168,17 @@ EOF
           cp -r locales StatCraft.app/Contents/MacOS/
 
           mkdir -p icon.iconset
-          cp assets/icon-16.png icon.iconset/icon_16x16.png
-          cp assets/icon-32.png icon.iconset/icon_16x16@2x.png
-          cp assets/icon-32.png icon.iconset/icon_32x32.png
-          cp assets/icon-64.png icon.iconset/icon_32x32@2x.png
-          cp assets/icon-128.png icon.iconset/icon_128x128.png
-          cp assets/icon-256.png icon.iconset/icon_128x128@2x.png
-          cp assets/icon-256.png icon.iconset/icon_256x256.png
-          iconutil -c icns icon.iconset -o StatCraft.app/Contents/Resources/icon.icns
+          sips -z 16 16 assets/icon-256.png --out icon.iconset/icon_16x16.png || cp assets/icon-16.png icon.iconset/icon_16x16.png
+          sips -z 32 32 assets/icon-256.png --out icon.iconset/icon_16x16@2x.png || cp assets/icon-32.png icon.iconset/icon_16x16@2x.png
+          sips -z 32 32 assets/icon-256.png --out icon.iconset/icon_32x32.png || cp assets/icon-32.png icon.iconset/icon_32x32.png
+          sips -z 64 64 assets/icon-256.png --out icon.iconset/icon_32x32@2x.png || cp assets/icon-64.png icon.iconset/icon_32x32@2x.png
+          sips -z 128 128 assets/icon-256.png --out icon.iconset/icon_128x128.png || cp assets/icon-128.png icon.iconset/icon_128x128.png
+          sips -z 256 256 assets/icon-256.png --out icon.iconset/icon_128x128@2x.png || cp assets/icon-256.png icon.iconset/icon_128x128@2x.png
+          sips -z 256 256 assets/icon-256.png --out icon.iconset/icon_256x256.png || cp assets/icon-256.png icon.iconset/icon_256x256.png
+          sips -z 512 512 assets/icon-256.png --out icon.iconset/icon_256x256@2x.png || true
+          sips -z 512 512 assets/icon-256.png --out icon.iconset/icon_512x512.png || true
+          sips -z 1024 1024 assets/icon-256.png --out icon.iconset/icon_512x512@2x.png || true
+          iconutil -c icns icon.iconset -o StatCraft.app/Contents/Resources/icon.icns || true
 
           mkdir -p dmg_root
           cp -r StatCraft.app dmg_root/
