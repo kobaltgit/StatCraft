@@ -1,4 +1,4 @@
-name: Build & Release
+name: "Release"
 
 on:
   push:
@@ -31,28 +31,36 @@ jobs:
         include:
           - os: windows-latest
             target_os: windows
+            target_arch: ""
             asset_name: statcraft-windows-x64
             archive_name: statcraft-windows-x64.zip
             installer_name: statcraft-windows-x64-installer.exe
             binary_name: statcraft_app.exe
+            binary_path: target/release/statcraft_app.exe
           - os: ubuntu-22.04
             target_os: linux
+            target_arch: ""
             asset_name: statcraft-linux-x64
             archive_name: statcraft-linux-x64.tar.gz
             installer_name: statcraft-linux-x64.deb
             binary_name: statcraft_app
+            binary_path: target/release/statcraft_app
           - os: macos-latest
             target_os: macos
+            target_arch: "aarch64-apple-darwin"
             asset_name: statcraft-macos-arm64
             archive_name: statcraft-macos-arm64.tar.gz
             installer_name: statcraft-macos-arm64.dmg
             binary_name: statcraft_app
-          - os: macos-13
+            binary_path: target/aarch64-apple-darwin/release/statcraft_app
+          - os: macos-latest
             target_os: macos
+            target_arch: "x86_64-apple-darwin"
             asset_name: statcraft-macos-x64
             archive_name: statcraft-macos-x64.tar.gz
             installer_name: statcraft-macos-x64.dmg
             binary_name: statcraft_app
+            binary_path: target/x86_64-apple-darwin/release/statcraft_app
 
     steps:
       - name: Checkout repository
@@ -66,9 +74,23 @@ jobs:
 
       - name: Setup Rust toolchain
         uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: ${{ matrix.target_arch }}
 
-      - name: Build StatCraft in Release Mode
+      - name: Build StatCraft in Release Mode (Windows)
+        if: matrix.target_os == 'windows'
+        shell: pwsh
         run: cargo build --package statcraft_app --release -j 1
+
+      - name: Build StatCraft in Release Mode (Unix)
+        if: matrix.target_os != 'windows'
+        shell: bash
+        run: |
+          if [ -n "${{ matrix.target_arch }}" ]; then
+            cargo build --package statcraft_app --release --target ${{ matrix.target_arch }} -j 1
+          else
+            cargo build --package statcraft_app --release -j 1
+          fi
 
       - name: Package Windows Artifacts (Portable & Installer)
         if: matrix.target_os == 'windows'
@@ -76,7 +98,7 @@ jobs:
         run: |
           # 1. Portable ZIP
           New-Item -ItemType Directory -Force -Path staging
-          Copy-Item target/release/${{ matrix.binary_name }} staging/
+          Copy-Item ${{ matrix.binary_path }} staging/
           Copy-Item -Recurse locales staging/locales
           Copy-Item README.md staging/
           Copy-Item README.ru.md staging/
@@ -102,7 +124,7 @@ jobs:
         run: |
           # 1. Portable TAR.GZ
           mkdir -p staging
-          cp target/release/${{ matrix.binary_name }} staging/
+          cp ${{ matrix.binary_path }} staging/
           chmod +x staging/${{ matrix.binary_name }}
           cp -r locales staging/
           cp README.md staging/
@@ -120,7 +142,7 @@ jobs:
           mkdir -p "$DEB_DIR/usr/share/icons/hicolor/scalable/apps"
           mkdir -p "$DEB_DIR/usr/share/icons/hicolor/256x256/apps"
 
-          cp target/release/${{ matrix.binary_name }} "$DEB_DIR/usr/bin/"
+          cp ${{ matrix.binary_path }} "$DEB_DIR/usr/bin/${{ matrix.binary_name }}"
           chmod +x "$DEB_DIR/usr/bin/${{ matrix.binary_name }}"
           cp -r locales "$DEB_DIR/usr/share/statcraft/"
           cp README.md README.ru.md LICENSE-MIT "$DEB_DIR/usr/share/statcraft/"
@@ -149,7 +171,7 @@ EOF
         run: |
           # 1. Portable TAR.GZ
           mkdir -p staging
-          cp target/release/${{ matrix.binary_name }} staging/
+          cp ${{ matrix.binary_path }} staging/${{ matrix.binary_name }}
           chmod +x staging/${{ matrix.binary_name }}
           cp -r locales staging/
           cp README.md staging/
@@ -161,7 +183,7 @@ EOF
           # 2. macOS Application Bundle & DMG Installer
           mkdir -p StatCraft.app/Contents/MacOS
           mkdir -p StatCraft.app/Contents/Resources/locales
-          cp target/release/${{ matrix.binary_name }} StatCraft.app/Contents/MacOS/
+          cp ${{ matrix.binary_path }} StatCraft.app/Contents/MacOS/${{ matrix.binary_name }}
           chmod +x StatCraft.app/Contents/MacOS/${{ matrix.binary_name }}
           cp packaging/macos/Info.plist StatCraft.app/Contents/
           cp -r locales/* StatCraft.app/Contents/Resources/locales/
