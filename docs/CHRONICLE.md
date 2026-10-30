@@ -1719,3 +1719,28 @@
    - `cargo clippy --workspace -j 1 -- -D warnings` — 0 предупреждений;
    - `cargo test --workspace -j 1` — 100% успешный прогон всех тестов воркспейса.
 
+---
+
+### Версия 0.2.0: Мультиплатформенная сборка бинарников под все ОС (Windows, Linux, macOS)
+*Время: 30 октября 2026, 14:15 (~15 минут)*
+
+Реализован релиз версии **0.2.0** и настроен автоматизированный CI/CD пайплайн сборки дистрибутивов под все ключевые настольные операционные системы:
+
+1. **Повышение версии экосистемы до 0.2.0:**
+   - Обновлен корень воркспейса `Cargo.toml`: `version = "0.2.0"`;
+   - Крейты `statcraft_reporting` и `xtask` переведены на сквозное наследование `version.workspace = true`;
+   - Синхронизированы метаданные пакетов во всем воркспейсе.
+
+2. **GitHub Actions Workflow кроссплатформенной сборки (`.github/workflows/release.yml`):**
+   - Настроена матричная сборка для всех целевых платформ:
+     * **Windows x64** (`windows-latest`, `x86_64-pc-windows-msvc`): архив `statcraft-windows-x64.zip`;
+     * **Linux x64** (`ubuntu-22.04`, `x86_64-unknown-linux-gnu`): установка системных библиотек X11/Wayland dev, архив `statcraft-linux-x64.tar.gz`;
+     * **macOS Apple Silicon** (`macos-latest`, `aarch64-apple-darwin`): архитектура ARM64 (M1/M2/M3/M4), архив `statcraft-macos-arm64.tar.gz`;
+     * **macOS Intel** (`macos-13`, `x86_64-apple-darwin`): архитектура x86_64, архив `statcraft-macos-x64.tar.gz`;
+   - Все дистрибутивы автоматически комплектуются каталогами внешних локализаций Fluent (`locales/`), документацией (`README.md`, `README.ru.md`) и файлом лицензии `LICENSE-MIT`;
+   - Автоматическая публикация GitHub Release через `softprops/action-gh-release@v2` при пуше тега `v*` или ручном запуске через `workflow_dispatch` с прикреплением всех 4 архивов без race conditions.
+
+3. **Контроль качества (Definition of Done):**
+   - Строгое соблюдение Resource Guard (`-j 1` во всех шагах компиляции);
+   - 100% успешный локальный прогон CI-шлюза (`cargo run -p xtask -j 1 -- ci`).
+

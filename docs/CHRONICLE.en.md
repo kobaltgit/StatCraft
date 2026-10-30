@@ -2431,3 +2431,28 @@ Implemented the supervised discretization procedure of continuous attributes fro
    - `cargo clippy --workspace -j 1 -- -D warnings` — 0 warnings;
    - `cargo test --workspace -j 1` — 100% passing test suite across the entire workspace.
 
+---
+
+### Version 0.2.0: Multi-Platform Binary Builds Across All OSes (Windows, Linux, macOS)
+*Time: October 30, 2026, 14:15 (~15 minutes)*
+
+Released version **0.2.0** and configured an automated CI/CD pipeline for building desktop release distributions across all key platforms:
+
+1. **Ecosystem Version Bump to 0.2.0:**
+   - Updated workspace root `Cargo.toml`: `version = "0.2.0"`;
+   - Updated crates `statcraft_reporting` and `xtask` to inherit `version.workspace = true`;
+   - Synchronized package metadata across all workspace members.
+
+2. **Cross-Platform GitHub Actions Release Workflow (`.github/workflows/release.yml`):**
+   - Configured matrix builds for all target desktop environments:
+     * **Windows x64** (`windows-latest`, `x86_64-pc-windows-msvc`): generates `statcraft-windows-x64.zip`;
+     * **Linux x64** (`ubuntu-22.04`, `x86_64-unknown-linux-gnu`): installs system X11/Wayland dev libraries, generates `statcraft-linux-x64.tar.gz`;
+     * **macOS Apple Silicon** (`macos-latest`, `aarch64-apple-darwin`): ARM64 architecture (M1/M2/M3/M4), generates `statcraft-macos-arm64.tar.gz`;
+     * **macOS Intel** (`macos-13`, `x86_64-apple-darwin`): x86_64 architecture, generates `statcraft-macos-x64.tar.gz`;
+   - All bundles are packaged with external Fluent translation catalogs (`locales/`), documentation (`README.md`, `README.ru.md`), and license `LICENSE-MIT`;
+   - Automated GitHub Release publication using `softprops/action-gh-release@v2` triggered by `v*` tag push or manual `workflow_dispatch`, attaching all 4 archives in a single step without race conditions.
+
+3. **Quality Control (Definition of Done):**
+   - Strict adherence to Resource Guard (`-j 1` across all compilation steps);
+   - 100% passing local CI quality gate (`cargo run -p xtask -j 1 -- ci`).
+
