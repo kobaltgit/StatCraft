@@ -152,6 +152,7 @@ cargo run -p xtask -j 1 -- parity
 
 ## Documentation
 
+* [Contributor Guide (CONTRIBUTING.md)](CONTRIBUTING.md) — Comprehensive development regulations, Resource Guard (-j 1), architecture rules, and Definition of Done.
 * [SPSS Feature Parity Checklist](docs/parity-checklist.md) — Comprehensive tracking of implemented SPSS commands and menus.
 * [Strategic Roadmap](docs/ROADMAP.md) — Long-term technical phases and module milestones.
 * [Canonical Design Guide](docs/DESIGN_GUIDE.md) — Standard layout specifications for all modal dialogs (`DialogKit`).

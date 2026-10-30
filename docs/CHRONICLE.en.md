@@ -2457,3 +2457,21 @@ Released version **0.2.0** and configured an automated CI/CD pipeline for buildi
    - Strict adherence to Resource Guard (`-j 1` across all compilation steps);
    - 100% passing local CI quality gate (`cargo run -p xtask -j 1 -- ci`).
 
+---
+
+### Regulations: Comprehensive Contributor Guide (`CONTRIBUTING.md`)
+*Time: October 30, 2026, 16:35 (~15 minutes)*
+
+Authored the exhaustive Contributor Guide for StatCraft — **`CONTRIBUTING.md`**, formalizing the ArtCraft / storytold ecosystem standards:
+
+1. **Ecosystem Foundations:** 100% Safe Rust (`#![forbid(unsafe_code)]`), prohibition of manual JS/TS, dual MIT / Apache-2.0 licensing, and Clean-Room principles without SPSS proprietary code.
+2. **Resource Guard:** Iron rule of single-threaded compilation (`-j 1`) to preserve developer and CI resources.
+3. **Never Crash:** Complete ban on panics (`unwrap`, `expect`, `panic!`, `todo!`), typed `Result<T, E>` error propagation, and defensive boundary checking.
+4. **Layering (L0..L6) & CommandBus:** Strict downward dependency hierarchy (`statcraft_io` $\to$ `core` $\to$ `algo` $\to$ `reporting` $\to$ `syntax` $\to$ `app`), typed engine commands with Undo/Redo history and `.sps` syntax equivalence.
+5. **DialogKit & Vector-First UI:** Canonical modal layout specifications, prohibition of emoji and unsupported Unicode glyphs, rendering via vector primitives.
+6. **Zero-Hardcode i18n:** Zero natural language literals in GUI code, mandatory semantic keys `t!("...")` with synchronized Fluent `locales/*.ftl` bundles.
+7. **File Size Guard:** Strict line ceilings (500 / 1000 / 1500) and the "Decompose, don't prune" architectural principle.
+8. **Testing & Golden Oracle:** Mathematical precision verified against SciPy ($\le 10^{-6}$) and UI invariant test suites.
+9. **Automated Audit & Definition of Done:** Single-command quality gate `cargo run -p xtask -j 1 -- ci`, DoD checklist, and a 5-step procedure creation cookbook.
+10. **Integration:** Linked from both `README.md` and `README.ru.md`.
+

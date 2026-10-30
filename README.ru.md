@@ -152,6 +152,7 @@ cargo run -p xtask -j 1 -- parity
 
 ## Документация
 
+* [Руководство контрибьютора (CONTRIBUTING.md)](CONTRIBUTING.md) — Исчерпывающий регламент разработки, Resource Guard (-j 1), архитектурные слои и Definition of Done.
 * [Чек-лист паритета с SPSS (Parity Checklist)](docs/parity-checklist.md) — Детальное отслеживание соответствия команд и меню SPSS.
 * [Дорожная карта (Roadmap)](docs/ROADMAP.md) — Долгосрочные технические фазы и этапы развития.
 * [Руководство по дизайну окон (Design Guide)](docs/DESIGN_GUIDE.md) — Стандарт компоновки диалоговых окон (`DialogKit`).
