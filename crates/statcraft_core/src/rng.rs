@@ -48,7 +48,7 @@ mod tests {
         assert_eq!(get_global_random_seed(), None);
 
         let effective_random = get_effective_random_seed();
-        assert!(effective_random >= 1 && effective_random <= 2_000_000_000);
+        assert!((1..=2_000_000_000).contains(&effective_random));
 
         set_global_random_seed(123_456);
         assert_eq!(get_global_random_seed(), Some(123_456));
