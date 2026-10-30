@@ -813,6 +813,9 @@ fn test_output_viewer_linear_regression_item_and_tsv() {
 
 #[test]
 fn test_reliability_output_and_tsv_integrity() {
+    let _ = statcraft_i18n::init_i18n();
+    statcraft_i18n::set_language("en");
+
     let ctx = egui::Context::default();
     let mut state = OutputViewerState::new();
 
@@ -873,17 +876,35 @@ fn test_reliability_output_and_tsv_integrity() {
     });
 
     let tsv = reliability_to_tsv(&sample_rel);
-    assert!(tsv.contains("Case Processing Summary"));
-    assert!(tsv.contains("Reliability Statistics"));
-    assert!(tsv.contains("Item Statistics"));
-    assert!(tsv.contains("Item-Total Statistics"));
-    assert!(tsv.contains("Scale Statistics"));
+    assert!(
+        tsv.contains("Case Processing Summary") || tsv.contains("Сводка обработки наблюдений"),
+        "Missing Case Processing Summary in TSV: {tsv}"
+    );
+    assert!(
+        tsv.contains("Reliability Statistics") || tsv.contains("Статистика надежности"),
+        "Missing Reliability Statistics in TSV: {tsv}"
+    );
+    assert!(
+        tsv.contains("Item Statistics") || tsv.contains("Статистика пунктов"),
+        "Missing Item Statistics in TSV: {tsv}"
+    );
+    assert!(
+        tsv.contains("Item-Total Statistics") || tsv.contains("Статистика пункт-итог"),
+        "Missing Item-Total Statistics in TSV: {tsv}"
+    );
+    assert!(
+        tsv.contains("Scale Statistics") || tsv.contains("Статистика шкалы"),
+        "Missing Scale Statistics in TSV: {tsv}"
+    );
     assert!(tsv.contains("0.854"));
     assert!(tsv.contains("0.862"));
 }
 
 #[test]
 fn test_factor_output_and_tsv_integrity() {
+    let _ = statcraft_i18n::init_i18n();
+    statcraft_i18n::set_language("en");
+
     let ctx = egui::Context::default();
     let mut state = OutputViewerState::new();
 
@@ -914,6 +935,9 @@ fn test_factor_output_and_tsv_integrity() {
 
 #[test]
 fn test_means_output_and_tsv_integrity() {
+    let _ = statcraft_i18n::init_i18n();
+    statcraft_i18n::set_language("en");
+
     let ctx = egui::Context::default();
     let mut state = OutputViewerState::new();
     let sample = sample_means();

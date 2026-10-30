@@ -1763,3 +1763,15 @@
 9. **Автоматический аудит и Definition of Done:** Единая команда `cargo run -p xtask -j 1 -- ci`, чек-лист сдачи задач, пошаговый рецепт добавления новой процедуры (Cookbook).
 10. **Интеграция:** Ссылки на руководство добавлены в `README.md` и `README.ru.md`.
 
+---
+
+### Исправление дефекта: Изоляция локали в тестах инвариантов Output Viewer
+*Время: 30 октября 2026, 17:25 (~10 минут)*
+
+Устранен недетерминированный сбой в тесте `test_reliability_output_and_tsv_integrity` в Linux CI Quality Gate:
+1. **Первопричина:** По умолчанию каталог локализации `I18nCatalog` инициализируется русской локалью (`ru`). В тесте `test_reliability_output_and_tsv_integrity` отсутствовал вызов `statcraft_i18n::set_language("en")`. При параллельном или произвольном порядке выполнения тестов на разных платформах вызовы `reliability_to_tsv` возвращали локализованные русские заголовки (`Сводка обработки наблюдений`), из-за чего проверка английской строки `Case Processing Summary` падала на Linux-раннере.
+2. **Исправление:**
+   - В тесты `test_reliability_output_and_tsv_integrity`, `test_factor_output_and_tsv_integrity` и `test_means_output_and_tsv_integrity` добавлена явная инициализация английской локали `statcraft_i18n::set_language("en")`;
+   - Проверки заголовков TSV дополнены поддержкой обеих канонических локалей (EN/RU) для исключения любых race conditions;
+   - Полный прогон `cargo run -p xtask -j 1 -- ci` завершился со 100% успехом.
+

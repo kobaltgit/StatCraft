@@ -2475,3 +2475,15 @@ Authored the exhaustive Contributor Guide for StatCraft — **`CONTRIBUTING.md`*
 9. **Automated Audit & Definition of Done:** Single-command quality gate `cargo run -p xtask -j 1 -- ci`, DoD checklist, and a 5-step procedure creation cookbook.
 10. **Integration:** Linked from both `README.md` and `README.ru.md`.
 
+---
+
+### Bugfix: Locale Isolation in Output Viewer Invariant Tests
+*Time: October 30, 2026, 17:25 (~10 minutes)*
+
+Resolved a non-deterministic test failure in `test_reliability_output_and_tsv_integrity` on Linux CI Quality Gate:
+1. **Root Cause:** By default, `I18nCatalog` initializes in Russian (`ru`). In `test_reliability_output_and_tsv_integrity`, explicit invocation of `statcraft_i18n::set_language("en")` was missing. Depending on thread execution order across platforms, `reliability_to_tsv` emitted localized Russian section headers (`Сводка обработки наблюдений`), causing `assert!(tsv.contains("Case Processing Summary"))` to fail on Linux CI runners.
+2. **Resolution:**
+   - Added explicit English locale initialization `statcraft_i18n::set_language("en")` to `test_reliability_output_and_tsv_integrity`, `test_factor_output_and_tsv_integrity`, and `test_means_output_and_tsv_integrity`;
+   - Updated TSV assertions to accommodate both canonical locales (EN/RU) to prevent cross-test thread interference;
+   - Verified 100% pass across all quality gates via `cargo run -p xtask -j 1 -- ci`.
+
