@@ -2444,13 +2444,14 @@ Released version **0.2.0** and configured an automated CI/CD pipeline for buildi
    - Synchronized package metadata across all workspace members.
 
 2. **Cross-Platform GitHub Actions Release Workflow (`.github/workflows/release.yml`):**
-   - Configured matrix builds for all target desktop environments:
-     * **Windows x64** (`windows-latest`, `x86_64-pc-windows-msvc`): generates `statcraft-windows-x64.zip`;
-     * **Linux x64** (`ubuntu-22.04`, `x86_64-unknown-linux-gnu`): installs system X11/Wayland dev libraries, generates `statcraft-linux-x64.tar.gz`;
-     * **macOS Apple Silicon** (`macos-latest`, `aarch64-apple-darwin`): ARM64 architecture (M1/M2/M3/M4), generates `statcraft-macos-arm64.tar.gz`;
-     * **macOS Intel** (`macos-13`, `x86_64-apple-darwin`): x86_64 architecture, generates `statcraft-macos-x64.tar.gz`;
+   - Configured matrix builds for both portable archives and native system installers across all target environments:
+     * **Windows x64** (`windows-latest`, `x86_64-pc-windows-msvc`): portable archive `statcraft-windows-x64.zip` and full Inno Setup installer `statcraft-windows-x64-installer.exe` (`packaging/windows/installer.iss`);
+     * **Linux x64** (`ubuntu-22.04`, `x86_64-unknown-linux-gnu`): portable archive `statcraft-linux-x64.tar.gz` and Debian/Ubuntu installer package `statcraft-linux-x64.deb` with application menu integration (`packaging/linux/statcraft.desktop`);
+     * **macOS Apple Silicon** (`macos-latest`, `aarch64-apple-darwin`): portable archive `statcraft-macos-arm64.tar.gz` and mountable DMG image `statcraft-macos-arm64.dmg` with `StatCraft.app` bundle (`packaging/macos/Info.plist`);
+     * **macOS Intel** (`macos-13`, `x86_64-apple-darwin`): portable archive `statcraft-macos-x64.tar.gz` and mountable DMG image `statcraft-macos-x64.dmg`;
    - All bundles are packaged with external Fluent translation catalogs (`locales/`), documentation (`README.md`, `README.ru.md`), and license `LICENSE-MIT`;
-   - Automated GitHub Release publication using `softprops/action-gh-release@v2` triggered by `v*` tag push or manual `workflow_dispatch`, attaching all 4 archives in a single step without race conditions.
+   - Enhanced `statcraft_i18n` with automatic runtime locale discovery for Linux system paths (`/usr/share/statcraft/locales`) and macOS app bundles (`Contents/Resources/locales`);
+   - Automated GitHub Release publication using `softprops/action-gh-release@v2` triggered by `v*` tag push or manual `workflow_dispatch`, attaching all 8 distribution packages in a single step without race conditions.
 
 3. **Quality Control (Definition of Done):**
    - Strict adherence to Resource Guard (`-j 1` across all compilation steps);

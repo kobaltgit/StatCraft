@@ -1732,13 +1732,14 @@
    - Синхронизированы метаданные пакетов во всем воркспейсе.
 
 2. **GitHub Actions Workflow кроссплатформенной сборки (`.github/workflows/release.yml`):**
-   - Настроена матричная сборка для всех целевых платформ:
-     * **Windows x64** (`windows-latest`, `x86_64-pc-windows-msvc`): архив `statcraft-windows-x64.zip`;
-     * **Linux x64** (`ubuntu-22.04`, `x86_64-unknown-linux-gnu`): установка системных библиотек X11/Wayland dev, архив `statcraft-linux-x64.tar.gz`;
-     * **macOS Apple Silicon** (`macos-latest`, `aarch64-apple-darwin`): архитектура ARM64 (M1/M2/M3/M4), архив `statcraft-macos-arm64.tar.gz`;
-     * **macOS Intel** (`macos-13`, `x86_64-apple-darwin`): архитектура x86_64, архив `statcraft-macos-x64.tar.gz`;
+   - Настроена матричная сборка портативных архивов и нативных установщиков для всех целевых платформ:
+     * **Windows x64** (`windows-latest`, `x86_64-pc-windows-msvc`): портативный архив `statcraft-windows-x64.zip` и полноценный инсталлятор Inno Setup `statcraft-windows-x64-installer.exe` (`packaging/windows/installer.iss`);
+     * **Linux x64** (`ubuntu-22.04`, `x86_64-unknown-linux-gnu`): портативный архив `statcraft-linux-x64.tar.gz` и пакет для Debian/Ubuntu `statcraft-linux-x64.deb` с интеграцией десктоп-меню (`packaging/linux/statcraft.desktop`);
+     * **macOS Apple Silicon** (`macos-latest`, `aarch64-apple-darwin`): архив `statcraft-macos-arm64.tar.gz` и монтируемый образ диска `statcraft-macos-arm64.dmg` с бандлом `StatCraft.app` (`packaging/macos/Info.plist`);
+     * **macOS Intel** (`macos-13`, `x86_64-apple-darwin`): архив `statcraft-macos-x64.tar.gz` и образ диска `statcraft-macos-x64.dmg`;
    - Все дистрибутивы автоматически комплектуются каталогами внешних локализаций Fluent (`locales/`), документацией (`README.md`, `README.ru.md`) и файлом лицензии `LICENSE-MIT`;
-   - Автоматическая публикация GitHub Release через `softprops/action-gh-release@v2` при пуше тега `v*` или ручном запуске через `workflow_dispatch` с прикреплением всех 4 архивов без race conditions.
+   - В крейт `statcraft_i18n` добавлено системное обнаружение локализаций для Linux (`/usr/share/statcraft/locales`) и бандлов macOS (`Contents/Resources/locales`);
+   - Автоматическая публикация GitHub Release через `softprops/action-gh-release@v2` при пуше тега `v*` или ручном запуске через `workflow_dispatch` с прикреплением всех 8 дистрибутивов без race conditions.
 
 3. **Контроль качества (Definition of Done):**
    - Строгое соблюдение Resource Guard (`-j 1` во всех шагах компиляции);

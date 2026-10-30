@@ -1,0 +1,12 @@
+[Desktop Entry]
+Name=StatCraft
+GenericName=Statistical Analysis Software
+Comment=Modern SPSS-compatible statistical analysis and reporting
+Exec=statcraft_app
+Icon=statcraft
+Terminal=false
+Type=Application
+Categories=Science;Math;Education;
+MimeType=application/x-spss-sav;application/x-spss-sps;
+Keywords=statistics;spss;data;analysis;survey;math;
+StartupNotify=true

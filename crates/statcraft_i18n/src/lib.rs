@@ -167,17 +167,35 @@ impl I18nCatalog {
             }
         }
 
-        // 2. Folder adjacent to current executable (for portable .exe releases)
+        // 2. Folder adjacent to current executable (for portable releases)
         if let Ok(exe_path) = std::env::current_exe() {
             if let Some(exe_dir) = exe_path.parent() {
                 let locales_path = exe_dir.join("locales");
                 if let Ok(loaded) = self.load_from_dir(&locales_path) {
                     count += loaded;
                 }
+
+                // 2b. macOS app bundle Resources directory (Contents/Resources/locales)
+                #[cfg(target_os = "macos")]
+                {
+                    let mac_locales = exe_dir.join("../Resources/locales");
+                    if let Ok(loaded) = self.load_from_dir(&mac_locales) {
+                        count += loaded;
+                    }
+                }
             }
         }
 
-        // 3. Current working directory ./locales (for cargo run and terminal launches)
+        // 3. System-wide share directory for Linux packages (/usr/share/statcraft/locales)
+        #[cfg(target_os = "linux")]
+        {
+            let linux_share = Path::new("/usr/share/statcraft/locales");
+            if let Ok(loaded) = self.load_from_dir(linux_share) {
+                count += loaded;
+            }
+        }
+
+        // 4. Current working directory ./locales (for cargo run and terminal launches)
         let local_locales = Path::new("locales");
         if let Ok(loaded) = self.load_from_dir(local_locales) {
             count += loaded;

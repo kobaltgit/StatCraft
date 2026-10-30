@@ -31,21 +31,25 @@ jobs:
             target_os: windows
             asset_name: statcraft-windows-x64
             archive_name: statcraft-windows-x64.zip
+            installer_name: statcraft-windows-x64-installer.exe
             binary_name: statcraft_app.exe
           - os: ubuntu-22.04
             target_os: linux
             asset_name: statcraft-linux-x64
             archive_name: statcraft-linux-x64.tar.gz
+            installer_name: statcraft-linux-x64.deb
             binary_name: statcraft_app
           - os: macos-latest
             target_os: macos
             asset_name: statcraft-macos-arm64
             archive_name: statcraft-macos-arm64.tar.gz
+            installer_name: statcraft-macos-arm64.dmg
             binary_name: statcraft_app
           - os: macos-13
             target_os: macos
             asset_name: statcraft-macos-x64
             archive_name: statcraft-macos-x64.tar.gz
+            installer_name: statcraft-macos-x64.dmg
             binary_name: statcraft_app
 
     steps:
@@ -64,10 +68,11 @@ jobs:
       - name: Build StatCraft in Release Mode
         run: cargo build --package statcraft_app --release -j 1
 
-      - name: Package Windows Artifacts
+      - name: Package Windows Artifacts (Portable & Installer)
         if: matrix.target_os == 'windows'
         shell: pwsh
         run: |
+          # 1. Portable ZIP
           New-Item -ItemType Directory -Force -Path staging
           Copy-Item target/release/${{ matrix.binary_name }} staging/
           Copy-Item -Recurse locales staging/locales
@@ -77,10 +82,14 @@ jobs:
           New-Item -ItemType Directory -Force -Path dist
           Compress-Archive -Path staging/* -DestinationPath dist/${{ matrix.archive_name }}
 
-      - name: Package Unix Artifacts
-        if: matrix.target_os != 'windows'
+          # 2. Inno Setup Installer
+          & "C:\Program Files (x86)\Inno Setup 6\ISCC.exe" packaging/windows/installer.iss
+
+      - name: Package Linux Artifacts (Portable & .deb Installer)
+        if: matrix.target_os == 'linux'
         shell: bash
         run: |
+          # 1. Portable TAR.GZ
           mkdir -p staging
           cp target/release/${{ matrix.binary_name }} staging/
           chmod +x staging/${{ matrix.binary_name }}
@@ -91,11 +100,85 @@ jobs:
           mkdir -p dist
           tar -czvf dist/${{ matrix.archive_name }} -C staging .
 
-      - name: Upload Artifact
+          # 2. Debian .deb Package
+          DEB_DIR=deb_staging
+          mkdir -p "$DEB_DIR/DEBIAN"
+          mkdir -p "$DEB_DIR/usr/bin"
+          mkdir -p "$DEB_DIR/usr/share/statcraft"
+          mkdir -p "$DEB_DIR/usr/share/applications"
+          mkdir -p "$DEB_DIR/usr/share/icons/hicolor/scalable/apps"
+          mkdir -p "$DEB_DIR/usr/share/icons/hicolor/256x256/apps"
+
+          cp target/release/${{ matrix.binary_name }} "$DEB_DIR/usr/bin/"
+          chmod +x "$DEB_DIR/usr/bin/${{ matrix.binary_name }}"
+          cp -r locales "$DEB_DIR/usr/share/statcraft/"
+          cp README.md README.ru.md LICENSE-MIT "$DEB_DIR/usr/share/statcraft/"
+
+          cp packaging/linux/statcraft.desktop "$DEB_DIR/usr/share/applications/"
+          cp assets/icon.svg "$DEB_DIR/usr/share/icons/hicolor/scalable/apps/statcraft.svg"
+          cp assets/icon-256.png "$DEB_DIR/usr/share/icons/hicolor/256x256/apps/statcraft.png"
+
+          cat << 'EOF' > "$DEB_DIR/DEBIAN/control"
+Package: statcraft
+Version: 0.2.0
+Section: math
+Priority: optional
+Architecture: amd64
+Maintainer: StatCraft Contributors <https://github.com/kobaltgit/StatCraft>
+Description: High-performance statistical analysis package and SPSS alternative
+ StatCraft provides authentic SPSS-compatible data management, statistical
+ modeling, and analysis workflows built on native Rust and modern design.
+EOF
+
+          dpkg-deb --build "$DEB_DIR" "dist/${{ matrix.installer_name }}"
+
+      - name: Package macOS Artifacts (Portable & DMG Installer)
+        if: matrix.target_os == 'macos'
+        shell: bash
+        run: |
+          # 1. Portable TAR.GZ
+          mkdir -p staging
+          cp target/release/${{ matrix.binary_name }} staging/
+          chmod +x staging/${{ matrix.binary_name }}
+          cp -r locales staging/
+          cp README.md staging/
+          cp README.ru.md staging/
+          cp LICENSE-MIT staging/
+          mkdir -p dist
+          tar -czvf dist/${{ matrix.archive_name }} -C staging .
+
+          # 2. macOS Application Bundle & DMG Installer
+          mkdir -p StatCraft.app/Contents/MacOS
+          mkdir -p StatCraft.app/Contents/Resources/locales
+          cp target/release/${{ matrix.binary_name }} StatCraft.app/Contents/MacOS/
+          chmod +x StatCraft.app/Contents/MacOS/${{ matrix.binary_name }}
+          cp packaging/macos/Info.plist StatCraft.app/Contents/
+          cp -r locales/* StatCraft.app/Contents/Resources/locales/
+          cp -r locales StatCraft.app/Contents/MacOS/
+
+          mkdir -p icon.iconset
+          cp assets/icon-16.png icon.iconset/icon_16x16.png
+          cp assets/icon-32.png icon.iconset/icon_16x16@2x.png
+          cp assets/icon-32.png icon.iconset/icon_32x32.png
+          cp assets/icon-64.png icon.iconset/icon_32x32@2x.png
+          cp assets/icon-128.png icon.iconset/icon_128x128.png
+          cp assets/icon-256.png icon.iconset/icon_128x128@2x.png
+          cp assets/icon-256.png icon.iconset/icon_256x256.png
+          iconutil -c icns icon.iconset -o StatCraft.app/Contents/Resources/icon.icns
+
+          mkdir -p dmg_root
+          cp -r StatCraft.app dmg_root/
+          ln -s /Applications dmg_root/Applications
+
+          hdiutil create -volname "StatCraft" -srcfolder dmg_root -ov -format UDZO "dist/${{ matrix.installer_name }}"
+
+      - name: Upload Artifacts
         uses: actions/upload-artifact@v4
         with:
           name: ${{ matrix.asset_name }}
-          path: dist/${{ matrix.archive_name }}
+          path: |
+            dist/${{ matrix.archive_name }}
+            dist/${{ matrix.installer_name }}
           if-no-files-found: error
 
   publish-release:
