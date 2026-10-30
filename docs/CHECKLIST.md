@@ -341,16 +341,150 @@
 - [x] L6 `statcraft_app`: активация пункта меню `Analyze -> Compare Means -> Means...` (`Анализ -> Сравнение средних -> Средние...`)
 - [x] 100% покрытие локализацией (`locales/en.ftl`, `locales/ru.ftl`, `C:\StatCraft\locales\fr.ftl`), 100% прохождение полного CI gate `cargo run -p xtask -j 1 -- ci` (`file-guard`, `design-guard`, `layers`, `parity`, `clippy -D warnings`, `cargo fmt --check`)
 
+## 36. Этап MP-1: Жизненный цикл сессии и навигация меню «Файл» (Session Lifecycle & File Menu)
+- [x] L6 `statcraft_app`: перевод пунктов главного меню `File -> New -> Data` (`menu-file-new-dataset`), `File -> New -> Syntax` (`menu-file-new-syntax`), `File -> New -> Project` (`menu-file-new-project`), `File -> Close Project` (`menu-file-close-project`) и `File -> Recent Files` (`menu-file-recent`) из `MenuItemStatus::InDev` в полноценно рабочий `MenuItemStatus::Ready` / динамический список
+- [x] L6 `statcraft_app`: модуль `crates/statcraft_app/src/recent_files.rs` (`RecentFiles`, ротация до 10 файлов, дедупликация с подъемом наверх, очистка, сохранение в `.statcraft/recent_files.json` и `eframe::Storage`)
+- [x] L6 `statcraft_app`: модуль `crates/statcraft_app/src/app_session.rs` (`PendingSessionAction`, управление жизненным циклом сессии, детекция несохраненных изменений `has_unsaved_changes()`, `load_file_from_path`)
+- [x] L6 `statcraft_app`: интерактивный редактор синтаксиса `crates/statcraft_app/src/views/syntax_editor.rs` (`SyntaxEditorState`, `render_syntax_editor`, канонический стартовый заголовок `* StatCraft Syntax Editor.`, интеграция вкладки в DockState и пункт `Window -> Syntax Editor (Ctrl+4)`)
+- [x] L6 `statcraft_app`: модальный диалог подтверждения `crates/statcraft_app/src/dialogs/confirm_save_dialog.rs` (`DialogShell::subdialog`, `[ Save ] [ Don't Save ] [ Cancel ]`)
+- [x] L6 `statcraft_app`: логирование `NEW DATASET.` в Output Viewer и уведомления в Status Bar (`status-new-dataset-created`, `status-new-syntax-created`, `status-new-project-created`)
+- [x] Тесты жизненного цикла: `crates/statcraft_app/tests/session_lifecycle_tests.rs` (очередь recent files, сброс датасета, синтаксис, новый проект, закрытие проекта, проверка несохраненных изменений, headless-рендер меню)
+- [x] 100% покрытие локализацией (`locales/en.ftl`, `locales/ru.ftl`), 100% прохождение полного CI gate `cargo run -p xtask -j 1 -- ci` (`file-guard`, `design-guard`, `layers`, `parity`, `clippy -D warnings`, `cargo fmt --check`)
 
 
+## 38. Этап MP-4: Импорт файлов Microsoft Excel (.xlsx / .xls / .ods)
+- [x] L0 `statcraft_io`: интеграция крейта `calamine = "0.37"`, модуль `crates/statcraft_io/src/excel_loader.rs` (`load_excel_from_path`, `load_excel_from_reader`, `load_excel_from_range`)
+- [x] L0 `statcraft_io`: санитизация и дедупликация имен колонок по каноническим правилам SPSS (`sanitize_and_dedup_headers`), автовывод типов колонок (`Numeric` vs `Text`), безопасная обработка пустых листов, пропусков и смешанных типов
+- [x] L5 `statcraft_syntax`: типизированная команда `ImportExcelCommand` (`data.import_excel`) со спецификацией параметров `specs()`, выполнением и поддержкой Undo
+- [x] L6 `statcraft_app`: метод `open_excel_dialog` с фильтрами `*.xlsx, *.xls, *.ods, *.xlsm`, активация пункта меню `File -> Import Data -> Excel...` (`menu-file-import-excel`) и `File -> Import Data -> CSV...` (`menu-file-import-csv`)
+- [x] L6 `statcraft_app`: расширение `load_file_from_path` с определением формата по расширению, добавлением в `RecentFiles`, протоколированием в Output Viewer канонического синтаксиса `GET DATA /TYPE=XLSX /FILE='...' /FIRSTROW=YES.`
+- [x] 100% покрытие локализацией (`locales/en.ftl`, `locales/ru.ftl`), 100% прохождение полного CI gate `cargo run -p xtask -j 1 -- ci` (`file-guard`, `design-guard`, `layers`, `parity`, `clippy -D warnings`, `cargo fmt --check`)
 
 
+## 39. Этап MP-5: Импорт бинарных файлов SPSS (.sav / .zsav)
+- [x] L0 `statcraft_io`: подмодуль `spss_loader/` (`header.rs`, `records.rs`, `decompress.rs`, `mod.rs`, `tests.rs` — полное чтение системных заголовков `$FL2`/`$FL3`, детекция endianness, чтение переменных Record 2, меток значений Record 3/4, расширений Record 7 (подтипы 4 display params, 13 long variable names, 20 encoding, 24 zlib metadata), распаковка простых байт-кодов с bias=100 и ZLIB-блоков `.zsav` через `flate2`)
+- [x] L1 `statcraft_core`: модуль `spss.rs` (`DataSet::from_spss_data`, `DataSet::load_spss_from_path`, `DataSet::load_spss_from_reader` с конвертацией форматов в 9 типов переменных SPSS, шкал Measure, выравнивания Alignment, словарей меток `ValueLabels`, пропусков `MissingValues` и переменной весов `weight_var`)
+- [x] L5 `statcraft_syntax`: типизированная команда `ImportSpssCommand` (`data.import_spss`) со спецификацией `specs()`, регистрацией в `CommandBus::with_defaults()`, генератором канонического синтаксиса `GET FILE='<path>'.` и поддержка `.sav`/`.zsav` в `OpenFileCommand`
+- [x] L6 `statcraft_app`: активация пункта главного меню `File -> Import Data -> SPSS Data...` (`menu-file-import-spss`) и добавление фильтра `.sav, .zsav` в диалог общего открытия данных `File -> Open Data...` (`open_data_dialog`)
+- [x] L6 `statcraft_app`: обработка импорта в `app_session.rs` с записью протокола `GET FILE='<path>'.` в Output Viewer, обновление статуса `DatasetImported`, добавление в `RecentFiles` и переключение на вкладку `Data View`
+- [x] Интеграционные тесты: модуль `spss_loader/tests.rs` в `statcraft_io` (синтетический буфер `.sav` с байт-кодами, несжатый `.sav`, обработка поврежденных/усеченных заголовков без паник) и тест в `crates/statcraft_app/tests/session_lifecycle_tests.rs` (`test_load_spss_sav_session_lifecycle`)
+- [x] 100% покрытие локализацией (`locales/en.ftl`, `locales/ru.ftl`), 100% прохождение полного CI gate `cargo run -p xtask -j 1 -- ci` (`file-guard`, `design-guard`, `layers`, `parity`, `clippy -D warnings`, `cargo fmt --check`)
+
+## 40. Финал: Интеграция меню «Файл», диалог сохранения и горячие клавиши (File Menu Final Integration)
+- [x] L6 `statcraft_app`: перехват закрытия окна `ctx.input(|i| i.viewport().close_requested())` при модифицированном датасете (`has_unsaved_changes()`), отмена закрытия через `ViewportCommand::CancelClose` и отображение `ConfirmSaveDialog` (`[ Save ] [ Don't Save ] [ Cancel ]`)
+- [x] L6 `statcraft_app`: метод `handle_confirm_save_dialog` в `crates/statcraft_app/src/app_session.rs` для сохранения при необходимости (`save_project` / `save_project_as`) и последующего исполнения отложенного действия `pending_session_action`
+- [x] L6 `statcraft_app`: глобальные клавиатурные сокращения (`Ctrl+Shift+N` — Новый проект, `Ctrl+N` — Новый датасет, `Ctrl+O` — Открыть данные, `Ctrl+Shift+O` — Открыть проект, `Ctrl+S` — Сохранить, `Ctrl+Shift+S` — Сохранить как)
+- [x] L6 `statcraft_app`: тест инвариантов диалога `test_headless_render_confirm_save_dialog` в `crates/statcraft_app/tests/dialog_invariants.rs`
+- [x] Репозиторий: добавление правил игнорирования `/.statcraft` и `crates/statcraft_app/.statcraft` в `.gitignore`
+- [x] 100% прохождение полного CI gate `cargo run -p xtask -j 1 -- ci` (130+ тестов, `fmt`, `clippy -D warnings`, `file-guard`, `design-guard`, `layers`, `parity`)
+
+## 41. Сохранение и восстановление полного состояния проекта (.stc)
+- [x] L0 `statcraft_io`: расширение структуры `StcContainer` опциональными полями `output_viewer_json` и `syntax_text` с `#[serde(default, skip_serializing_if = "Option::is_none")]`, метод `StcContainer::with_project_data`
+- [x] L1 `statcraft_core`: методы `project_to_stc`, `save_project_stc_to_path` и `load_project_stc_from_path` с извлечением и сохранением полного состояния аналитического пространства
+- [x] L6 `statcraft_app`: безопасная сериализация/десериализация процедур и элементов `OutputViewerState` (`static_str_serde`, `to_json()`, `load_from_json()` с автоматическим пересчетом `next_id`)
+- [x] L6 `statcraft_app`: интеграция в жизненный цикл сессии `app_session.rs` (`save_to_path` сериализует правую панель и текст синтаксиса, `load_file_from_path` восстанавливает 100% состояния)
+- [x] L6 `statcraft_app`: разграничение диалогов сохранения — `Save Project` (`Ctrl+S`) / `Save Project As...` сохраняют монолитный `.stc`, а `Save Data As...` сохраняет исключительно массив данных в `.csv` (фильтр `.stc` исключен)
+- [x] Интеграционные тесты: сквозной тест `test_save_and_load_full_project_with_output_and_syntax` в `session_lifecycle_tests.rs`, тесты roundtrip в `statcraft_io` и `statcraft_core`, тесты сериализации в `OutputViewerState`
+- [x] 100% прохождение полного CI gate `cargo run -p xtask -j 1 -- ci` (`file-guard`, `design-guard`, `layers`, `parity`, `clippy -D warnings`, `cargo fmt --check`)
+
+## 42. Процедура сдвига значений (Lead / Lag) — `transform.shift_values`
+- [x] L2 `statcraft_algo`: алгоритмическая основа сдвига `compute_shift_raw` и перечисление `ShiftDirection` (`Lag`, `Lead`) в `crates/statcraft_algo/src/shift.rs` с поддержкой шага `step`, граничных случаев и пропусков
+- [x] L5 `statcraft_syntax`: типизированная команда движка `ShiftValuesCommand` (`transform.shift_values`) с регистрацией в `CommandBus`, генерацией синтаксиса `SHIFT VALUES /VARIABLE=... /RESULT=... /LAG=... /LEAD=...` и полным откатом Undo/Redo
+- [x] Локализация: декларативные ключи диалога и сообщений журнала в `locales/en.ftl` и `locales/ru.ftl`
+- [x] L6 `statcraft_app`: канонический диалог `ShiftValuesDialog` по стандарту `DialogKit` (`DialogShell::standard`, `VariableListItem`, `TransferButton`, `GroupBox`, `DialogActionBar`)
+- [x] L6 `statcraft_app`: интеграция диалога в меню «Преобразование» (снята метка `[dev]`), привязка к CommandBus и логирование в Output Viewer
+- [x] Тесты инвариантов: headless-тест `test_headless_render_shift_values_dialog` в `crates/statcraft_app/tests/dialog_invariants.rs`
+- [x] 100% прохождение всех проверок Definition of Done (`cargo test --workspace -j 1`, `xtask layers`, `xtask file-guard`, `xtask design-guard`, `xtask parity`, `clippy -D warnings`)
+
+## 43. Подсчет значений в строках (Count Occurrences of Values within Cases: `COUNT`) — `transform.count_values`
+- [x] L2 `statcraft_algo`: модуль `count_values.rs` — тип критерия `ValueCriterion` (`ExactNumber`, `ExactString`, `Range`, `LowestThru`, `ThruHighest`, `SystemMissing`), метод `matches()` и вычисление `compute_count_across_columns`
+- [x] L5 `statcraft_syntax`: типизированная команда движка `CountValuesCommand` (`transform.count_values`) со спецификацией `specs()`, созданием или перезаписью числовой переменной с 0 десятичных знаков, шкалой `Scale`, поддержкой Undo/Redo и генератором канонического синтаксиса `COUNT target = var1 var2 (val1) (val2). \n VARIABLE LABELS ... \n EXECUTE.`
+- [x] Локализация: декларативные ключи `dialog-count-*` и `output-count-executed` в `locales/en.ftl` и `locales/ru.ftl`
+- [x] L6 `statcraft_app`: канонический диалог `CountValuesDialog` ($560 \times 430$ px) по стандарту `DialogKit` (`DialogShell::standard`, `render_variable_list_panel`, `TransferButton`, `GroupBox`, `DialogActionBar`) и модальный поддиалог `CountValuesDefineState` (`render_count_values_define_dialog`) для определения значений и диапазонов подсчета
+- [x] L6 `statcraft_app`: интеграция диалога в меню `Transform -> Count Values within Cases...` (снят статус InDev), подключение в `app_dialogs_data.rs`, статус-сообщение `StatusMessage::CountValuesExecuted` и логирование в `Output Viewer`
+- [x] Тесты инвариантов: headless-тест `test_headless_render_count_values_dialog` в `crates/statcraft_app/tests/dialog_invariants.rs`
+- [x] 100% прохождение всех проверок Definition of Done (`cargo test --workspace -j 1`, `xtask layers`, `xtask file-guard`, `xtask design-guard`, `xtask parity`, `clippy -D warnings`)
+
+## 44. Установка зерна ДСЧ (Set Random Number Seed: `SET SEED`) — `transform.random_seed`
+- [x] L1 `statcraft_core`: потокобезопасное глобальное состояние зерна генератора случайных чисел (`set_global_random_seed`, `get_global_random_seed`, `clear_global_random_seed`, `get_effective_random_seed`) с поддержкой режима случайной инициализации и фиксированного зерна
+- [x] L5 `statcraft_syntax`: типизированная команда движка `RandomSeedCommand` (`transform.random_seed`) с JSON Schema `specs()`, валидацией диапазона 1 - 2 000 000 000, генерацией синтаксиса `SET SEED = <val>.` / `SET SEED = RANDOM.` и поддержкой Undo/Redo
+- [x] Локализация: декларативные ключи `dialog-seed-*` и `status-random-seed-*` в `locales/en.ftl` и `locales/ru.ftl`
+- [x] L6 `statcraft_app`: канонический диалог `RandomSeedDialog` по стандарту `DialogKit` (`DialogShell::properties`, `GroupBox`, `DialogActionBar`) с переключением между случайной инициализацией и фиксированным зерном
+- [x] L6 `statcraft_app`: интеграция диалога в меню `Transform -> Set Random Number Seed...` (снят статус InDev), подключение в `app_dialogs_data.rs`, статус-сообщение `StatusMessage::RandomSeedExecuted` и логирование синтаксиса в `Output Viewer`
+- [x] Тесты инвариантов: headless-тест `test_headless_render_random_seed_dialog` в `crates/statcraft_app/tests/dialog_invariants.rs`
+- [x] 100% прохождение всех проверок Definition of Done (`cargo test --workspace -j 1`, `xtask layers`, `xtask file-guard`, `xtask design-guard`, `xtask parity`, `clippy -D warnings`)
+
+## 45. Автоматическое перекодирование (Automatic Recode: `AUTORECODE`) — `transform.auto_recode`
+- [x] L2 `statcraft_algo`: модуль `crates/statcraft_algo/src/auto_recode.rs` — функция `compute_auto_recode`, перечисление `AutoRecodeOrder` (`LowestValue`, `HighestValue`), сбор уникальных непустых значений, сортировка, последовательное присвоение целочисленных кодов ($1, 2, \dots, K$) и генерация словаря меток `ValueLabels`
+- [x] L5 `statcraft_syntax`: типизированная команда движка `AutoRecodeCommand` (`transform.auto_recode`) со спецификацией `specs()`, добавлением новых числовых переменных (`decimals: 0`, `Measure::Nominal`) со словарем меток значений, поддержкой Undo/Redo и генератором канонического синтаксиса `AUTORECODE VARIABLES=... /INTO ... [/DESCENDING] /PRINT. \n EXECUTE.`
+- [x] Локализация: декларативные ключи `dialog-autorecode-*` и `output-autorecode-executed` в `locales/en.ftl` и `locales/ru.ftl`
+- [x] L6 `statcraft_app`: канонический диалог `AutoRecodeDialog` ($560 \times 430$ px) по стандарту `DialogKit` (`DialogShell::standard`, `render_variable_list_panel`, `TransferButton`, `GroupBox`, `DialogActionBar`, список пар `source -> target`, блок изменения имени и выбор направления ранжирования)
+- [x] L6 `statcraft_app`: интеграция диалога в меню `Transform -> Recode -> Automatic Recode...` (снят статус `[dev]`), подключение в `app_dialogs_data.rs`, статус-сообщение `StatusMessage::AutoRecodeExecuted` и логирование в `Output Viewer`
+- [x] Тесты инвариантов: headless-тест `test_headless_render_auto_recode_dialog` в `crates/statcraft_app/tests/dialog_invariants.rs`
+- [x] 100% прохождение всех проверок Definition of Done (`cargo test --workspace -j 1`, `xtask layers`, `xtask file-guard`, `xtask design-guard`, `xtask parity`, `clippy -D warnings`)
+
+## 46. Создание фиктивных переменных (Create Dummy Variables: `SPSSINC CREATE DUMMIES`) — `transform.create_dummies`
+- [x] L2 `statcraft_algo`: модуль `crates/statcraft_algo/src/dummies.rs` — функция `generate_dummies_for_column`, структуры `DummySpec`, `GeneratedDummyColumn`, сортировка уникальных категорий, сопоставление меток `ValueLabels`, генерация бинарных колонок (0.0/1.0/Null), пропуск референтной категории при `omit_first == true`
+- [x] L5 `statcraft_syntax`: типизированная команда движка `CreateDummiesCommand` (`transform.create_dummies`) со спецификацией `specs()`, добавлением новых числовых переменных (`decimals: 0`, `Measure::Nominal`) со словарем меток, поддержкой полного стека отката `Undo` (`Ctrl+Z`), генератором синтаксиса `SPSSINC CREATE DUMMIES VARIABLES=... /ROOTNAMES=... /OMITFIRST=... \n EXECUTE.`
+- [x] Локализация: декларативные ключи `dialog-dummy-*` и `status-dummies-executed` в `locales/en.ftl` и `locales/ru.ftl`
+- [x] L6 `statcraft_app`: канонический диалог `DummyDialog` ($560 \times 430$ px) по стандарту `DialogKit` (`DialogShell::standard`, `render_variable_list_panel`, `TransferButton`, `GroupBox`, `DialogActionBar`, список выбранных категориальных переменных, поле ввода базового префикса `root_prefix` и чекбокс исключения референтной группы)
+- [x] L6 `statcraft_app`: интеграция диалога в меню `Transform -> Create Dummy Variables...` (снят статус `[dev]`), подключение в `app_dialogs_data.rs`, статус-сообщение `StatusMessage::CreateDummiesExecuted` и логирование синтаксиса в `Output Viewer`
+- [x] Тесты инвариантов: headless-тест `test_headless_render_dummy_dialog` в `crates/statcraft_app/tests/dialog_invariants.rs`
+- [x] 100% прохождение всех проверок Definition of Done (`cargo test --workspace -j 1`, `xtask layers`, `xtask file-guard`, `xtask design-guard`, `xtask parity`, `clippy -D warnings`)
+
+## 47. Замена пропущенных значений (Replace Missing Values: `RMV`) — `transform.replace_missing`
+- [x] L2 `statcraft_algo`: модуль `crates/statcraft_algo/src/replace_missing.rs` — функция `impute_missing_values`, методы импутации `ImputationMethod` (`SeriesMean`, `MeanOfNearby`, `MedianOfNearby`, `LinearInterpolation`, `LinearTrendAtPoint`), обработка краевых случаев и пропусков
+- [x] L5 `statcraft_syntax`: типизированная команда движка `ReplaceMissingCommand` (`transform.replace_missing`) со спецификацией JSON Schema `specs()`, добавлением или заменой числовых переменных в датасете, поддержкой Undo/Redo и генератором канонического синтаксиса SPSS `RMV new_var = METHOD(src_var, span). \n EXECUTE.`
+- [x] Локализация: декларативные ключи `dialog-missing-*`, `output-missing-executed` и `status-missing-executed` в `locales/en.ftl` и `locales/ru.ftl`
+- [x] L6 `statcraft_app`: канонический диалог `ReplaceMissingDialog` ($560 \times 430$ px) по стандарту `DialogKit` (`DialogShell::standard`, `render_variable_list_panel`, `TransferButton`, список сформированных пар `target -> METHOD(source)`, поле изменения имени, переключатели методов и счетчик `span`, панель действий `DialogActionBar`)
+- [x] L6 `statcraft_app`: интеграция диалога в меню `Transform -> Replace Missing Values...` (снят статус `[dev]`), подключение в `app_dialogs_data.rs`, статус-сообщение `StatusMessage::ReplaceMissingExecuted` и логирование синтаксиса в `Output Viewer`
+- [x] Тесты инвариантов: headless-тест `test_headless_render_replace_missing_dialog` в `crates/statcraft_app/tests/dialog_invariants.rs`
+- [x] 100% прохождение всех проверок Definition of Done (`cargo test --workspace -j 1`, `xtask layers`, `xtask file-guard`, `xtask design-guard`, `xtask parity`, `clippy -D warnings`)
+
+## 48. Ранжирование наблюдений (Rank Cases: `RANK`) — `transform.rank_cases`
+- [x] L2 `statcraft_algo`: модули `crates/statcraft_algo/src/rank_cases.rs` и `rank_cases_tests.rs` — функция `compute_ranks`, обработка связей `TiesHandling` (`Mean`, `Low`, `High`, `Seq`), направления `RankDirection` (`Ascending`, `Descending`), типы ранжирования `RankType` (`SimpleRank`, `FractionalRank`, `FractionalPercent`, `Ntiles`, `NormalBlom`, `NormalTukey`, `NormalRankit`, `NormalVanderWaerden`), обратная функция нормального распределения `inv_normal_cdf` (аппроксимация Аклема)
+- [x] L5 `statcraft_syntax`: типизированная команда движка `RankCasesCommand` (`transform.rank_cases`) со спецификацией JSON Schema `specs()`, пакетным созданием/перезаписью ранговых переменных со шкалой `Measure::Ordinal`, полной поддержкой отката Undo (`Ctrl+Z`), генератором синтаксиса `RANK VARIABLES=... /TIES=... /RANK ... \n EXECUTE.`
+- [x] Локализация: декларативные ключи `dialog-rank-*` и `output-rank-executed` в `locales/en.ftl` и `locales/ru.ftl`
+- [x] L6 `statcraft_app`: канонический диалог `RankCasesDialog` ($560 \times 430$ px) по стандарту `DialogKit` (`DialogShell::standard`, `render_variable_list_panel`, `TransferButton`, `GroupBox` для направления и связок, `SubdialogSidebar` с вызовом поддиалога типов рангов `Rank Types...`, нижняя панель `DialogActionBar`)
+- [x] L6 `statcraft_app`: интеграция диалога в меню `Transform -> Rank Cases...` (снят статус `InDev`), подключение в `app_dialogs_data.rs`, логирование канонического синтаксиса и результата в `Output Viewer`
+- [x] Тесты инвариантов: headless-тест `test_headless_render_rank_cases_dialog` в `crates/statcraft_app/tests/dialog_invariants.rs`
+- [x] 100% прохождение всех проверок Definition of Done (`cargo test --workspace -j 1`, `xtask layers`, `xtask file-guard`, `xtask design-guard`, `xtask parity`)
+
+## 49. Визуальная группировка (Visual Binning) — `transform.visual_binning`
+- [x] L2 `statcraft_algo`: модуль `crates/statcraft_algo/src/binning.rs` — структуры `Cutpoint`, `BinningResult`, функции `compute_visual_binning`, `compute_visual_binning_with_labels`, генераторы срезов `generate_equal_width_cutpoints`, `generate_equal_percentile_cutpoints`, `generate_stddev_cutpoints`, автогенератор меток `generate_bin_labels`
+- [x] L5 `statcraft_syntax`: типизированная команда движка `VisualBinningCommand` (`transform.visual_binning`) со спецификацией JSON Schema `specs()`, созданием или перезаписью переменной типа `Numeric` с измерением `Ordinal` и автоприкреплением словаря меток `ValueLabels`, полной поддержкой Undo/Redo и генератором канонического синтаксиса SPSS `RECODE ... INTO ... \n VARIABLE LABELS ... \n VALUE LABELS ... \n EXECUTE.`
+- [x] Локализация: ключи `dialog-binning-*` и `output-binning-executed` в `locales/en.ftl` и `locales/ru.ftl`
+- [x] L6 `statcraft_app`: диалог `VisualBinningDialog` по стандарту `DialogKit` (`DialogShell::standard`, `render_variable_list_panel`, имя и метка целевой переменной, переключатель верхних границ включительно/исключительно, таблица срезов с авто/кастомными метками, ручное добавление срезов, поддиалог `Make Cutpoints...`, `DialogActionBar`)
+- [x] L6 `statcraft_app`: поддиалог `Make Cutpoints...` (`DialogShell::subdialog`, `SubdialogActionBar`, режимы равной ширины, равных процентилей и стандартных отклонений)
+- [x] L6 `statcraft_app`: снятие статуса `[dev]` и активация пункта меню `Transform -> Visual Binning...`, подключение в `app_dialogs_data.rs`, статус-сообщение `StatusMessage::VisualBinningExecuted` и логирование в `Output Viewer`
+- [x] Тесты инвариантов: headless-тест `test_headless_render_visual_binning_dialog` в `crates/statcraft_app/tests/dialog_invariants.rs`
+- [x] 100% прохождение всех проверок Definition of Done (`cargo test --workspace -j 1`, `xtask layers`, `xtask file-guard`, `xtask design-guard`, `xtask parity`, `clippy -D warnings`)
+
+## 48. Ранжирование наблюдений (Rank Cases: `RANK`) — `transform.rank_cases`
+- [x] L2 `statcraft_algo`: модули `crates/statcraft_algo/src/rank_cases.rs` и `rank_cases_tests.rs` — функция `compute_ranks`, обработка связей `TiesHandling` (`Mean`, `Low`, `High`, `Seq`), направления `RankDirection` (`Ascending`, `Descending`), типы ранжирования `RankType` (`SimpleRank`, `FractionalRank`, `FractionalPercent`, `Ntiles`, `NormalBlom`, `NormalTukey`, `NormalRankit`, `NormalVanderWaerden`), обратная функция нормального распределения `inv_normal_cdf` (аппроксимация Аклема)
+- [x] L5 `statcraft_syntax`: типизированная команда движка `RankCasesCommand` (`transform.rank_cases`) со спецификацией JSON Schema `specs()`, пакетным созданием/перезаписью ранговых переменных со шкалой `Measure::Ordinal`, полной поддержкой отката Undo (`Ctrl+Z`), генератором синтаксиса `RANK VARIABLES=... /TIES=... /RANK ... \n EXECUTE.`
+- [x] Локализация: декларативные ключи `dialog-rank-*` и `output-rank-executed` в `locales/en.ftl` и `locales/ru.ftl`
+- [x] L6 `statcraft_app`: канонический диалог `RankCasesDialog` ($560 \times 430$ px) по стандарту `DialogKit` (`DialogShell::standard`, `render_variable_list_panel`, `TransferButton`, `GroupBox` для направления и связок, `SubdialogSidebar` с вызовом поддиалога типов рангов `Rank Types...`, нижняя панель `DialogActionBar`)
+- [x] L6 `statcraft_app`: интеграция диалога в меню `Transform -> Rank Cases...` (снят статус `InDev`), подключение в `app_dialogs_data.rs`, логирование канонического синтаксиса и результата в `Output Viewer`
+- [x] Тесты инвариантов: headless-тест `test_headless_render_rank_cases_dialog` в `crates/statcraft_app/tests/dialog_invariants.rs`
+- [x] 100% прохождение всех проверок Definition of Done (`cargo test --workspace -j 1`, `xtask layers`, `xtask file-guard`, `xtask design-guard`, `xtask parity`)
 
 
+## 50. Мастер даты и времени (Date and Time Wizard) — `transform.date_time_wizard`
+- [x] L2 `statcraft_algo`: модуль `crates/statcraft_algo/src/date_time.rs` — вычисления с датами, парсинг ISO 8601 / RFC 3339 / `DD.MM.YYYY` / `MM/DD/YYYY` / `YYYY/MM/DD` / эпохи timestamp без паник, извлечение компонентов `DatePart` (Year, Month, Day, Hour, Minute, Second, DayOfWeek, Quarter), расчет разности двух дат `DateUnit` (Years, Months, Weeks, Days, Hours, Minutes, Seconds), сложение и вычитание длительностей `AddDuration`
+- [x] L5 `statcraft_syntax`: типизированная команда движка `DateTimeWizardCommand` (`transform.date_time_wizard`) со спецификацией JSON Schema `specs()`, созданием новой переменной (`Numeric` или `Date`) со шкалой `Measure::Scale`, полной поддержкой Undo/Redo и генератором канонического синтаксиса SPSS `COMPUTE target = XDATE.PART(var).`, `COMPUTE target = DATEDIFF(var1, var2, "unit").`, `COMPUTE target = DATESUM(var, amt, "unit").`
+- [x] Локализация: ключи `dialog-datetime-*` и `status-datetime-executed` в `locales/en.ftl` и `locales/ru.ftl`
+- [x] L6 `statcraft_app`: канонический диалог `DateTimeDialog` ($560 \times 430$ px) по стандарту `DialogKit` (`DialogShell::standard`, выбор задачи мастера в `GroupBox`, панель доступных переменных `render_variable_list_panel`, адаптивная кнопка переноса `TransferButton`, селекторы компонентов даты и единиц времени, нижняя панель `DialogActionBar`)
+- [x] L6 `statcraft_app`: снятие статуса `[dev]` и активация пункта меню `Transform -> Date and Time Wizard...`, подключение обработчика в `app_dialogs_transform.rs`, статус-сообщение `StatusMessage::DateTimeExecuted` и логирование в `Output Viewer`
+- [x] Тесты инвариантов: headless-тест `test_headless_render_date_time_dialog` в `crates/statcraft_app/tests/dialog_invariants.rs` и интеграционные тесты `crates/statcraft_syntax/tests/date_time_cmd_tests.rs`
+- [x] 100% прохождение всех проверок Definition of Done (`cargo test --workspace -j 1`, `xtask layers`, `xtask file-guard`, `xtask design-guard`, `xtask parity`)
 
-
-
-
-
-
+## 51. Оптимальная группировка (Optimal Binning) — `transform.optimal_binning`
+- [x] L2 `statcraft_algo`: модуль `crates/statcraft_algo/src/optimal_binning.rs` — алгоритм MDLP (Fayyad & Irani, 1993) оптимизации энтропии и информационного выигрыша с остановкой по критерию длины описания, ограничение `max_bins`, безопасная обработка константных признаков, одноклассовых целей и `Null`-значений, автогенерация меток интервалов `ValueLabels`
+- [x] L5 `statcraft_syntax`: типизированная команда движка `OptimalBinningCommand` (`transform.optimal_binning`) со спецификацией JSON Schema `specs()`, созданием переменных с измерением `Measure::Ordinal`, автоматическим прикреплением `ValueLabels`, поддержкой отката Undo (`Ctrl+Z`) и генератором канонического синтаксиса SPSS `OPTIMAL BINNING /VARIABLES = ... BY ... /CRITERIA METHOD = MDLP [MAXBINS = ...]. \n EXECUTE.`
+- [x] Локализация: ключи `dialog-optbin-*`, `output-optbin-executed`, `status-optbin-executed` в `locales/en.ftl` и `locales/ru.ftl`
+- [x] L6 `statcraft_app`: канонический диалог `OptimalBinningDialog` по стандарту `DialogKit` (`DialogShell::standard`, доступные переменные, целевая переменная-направитель `Guide Variable`, параметры `max_bins` и `prefix` в `GroupBox`, кнопки переноса `TransferButton`, нижняя панель `DialogActionBar`)
+- [x] L6 `statcraft_app`: снятие статуса `[dev]` и активация пункта меню `Transform -> Optimal Binning...`, подключение обработчика в `app_dialogs_transform.rs`, статус-сообщение `StatusMessage::OptimalBinningExecuted` и логирование в `Output Viewer`
+- [x] Тесты инвариантов: headless-тест `test_headless_render_optimal_binning_dialog` в `crates/statcraft_app/tests/dialog_invariants.rs`
+- [x] 100% прохождение всех проверок Definition of Done (`cargo test --workspace -j 1`, `xtask layers`, `xtask file-guard`, `xtask design-guard`, `xtask parity`, `cargo clippy --workspace -j 1 -- -D warnings`)
 

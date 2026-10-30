@@ -10,6 +10,8 @@ pub enum DialogSize {
     Properties,
     /// 620 x 480 px - Type 4: Compute & Transform
     Compute,
+    /// 440 x 170 px - Type 5: Confirmation / Alert Prompt
+    Alert,
     /// Custom dimensions
     Custom(Vec2),
 }
@@ -21,6 +23,7 @@ impl DialogSize {
             DialogSize::Subdialog => vec2(360.0, 300.0),
             DialogSize::Properties => vec2(460.0, 380.0),
             DialogSize::Compute => vec2(620.0, 480.0),
+            DialogSize::Alert => vec2(440.0, 170.0),
             DialogSize::Custom(v) => v,
         }
     }
@@ -59,6 +62,10 @@ impl DialogShell {
 
     pub fn compute(title: impl Into<String>) -> Self {
         Self::new(title, DialogSize::Compute)
+    }
+
+    pub fn alert(title: impl Into<String>) -> Self {
+        Self::new(title, DialogSize::Alert)
     }
 
     pub fn id(mut self, id: Id) -> Self {

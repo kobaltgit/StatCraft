@@ -1,15 +1,18 @@
 use crate::command::{CommandError, EngineCommand};
 use crate::commands::{
-    CellEditCommand, ComputeVariableCommand, CorrelationsCommand, CrosstabsCommand,
-    DataAddRowCommand, DataDeleteRowCommand, DescriptivesCommand, FactorCommand,
-    FrequenciesCommand, ImportCsvCommand, IndependentSamplesTTestCommand, KruskalWallisCommand,
-    LinearRegressionCommand, MannWhitneyCommand, MeansCommand, OneSampleTTestCommand,
-    OneWayAnovaCommand, PairedSamplesTTestCommand, RecodeIntoDifferentCommand,
-    RecodeIntoSameCommand, RelatedSamplesTestCommand, ReliabilityCommand, SelectCasesCommand,
-    SetLabelCommand, SetMeasureCommand, SortCasesCommand, SplitFileCommand, VarAddCommand,
-    VarDeleteCommand, VarRenameCommand, VarSetAlignCommand, VarSetDecimalsCommand,
+    AutoRecodeCommand, CellEditCommand, ComputeVariableCommand, CorrelationsCommand,
+    CountValuesCommand, CreateDummiesCommand, CreateTimeSeriesCommand, CrosstabsCommand,
+    DataAddRowCommand, DataDeleteRowCommand, DateTimeWizardCommand, DescriptivesCommand,
+    FactorCommand, FrequenciesCommand, ImportCsvCommand, ImportExcelCommand, ImportSpssCommand,
+    IndependentSamplesTTestCommand, KruskalWallisCommand, LinearRegressionCommand,
+    MannWhitneyCommand, MeansCommand, OneSampleTTestCommand, OneWayAnovaCommand, OpenFileCommand,
+    OptimalBinningCommand, PairedSamplesTTestCommand, RandomSeedCommand, RankCasesCommand,
+    RecodeIntoDifferentCommand, RecodeIntoSameCommand, RelatedSamplesTestCommand,
+    ReliabilityCommand, ReplaceMissingCommand, SaveFileCommand, SelectCasesCommand,
+    SetLabelCommand, SetMeasureCommand, ShiftValuesCommand, SortCasesCommand, SplitFileCommand,
+    VarAddCommand, VarDeleteCommand, VarRenameCommand, VarSetAlignCommand, VarSetDecimalsCommand,
     VarSetMissingValuesCommand, VarSetTypeCommand, VarSetValueLabelsCommand, VarSetWidthCommand,
-    WeightCasesCommand,
+    VisualBinningCommand, WeightCasesCommand,
 };
 use serde::{Deserialize, Serialize};
 use serde_json::{json, Value};
@@ -45,6 +48,8 @@ impl CommandBus {
     pub fn with_defaults() -> Self {
         let mut bus = Self::new();
         bus.register(Box::new(ImportCsvCommand));
+        bus.register(Box::new(ImportExcelCommand));
+        bus.register(Box::new(ImportSpssCommand));
         bus.register(Box::new(SetLabelCommand));
         bus.register(Box::new(SetMeasureCommand));
         bus.register(Box::new(CellEditCommand));
@@ -75,12 +80,25 @@ impl CommandBus {
         bus.register(Box::new(DataAddRowCommand));
         bus.register(Box::new(DataDeleteRowCommand));
         bus.register(Box::new(ComputeVariableCommand::new()));
+        bus.register(Box::new(CountValuesCommand::new()));
+        bus.register(Box::new(CreateDummiesCommand::new()));
+        bus.register(Box::new(CreateTimeSeriesCommand::new()));
+        bus.register(Box::new(DateTimeWizardCommand::new()));
+        bus.register(Box::new(ShiftValuesCommand::new()));
+        bus.register(Box::new(RankCasesCommand::new()));
+        bus.register(Box::new(ReplaceMissingCommand::new()));
         bus.register(Box::new(RecodeIntoDifferentCommand::new()));
         bus.register(Box::new(RecodeIntoSameCommand::new()));
+        bus.register(Box::new(AutoRecodeCommand::new()));
+        bus.register(Box::new(VisualBinningCommand::new()));
+        bus.register(Box::new(OptimalBinningCommand::new()));
+        bus.register(Box::new(RandomSeedCommand::new()));
         bus.register(Box::new(SortCasesCommand::new()));
         bus.register(Box::new(SelectCasesCommand::new()));
         bus.register(Box::new(SplitFileCommand::new()));
         bus.register(Box::new(WeightCasesCommand::new()));
+        bus.register(Box::new(SaveFileCommand));
+        bus.register(Box::new(OpenFileCommand));
         bus
     }
 
@@ -202,5 +220,18 @@ mod tests {
         assert!(!bus.is_enabled("var.set_label", ds.as_ref()));
         // data.import_csv is enabled without dataset
         assert!(bus.is_enabled("data.import_csv", ds.as_ref()));
+        assert!(!bus.is_enabled("transform.shift_values", ds.as_ref()));
+    }
+
+    #[test]
+    fn test_shift_values_in_bus() {
+        let bus = CommandBus::with_defaults();
+        assert!(bus.get("transform.shift_values").is_some());
+    }
+
+    #[test]
+    fn test_count_values_in_bus() {
+        let bus = CommandBus::with_defaults();
+        assert!(bus.get("transform.count_values").is_some());
     }
 }

@@ -1,5 +1,6 @@
 pub mod blocks;
 pub mod builder;
+pub mod export;
 pub mod model;
 pub mod outline;
 pub mod tables_anova;
@@ -20,6 +21,10 @@ pub mod tables_ttest_onesample;
 pub mod tables_ttest_paired;
 
 pub use blocks::{render_item_context_menu, render_log_block, render_notes_block};
+pub use export::{
+    export_output_to_html, export_output_to_tsv, export_output_to_txt,
+    output_viewer_to_report_document,
+};
 pub use model::{
     OutputItem, OutputItemKind, OutputNotes, OutputProcedure, OutputViewerState, SelectedTarget,
 };

@@ -27,6 +27,8 @@ menu-file-import-spss = SPSS Data File (*.sav, *.zsav)...
 menu-file-import-csv = Text / Delimited File (*.csv, *.tsv)...
 menu-file-import-excel = Excel Spreadsheet (*.xlsx)...
 menu-file-recent = Recent Files
+menu-file-recent-empty = (No recent files)
+menu-file-recent-clear = Clear Recent Files List
 menu-file-save = Save Project
 menu-file-save-as = Save Project As...
 menu-file-save-data-as = Save Data As...
@@ -269,6 +271,19 @@ status-error = Error
 status-rows-count = Rows: { $count }
 status-cols-count = Variables: { $count }
 status-cell-edited = Cell ({ $row }, { $col }) updated.
+status-new-dataset-created = New dataset created.
+status-new-syntax-created = New syntax editor created.
+status-new-project-created = New project created.
+status-data-exported = Data exported successfully to { $path }
+status-output-exported = Output exported successfully to { $path }
+dialog-export-data-title = Export Data
+dialog-export-output-title = Export Output Report
+filter-csv-comma = Comma-Separated Values (*.csv)
+filter-csv-semicolon = Semicolon-Separated Values (*.csv)
+filter-tsv = Tab-Delimited Values (*.tsv, *.txt)
+filter-html = Web Page / HTML Document (*.html, *.htm)
+filter-txt = Text Document (*.txt)
+filter-tsv-bundle = All Tables TSV Bundle (*.tsv)
 toolbar-toggle-labels = Toggle Labels
 toolbar-open = Open Data Document (Ctrl+O)
 toolbar-save = Save This Document (Ctrl+S)
@@ -294,6 +309,8 @@ menu-view-toolbar-hidden = Hide Toolbar
 
 # Dialogs & Output
 dialog-open-csv-title = Select CSV or TSV Dataset
+dialog-open-excel-title = Select Excel Spreadsheet (*.xlsx, *.xls, *.ods)
+dialog-open-spss-title = Select SPSS Data File (*.sav, *.zsav)
 output-title = Output Viewer
 output-log = Log
 output-dataset-imported = Dataset imported successfully: { $name } ({ $rows } rows, { $cols } variables).
@@ -691,6 +708,44 @@ dialog-compute-group-arithmetic = Arithmetic
 dialog-compute-group-statistical = Statistical
 output-compute-executed = Compute Variable '{ $target }' executed successfully ({ $rows } cases).
 
+# Shift Values Dialog
+dialog-shift-title = Shift Values (Lead / Lag)
+dialog-shift-source-var = Source Variable:
+dialog-shift-target-var = Target Variable Name:
+dialog-shift-target-label = Variable Label (optional):
+dialog-shift-direction-group = Shift Direction
+dialog-shift-direction-lag = Lag (previous cases / down)
+dialog-shift-direction-lead = Lead (subsequent cases / up)
+dialog-shift-step = Number of steps:
+dialog-shift-error-source-required = Please select a source variable.
+dialog-shift-error-target-invalid = Please enter a valid target variable name.
+output-shift-executed = Shift Values '{ $target }' executed successfully ({ $rows } cases).
+
+# Rank Cases Dialog
+dialog-rank-title = Rank Cases
+dialog-rank-variables = Variables:
+dialog-rank-direction-group = Assign Rank 1 to
+dialog-rank-direction-smallest = Smallest value
+dialog-rank-direction-largest = Largest value
+dialog-rank-ties-group = Ties
+dialog-rank-ties-button = Ties...
+dialog-rank-ties-title = Rank Cases: Ties
+dialog-rank-ties-mean = Mean
+dialog-rank-ties-low = Low
+dialog-rank-ties-high = High
+dialog-rank-types-button = Rank Types...
+dialog-rank-types-title = Rank Cases: Types
+dialog-rank-type-simple = Rank
+dialog-rank-type-fractional = Fractional rank
+dialog-rank-type-percent = Fractional rank as percent
+dialog-rank-type-ntiles = Ntiles
+dialog-rank-ntiles-groups = Groups:
+dialog-rank-type-blom = Blom normal score
+dialog-rank-type-tukey = Tukey normal score
+dialog-rank-type-rankit = Rankit normal score
+dialog-rank-type-vw = Van der Waerden normal score
+output-rank-executed = Rank Cases created { $count } variable(s) for { $rows } cases.
+
 # Recode Variables Dialog & Transform
 dialog-recode-diff-title = Recode into Different Variables
 dialog-recode-same-title = Recode into Same Variables
@@ -719,6 +774,14 @@ dialog-recode-btn-add = Add
 dialog-recode-btn-remove = Remove
 dialog-recode-old-new-mappings-title = Old -> New:
 output-recode-executed = Recode executed successfully for { $count } variable(s).
+output-autorecode-executed = Automatic recode executed successfully for { $count } variable(s).
+dialog-autorecode-title = Automatic Recode
+dialog-autorecode-variables = Variables -> New Name:
+dialog-autorecode-new-name = New Name:
+dialog-autorecode-change = Change Name
+dialog-autorecode-order-group = Recode Starting from
+dialog-autorecode-order-lowest = Lowest value
+dialog-autorecode-order-highest = Highest value
 output-sort-cases-executed = Sorted cases by { $count } variable(s).
 output-select-cases-executed = Select cases executed ({ $mode }).
 output-split-file-executed = Split file executed ({ $mode }, { $count } variable(s)).
@@ -913,3 +976,166 @@ output-col-excluded-pct = Excluded %
 output-col-total-n = Total N
 output-col-total-pct = Total %
 output-means-executed = Means breakdown computed for {$tables} table(s), {$cases} case(s)
+
+# Confirm Save Dialog
+dialog-confirm-save-title = Unsaved Changes
+dialog-confirm-save-message = Save changes before continuing?
+dialog-confirm-save-btn-save = Save
+dialog-confirm-save-btn-dont-save = Don't Save
+dialog-confirm-save-btn-cancel = Cancel
+
+# Project and Data Save / Open
+status-project-saved = Project saved successfully: { $path }
+status-project-opened = Opened project { $name } ({ $rows } cases, { $cols } variables)
+status-data-saved = Data saved successfully: { $path }
+status-no-dataset-to-save = No active dataset to save
+
+dialog-save-project-title = Save Project
+dialog-open-project-title = Open StatCraft Project
+dialog-save-data-title = Save Data As
+dialog-open-data-title = Open Data File
+dialog-filter-all-data = All Supported Data (*.stc, *.sav, *.zsav, *.csv, *.tsv, *.txt, *.xlsx, *.xls)
+dialog-filter-spss = SPSS Statistics Data (*.sav, *.zsav)
+dialog-filter-stc = StatCraft Project (*.stc)
+dialog-filter-csv = CSV Data (*.csv, *.tsv, *.txt)
+
+# Dummy Variables Dialog
+dialog-dummy-title = Create Dummy Variables
+dialog-dummy-source-vars = Categorical Variables:
+dialog-dummy-root-prefix = Root Name / Prefix:
+dialog-dummy-omit-reference = Omit reference category (k - 1 dummies)
+dialog-dummy-error-empty-vars = Select at least one variable.
+status-dummies-executed = Created { $count } dummy variable(s)
+
+# Count Values within Cases Dialog & Transform
+dialog-count-title = Count Occurrences of Values within Cases
+dialog-count-target-var = Target Variable:
+dialog-count-target-label = Target Label:
+dialog-count-variables = Variables:
+dialog-count-define-values = Define Values...
+dialog-count-values-title = Count Values within Cases: Values to Count
+dialog-count-values-to-count = Values to Count:
+dialog-count-val-value = Value:
+dialog-count-val-sysmis = System-missing
+dialog-count-val-range = Range:
+dialog-count-val-range-lowest = Range, LOWEST through value:
+dialog-count-val-range-highest = Range, value through HIGHEST:
+dialog-count-through = through
+dialog-count-btn-add = Add
+dialog-count-btn-change = Change
+dialog-count-btn-remove = Remove
+output-count-executed = Count Values '{ $target }' executed successfully across { $variables } variables ({ $rows } cases).
+
+# Set Random Number Seed
+dialog-seed-title = Set Random Number Seed
+dialog-seed-mode-random = Generate random initialization
+dialog-seed-mode-fixed = Set fixed starting point (seed)
+dialog-seed-value-label = Value (1 - 2,000,000,000):
+status-random-seed-fixed = Random seed set to { $seed }
+status-random-seed-random = Random number generator initialized randomly
+
+# Create Time Series Dialog & Transform
+dialog-timeseries-title = Create Time Series
+dialog-timeseries-new-vars = New Variable -> Function:
+dialog-timeseries-function-group = Function
+dialog-timeseries-fn-diff = Differences (DIFF)
+dialog-timeseries-fn-sdiff = Seasonal differences (SDIFF)
+dialog-timeseries-fn-sma = Simple moving average (SMA)
+dialog-timeseries-fn-csum = Cumulative sum (CSUM)
+dialog-timeseries-order = Order / Span:
+dialog-timeseries-change = Change
+dialog-timeseries-name = Name:
+dialog-timeseries-label = Label:
+output-timeseries-executed = Create Time Series executed successfully ({ $count } series, { $rows } cases).
+
+# Replace Missing Values Dialog & Transform
+dialog-missing-title = Replace Missing Values
+dialog-missing-new-vars = New Variable -> Method:
+dialog-missing-name = Name:
+dialog-missing-method-group = Method
+dialog-missing-method-smean = Series mean
+dialog-missing-method-nearby-mean = Mean of nearby points
+dialog-missing-method-nearby-median = Median of nearby points
+dialog-missing-method-linear = Linear interpolation
+dialog-missing-method-trend = Linear trend at point
+dialog-missing-span = Span of nearby points:
+dialog-missing-change = Change
+output-missing-executed = Replace Missing Values executed successfully ({ $count } series, { $rows } cases).
+status-missing-executed = Replace missing values executed for { $count } variable(s)
+
+# Visual Binning Dialog & Transform
+dialog-binning-title = Visual Binning
+dialog-binning-scanned-vars = Scanned Variables:
+dialog-binning-binned-var = Binned Variable:
+dialog-binning-make-cutpoints = Make Cutpoints...
+dialog-binning-cutpoints-table = Cutpoint Grid
+dialog-binning-value-label = Label
+dialog-binning-high-endpoint = High Endpoint
+dialog-binning-included = Included (<=)
+dialog-binning-excluded = Excluded (<)
+dialog-binning-name = Name:
+dialog-binning-label = Label:
+dialog-binning-endpoints = Upper Endpoints:
+dialog-binning-endpoints-inclusive = Included (<=) - lower endpoint exclusive
+dialog-binning-endpoints-exclusive = Excluded (<) - lower endpoint inclusive
+dialog-binning-add-cutpoint = Add Cutpoint
+dialog-binning-remove-cutpoint = Remove
+dialog-binning-clear-all = Clear Cutpoints
+dialog-binning-grid-bin = Bin
+dialog-binning-grid-value = Value
+dialog-binning-grid-high = High Endpoint
+dialog-binning-grid-label = Label
+dialog-binning-make-cutpoints-title = Make Cutpoints
+dialog-binning-equal-width = Equal Width Intervals
+dialog-binning-equal-percentiles = Equal Percentiles (based on scanned cases)
+dialog-binning-stddev = Cutpoints at Standard Deviation Intervals
+dialog-binning-stddev-desc = +/- 1 and +/- 2 Std. Dev.
+dialog-binning-num-intervals = Number of Cutpoints:
+dialog-binning-cutpoint-val = Upper bound:
+dialog-binning-high = High
+output-binning-executed = Visual Binning '{ $target }' created successfully ({ $rows } cases).
+
+
+
+# Date and Time Wizard Dialog
+dialog-datetime-wizard-title = Date and Time Wizard
+dialog-datetime-task-group = What would you like to do?
+dialog-datetime-task-extract = Extract a part of a date or time variable
+dialog-datetime-task-diff = Calculate the interval between two dates
+dialog-datetime-task-add = Add or subtract a duration from a date
+dialog-datetime-task-construct = Convert to standardized date
+dialog-datetime-part-label = Part to extract:
+dialog-datetime-unit-label = Time unit:
+dialog-datetime-first-date = First Date:
+dialog-datetime-second-date = Second Date:
+dialog-datetime-target-var = Result Variable:
+dialog-datetime-target-label = Variable Label:
+dialog-datetime-part-year = Year
+dialog-datetime-part-month = Month
+dialog-datetime-part-day = Day
+dialog-datetime-part-hour = Hour
+dialog-datetime-part-minute = Minute
+dialog-datetime-part-second = Second
+dialog-datetime-part-dayofweek = Day of week
+dialog-datetime-part-quarter = Quarter
+dialog-datetime-unit-years = Years
+dialog-datetime-unit-months = Months
+dialog-datetime-unit-weeks = Weeks
+dialog-datetime-unit-days = Days
+dialog-datetime-unit-hours = Hours
+dialog-datetime-unit-minutes = Minutes
+dialog-datetime-unit-seconds = Seconds
+dialog-datetime-duration-amount = Value / Duration:
+status-datetime-executed = Date and Time Wizard: created {$target}
+
+# Optimal Binning Dialog & Transform
+dialog-optbin-title = Optimal Binning
+dialog-optbin-variables = Variables to Bin:
+dialog-optbin-target = Guide Variable (Categorical):
+dialog-optbin-options = Options
+dialog-optbin-max-bins = Maximum number of bins:
+dialog-optbin-prefix = Prefix for new variables:
+dialog-optbin-error-target = Please select a categorical guide variable.
+output-optbin-executed = Optimal Binning created { $count } variable(s).
+status-optbin-executed = Optimal Binning created { $count } variable(s)
+

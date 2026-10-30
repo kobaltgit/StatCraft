@@ -43,6 +43,11 @@ pub const CRATE_REGISTRY: &[CrateSpec] = &[
         allowed_dependencies: &["statcraft_core"],
     },
     CrateSpec {
+        name: "statcraft_reporting",
+        level: LayerLevel::L4Reporting,
+        allowed_dependencies: &["statcraft_i18n"],
+    },
+    CrateSpec {
         name: "statcraft_syntax",
         level: LayerLevel::L5Syntax,
         allowed_dependencies: &["statcraft_core", "statcraft_io", "statcraft_algo"],
@@ -56,6 +61,7 @@ pub const CRATE_REGISTRY: &[CrateSpec] = &[
             "statcraft_syntax",
             "statcraft_i18n",
             "statcraft_algo",
+            "statcraft_reporting",
         ],
     },
 ];
@@ -135,6 +141,7 @@ mod tests {
         assert!(names.contains(&"statcraft_algo"));
         assert!(names.contains(&"statcraft_io"));
         assert!(names.contains(&"statcraft_syntax"));
+        assert!(names.contains(&"statcraft_reporting"));
         assert!(names.contains(&"statcraft_app"));
         assert!(names.contains(&"statcraft_i18n"));
     }

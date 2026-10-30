@@ -1,11 +1,13 @@
 use super::app::{StatCraftApp, StatusMessage};
 use super::dialogs::{
-    render_compute_dialog, render_missing_values_dialog, render_recode_dialog,
-    render_select_cases_dialog, render_sort_cases_dialog, render_split_file_dialog,
-    render_value_labels_dialog, render_variable_type_dialog, render_weight_cases_dialog,
+    render_compute_dialog, render_missing_values_dialog, render_rank_cases_dialog,
+    render_recode_dialog, render_select_cases_dialog, render_sort_cases_dialog,
+    render_split_file_dialog, render_time_series_dialog, render_value_labels_dialog,
+    render_variable_type_dialog, render_visual_binning_dialog, render_weight_cases_dialog,
     ComputeDialogAction, DialogCasesAction, DialogSelectMode, MissingValuesDialogAction,
-    RecodeDialogAction, SelectCasesDialogAction, SortCasesDialogAction, SplitFileDialogAction,
-    ValueLabelsDialogAction, VariableTypeDialogAction, WeightCasesDialogAction,
+    RankCasesDialogAction, RecodeDialogAction, SelectCasesDialogAction, SortCasesDialogAction,
+    SplitFileDialogAction, TimeSeriesDialogAction, ValueLabelsDialogAction,
+    VariableTypeDialogAction, VisualBinningDialogAction, WeightCasesDialogAction,
 };
 use serde_json::json;
 use statcraft_i18n::t;
@@ -128,6 +130,42 @@ impl StatCraftApp {
                 self.output_view_state.add_entry(t!("output-log"), sps);
             }
             ComputeDialogAction::None => {}
+        }
+
+        // 4b. Time Series Dialog
+        let ts_action = render_time_series_dialog(
+            ctx,
+            self.dataset.as_ref(),
+            &mut self.time_series_dialog_state,
+        );
+
+        match ts_action {
+            TimeSeriesDialogAction::Run { variables } => {
+                let sps = statcraft_syntax::commands::CreateTimeSeriesCommand::to_sps(&variables);
+                let params = json!({
+                    "variables": variables
+                });
+                match self.command_bus.execute(
+                    "transform.create_time_series",
+                    &mut self.dataset,
+                    params,
+                ) {
+                    Ok(result_value) => {
+                        let _count = result_value["count"].as_u64().unwrap_or(0) as usize;
+                        let _rows = result_value["rows"].as_u64().unwrap_or(0) as usize;
+                        self.output_view_state.add_entry(t!("output-log"), sps);
+                        self.status_message = StatusMessage::Ready;
+                    }
+                    Err(e) => {
+                        self.status_message = StatusMessage::Error(e.to_string());
+                    }
+                }
+            }
+            TimeSeriesDialogAction::Paste { variables } => {
+                let sps = statcraft_syntax::commands::CreateTimeSeriesCommand::to_sps(&variables);
+                self.output_view_state.add_entry(t!("output-log"), sps);
+            }
+            TimeSeriesDialogAction::None => {}
         }
 
         // 5. Recode Dialog
@@ -461,6 +499,182 @@ impl StatCraftApp {
                 self.output_view_state.add_entry(t!("output-log"), sps);
             }
             WeightCasesDialogAction::None => {}
+        }
+
+        // 9. Rank Cases Dialog
+        let rank_action = render_rank_cases_dialog(
+            ctx,
+            self.dataset.as_ref(),
+            &mut self.rank_cases_dialog_state,
+        );
+
+        match rank_action {
+            RankCasesDialogAction::Run {
+                variables,
+                direction,
+                ties,
+                rank_type,
+                ntiles_groups,
+                prefix,
+            } => {
+                let dir_str = match direction {
+                    statcraft_algo::RankDirection::Ascending => "ascending",
+                    statcraft_algo::RankDirection::Descending => "descending",
+                };
+                let ties_str = match ties {
+                    statcraft_algo::TiesHandling::Mean => "mean",
+                    statcraft_algo::TiesHandling::Low => "low",
+                    statcraft_algo::TiesHandling::High => "high",
+                    statcraft_algo::TiesHandling::Seq => "sequential",
+                };
+                let rank_type_str = match rank_type {
+                    statcraft_algo::RankType::SimpleRank => "rank",
+                    statcraft_algo::RankType::FractionalRank => "fractional",
+                    statcraft_algo::RankType::FractionalPercent
+                    | statcraft_algo::RankType::Percentiles => "percent",
+                    statcraft_algo::RankType::Ntiles(_) => "ntiles",
+                    statcraft_algo::RankType::NormalBlom => "blom",
+                    statcraft_algo::RankType::NormalTukey => "tukey",
+                    statcraft_algo::RankType::NormalRankit => "rankit",
+                    statcraft_algo::RankType::NormalVanderWaerden => "vw",
+                };
+
+                let params = json!({
+                    "variables": variables,
+                    "direction": dir_str,
+                    "ties": ties_str,
+                    "rank_type": rank_type_str,
+                    "ntiles_groups": ntiles_groups,
+                    "prefix": prefix,
+                });
+
+                match self
+                    .command_bus
+                    .execute("transform.rank_cases", &mut self.dataset, params)
+                {
+                    Ok(result_value) => {
+                        let rows = result_value["rows"].as_u64().unwrap_or(0) as usize;
+                        let var_refs: Vec<&str> = variables.iter().map(|s| s.as_str()).collect();
+                        let sps = statcraft_syntax::commands::RankCasesCommand::to_sps(
+                            &var_refs,
+                            direction,
+                            ties,
+                            rank_type,
+                            ntiles_groups,
+                            &prefix,
+                        );
+                        self.output_view_state.add_entry(t!("output-log"), sps);
+                        let count = variables.len();
+                        self.output_view_state.add_entry(
+                            t!("output-log"),
+                            t!("output-rank-executed", count = count, rows = rows),
+                        );
+                    }
+                    Err(e) => {
+                        self.status_message = StatusMessage::Error(e.to_string());
+                    }
+                }
+            }
+            RankCasesDialogAction::Paste {
+                variables,
+                direction,
+                ties,
+                rank_type,
+                ntiles_groups,
+                prefix,
+            } => {
+                let var_refs: Vec<&str> = variables.iter().map(|s| s.as_str()).collect();
+                let sps = statcraft_syntax::commands::RankCasesCommand::to_sps(
+                    &var_refs,
+                    direction,
+                    ties,
+                    rank_type,
+                    ntiles_groups,
+                    &prefix,
+                );
+                self.output_view_state.add_entry(t!("output-log"), sps);
+            }
+            RankCasesDialogAction::None => {}
+        }
+
+        // 10. Visual Binning Dialog
+        let binning_action = render_visual_binning_dialog(
+            ctx,
+            self.dataset.as_ref(),
+            &mut self.visual_binning_dialog_state,
+        );
+
+        match binning_action {
+            VisualBinningDialogAction::Run {
+                source_var,
+                target_var,
+                target_label,
+                cutpoints,
+                labels,
+            } => {
+                let cp_json: Vec<serde_json::Value> = cutpoints
+                    .iter()
+                    .map(|cp| {
+                        json!({
+                            "upper_bound": cp.upper_bound,
+                            "inclusive": cp.inclusive,
+                        })
+                    })
+                    .collect();
+
+                let mut params_map = serde_json::Map::new();
+                params_map.insert("source_var".to_string(), json!(source_var));
+                params_map.insert("target_var".to_string(), json!(target_var));
+                if let Some(lbl) = &target_label {
+                    params_map.insert("target_label".to_string(), json!(lbl));
+                }
+                params_map.insert("cutpoints".to_string(), json!(cp_json));
+                params_map.insert("labels".to_string(), json!(labels));
+
+                let params = serde_json::Value::Object(params_map);
+
+                match self.command_bus.execute(
+                    "transform.visual_binning",
+                    &mut self.dataset,
+                    params,
+                ) {
+                    Ok(_) => {
+                        let sps = statcraft_syntax::commands::VisualBinningCommand::to_sps(
+                            &source_var,
+                            &target_var,
+                            target_label.as_deref(),
+                            &cutpoints,
+                            &labels,
+                        );
+                        self.output_view_state.add_entry(t!("output-log"), sps);
+                        let rows = self.dataset.as_ref().map(|d| d.row_count()).unwrap_or(0);
+                        self.status_message = StatusMessage::VisualBinningExecuted {
+                            target: target_var,
+                            rows,
+                        };
+                    }
+                    Err(e) => {
+                        self.status_message = StatusMessage::Error(e.to_string());
+                    }
+                }
+            }
+            VisualBinningDialogAction::Paste {
+                source_var,
+                target_var,
+                target_label,
+                cutpoints,
+                labels,
+            } => {
+                let sps = statcraft_syntax::commands::VisualBinningCommand::to_sps(
+                    &source_var,
+                    &target_var,
+                    target_label.as_deref(),
+                    &cutpoints,
+                    &labels,
+                );
+                self.output_view_state.add_entry(t!("output-log"), sps);
+            }
+            VisualBinningDialogAction::None => {}
         }
     }
 }

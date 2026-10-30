@@ -5,6 +5,7 @@
 | SPSS Menu Path | Command ID | Status | Notes |
 |---|---|---|---|
 | File > Open > Data (CSV) | `data.import_csv` | In Progress | Streaming CSV/TSV parser |
+| File > Import Data > Excel | `data.import_excel` | Done | Calamine Excel (.xlsx, .xls, .ods) reader, type inference, SPSS sanitized headers |
 | Edit > Undo | `edit.undo` | Planned | DeltaBuffer undo |
 | Edit > Redo | `edit.redo` | Planned | DeltaBuffer redo |
 | View > Value Labels | `view.toggle_labels` | Done | Toggle code/label rendering (`1/A` toolbar button) |
@@ -28,6 +29,17 @@
 | Transform > Compute Variable | `transform.compute` | Done | Expression evaluator, DialogKit calculator dialog, undo support |
 | Transform > Recode into Different Variables | `transform.recode.diff` | Done | Mapping engine (exact, ranges, sysmis, else), DialogKit dialog & Old and New Values subdialog, undo support |
 | Transform > Recode into Same Variables | `transform.recode.same` | Done | In-place recode, DialogKit dialog & Old and New Values subdialog, undo support |
+| Transform > Automatic Recode | `transform.auto_recode` | Done | Sequential integer coding (1, 2, ..., K) with automatic value labels, Lowest/Highest order, DialogKit dialog, SPSS AUTORECODE syntax, undo support |
+| Transform > Shift Values | `transform.shift_values` | Done | Lead/Lag values shift (K steps), DialogKit dialog with direction/step, SPS syntax, undo support |
+| Transform > Count Values within Cases | `transform.count_values` | Done | Count occurrences of values/ranges/sysmis across cases, DialogKit dialog & Values subdialog, SPSS COUNT syntax, undo support |
+| Transform > Create Dummy Variables | `transform.create_dummies` | Done | Indicator (0/1) binary variables generation (One-Hot Encoding), root name / prefix, reference category omission (k-1 dummies), DialogKit dialog, SPSSINC CREATE DUMMIES syntax, undo support |
+| Transform > Set Random Number Seed | `transform.random_seed` | Done | Global RNG state & thread-safe seed lifecycle, DialogKit dialog, SPSS SET SEED syntax, undo support |
+| Transform > Replace Missing Values | `transform.replace_missing` | Done | Imputation methods (Series Mean, Nearby Mean, Nearby Median, Linear Interpolation, Trend), DialogKit dialog with method selection & span, SPSS RMV syntax, undo support |
+| Transform > Create Time Series | `transform.create_time_series` | Done | Time series functions (DIFF, SDIFF, SMA, CSUM), DialogKit dialog with function & order/span settings, SPSS CREATE syntax, batch undo support |
+| Transform > Visual Binning | `transform.visual_binning` | Done | Continuous variable discretization (Equal Width, Equal Percentiles, Std Dev), DialogKit dialog & Make Cutpoints subdialog, auto/custom Value Labels, SPSS RECODE/VALUE LABELS syntax, undo support |
+| Transform > Optimal Binning | `transform.optimal_binning` | Done | Supervised discretization via Fayyad & Irani MDLP entropy optimization, max bins parameter, variable prefix, automatic Value Labels, DialogKit dialog, SPSS OPTIMAL BINNING syntax, undo support |
+| Transform > Rank Cases | `transform.rank_cases` | Done | Rank calculation with ties handling (Mean, Low, High, Sequential), direction (Ascending/Descending), types (Simple, Fractional, Percent, Ntiles, Normal: Blom, Tukey, Rankit, VW), DialogKit dialog & Types subdialog, SPSS RANK syntax, batch undo support |
+| Transform > Date and Time Wizard | `transform.date_time_wizard` | Done | Extract date parts (Year, Month, Day, Hour, Minute, Second, Day of week, Quarter), interval between two dates, duration summation/subtraction, DialogKit dialog, SPSS COMPUTE XDATE/DATEDIFF/DATESUM syntax, undo support |
 | Analyze > Descriptive Statistics > Frequencies | `stat.frequencies` | Done | Frequency tables, percentiles, quartiles, dialog & SPSS tables |
 | Analyze > Descriptive Statistics > Descriptives | `stat.descriptives` | Done | Mean, StdDev, Variance, Min, Max, Range, Skewness, Kurtosis, SE Mean, Dialog & Pivot Table |
 | Analyze > Descriptive Statistics > Crosstabs | `stat.crosstabs` | Done | Contingency tables, Pearson Chi-Square, Fisher's Exact, Continuity Correction, Likelihood Ratio, Phi & Cramér's V, DialogKit dialog & 4 authentic SPSS Pivot Tables |

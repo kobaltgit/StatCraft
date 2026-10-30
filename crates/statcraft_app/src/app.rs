@@ -1,216 +1,43 @@
+use crate::app_session::PendingSessionAction;
+use crate::dialogs::ConfirmSaveDialogState;
 use crate::dialogs::{
-    ComputeDialogState, CorrelationsDialogState, CrosstabsDialogState, DescriptivesDialogState,
+    AutoRecodeDialogState, ComputeDialogState, CorrelationsDialogState, CountValuesDialogState,
+    CrosstabsDialogState, DateTimeDialogState, DescriptivesDialogState, DummyDialogState,
     FactorDialogState, FrequenciesDialogState, IndependentSamplesTTestDialogState,
     KruskalWallisDialogState, LinearRegressionDialogState, MeansDialogState,
     MissingValuesDialogState, NonparamRelatedDialogState, NonparamTwoSampleDialogState,
-    OneSampleTTestDialogState, OneWayAnovaDialogState, PairedSamplesTTestDialogState,
-    RecodeDialogState, ReliabilityDialogState, SelectCasesDialogState, SortCasesDialogState,
-    SplitFileDialogState, ValueLabelsDialogState, VariableTypeDialogState, WeightCasesDialogState,
+    OneSampleTTestDialogState, OneWayAnovaDialogState, OptimalBinningDialogState,
+    PairedSamplesTTestDialogState, RandomSeedDialogState, RankCasesDialogState, RecodeDialogState,
+    ReliabilityDialogState, ReplaceMissingDialogState, SelectCasesDialogState,
+    ShiftValuesDialogState, SortCasesDialogState, SplitFileDialogState, TimeSeriesDialogState,
+    ValueLabelsDialogState, VariableTypeDialogState, VisualBinningDialogState,
+    WeightCasesDialogState,
 };
+use crate::recent_files::RecentFiles;
 use crate::views::{
-    render_data_view, render_output_view, render_variable_view, DataViewState, OutputViewerState,
-    VariableViewAction, VariableViewState,
+    render_data_view, render_output_view, render_syntax_editor, render_variable_view,
+    DataViewState, OutputViewerState, SyntaxEditorState, VariableViewAction, VariableViewState,
 };
 use crate::widgets::{
-    render_caption_buttons, render_menu_item, render_resize_zones, render_toolbar, title_x,
-    MenuItemStatus, ToolbarAction, ToolbarPosition, CAPTION_BAR_HEIGHT, CAPTION_BUTTON_WIDTH,
+    render_caption_buttons, render_resize_zones, render_toolbar, title_x, MenuItemStatus,
+    ToolbarAction, ToolbarPosition, CAPTION_BAR_HEIGHT, CAPTION_BUTTON_WIDTH,
 };
 use egui::{CentralPanel, SidePanel, TopBottomPanel, Ui};
 use egui_dock::{DockArea, DockState, NodeIndex, TabViewer};
-use serde_json::json;
 use statcraft_core::DataSet;
-use statcraft_i18n::{
-    available_languages, current_language, language_name, reload_locales, set_language, t,
-};
+use statcraft_i18n::t;
 use statcraft_syntax::CommandBus;
-use std::fs;
+use std::path::PathBuf;
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum Tab {
     DataView,
     VariableView,
     OutputViewer,
+    SyntaxEditor,
 }
 
-#[derive(Debug, Clone)]
-pub enum StatusMessage {
-    Ready,
-    DatasetImported {
-        name: String,
-        rows: usize,
-        cols: usize,
-    },
-    DescriptivesExecuted {
-        count: usize,
-    },
-    FrequenciesExecuted {
-        count: usize,
-    },
-    TTestExecuted {
-        count: usize,
-    },
-    IndepTTestExecuted {
-        count: usize,
-    },
-    PairedTTestExecuted {
-        count: usize,
-    },
-    AnovaExecuted {
-        count: usize,
-    },
-    CrosstabsExecuted {
-        count: usize,
-    },
-    CorrelationsExecuted {
-        count: usize,
-    },
-    MannWhitneyExecuted {
-        count: usize,
-    },
-    KruskalWallisExecuted {
-        count: usize,
-    },
-    RelatedSamplesExecuted {
-        count: usize,
-    },
-    ComputeExecuted {
-        target: String,
-        rows: usize,
-    },
-    RecodeExecuted {
-        count: usize,
-    },
-    SortCasesExecuted {
-        count: usize,
-    },
-    SelectCasesExecuted {
-        mode: String,
-    },
-    SplitFileExecuted {
-        mode: String,
-        count: usize,
-    },
-    WeightCasesExecuted {
-        var: Option<String>,
-    },
-    RegressionExecuted {
-        dep_var: String,
-        indep_count: usize,
-    },
-    ReliabilityExecuted {
-        scale: String,
-        count: usize,
-    },
-    FactorExecuted {
-        count: usize,
-        factors: usize,
-    },
-    MeansExecuted {
-        tables: usize,
-        cases: usize,
-    },
-    Error(String),
-}
-
-impl StatusMessage {
-    pub fn text(&self) -> String {
-        match self {
-            StatusMessage::Ready => t!("status-ready"),
-            StatusMessage::DatasetImported { name, rows, cols } => {
-                t!(
-                    "output-dataset-imported",
-                    name = name.as_str(),
-                    rows = *rows,
-                    cols = *cols
-                )
-            }
-            StatusMessage::DescriptivesExecuted { count } => {
-                t!("output-descriptives-executed", count = *count)
-            }
-            StatusMessage::FrequenciesExecuted { count } => {
-                t!("output-frequencies-executed", count = *count)
-            }
-            StatusMessage::TTestExecuted { count } => {
-                t!("output-ttest-executed", count = *count)
-            }
-            StatusMessage::IndepTTestExecuted { count } => {
-                t!("output-ttest-indep-executed", count = *count)
-            }
-            StatusMessage::PairedTTestExecuted { count } => {
-                t!("output-ttest-paired-executed", count = *count)
-            }
-            StatusMessage::AnovaExecuted { count } => {
-                t!("output-anova-executed", count = *count)
-            }
-            StatusMessage::CrosstabsExecuted { count } => {
-                t!("output-crosstabs-executed", count = *count)
-            }
-            StatusMessage::CorrelationsExecuted { count } => {
-                t!("output-correlations-executed", count = *count)
-            }
-            StatusMessage::MannWhitneyExecuted { count } => {
-                t!("output-npar-mann-whitney-executed", count = *count)
-            }
-            StatusMessage::KruskalWallisExecuted { count } => {
-                t!("output-npar-kruskal-executed", count = *count)
-            }
-            StatusMessage::RelatedSamplesExecuted { count } => {
-                t!("output-npar-related-executed", count = *count)
-            }
-            StatusMessage::ComputeExecuted { target, rows } => {
-                t!(
-                    "output-compute-executed",
-                    target = target.as_str(),
-                    rows = *rows
-                )
-            }
-            StatusMessage::RecodeExecuted { count } => {
-                t!("output-recode-executed", count = *count)
-            }
-            StatusMessage::SortCasesExecuted { count } => {
-                t!("output-sort-cases-executed", count = *count)
-            }
-            StatusMessage::SelectCasesExecuted { mode } => {
-                t!("output-select-cases-executed", mode = mode.as_str())
-            }
-            StatusMessage::SplitFileExecuted { mode, count } => {
-                t!(
-                    "output-split-file-executed",
-                    mode = mode.as_str(),
-                    count = *count
-                )
-            }
-            StatusMessage::WeightCasesExecuted { var } => match var {
-                Some(v) => t!("status-weight-executed", var = v.as_str()),
-                None => t!("status-weight-off-executed"),
-            },
-            StatusMessage::RegressionExecuted {
-                dep_var,
-                indep_count,
-            } => {
-                t!(
-                    "output-regression-executed",
-                    dep = dep_var.as_str(),
-                    count = *indep_count
-                )
-            }
-            StatusMessage::ReliabilityExecuted { scale, count } => {
-                t!(
-                    "output-reliability-executed",
-                    scale = scale.as_str(),
-                    count = *count
-                )
-            }
-            StatusMessage::FactorExecuted { count, factors } => {
-                t!("output-factor-executed", count = *count, factors = *factors)
-            }
-            StatusMessage::MeansExecuted { tables, cases } => {
-                t!("output-means-executed", tables = *tables, cases = *cases)
-            }
-            StatusMessage::Error(e) => format!("{}: {}", t!("status-error"), e),
-        }
-    }
-}
+pub use crate::status_message::StatusMessage;
 
 pub struct StatCraftApp {
     pub dataset: Option<DataSet>,
@@ -234,7 +61,17 @@ pub struct StatCraftApp {
     pub missing_values_dialog_state: MissingValuesDialogState,
     pub variable_type_dialog_state: VariableTypeDialogState,
     pub compute_dialog_state: ComputeDialogState,
+    pub count_values_dialog_state: CountValuesDialogState,
+    pub dummy_dialog_state: DummyDialogState,
+    pub shift_values_dialog_state: ShiftValuesDialogState,
+    pub date_time_dialog_state: DateTimeDialogState,
+    pub rank_cases_dialog_state: RankCasesDialogState,
+    pub time_series_dialog_state: TimeSeriesDialogState,
+    pub replace_missing_dialog_state: ReplaceMissingDialogState,
     pub recode_dialog_state: RecodeDialogState,
+    pub auto_recode_dialog_state: AutoRecodeDialogState,
+    pub visual_binning_dialog_state: VisualBinningDialogState,
+    pub optimal_binning_dialog_state: OptimalBinningDialogState,
     pub sort_cases_dialog_state: SortCasesDialogState,
     pub select_cases_dialog_state: SelectCasesDialogState,
     pub split_file_dialog_state: SplitFileDialogState,
@@ -243,16 +80,22 @@ pub struct StatCraftApp {
     pub reliability_dialog_state: ReliabilityDialogState,
     pub factor_dialog_state: FactorDialogState,
     pub means_dialog_state: MeansDialogState,
+    pub random_seed_dialog_state: RandomSeedDialogState,
     pub pending_variable_action: VariableViewAction,
     pub status_message: StatusMessage,
     pub toolbar_position: ToolbarPosition,
+    pub current_file_path: Option<PathBuf>,
+    pub recent_files: RecentFiles,
+    pub syntax_editor_state: SyntaxEditorState,
+    pub confirm_save_dialog_state: ConfirmSaveDialogState,
+    pub pending_session_action: Option<PendingSessionAction>,
+    pub saved_checkpoint: Option<crate::app_session::SavedCheckpoint>,
 }
 
 impl StatCraftApp {
-    pub fn new(cc: &eframe::CreationContext<'_>) -> Self {
-        egui_extras::install_image_loaders(&cc.egui_ctx);
-
-        let mut dock_state = DockState::new(vec![Tab::DataView, Tab::VariableView]);
+    pub fn new_headless() -> Self {
+        let mut dock_state =
+            DockState::new(vec![Tab::DataView, Tab::VariableView, Tab::SyntaxEditor]);
         let surface = dock_state.main_surface_mut();
         surface.split_right(NodeIndex::root(), 0.35, vec![Tab::OutputViewer]);
 
@@ -278,7 +121,17 @@ impl StatCraftApp {
             missing_values_dialog_state: MissingValuesDialogState::default(),
             variable_type_dialog_state: VariableTypeDialogState::default(),
             compute_dialog_state: ComputeDialogState::default(),
+            count_values_dialog_state: CountValuesDialogState::default(),
+            dummy_dialog_state: DummyDialogState::default(),
+            shift_values_dialog_state: ShiftValuesDialogState::default(),
+            date_time_dialog_state: DateTimeDialogState::default(),
+            rank_cases_dialog_state: RankCasesDialogState::default(),
+            time_series_dialog_state: TimeSeriesDialogState::default(),
+            replace_missing_dialog_state: ReplaceMissingDialogState::default(),
             recode_dialog_state: RecodeDialogState::default(),
+            auto_recode_dialog_state: AutoRecodeDialogState::default(),
+            visual_binning_dialog_state: VisualBinningDialogState::default(),
+            optimal_binning_dialog_state: OptimalBinningDialogState::default(),
             sort_cases_dialog_state: SortCasesDialogState::default(),
             select_cases_dialog_state: SelectCasesDialogState::default(),
             split_file_dialog_state: SplitFileDialogState::default(),
@@ -287,10 +140,28 @@ impl StatCraftApp {
             reliability_dialog_state: ReliabilityDialogState::default(),
             factor_dialog_state: FactorDialogState::default(),
             means_dialog_state: MeansDialogState::default(),
+            random_seed_dialog_state: RandomSeedDialogState::default(),
             pending_variable_action: VariableViewAction::None,
             status_message: StatusMessage::Ready,
             toolbar_position: ToolbarPosition::Top,
+            current_file_path: None,
+            recent_files: RecentFiles::default(),
+            syntax_editor_state: SyntaxEditorState::default(),
+            confirm_save_dialog_state: ConfirmSaveDialogState::default(),
+            pending_session_action: None,
+            saved_checkpoint: None,
         }
+    }
+
+    pub fn new(cc: &eframe::CreationContext<'_>) -> Self {
+        egui_extras::install_image_loaders(&cc.egui_ctx);
+        let mut app = Self::new_headless();
+        app.recent_files = cc
+            .storage
+            .and_then(|s| s.get_string(RecentFiles::STORAGE_KEY))
+            .and_then(|s| serde_json::from_str::<RecentFiles>(&s).ok())
+            .unwrap_or_else(RecentFiles::load_default);
+        app
     }
 
     pub fn open_csv_dialog(&mut self) {
@@ -299,767 +170,8 @@ impl StatCraftApp {
             .add_filter("Tabular Data", &["csv", "tsv", "txt"])
             .pick_file()
         {
-            if let Ok(content) = fs::read_to_string(&path) {
-                let file_name = path
-                    .file_name()
-                    .and_then(|n| n.to_str())
-                    .unwrap_or("Dataset");
-
-                let params = json!({
-                    "csv_data": content,
-                    "dataset_name": file_name
-                });
-
-                match self
-                    .command_bus
-                    .execute("data.import_csv", &mut self.dataset, params)
-                {
-                    Ok(res) => {
-                        let rows = res["rows"].as_u64().unwrap_or(0) as usize;
-                        let cols = res["cols"].as_u64().unwrap_or(0) as usize;
-                        self.status_message = StatusMessage::DatasetImported {
-                            name: file_name.to_string(),
-                            rows,
-                            cols,
-                        };
-                        self.output_view_state.add_dataset_imported(
-                            file_name.to_string(),
-                            rows,
-                            cols,
-                        );
-                    }
-                    Err(e) => {
-                        self.status_message = StatusMessage::Error(e.to_string());
-                    }
-                }
-            }
+            self.request_session_action(PendingSessionAction::OpenPath(path));
         }
-    }
-
-    fn render_single_menu(
-        &mut self,
-        ui: &mut Ui,
-        index: usize,
-        requires_dataset_status: MenuItemStatus,
-    ) {
-        match index {
-            0 => {
-                ui.menu_button(t!("menu-file"), |ui| {
-                    ui.menu_button(t!("menu-file-new"), |ui| {
-                        render_menu_item(ui, t!("menu-file-new-project"), MenuItemStatus::InDev);
-                        render_menu_item(ui, t!("menu-file-new-dataset"), MenuItemStatus::InDev);
-                        render_menu_item(ui, t!("menu-file-new-syntax"), MenuItemStatus::InDev);
-                    });
-                    render_menu_item(ui, t!("menu-file-open-project"), MenuItemStatus::InDev);
-                    render_menu_item(ui, t!("menu-file-open-data"), MenuItemStatus::InDev);
-                    if render_menu_item(
-                        ui,
-                        t!("menu-file-open-csv"),
-                        MenuItemStatus::Ready {
-                            shortcut: Some("Ctrl+O"),
-                        },
-                    )
-                    .clicked()
-                    {
-                        ui.close_menu();
-                        self.open_csv_dialog();
-                    }
-                    ui.menu_button(t!("menu-file-import-data"), |ui| {
-                        render_menu_item(ui, t!("menu-file-import-spss"), MenuItemStatus::InDev);
-                        render_menu_item(ui, t!("menu-file-import-csv"), MenuItemStatus::InDev);
-                        render_menu_item(ui, t!("menu-file-import-excel"), MenuItemStatus::InDev);
-                    });
-                    render_menu_item(ui, t!("menu-file-recent"), MenuItemStatus::InDev);
-                    ui.separator();
-                    render_menu_item(ui, t!("menu-file-save"), MenuItemStatus::InDev);
-                    render_menu_item(ui, t!("menu-file-save-as"), MenuItemStatus::InDev);
-                    render_menu_item(ui, t!("menu-file-save-data-as"), MenuItemStatus::InDev);
-                    ui.menu_button(t!("menu-file-export"), |ui| {
-                        render_menu_item(ui, t!("menu-file-export-output"), MenuItemStatus::InDev);
-                        render_menu_item(ui, t!("menu-file-export-data"), MenuItemStatus::InDev);
-                    });
-                    ui.separator();
-                    render_menu_item(ui, t!("menu-file-close-project"), MenuItemStatus::InDev);
-                    if render_menu_item(
-                        ui,
-                        t!("menu-file-exit"),
-                        MenuItemStatus::Ready {
-                            shortcut: Some("Alt+F4"),
-                        },
-                    )
-                    .clicked()
-                    {
-                        ui.ctx().send_viewport_cmd(egui::ViewportCommand::Close);
-                    }
-                });
-            }
-            1 => {
-                ui.menu_button(t!("menu-edit"), |ui| {
-                    if render_menu_item(
-                        ui,
-                        t!("menu-edit-undo"),
-                        MenuItemStatus::Ready {
-                            shortcut: Some("Ctrl+Z"),
-                        },
-                    )
-                    .clicked()
-                    {
-                        ui.close_menu();
-                        let _ = self.command_bus.undo(&mut self.dataset);
-                    }
-                    render_menu_item(
-                        ui,
-                        t!("menu-edit-redo"),
-                        MenuItemStatus::Ready {
-                            shortcut: Some("Ctrl+Y"),
-                        },
-                    );
-                    ui.separator();
-                    render_menu_item(ui, t!("menu-edit-cut"), MenuItemStatus::InDev);
-                    render_menu_item(ui, t!("menu-edit-copy"), MenuItemStatus::InDev);
-                    render_menu_item(ui, t!("menu-edit-copy-names"), MenuItemStatus::InDev);
-                    render_menu_item(ui, t!("menu-edit-paste"), MenuItemStatus::InDev);
-                    render_menu_item(ui, t!("menu-edit-clear"), MenuItemStatus::InDev);
-                    ui.separator();
-                    render_menu_item(ui, t!("menu-edit-find"), MenuItemStatus::InDev);
-                    render_menu_item(ui, t!("menu-edit-replace"), MenuItemStatus::InDev);
-                    render_menu_item(ui, t!("menu-edit-goto-case"), MenuItemStatus::InDev);
-                    render_menu_item(ui, t!("menu-edit-goto-var"), MenuItemStatus::InDev);
-                    ui.separator();
-                    render_menu_item(ui, t!("menu-edit-insert-case"), MenuItemStatus::InDev);
-                    render_menu_item(ui, t!("menu-edit-insert-var"), MenuItemStatus::InDev);
-                    ui.separator();
-                    render_menu_item(ui, t!("menu-edit-preferences"), MenuItemStatus::InDev);
-                });
-            }
-            2 => {
-                ui.menu_button(t!("menu-view"), |ui| {
-                    let mut show_labels = self.data_view_state.show_value_labels;
-                    if ui
-                        .checkbox(&mut show_labels, t!("menu-view-value-labels"))
-                        .clicked()
-                    {
-                        self.data_view_state.show_value_labels = show_labels;
-                    }
-                    ui.separator();
-                    render_menu_item(ui, t!("menu-view-status-bar"), MenuItemStatus::InDev);
-                    ui.menu_button(t!("menu-view-toolbars"), |ui| {
-                        if ui
-                            .selectable_label(
-                                self.toolbar_position == ToolbarPosition::Top,
-                                t!("menu-view-toolbar-top"),
-                            )
-                            .clicked()
-                        {
-                            self.toolbar_position = ToolbarPosition::Top;
-                            ui.close_menu();
-                        }
-                        if ui
-                            .selectable_label(
-                                self.toolbar_position == ToolbarPosition::Left,
-                                t!("menu-view-toolbar-left"),
-                            )
-                            .clicked()
-                        {
-                            self.toolbar_position = ToolbarPosition::Left;
-                            ui.close_menu();
-                        }
-                        if ui
-                            .selectable_label(
-                                self.toolbar_position == ToolbarPosition::Hidden,
-                                t!("menu-view-toolbar-hidden"),
-                            )
-                            .clicked()
-                        {
-                            self.toolbar_position = ToolbarPosition::Hidden;
-                            ui.close_menu();
-                        }
-                    });
-                    render_menu_item(ui, t!("menu-view-grid-lines"), MenuItemStatus::InDev);
-                    ui.separator();
-                    render_menu_item(ui, t!("menu-view-zoom-in"), MenuItemStatus::InDev);
-                    render_menu_item(ui, t!("menu-view-zoom-out"), MenuItemStatus::InDev);
-                    render_menu_item(ui, t!("menu-view-zoom-reset"), MenuItemStatus::InDev);
-                    ui.separator();
-                    ui.menu_button(t!("menu-view-theme"), |ui| {
-                        render_menu_item(ui, t!("menu-view-theme-light"), MenuItemStatus::InDev);
-                        render_menu_item(ui, t!("menu-view-theme-dark"), MenuItemStatus::InDev);
-                        render_menu_item(ui, t!("menu-view-theme-system"), MenuItemStatus::InDev);
-                    });
-                    ui.separator();
-                    // Language Submenu
-                    ui.menu_button(t!("menu-view-language"), |ui| {
-                        let _ = reload_locales();
-                        let cur_lang = current_language();
-                        for lang in available_languages() {
-                            let label = language_name(&lang);
-                            let is_active = cur_lang == lang;
-                            if ui.selectable_label(is_active, label).clicked() {
-                                set_language(&lang);
-                                ui.close_menu();
-                            }
-                        }
-                    });
-                });
-            }
-            3 => {
-                ui.menu_button(t!("menu-data"), |ui| {
-                    if render_menu_item(ui, t!("menu-data-sort-cases"), requires_dataset_status)
-                        .clicked()
-                    {
-                        self.sort_cases_dialog_state.is_open = true;
-                        ui.close_menu();
-                    }
-                    render_menu_item(ui, t!("menu-data-sort-vars"), requires_dataset_status);
-                    render_menu_item(ui, t!("menu-data-transpose"), requires_dataset_status);
-                    ui.separator();
-                    ui.menu_button(t!("menu-data-merge-files"), |ui| {
-                        render_menu_item(ui, t!("menu-data-merge-cases"), MenuItemStatus::InDev);
-                        render_menu_item(ui, t!("menu-data-merge-vars"), MenuItemStatus::InDev);
-                    });
-                    render_menu_item(ui, t!("menu-data-restructure"), MenuItemStatus::InDev);
-                    render_menu_item(ui, t!("menu-data-aggregate"), MenuItemStatus::InDev);
-                    ui.separator();
-                    if render_menu_item(ui, t!("menu-data-split-file"), requires_dataset_status)
-                        .clicked()
-                    {
-                        self.split_file_dialog_state.is_open = true;
-                        ui.close_menu();
-                    }
-                    if render_menu_item(ui, t!("menu-data-filter"), requires_dataset_status)
-                        .clicked()
-                    {
-                        self.select_cases_dialog_state.is_open = true;
-                        ui.close_menu();
-                    }
-                    if render_menu_item(ui, t!("menu-data-weight-cases"), requires_dataset_status)
-                        .clicked()
-                    {
-                        if let Some(ds) = &self.dataset {
-                            self.weight_cases_dialog_state.weight_active = ds.is_weighted();
-                            self.weight_cases_dialog_state.selected_var =
-                                ds.weight_var().map(str::to_string);
-                        }
-                        self.weight_cases_dialog_state.is_open = true;
-                        ui.close_menu();
-                    }
-                });
-            }
-            4 => {
-                ui.menu_button(t!("menu-transform"), |ui| {
-                    if render_menu_item(ui, t!("menu-transform-compute"), requires_dataset_status)
-                        .clicked()
-                    {
-                        self.compute_dialog_state.is_open = true;
-                        ui.close_menu();
-                    }
-                    render_menu_item(ui, t!("menu-transform-shift"), MenuItemStatus::InDev);
-                    ui.menu_button(t!("menu-transform-recode"), |ui| {
-                        if render_menu_item(
-                            ui,
-                            t!("menu-transform-recode-diff"),
-                            requires_dataset_status,
-                        )
-                        .clicked()
-                        {
-                            self.recode_dialog_state.open_diff();
-                            ui.close_menu();
-                        }
-                        if render_menu_item(
-                            ui,
-                            t!("menu-transform-recode-same"),
-                            requires_dataset_status,
-                        )
-                        .clicked()
-                        {
-                            self.recode_dialog_state.open_same();
-                            ui.close_menu();
-                        }
-                        render_menu_item(
-                            ui,
-                            t!("menu-transform-auto-recode"),
-                            MenuItemStatus::InDev,
-                        );
-                    });
-                    render_menu_item(ui, t!("menu-transform-dummy"), MenuItemStatus::InDev);
-                    render_menu_item(
-                        ui,
-                        t!("menu-transform-visual-binning"),
-                        MenuItemStatus::InDev,
-                    );
-                    render_menu_item(
-                        ui,
-                        t!("menu-transform-optimal-binning"),
-                        MenuItemStatus::InDev,
-                    );
-                    render_menu_item(ui, t!("menu-transform-adp"), MenuItemStatus::InDev);
-                    render_menu_item(ui, t!("menu-transform-rank-cases"), MenuItemStatus::InDev);
-                    render_menu_item(ui, t!("menu-transform-date-time"), MenuItemStatus::InDev);
-                    render_menu_item(ui, t!("menu-transform-time-series"), MenuItemStatus::InDev);
-                    render_menu_item(
-                        ui,
-                        t!("menu-transform-missing-values"),
-                        MenuItemStatus::InDev,
-                    );
-                    render_menu_item(ui, t!("menu-transform-random-seed"), MenuItemStatus::InDev);
-                    render_menu_item(ui, t!("menu-transform-count-values"), MenuItemStatus::InDev);
-                    render_menu_item(
-                        ui,
-                        t!("menu-transform-programmability"),
-                        MenuItemStatus::InDev,
-                    );
-                });
-            }
-            5 => {
-                ui.menu_button(t!("menu-analyze"), |ui| {
-                    ui.menu_button(t!("menu-analyze-reports"), |ui| {
-                        render_menu_item(
-                            ui,
-                            t!("menu-analyze-reports-codebook"),
-                            MenuItemStatus::InDev,
-                        );
-                        render_menu_item(
-                            ui,
-                            t!("menu-analyze-reports-case-summaries"),
-                            MenuItemStatus::InDev,
-                        );
-                    });
-                    ui.menu_button(t!("menu-analyze-descriptive-stats"), |ui| {
-                        if render_menu_item(
-                            ui,
-                            t!("menu-analyze-descriptives"),
-                            requires_dataset_status,
-                        )
-                        .clicked()
-                        {
-                            self.descriptives_dialog_state.is_open = true;
-                            ui.close_menu();
-                        }
-                        if render_menu_item(
-                            ui,
-                            t!("menu-analyze-frequencies"),
-                            requires_dataset_status,
-                        )
-                        .clicked()
-                        {
-                            self.frequencies_dialog_state.is_open = true;
-                            ui.close_menu();
-                        }
-                        render_menu_item(ui, t!("menu-analyze-explore"), MenuItemStatus::InDev);
-                        if render_menu_item(
-                            ui,
-                            t!("menu-analyze-crosstabs"),
-                            requires_dataset_status,
-                        )
-                        .clicked()
-                        {
-                            self.crosstabs_dialog_state.is_open = true;
-                            ui.close_menu();
-                        }
-                    });
-                    ui.menu_button(t!("menu-analyze-compare-means"), |ui| {
-                        if render_menu_item(ui, t!("menu-analyze-means"), requires_dataset_status)
-                            .clicked()
-                        {
-                            self.means_dialog_state.is_open = true;
-                            ui.close_menu();
-                        }
-                        if render_menu_item(
-                            ui,
-                            t!("menu-analyze-ttest-one-sample"),
-                            requires_dataset_status,
-                        )
-                        .clicked()
-                        {
-                            self.ttest_onesample_dialog_state.is_open = true;
-                            ui.close_menu();
-                        }
-                        if render_menu_item(
-                            ui,
-                            t!("menu-analyze-ttest-indep"),
-                            requires_dataset_status,
-                        )
-                        .clicked()
-                        {
-                            self.ttest_indep_dialog_state.is_open = true;
-                            ui.close_menu();
-                        }
-                        if render_menu_item(
-                            ui,
-                            t!("menu-analyze-ttest-paired"),
-                            requires_dataset_status,
-                        )
-                        .clicked()
-                        {
-                            self.ttest_paired_dialog_state.is_open = true;
-                            ui.close_menu();
-                        }
-                        if render_menu_item(
-                            ui,
-                            t!("menu-analyze-anova-oneway"),
-                            requires_dataset_status,
-                        )
-                        .clicked()
-                        {
-                            self.anova_oneway_dialog_state.is_open = true;
-                            ui.close_menu();
-                        }
-                    });
-                    ui.menu_button(t!("menu-analyze-glm"), |ui| {
-                        render_menu_item(
-                            ui,
-                            t!("menu-analyze-glm-univariate"),
-                            MenuItemStatus::InDev,
-                        );
-                        render_menu_item(
-                            ui,
-                            t!("menu-analyze-glm-multivariate"),
-                            MenuItemStatus::InDev,
-                        );
-                        render_menu_item(
-                            ui,
-                            t!("menu-analyze-glm-repeated"),
-                            MenuItemStatus::InDev,
-                        );
-                    });
-                    ui.menu_button(t!("menu-analyze-correlate"), |ui| {
-                        if render_menu_item(
-                            ui,
-                            t!("menu-analyze-correlate-bivariate"),
-                            requires_dataset_status,
-                        )
-                        .clicked()
-                        {
-                            self.correlations_dialog_state.is_open = true;
-                            ui.close_menu();
-                        }
-                        render_menu_item(
-                            ui,
-                            t!("menu-analyze-correlate-partial"),
-                            MenuItemStatus::InDev,
-                        );
-                    });
-                    ui.menu_button(t!("menu-analyze-regression"), |ui| {
-                        if render_menu_item(
-                            ui,
-                            t!("menu-analyze-regression-linear"),
-                            requires_dataset_status,
-                        )
-                        .clicked()
-                        {
-                            self.linear_regression_dialog_state.is_open = true;
-                            ui.close_menu();
-                        }
-                        render_menu_item(
-                            ui,
-                            t!("menu-analyze-regression-binary"),
-                            MenuItemStatus::InDev,
-                        );
-                        render_menu_item(
-                            ui,
-                            t!("menu-analyze-regression-multinomial"),
-                            MenuItemStatus::InDev,
-                        );
-                        render_menu_item(
-                            ui,
-                            t!("menu-analyze-regression-curve"),
-                            MenuItemStatus::InDev,
-                        );
-                    });
-                    ui.menu_button(t!("menu-analyze-nonparametric"), |ui| {
-                        if render_menu_item(
-                            ui,
-                            t!("menu-analyze-nonparam-two-indep"),
-                            requires_dataset_status,
-                        )
-                        .clicked()
-                        {
-                            self.nonparam_twosample_dialog_state.is_open = true;
-                            ui.close_menu();
-                        }
-                        if render_menu_item(
-                            ui,
-                            t!("menu-analyze-nonparam-k-indep"),
-                            requires_dataset_status,
-                        )
-                        .clicked()
-                        {
-                            self.kruskal_wallis_dialog_state.is_open = true;
-                            ui.close_menu();
-                        }
-                        if render_menu_item(
-                            ui,
-                            t!("menu-analyze-nonparam-related"),
-                            requires_dataset_status,
-                        )
-                        .clicked()
-                        {
-                            self.nonparam_related_dialog_state.is_open = true;
-                            ui.close_menu();
-                        }
-                    });
-                    ui.menu_button(t!("menu-analyze-dimension"), |ui| {
-                        if render_menu_item(ui, t!("menu-analyze-factor"), requires_dataset_status)
-                            .clicked()
-                        {
-                            self.factor_dialog_state.is_open = true;
-                            ui.close_menu();
-                        }
-                        render_menu_item(ui, t!("menu-analyze-cluster"), MenuItemStatus::InDev);
-                    });
-                    ui.menu_button(t!("menu-analyze-scale"), |ui| {
-                        if render_menu_item(
-                            ui,
-                            t!("menu-analyze-reliability"),
-                            requires_dataset_status,
-                        )
-                        .clicked()
-                        {
-                            self.reliability_dialog_state.is_open = true;
-                            ui.close_menu();
-                        }
-                    });
-                    ui.menu_button(t!("menu-analyze-survival"), |ui| {
-                        render_menu_item(
-                            ui,
-                            t!("menu-analyze-survival-life-tables"),
-                            MenuItemStatus::InDev,
-                        );
-                        render_menu_item(
-                            ui,
-                            t!("menu-analyze-survival-kaplan-meier"),
-                            MenuItemStatus::InDev,
-                        );
-                        render_menu_item(
-                            ui,
-                            t!("menu-analyze-survival-cox"),
-                            MenuItemStatus::InDev,
-                        );
-                    });
-                });
-            }
-            6 => {
-                ui.menu_button(t!("menu-direct-marketing"), |ui| {
-                    render_menu_item(ui, t!("menu-dm-rfm"), MenuItemStatus::InDev);
-                    render_menu_item(ui, t!("menu-dm-cluster"), MenuItemStatus::InDev);
-                    render_menu_item(ui, t!("menu-dm-profile"), MenuItemStatus::InDev);
-                    render_menu_item(ui, t!("menu-dm-control-package"), MenuItemStatus::InDev);
-                    render_menu_item(ui, t!("menu-dm-response-rate"), MenuItemStatus::InDev);
-                });
-            }
-            7 => {
-                ui.menu_button(t!("menu-graphs"), |ui| {
-                    render_menu_item(ui, t!("menu-graphs-chart-builder"), MenuItemStatus::InDev);
-                    ui.menu_button(t!("menu-graphs-legacy"), |ui| {
-                        render_menu_item(ui, t!("menu-graphs-bar"), MenuItemStatus::InDev);
-                        render_menu_item(ui, t!("menu-graphs-line"), MenuItemStatus::InDev);
-                        render_menu_item(ui, t!("menu-graphs-pie"), MenuItemStatus::InDev);
-                        render_menu_item(ui, t!("menu-graphs-boxplot"), MenuItemStatus::InDev);
-                        render_menu_item(ui, t!("menu-graphs-error-bar"), MenuItemStatus::InDev);
-                        render_menu_item(ui, t!("menu-graphs-scatter"), MenuItemStatus::InDev);
-                        render_menu_item(ui, t!("menu-graphs-histogram"), MenuItemStatus::InDev);
-                        render_menu_item(ui, t!("menu-graphs-pyramid"), MenuItemStatus::InDev);
-                    });
-                });
-            }
-            8 => {
-                ui.menu_button(t!("menu-utilities"), |ui| {
-                    render_menu_item(ui, t!("menu-utilities-variables"), MenuItemStatus::InDev);
-                    render_menu_item(ui, t!("menu-utilities-oms"), MenuItemStatus::InDev);
-                    render_menu_item(ui, t!("menu-utilities-comments"), MenuItemStatus::InDev);
-                    render_menu_item(ui, t!("menu-utilities-codebook"), MenuItemStatus::InDev);
-                });
-            }
-            9 => {
-                ui.menu_button(t!("menu-extensions"), |ui| {
-                    render_menu_item(ui, t!("menu-extensions-hub"), MenuItemStatus::InDev);
-                    render_menu_item(ui, t!("menu-extensions-install"), MenuItemStatus::InDev);
-                    render_menu_item(
-                        ui,
-                        t!("menu-extensions-dialog-builder"),
-                        MenuItemStatus::InDev,
-                    );
-                    render_menu_item(ui, t!("menu-extensions-mcp-bridge"), MenuItemStatus::InDev);
-                    render_menu_item(ui, t!("menu-extensions-scripting"), MenuItemStatus::InDev);
-                });
-            }
-            10 => {
-                ui.menu_button(t!("menu-window"), |ui| {
-                    if render_menu_item(
-                        ui,
-                        t!("menu-window-reset-layout"),
-                        MenuItemStatus::Ready { shortcut: None },
-                    )
-                    .clicked()
-                    {
-                        ui.close_menu();
-                        let mut dock_state = DockState::new(vec![Tab::DataView, Tab::VariableView]);
-                        let surface = dock_state.main_surface_mut();
-                        surface.split_right(NodeIndex::root(), 0.35, vec![Tab::OutputViewer]);
-                        self.dock_state = dock_state;
-                    }
-                    ui.menu_button(t!("menu-window-presets"), |ui| {
-                        if render_menu_item(
-                            ui,
-                            t!("menu-window-preset-split"),
-                            MenuItemStatus::Ready { shortcut: None },
-                        )
-                        .clicked()
-                        {
-                            ui.close_menu();
-                            let mut dock_state =
-                                DockState::new(vec![Tab::DataView, Tab::VariableView]);
-                            let surface = dock_state.main_surface_mut();
-                            surface.split_right(NodeIndex::root(), 0.35, vec![Tab::OutputViewer]);
-                            self.dock_state = dock_state;
-                        }
-                        render_menu_item(
-                            ui,
-                            t!("menu-window-preset-classic"),
-                            MenuItemStatus::InDev,
-                        );
-                        render_menu_item(
-                            ui,
-                            t!("menu-window-preset-syntax"),
-                            MenuItemStatus::InDev,
-                        );
-                    });
-                    ui.separator();
-                    if render_menu_item(
-                        ui,
-                        t!("menu-window-data-editor"),
-                        MenuItemStatus::Ready {
-                            shortcut: Some("Ctrl+1"),
-                        },
-                    )
-                    .clicked()
-                    {
-                        ui.close_menu();
-                        if let Some(pos) = self.dock_state.find_tab(&Tab::DataView) {
-                            self.dock_state.set_active_tab(pos);
-                        }
-                    }
-                    if render_menu_item(
-                        ui,
-                        t!("menu-window-variable-view"),
-                        MenuItemStatus::Ready {
-                            shortcut: Some("Ctrl+2"),
-                        },
-                    )
-                    .clicked()
-                    {
-                        ui.close_menu();
-                        if let Some(pos) = self.dock_state.find_tab(&Tab::VariableView) {
-                            self.dock_state.set_active_tab(pos);
-                        }
-                    }
-                    if render_menu_item(
-                        ui,
-                        t!("menu-window-output-viewer"),
-                        MenuItemStatus::Ready {
-                            shortcut: Some("Ctrl+3"),
-                        },
-                    )
-                    .clicked()
-                    {
-                        ui.close_menu();
-                        if let Some(pos) = self.dock_state.find_tab(&Tab::OutputViewer) {
-                            self.dock_state.set_active_tab(pos);
-                        }
-                    }
-                    render_menu_item(ui, t!("menu-window-syntax-editor"), MenuItemStatus::InDev);
-                    render_menu_item(ui, t!("menu-window-ai-copilot"), MenuItemStatus::InDev);
-                    ui.separator();
-                    render_menu_item(ui, t!("menu-window-minimize-all"), MenuItemStatus::InDev);
-                });
-            }
-            11 => {
-                ui.menu_button(t!("menu-help"), |ui| {
-                    render_menu_item(ui, t!("menu-help-coach"), MenuItemStatus::InDev);
-                    render_menu_item(ui, t!("menu-help-algorithms"), MenuItemStatus::InDev);
-                    render_menu_item(ui, t!("menu-help-syntax"), MenuItemStatus::InDev);
-                    ui.menu_button(t!("menu-help-sample-data"), |ui| {
-                        render_menu_item(ui, t!("menu-help-sample-iris"), MenuItemStatus::InDev);
-                        render_menu_item(ui, t!("menu-help-sample-trial"), MenuItemStatus::InDev);
-                        render_menu_item(ui, t!("menu-help-sample-survey"), MenuItemStatus::InDev);
-                    });
-                    ui.separator();
-                    render_menu_item(ui, t!("menu-help-check-updates"), MenuItemStatus::InDev);
-                    render_menu_item(ui, t!("menu-help-about"), MenuItemStatus::InDev);
-                });
-            }
-            _ => {}
-        }
-    }
-
-    fn render_top_menus(
-        &mut self,
-        ui: &mut Ui,
-        controls_start_x: f32,
-        requires_dataset_status: MenuItemStatus,
-    ) -> f32 {
-        const MENU_KEYS: [&str; 12] = [
-            "menu-file",
-            "menu-edit",
-            "menu-view",
-            "menu-data",
-            "menu-transform",
-            "menu-analyze",
-            "menu-direct-marketing",
-            "menu-graphs",
-            "menu-utilities",
-            "menu-extensions",
-            "menu-window",
-            "menu-help",
-        ];
-
-        let font_id = egui::FontId::proportional(13.0);
-        let overflow_label = t!("menu-overflow");
-        let overflow_w = ui.fonts(|f| {
-            f.layout_no_wrap(
-                overflow_label.to_string(),
-                font_id.clone(),
-                egui::Color32::WHITE,
-            )
-            .size()
-            .x
-        }) + 16.0;
-
-        let mut overflow_from = None;
-
-        for (i, &key) in MENU_KEYS.iter().enumerate() {
-            let label = statcraft_i18n::tr(key);
-            let text_w = ui.fonts(|f| {
-                f.layout_no_wrap(label.to_string(), font_id.clone(), egui::Color32::WHITE)
-                    .size()
-                    .x
-            });
-            let item_w = text_w + 16.0;
-            let current_x = ui.cursor().left();
-
-            let room_needed = if i < 11 {
-                item_w + overflow_w + 8.0
-            } else {
-                item_w + 8.0
-            };
-
-            if current_x + room_needed > controls_start_x {
-                overflow_from = Some(i);
-                break;
-            }
-
-            self.render_single_menu(ui, i, requires_dataset_status);
-        }
-
-        if let Some(start_idx) = overflow_from {
-            ui.menu_button(overflow_label, |ui| {
-                for rem_idx in start_idx..12 {
-                    self.render_single_menu(ui, rem_idx, requires_dataset_status);
-                }
-            });
-        }
-
-        ui.cursor().left()
     }
 }
 
@@ -1068,6 +180,7 @@ struct StatCraftTabViewer<'a> {
     data_view_state: &'a mut DataViewState,
     variable_view_state: &'a mut VariableViewState,
     output_view_state: &'a mut OutputViewerState,
+    syntax_editor_state: &'a mut SyntaxEditorState,
     pending_variable_action: &'a mut VariableViewAction,
 }
 
@@ -1079,6 +192,7 @@ impl<'a> TabViewer for StatCraftTabViewer<'a> {
             Tab::DataView => t!("menu-view-data").into(),
             Tab::VariableView => t!("menu-view-variables").into(),
             Tab::OutputViewer => t!("menu-view-output").into(),
+            Tab::SyntaxEditor => t!("menu-file-new-syntax").into(),
         }
     }
 
@@ -1096,6 +210,9 @@ impl<'a> TabViewer for StatCraftTabViewer<'a> {
             Tab::OutputViewer => {
                 render_output_view(ui, self.output_view_state);
             }
+            Tab::SyntaxEditor => {
+                render_syntax_editor(ui, self.syntax_editor_state);
+            }
         }
     }
 }
@@ -1104,6 +221,60 @@ impl eframe::App for StatCraftApp {
     fn update(&mut self, ctx: &egui::Context, _frame: &mut eframe::Frame) {
         let is_maximized = ctx.input(|i| i.viewport().maximized.unwrap_or(false));
         render_resize_zones(ctx, is_maximized);
+
+        if ctx.input(|i| i.viewport().close_requested()) && self.has_unsaved_changes() {
+            ctx.send_viewport_cmd(egui::ViewportCommand::CancelClose);
+            self.request_session_action(PendingSessionAction::CloseProject);
+        }
+
+        if ctx.input_mut(|i| {
+            i.consume_shortcut(&egui::KeyboardShortcut::new(
+                egui::Modifiers::COMMAND | egui::Modifiers::SHIFT,
+                egui::Key::N,
+            ))
+        }) {
+            self.request_session_action(PendingSessionAction::NewProject);
+        }
+        if ctx.input_mut(|i| {
+            i.consume_shortcut(&egui::KeyboardShortcut::new(
+                egui::Modifiers::COMMAND,
+                egui::Key::N,
+            ))
+        }) {
+            self.request_session_action(PendingSessionAction::NewDataset);
+        }
+        if ctx.input_mut(|i| {
+            i.consume_shortcut(&egui::KeyboardShortcut::new(
+                egui::Modifiers::COMMAND,
+                egui::Key::O,
+            ))
+        }) {
+            self.open_data_dialog();
+        }
+        if ctx.input_mut(|i| {
+            i.consume_shortcut(&egui::KeyboardShortcut::new(
+                egui::Modifiers::COMMAND,
+                egui::Key::S,
+            ))
+        }) {
+            self.save_project();
+        }
+        if ctx.input_mut(|i| {
+            i.consume_shortcut(&egui::KeyboardShortcut::new(
+                egui::Modifiers::COMMAND | egui::Modifiers::SHIFT,
+                egui::Key::S,
+            ))
+        }) {
+            self.save_project_as();
+        }
+        if ctx.input_mut(|i| {
+            i.consume_shortcut(&egui::KeyboardShortcut::new(
+                egui::Modifiers::COMMAND | egui::Modifiers::SHIFT,
+                egui::Key::O,
+            ))
+        }) {
+            self.open_project_dialog();
+        }
 
         // 1. Top Custom Title Bar (CSD)
         TopBottomPanel::top("title_bar")
@@ -1173,10 +344,19 @@ impl eframe::App for StatCraftApp {
                     }
                 }
 
-                let project_title = match &self.status_message {
-                    StatusMessage::DatasetImported { name, .. } => format!("{} •", name),
-                    _ => "Untitled-1 •".to_string(),
-                };
+                let file_name = self
+                    .current_file_path
+                    .as_ref()
+                    .and_then(|p| p.file_name())
+                    .and_then(|n| n.to_str())
+                    .map(|s| s.to_string())
+                    .unwrap_or_else(|| match &self.status_message {
+                        StatusMessage::DatasetImported { name, .. } => name.clone(),
+                        StatusMessage::ProjectOpened { name, .. } => name.clone(),
+                        _ => "Untitled-1".to_string(),
+                    });
+                let asterisk = if self.has_unsaved_changes() { "*" } else { "" };
+                let project_title = format!("{}{} •", file_name, asterisk);
 
                 let font_id = egui::FontId::proportional(12.5);
                 let galley = ui.painter().layout_no_wrap(
@@ -1212,7 +392,11 @@ impl eframe::App for StatCraftApp {
             .map(|d| d.col_count() > 0)
             .unwrap_or(false);
         let can_undo = !self.command_bus.history().is_empty();
-        let can_redo = false;
+        let can_redo = self
+            .dataset
+            .as_ref()
+            .map(|d| !d.delta.redo_stack.is_empty())
+            .unwrap_or(false);
         let mut toolbar_action = ToolbarAction::None;
 
         // 2. Main Toolbar (Top)
@@ -1239,7 +423,7 @@ impl eframe::App for StatCraftApp {
         // 3. Bottom Status Bar
         TopBottomPanel::bottom("status_bar").show(ctx, |ui| {
             ui.horizontal(|ui| {
-                ui.label(self.status_message.text());
+                ui.colored_label(self.status_message.color(), self.status_message.text());
                 ui.with_layout(egui::Layout::right_to_left(egui::Align::Center), |ui| {
                     if let Some(ds) = &self.dataset {
                         ui.label(t!("status-cols-count", count = ds.col_count()));
@@ -1294,8 +478,16 @@ impl eframe::App for StatCraftApp {
             ToolbarAction::OpenData => {
                 self.open_csv_dialog();
             }
+            ToolbarAction::SaveData => {
+                self.save_project();
+            }
             ToolbarAction::Undo => {
                 let _ = self.command_bus.undo(&mut self.dataset);
+            }
+            ToolbarAction::Redo => {
+                if let Some(ds) = &mut self.dataset {
+                    let _ = ds.redo();
+                }
             }
             ToolbarAction::InsertCase => {
                 let _ = self.command_bus.execute(
@@ -1328,6 +520,7 @@ impl eframe::App for StatCraftApp {
                 data_view_state: &mut self.data_view_state,
                 variable_view_state: &mut self.variable_view_state,
                 output_view_state: &mut self.output_view_state,
+                syntax_editor_state: &mut self.syntax_editor_state,
                 pending_variable_action: &mut self.pending_variable_action,
             };
 
@@ -1383,5 +576,12 @@ impl eframe::App for StatCraftApp {
 
         // 5. Modal Dialogs
         self.handle_dialogs(ctx);
+        self.handle_confirm_save_dialog(ctx);
+    }
+
+    fn save(&mut self, storage: &mut dyn eframe::Storage) {
+        if let Ok(json_str) = serde_json::to_string(&self.recent_files) {
+            storage.set_string(RecentFiles::STORAGE_KEY, json_str);
+        }
     }
 }

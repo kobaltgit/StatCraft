@@ -5,6 +5,7 @@ members = [
     "crates/statcraft_io",
     "crates/statcraft_algo",
     "crates/statcraft_syntax",
+    "crates/statcraft_reporting",
     "crates/statcraft_app",
     "xtask",
 ]

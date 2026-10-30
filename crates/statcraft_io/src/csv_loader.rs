@@ -1,3 +1,4 @@
+use serde::{Deserialize, Serialize};
 use std::fs::File;
 use std::io::{BufReader, Read};
 use std::path::Path;
@@ -14,21 +15,45 @@ pub enum IoError {
     #[error("CSV parsing error: {0}")]
     Csv(String),
 
+    #[error("Excel parsing error: {0}")]
+    Excel(String),
+
     #[error("Malformed row at line {line}: expected {expected} columns, found {found}")]
     MalformedRow {
         line: usize,
         expected: usize,
         found: usize,
     },
+
+    #[error("Serialization error: {0}")]
+    Serialization(String),
+
+    #[error("Malformed SPSS file: {0}")]
+    MalformedSpss(String),
+
+    #[error("Deserialization error: {0}")]
+    Deserialization(String),
 }
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+impl From<std::io::Error> for IoError {
+    fn from(e: std::io::Error) -> Self {
+        IoError::Io(e.to_string())
+    }
+}
+
+impl From<serde_json::Error> for IoError {
+    fn from(e: serde_json::Error) -> Self {
+        IoError::Deserialization(e.to_string())
+    }
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
 pub enum RawDataType {
     Numeric,
     Text,
 }
 
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub enum RawValue {
     Number(f64),
     Text(String),
@@ -55,14 +80,14 @@ impl RawValue {
     }
 }
 
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct RawColumn {
     pub name: String,
     pub data_type: RawDataType,
     pub values: Vec<RawValue>,
 }
 
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct RawTable {
     pub columns: Vec<RawColumn>,
     pub row_count: usize,

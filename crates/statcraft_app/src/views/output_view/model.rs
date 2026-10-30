@@ -1,3 +1,4 @@
+use serde::{Deserialize, Serialize};
 use statcraft_algo::{
     BivariateCorrelationsResult, CrosstabResult, DescriptivesResult, FactorAnalysisResult,
     FrequencyResult, IndepTTestResult, KruskalWallisResult, LinearRegressionResult,
@@ -6,13 +7,34 @@ use statcraft_algo::{
 };
 use statcraft_i18n::t;
 
+pub mod static_str_serde {
+    use serde::{Deserialize, Deserializer, Serializer};
+
+    pub fn serialize<S>(val: &&'static str, s: S) -> Result<S::Ok, S::Error>
+    where
+        S: Serializer,
+    {
+        s.serialize_str(val)
+    }
+
+    pub fn deserialize<'de, D>(d: D) -> Result<&'static str, D::Error>
+    where
+        D: Deserializer<'de>,
+    {
+        let s = String::deserialize(d)?;
+        Ok(Box::leak(s.into_boxed_str()))
+    }
+}
+
+pub type StaticStr = &'static str;
+
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum SelectedTarget {
     Procedure(usize),
     Item { proc_idx: usize, item_idx: usize },
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct OutputNotes {
     pub dataset_name: String,
     pub timestamp: String,
@@ -20,7 +42,7 @@ pub struct OutputNotes {
     pub active_vars: usize,
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 pub enum OutputItemKind {
     Log(String),
     Notes(OutputNotes),
@@ -74,10 +96,11 @@ pub enum OutputItemKind {
     },
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct OutputItem {
     pub id: usize,
-    pub title_key: &'static str,
+    #[serde(with = "static_str_serde")]
+    pub title_key: StaticStr,
     pub custom_title: Option<String>,
     pub kind: OutputItemKind,
 }
@@ -92,10 +115,11 @@ impl OutputItem {
     }
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct OutputProcedure {
     pub id: usize,
-    pub title_key: &'static str,
+    #[serde(with = "static_str_serde")]
+    pub title_key: StaticStr,
     pub custom_title: Option<String>,
     pub is_expanded: bool,
     pub items: Vec<OutputItem>,
@@ -154,6 +178,33 @@ impl OutputViewerState {
         self.last_copied_id = None;
     }
 
+    pub fn add_log(&mut self, log_message: impl Into<String>) {
+        let msg = log_message.into();
+        let proc_id = self.alloc_id();
+        let item_id = self.alloc_id();
+
+        let proc = OutputProcedure {
+            id: proc_id,
+            title_key: "output-log",
+            custom_title: None,
+            is_expanded: true,
+            items: vec![OutputItem {
+                id: item_id,
+                title_key: "output-log",
+                custom_title: None,
+                kind: OutputItemKind::Log(msg),
+            }],
+        };
+
+        self.procedures.push(proc);
+        let new_proc_idx = self.procedures.len() - 1;
+        self.selected_target = Some(SelectedTarget::Item {
+            proc_idx: new_proc_idx,
+            item_idx: 0,
+        });
+        self.scroll_to_target = self.selected_target;
+    }
+
     pub fn expand_all(&mut self) {
         for proc in &mut self.procedures {
             proc.is_expanded = true;
@@ -191,5 +242,86 @@ impl OutputViewerState {
                 }
             }
         }
+    }
+
+    pub fn to_json(&self) -> Result<String, serde_json::Error> {
+        serde_json::to_string(&self.procedures)
+    }
+
+    pub fn load_from_json(&mut self, json_str: &str) -> Result<(), serde_json::Error> {
+        #[derive(Deserialize)]
+        #[serde(bound(deserialize = ""))]
+        struct Wrapped {
+            procedures: Vec<OutputProcedure>,
+        }
+
+        let loaded_procs =
+            if let Ok(direct) = serde_json::from_str::<Vec<OutputProcedure>>(json_str) {
+                direct
+            } else {
+                let wrapped: Wrapped = serde_json::from_str(json_str)?;
+                wrapped.procedures
+            };
+
+        let mut max_id = 0;
+        for proc in &loaded_procs {
+            if proc.id > max_id {
+                max_id = proc.id;
+            }
+            for item in &proc.items {
+                if item.id > max_id {
+                    max_id = item.id;
+                }
+            }
+        }
+        self.procedures = loaded_procs;
+        self.next_id = max_id + 1;
+        self.selected_target = None;
+        self.scroll_to_target = None;
+        self.last_copied_id = None;
+        Ok(())
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_output_viewer_state_to_and_from_json() {
+        let mut state = OutputViewerState::new();
+        state.add_log("GET FILE='data.sav'.");
+        let item_id = state.alloc_id();
+        let proc_id = state.alloc_id();
+
+        state.procedures.push(OutputProcedure {
+            id: proc_id,
+            title_key: "output-descriptives-title",
+            custom_title: Some("My Descriptives".to_string()),
+            is_expanded: true,
+            items: vec![OutputItem {
+                id: item_id,
+                title_key: "output-descriptives-table",
+                custom_title: None,
+                kind: OutputItemKind::Warning("Check missing data".to_string()),
+            }],
+        });
+
+        let json = state.to_json().unwrap();
+        assert!(!json.is_empty());
+
+        let mut restored = OutputViewerState::new();
+        restored.load_from_json(&json).unwrap();
+
+        assert_eq!(restored.procedures.len(), 2);
+        assert_eq!(
+            restored.procedures[1].custom_title.as_deref(),
+            Some("My Descriptives")
+        );
+        assert_eq!(
+            restored.procedures[1].title_key,
+            "output-descriptives-title"
+        );
+        assert!(restored.next_id > proc_id && restored.next_id > item_id);
     }
 }

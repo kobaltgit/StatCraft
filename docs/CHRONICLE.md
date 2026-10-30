@@ -1025,3 +1025,697 @@
    - Полная синхронная локализация без хардкода строк (`locales/en.ftl`, `locales/ru.ftl`, `C:\StatCraft\locales\fr.ftl`);
    - Компиляция `cargo clippy --workspace --all-targets -j 1 -- -D warnings` — 0 предупреждений;
    - Сборка и развертывание бинарника в `C:\StatCraft\statcraft_app.exe`.
+
+---
+
+### Этап MP-1: Жизненный цикл сессии и меню «Файл» (Session Lifecycle & File Menu)
+*Время: 29 октября 2026, 21:30 (~25 минут)*
+
+Оживлены базовые пункты управления жизненным циклом сессии и навигации в главном меню `File` приложения StatCraft (`crates/statcraft_app`), переведенные из статуса `MenuItemStatus::InDev` в полноценно рабочий `MenuItemStatus::Ready`:
+1. **Менеджер недавних файлов L6 (`recent_files.rs`):**
+   - Структура `RecentFiles` с хранением очереди до 10 последних открытых файлов;
+   - Автоматическая ротация: при открытии файл помещается на первое место списка, дубликаты поднимаются наверх, при превышении 10 записей старые отсекаются;
+   - Двойная персистентность: сохранение в `.statcraft/recent_files.json` и синхронизация с `eframe::Storage` при закрытии;
+   - Интерактивное подменю `File -> Recent Files`: всплывающие подсказки с полными путями, неактивное состояние `(No recent files)` при пустом списке и разделитель с кнопкой `Clear Recent Files`.
+2. **Жизненный цикл сессии и координация L6 (`app_session.rs`):**
+   - `File -> New -> Data` (`Ctrl+N`): сброс датасета в чистый бланк, очистка `current_file_path`, сброс командной шины `CommandBus` и параметров фильтрации/весов/расщепления, переключение на вкладку `Data View`, уведомление в строке состояния и запись команды `NEW DATASET.` в журнал `Output Viewer`;
+   - `File -> New -> Syntax`: перевод фокуса на редактор синтаксиса `Syntax Editor`, инициализация канонического стартового заголовка с текущей датой и временем `* StatCraft Syntax Editor. / * Created: <timestamp>.`, уведомление в статусе;
+   - `File -> New -> Project` (`Ctrl+Shift+N`): комплексный сброс приложения (датасет, журнал вывода, синтаксис, путь к файлу);
+   - `File -> Close Project`: закрытие текущего проекта с очисткой данных и отчетов, возврат статус-бара в `Ready`;
+   - Проверка несохраненных изменений `has_unsaved_changes()`: при попытке создания или открытия при наличии данных/правок открывается центрированный модальный диалог подтверждения `ConfirmSaveDialog` (`[ Save ] [ Don't Save ] [ Cancel ]`) на базе `DialogShell::subdialog`.
+3. **Редактор синтаксиса L6 (`views/syntax_editor.rs`):**
+   - Интерактивный компонент `SyntaxEditorState` и функция отрисовки `render_syntax_editor`;
+   - Моноширинный многострочный редактор кода, зарегистрированный в докинг-системе приложения (`Tab::SyntaxEditor`);
+   - Быстрый переход через `Window -> Syntax Editor` (`Ctrl+4`).
+4. **Контроль качества (Definition of Done):**
+   - Создан отдельный набор модульных и интеграционных тестов `crates/statcraft_app/tests/session_lifecycle_tests.rs` (ротация recent files, проверка детекции правок, комплексные сценарии сброса сессий, headless-рендер);
+   - Полное прохождение пайплайна качества `cargo run -p xtask -j 1 -- ci` — 100% OK;
+   - Жесткое соблюдение `file-guard`: координатор `app.rs` строго в рамках лимита (1407 из 1500 строк), вспомогательные модули $\le 500$ строк;
+   - Строгий линтер дизайна `design-guard` — 100% OK;
+   - Полная синхронная локализация без единого хардкода строк (`locales/en.ftl`, `locales/ru.ftl`);
+   - `cargo clippy --workspace --all-targets -j 1 -- -D warnings` — 0 предупреждений.
+
+---
+
+### Этап MP-3: Экспорт данных и отчетов вывода (Export Data & Export Output)
+*Время: 29 октября 2026, 22:15 (~35 минут)*
+
+Реализованы полноценные функции экспорта данных и результатов статистического анализа для внешнего использования, публикаций и обмена в меню `File -> Export`:
+1. **Экспорт данных L0/L1 (`statcraft_io::csv_writer`, `statcraft_core::csv_export`):**
+   - Модуль `csv_writer.rs` в слое L0 с поддержкой структуры настроек `CsvExportOptions` (разделители запятая, точка с запятой, табуляция, кавычки, экранирование спецсимволов `\n`, `\r`, `"`, десятичные разделители и представление системных пропусков `sysmis_repr`);
+   - Модуль `csv_export.rs` в слое L1 с функцией `export_dataset_to_csv` для экспорта `DataSet` с автоматической подстановкой меток значений `ValueLabels` (или исходных числовых кодов), безопасной обработкой пустых наборов данных (0 строк/колонок) и потоковой записью в `std::io::Write`;
+   - Регистрация фильтров диалога сохранения: `Comma-Separated Values (*.csv)`, `Tab-Delimited Values (*.tsv, *.txt)`, `Semicolon-Separated Values (*.csv)` с автоопределением параметров по расширению.
+2. **Архитектурный слой отчетов L4 (`crates/statcraft_reporting`):**
+   - Создан новый независимый крейт слоя L4 `statcraft_reporting` (зарегистрирован в `xtask/src/layers.rs` с соблюдением строгой иерархии зависимостей L4 $\to$ Utility, L6 $\to$ L4);
+   - Универсальная модель отчетов: `ReportDocument`, `ReportSection`, `ReportItem` (Log, Notes, Table, Text, Warning), `ReportTable`, `ReportNotes`, `CellAlignment`;
+   - Генератор HTML-отчетов `html_export.rs`: единый самодостаточный HTML5-документ со встроенными аутентичными стилями таблиц SPSS (гарнитура sans-serif, рамки шапки таблицы, чередование строк, акцентные заголовки, сноски мелким курсивом, темные блоки логов синтаксиса, безопасное экранирование спецсимволов HTML);
+   - Генератор моноширинного текста `txt_export.rs`: адаптивное форматирование в ASCII-таблицы с рамками и выравниванием;
+   - Генератор пакетного TSV `tsv_export.rs`: объединение всех таблиц сессии через пустые строки для прямой вставки в электронные таблицы (Excel, Google Sheets).
+3. **Графический интерфейс и интеграция L6 (`crates/statcraft_app`):**
+   - Модуль `views/output_view/export.rs`: преобразование `OutputViewerState` в `ReportDocument` с извлечением заголовков, данных и сносок для всех процедур;
+   - Модуль `export_handlers.rs`: пункты меню `File -> Export -> Export Output...` и `File -> Export -> Export Data...` (с предикатом доступности данных `requires_dataset_status`);
+   - Вызовы нативных диалогов сохранения `rfd::FileDialog::save_file()`;
+   - Уведомления в строке состояния (`status-data-exported`, `status-output-exported`);
+   - Протоколирование команд в журнале синтаксиса `Output Viewer`: `SAVE TRANSLATE OUTFILE='...' /TYPE=... /REPLACE /FIELDNAMES.` и `OUTPUT EXPORT /CONTENTS=ALL /TYPE=... /DESTINATION='...'`.
+4. **Контроль качества (Definition of Done):**
+   - 100% прохождение полного CI gate: `cargo run -p xtask -j 1 -- ci` (`fmt`, `clippy -D warnings`, `cargo test --workspace -j 1`, `parity`);
+   - Строгая проверка архитектурных слоев `cargo run -p xtask -j 1 -- layers` (L4Reporting);
+   - Соблюдение лимитов строк `file-guard` ($\le 500$ строк на новые модули);
+   - Соблюдение дизайн-системы `design-guard`;
+   - Полная синхронная локализация без хардкода строк (`locales/en.ftl`, `locales/ru.ftl`);
+   - Покрытие новыми тестами: `statcraft_io::csv_writer`, `statcraft_core::csv_export`, `statcraft_reporting` (HTML, TXT, TSV), `statcraft_app::export_handlers` и `output_view::export`.
+
+---
+
+### Этап MP-5: Импорт бинарных файлов SPSS (.sav / .zsav)
+*Время: 29 октября 2026, 22:20 (~30 минут)*
+
+Реализована полноценная поддержка чтения оригинальных бинарных файлов IBM SPSS Statistics (`.sav` и сжатых `.zsav`) с полным извлечением данных и словаря метаданных без использования сторонних проприетарных библиотек:
+1. **Низкоуровневый декодер L0 (`crates/statcraft_io::spss_loader`):**
+   - Модульная архитектура: `header.rs`, `records.rs`, `decompress.rs`, `mod.rs` (каждый файл $\le 500$ строк по правилам `file-guard`);
+   - Чтение системного заголовка Record 0 (`$FL2` / `$FL3`, автоопределение порядка байт Little/Big Endian по `layout_code`, коэффициент сжатия `bias = 100.0`, индекс весовой переменной `weight_index`, число наблюдений `case_cnt`);
+   - Обработка записей переменных Record 2: типы данных (числовые и строки), метки переменных, коды пользовательских пропусков (1–3 дискретных значения, диапазоны значений);
+   - Обработка меток значений Record 3 и 4: парные списки `(f64, label)` и привязка к соответствующим переменным;
+   - Обработка записей расширений Record 7: подтип 4 (Display parameters: шкалы измерения Measure Nominal/Ordinal/Scale, выравнивание Left/Right/Center, ширина колонок), подтип 13 (Long Variable Names: отображение коротких 8-байтовых имен в современные длинные имена колонок в UTF-8), подтип 20 (Character Encoding), подтип 24 (ZLIB metadata для файлов `.zsav`);
+   - Потоковый распаковщик байт-кодов Record 999: декодирование команд 1..251 (`code - bias`), 252 (EOF), 253 (8-байтовые IEEE 754 float / строковые блоки), 254 (пробелы), 255 (системные пропуски `SYSMIS` / `Null`);
+   - Поддержка формата `.zsav`: чтение трейлера `ztrailer`, пакетная распаковка сжатых блоков через `flate2::read::ZlibDecoder` в единый поток байт-кодов.
+2. **Интеграция с ядром L1 (`crates/statcraft_core::spss`):**
+   - Модуль `spss.rs`: методы `DataSet::from_spss_data`, `DataSet::load_spss_from_path`, `DataSet::load_spss_from_reader`;
+   - Конвертация структуры `SpssVariableInfo` в канонические типы `VariableMetadata`: 9 типов данных SPSS, шкалы `Measure`, выравнивание `Alignment`, словарь меток значений `ValueLabels`, пропуски `MissingValues`, переменная весов `weight_var`;
+   - Строгая типизация ошибок `CoreError::Io(#[from] statcraft_io::IoError)`.
+3. **Командная шина L5 (`crates/statcraft_syntax`):**
+   - Типизированная команда `ImportSpssCommand` (`data.import_spss`) со спецификацией `specs()`, выполнением и поддержкой Undo;
+   - Регистрация в `CommandBus::with_defaults()`;
+   - Генератор канонического синтаксиса `GET FILE='<path>'.`;
+   - Расширение команды `OpenFileCommand` (`data.open_file`) автоматической поддержкой расширений `.sav` и `.zsav`.
+4. **Графический интерфейс L6 (`crates/statcraft_app`):**
+   - Активирован пункт меню `File -> Import Data -> SPSS Data...` (`menu-file-import-spss`) с вызовом диалога выбора файлов SPSS Statistics Data (`*.sav, *.zsav`);
+   - Добавлен фильтр файлов данных SPSS в общий диалог `File -> Open Data...` (`open_data_dialog`);
+   - В `app_session.rs` метод `load_file_from_path` автоматически определяет формат `.sav`/`.zsav`, импортирует датасет через командную шину, протоколирует команду `GET FILE='<path>'.` в Output Viewer, добавляет файл в `RecentFiles` и переключает фокус на вкладку `Data View`.
+5. **Контроль качества (Definition of Done):**
+   - 100% прохождение полного CI gate: `cargo run -p xtask -j 1 -- ci` (`fmt`, `clippy -D warnings`, `cargo test --workspace -j 1`, `parity`, `layers`, `file-guard`, `design-guard`);
+   - Модульные тесты `statcraft_io::spss_loader::tests`: байт-коды, несжатый формат, обработка поврежденных заголовков и некорректных записей без паник;
+   - Интеграционный тест жизненного цикла `crates/statcraft_app/tests/session_lifecycle_tests.rs::test_load_spss_sav_session_lifecycle`;
+   - 100% покрытие локализацией (`locales/en.ftl`, `locales/ru.ftl`);
+   - 100% Safe Rust без `unwrap`/`expect`/`panic` в нетестовом коде.
+
+---
+
+### Этап MP-4: Импорт файлов Microsoft Excel (.xlsx / .xls / .ods)
+*Время: 29 октября 2026, 23:05 (~35 минут)*
+
+Реализована возможность прямого открытия и импорта электронных таблиц Microsoft Excel и OpenDocument без предварительной конвертации в CSV:
+1. **Слой L0 (`statcraft_io::excel_loader`):**
+   - Интеграция современного крейта `calamine = "0.37"` (100% safe Rust, потоковое чтение без вызовов COM или системных библиотек Office);
+   - Функции `load_excel_from_path`, `load_excel_from_reader` и `load_excel_from_range` с поддержкой форматов `.xlsx`, `.xlsm`, `.xls`, `.ods`;
+   - Алгоритм извлечения структуры листа:
+     * Выбор первого листа книги по умолчанию (`workbook.sheet_names()[0]`) либо по явно переданному имени;
+     * Каноническая санитизация и дедупликация имен переменных первой строки (`sanitize_and_dedup_headers`): замена недопустимых символов на `_`, добавление префикса `V_` для чисел, генерация `VAR00001` для пустых ячеек и суффиксов `_1`, `_2` при коллизиях;
+     * Распознавание типов ячеек `calamine::Data` (целые числа `Int`, вещественные `Float`, булевы `Bool` -> `1.0`/`0.0`, даты/время `DateTime`/`DateTimeIso`, текстовые `String`, пропуски `Empty`/`Error`/`"NA"`/`"."` -> `RawValue::Null`);
+     * Автоопределение типов колонок: если все непустые ячейки колонки являются числами -> колонка типизируется как `RawDataType::Numeric`, иначе все числовые значения приводятся к тексту и колонка становится `RawDataType::Text`;
+   - Защита **Never Crash**: безопасная обработка пустых книг, листов без данных (0 строк), листов с одними заголовками.
+2. **Командная шина движка L5 (`statcraft_syntax::commands::import_excel`):**
+   - Типизированная команда `ImportExcelCommand` (`data.import_excel`) со спецификацией `specs()` (параметры `file_path`, `sheet_name`, `dataset_name`) для внешних ИИ-агентов;
+   - Загрузка в активный `DataSet` и полная поддержка `Undo` (сброс датасета);
+   - Регистрация в `CommandBus::with_defaults()`.
+3. **Графический интерфейс и интеграция L6 (`crates/statcraft_app`):**
+   - Активация пунктов меню `File -> Import Data -> Excel...` (`menu-file-import-excel`) и `File -> Import Data -> CSV...` (`menu-file-import-csv`);
+   - Метод `open_excel_dialog` с системным диалогом `rfd::FileDialog` и фильтрами `Excel Spreadsheets (*.xlsx, *.xls, *.ods, *.xlsm)`;
+   - Расширение обработчика `load_file_from_path`: автоопределение расширения файла (`xlsx`, `xls`, `ods`, `xlsm`), вызов команды `data.import_excel`, добавление пути в историю недавно открытых файлов `RecentFiles`;
+   - Протоколирование канонической команды в Output Viewer:
+     ```text
+     GET DATA /TYPE=XLSX /FILE='<path>' /FIRSTROW=YES.
+     ```
+   - Уведомление в строке состояния: `Dataset imported: <name> (<n> cases, <m> variables)`.
+4. **Контроль качества (Definition of Done):**
+   - 100% прохождение полного пайплайна CI gate: `cargo run -p xtask -j 1 -- ci` (`cargo fmt --check`, `clippy -D warnings`, `cargo test --workspace -j 1`, `parity`);
+   - Прохождение архитектурного линтера `xtask layers` и `xtask parity` (40 команд отслеживается);
+   - Полное соблюдение лимитов строк `file-guard`: модуль `excel_loader.rs` (344 строки из 500), координатор `app.rs` (1471 из 1500 строк);
+   - Соблюдение дизайн-системы `design-guard`;
+   - Полная синхронная локализация без хардкода строк (`locales/en.ftl`, `locales/ru.ftl`);
+   - Модульные тесты парсера Excel в `statcraft_io`, тесты команды в `statcraft_syntax` и тесты жизненного цикла сессии.
+
+
+---
+
+### Этап MP-2: Нативный формат проектов (.stc) и команды сохранения (Native .stc Projects & Save Commands)
+*Время: 29 октября 2026, 22:25 (~30 минут)*
+
+Реализована полноценная поддержка нативного формата проектов StatCraft (`.stc`) и цепочки команд сохранения и открытия данных в главном меню `File`:
+1. **Кодек нативного формата проектов L0 (`statcraft_io::stc_codec`):**
+   - Структура контейнера проекта `StcContainer` (`format_version = 1`, `dataset_name`, `metadata_json`, `table: RawTable`, `active_filter_var`, `weight_var`, `split_file_json`);
+   - Потоковое сжатие Gzip через `flate2::write::GzEncoder` с прозрачным распознаванием заголовка GZIP (`0x1f 0x8b`) и fallback-десериализацией открытого JSON при чтении;
+   - Функции `save_stc_container`, `load_stc_container`, `save_stc_container_to_path`, `load_stc_container_from_path`;
+   - Кодек CSV/TSV записи `crates/statcraft_io/src/csv_writer.rs` (`export_raw_table_to_csv_path`) с поддержкой экранирования и локализованных десятичных разделителей.
+2. **Сериализация полного словаря метаданных L1 (`statcraft_core::stc_codec`):**
+   - 100% сохранение и восстановление состояния датасета:
+     * Все 9 канонических типов переменных (`Numeric`, `Comma`, `Dot`, `Scientific`, `Date`, `Dollar`, `CustomCurrency`, `String`, `RestrictedNumeric`);
+     * Шкалы измерения (`Scale`, `Ordinal`, `Nominal`), выравнивание (`Left`, `Right`, `Center`), ширина и число знаков после запятой;
+     * Полные словари меток значений `ValueLabels` (`BTreeMap<String, String>`);
+     * Дискретные и диапазонные пропуски `MissingValues`;
+     * Настройки активного фильтра (`active_filter_var`), переменной взвешивания (`weight_var`) и конфигурации расщепления (`split_file`);
+   - Унифицированные методы `save_stc_to_writer`, `load_stc_from_reader`, `save_stc_to_path`, `load_stc_from_path` и `save_csv_to_path`.
+3. **Командная шина и синтаксис L5 (`statcraft_syntax::commands::file_cmds`):**
+   - Команда сохранения `SaveFileCommand` (`data.save_file`) со спецификацией параметров `specs()` и генератором канонического синтаксиса `SAVE OUTFILE='<path>'.\nEXECUTE.`;
+   - Команда открытия `OpenFileCommand` (`data.open_file`) с генератором синтаксиса `GET FILE='<path>'.\nEXECUTE.`;
+   - Регистрация в `CommandBus::with_defaults()`.
+4. **Интеграция в главное меню и диалоги L6 (`statcraft_app::app_session` и `app.rs`):**
+   - Перевод пунктов меню `File -> Save` (`Ctrl+S`), `File -> Save As...` (`Ctrl+Shift+S`), `File -> Save Data As...`, `File -> Open Project...` (`Ctrl+Shift+O`), `File -> Open Data...` (`Ctrl+O`) в статус `MenuItemStatus::Ready`;
+   - Интеграция системных диалогов выбора файлов `rfd::FileDialog` с преднастроенными расширениями, фильтрами и начальными именами;
+   - Быстрые клавиатурные сокращения в `update()` (`Ctrl+S` -> `save_project`, `Ctrl+Shift+S` -> `save_project_as`, `Ctrl+Shift+O` -> `open_project_dialog`);
+   - Динамический заголовок окна: отображение имени активного файла и индикатора несохраненных изменений `*`;
+   - Автоматическое пополнение очереди `RecentFiles` и журналирование в Output Viewer (`SAVE OUTFILE=...` / `GET FILE=...`);
+   - Подтверждение сохранения перед деструктивными действиями: сохранение проекта при нажатии `[ Save ]` в `ConfirmSaveDialog`.
+5. **Архитектурная чистота («Разделяй, а не урезай»):**
+   - Выделение модуля `crates/statcraft_app/src/status_message.rs` позволило сократить файл `app.rs` с 1453 до ~1300 строк, гарантируя запас до жесткого лимита 1500 строк.
+6. **Контроль качества (Definition of Done):**
+   - Прогон полного пайплайна качества `cargo run -p xtask -j 1 -- ci` — 100% OK;
+   - 202 файла Rust проверены и укладываются в лимиты строк (`file-guard` — 100% OK);
+   - Соблюдение правил слоев `layers` (L0-L6) и дизайна `design-guard` — 100% OK;
+   - 125+ модульных и интеграционных тестов воркспейса завершились успешно;
+   - 100% синхронная локализация без хардкода строк (`locales/en.ftl`, `locales/ru.ftl`);
+   - Компилятор и линтер `cargo clippy --workspace --all-targets -j 1 -- -D warnings` — 0 предупреждений.
+
+---
+
+### Финал: Бесшовная интеграция меню «Файл», диалог сохранения и глобальные горячие клавиши (File Menu Integration & Shortcuts)
+*Время: 29 октября 2026, 22:45 (~20 минут)*
+
+Завершена комплексная бесшовная интеграция всех подсистем меню «Файл» (File Menu Integration) в приложении StatCraft (`crates/statcraft_app`):
+1. **Перехват закрытия окна и защита от потери данных (Window Close Guard):**
+   - Перехват события закрытия окна через `ctx.input(|i| i.viewport().close_requested())` при наличии несохраненных изменений (`has_unsaved_changes() == true`);
+   - Мгновенная отмена несанкционированного закрытия через `ctx.send_viewport_cmd(egui::ViewportCommand::CancelClose)`;
+   - Запуск диалога подтверждения `ConfirmSaveDialog` с сохранением отложенного действия закрытия в `pending_session_action`;
+   - Поддержка канонических действий: `[ Save ]` (сохранение в `.stc` / `.csv` и переход к действию), `[ Don't Save ]` (исполнение действия без сохранения) и `[ Cancel ]` (отмена и продолжение работы с проектом).
+2. **Глобальные клавиатурные сокращения (Global Accelerators):**
+   - Быстрый вызов канонических операций меню «Файл» из любого экрана приложения:
+     * `Ctrl+Shift+N` — Новый проект (`NewProject`);
+     * `Ctrl+N` — Новый датасет (`NewDataset`);
+     * `Ctrl+O` — Открыть данные (`open_data_dialog` с поддержкой `.stc`, `.sav`, `.zsav`, `.csv`, `.xlsx`);
+     * `Ctrl+Shift+O` — Открыть проект StatCraft (`open_project_dialog`);
+     * `Ctrl+S` — Сохранить активный проект (`save_project`);
+     * `Ctrl+Shift+S` — Сохранить проект как (`save_project_as`).
+3. **Репозиторий и тесты инвариантов диалогов (DoD):**
+   - Добавлен headless-тест `test_headless_render_confirm_save_dialog` в `crates/statcraft_app/tests/dialog_invariants.rs` для проверки надежности рендера и отсутствия паник;
+   - Настроено игнорирование локального каталога недавних файлов `.statcraft/` в корне и внутри `crates/statcraft_app/` в `.gitignore`;
+   - Успешный прогон 130+ тестов воркспейса с `-j 1` и полное прохождение гейта `xtask ci` (`cargo fmt --check`, `clippy -D warnings`, `file-guard`, `design-guard`, `layers`, `parity`).
+
+---
+
+### Этап 41: Сохранение и восстановление полного аналитического пространства проекта (.stc)
+*Время: 29 октября 2026, 23:40 (~35 минут)*
+
+Реализовано монолитное сохранение полного рабочего пространства проекта StatCraft в нативном формате `.stc` (аналог `.psd` в Photoshop):
+1. **Расширение контейнера проекта L0 (`statcraft_io::stc_codec`):**
+   - Структура `StcContainer` расширена опциональными полями `output_viewer_json` и `syntax_text` с сохранением обратной совместимости (`Format Version 1`, `#[serde(default, skip_serializing_if = "Option::is_none")]`);
+   - Добавлен конструктор `StcContainer::with_project_data` для чистой упаковки всех аналитических артефактов;
+   - Защита от деградации старых файлов: старые `.stc` открываются штатно без ошибок.
+2. **Сериализация правой панели L6 (`statcraft_app::views::output_view`):**
+   - Модуль безопасной сериализации `static_str_serde` для десериализации статических ключей заголовков `&'static str` (`Box::leak`);
+   - Реализована сериализация для всех 19 типов элементов вывода `OutputItemKind` (дескриптивные статистики, таблицы частот, t-критерии, ANOVA, таблицы сопряженности, корреляции, непараметрические критерии, линейная регрессия, надежность, факторный анализ, средние, логи, заметки, предупреждения и сводки данных);
+   - Методы `OutputViewerState::to_json()` и `OutputViewerState::load_from_json()` с автоматическим вычислением `next_id = max(id) + 1` для предотвращения коллизий идентификаторов при последующих вычислениях.
+3. **Мост L1 (`statcraft_core::stc_codec`):**
+   - Функции `project_to_stc`, `save_project_stc_to_path` и `load_project_stc_from_path` для координации между датасетом, структурой метаданных и прикладными блоками проекта.
+4. **Интеграция в жизненный цикл сессии L6 (`statcraft_app::app_session`):**
+   - В `save_to_path`: при сохранении `.stc` сериализуются процедуры правой панели (`OutputViewerState`) и текст активного скрипта (`SyntaxEditorState`);
+   - В `load_file_from_path`: при открытии проекта `.stc` восстанавливаются таблица данных, словарь переменных, активный фильтр, веса, группировка `split_file`, все процедуры и сводные таблицы правой панели, а также текст скрипта в редакторе синтаксиса;
+   - Строгое разграничение меню: диалог `File -> Save Data As...` очищен от фильтра `.stc` и сохраняет исключительно открытый массив данных (`.csv` / `.tsv`), а `File -> Save Project` (`Ctrl+S`) и `Save Project As...` (`Ctrl+Shift+S`) сохраняют 100% монолитного аналитического пространства.
+5. **Контроль качества (DoD):**
+   - Добавлен сквозной интеграционный тест `test_save_and_load_full_project_with_output_and_syntax` в `session_lifecycle_tests.rs`;
+   - Прогон полного набора тестов рабочего пространства `cargo test --workspace -j 1` — 100% успешно;
+   - 100% соответствие `cargo run -p xtask -j 1 -- ci` (`file-guard`, `design-guard`, `layers`, `parity`, `clippy -D warnings`, `cargo fmt --check`).
+
+---
+
+### Этап 42: Исправление кнопки сохранения на тулбаре, контрольная точка сессии (SavedCheckpoint) и индикация статуса
+*Время: 30 октября 2026, 05:35 (~25 минут)*
+
+Устранены дефекты жизненного цикла сохранения проекта и синхронизации интерфейса:
+1. **Диспетчеризация действий тулбара L6 (`crates/statcraft_app/src/app.rs`):**
+   - Добавлена обработка `ToolbarAction::SaveData`: клик по иконке дискеты на главной панели инструментов теперь корректно вызывает `self.save_project()`, открывая диалог сохранения или перезаписывая текущий `.stc` файл проекта;
+   - Добавлена обработка `ToolbarAction::Redo` с вызовом `ds.redo()`, а флаг активности кнопки `can_redo` динамически связан с состоянием `ds.delta.redo_stack`.
+2. **Контрольная точка сохраненного состояния `SavedCheckpoint` (`crates/statcraft_app/src/app_session.rs`):**
+   - Разработана легковесная структура `SavedCheckpoint`, фиксирующая состояние документа (число колонок и строк датасета, размер стека отмены правок ячеек `delta_undo_len`, размер истории команд `command_history_len`, длина текста синтаксиса `syntax_len`, количество процедур в `OutputViewer`);
+   - Поле `saved_checkpoint: Option<SavedCheckpoint>` интегрировано в `StatCraftApp`;
+   - Метод `has_unsaved_changes(&self)` теперь проверяет расхождение текущего состояния с контрольной точкой `saved_checkpoint`: маркер несохраненных изменений (`*`) в верхней строке заголовка автоматически гаснет сразу после сохранения, а также при возврате к сохраненному состоянию через `Undo` (`Ctrl+Z`);
+   - Автоматическая фиксация контрольной точки `update_saved_checkpoint()` внедрена в `save_to_path`, `load_file_from_path` (для `.stc`, `.sav`, `.xlsx`, `.csv`), `execute_new_dataset`, `execute_new_project` и `execute_close_project`.
+3. **Цветовая дифференциация строки состояния (`crates/statcraft_app/src/status_message.rs`):**
+   - Добавлен метод `StatusMessage::color(&self) -> egui::Color32`: успешные события сохранения и экспорта (`ProjectSaved`, `DataSaved`, `DataExported`, `OutputExported`) подсвечиваются акцентным изумрудным цветом `Tokens::MEASURE_NOMINAL`; сообщения об ошибках — контрастным `Color32::from_rgb(235, 80, 80)`; информационные сообщения — спокойным `Tokens::TEXT_MUTED`;
+   - В статус-баре задействован `ui.colored_label(...)` для мгновенной периферической обратной связи.
+4. **Контроль качества (DoD):**
+   - Расширен интеграционный тест `test_has_unsaved_changes_detection` и добавлен `test_toolbar_save_action_execution` в `crates/statcraft_app/tests/session_lifecycle_tests.rs`;
+   - Добавлены модульные тесты цветов `test_status_message_colors` в `status_message.rs`;
+   - 100% успешный прогон всех тестов воркспейса: `cargo test --workspace -j 1`;
+   - 100% прохождение всех CI гейтов: `cargo run -p xtask -j 1 -- ci` (`cargo fmt --check`, `clippy -D warnings`, `file-guard`, `design-guard`, `layers`, `parity`).
+
+---
+
+### Этап 43: Процедура сдвига значений (Lead / Lag) — `transform.shift_values`
+*Время: 30 октября 2026, 06:05 (~30 минут)*
+
+Реализована каноническая процедура временного сдвига значений (лаги и опережения) пакета IBM SPSS Statistics — `Преобразование -> Сдвиг значений (Lead / Lag)...` (команда `transform.shift_values` / синтаксис `SHIFT VALUES`):
+1. **Алгоритмический фундамент L2 (`crates/statcraft_algo/src/shift.rs`):**
+   - Тип направления сдвига `ShiftDirection` (`Lag` — сдвиг вниз со смещением в прошлое, `Lead` — сдвиг вверх со смещением в будущее);
+   - Функция `compute_shift_raw(values, direction, step)` для колоночного массива `RawValue` с поддержкой произвольного шага $K \ge 1$;
+   - Обработка граничных условий: при $K = 0$ или пустом массиве возвращается исходный срез; при $K \ge N$ весь массив заполняется `RawValue::Null`;
+   - Для `Lag(step)` первые $K$ ячеек получают системный пропуск `RawValue::Null`, а последующие заполняются значениями `values[i - step]`;
+   - Для `Lead(step)` значения смещаются вперед на $K$ позиций, а завершающие $K$ ячеек заполняются `RawValue::Null`;
+   - 100% safe Rust без `unwrap`/`expect`/`panic`, модульные тесты граничных случаев, пропусков и строковых значений.
+2. **Командная шина и синтаксис L5 (`crates/statcraft_syntax/src/commands/shift_values_cmd.rs`):**
+   - Команда `ShiftValuesCommand` (`transform.shift_values`) с регистрацией в `CommandBus`;
+   - Сигнатура параметров `specs()` для внешних AI-агентов (`source_var`, `target_var`, `direction`, `step`, `target_label`);
+   - Генератор синтаксиса SPSS:
+     ```text
+     SHIFT VALUES /VARIABLE=sales /RESULT=sales_lag1 /LAG=1.
+     VARIABLE LABELS sales_lag1 "Previous Sales".
+     EXECUTE.
+     ```
+   - Защита от потери данных и история Undo/Redo: создание новой переменной наследует тип данных и шкалу измерения исходной колонки, при перезаписи сохраняются старые метаданные и значения (`ShiftUndoEntry::Created` / `ShiftUndoEntry::Overwritten`);
+   - Интеграционные тесты сдвига и полного отката в `statcraft_syntax`.
+3. **Локализация без хардкода строк (`locales/en.ftl`, `locales/ru.ftl`):**
+   - Декларативные ключи диалога, групп радиокнопок, шага сдвига и статусных сообщений.
+4. **Графический интерфейс L6 (`crates/statcraft_app/src/dialogs/shift_values_dialog.rs`):**
+   - Модальное диалоговое окно по канону `DialogKit` (`DialogShell::standard` 560 × 430 px);
+   - Панель выбора доступных переменных `render_variable_list_panel` и адаптивная кнопка переноса `TransferButton`;
+   - Поля ввода имени и метки целевой переменной с автоподстановкой суффикса;
+   - Переключатель направления сдвига `GroupBox` (`Lag` / `Lead`) и счетчик шага сдвига `DragValue`;
+   - Нижний ряд кнопок действий `DialogActionBar` (`[ OK ] [ Paste ] [ Reset ] [ Cancel ] [ Help ]`).
+5. **Интеграция в десктопное приложение L6 (`app.rs`, `app_dialogs_data.rs`):**
+   - В меню `Преобразование` активирован пункт `menu-transform-shift` (метка `[dev]` снята);
+   - Выполнение команды из диалога обновляет датасет, логирует канонический синтаксис в `Output Viewer` и выводит подтверждение `StatusMessage::ShiftValuesExecuted` в строке состояния;
+   - Headless-тест `test_headless_render_shift_values_dialog` в `crates/statcraft_app/tests/dialog_invariants.rs`.
+6. **Контроль качества (DoD):**
+   - 100% тестов воркспейса завершились успешно;
+   - Прохождение всех линтеров и защитников архитектуры: `layers`, `file-guard`, `design-guard`, `parity`.
+
+---
+
+### Этап 44: Подсчет значений в строках — `transform.count_values`
+*Время: 30 октября 2026, 06:15 (~35 минут)*
+
+Реализована каноническая процедура агрегации вхождений значений внутри каждого наблюдения пакета IBM SPSS Statistics — `Преобразование -> Подсчет значений в строках...` (команда `transform.count_values` / синтаксис `COUNT`):
+1. **Алгоритмический фундамент L2 (`crates/statcraft_algo/src/count_values.rs`):**
+   - Перечисление критериев сопоставления `ValueCriterion` (`ExactNumber`, `ExactString`, `Range { low, high }`, `LowestThru(high)`, `ThruHighest(low)`, `SystemMissing`);
+   - Метод `ValueCriterion::matches(&self, val: &RawValue) -> bool` с точным сопоставлением чисел с эпсилоном $10^{-9}$, поддержкой строковых литералов, диапазонов и пропусков `SYSMIS` / `NaN` / `Null`;
+   - Функция `compute_count_across_columns(rows, columns_data, criteria)`: подсчитывает количество колонок внутри строки, удовлетворяющих хотя бы одному из заданных критериев;
+   - Возвращает числовой вектор `RawValue::Number(count as f64)` без пропусков (по стандарту SPSS);
+   - 100% safe Rust без `unwrap`/`expect`/`panic`, всесторонние модульные тесты.
+2. **Командная шина и синтаксис L5 (`crates/statcraft_syntax/src/commands/count_values_cmd.rs`):**
+   - Типизированная команда `CountValuesCommand` (`transform.count_values`) с регистрацией в `CommandBus`;
+   - JSON-спецификация `specs()` для внешних AI-агентов (`target_var`, `target_label`, `variables`, `criteria`);
+   - Генератор канонического синтаксиса SPSS:
+     ```text
+     COUNT high_scores = q1 q2 (5) (8 THRU 10).
+     VARIABLE LABELS high_scores "High score count".
+     EXECUTE.
+     ```
+   - Защита данных и полный откат Undo/Redo: при создании новой переменной создается колонка `DataType::Numeric { decimals: 0 }` со шкалой `Measure::Scale`, при перезаписи сохраняются старые метаданные и значения (`CountUndoEntry::Created` / `CountUndoEntry::Overwritten`);
+   - Модульные тесты выполнения команды, синтаксиса и отката в `statcraft_syntax`.
+3. **Локализация без хардкода строк (`locales/en.ftl`, `locales/ru.ftl`):**
+   - Декларативные ключи для заголовка, полей целевой переменной, списков, радиокнопок диапазонов, кнопок `Add`/`Change`/`Remove` и статусного сообщения `output-count-executed`.
+4. **Графический интерфейс L6 (`crates/statcraft_app/src/dialogs/`):**
+   - Основной диалог `CountValuesDialog` (`count_values_dialog.rs`, 560 × 430 px, `DialogShell::standard`) с полями целевой переменной и метки, списком доступных переменных, векторной кнопкой переноса `TransferButton`, списком выбранных переменных и правой колонкой с кнопкой `Define Values...` и блоком предпросмотра критериев;
+   - Модальный поддиалог `CountValuesDefineState` (`count_values_define_dialog.rs`, `DialogShell::standard`) для добавления, изменения и удаления точных значений, системных пропусков и диапазонов (`Range`, `LOWEST THRU`, `THRU HIGHEST`) с нижней панелью `SubdialogActionBar`;
+   - Нижний ряд кнопок действий `DialogActionBar` (`[ OK ] [ Paste ] [ Reset ] [ Cancel ] [ Help ]`).
+5. **Интеграция в десктопное приложение L6 (`app.rs`, `app_dialogs_data.rs`):**
+   - В меню `Преобразование` активирован пункт `menu-transform-count-values` (снята метка `InDev`);
+   - Выполнение диалога обновляет данные, логирует синтаксис в `Output Viewer` и выводит подтверждение `StatusMessage::CountValuesExecuted` в строке состояния;
+   - Headless-тест `test_headless_render_count_values_dialog` в `crates/statcraft_app/tests/dialog_invariants.rs`.
+6. **Контроль качества (DoD):**
+   - 100% тестов воркспейса завершились успешно;
+   - Прохождение всех линтеров и защитников архитектуры: `layers`, `file-guard`, `design-guard`, `parity`.
+
+---
+
+### Этап 45: Установка зерна ДСЧ — `transform.random_seed`
+*Время: 30 октября 2026, 06:16 (~30 минут)*
+
+Реализована каноническая процедура фиксации начального значения генератора псевдослучайных чисел пакета IBM SPSS Statistics — `Преобразование -> Установить зерно ДСЧ...` (команда `transform.random_seed` / синтаксис `SET SEED`):
+1. **Состояние RNG на слое L1 (`crates/statcraft_core/src/rng.rs`):**
+   - Потокобезопасное атомарное хранение состояния глобального зерна генератора (`AtomicBool`, `AtomicU64`, `Ordering::SeqCst`);
+   - Функции `set_global_random_seed(seed: u64)`, `clear_global_random_seed()`, `get_global_random_seed() -> Option<u64>`;
+   - Вспомогательная функция `get_effective_random_seed() -> u64`: возвращает зафиксированное зерно либо генерирует значение по системному времени от 1 до 2 000 000 000;
+   - Поддержка двух режимов: «Случайная инициализация» (сброс фиксации) и «Фиксированное зерно».
+2. **Командная шина и синтаксис L5 (`crates/statcraft_syntax/src/commands/random_seed_cmd.rs`):**
+   - Типизированная команда `RandomSeedCommand` (`transform.random_seed`) с регистрацией в `CommandBus`;
+   - JSON-спецификация `specs()` (`seed` типа `integer` или `null`, диапазон от 1 до 2 000 000 000);
+   - Генератор синтаксиса SPSS:
+     ```text
+     SET SEED = 2000000.
+     ```
+     или `SET SEED = RANDOM.` при случайной инициализации;
+   - Полная поддержка отката `undo` с восстановлением предыдущего значения зерна через историю `RandomSeedUndoEntry`;
+   - Модульные тесты валидации, синтаксиса и отката в `statcraft_syntax`.
+3. **Локализация без хардкода строк (`locales/en.ftl`, `locales/ru.ftl`):**
+   - Ключи `dialog-seed-title`, `dialog-seed-mode-random`, `dialog-seed-mode-fixed`, `dialog-seed-value-label`, `status-random-seed-fixed`, `status-random-seed-random`.
+4. **Графический интерфейс L6 (`crates/statcraft_app/src/dialogs/random_seed_dialog.rs`):**
+   - Модальное окно `RandomSeedDialog` по стандарту `DialogKit` (`DialogShell::properties`, `GroupBox`, радиокнопки режимов, текстовое поле ввода числа с автовалидацией);
+   - Нижний ряд кнопок действий `DialogActionBar` (`[ OK ] [ Paste ] [ Reset ] [ Cancel ] [ Help ]`).
+5. **Интеграция в десктопное приложение L6 (`app.rs`, `app_dialogs_data.rs`):**
+   - В меню `Преобразование` активирован пункт `menu-transform-random-seed` (метка `InDev` снята);
+   - Выполнение диалога обновляет глобальное зерно, логирует синтаксис в `Output Viewer` и выводит подтверждение `StatusMessage::RandomSeedExecuted` в строке состояния;
+   - Headless-тест `test_headless_render_random_seed_dialog` в `crates/statcraft_app/tests/dialog_invariants.rs`.
+6. **Контроль качества (DoD):**
+   - 100% тестов воркспейса завершились успешно;
+   - Прохождение всех проверок архитектуры: `layers`, `file-guard`, `design-guard`, `parity`, `clippy -D warnings`.
+
+---
+
+### Этап 46: Создание фиктивных переменных (Create Dummy Variables: `SPSSINC CREATE DUMMIES`) — `transform.create_dummies`
+*Время: 30 октября 2026, 06:45 (~30 минут)*
+
+Реализована каноническая процедура генерации фиктивных (dummy) переменных для категориальных предикторов (One-Hot Encoding) — пункт меню `Преобразование -> Создать фиктивные (dummy) переменные...` (`Transform -> Create Dummy Variables...`, команда `transform.create_dummies` / синтаксис `SPSSINC CREATE DUMMIES`):
+1. **Алгоритмический движок L2 (`crates/statcraft_algo/src/dummies.rs`):**
+   - Модуль генерации фиктивных колонок `generate_dummies_for_column` со структурами `DummySpec` и `GeneratedDummyColumn`;
+   - Сбор и сортировка уникальных категориальных значений (`Number` и `Text`) в порядке возрастания с игнорированием пропусков (`Null`, `NaN`, пустые строки);
+   - Поддержка пропуска базовой (референтной) категории (`omit_first == true`) для получения $k - 1$ фиктивных переменных для линейных регрессионных моделей;
+   - Сопоставление меток категорий по словарю `ValueLabels`: генерация понятных меток вида `gender = Female`, `jobcat = Clerical`;
+   - Санитизация имен колонок (буквы, цифры, `_`), сохранение пропусков в строках как `RawValue::Null`;
+   - 100% Safe Rust без паник (`unwrap`, `expect`) и модульные тесты для числовых, строковых и пустых данных.
+2. **Командная шина и синтаксис L5 (`crates/statcraft_syntax/src/commands/dummy_cmd.rs`):**
+   - Типизированная команда `CreateDummiesCommand` (`DummyCommand`, ID `transform.create_dummies`), зарегистрированная в `CommandBus`;
+   - Спецификация JSON Schema `specs()` (`variables`, `root_prefix`, `omit_reference`);
+   - Добавление сгенерированных колонок в датасет (`Numeric`, 0 десятичных знаков, `Measure::Nominal`) с автоматическим разрешением конфликтов имен;
+   - Полная поддержка отката `Undo` (`Ctrl+Z`) через удаление добавленных переменных в обратном порядке индексов (`DummyUndoEntry`);
+   - Генератор канонического синтаксиса расширения SPSS:
+     ```text
+     SPSSINC CREATE DUMMIES VARIABLES=gender jobcat
+       /ROOTNAMES=d_gender d_jobcat
+       /OMITFIRST=NO.
+     EXECUTE.
+     ```
+3. **Локализация без хардкода строк (`locales/en.ftl`, `locales/ru.ftl`):**
+   - Декларативные ключи `dialog-dummy-title`, `dialog-dummy-source-vars`, `dialog-dummy-root-prefix`, `dialog-dummy-omit-reference`, `dialog-dummy-error-empty-vars`, `status-dummies-executed`.
+4. **Графический интерфейс на DialogKit L6 (`crates/statcraft_app/src/dialogs/dummy_dialog.rs`):**
+   - Модальное окно `DummyDialog` ($560 \times 430$ px, `DialogShell::standard`);
+   - Список доступных переменных `render_variable_list_panel` слева и векторная кнопка переноса `TransferButton` по центру;
+   - Правая колонка: список выбранных категориальных переменных, блок `GroupBox` с полем ввода префикса (`TextEdit`) и чекбокс исключения референтной группы `omit_reference`;
+   - Нижний ряд `DialogActionBar` (`[ OK ] [ Paste ] [ Reset ] [ Cancel ] [ Help ]`).
+5. **Интеграция в десктопное приложение L6 (`app.rs`, `app_dialogs_data.rs`):**
+   - Активирован пункт меню `Transform -> Create Dummy Variables...` (снят статус `InDev`);
+   - Обработка запуска в `app_dialogs_data.rs` с логированием синтаксиса в `Output Viewer` и статусным сообщением `StatusMessage::CreateDummiesExecuted`;
+   - Регрессионный headless-тест `test_headless_render_dummy_dialog` в `crates/statcraft_app/tests/dialog_invariants.rs`.
+6. **Контроль качества (DoD):**
+   - 100% тестов воркспейса завершились успешно;
+   - Прохождение всех линтеров и защитников архитектуры: `layers`, `file-guard`, `design-guard`, `parity`, `clippy -D warnings`.
+
+---
+
+### Этап 47: Автоматическое перекодирование (Automatic Recode: `AUTORECODE`) — `transform.auto_recode`
+*Время: 30 октября 2026, 07:15 (~30 минут)*
+
+Реализована каноническая процедура преобразования строковых или нерегулярных числовых категорий в последовательные целочисленные коды ($1, 2, 3, \dots, K$) с автоматическим заполнением меток значений исходными данными — пункт меню `Преобразование -> Перекодирование -> Автоматическое...` (`Transform -> Recode -> Automatic Recode...`, команда `transform.auto_recode` / синтаксис `AUTORECODE`):
+1. **Алгоритмический движок L2 (`crates/statcraft_algo/src/auto_recode.rs`):**
+   - Функция `compute_auto_recode` и перечисление порядка ранжирования `AutoRecodeOrder` (`LowestValue`, `HighestValue`);
+   - Сбор уникальных непустых значений (`RawValue::Number` и `RawValue::Text`) с игнорированием пропусков (`Null`, `NaN`, пустые строки);
+   - Сортировка уникальных категорий: по возрастанию (`LowestValue`) либо по убыванию (`HighestValue`);
+   - Последовательное присвоение целочисленных кодов ($1.0, 2.0, \dots, K$);
+   - Автоматическое формирование словаря меток значений `ValueLabels` (`"1"` $\to$ оригинальное значение, `"2"` $\to$ оригинальное значение...);
+   - 100% Safe Rust без паник (`unwrap`, `expect`) с модульными тестами для строковых, числовых, смешанных и пустых выборок.
+2. **Командная шина и синтаксис L5 (`crates/statcraft_syntax/src/commands/auto_recode_cmd.rs`):**
+   - Типизированная команда `AutoRecodeCommand` (ID `transform.auto_recode`), зарегистрированная в `CommandBus`;
+   - Спецификация JSON Schema `specs()` (массив пар `pairs` с `source_var` и `target_var`, опция `order`);
+   - Создание новых числовых переменных (`Numeric`, `decimals: 0`, `Measure::Nominal`) со словарем меток `ValueLabels` либо перезапись существующих;
+   - Полная поддержка отката `Undo` (`Ctrl+Z`) через историю `AutoRecodeUndoItem` (`Created` / `Overwritten`);
+   - Генератор канонического синтаксиса IBM SPSS Statistics:
+     ```text
+     AUTORECODE VARIABLES=country /INTO country_code
+       /PRINT.
+     EXECUTE.
+     ```
+     (с поддержкой подкоманды `/DESCENDING` при порядке `HighestValue`).
+3. **Локализация без хардкода строк (`locales/en.ftl`, `locales/ru.ftl`):**
+   - Декларативные ключи `dialog-autorecode-title`, `dialog-autorecode-variables`, `dialog-autorecode-new-name`, `dialog-autorecode-change`, `dialog-autorecode-order-group`, `dialog-autorecode-order-lowest`, `dialog-autorecode-order-highest`, `output-autorecode-executed`.
+4. **Графический интерфейс на DialogKit L6 (`crates/statcraft_app/src/dialogs/auto_recode_dialog.rs`):**
+   - Модальное окно `AutoRecodeDialog` ($560 \times 430$ px, `DialogShell::standard`);
+   - Список доступных переменных `render_variable_list_panel` слева и адаптивная векторная кнопка переноса `TransferButton` по центру;
+   - Правая колонка: список пар `source -> target`, блок `GroupBox` с полем ввода нового имени и кнопкой `Change Name`, блок `GroupBox` с радиокнопками выбора порядка ранжирования (*Lowest value / Highest value*);
+   - Нижний ряд `DialogActionBar` (`[ OK ] [ Paste ] [ Reset ] [ Cancel ] [ Help ]`).
+5. **Интеграция в десктопное приложение L6 (`app.rs`, `app_dialogs_data.rs`):**
+   - В меню `Преобразование -> Перекодирование` активирован пункт `menu-transform-auto-recode` (снят статус `InDev`);
+   - Обработка запуска в `app_dialogs_data.rs` с логированием синтаксиса в `Output Viewer` и статусным сообщением `StatusMessage::AutoRecodeExecuted`;
+   - Регрессионный headless-тест `test_headless_render_auto_recode_dialog` в `crates/statcraft_app/tests/dialog_invariants.rs`.
+6. **Контроль качества (DoD):**
+   - 100% тестов воркспейса завершились успешно (`cargo test --workspace -j 1`);
+   - Полное прохождение проверок архитектурных линтеров: `layers`, `file-guard`, `design-guard`, `parity`, `clippy -D warnings`.
+
+---
+
+### Микроплан №8: Создание временного ряда — `transform.create_time_series`
+*Время: 30 октября 2026, 07:45 (~35 минут)*
+
+Реализован классический инструмент генерации производных рядов динамики IBM SPSS Statistics — **Создание временного ряда...** (`Преобразование -> Создать временной ряд...`, идентификатор команды `transform.create_time_series`):
+1. **Математическое ядро L2 (`statcraft_algo::time_series`):**
+   - Реализована функция `compute_time_series_transform` с поддержкой четырех ключевых преобразований:
+     - `DIFF`: последовательные разности порядка $K$ (степени дифференцирования $(1-L)^k$);
+     - `SDIFF`: сезонные разности с периодом/лагом $S$ ($(1-L^s)$);
+     - `SMA`: простое скользящее среднее ширины $W$ (trailing moving average с требованием полноты окна);
+     - `CSUM`: кумулятивная нарастающая сумма с SPSS-совместимой остановкой при пропусках;
+   - Строгая обработка пропусков `RawValue::Null`, нечисловых данных и NaN без единой паники на 100% Safe Rust;
+   - Полноценные юнит-тесты на все 4 функции, граничные значения порядка и пропуски.
+2. **Командная шина L5 (`statcraft_syntax::commands::time_series_cmd`):**
+   - Движковая команда `CreateTimeSeriesCommand` (`transform.create_time_series`) с JSON Schema спецификацией параметров `specs()`;
+   - Генерация аутентичного SPSS-синтаксиса `CREATE diff_sales = DIFF(sales, 1) / sma_sales = SMA(sales, 3) / csum_sales = CSUM(sales). EXECUTE.`;
+   - Полная пакетная поддержка отката `Undo` (`SingleVarUndoEntry::Created` и `SingleVarUndoEntry::Overwritten`).
+3. **Графический интерфейс L6 (`statcraft_app::dialogs::time_series_dialog`):**
+   - Диалог на канонической дизайн-системе DialogKit (`DialogShell::standard`);
+   - Левая панель выбора переменных со шкалами измерения, кнопка переноса `TransferButton`, список сформированных рядов `target = FN(source, order)`, редактирование имени и метки переменной, радиокнопки выбора функции, поле порядка/интервала и кнопка `Change`;
+   - Нижняя панель действий `DialogActionBar` (`[ OK ] [ Paste ] [ Reset ] [ Cancel ] [ Help ]`);
+   - Пункт меню `menu-transform-time-series` переведен из `InDev` в активный режим `Ready`;
+   - Двуязычная локализация Fluent (`dialog-timeseries-*` в `locales/ru.ftl` и `locales/en.ftl`).
+4. **Контроль качества (DoD):**
+   - 100% Safe Rust, 0 паник;
+   - `cargo run -p xtask -j 1 -- layers` — 0 нарушений;
+   - `cargo run -p xtask -j 1 -- file-guard` — все 232 файла в пределах лимитов;
+   - `cargo run -p xtask -j 1 -- design-guard` — все диалоги соответствуют DialogKit;
+   - `cargo run -p xtask -j 1 -- parity` — 47 команд зарегистрировано;
+   - `cargo test --workspace -j 1` — 100% успешный прогон всех тестов воркспейса;
+   - `cargo clippy --workspace -j 1 -- -D warnings` — 0 предупреждений.
+
+---
+
+### Микроплан №6: Ранжирование наблюдений — `transform.rank_cases`
+*Время: 30 октября 2026, 07:50 (~35 минут)*
+
+Реализована каноническая процедура вычисления рангов и нормальных оценок IBM SPSS Statistics — **Ранжирование наблюдений...** (`Преобразование -> Ранжировать наблюдения...`, идентификатор команды `transform.rank_cases`):
+1. **Математическое ядро L2 (`statcraft_algo::rank_cases` и `rank_cases_tests`):**
+   - Функция `compute_ranks` с поддержкой всех четырех методов разрешения связей `TiesHandling`:
+     - `Mean`: средний ранг группы связанных наблюдений (стандарт SPSS по умолчанию);
+     - `Low`: наименьший ранг связки;
+     - `High`: наибольший ранг связки;
+     - `Seq`: последовательный ранг без образования связей;
+   - Направление ранжирования `RankDirection` (`Ascending` — наименьшему значению ранг 1, `Descending` — наибольшему значению ранг 1);
+   - Поддержка спектра типов рангов `RankType`:
+     - `SimpleRank`: обычные целочисленные и полуцелые ранги;
+     - `FractionalRank`: дробные ранги $r / N$;
+     - `FractionalPercent` / `Percentiles`: процентильные ранги $(r / N) \times 100$;
+     - `Ntiles(k)`: квантили/N-тили с вычислением $\lceil (r \cdot k) / N \rceil$ (по умолчанию 4 для квартилей);
+     - Нормальные оценки: Blom $((r - 3/8) / (w + 1/4))$, Tukey $((r - 1/3) / (w + 1/3))$, Rankit $((r - 1/2) / w)$, Van der Waerden $(r / (w + 1))$;
+   - Чистая реализация обратной функции нормального распределения `inv_normal_cdf` (аппроксимация Питера Аклема с точностью $< 10^{-9}$);
+   - 100% Safe Rust без единого падения, пропуски `RawValue::Null` сохраняются на исходных позициях.
+2. **Командная шина L5 (`statcraft_syntax::commands::rank_cases_cmd`):**
+   - Движковая команда `RankCasesCommand` (`transform.rank_cases`) с JSON Schema `specs()`;
+   - Пакетное создание/перезапись новых числовых переменных со шкалой `Measure::Ordinal` и префиксом (по умолчанию `R_`);
+   - Генерация аутентичного синтаксиса `RANK VARIABLES=... /TIES=... /RANK ... \n EXECUTE.`;
+   - Полный откат Undo (`Ctrl+Z`) с восстановлением исходных колонок и метаданных.
+3. **Графический интерфейс L6 (`statcraft_app::dialogs::rank_cases_dialog`):**
+   - Диалог на канонической дизайн-системе DialogKit (`DialogShell::standard`);
+   - Левая панель `Variables:`, центральная кнопка `TransferButton`, правый список целевых переменных;
+   - Блоки `GroupBox` выбора направления ранжирования (*Smallest value / Largest value*) и метода разрешения связей (*Mean / Low / High*);
+   - Правая колонка `SubdialogSidebar` с кнопкой `Rank Types...` и поддиалогом `DialogShell::subdialog` для детальной настройки типа ранжирования и N-тилей;
+   - Нижняя панель действий `DialogActionBar` (`[ OK ] [ Paste ] [ Reset ] [ Cancel ] [ Help ]`);
+   - Пункт меню `menu-transform-rank-cases` переведен из `InDev` в активный режим `Ready`;
+   - Локализация Fluent (`dialog-rank-*` и `output-rank-executed` в `ru.ftl` и `en.ftl`).
+4. **Контроль качества (DoD):**
+   - 100% Safe Rust, 0 паник;
+   - `cargo run -p xtask -j 1 -- layers` — 0 нарушений;
+   - `cargo run -p xtask -j 1 -- file-guard` — все 232 файла в пределах лимитов;
+   - `cargo run -p xtask -j 1 -- design-guard` — все диалоги соответствуют DialogKit;
+   - `cargo run -p xtask -j 1 -- parity` — паритет зафиксирован;
+   - `cargo test --workspace -j 1` — 100% успешный прогон всех тестов воркспейса.
+
+---
+
+### Микроплан №9: Визуальная группировка — `transform.visual_binning`
+*Время: 30 октября 2026, 08:45 (~35 минут)*
+
+Реализован один из важнейших инструментов подготовки данных IBM SPSS Statistics — **Визуальная группировка...** (`Преобразование -> Визуальная группировка...`, идентификатор команды `transform.visual_binning`):
+1. **Математическое ядро L2 (`statcraft_algo::binning`):**
+   - Алгоритм дискретизации числовых рядов `compute_visual_binning` и `compute_visual_binning_with_labels` на базе списка точек среза `Cutpoint` (верхняя граница `upper_bound` и признак включения `inclusive`);
+   - Автоматический расчет словаря меток `ValueLabels` по стандарту SPSS (`"<= 25000"`, `"25000 - 50000"`, `"> 50000"`);
+   - Генераторы точек среза по ключевым методикам:
+     - `generate_equal_width_cutpoints`: нарезка на интервалы равной ширины $W = (max - min) / N$;
+     - `generate_equal_percentile_cutpoints`: квантильная нарезка (равное число наблюдений в интервале) на базе метода HAVERAGE;
+     - `generate_stddev_cutpoints`: нарезка по интервалам стандартного отклонения $\pm 1\sigma, \pm 2\sigma$ вокруг выборочного среднего $\mu$;
+   - 100% Safe Rust без единого `unwrap` в рабочем коде, безопасное сохранение пропусков `RawValue::Null` и юнит-тесты на все методы.
+2. **Командная шина L5 (`statcraft_syntax::commands::binning_cmd`):**
+   - Движковая команда `VisualBinningCommand` (`transform.visual_binning`) с JSON Schema `specs()`;
+   - Создание/перезапись переменной со шкалой `Measure::Ordinal`, типом `DataType::Numeric { decimals: 0 }` и прикреплением словаря меток `ValueLabels`;
+   - Генерация канонического синтаксиса IBM SPSS Statistics:
+     ```text
+     RECODE salary (MISSING=COPY) (LO THRU 25000 = 1) (LO THRU 50000 = 2) (ELSE = 3)
+       INTO salary_binned.
+     VARIABLE LABELS salary_binned 'Salary (Binned)'.
+     VALUE LABELS salary_binned 1 '<= 25000' 2 '25000 - 50000' 3 '> 50000'.
+     EXECUTE.
+     ```
+   - Полная поддержка отката `Undo` (`Ctrl+Z`).
+3. **Графический интерфейс L6 (`statcraft_app::dialogs::binning_dialog` и `binning_cutpoints_dialog`):**
+   - Диалог `VisualBinningDialog` по стандарту `DialogKit` (`DialogShell::standard`);
+   - Левая панель выбора сканируемой переменной `render_variable_list_panel`;
+   - Правая часть: имя и метка сгруппированной переменной, радиокнопки включения/исключения верхних границ (*Included (<=) / Excluded (<)*), кнопка вызова поддиалога `Make Cutpoints...`, ручной ввод точек среза, сетка срезов и меток `Cutpoint Grid` с прямым редактированием;
+   - Поддиалог `binning_cutpoints_dialog` (`DialogShell::subdialog`, `SubdialogActionBar`) с выбором метода нарезки и числа срезов;
+   - Нижняя панель действий `DialogActionBar` (`[ OK ] [ Paste ] [ Reset ] [ Cancel ] [ Help ]`);
+   - Активирован пункт меню `menu-transform-visual-binning` (снят статус `InDev`), интеграция в `app_dialogs_data.rs`, статусное сообщение и логирование синтаксиса в `Output Viewer`.
+4. **Контроль качества (DoD):**
+   - 100% Safe Rust, 0 паник;
+   - `cargo run -p xtask -j 1 -- layers` — 0 нарушений;
+   - `cargo run -p xtask -j 1 -- file-guard` — все 232 файла в пределах лимитов;
+   - `cargo run -p xtask -j 1 -- design-guard` — все диалоги соответствуют DialogKit;
+   - `cargo run -p xtask -j 1 -- parity` — команда зарегистрирована;
+   - `cargo test --workspace -j 1` — 100% успешный прогон всех тестов воркспейса;
+   - `cargo clippy --workspace -j 1 -- -D warnings` — 0 предупреждений.
+
+---
+
+### Микроплан №7: Замена пропущенных значений (Replace Missing Values: `RMV`) — `transform.replace_missing`
+*Время: 30 октября 2026, 09:15 (~30 минут)*
+
+Реализована каноническая статистическая процедура импутации пропущенных данных IBM SPSS Statistics — **Заменить пропущенные значения...** (`Преобразование -> Заменить пропущенные значения...`, идентификатор команды `transform.replace_missing`):
+1. **Математическое ядро L2 (`statcraft_algo::replace_missing`):**
+   - Функция `impute_missing_values` с поддержкой всех пяти классических методов импутации SPSS `ImputationMethod`:
+     - `SeriesMean` (SMEAN): заполнение средним значением всех валидных точек анализируемой серии;
+     - `MeanOfNearby(span)` (MEAN): среднее арифметическое валидных соседних точек в окне $[i - \text{span} .. i + \text{span}]$;
+     - `MedianOfNearby(span)` (MEDIAN): медиана валидных соседних точек в окне $[i - \text{span} .. i + \text{span}]$;
+     - `LinearInterpolation` (LINEAR): линейная интерполяция между предыдущей валидной $(i_0, y_0)$ и последующей валидной $(i_1, y_1)$ точками с ближайшим переносом для краевых пропусков на границах серии;
+     - `LinearTrendAtPoint` (TREND): линейный регрессионный тренд $y = a + b \cdot x$ по номеру наблюдения $x_i = i + 1$;
+   - Надежная защита Never Crash: безопасная обработка краевых пропусков, серий из одних пропусков, нулевых и одиночных выборок на 100% safe Rust.
+2. **Командная шина L5 (`statcraft_syntax::commands::replace_missing_cmd`):**
+   - Движковая команда `ReplaceMissingCommand` (`transform.replace_missing`) с JSON Schema `specs()` для AI-агентов;
+   - Добавление новых числовых колонок (`DataType::Numeric { decimals: 2 }`, `Measure::Scale`) либо замещение существующих;
+   - Генерация аутентичного синтаксиса SPSS:
+     ```sps
+     RMV new_salary = SMEAN(salary)
+       /new_sales = MEDIAN(sales, 2)
+       /new_temp = LINEAR(temp).
+     EXECUTE.
+     ```
+   - Полный откат `Undo` (`Ctrl+Z`) с восстановлением исходных колонок, метаданных и значений.
+3. **Графический интерфейс L6 (`statcraft_app::dialogs::replace_missing_dialog`):**
+   - Модальное окно по стандарту DialogKit (`DialogShell::standard`, $560 \times 430$ px);
+   - Левая панель выбора исходных переменных, центральная кнопка `TransferButton`, правый список правил `target -> METHOD(source)`;
+   - Поле редактирования имени новой переменной с кнопкой `Change`, блок `GroupBox` выбора метода (радиокнопки) и числовой счетчик `span` для близлежащих точек;
+   - Нижняя строка действий `DialogActionBar` (`[ OK ] [ Paste ] [ Reset ] [ Cancel ] [ Help ]`);
+   - Активирован пункт меню `Transform -> Replace Missing Values...` (снят статус `[dev]`);
+   - Двуязычная локализация Fluent (`dialog-missing-*`, `output-missing-executed`, `status-missing-executed` в `ru.ftl` и `en.ftl`).
+4. **Контроль качества (Definition of Done):**
+   - 100% Safe Rust, 0 паник, 0 `unwrap` в прикладном коде;
+   - `cargo run -p xtask -j 1 -- layers` — 0 нарушений;
+   - `cargo run -p xtask -j 1 -- file-guard` — все 232 файла строго в пределах лимитов строк;
+   - `cargo run -p xtask -j 1 -- design-guard` — все диалоги строго соответствуют DialogKit;
+   - `cargo run -p xtask -j 1 -- parity` — команда зарегистрирована в реестре паритета;
+   - `cargo clippy --workspace -j 1 -- -D warnings` — 0 предупреждений;
+   - `cargo test --workspace -j 1` — 100% успешный прогон всех тестов воркспейса.
+
+
+
+
+
+
+
+### Микроплан №10: Мастер даты и времени — `transform.date_time_wizard`
+*Время: 30 октября 2026, 10:00 (~30 минут)*
+
+Реализован классический инструмент работы с датами и временем IBM SPSS Statistics — **Мастер даты и времени...** (`Преобразование -> Мастер даты и времени...`, идентификатор команды `transform.date_time_wizard`):
+
+1. **Математическое ядро L2 (`statcraft_algo::date_time`):**
+   - Модуль `crates/statcraft_algo/src/date_time.rs` (393 строки, строго в лимите $\le 500$ строк);
+   - Безопасный парсинг дат и временных меток без паник: поддержка стандартов ISO 8601, RFC 3339, `YYYY-MM-DD`, `DD.MM.YYYY`, `MM/DD/YYYY`, `YYYY/MM/DD`, форматов со временем `HH:MM:SS`, а также числовых unix timestamp и эпох;
+   - Перечисление операций `DateTimeOperation`:
+     - `ExtractPart(DatePart)`: извлечение года (`Year`), месяца (`Month`), дня (`Day`), часа (`Hour`), минут (`Minute`), секунд (`Second`), дня недели (`DayOfWeek`, 1 = воскресенье по стандарту SPSS) и квартала (`Quarter`);
+     - `Difference { unit: DateUnit }`: расчет точного календарного интервала между двумя датами в годах, месяцах, неделях, днях, часах, минутах или секундах;
+     - `AddDuration { amount, unit }`: прибавление или вычитание временной длительности с автоматической коррекцией високосных годов (например, 31 января + 1 месяц = 29 февраля в високосный год);
+     - `ConstructDate`: стандартизация строковых или числовых данных в канонический формат даты;
+   - Корректная обработка отсутствующих данных (`RawValue::Null`) и невалидных значений с сохранением пропусков без аварийных завершений.
+
+2. **Командная шина L5 (`statcraft_syntax::commands::date_time_cmd`):**
+   - Движковая команда `DateTimeWizardCommand` (`transform.date_time_wizard`) с валидируемой JSON Schema `specs()` для MCP и AI-агентов;
+   - Создание новых колонок со шкалой `Measure::Scale` и типами данных `DataType::Numeric` (для извлечения частей и разностей) или `DataType::Date` (для вычисления дат);
+   - Генерация канонического синтаксиса SPSS:
+     ```sps
+     COMPUTE birth_year = XDATE.YEAR(birth_date).
+     COMPUTE age_years = DATEDIFF(date2, date1, "years").
+     COMPUTE due_date = DATESUM(start_date, 30, "days").
+     VARIABLE LABELS target "Result Label".
+     EXECUTE.
+     ```
+   - Полная поддержка отката `Undo` (`Ctrl+Z`) с восстановлением исходных колонок и словаря метаданных.
+
+3. **Графический интерфейс L6 (`statcraft_app::dialogs::date_time_dialog`):**
+   - Модальное диалоговое окно по канону `DialogKit` (`DialogShell::standard`, $560 \times 430$ px);
+   - Верхний блок `GroupBox` с выбором задачи мастера (Извлечь часть даты / Рассчитать разность двух дат / Прибавить или вычесть длительность / Преобразовать в стандартную дату);
+   - Левая панель выбора доступных переменных `render_variable_list_panel`, адаптивная кнопка переноса `TransferButton`, слоты первой и второй даты;
+   - Выпадающие списки `ComboBox::from_id_salt` для извлекаемых частей и единиц времени, счетчик `DragValue` для длительности, поля ввода имени и метки целевой переменной;
+   - Нижняя панель действий `DialogActionBar` (`[ OK ] [ Paste ] [ Reset ] [ Cancel ] [ Help ]`);
+   - Снятие статуса `[dev]` и активация пункта меню `Преобразование -> Мастер даты и времени...`;
+   - Синхронная двуязычная локализация Fluent (`dialog-datetime-*`, `status-datetime-executed` в `locales/ru.ftl` и `locales/en.ftl`).
+
+4. **Контроль качества (Definition of Done):**
+   - 100% Safe Rust, отсутствие паник и `unwrap()` в нетестовом коде;
+   - `cargo run -p xtask -j 1 -- layers` — 0 нарушений архитектурных слоев;
+   - `cargo run -p xtask -j 1 -- file-guard` — все 237 файлов укладываются в лимиты строк;
+   - `cargo run -p xtask -j 1 -- design-guard` — 100% соответствие DialogKit;
+   - `cargo run -p xtask -j 1 -- parity` — регистрация команды в реестре паритета функций;
+   - `cargo test --workspace -j 1` — 100% успешное прохождение всех тестов воркспейса (включая линтер локализации `i18n_lint_test` и тесты инвариантов диалогов).
+
+---
+
+### Микроплан №11: Оптимальная группировка — `transform.optimal_binning`
+*Время: 30 октября 2026, 10:35 (~35 минут)*
+
+Реализована процедура управляемой дискретизации непрерывных признаков IBM SPSS Statistics — **Оптимальная группировка...** (`Преобразование -> Оптимальная группировка...`, идентификатор команды `transform.optimal_binning`):
+
+1. **Алгоритмическое ядро L2 (`statcraft_algo::optimal_binning`):**
+   - Новый модуль `crates/statcraft_algo/src/optimal_binning.rs` (289 строк, строго $\le 500$ строк);
+   - Алгоритм MDLP (Minimum Description Length Principle Discretization, Fayyad & Irani 1993):
+     * Сортировка пар $(x_i, y_i)$ по непрерывному признаку $x$;
+     * Жадный поиск оптимального среза $T$, максимизирующего информационный выигрыш $\Delta Ent = Ent(S) - \frac{|S_1|}{|S|}Ent(S_1) - \frac{|S_2|}{|S|}Ent(S_2)$;
+     * Проверка критерия остановки по сложности описания модели (MDL Principle Stopping Rule): разбиение принимается только если выигрыш превышает порог сложности описания $\frac{\log_2(N - 1) + \Delta}{N}$;
+     * Глобальная очередь с приоритетом (Priority Queue) для выбора наиболее информативных срезов во всем датасете и строгого соблюдения ограничения числа бинов `max_bins` (по умолчанию 5);
+     * Безопасная обработка константных признаков, одноклассовых целей и пропущенных значений (`Null`);
+     * Автоматическая генерация текстовых меток интервалов (`<= bound`, `prev - curr`, `> bound`) и структуры `ValueLabels`.
+
+2. **Командная шина движка L5 (`statcraft_syntax::commands::optimal_binning_cmd`):**
+   - Типизированная команда `OptimalBinningCommand` (`transform.optimal_binning`) с JSON Schema `specs()` для MCP и AI-агентов;
+   - Создание новых числовых колонок со шкалой измерения `Measure::Ordinal` и 0 знаков после запятой, прикрепление сгенерированных меток категорий `ValueLabels`;
+   - Генерация канонического синтаксиса IBM SPSS Statistics:
+     ```sps
+     OPTIMAL BINNING
+       /VARIABLES = income age BY default_status
+       /CRITERIA METHOD = MDLP.
+     EXECUTE.
+     ```
+   - Полная поддержка отката `Undo` (`Ctrl+Z`) со снятием созданных колонок в обратном порядке.
+
+3. **Графический интерфейс L6 (`statcraft_app::dialogs::optimal_binning_dialog`):**
+   - Диалоговое окно на базе `DialogKit` (`DialogShell::standard`, $560 \times 430$ px);
+   - Левая панель выбора доступных переменных `render_variable_list_panel`;
+   - Векторные адаптивные кнопки переноса `TransferButton` для списка группируемых переменных и целевой категориальной переменной (*Guide Variable*);
+   - Правая панель: список переменных для группировки, слот целевой переменной с кнопкой сброса, блок параметров `GroupBox` со счетчиком `max_bins` (2..20) и префиксом новых колонок (`OB_`);
+   - Нижняя строка действий `DialogActionBar` (`[ OK ] [ Paste ] [ Reset ] [ Cancel ] [ Help ]`);
+   - Снятие статуса `[dev]` и активация пункта меню `Преобразование -> Оптимальная группировка...`;
+   - Обработка в `app_dialogs_transform.rs`, статус `StatusMessage::OptimalBinningExecuted` и протоколирование в `Output Viewer`.
+
+4. **Архитектурная декомпозиция для защиты лимитов строк (File Guard):**
+   - Вынос системы меню `StatCraftApp` в изолированный подпакет `crates/statcraft_app/src/app_menus/` (`mod.rs`, `file_edit_view.rs`, `data_transform.rs`, `analyze_etc.rs`), что снизило размер `app.rs` с 1557 до 585 строк (при лимите 1500);
+   - Декомпозиция `date_time_dialog` в модуль `date_time_dialog/` (`mod.rs`, `view.rs`), уложившись в лимит $\le 500$ строк на файл.
+
+5. **Контроль качества (Definition of Done):**
+   - 100% Safe Rust, 0 паник и unwrap в прикладном коде;
+   - `cargo run -p xtask -j 1 -- layers` — 0 нарушений;
+   - `cargo run -p xtask -j 1 -- file-guard` — все 245 файлов строго соблюдают лимиты строк;
+   - `cargo run -p xtask -j 1 -- design-guard` — 100% соответствие DialogKit;
+   - `cargo run -p xtask -j 1 -- parity` — 51 документированная команда;
+   - `cargo clippy --workspace -j 1 -- -D warnings` — 0 предупреждений;
+   - `cargo test --workspace -j 1` — 100% успешный прогон всех тестов воркспейса.
+

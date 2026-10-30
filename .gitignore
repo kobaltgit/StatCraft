@@ -7,3 +7,6 @@ Cargo.lock
 *.zsav
 .DS_Store
 Thumbs.db
+/.statcraft
+crates/statcraft_app/.statcraft
+

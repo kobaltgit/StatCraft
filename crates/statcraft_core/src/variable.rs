@@ -22,6 +22,9 @@ pub enum CoreError {
 
     #[error("Cannot parse value '{0}' as numeric")]
     TypeMismatch(String),
+
+    #[error("I/O error: {0}")]
+    Io(#[from] statcraft_io::IoError),
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]

@@ -27,6 +27,8 @@ menu-file-import-spss = Файл данных SPSS (*.sav, *.zsav)...
 menu-file-import-csv = Текстовый файл с разделителями (*.csv, *.tsv)...
 menu-file-import-excel = Электронная таблица Excel (*.xlsx)...
 menu-file-recent = Недавние файлы
+menu-file-recent-empty = (Нет недавних файлов)
+menu-file-recent-clear = Очистить список недавних файлов
 menu-file-save = Сохранить проект
 menu-file-save-as = Сохранить проект как...
 menu-file-save-data-as = Сохранить данные как...
@@ -269,6 +271,19 @@ status-error = Ошибка
 status-rows-count = Наблюдений: { $count }
 status-cols-count = Переменных: { $count }
 status-cell-edited = Ячейка ({ $row }, { $col }) обновлена.
+status-new-dataset-created = Создан новый набор данных.
+status-new-syntax-created = Создан новый редактор синтаксиса.
+status-new-project-created = Создан новый проект.
+status-data-exported = Данные успешно экспортированы в { $path }
+status-output-exported = Журнал вывода успешно экспортирован в { $path }
+dialog-export-data-title = Экспорт данных
+dialog-export-output-title = Экспорт отчета вывода
+filter-csv-comma = Значения, разделенные запятыми (*.csv)
+filter-csv-semicolon = Значения, разделенные точкой с запятой (*.csv)
+filter-tsv = Значения, разделенные табуляцией (*.tsv, *.txt)
+filter-html = Веб-страница / Документ HTML (*.html, *.htm)
+filter-txt = Текстовый документ (*.txt)
+filter-tsv-bundle = Все таблицы TSV (*.tsv)
 toolbar-toggle-labels = Метки значений
 toolbar-open = Открыть файл данных (Ctrl+O)
 toolbar-save = Сохранить этот документ (Ctrl+S)
@@ -294,6 +309,8 @@ menu-view-toolbar-hidden = Скрыть панель инструментов
 
 # Dialogs & Output
 dialog-open-csv-title = Выберите файл массива данных CSV или TSV
+dialog-open-excel-title = Выберите электронную таблицу Excel (*.xlsx, *.xls, *.ods)
+dialog-open-spss-title = Выберите файл данных SPSS (*.sav, *.zsav)
 output-title = Журнал вывода результатов
 output-log = Протокол
 output-dataset-imported = Массив данных успешно загружен: { $name } (строк: { $rows }, переменных: { $cols }).
@@ -691,6 +708,44 @@ dialog-compute-group-arithmetic = Арифметика
 dialog-compute-group-statistical = Статистические
 output-compute-executed = Вычисление переменной '{ $target }' успешно выполнено ({ $rows } наблюдений).
 
+# Shift Values Dialog
+dialog-shift-title = Сдвиг значений (Lead / Lag)
+dialog-shift-source-var = Исходная переменная:
+dialog-shift-target-var = Имя новой переменной:
+dialog-shift-target-label = Метка переменной (опционально):
+dialog-shift-direction-group = Направление сдвига
+dialog-shift-direction-lag = Lag (значения из прошлого / вниз)
+dialog-shift-direction-lead = Lead (значения из будущего / вверх)
+dialog-shift-step = Число шагов сдвига:
+dialog-shift-error-source-required = Выберите исходную переменную.
+dialog-shift-error-target-invalid = Введите корректное имя новой переменной.
+output-shift-executed = Сдвиг значений '{ $target }' успешно выполнен ({ $rows } наблюдений).
+
+# Rank Cases Dialog
+dialog-rank-title = Ранжирование наблюдений
+dialog-rank-variables = Переменные:
+dialog-rank-direction-group = Присвоить ранг 1
+dialog-rank-direction-smallest = Наименьшему значению
+dialog-rank-direction-largest = Наибольшему значению
+dialog-rank-ties-group = Связи
+dialog-rank-ties-button = Связи...
+dialog-rank-ties-title = Ранжирование: Связи
+dialog-rank-ties-mean = Средний
+dialog-rank-ties-low = Наименьший
+dialog-rank-ties-high = Наибольший
+dialog-rank-types-button = Типы рангов...
+dialog-rank-types-title = Ранжирование: типы рангов
+dialog-rank-type-simple = Ранг
+dialog-rank-type-fractional = Дробный ранг
+dialog-rank-type-percent = Дробный ранг в процентах
+dialog-rank-type-ntiles = Квантили (N-тили)
+dialog-rank-ntiles-groups = Число групп:
+dialog-rank-type-blom = Нормальные оценки Блома
+dialog-rank-type-tukey = Нормальные оценки Тьюки
+dialog-rank-type-rankit = Ранкиты
+dialog-rank-type-vw = Нормальные оценки Ван дер Вардена
+output-rank-executed = Ранжирование наблюдений: создано { $count } переменных для { $rows } наблюдений.
+
 # Recode Variables Dialog & Transform
 dialog-recode-diff-title = Перекодировать в другие переменные
 dialog-recode-same-title = Перекодировать в те же переменные
@@ -719,6 +774,14 @@ dialog-recode-btn-add = Добавить
 dialog-recode-btn-remove = Удалить
 dialog-recode-old-new-mappings-title = Старое -> Новое:
 output-recode-executed = Перекодирование успешно выполнено для { $count } переменных.
+output-autorecode-executed = Автоматическое перекодирование успешно выполнено для { $count } переменных.
+dialog-autorecode-title = Автоматическое перекодирование
+dialog-autorecode-variables = Исходная переменная -> Новое имя:
+dialog-autorecode-new-name = Новое имя:
+dialog-autorecode-change = Изменить имя
+dialog-autorecode-order-group = Порядок перекодирования
+dialog-autorecode-order-lowest = От наименьшего значения
+dialog-autorecode-order-highest = От наибольшего значения
 output-sort-cases-executed = Наблюдения отсортированы по { $count } переменным.
 output-select-cases-executed = Выборка наблюдений выполнена ({ $mode }).
 output-split-file-executed = Разделение файла выполнено ({ $mode }, переменных: { $count }).
@@ -913,3 +976,166 @@ output-col-excluded-pct = Исключено %
 output-col-total-n = Всего N
 output-col-total-pct = Всего %
 output-means-executed = Рассчитано сравнение средних для {$tables} таблиц, {$cases} наблюдений
+
+# Confirm Save Dialog
+dialog-confirm-save-title = Несохраненные изменения
+dialog-confirm-save-message = Сохранить изменения перед продолжением?
+dialog-confirm-save-btn-save = Сохранить
+dialog-confirm-save-btn-dont-save = Не сохранять
+dialog-confirm-save-btn-cancel = Отмена
+
+# Project and Data Save / Open
+status-project-saved = Проект успешно сохранен: { $path }
+status-project-opened = Открыт проект { $name } ({ $rows } наблюдений, { $cols } переменных)
+status-data-saved = Данные успешно сохранены: { $path }
+status-no-dataset-to-save = Нет активного набора данных для сохранения
+
+dialog-save-project-title = Сохранить проект
+dialog-open-project-title = Открыть проект StatCraft
+dialog-save-data-title = Сохранить данные как
+dialog-open-data-title = Открыть файл данных
+dialog-filter-all-data = Все поддерживаемые форматы (*.stc, *.sav, *.zsav, *.csv, *.tsv, *.txt, *.xlsx, *.xls)
+dialog-filter-spss = Данные SPSS Statistics (*.sav, *.zsav)
+dialog-filter-stc = Проект StatCraft (*.stc)
+dialog-filter-csv = Текстовые данные (*.csv, *.tsv, *.txt)
+
+# Dummy Variables Dialog
+dialog-dummy-title = Создать фиктивные (dummy) переменные
+dialog-dummy-source-vars = Категориальные переменные:
+dialog-dummy-root-prefix = Базовое имя / префикс:
+dialog-dummy-omit-reference = Исключить референтную категорию (k - 1)
+dialog-dummy-error-empty-vars = Выберите хотя бы одну переменную.
+status-dummies-executed = Создано { $count } фиктивных переменных
+
+# Count Values within Cases Dialog & Transform
+dialog-count-title = Подсчет значений в строках
+dialog-count-target-var = Целевая переменная:
+dialog-count-target-label = Метка целевой переменной:
+dialog-count-variables = Переменные:
+dialog-count-define-values = Значения...
+dialog-count-values-title = Подсчет значений в строках: Значения
+dialog-count-values-to-count = Значения для подсчета:
+dialog-count-val-value = Значение:
+dialog-count-val-sysmis = Системно-пропущенные
+dialog-count-val-range = Диапазон:
+dialog-count-val-range-lowest = Диапазон от НАИМЕНЬШЕГО до:
+dialog-count-val-range-highest = Диапазон от значения до НАИБОЛЬШЕГО:
+dialog-count-through = по
+dialog-count-btn-add = Добавить
+dialog-count-btn-change = Изменить
+dialog-count-btn-remove = Удалить
+output-count-executed = Подсчет значений '{ $target }' успешно выполнен по { $variables } переменным ({ $rows } строк).
+
+# Set Random Number Seed
+dialog-seed-title = Установить зерно ДСЧ
+dialog-seed-mode-random = Случайная инициализация
+dialog-seed-mode-fixed = Задать начальное значение (seed)
+dialog-seed-value-label = Значение (1 - 2 000 000 000):
+status-random-seed-fixed = Установлено зерно ДСЧ: { $seed }
+status-random-seed-random = Включена случайная инициализация ДСЧ
+
+# Create Time Series Dialog & Transform
+dialog-timeseries-title = Создать временной ряд
+dialog-timeseries-new-vars = Новая переменная -> Функция:
+dialog-timeseries-function-group = Функция
+dialog-timeseries-fn-diff = Разности (DIFF)
+dialog-timeseries-fn-sdiff = Сезонные разности (SDIFF)
+dialog-timeseries-fn-sma = Простое скользящее среднее (SMA)
+dialog-timeseries-fn-csum = Кумулятивная сумма (CSUM)
+dialog-timeseries-order = Порядок / Интервал:
+dialog-timeseries-change = Изменить
+dialog-timeseries-name = Имя:
+dialog-timeseries-label = Метка:
+output-timeseries-executed = Создание временных рядов успешно выполнено ({ $count } рядов, { $rows } строк).
+
+# Visual Binning Dialog & Transform
+dialog-binning-title = Визуальная группировка
+dialog-binning-scanned-vars = Сканированные переменные:
+dialog-binning-binned-var = Сгруппированная переменная:
+dialog-binning-make-cutpoints = Создать точки среза...
+dialog-binning-cutpoints-table = Сетка точек среза
+dialog-binning-value-label = Метка
+dialog-binning-high-endpoint = Верхняя граница
+dialog-binning-included = Включая (<=)
+dialog-binning-excluded = Исключая (<)
+dialog-binning-name = Имя:
+dialog-binning-label = Метка:
+dialog-binning-endpoints = Верхние границы:
+dialog-binning-endpoints-inclusive = Включая (<=) - нижняя граница исключена
+dialog-binning-endpoints-exclusive = Исключая (<) - нижняя граница включена
+dialog-binning-add-cutpoint = Добавить срез
+dialog-binning-remove-cutpoint = Удалить
+dialog-binning-clear-all = Очистить срезы
+dialog-binning-grid-bin = Бин
+dialog-binning-grid-value = Значение
+dialog-binning-grid-high = Верхняя граница
+dialog-binning-grid-label = Метка
+dialog-binning-make-cutpoints-title = Создание точек среза
+dialog-binning-equal-width = Интервалы равной ширины
+dialog-binning-equal-percentiles = Равные процентили (на основе наблюдений)
+dialog-binning-stddev = Точки среза на основе стандартных отклонений
+dialog-binning-stddev-desc = +/- 1 и +/- 2 станд. откл.
+dialog-binning-num-intervals = Число точек среза:
+dialog-binning-cutpoint-val = Верхняя граница:
+dialog-binning-high = Верх
+output-binning-executed = Визуальная группировка '{ $target }' успешно создана ({ $rows } строк).
+
+# Replace Missing Values Dialog & Transform
+dialog-missing-title = Замена пропущенных значений
+dialog-missing-new-vars = Новая переменная -> Метод:
+dialog-missing-name = Имя:
+dialog-missing-method-group = Метод
+dialog-missing-method-smean = Среднее серии (Series mean)
+dialog-missing-method-nearby-mean = Среднее соседних точек
+dialog-missing-method-nearby-median = Медиана соседних точек
+dialog-missing-method-linear = Линейная интерполяция
+dialog-missing-method-trend = Линейный тренд в точке
+dialog-missing-span = Число соседних точек:
+dialog-missing-change = Изменить
+output-missing-executed = Замена пропущенных значений успешно выполнена ({ $count } переменных, { $rows } наблюдений).
+status-missing-executed = Замена пропущенных значений выполнена для { $count } переменных
+
+
+
+# Date and Time Wizard Dialog
+dialog-datetime-wizard-title = Мастер даты и времени
+dialog-datetime-task-group = Выберите действие:
+dialog-datetime-task-extract = Извлечь часть даты или времени
+dialog-datetime-task-diff = Рассчитать интервал между двумя датами
+dialog-datetime-task-add = Прибавить или вычесть длительность
+dialog-datetime-task-construct = Преобразовать в стандартную дату
+dialog-datetime-part-label = Извлекаемая часть:
+dialog-datetime-unit-label = Единица времени:
+dialog-datetime-first-date = Первая дата:
+dialog-datetime-second-date = Вторая дата:
+dialog-datetime-target-var = Целевая переменная:
+dialog-datetime-target-label = Метка переменной:
+dialog-datetime-part-year = Год
+dialog-datetime-part-month = Месяц
+dialog-datetime-part-day = День
+dialog-datetime-part-hour = Час
+dialog-datetime-part-minute = Минута
+dialog-datetime-part-second = Секунда
+dialog-datetime-part-dayofweek = День недели
+dialog-datetime-part-quarter = Квартал
+dialog-datetime-unit-years = Годы
+dialog-datetime-unit-months = Месяцы
+dialog-datetime-unit-weeks = Недели
+dialog-datetime-unit-days = Дни
+dialog-datetime-unit-hours = Часы
+dialog-datetime-unit-minutes = Минуты
+dialog-datetime-unit-seconds = Секунды
+dialog-datetime-duration-amount = Значение / Длительность:
+status-datetime-executed = Мастер даты и времени: создана переменная {$target}
+
+# Optimal Binning Dialog & Transform
+dialog-optbin-title = Оптимальная группировка
+dialog-optbin-variables = Переменные для группировки:
+dialog-optbin-target = Целевая переменная (категориальная):
+dialog-optbin-options = Параметры
+dialog-optbin-max-bins = Максимальное число интервалов:
+dialog-optbin-prefix = Префикс новых переменных:
+dialog-optbin-error-target = Выберите категориальную целевую переменную.
+output-optbin-executed = Оптимальная группировка создала { $count } перем.
+status-optbin-executed = Оптимальная группировка создала { $count } перем.
+
