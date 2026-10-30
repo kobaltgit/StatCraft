@@ -1,0 +1,9 @@
+Package: statcraft
+Version: 0.2.0
+Section: math
+Priority: optional
+Architecture: amd64
+Maintainer: StatCraft Contributors <https://github.com/kobaltgit/StatCraft>
+Description: High-performance statistical analysis package and SPSS alternative
+ StatCraft provides authentic SPSS-compatible data management, statistical
+ modeling, and analysis workflows built on native Rust and modern design.

@@ -1,4 +1,4 @@
-name: "Release"
+name: Release
 
 on:
   push:
@@ -12,99 +12,37 @@ on:
         description: 'Release Tag (e.g. v0.2.0)'
         required: false
         default: 'v0.2.0'
-      publish_release:
-        description: 'Publish GitHub Release'
-        type: boolean
-        required: false
-        default: true
 
 permissions:
   contents: write
 
 jobs:
-  build:
-    name: Build (${{ matrix.asset_name }})
-    runs-on: ${{ matrix.os }}
-    strategy:
-      fail-fast: false
-      matrix:
-        include:
-          - os: windows-latest
-            target_os: windows
-            target_arch: ""
-            asset_name: statcraft-windows-x64
-            archive_name: statcraft-windows-x64.zip
-            installer_name: statcraft-windows-x64-installer.exe
-            binary_name: statcraft_app.exe
-            binary_path: target/release/statcraft_app.exe
-          - os: ubuntu-22.04
-            target_os: linux
-            target_arch: ""
-            asset_name: statcraft-linux-x64
-            archive_name: statcraft-linux-x64.tar.gz
-            installer_name: statcraft-linux-x64.deb
-            binary_name: statcraft_app
-            binary_path: target/release/statcraft_app
-          - os: macos-latest
-            target_os: macos
-            target_arch: "aarch64-apple-darwin"
-            asset_name: statcraft-macos-arm64
-            archive_name: statcraft-macos-arm64.tar.gz
-            installer_name: statcraft-macos-arm64.dmg
-            binary_name: statcraft_app
-            binary_path: target/aarch64-apple-darwin/release/statcraft_app
-          - os: macos-latest
-            target_os: macos
-            target_arch: "x86_64-apple-darwin"
-            asset_name: statcraft-macos-x64
-            archive_name: statcraft-macos-x64.tar.gz
-            installer_name: statcraft-macos-x64.dmg
-            binary_name: statcraft_app
-            binary_path: target/x86_64-apple-darwin/release/statcraft_app
-
+  build-windows:
+    name: Build Windows (x64)
+    runs-on: windows-latest
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Install Linux GUI Dependencies
-        if: matrix.target_os == 'linux'
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y pkg-config libssl-dev libx11-dev libxcursor-dev libxrandr-dev libxi-dev libxinerama-dev libwayland-dev libxkbcommon-dev
-
       - name: Setup Rust toolchain
         uses: dtolnay/rust-toolchain@stable
-        with:
-          targets: ${{ matrix.target_arch }}
 
-      - name: Build StatCraft in Release Mode (Windows)
-        if: matrix.target_os == 'windows'
+      - name: Build StatCraft in Release Mode
         shell: pwsh
         run: cargo build --package statcraft_app --release -j 1
 
-      - name: Build StatCraft in Release Mode (Unix)
-        if: matrix.target_os != 'windows'
-        shell: bash
-        run: |
-          if [ -n "${{ matrix.target_arch }}" ]; then
-            cargo build --package statcraft_app --release --target ${{ matrix.target_arch }} -j 1
-          else
-            cargo build --package statcraft_app --release -j 1
-          fi
-
       - name: Package Windows Artifacts (Portable & Installer)
-        if: matrix.target_os == 'windows'
         shell: pwsh
         run: |
           # 1. Portable ZIP
           New-Item -ItemType Directory -Force -Path staging
-          Copy-Item ${{ matrix.binary_path }} staging/
+          Copy-Item target/release/statcraft_app.exe staging/
           Copy-Item -Recurse locales staging/locales
           Copy-Item README.md staging/
           Copy-Item README.ru.md staging/
           Copy-Item LICENSE-MIT staging/
           New-Item -ItemType Directory -Force -Path dist
-          Compress-Archive -Path staging/* -DestinationPath dist/${{ matrix.archive_name }}
+          Compress-Archive -Path staging/* -DestinationPath dist/statcraft-windows-x64.zip
 
           # 2. Inno Setup Installer
           if (Get-Command iscc -ErrorAction SilentlyContinue) {
@@ -118,20 +56,45 @@ jobs:
             & "C:\Program Files (x86)\Inno Setup 6\ISCC.exe" packaging/windows/installer.iss
           }
 
+      - name: Upload Windows Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: statcraft-windows-x64
+          path: |
+            dist/statcraft-windows-x64.zip
+            dist/statcraft-windows-x64-installer.exe
+          if-no-files-found: error
+
+  build-linux:
+    name: Build Linux (x64)
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install Linux GUI Dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y pkg-config libssl-dev libx11-dev libxcursor-dev libxrandr-dev libxi-dev libxinerama-dev libwayland-dev libxkbcommon-dev
+
+      - name: Setup Rust toolchain
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Build StatCraft in Release Mode
+        run: cargo build --package statcraft_app --release -j 1
+
       - name: Package Linux Artifacts (Portable & .deb Installer)
-        if: matrix.target_os == 'linux'
-        shell: bash
         run: |
           # 1. Portable TAR.GZ
           mkdir -p staging
-          cp ${{ matrix.binary_path }} staging/
-          chmod +x staging/${{ matrix.binary_name }}
+          cp target/release/statcraft_app staging/
+          chmod +x staging/statcraft_app
           cp -r locales staging/
           cp README.md staging/
           cp README.ru.md staging/
           cp LICENSE-MIT staging/
           mkdir -p dist
-          tar -czvf dist/${{ matrix.archive_name }} -C staging .
+          tar -czvf dist/statcraft-linux-x64.tar.gz -C staging .
 
           # 2. Debian .deb Package
           DEB_DIR=deb_staging
@@ -142,49 +105,58 @@ jobs:
           mkdir -p "$DEB_DIR/usr/share/icons/hicolor/scalable/apps"
           mkdir -p "$DEB_DIR/usr/share/icons/hicolor/256x256/apps"
 
-          cp ${{ matrix.binary_path }} "$DEB_DIR/usr/bin/${{ matrix.binary_name }}"
-          chmod +x "$DEB_DIR/usr/bin/${{ matrix.binary_name }}"
+          cp target/release/statcraft_app "$DEB_DIR/usr/bin/statcraft_app"
+          chmod +x "$DEB_DIR/usr/bin/statcraft_app"
           cp -r locales "$DEB_DIR/usr/share/statcraft/"
           cp README.md README.ru.md LICENSE-MIT "$DEB_DIR/usr/share/statcraft/"
 
           cp packaging/linux/statcraft.desktop "$DEB_DIR/usr/share/applications/"
           cp assets/icon.svg "$DEB_DIR/usr/share/icons/hicolor/scalable/apps/statcraft.svg"
           cp assets/icon-256.png "$DEB_DIR/usr/share/icons/hicolor/256x256/apps/statcraft.png"
+          cp packaging/linux/control "$DEB_DIR/DEBIAN/control"
 
-          cat << 'EOF' > "$DEB_DIR/DEBIAN/control"
-Package: statcraft
-Version: 0.2.0
-Section: math
-Priority: optional
-Architecture: amd64
-Maintainer: StatCraft Contributors <https://github.com/kobaltgit/StatCraft>
-Description: High-performance statistical analysis package and SPSS alternative
- StatCraft provides authentic SPSS-compatible data management, statistical
- modeling, and analysis workflows built on native Rust and modern design.
-EOF
+          dpkg-deb --build "$DEB_DIR" dist/statcraft-linux-x64.deb
 
-          dpkg-deb --build "$DEB_DIR" "dist/${{ matrix.installer_name }}"
+      - name: Upload Linux Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: statcraft-linux-x64
+          path: |
+            dist/statcraft-linux-x64.tar.gz
+            dist/statcraft-linux-x64.deb
+          if-no-files-found: error
 
-      - name: Package macOS Artifacts (Portable & DMG Installer)
-        if: matrix.target_os == 'macos'
-        shell: bash
+  build-macos-arm64:
+    name: Build macOS (Apple Silicon ARM64)
+    runs-on: macos-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Rust toolchain
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Build StatCraft in Release Mode
+        run: cargo build --package statcraft_app --release -j 1
+
+      - name: Package macOS ARM64 Artifacts (Portable & DMG)
         run: |
           # 1. Portable TAR.GZ
           mkdir -p staging
-          cp ${{ matrix.binary_path }} staging/${{ matrix.binary_name }}
-          chmod +x staging/${{ matrix.binary_name }}
+          cp target/release/statcraft_app staging/statcraft_app
+          chmod +x staging/statcraft_app
           cp -r locales staging/
           cp README.md staging/
           cp README.ru.md staging/
           cp LICENSE-MIT staging/
           mkdir -p dist
-          tar -czvf dist/${{ matrix.archive_name }} -C staging .
+          tar -czvf dist/statcraft-macos-arm64.tar.gz -C staging .
 
           # 2. macOS Application Bundle & DMG Installer
           mkdir -p StatCraft.app/Contents/MacOS
           mkdir -p StatCraft.app/Contents/Resources/locales
-          cp ${{ matrix.binary_path }} StatCraft.app/Contents/MacOS/${{ matrix.binary_name }}
-          chmod +x StatCraft.app/Contents/MacOS/${{ matrix.binary_name }}
+          cp target/release/statcraft_app StatCraft.app/Contents/MacOS/statcraft_app
+          chmod +x StatCraft.app/Contents/MacOS/statcraft_app
           cp packaging/macos/Info.plist StatCraft.app/Contents/
           cp -r locales/* StatCraft.app/Contents/Resources/locales/
           cp -r locales StatCraft.app/Contents/MacOS/
@@ -206,22 +178,87 @@ EOF
           cp -r StatCraft.app dmg_root/
           ln -s /Applications dmg_root/Applications
 
-          hdiutil create -volname "StatCraft" -srcfolder dmg_root -ov -format UDZO "dist/${{ matrix.installer_name }}"
+          hdiutil create -volname "StatCraft" -srcfolder dmg_root -ov -format UDZO dist/statcraft-macos-arm64.dmg
 
-      - name: Upload Artifacts
+      - name: Upload macOS ARM64 Artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: ${{ matrix.asset_name }}
+          name: statcraft-macos-arm64
           path: |
-            dist/${{ matrix.archive_name }}
-            dist/${{ matrix.installer_name }}
+            dist/statcraft-macos-arm64.tar.gz
+            dist/statcraft-macos-arm64.dmg
+          if-no-files-found: error
+
+  build-macos-x64:
+    name: Build macOS (Intel x64)
+    runs-on: macos-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Rust toolchain with x86_64 target
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: x86_64-apple-darwin
+
+      - name: Build StatCraft in Release Mode (Intel)
+        run: cargo build --package statcraft_app --release --target x86_64-apple-darwin -j 1
+
+      - name: Package macOS x64 Artifacts (Portable & DMG)
+        run: |
+          # 1. Portable TAR.GZ
+          mkdir -p staging
+          cp target/x86_64-apple-darwin/release/statcraft_app staging/statcraft_app
+          chmod +x staging/statcraft_app
+          cp -r locales staging/
+          cp README.md staging/
+          cp README.ru.md staging/
+          cp LICENSE-MIT staging/
+          mkdir -p dist
+          tar -czvf dist/statcraft-macos-x64.tar.gz -C staging .
+
+          # 2. macOS Application Bundle & DMG Installer
+          mkdir -p StatCraft.app/Contents/MacOS
+          mkdir -p StatCraft.app/Contents/Resources/locales
+          cp target/x86_64-apple-darwin/release/statcraft_app StatCraft.app/Contents/MacOS/statcraft_app
+          chmod +x StatCraft.app/Contents/MacOS/statcraft_app
+          cp packaging/macos/Info.plist StatCraft.app/Contents/
+          cp -r locales/* StatCraft.app/Contents/Resources/locales/
+          cp -r locales StatCraft.app/Contents/MacOS/
+
+          mkdir -p icon.iconset
+          sips -z 16 16 assets/icon-256.png --out icon.iconset/icon_16x16.png || cp assets/icon-16.png icon.iconset/icon_16x16.png
+          sips -z 32 32 assets/icon-256.png --out icon.iconset/icon_16x16@2x.png || cp assets/icon-32.png icon.iconset/icon_16x16@2x.png
+          sips -z 32 32 assets/icon-256.png --out icon.iconset/icon_32x32.png || cp assets/icon-32.png icon.iconset/icon_32x32.png
+          sips -z 64 64 assets/icon-256.png --out icon.iconset/icon_32x32@2x.png || cp assets/icon-64.png icon.iconset/icon_32x32@2x.png
+          sips -z 128 128 assets/icon-256.png --out icon.iconset/icon_128x128.png || cp assets/icon-128.png icon.iconset/icon_128x128.png
+          sips -z 256 256 assets/icon-256.png --out icon.iconset/icon_128x128@2x.png || cp assets/icon-256.png icon.iconset/icon_128x128@2x.png
+          sips -z 256 256 assets/icon-256.png --out icon.iconset/icon_256x256.png || cp assets/icon-256.png icon.iconset/icon_256x256.png
+          sips -z 512 512 assets/icon-256.png --out icon.iconset/icon_256x256@2x.png || true
+          sips -z 512 512 assets/icon-256.png --out icon.iconset/icon_512x512.png || true
+          sips -z 1024 1024 assets/icon-256.png --out icon.iconset/icon_512x512@2x.png || true
+          iconutil -c icns icon.iconset -o StatCraft.app/Contents/Resources/icon.icns || true
+
+          mkdir -p dmg_root
+          cp -r StatCraft.app dmg_root/
+          ln -s /Applications dmg_root/Applications
+
+          hdiutil create -volname "StatCraft" -srcfolder dmg_root -ov -format UDZO dist/statcraft-macos-x64.dmg
+
+      - name: Upload macOS x64 Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: statcraft-macos-x64
+          path: |
+            dist/statcraft-macos-x64.tar.gz
+            dist/statcraft-macos-x64.dmg
           if-no-files-found: error
 
   publish-release:
     name: Publish GitHub Release
-    needs: [build]
+    needs: [build-windows, build-linux, build-macos-arm64, build-macos-x64]
     runs-on: ubuntu-latest
-    if: startsWith(github.ref, 'refs/tags/') || (github.event_name == 'workflow_dispatch' && (inputs.publish_release == true || inputs.publish_release == 'true'))
+    if: startsWith(github.ref, 'refs/tags/') || github.event_name == 'workflow_dispatch'
     steps:
       - name: Download all build artifacts
         uses: actions/download-artifact@v4
