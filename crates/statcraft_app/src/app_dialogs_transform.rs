@@ -1,10 +1,12 @@
 use super::app::{StatCraftApp, StatusMessage};
 use super::dialogs::{
-    render_auto_recode_dialog, render_count_values_dialog, render_date_time_dialog,
-    render_dummy_dialog, render_optimal_binning_dialog, render_random_seed_dialog,
-    render_replace_missing_dialog, render_shift_values_dialog, AutoRecodeDialogAction,
-    CountValuesDialogAction, DateTimeDialogAction, DummyDialogAction, OptimalBinningDialogAction,
-    RandomSeedDialogAction, ReplaceMissingDialogAction, ShiftValuesDialogAction,
+    render_adp_dialog, render_auto_recode_dialog, render_count_values_dialog,
+    render_date_time_dialog, render_dummy_dialog, render_optimal_binning_dialog,
+    render_programmability_dialog, render_random_seed_dialog, render_replace_missing_dialog,
+    render_shift_values_dialog, AdpDialogAction, AutoRecodeDialogAction, CountValuesDialogAction,
+    DateTimeDialogAction, DummyDialogAction, OptimalBinningDialogAction,
+    ProgrammabilityDialogAction, RandomSeedDialogAction, ReplaceMissingDialogAction,
+    ShiftValuesDialogAction,
 };
 use serde_json::json;
 use statcraft_i18n::t;
@@ -465,6 +467,120 @@ impl StatCraftApp {
                 self.output_view_state.add_entry(t!("output-log"), sps);
             }
             OptimalBinningDialogAction::None => {}
+        }
+
+        // 9. Automated Data Preparation (ADP) Dialog
+        let adp_action = render_adp_dialog(ctx, &mut self.adp_dialog_state, self.dataset.as_ref());
+
+        match adp_action {
+            AdpDialogAction::Run(opts) => {
+                let sps = statcraft_syntax::commands::PrepareDataModelingCommand::to_sps(&opts);
+                let params = serde_json::to_value(&opts).unwrap_or_default();
+
+                match self
+                    .command_bus
+                    .execute("transform.adp", &mut self.dataset, params)
+                {
+                    Ok(result_value) => {
+                        if let Ok(result) =
+                            serde_json::from_value::<statcraft_algo::AdpResult>(result_value)
+                        {
+                            let total_inputs = result.total_inputs;
+                            let recommended = result.recommended_count;
+                            self.output_view_state.add_adp(result, Some(sps));
+                            self.status_message = StatusMessage::AdpExecuted {
+                                total_inputs,
+                                recommended,
+                            };
+                        }
+                    }
+                    Err(e) => {
+                        self.status_message = StatusMessage::Error(e.to_string());
+                    }
+                }
+            }
+            AdpDialogAction::Paste(opts) => {
+                let sps = statcraft_syntax::commands::PrepareDataModelingCommand::to_sps(&opts);
+                self.output_view_state.add_entry(t!("output-log"), sps);
+            }
+            AdpDialogAction::None => {}
+        }
+
+        // 10. Programmability Transformations Dialog
+        let prog_action = render_programmability_dialog(
+            ctx,
+            self.dataset.as_ref(),
+            &mut self.programmability_dialog_state,
+        );
+
+        match prog_action {
+            ProgrammabilityDialogAction::Run { script } => {
+                let sps = statcraft_syntax::commands::ProgrammabilityCommand::to_sps(&script);
+                let params = json!({ "script": script });
+
+                match self.command_bus.execute(
+                    "transform.programmability",
+                    &mut self.dataset,
+                    params,
+                ) {
+                    Ok(result_value) => {
+                        let statements = result_value
+                            .get("statements")
+                            .and_then(|v| v.as_u64())
+                            .unwrap_or(0) as usize;
+                        let rows = result_value
+                            .get("rows_affected")
+                            .and_then(|v| v.as_u64())
+                            .unwrap_or(0) as usize;
+                        let created: Vec<String> = result_value
+                            .get("created")
+                            .and_then(|v| v.as_array())
+                            .map(|arr| {
+                                arr.iter()
+                                    .filter_map(|x| x.as_str().map(|s| s.to_string()))
+                                    .collect()
+                            })
+                            .unwrap_or_default();
+                        let modified: Vec<String> = result_value
+                            .get("modified")
+                            .and_then(|v| v.as_array())
+                            .map(|arr| {
+                                arr.iter()
+                                    .filter_map(|x| x.as_str().map(|s| s.to_string()))
+                                    .collect()
+                            })
+                            .unwrap_or_default();
+                        let logs: Vec<String> = result_value
+                            .get("logs")
+                            .and_then(|v| v.as_array())
+                            .map(|arr| {
+                                arr.iter()
+                                    .filter_map(|x| x.as_str().map(|s| s.to_string()))
+                                    .collect()
+                            })
+                            .unwrap_or_default();
+
+                        let res = statcraft_algo::ProgrammabilityResult {
+                            created_vars: created,
+                            modified_vars: modified,
+                            rows_affected: rows,
+                            statements_count: statements,
+                            logs,
+                        };
+                        self.output_view_state.add_programmability(res, Some(sps));
+                        self.status_message =
+                            StatusMessage::ProgrammabilityExecuted { statements, rows };
+                    }
+                    Err(e) => {
+                        self.status_message = StatusMessage::Error(e.to_string());
+                    }
+                }
+            }
+            ProgrammabilityDialogAction::Paste { script } => {
+                let sps = statcraft_syntax::commands::ProgrammabilityCommand::to_sps(&script);
+                self.output_view_state.add_entry(t!("output-log"), sps);
+            }
+            ProgrammabilityDialogAction::None => {}
         }
     }
 }

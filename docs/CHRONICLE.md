@@ -1775,3 +1775,117 @@
    - Проверки заголовков TSV дополнены поддержкой обеих канонических локалей (EN/RU) для исключения любых race conditions;
    - Полный прогон `cargo run -p xtask -j 1 -- ci` завершился со 100% успехом.
 
+
+---
+
+### Микроплан #12: Подготовка данных для моделирования (Automated Data Preparation / ADP) — `transform.adp`
+*Время: 30 октября 2026, 18:30 (~35 минут)*
+
+Реализована каноническая процедура автоматической подготовки данных для прогнозного моделирования и машинного обучения из IBM SPSS Statistics — **«Подготовка данных для моделирования»** (*Prepare Data for Modeling / Automated Data Preparation, ADP*, пункт меню `Преобразование -> Подготовка данных для моделирования (ADP)...` / `Transform -> Prepare Data for Modeling (ADP)...`, типизированная команда `transform.adp` и синтаксис `ADP`):
+
+1. **Математическое ядро и алгоритмы L2 (`statcraft_algo::adp`):**
+   - Выделен изолированный подмодуль `crates/statcraft_algo/src/adp/` с соблюдением File Size Guard ($\le 300$ строк на файл);
+   - **Скрининг качества данных (`screening.rs`):** многомерный отсев предикторов по порогам пропущенных значений (по умолчанию $>50\%$), отсев константных/квазиконстантных признаков (доля преобладающей категории/моды $>95\%$) и признаков-идентификаторов ($>95\%$ уникальных значений при $N \ge 20$) с взвешиванием наблюдений;
+   - **Детекция и обработка аномальных выбросов (`outliers.rs`):** расчет взвешенного Z-score ($3.0\sigma$) и межквартильного размаха ($1.5 \times IQR$) с возможностью винзоризации (Winsorizing / Capping до границ) или замены на системные пропуски;
+   - **Масштабирование и категории (`transform.rs`):** непрерывное Z-масштабирование ($(x - \mu)/\sigma$) и Min-Max нормализация к $[0, 1]$, слияние редких категорий ($<5\%$) в категорию `'Other'` с автоматической генерацией словаря `ValueLabels`, супервизорный MDLP-биннинг числовых признаков при наличии целевой переменной;
+   - **Конструирование признаков (`transform.rs`):** автоматическая генерация парных взаимодействий (кросс-произведений `P_var1_X_var2 = var1 * var2`) для наиболее информативных признаков;
+   - **Оценка предиктивной силы признаков (`predictive_power.rs`):** ранжирование признаков по силе связи с целевой зависимой переменной через коэффициент корреляции Пирсона $r$ и критерий One-Way ANOVA $\eta^2$ с точным вычислением статистической значимости ($p$-value);
+   - **Разбиение выборки (`partition.rs`):** детерминированное стратифицированное/случайное разделение выборки на обучающую (70%), тестовую (20%) и валидационную (10%) выборки с созданием системного столбца `_Partition_`, словарем меток и настраиваемым зерном PRNG;
+   - Golden Oracle тесты (`tests.rs`) против математических эталонов.
+
+2. **Командная шина и синтаксис L5 (`statcraft_syntax::commands::adp_cmd`):**
+   - Команда `PrepareDataModelingCommand` (`transform.adp`), спецификация `specs()` для AI-агентов;
+   - Генератор канонического синтаксиса `ADP /FIELDS TARGET=... INPUTS=... /OBJECTIVE ... /PREPAREINPUTS ... /OUTLIERS ... /RESCALE ... /CATEGORICAL ... /TRANSFORM ... /CONSTRUCT ... /PARTITION ... \n EXECUTE.`;
+   - Интеграция с `CommandBus::with_defaults()`, добавление сгенерированных признаков `P_*` и столбца `_Partition_` в `DataSet`, 100% откат и повтор (Undo/Redo);
+   - Набор тестов команды `crates/statcraft_syntax/tests/adp_cmd_tests.rs`.
+
+3. **Сводные таблицы в Output Viewer L4/L6 (`tables_adp.rs`):**
+   - Четыре аутентичные таблицы вывода SPSS: *Automated Data Preparation Summary*, *Action Log / Field Processing Details*, *Predictive Power / Feature Importance*, *Partition Breakdown*;
+   - Копирование в буфер обмена и экспорт отчетов в TSV через `adp_to_tsv`.
+
+4. **Диалоговое окно DialogKit L6 (`crates/statcraft_app/src/dialogs/adp_dialog`):**
+   - Основное окно `AdpDialog` на базе `DialogShell::standard` ($580 \times 460$ px) с `VariablePicker`, кнопками переноса `TransferButton`, селектором цели `Objective` и нижней панелью действий `DialogActionBar` Type 1;
+   - Модальные поддиалоги на базе `DialogShell::subdialog` и `SubdialogActionBar`: `ScreeningSubdialog`, `TransformSubdialog`, `PartitionSubdialog`;
+   - Снятие статуса `[dev]` и активация пункта меню `Преобразование -> Подготовка данных для моделирования (ADP)...`, статусное сообщение `StatusMessage::AdpExecuted`.
+
+5. **Тестирование и Definition of Done:**
+   - Модульные тесты `statcraft_algo::adp::tests` — 6 пройденных тестов;
+   - Тесты синтаксиса `adp_cmd_tests` — 2 пройденных теста;
+   - Тесты инвариантов диалога и сводных таблиц `adp_dialog_invariants.rs` — 2 пройденных теста;
+   - 100% соответствие Design Guard, File Size Guard (260 файлов $\le$ лимитов строк), Layer Guard, Parity (52 команды) и Zero-Hardcode i18n (`statcraft_i18n` lint test).
+
+---
+
+### Микроплан #13: Программируемые преобразования (Programmability Transformations) — `transform.programmability`
+*Время: 30 октября 2026, 20:50 (~25 минут)*
+
+Реализован последний пункт меню **«Преобразование»** (`Transform`), завершивший 100% активацию всех процедур раздела — **«Программируемые преобразования...»** (*Programmability Transformations*, пункт меню `Преобразование -> Программируемые преобразования...` / `Transform -> Programmability Transformations...`, типизированная команда `transform.programmability` и синтаксис `BEGIN PROGRAM ... END PROGRAM.`):
+
+1. **Математическое ядро и скриптовый исполнитель L2 (`statcraft_algo::programmability`):**
+   - Модуль `crates/statcraft_algo/src/programmability.rs` ($\le 410$ строк) с полной защитой от паник (`Never Crash`) на 100% Safe Rust;
+   - Парсер `ProgrammabilityScript::parse`: поддержка многострочных скриптов преобразования, комментариев (`#`, `//`, `--`), прямых присваиваний (`target = expression`), условных операторов с ветвлением `IF condition THEN target = expr [ELSE target = else_expr]`, Python-стиля `IF condition: target = expr [ELSE: target = else_expr]` и стрелочной формы `IF condition => target = expr`;
+   - Вычисление выражений через `CompiledExpr` с поддержкой арифметических операций (`+`, `-`, `*`, `/`, `^`), отношений (`<`, `<=`, `>`, `>=`, `==`, `!=`), логических связок (`AND`, `OR`, `NOT`) и встроенных математических функций (`ABS`, `SQRT`, `LN`, `EXP`, `ROUND`, `TRUNC`, `SUM`, `MEAN`, `MIN`, `MAX`);
+   - Движок `execute_programmability`: транзакционное применение правил к строкам датасета, создание новых числовых переменных (`Scale`, 2 знака) и модификация существующих колонок с сохранением исходных значений для необработанных строк при частичных условиях;
+   - Результат выполнения `ProgrammabilityResult`: списки созданных и модифицированных переменных, общее число затронутых ячеек, журнал действий по каждому оператору.
+
+2. **Командная шина и синтаксис L5 (`statcraft_syntax::commands::programmability_cmd`):**
+   - Команда `ProgrammabilityCommand` (`transform.programmability`) со спецификацией схемы JSON Schema `specs()` для управления через AI-агентов и MCP;
+   - Генератор канонического синтаксиса SPSS:
+     ```text
+     BEGIN PROGRAM.
+     # StatCraft Programmability Transformation Script
+     target = salary * 1.1
+     IF educ >= 16 THEN high_educ = 1 ELSE 0
+     END PROGRAM.
+     EXECUTE.
+     ```
+   - Интеграция с `CommandBus::with_defaults()`, полное сохранение снапшота состояния (метаданные и массивы значений колонок) для безупречного отката Undo (`Ctrl+Z`) и повтора;
+   - Набор тестов команды `crates/statcraft_syntax/tests/programmability_cmd_tests.rs`.
+
+3. **Сводные таблицы в Output Viewer L4/L6 (`tables_programmability.rs`):**
+   - Процедура вывода `output-programmability-title` с блоком синтаксического журнала (`Log`), примечаниями сессии (`Notes`) и сводными таблицами:
+     1. **Script Execution Summary:** число выполненных операторов, перечень созданных переменных, перечень модифицированных переменных, число обработанных строк, статус выполнения;
+     2. **Execution Action Log:** построчный журнал с номерами операторов и детализацией затронутых строк;
+   - Экспорт таблиц в TSV (`programmability_to_tsv`) для копирования в электронные таблицы.
+
+4. **Диалоговое окно DialogKit L6 (`crates/statcraft_app/src/dialogs/programmability_dialog.rs`):**
+   - Диалог `render_programmability_dialog` на базе модального окна `DialogShell::standard` ($640 \times 480$ px);
+   - Левая панель `VariablePicker`: выбор переменных датасета с иконками шкал измерения, вставка по двойному клику или по адаптивной кнопке переноса `TransferButton`;
+   - Панель быстрых шаблонов операторов: `[ + Formula ]`, `[ + IF / ELSE ]`, `[ + Normalize ]`, `[ + Math ]`;
+   - Многострочный редактор скрипта с подсветкой и моноширинным шрифтом;
+   - Векторный статус валидности синтаксиса в реальном времени: зеленый векторный индикатор с подсчетом операторов при валидном скрипте, серый при пустом, красный с текстом ошибки при синтаксическом сбое;
+   - Нижняя строка действий `DialogActionBar` Type 1 (`[ OK ] [ Paste ] [ Reset ] [ Cancel ] [ Help ]`);
+   - Снятие последнего статуса `[dev]` в меню `Transform` (`app_menus/data_transform.rs`), перевод пункта в боевой `requires_dataset_status`, статусное сообщение `StatusMessage::ProgrammabilityExecuted`.
+
+5. **Тестирование и Definition of Done:**
+   - 100% успешный прогон модульных тестов `statcraft_algo::programmability` (4 теста);
+   - 100% успешный прогон тестов команды `statcraft_syntax::programmability_cmd_tests` (2 теста);
+   - 100% успешный прогон тестов инвариантов `statcraft_app::programmability_dialog_invariants` (2 теста) и `dialog_invariants` (37 тестов);
+   - 100% соответствие Design Guard, File Size Guard (267 файлов $\le$ лимитов строк), Layer Guard (L0–L6) и Zero-Hardcode i18n (`statcraft_i18n`).
+
+---
+
+### Релиз v0.2.1: Инструментальный математический Clean-Room аудит (Craft Anything) и финализация Transform
+*Время: 1 ноября 2026, 12:15 (~30 минут)*
+
+Подготовлен и опубликован релиз **StatCraft v0.2.1** для всех целевых операционных систем (Windows, Linux, macOS ARM64/x64). Релиз закрепляет результаты инструментального доказательного аудита математического ядра на соответствие канону IBM SPSS Statistics 24, а также финализирует блок процедур преобразования данных:
+
+1. **Инструментальный математический аудит Clean-Room (Craft Anything):**
+   * С помощью открытого MCP-сервера **[Craft Anything](https://github.com/storytold/craft-anything)** в строгом режиме `clean-room: true` проведена постраничная математическая сверка всех алгоритмов ядра `statcraft_algo` с каноническим руководством *IBM SPSS Statistics 24 Algorithms Guide* (1271 стр.);
+   * Оформлена двуязычная публичная документация: основной документ [`docs/SPSS_ALGORITHMS_AUDIT.md`](SPSS_ALGORITHMS_AUDIT.md) на английском языке и русскоязычный зеркальный документ [`docs/SPSS_ALGORITHMS_AUDIT_RU.md`](SPSS_ALGORITHMS_AUDIT_RU.md) со взаимной навигацией в шапке;
+   * Подтверждена 100% эквивалентность формул с точностью «Золотого оракула» $\le 10^{-6}$ по всем 5 процедурным блокам:
+     1. *Описательные статистики и базовые процедуры:* Spicer provisional moments, Bliss sample kurtosis, HAVERAGE quartiles, Yates correction, Pearson $\chi^2$, Fisher's exact test, ANOVA $\eta^2$;
+     2. *Сравнение средних:* центрированный тест Левена, критерий Стьюдента, критерий Уэлча с дробными степенями свободы Саттертуэйта, парный $t$-критерий, однофакторный дисперсионный анализ;
+     3. *Связи и многомерные методы:* Пирсон, Спирмен, Кендалл $\tau_b$ со всеми тремя поправками на связки, регрессия OLS/WLS, Tolerance/VIF, метод Якоби для PCA, тест сферичности Бартлетта, индекс KMO, $\alpha$ Кронбаха;
+     4. *Непараметрические критерии:* Манн-Уитни $U$, Уилкоксон $W$, Краскел-Уоллис $H_{adj}$, знаково-ранговый критерий Уилкоксона со связками, точный биномиальный критерий знаков;
+     5. *Трансформации данных:* ранги Блома, Тьюки, Ранкита, Ван дер Вардена, аппроксимация Акклама для нормальных меток, энтропийная дискретизация MDLP (Файяд и Ирани), линейная интерполяция и тренд.
+
+2. **Завершение блока трансформаций данных (`Transform`):**
+   * Включение процедур автоматической подготовки данных (`adp`) и программируемых преобразований (`programmability`) в боевой интерфейс со снятием флагов `[dev]`;
+   * 100% охват всех процедур меню Transform аутентичными диалогами DialogKit и сводными таблицами Output Viewer.
+
+3. **Синхронизация версий и подготовка мультиплатформенного релиза:**
+   * Версия `0.2.1` синхронизирована байт-в-байт в `Cargo.toml`, `packaging/windows/installer.iss`, `packaging/macos/Info.plist`, `packaging/linux/control`;
+   * Добавлено правило `*.pdf` в `.gitignore` для защиты репозитория от тяжелых бинарных документов;
+   * Автоматическая сборка в GitHub Actions для Windows (ZIP + Inno Setup Installer), Linux (TAR.GZ + .deb), macOS ARM64/x64 (TAR.GZ + DMG).
+

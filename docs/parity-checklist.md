@@ -2,6 +2,8 @@
 
 Этот документ отслеживает соответствие функционала StatCraft меню и командам IBM SPSS Statistics. Обновляется автоматически через `cargo xtask parity`.
 
+> 🔬 **Математический аудит алгоритмов:** Детальное сопоставление формул, степеней свободы и Golden Oracle тестов со справочником IBM SPSS Statistics 24 Algorithms (при содействии [Craft Anything](https://github.com/storytold/craft-anything)) ведется в [SPSS_ALGORITHMS_AUDIT.md](SPSS_ALGORITHMS_AUDIT.md).
+
 | SPSS Menu Path | Command ID | Status | Notes |
 |---|---|---|---|
 | File > Open > Data (CSV) | `data.import_csv` | In Progress | Streaming CSV/TSV parser |
@@ -40,6 +42,8 @@
 | Transform > Optimal Binning | `transform.optimal_binning` | Done | Supervised discretization via Fayyad & Irani MDLP entropy optimization, max bins parameter, variable prefix, automatic Value Labels, DialogKit dialog, SPSS OPTIMAL BINNING syntax, undo support |
 | Transform > Rank Cases | `transform.rank_cases` | Done | Rank calculation with ties handling (Mean, Low, High, Sequential), direction (Ascending/Descending), types (Simple, Fractional, Percent, Ntiles, Normal: Blom, Tukey, Rankit, VW), DialogKit dialog & Types subdialog, SPSS RANK syntax, batch undo support |
 | Transform > Date and Time Wizard | `transform.date_time_wizard` | Done | Extract date parts (Year, Month, Day, Hour, Minute, Second, Day of week, Quarter), interval between two dates, duration summation/subtraction, DialogKit dialog, SPSS COMPUTE XDATE/DATEDIFF/DATESUM syntax, undo support |
+| Transform > Prepare Data for Modeling (ADP) | `transform.adp` | Done | Automated data preparation (screening, outlier winsorizing/sysmis, Z-Score/Min-Max rescaling, sparse category merge, MDLP binning, pairwise interactions, sample partitioning), DialogKit modal & subdialogs, SPSS ADP syntax, undo support |
+| Transform > Programmability Transformations | `transform.programmability` | Done | Multi-line transformation script engine (assignments, conditional IF/THEN/ELSE branching, vector math), DialogKit modal with quick snippets, live syntax validator, Output Viewer execution summary, BEGIN PROGRAM ... END PROGRAM syntax, undo support |
 | Analyze > Descriptive Statistics > Frequencies | `stat.frequencies` | Done | Frequency tables, percentiles, quartiles, dialog & SPSS tables |
 | Analyze > Descriptive Statistics > Descriptives | `stat.descriptives` | Done | Mean, StdDev, Variance, Min, Max, Range, Skewness, Kurtosis, SE Mean, Dialog & Pivot Table |
 | Analyze > Descriptive Statistics > Crosstabs | `stat.crosstabs` | Done | Contingency tables, Pearson Chi-Square, Fisher's Exact, Continuity Correction, Likelihood Ratio, Phi & Cramér's V, DialogKit dialog & 4 authentic SPSS Pivot Tables |

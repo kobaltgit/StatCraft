@@ -1,3 +1,4 @@
+pub mod adp_cmd;
 pub mod anova_oneway_cmd;
 pub mod auto_recode_cmd;
 pub mod binning_cmd;
@@ -21,6 +22,7 @@ pub mod means_cmd;
 pub mod nonparam_related_cmd;
 pub mod nonparam_twosample_cmd;
 pub mod optimal_binning_cmd;
+pub mod programmability_cmd;
 pub mod random_seed_cmd;
 pub mod rank_cases_cmd;
 pub mod recode_diff_cmd;
@@ -41,6 +43,7 @@ pub mod var_format_cmds;
 pub mod var_metadata_cmds;
 pub mod weight_cases_cmd;
 
+pub use adp_cmd::{AdpUndoEntry, PrepareDataModelingCommand};
 pub use anova_oneway_cmd::OneWayAnovaCommand;
 pub use auto_recode_cmd::AutoRecodeCommand;
 pub use binning_cmd::VisualBinningCommand;
@@ -64,6 +67,7 @@ pub use means_cmd::MeansCommand;
 pub use nonparam_related_cmd::RelatedSamplesTestCommand;
 pub use nonparam_twosample_cmd::MannWhitneyCommand;
 pub use optimal_binning_cmd::{OptimalBinningCommand, OptimalBinningUndoEntry};
+pub use programmability_cmd::{ProgrammabilityCommand, ProgrammabilityUndoEntry};
 pub use random_seed_cmd::{RandomSeedCommand, RandomSeedUndoEntry};
 pub use rank_cases_cmd::{RankCasesCommand, RankCasesUndoItem};
 pub use recode_diff_cmd::RecodeIntoDifferentCommand;

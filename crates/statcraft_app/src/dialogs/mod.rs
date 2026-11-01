@@ -1,3 +1,4 @@
+pub mod adp_dialog;
 pub mod anova_oneway_dialog;
 pub mod auto_recode_dialog;
 pub mod binning_cutpoints_dialog;
@@ -21,6 +22,7 @@ pub mod nonparam_define_groups;
 pub mod nonparam_related_dialog;
 pub mod nonparam_twosample_dialog;
 pub mod optimal_binning_dialog;
+pub mod programmability_dialog;
 pub mod random_seed_dialog;
 pub mod rank_cases_dialog;
 pub mod recode_dialog;
@@ -41,6 +43,7 @@ pub mod value_labels_dialog;
 pub mod variable_type_dialog;
 pub mod weight_cases_dialog;
 
+pub use adp_dialog::{render_adp_dialog, AdpDialogAction, AdpDialogState};
 pub use anova_oneway_dialog::{
     render_anova_oneway_dialog, OneWayAnovaDialogAction, OneWayAnovaDialogState,
 };
@@ -94,6 +97,9 @@ pub use nonparam_twosample_dialog::{
 };
 pub use optimal_binning_dialog::{
     render_optimal_binning_dialog, OptimalBinningDialogAction, OptimalBinningDialogState,
+};
+pub use programmability_dialog::{
+    render_programmability_dialog, ProgrammabilityDialogAction, ProgrammabilityDialogState,
 };
 pub use random_seed_dialog::{
     render_random_seed_dialog, RandomSeedDialogAction, RandomSeedDialogState,

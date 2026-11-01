@@ -1,3 +1,4 @@
+pub mod adp;
 pub mod anova_oneway;
 pub mod auto_recode;
 pub mod binning;
@@ -35,6 +36,7 @@ pub mod nonparam_twosample;
 mod nonparam_twosample_tests;
 pub mod nonparam_twosample_types;
 pub mod optimal_binning;
+pub mod programmability;
 pub mod rank_cases;
 #[cfg(test)]
 mod rank_cases_tests;
@@ -56,6 +58,7 @@ pub mod ttest_indep;
 pub mod ttest_onesample;
 pub mod ttest_paired;
 
+pub use adp::*;
 pub use anova_oneway::{
     compute_oneway_anova, compute_oneway_anova_from_slices, f_distribution_sf, AlgoError,
     AnovaGroupDescriptives, AnovaHomogeneityTest, AnovaTableRow, OneWayAnovaOptions,
@@ -118,6 +121,7 @@ pub use nonparam_twosample::{
 };
 pub use nonparam_twosample_types::{MannWhitneyResult, RankGroupStats};
 pub use optimal_binning::{compute_optimal_binning, OptimalBinningResult};
+pub use programmability::*;
 pub use rank_cases::{compute_ranks, inv_normal_cdf, RankDirection, RankType, TiesHandling};
 pub use recode::{apply_recode, NewValueSpec, OldValueRule, RecodeMapping, RecodePlan};
 pub use regression::{compute_linear_regression, invert_matrix};

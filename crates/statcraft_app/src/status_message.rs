@@ -72,6 +72,10 @@ pub enum StatusMessage {
     OptimalBinningExecuted {
         count: usize,
     },
+    AdpExecuted {
+        total_inputs: usize,
+        recommended: usize,
+    },
     CreateDummiesExecuted {
         count: usize,
     },
@@ -109,6 +113,10 @@ pub enum StatusMessage {
     MeansExecuted {
         tables: usize,
         cases: usize,
+    },
+    ProgrammabilityExecuted {
+        statements: usize,
+        rows: usize,
     },
     NewDatasetCreated,
     NewSyntaxCreated,
@@ -246,6 +254,16 @@ impl StatusMessage {
             StatusMessage::OptimalBinningExecuted { count } => {
                 t!("status-optbin-executed", count = *count)
             }
+            StatusMessage::AdpExecuted {
+                total_inputs,
+                recommended,
+            } => {
+                t!(
+                    "status-adp-executed",
+                    total = *total_inputs,
+                    recommended = *recommended
+                )
+            }
             StatusMessage::CreateDummiesExecuted { count } => {
                 t!("status-dummies-executed", count = *count)
             }
@@ -295,6 +313,13 @@ impl StatusMessage {
             }
             StatusMessage::MeansExecuted { tables, cases } => {
                 t!("output-means-executed", tables = *tables, cases = *cases)
+            }
+            StatusMessage::ProgrammabilityExecuted { statements, rows } => {
+                t!(
+                    "output-programmability-executed",
+                    statements = *statements,
+                    rows = *rows
+                )
             }
             StatusMessage::Error(e) => format!("{}: {}", t!("status-error"), e),
         }

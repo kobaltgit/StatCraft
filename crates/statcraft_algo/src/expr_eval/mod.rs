@@ -11,7 +11,7 @@ use parser::to_rpn;
 use std::collections::HashMap;
 pub use types::{EvalError, EvalNode, Op, Token};
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq)]
 pub struct CompiledExpr {
     rpn: Vec<EvalNode>,
 }

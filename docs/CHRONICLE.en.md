@@ -2487,3 +2487,116 @@ Resolved a non-deterministic test failure in `test_reliability_output_and_tsv_in
    - Updated TSV assertions to accommodate both canonical locales (EN/RU) to prevent cross-test thread interference;
    - Verified 100% pass across all quality gates via `cargo run -p xtask -j 1 -- ci`.
 
+
+---
+
+### Microplan #12: Prepare Data for Modeling (Automated Data Preparation / ADP) — `transform.adp`
+*Time: October 30, 2026, 18:30 (~35 minutes)*
+
+Implemented the canonical machine learning and predictive data preparation procedure from IBM SPSS Statistics — **Prepare Data for Modeling** (*Automated Data Preparation, ADP*, menu item `Transform -> Prepare Data for Modeling (ADP)...`, engine command `transform.adp`, and syntax `ADP`):
+
+1. **Mathematical Core and L2 Algorithms (`statcraft_algo::adp`):**
+   - Created an isolated submodule `crates/statcraft_algo/src/adp/` complying with File Size Guard ($\le 300$ lines per leaf file);
+   - **Data Quality Screening (`screening.rs`):** multi-criteria input screening filtering out high-missing variables (default $>50\%$), quasi-constant fields (predominant mode $>95\%$), and identifier-like high-cardinality keys ($>95\%$ unique values with $N \ge 20$) with case weighting support;
+   - **Outlier Detection & Treatment (`outliers.rs`):** weighted Z-score ($3.0\sigma$) and Interquartile Range ($1.5 \times IQR$) cutoffs with Winsorizing (capping to bounds) or system-missing replacement;
+   - **Rescaling & Categories (`transform.rs`):** continuous Z-Score standardization ($(x - \mu)/\sigma$) and Min-Max scaling to $[0, 1]$, sparse category merging ($<5\%$) into `'Other'` with automated `ValueLabels` dictionary generation, supervised MDLP binning when target is specified;
+   - **Feature Construction (`transform.rs`):** automatic construction of pairwise interaction terms (cross-products `P_var1_X_var2 = var1 * var2`) for top predictive features;
+   - **Predictive Power Evaluation (`predictive_power.rs`):** predictor association ranking against target via Pearson correlation $r$ and One-Way ANOVA $\eta^2$ with exact $p$-value computation;
+   - **Sample Partitioning (`partition.rs`):** deterministic stratified/random dataset partitioning into Training (70%), Testing (20%), and Validation (10%) subsets with a dedicated `_Partition_` column, value labels, and PRNG seed control;
+   - Mathematical Golden Oracle validation (`tests.rs`).
+
+2. **Command Bus and Syntax L5 (`statcraft_syntax::commands::adp_cmd`):**
+   - `PrepareDataModelingCommand` (`transform.adp`) with JSON Schema `specs()` for AI agents;
+   - Canonical SPSS syntax generator: `ADP /FIELDS TARGET=... INPUTS=... /OBJECTIVE ... /PREPAREINPUTS ... /OUTLIERS ... /RESCALE ... /CATEGORICAL ... /TRANSFORM ... /CONSTRUCT ... /PARTITION ... \n EXECUTE.`;
+   - Registration in `CommandBus::with_defaults()`, inserting transformed `P_*` and `_Partition_` columns into `DataSet`, 100% Undo/Redo support (`Ctrl+Z`), and integration test suite `crates/statcraft_syntax/tests/adp_cmd_tests.rs`.
+
+3. **Output Viewer Pivot Tables L4/L6 (`tables_adp.rs`):**
+   - Four authentic SPSS pivot tables: *Automated Data Preparation Summary*, *Action Log / Field Processing Details*, *Predictive Power / Feature Importance*, and *Partition Breakdown*;
+   - Clipboard TSV copying and report export via `adp_to_tsv`.
+
+4. **DialogKit Modal Interface L6 (`crates/statcraft_app/src/dialogs/adp_dialog`):**
+   - Main modal `AdpDialog` powered by `DialogShell::standard` ($580 \times 460$ px) with `VariablePicker`, `TransferButton` controls, objective selector `GroupBox`, and bottom action bar `DialogActionBar` Type 1;
+   - Subdialog modals powered by `DialogShell::subdialog` and `SubdialogActionBar`: `ScreeningSubdialog`, `TransformSubdialog`, and `PartitionSubdialog`;
+   - Removed `[dev]` badge and activated menu item `Transform -> Prepare Data for Modeling (ADP)...`, status notification `StatusMessage::AdpExecuted`.
+
+5. **Testing and Definition of Done:**
+   - Unit test suite `statcraft_algo::adp::tests` — 6 passing tests;
+   - Syntax test suite `adp_cmd_tests` — 2 passing tests;
+   - Dialog and output invariants `adp_dialog_invariants.rs` — 2 passing tests;
+   - 100% compliance with Design Guard, File Size Guard (260 files $\le$ line limits), Layer Guard, Parity (52 commands), and Zero-Hardcode i18n (`statcraft_i18n` lint test).
+
+---
+
+### Phase MP-13: Programmability Transformations (`transform.programmability`)
+*Time: October 30, 2026, 20:50 (~25 minutes)*
+
+Completed the final remaining item in the **«Transform»** menu, achieving 100% feature activation across all procedures in this category — **«Programmability Transformations...»** (menu item `Transform -> Programmability Transformations...`, engine command `transform.programmability`, and syntax `BEGIN PROGRAM ... END PROGRAM.`):
+
+1. **Mathematical Core and Script Engine L2 (`statcraft_algo::programmability`):**
+   - Implemented `crates/statcraft_algo/src/programmability.rs` ($\le 410$ lines) in 100% safe Rust under the strict Never Crash invariant;
+   - Parser `ProgrammabilityScript::parse`: supports multi-line transformation scripts, comments (`#`, `//`, `--`), direct variable assignments (`target = expression`), conditional logic `IF condition THEN target = expr [ELSE target = else_expr]`, Python style `IF condition: target = expr [ELSE: target = else_expr]`, and arrow shorthand `IF condition => target = expr`;
+   - Expression evaluation via `CompiledExpr` supporting arithmetic operations (`+`, `-`, `*`, `/`, `^`), comparison relations (`<`, `<=`, `>`, `>=`, `==`, `!=`), logical operators (`AND`, `OR`, `NOT`), and built-in mathematical functions (`ABS`, `SQRT`, `LN`, `EXP`, `ROUND`, `TRUNC`, `SUM`, `MEAN`, `MIN`, `MAX`);
+   - Execution engine `execute_programmability`: transactional application of rules across dataset rows, dynamic creation of new numeric variables (`Scale`, 2 decimals) and modification of existing columns while preserving untouched row values for partial conditions;
+   - Summary statistics in `ProgrammabilityResult`: lists of created and modified variables, total affected cells, and execution action logs.
+
+2. **Command Bus and Syntax L5 (`statcraft_syntax::commands::programmability_cmd`):**
+   - Command `ProgrammabilityCommand` (`transform.programmability`) with JSON Schema `specs()` for AI agent coordination;
+   - Canonical SPSS syntax generator:
+     ```text
+     BEGIN PROGRAM.
+     # StatCraft Programmability Transformation Script
+     target = salary * 1.1
+     IF educ >= 16 THEN high_educ = 1 ELSE 0
+     END PROGRAM.
+     EXECUTE.
+     ```
+   - Integration into `CommandBus::with_defaults()`, capturing column state snapshots (dictionary metadata and raw values) for 100% reliable Undo/Redo (`Ctrl+Z`);
+   - Test suite `crates/statcraft_syntax/tests/programmability_cmd_tests.rs`.
+
+3. **Output Viewer Pivot Tables L4/L6 (`tables_programmability.rs`):**
+   - Output procedure `output-programmability-title` with syntax Log, session Notes, and two pivot tables:
+     1. **Script Execution Summary:** count of executed statements, created variables list, modified variables list, processed rows count, and status;
+     2. **Execution Action Log:** numbered statement breakdown detailing affected cases;
+   - Clipboard TSV copying and report export via `programmability_to_tsv`.
+
+4. **DialogKit Modal Interface L6 (`crates/statcraft_app/src/dialogs/programmability_dialog.rs`):**
+   - Modal `render_programmability_dialog` based on canonical `DialogShell::standard` ($640 \times 480$ px);
+   - Left panel `VariablePicker`: variable list with measurement scale icons, double-click insertion, and `TransferButton` support;
+   - Quick snippet insertion toolbar: `[ + Formula ]`, `[ + IF / ELSE ]`, `[ + Normalize ]`, `[ + Math ]`;
+   - Multiline code editor with monospace typography;
+   - Real-time vector syntax validation indicator: green vector circle with statement count on success, neutral muted on empty, red with error description on syntax failure;
+   - Bottom action bar `DialogActionBar` Type 1 (`[ OK ] [ Paste ] [ Reset ] [ Cancel ] [ Help ]`);
+   - Removed last `[dev]` badge in `app_menus/data_transform.rs`, bound to `requires_dataset_status`, with status feedback `StatusMessage::ProgrammabilityExecuted`.
+
+5. **Testing and Definition of Done:**
+   - 100% pass on unit tests `statcraft_algo::programmability` (4 tests);
+   - 100% pass on syntax command tests `statcraft_syntax::programmability_cmd_tests` (2 tests);
+   - 100% pass on dialog invariant tests `statcraft_app::programmability_dialog_invariants` (2 tests) and `dialog_invariants` (37 tests);
+   - 100% compliance with Design Guard, File Size Guard (267 files $\le$ line limits), Layer Guard (L0–L6), and Zero-Hardcode i18n (`statcraft_i18n`).
+
+---
+
+### Release v0.2.1: Mathematical Clean-Room Audit (Craft Anything) & Transform Block Finalization
+*Time: November 1, 2026, 12:15 (~30 minutes)*
+
+Prepared and published **StatCraft v0.2.1** for all supported operating systems (Windows, Linux, macOS ARM64/x64). This release consolidates the results of a rigorous evidence-based mathematical audit verifying full parity with the canonical IBM SPSS Statistics 24 algorithms, alongside finalization of the Transform procedures:
+
+1. **Clean-Room Mathematical Audit via Craft Anything:**
+   * Utilized the open-source MCP engine **[Craft Anything](https://github.com/storytold/craft-anything)** in strict `clean-room: true` mode to verify each mathematical formula in `statcraft_algo` against the *IBM SPSS Statistics 24 Algorithms Guide* (1,271 pp.);
+   * Published synchronized bilingual audit documentation: primary English guide [`docs/SPSS_ALGORITHMS_AUDIT.md`](SPSS_ALGORITHMS_AUDIT.md) and Russian mirror [`docs/SPSS_ALGORITHMS_AUDIT_RU.md`](SPSS_ALGORITHMS_AUDIT_RU.md) with header language switches;
+   * Verified 100% formula equivalence with Golden Oracle precision $\le 10^{-6}$ across all 5 procedure blocks:
+     1. *Descriptives & Basic Statistics:* Spicer provisional moments, Bliss sample kurtosis, HAVERAGE quartiles, Yates correction, Pearson $\chi^2$, Fisher's exact test, ANOVA $\eta^2$;
+     2. *Mean Comparisons:* Mean-centered Levene test, Student's $t$, Welch's $t$ with Satterthwaite fractional $df$, paired $t$-test, One-Way ANOVA;
+     3. *Associations & Multivariates:* Pearson, Spearman, Kendall $\tau_b$ with full tie adjustments, OLS/WLS regression, Tolerance/VIF, cyclic Jacobi eigensolver for PCA, Bartlett sphericity, KMO measure, Cronbach's $\alpha$;
+     4. *Nonparametric Tests:* Mann-Whitney $U$, Wilcoxon $W$, Kruskal-Wallis $H_{adj}$, Wilcoxon signed-rank test with tie-corrected variance, exact binomial Sign test;
+     5. *Data Transformations:* Blom, Tukey, Rankit, Van der Waerden normal proportions, Acklam inverse normal CDF, MDLP entropy discretization (Fayyad & Irani), linear interpolation and trend.
+
+2. **Finalization of the Data Transformation Suite (`Transform`):**
+   * Production activation of Automated Data Preparation (`adp`) and Programmability Transformations (`programmability`), removing all `[dev]` badges;
+   * 100% coverage of the Transform menu with native DialogKit modal interfaces and Output Viewer pivot tables.
+
+3. **Version Synchronization & Multi-Platform Distribution:**
+   * Version `0.2.1` synchronized byte-for-byte in `Cargo.toml`, `packaging/windows/installer.iss`, `packaging/macos/Info.plist`, and `packaging/linux/control`;
+   * Added `*.pdf` rule to `.gitignore` preventing repository bloat from reference PDFs;
+   * Automated GitHub Actions multi-platform release pipeline for Windows (ZIP + Inno Setup Installer), Linux (TAR.GZ + .deb), and macOS ARM64/x64 (TAR.GZ + DMG).
+

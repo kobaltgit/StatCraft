@@ -9,4 +9,4 @@ Cargo.lock
 Thumbs.db
 /.statcraft
 crates/statcraft_app/.statcraft
-
+*.pdf

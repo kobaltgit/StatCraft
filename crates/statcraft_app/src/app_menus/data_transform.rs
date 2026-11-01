@@ -126,7 +126,12 @@ impl StatCraftApp {
                         self.optimal_binning_dialog_state.open();
                         ui.close_menu();
                     }
-                    render_menu_item(ui, t!("menu-transform-adp"), MenuItemStatus::InDev);
+                    if render_menu_item(ui, t!("menu-transform-adp"), requires_dataset_status)
+                        .clicked()
+                    {
+                        self.adp_dialog_state.open();
+                        ui.close_menu();
+                    }
                     if render_menu_item(
                         ui,
                         t!("menu-transform-rank-cases"),
@@ -189,11 +194,16 @@ impl StatCraftApp {
                         self.count_values_dialog_state.is_open = true;
                         ui.close_menu();
                     }
-                    render_menu_item(
+                    if render_menu_item(
                         ui,
                         t!("menu-transform-programmability"),
-                        MenuItemStatus::InDev,
-                    );
+                        requires_dataset_status,
+                    )
+                    .clicked()
+                    {
+                        self.programmability_dialog_state.is_open = true;
+                        ui.close_menu();
+                    }
                 });
             }
             _ => {}

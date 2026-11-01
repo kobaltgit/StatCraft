@@ -6,13 +6,13 @@ use crate::commands::{
     FactorCommand, FrequenciesCommand, ImportCsvCommand, ImportExcelCommand, ImportSpssCommand,
     IndependentSamplesTTestCommand, KruskalWallisCommand, LinearRegressionCommand,
     MannWhitneyCommand, MeansCommand, OneSampleTTestCommand, OneWayAnovaCommand, OpenFileCommand,
-    OptimalBinningCommand, PairedSamplesTTestCommand, RandomSeedCommand, RankCasesCommand,
-    RecodeIntoDifferentCommand, RecodeIntoSameCommand, RelatedSamplesTestCommand,
-    ReliabilityCommand, ReplaceMissingCommand, SaveFileCommand, SelectCasesCommand,
-    SetLabelCommand, SetMeasureCommand, ShiftValuesCommand, SortCasesCommand, SplitFileCommand,
-    VarAddCommand, VarDeleteCommand, VarRenameCommand, VarSetAlignCommand, VarSetDecimalsCommand,
-    VarSetMissingValuesCommand, VarSetTypeCommand, VarSetValueLabelsCommand, VarSetWidthCommand,
-    VisualBinningCommand, WeightCasesCommand,
+    OptimalBinningCommand, PairedSamplesTTestCommand, PrepareDataModelingCommand,
+    ProgrammabilityCommand, RandomSeedCommand, RankCasesCommand, RecodeIntoDifferentCommand,
+    RecodeIntoSameCommand, RelatedSamplesTestCommand, ReliabilityCommand, ReplaceMissingCommand,
+    SaveFileCommand, SelectCasesCommand, SetLabelCommand, SetMeasureCommand, ShiftValuesCommand,
+    SortCasesCommand, SplitFileCommand, VarAddCommand, VarDeleteCommand, VarRenameCommand,
+    VarSetAlignCommand, VarSetDecimalsCommand, VarSetMissingValuesCommand, VarSetTypeCommand,
+    VarSetValueLabelsCommand, VarSetWidthCommand, VisualBinningCommand, WeightCasesCommand,
 };
 use serde::{Deserialize, Serialize};
 use serde_json::{json, Value};
@@ -92,6 +92,8 @@ impl CommandBus {
         bus.register(Box::new(AutoRecodeCommand::new()));
         bus.register(Box::new(VisualBinningCommand::new()));
         bus.register(Box::new(OptimalBinningCommand::new()));
+        bus.register(Box::new(PrepareDataModelingCommand::new()));
+        bus.register(Box::new(ProgrammabilityCommand::new()));
         bus.register(Box::new(RandomSeedCommand::new()));
         bus.register(Box::new(SortCasesCommand::new()));
         bus.register(Box::new(SelectCasesCommand::new()));
