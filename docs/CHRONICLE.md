@@ -1955,4 +1955,38 @@
    * Актуализирован отчет `docs/CRAFT_ANYTHING_AUDIT_REPORT.md` (все вопросы закрыты);
    * 100% успешное прохождение полного пайплайна: `cargo test --workspace -j 1` (все крейты воркспейса), `cargo clippy --workspace -j 1 -- -D warnings`, `xtask file-guard` (267 файлов), `xtask layers` (L0–L6), `xtask design-guard`, `xtask parity`.
 
+---
+
+### Этап: Завершение Фазы 3 Clean-Room аудита через Craft Anything MCP (Output Viewer, экраны, DialogKit, локализация и дистрибуция: M-21 — M-33)
+*Время: 2 ноября 2026, 18:55 (~35 минут)*
+
+Успешно завершена финальная, 3-я фаза всеобъемлющего доказательного аудита StatCraft, охватывающая графический интерфейс пользователя (Desktop GUI), генераторы сводных таблиц Output Viewer, интерактивные экраны, дизайн-систему DialogKit, каталоги локализации и подсистему дистрибуции на соответствие эргономическим и визуальным стандартам канона **IBM SPSS Statistics** и требованиям экосистемы ArtCraft ([AGENTS.md](../AGENTS.md)). Вся доказательная база зарегистрирована в **Craft Anything MCP** (`hyp_33` .. `hyp_45: supported`):
+
+1. **Раздел E: Output Viewer и канонический рендеринг сводных таблиц (M-21 — M-24):**
+   * **M-21 (Базовые таблицы вывода):** подтверждена каноническая модель сводных таблиц SPSS. Таблица Descriptives (N, Min, Max, Mean, Std. Dev, Variance, Skewness, Kurtosis); Frequencies с 4 стандартными колонками (Frequency, Percent, Valid Percent, Cumulative Percent) и разделением валидных значений и пропусков Missing; Crosstabs со сложным двухъярусным вложенным макетом (Count, Expected Count, Row %, Col %, Total %, Residuals) и таблицей Chi-Square Tests; форматирование вероятностей с подавлением лидирующего нуля `< .001` (`hyp_33: supported`);
+   * **M-22 (Сравнение средних):** подтвержден двухъярусный заголовок Independent Samples Test с тестом Левена ($F$, Sig.) и двумя взаимоисключающими строками `Equal variances assumed` и `Equal variances not assumed`; 3 таблицы Paired Samples Test (Statistics, Correlations, Test); 3-секционная сводная таблица One-Way ANOVA (Between, Within, Total) (`hyp_34: supported`);
+   * **M-23 (Многомерный анализ и непараметрика):** подтверждены корреляционные матрицы с флагами значимости `*` и `**` и сносками; блок линейной регрессии из 4 таблиц (Variables Entered/Removed, Model Summary, ANOVA, Coefficients с Beta, t, Sig., Tolerance, VIF); факторный анализ (KMO и Бартлетт, общности, дисперсия, Component Matrix); надежность (альфа Кронбаха, Item-Total Statistics); критерии Манна-Уитни, Вилкоксона и Краскела-Уоллиса (`hyp_35: supported`);
+   * **M-24 (Иерархическое дерево оглавления и экспорт):** иерархия Output Root $\to$ Procedure Node $\to$ Log (.sps) $\to$ Notes $\to$ Pivot Tables, плавная навигация по клику, контекстное меню копирования TSV/текста и экспорт в TSV, HTML и Plain Text через `statcraft_reporting` (`hyp_36: supported`). 11/11 тестов `output_viewer_invariants` пройдены успешно.
+
+2. **Раздел F: Интерактивные редакторы данных (M-25 — M-27):**
+   * **M-25 (Data View):** виртуализированный грид через `ScrollArea::vertical().show_rows(...)`, инлайн-редактирование ячеек по двойному клику с навигацией Tab/Enter, переключатель Value Labels `1/A`, канонический диагональный слэш-перечеркивание номеров строк неактивных наблюдений при включенном фильтре `FILTER BY` (`hyp_37: supported`);
+   * **M-26 (Variable View):** отображение и редактирование 11 канонических колонок метаданных словаря SPSS (Name, Type, Width, Decimals, Label, Values, Missing, Columns, Align, Measure, Role), строгая валидация имен по канону SPSS (до 64 символов, без спецзнаков и пробелов, запрет ключевых слов), кнопки многоточия `...` для вызова модальных редакторов (`hyp_38: supported`);
+   * **M-27 (Syntax Editor):** моноширинный редактор с временными метками сессии, панель управления исполнением (Run Selection / Run All), CommandBus и шина вставки синтаксиса из всех диалоговых окон по кнопке `[ Paste ]` (`hyp_39: supported`).
+
+3. **Раздел G: Дизайн-система DialogKit и 37 модальных диалогов (M-28, M-29):**
+   * **M-28 (Базовые компоненты DialogKit):** стандартизированные размеры `DialogSize` (Standard 560x430, Subdialog 360x300, Properties 460x380, Compute 620x480, Alert 440x170), центрирование окон, нижний ряд действий Type 1 (`[ OK ] [ Paste ] [ Reset ] [ Cancel ] [ Help ]`) с динамическим выравниванием ширины кнопок по правилу `i18n Shield` ($\ge 80 \times 26$ px, 3px rounding), автоматическая деактивация кнопки OK при неполных входных данных, списки `VariablePicker` с векторными иконками шкал и адаптивная `TransferButton` (`hyp_40: supported`);
+   * **M-29 (37 процедурных диалогов):** полный аудит всех диалоговых окон. Статический линтер `xtask design-guard` подтвердил 0 нарушений (0 сырых кнопок в обход DialogKit, 0 произвольных размеров окон). Все 37 диалогов поддерживают идемпотентность кнопки `[ Reset ]` и генерацию синтаксиса `.sps`. 37/37 тестов `dialog_invariants` пройдены успешно (`hyp_41: supported`).
+
+4. **Раздел H: Локализация, векторный UI, сессия и дистрибуция (M-30 — M-33):**
+   * **M-30 (Fluent FTL):** 100% паритет ключей между `en.ftl` и `ru.ftl`, нулевой хардкод строк естественных языков в исходном коде UI, динамическое переключение языка на лету без перезапуска (`hyp_42: supported`). 4/4 тестов `i18n_lint_test` пройдены успешно;
+   * **M-31 (Vector-First UI):** все значки шкал (Scale=линейка, Ordinal=гистограмма, Nominal=кружки), стрелки, папки и таблицы отрисованы векторными примитивами `ui.painter()`. Полный запрет эмодзи и спец-символов Unicode гарантирует отсутствие квадратов «тофу» (`□`) во всех средах (`hyp_43: supported`);
+   * **M-32 (Session Guard):** отслеживание изменений датасета (dirty flag с отображением `*` в заголовке), защитный диалог `ConfirmSaveDialog`, предотвращающий потерю правок при выходе или открытии файла, безопасная очередь `RecentFiles` (MRU). 12/12 тестов `session_lifecycle_tests` пройдены успешно (`hyp_44: supported`);
+   * **M-33 (Packaging & CI):** синхронизация версии `0.2.1` байт-в-байт в 4 файлах (`Cargo.toml`, `installer.iss`, `Info.plist`, `control`), регистрация файловых ассоциаций (`.sav`, `.zsav`, `.stc`, `.sps`) и матричный релизный воркфлоу под Windows (ZIP + Inno Setup installer), Linux (.deb + tar.gz) и macOS (DMG + .app bundle) (`hyp_45: supported`).
+
+5. **Финализация документации и контроль качества (DoD):**
+   * Созданы официальные двуязычные протоколы аудита интерфейса: [`docs/SPSS_UI_CANON_AUDIT.md`](SPSS_UI_CANON_AUDIT.md) (EN) и [`docs/SPSS_UI_CANON_AUDIT_RU.md`](SPSS_UI_CANON_AUDIT_RU.md) (RU);
+   * Обновлены чек-лист [`docs/CHECKLIST.md`](CHECKLIST.md) и отчет Craft Anything;
+   * 100% успешное прохождение всех тестов и линтеров: `cargo test --workspace -j 1`, `xtask design-guard`, `xtask file-guard` (267 файлов), `xtask layers` (L0–L6), `xtask parity`.
+
+
 

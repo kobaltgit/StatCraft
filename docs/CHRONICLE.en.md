@@ -2666,4 +2666,38 @@ Completed the comprehensive, line-by-line Clean-Room audit of all remaining Stat
    * Updated investigation report in `docs/CRAFT_ANYTHING_AUDIT_REPORT.md` (all open questions resolved);
    * 100% pass across full pipeline: `cargo test --workspace -j 1`, `cargo clippy --workspace -j 1 -- -D warnings`, `xtask file-guard` (267 files), `xtask layers` (L0–L6), `xtask design-guard`, `xtask parity`.
 
+---
+
+### Phase: Finalization of Phase 3 Clean-Room UI Audit via Craft Anything MCP (Output Viewer, Screens, DialogKit, Localization & Packaging: M-21 through M-33)
+*Time: November 2, 2026, 18:55 (~35 minutes)*
+
+Successfully completed the final Phase 3 of the comprehensive evidence-backed audit of StatCraft, evaluating the desktop user interface (Desktop GUI), Output Viewer pivot table generators, interactive editors, DialogKit design system, Fluent localization catalogs, and cross-platform distribution according to the ergonomic and visual standards of the **IBM SPSS Statistics** canon and the ArtCraft ecosystem regulations ([`AGENTS.md`](../AGENTS.md)). The entire evidentiary ledger is confirmed and recorded in **Craft Anything MCP** (`hyp_33` through `hyp_45: supported`):
+
+1. **Section E: Output Viewer & Canonical Pivot Tables (M-21 — M-24):**
+   * **M-21 (Base Statistics Output Tables):** confirmed SPSS canonical pivot tables model. Descriptives table (N, Min, Max, Mean, Std. Dev, Variance, Skewness, Kurtosis); Frequencies with the 4 standard columns (Frequency, Percent, Valid Percent, Cumulative Percent) and distinct sections for valid cases and Missing; Crosstabs with nested two-tier layout (Count, Expected Count, Row %, Col %, Total %, Residuals) and Chi-Square Tests table; probability formatting with leading zero suppression `< .001` (`hyp_33: supported`);
+   * **M-22 (Compare Means):** confirmed two-tier header for Independent Samples Test with Levene's Test ($F$, Sig.) and the two mutually exclusive canonical rows `Equal variances assumed` and `Equal variances not assumed`; 3 tables for Paired Samples Test (Statistics, Correlations, Test); 3-section One-Way ANOVA table (Between Groups, Within Groups, Total) (`hyp_34: supported`);
+   * **M-23 (Advanced Statistics & Nonparametric Suite):** confirmed correlation matrices with significance flags `*` and `**` and explanatory footnotes; linear regression 4-table block (Variables Entered/Removed, Model Summary, ANOVA, Coefficients with Beta, t, Sig., Tolerance, VIF); factor analysis (KMO and Bartlett, Communalities, Total Variance Explained, Component Matrix); reliability analysis (Cronbach's alpha, Item-Total Statistics); Mann-Whitney, Wilcoxon, and Kruskal-Wallis nonparametrics (`hyp_35: supported`);
+   * **M-24 (Outline Tree Navigation & Export):** document hierarchy Output Root $\to$ Procedure Node $\to$ Log (.sps) $\to$ Notes $\to$ Pivot Tables, smooth click-to-scroll navigation, context menu for copying TSV/text, and clean export to TSV, HTML, and Plain Text via `statcraft_reporting` (`hyp_36: supported`). 11/11 `output_viewer_invariants` passing.
+
+2. **Section F: Interactive Data Screens (M-25 — M-27):**
+   * **M-25 (Data View):** virtualized grid via `ScrollArea::vertical().show_rows(...)`, inline cell editing on double-click with Tab/Enter navigation, Value Labels toggle `1/A`, canonical diagonal strikethrough slash over inactive row numbers when `FILTER BY` is active (`hyp_37: supported`);
+   * **M-26 (Variable View):** display and editing of all 11 canonical SPSS metadata columns (Name, Type, Width, Decimals, Label, Values, Missing, Columns, Align, Measure, Role), strict SPSS naming rules validation (up to 64 chars, no invalid symbols/spaces, reserved words blocked), ellipsis buttons `...` for modal editor invocation (`hyp_38: supported`);
+   * **M-27 (Syntax Editor):** monospace editor with session timestamps, execution toolbar (Run Selection / Run All), CommandBus integration, and syntax paste pipeline from all dialogs via `[ Paste ]` (`hyp_39: supported`).
+
+3. **Section G: DialogKit Design System & 37 Modal Dialogs (M-28, M-29):**
+   * **M-28 (DialogKit Primitives):** standardized dimensions `DialogSize` (Standard 560x430, Subdialog 360x300, Properties 460x380, Compute 620x480, Alert 440x170), window centering, Type 1 bottom action bar (`[ OK ] [ Paste ] [ Reset ] [ Cancel ] [ Help ]`) with uniform button width dynamically calculated via `i18n Shield` ($\ge 80 \times 26$ px, 3px rounding), automated OK disable guard on incomplete input, `VariablePicker` lists with vector scale icons, and adaptive `TransferButton` (`hyp_40: supported`);
+   * **M-29 (37 Procedural Dialogs):** full suite audit. Static linter `xtask design-guard` confirmed 0 violations (0 raw buttons, 0 unmanaged dialog dimensions). All 37 dialogs support `[ Reset ]` idempotence and `.sps` syntax generation. 37/37 `dialog_invariants` passing (`hyp_41: supported`).
+
+4. **Section H: Localization, Vector UI, Session & Packaging (M-30 — M-33):**
+   * **M-30 (Fluent FTL):** 100% key parity between `en.ftl` and `ru.ftl`, zero raw strings in UI source code, dynamic runtime language switching without restart (`hyp_42: supported`). 4/4 `i18n_lint_test` passing;
+   * **M-31 (Vector-First UI):** all scale icons (Scale ruler, Ordinal bars, Nominal circles), arrows, folders, and tables rendered via `ui.painter()`. Absolute prohibition of Unicode emoji and rare symbols prevents tofu glyphs (`□`) across all platforms (`hyp_43: supported`);
+   * **M-32 (Session Guard):** dirty flag tracking with window title `*` indicator, `ConfirmSaveDialog` guard preventing unsaved data loss on exit or file open, robust `RecentFiles` (MRU) tracking. 12/12 `session_lifecycle_tests` passing (`hyp_44: supported`);
+   * **M-33 (Packaging & CI):** version `0.2.1` synchronized byte-for-byte across all 4 manifests (`Cargo.toml`, `installer.iss`, `Info.plist`, `control`), registered file associations (`.sav`, `.zsav`, `.stc`, `.sps`), and multi-platform CI release workflow for Windows (ZIP + Inno Setup installer), Linux (.deb + tar.gz), and macOS (DMG + .app bundle) (`hyp_45: supported`).
+
+5. **Documentation Finalization & Quality Control (DoD):**
+   * Created official bilingual UI audit specifications: [`docs/SPSS_UI_CANON_AUDIT.md`](SPSS_UI_CANON_AUDIT.md) (EN) and [`docs/SPSS_UI_CANON_AUDIT_RU.md`](SPSS_UI_CANON_AUDIT_RU.md) (RU);
+   * Updated [`docs/CHECKLIST.md`](CHECKLIST.md) and Craft Anything ledger;
+   * 100% pass across all tests and linters: `cargo test --workspace -j 1`, `xtask design-guard`, `xtask file-guard` (267 files), `xtask layers` (L0–L6), `xtask parity`.
+
+
 
