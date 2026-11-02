@@ -2600,3 +2600,38 @@ Prepared and published **StatCraft v0.2.1** for all supported operating systems 
    * Added `*.pdf` rule to `.gitignore` preventing repository bloat from reference PDFs;
    * Automated GitHub Actions multi-platform release pipeline for Windows (ZIP + Inno Setup Installer), Linux (TAR.GZ + .deb), and macOS ARM64/x64 (TAR.GZ + DMG).
 
+---
+
+### Phase: Instrumental Clean-Room Core Audit via Craft Anything MCP (Blocks 7–10)
+*Time: November 2, 2026, 17:30 (~50 minutes)*
+
+Executed a rigorous, line-by-line instrumental Clean-Room audit of the `statcraft_algo` core and `statcraft_syntax` command bus against the *IBM SPSS Statistics 24 Algorithms Guide* (1,271 pp.), recording full evidentiary proof into **Craft Anything MCP** (`hyp_1` through `hyp_15`):
+
+1. **Block 7: Mathematical Expressions & Evaluator (COMPUTE & expr_eval):**
+   * **Identified Divergences from IBM SPSS Canon:**
+     1. *Exponentiation vs Unary Minus Precedence:* in SPSS, `**` binds tighter than unary minus (`-2**2 = -4`). In `parser.rs`, unary minus holds precedence 7 against 6 for exponentiation, yielding `(-2)**2 = +4`;
+     2. *Logical NOT Precedence:* in SPSS, `NOT` is evaluated after relational operators (`NOT a = b` $\to$ `NOT (a = b)`). In `parser.rs`, `NOT` holds precedence 7 (above relational operators at 3), erroneously parsing as `(NOT a) = b`;
+     3. *Kleene 3-Valued Logic (3VL):* in `mod.rs`, any `NaN` unconditionally short-circuits to `NaN` instead of following Kleene 3VL (`TRUE OR MISSING = TRUE`, `FALSE AND MISSING = FALSE`);
+     4. *Functions:* `eval.rs` lacks trigonometric functions `SIN`, `COS`, `TAN`, modulo operator `MOD`, and SPSS alias `LG10`.
+   * **Confirmed:** Dijkstra's Shunting-yard AST parser for basic arithmetic, safe `NaN` and divide-by-zero isolation (`Never Crash`), elementary functions `SQRT`, `EXP`, `LN`, `LOG10`, `ABS`, `RND`, `TRUNC`, and aggregates `SUM`, `MEAN`, `MIN`, `MAX`.
+
+2. **Block 8: Time Series Transformations & Case Shifts (DIFF, SDIFF, SMA, CSUM, LAG, LEAD):**
+   * **Confirmed:** exact formula match for $\Delta^d X_t$ and $\Delta_s X_t = X_t - X_{t-s}$, `SYSMIS` cascade in `CSUM`, and shift operators `LAG(k)` and `LEAD(k)` with preservation of underlying data types (`hyp_4`, `hyp_6`, `hyp_7: supported`);
+   * **Identified Divergence:** `SimpleMovingAverage(span)` in `time_series.rs` implements a trailing/prior window (known in SPSS as `PMA` — Prior Moving Average), whereas canonical SPSS `SMA(span)` computes a centered moving average (`hyp_5: refuted`).
+
+3. **Block 9: Date & Time Wizard (DATEDIFF, DATEADD, XDATE):**
+   * **Confirmed:** exact calendar interval computation in `DATEDIFF` across completed calendar years and months with day-boundary adjustments, calendar-aware `DATEADD` with month-end day clamping (`checked_add_months`), component extraction `XDATE.*` matching Sunday = 1 canonical index in `XDATE.WKDAY`, and multi-format parsing for ISO 8601, European, American formats and unix timestamps (`hyp_8` .. `hyp_11: supported`). Continuous floating-point fractions noted for minutes and hours.
+
+4. **Block 10: Recoding, Dummy Variables & Value Counting:**
+   * **Confirmed 100% Match to SPSS Canon:**
+     * `RECODE` with deterministic declaration-order rule matching, ranges `low THRU high`, `LOWEST THRU`, `THRU HIGHEST`, `SYSMIS`, `MISSING`, `ELSE`, `COPY`, and `.sps` syntax round-trip (`hyp_12: supported`);
+     * `AUTORECODE` with consecutive integer encoding $1..K$ and automatic `ValueLabels` dictionary synthesis (`hyp_13: supported`);
+     * `CREATE DUMMIES` with indicator coding $\{0.0, 1.0\}$, column name sanitization, and the $K-1$ rule (`omit_first`) to eliminate multi-collinearity (`hyp_15: supported`);
+     * `COUNT VALUES` with row-wise multi-column criteria summation (`hyp_14: supported`).
+
+5. **Documentation Finalization & Quality Control (DoD):**
+   * Exported Craft Anything investigation report: [`docs/CRAFT_ANYTHING_AUDIT_REPORT.md`](CRAFT_ANYTHING_AUDIT_REPORT.md);
+   * Synchronized bilingual audit specifications [`docs/SPSS_ALGORITHMS_AUDIT.md`](SPSS_ALGORITHMS_AUDIT.md) and [`docs/SPSS_ALGORITHMS_AUDIT_RU.md`](SPSS_ALGORITHMS_AUDIT_RU.md) with exact code references and documented divergences;
+   * 100% pass across test suite: `cargo test --workspace -j 1`, `xtask file-guard` (267 files), `xtask layers` (L0–L6), `xtask design-guard`.
+
+

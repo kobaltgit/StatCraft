@@ -469,7 +469,6 @@
 - [x] Тесты инвариантов: headless-тест `test_headless_render_rank_cases_dialog` в `crates/statcraft_app/tests/dialog_invariants.rs`
 - [x] 100% прохождение всех проверок Definition of Done (`cargo test --workspace -j 1`, `xtask layers`, `xtask file-guard`, `xtask design-guard`, `xtask parity`)
 
-
 ## 50. Мастер даты и времени (Date and Time Wizard) — `transform.date_time_wizard`
 - [x] L2 `statcraft_algo`: модуль `crates/statcraft_algo/src/date_time.rs` — вычисления с датами, парсинг ISO 8601 / RFC 3339 / `DD.MM.YYYY` / `MM/DD/YYYY` / `YYYY/MM/DD` / эпохи timestamp без паник, извлечение компонентов `DatePart` (Year, Month, Day, Hour, Minute, Second, DayOfWeek, Quarter), расчет разности двух дат `DateUnit` (Years, Months, Weeks, Days, Hours, Minutes, Seconds), сложение и вычитание длительностей `AddDuration`
 - [x] L5 `statcraft_syntax`: типизированная команда движка `DateTimeWizardCommand` (`transform.date_time_wizard`) со спецификацией JSON Schema `specs()`, созданием новой переменной (`Numeric` или `Date`) со шкалой `Measure::Scale`, полной поддержкой Undo/Redo и генератором канонического синтаксиса SPSS `COMPUTE target = XDATE.PART(var).`, `COMPUTE target = DATEDIFF(var1, var2, "unit").`, `COMPUTE target = DATESUM(var, amt, "unit").`
@@ -507,4 +506,13 @@
 - [x] Меню и интерфейс: снятие последнего статуса `[dev]` в меню Transform (`menu-transform-programmability`), статус-сообщение `StatusMessage::ProgrammabilityExecuted`
 - [x] Локализация: полная двуязычная поддержка (`locales/en.ftl` и `locales/ru.ftl`) без хардкода строк (`dialog-programmability-*`, `output-programmability-*`)
 - [x] Тесты инвариантов: тесты диалога и таблиц `crates/statcraft_app/tests/programmability_dialog_invariants.rs`
+- [x] 100% прохождение всех проверок Definition of Done (`cargo test --workspace -j 1`, `xtask layers`, `xtask file-guard`, `xtask design-guard`, `xtask parity`)
+
+## 54. Этап Clean-Room Аудита ядра (Блоки 7–10: Вычисления, Временные ряды, Даты, Перекодирование)
+- [x] L2 `statcraft_algo`: Блок 7 (`COMPUTE` / `expr_eval/`) — Shunting-Yard AST, правоассоциативное возведение в степень, функции `SQRT`, `EXP`, `LN`, `LOG10`, `ABS`, `RND`, `TRUNC`, статистические агрегаты `SUM`, `MEAN`, `MIN`, `MAX`, трехзначная логика и изоляция `NaN` / `SYSMIS` (`Never Crash`)
+- [x] L2 `statcraft_algo`: Блок 8 (`time_series.rs`, `shift.rs`) — операторы разностей `DIFF(d)`, сезонных разностей `SDIFF(s)`, скользящих средних `SMA(k)`, кумулятивных сумм `CSUM` и сдвигов `LAG(k)` / `LEAD(k)`
+- [x] L2 `statcraft_algo`: Блок 9 (`date_time.rs`) — мастер дат и времени, календарные разности `DATEDIFF` в днях, неделях, месяцах, годах, прибавление интервалов `DATEADD`, извлечение компонентов `XDATE.*`, мультиформатный парсинг ISO 8601, европейского и американского форматов
+- [x] L2 `statcraft_algo`: Блок 10 (`recode.rs`, `auto_recode.rs`, `dummies.rs`, `count_values.rs`) — `RECODE (SAME / DIFFERENT)` с диапазонами `LOWEST THRU` и `THRU HIGHEST`, `AUTORECODE` со сбором словаря `ValueLabels`, генерация дамми-переменных с опцией `omit_first`, подсчет вхождений `COUNT VALUES`
+- [x] L5 `statcraft_syntax`: валидация и 100% покрытие командами движка (`ComputeCommand`, `TimeSeriesCommand`, `ShiftValuesCommand`, `DateTimeWizardCommand`, `RecodeSameCommand`, `RecodeDifferentCommand`, `AutoRecodeCommand`, `DummyCommand`, `CountValuesCommand`) со 100% поддержкой отката Undo (`Ctrl+Z`)
+- [x] Документация: синхронное обновление двуязычных протоколов аудита `docs/SPSS_ALGORITHMS_AUDIT.md` и `docs/SPSS_ALGORITHMS_AUDIT_RU.md` с фиксацией результатов построчной инструментальной верификации (Craft Anything MCP) и зафиксированных расхождений (Блоки 7 и 8)
 - [x] 100% прохождение всех проверок Definition of Done (`cargo test --workspace -j 1`, `xtask layers`, `xtask file-guard`, `xtask design-guard`, `xtask parity`)
