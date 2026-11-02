@@ -516,3 +516,12 @@
 - [x] L5 `statcraft_syntax`: валидация и 100% покрытие командами движка (`ComputeCommand`, `TimeSeriesCommand`, `ShiftValuesCommand`, `DateTimeWizardCommand`, `RecodeSameCommand`, `RecodeDifferentCommand`, `AutoRecodeCommand`, `DummyCommand`, `CountValuesCommand`) со 100% поддержкой отката Undo (`Ctrl+Z`)
 - [x] Документация: синхронное обновление двуязычных протоколов аудита `docs/SPSS_ALGORITHMS_AUDIT.md` и `docs/SPSS_ALGORITHMS_AUDIT_RU.md` с фиксацией результатов построчной инструментальной верификации (Craft Anything MCP) и зафиксированных расхождений (Блоки 7 и 8)
 - [x] 100% прохождение всех проверок Definition of Done (`cargo test --workspace -j 1`, `xtask layers`, `xtask file-guard`, `xtask design-guard`, `xtask parity`)
+
+## 55. Завершение Фазы 2 Clean-Room Аудита (Блоки 11–14: Микропланы M-09 — M-20)
+- [x] L2/L5: Блок 11 (M-09 Programmability, M-10 `SET SEED` & RNG) — парсинг скриптов `BEGIN PROGRAM`, условные ветвления, атомарность, диапазон сида $[1, 2\,000\,000\,000]$ и применение SplitMix64
+- [x] L5/L1/L2: Блок 12 (M-11 `SELECT CASES`, M-12 `SORT CASES`, M-13 `WEIGHT BY`, M-14 `SPLIT FILE`, M-15 Metadata) — `active_row_indices`, фильтрация и удаление с откатом Undo, стабильная сортировка с `Ordering::Less` для пропусков, отсечение $w_i \le 0$, комбинаторный сплит с автосортировкой, 11 атрибутов словаря
+- [x] L0 `statcraft_io`: Блок 13 (M-16 `spss_loader/`, M-17 `excel_loader.rs`, M-18 `csv_loader.rs`, M-19 `stc_codec.rs`) — Record Types 1 ($FL2/$FL3), 2, 3/4, 7 (подтипы 3, 4, 11, 13, 20), байт-код и zsav ZLIB декомпрессия, санирование колонок Excel (префикс `V_`), RFC 4180 и контейнер `.stc`
+- [x] L4 `statcraft_reporting`: Блок 14 (M-20 Pivot Tables & Exporters) — двухъярусные супер-заголовки, подавление лидирующего нуля `.000` для $p$-value, соответствие экспорта TSV/HTML/TXT
+- [x] Craft Anything MCP: фиксация гипотез `hyp_16` .. `hyp_32` со статусом `supported`, обновление протокола `docs/CRAFT_ANYTHING_AUDIT_REPORT.md`
+- [x] Документация: полное обновление сводной матрицы и разделов в `docs/SPSS_ALGORITHMS_AUDIT.md` и `docs/SPSS_ALGORITHMS_AUDIT_RU.md` (14 блоков, M-01 — M-20)
+- [x] 100% прохождение всех тестов Definition of Done (`cargo test --workspace -j 1`, `xtask file-guard`, `xtask layers`, `xtask design-guard`, `xtask parity`, `clippy -D warnings`)

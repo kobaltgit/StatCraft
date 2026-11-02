@@ -2634,4 +2634,36 @@ Executed a rigorous, line-by-line instrumental Clean-Room audit of the `statcraf
    * Synchronized bilingual audit specifications [`docs/SPSS_ALGORITHMS_AUDIT.md`](SPSS_ALGORITHMS_AUDIT.md) and [`docs/SPSS_ALGORITHMS_AUDIT_RU.md`](SPSS_ALGORITHMS_AUDIT_RU.md) with exact code references and documented divergences;
    * 100% pass across test suite: `cargo test --workspace -j 1`, `xtask file-guard` (267 files), `xtask layers` (L0–L6), `xtask design-guard`.
 
+---
+
+### Phase: Finalization of Phase 2 Clean-Room Core Audit via Craft Anything MCP (Blocks 11–14, Microplans M-09 through M-20)
+*Time: November 2, 2026, 18:20 (~35 minutes)*
+
+Completed the comprehensive, line-by-line Clean-Room audit of all remaining StatCraft core modules and subsystems according to the Phase 2 Microplans Register (M-09 through M-20, Blocks 11–14). The entire evidentiary ledger is recorded in **Craft Anything MCP** (`hyp_16` through `hyp_32: supported`):
+
+1. **Block 11: Programmability & Random Number Generation (M-09, M-10):**
+   * **M-09 (`programmability.rs`, `programmability_cmd.rs`):** line-by-line verification of expression assignments `VAR = EXPR` and conditional statements `IF COND THEN ... ELSE ...`. Verified statement atomicity, structured `ProgrammabilityResult` output, safe division-by-zero/missing mapping to `RawValue::Null` (`Never Crash`), and 100% Undo/Redo restoration via snapshots of overwritten and newly created columns;
+   * **M-10 (`rng.rs`, `random_seed_cmd.rs`):** confirmed thread-safe atomic `GLOBAL_SEED` lifecycle, SPSS boundary validation $[1, 2\,000\,000\,000]$, `SET SEED = n`, and `SET SEED = RANDOM`. Noted modern 64-bit SplitMix64 PRNG ($2^{64}$ period, passes BigCrush) in `adp/partition.rs` replacing SPSS's 1970s LCG.
+
+2. **Block 12: Data Management, Filtering, Subsets & Metadata (M-11 — M-15):**
+   * **M-11 (`select_cases_cmd.rs`, `dataset.rs`):** verified non-destructive `FILTER BY` via `active_row_indices(ds)` and destructive `SELECT IF` with 100% Undo table restoration. Synthesized `filter_$` variable with labels `Selected` / `Not Selected` fully confirmed;
+   * **M-12 (`sort_cases.rs`, `sort_cases_cmd.rs`):** verified stable multi-key sorting. Missing value positioning invariant confirmed: `compare_raw_values` assigns `Ordering::Less` to missing values (smallest / $-\infty$), placing them at the beginning in ascending sort (A) and at the end in descending sort (D), exactly matching IBM SPSS canon;
+   * **M-13 (`weight_cases_cmd.rs`, `dataset.rs`):** verified `ds.weight_var` binding. In `row_weight(r)`, cases with $w_i \le 0$, $w_i = \text{NaN}$, and filtered rows receive zero weight and are excluded from statistics;
+   * **M-14 (`split_groups.rs`, `split_file_cmd.rs`):** confirmed combinatorial partitioning into `SplitSubgroup`, filter awareness, missing value isolation into `.` groups, and automated prepending of `SORT CASES BY ... (A)`;
+   * **M-15 (`variable.rs`, `var_metadata_cmds.rs`):** confirmed model for all 11 canonical SPSS dictionary attributes, discrete and range `MissingValues`, and deterministic `ValueLabels`.
+
+3. **Block 13: Input/Output Codecs (M-16 — M-19):**
+   * **M-16 (`spss_loader/`):** confirmed decoding of Record Types 1 ($FL2/$FL3), 2 (variables), 3/4 (ValueLabels), 7 (subtypes 3, 4, 11, 13, 20 UTF-8), bytecode compression, and zsav ZLIB block decompression without panics;
+   * **M-17 (`excel_loader.rs`):** automatic type inference and SPSS header sanitization (prefix `V_`, `_`, `VAR00001` fallback);
+   * **M-18 (`csv_loader.rs`, `csv_writer.rs`):** strict RFC 4180 compliance and lossless round-trip;
+   * **M-19 (`stc_codec.rs`):** 100% preservation of `VariableDictionary` attributes alongside Apache Parquet chunks.
+
+4. **Block 14: Pivot Tables & Reporting (M-20):**
+   * **M-20 (`statcraft_reporting`):** `PivotTable` model with two-tier super-headers, leading zero suppression `.000` for probability metrics, and TSV/HTML/TXT export fidelity matching SPSS styles.
+
+5. **Quality Control & Definition of Done:**
+   * Synchronized bilingual documentation in `docs/SPSS_ALGORITHMS_AUDIT.md` and `docs/SPSS_ALGORITHMS_AUDIT_RU.md`;
+   * Updated investigation report in `docs/CRAFT_ANYTHING_AUDIT_REPORT.md` (all open questions resolved);
+   * 100% pass across full pipeline: `cargo test --workspace -j 1`, `cargo clippy --workspace -j 1 -- -D warnings`, `xtask file-guard` (267 files), `xtask layers` (L0–L6), `xtask design-guard`, `xtask parity`.
+
 
