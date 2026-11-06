@@ -15,6 +15,7 @@
     <img src="https://img.shields.io/badge/Architecture-100%25%20Safe%20Rust-brightgreen.svg" alt="100% Safe Rust" />
     <img src="https://img.shields.io/badge/Tests-Passing%20(90%2B)-success.svg" alt="Tests: 90+ Passing" />
     <img src="https://img.shields.io/badge/i18n-EN%20%7C%20RU-informational.svg" alt="i18n: EN | RU" />
+    <a href="https://app.lava.top/kobaltgit"><img src="https://img.shields.io/badge/Sponsor-Lava.top-FF5C35?logo=githubsponsors&logoColor=white" alt="Sponsor: Lava.top" /></a>
   </p>
 </div>
 
@@ -105,7 +106,7 @@ Cross-cutting utility crates:
 Clone the repository and launch the desktop application:
 
 ```bash
-git clone https://github.com/storytold/StatCraft.git
+git clone https://github.com/kobaltgit/StatCraft.git
 cd StatCraft
 
 # Run StatCraft in release mode (strictly single-threaded compiler guard)
@@ -161,6 +162,24 @@ cargo run -p xtask -j 1 -- parity
 
 ---
 
+## 💖 Support & Sponsorship
+
+**StatCraft** is an ambitious, mathematically rigorous, clean-room statistical suite built in **100% pure Safe Rust** with zero legacy C/Fortran code. Developing clean-room analytical algorithms (parametric & non-parametric tests, ANOVA, Levene, regression, syntax pipelines, and canonical pivot tables) requires immense research and mathematical verification.
+
+If **StatCraft** helps your academic research, university coursework, or statistical workflows, and you would like to support its ongoing development:
+
+<div align="center">
+
+[![Support on Lava.top](https://img.shields.io/badge/Support_Project-Lava.top-FF5C35?style=for-the-badge&logo=heart&logoColor=white)](https://app.lava.top/kobaltgit)
+
+**👉 [https://app.lava.top/kobaltgit](https://app.lava.top/kobaltgit)**
+
+*(Accepts Russian cards, CIS, and international payment options)*
+
+</div>
+
+---
+
 ## License
 
 This project is dual-licensed under:
@@ -169,4 +188,4 @@ This project is dual-licensed under:
 
 You may choose either license at your option.
 
-All brand assets and logos in `assets/` and `docs/brand/` are proprietary to the **storytold / ArtCraft** project and are subject to the brand guidelines.
+All brand assets and logos in `assets/` are property of the **StatCraft** project (kobaltGIT).

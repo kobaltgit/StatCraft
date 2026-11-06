@@ -15,6 +15,7 @@
     <img src="https://img.shields.io/badge/Архитектура-100%25%20Safe%20Rust-brightgreen.svg" alt="100% Safe Rust" />
     <img src="https://img.shields.io/badge/Тесты-Пройдены%20(90%2B)-success.svg" alt="Тесты: 90+ пройдены" />
     <img src="https://img.shields.io/badge/Локализация-EN%20%7C%20RU-informational.svg" alt="Локализация: EN | RU" />
+    <a href="https://app.lava.top/kobaltgit"><img src="https://img.shields.io/badge/Поддержать-Lava.top-FF5C35?logo=githubsponsors&logoColor=white" alt="Поддержать: Lava.top" /></a>
   </p>
 </div>
 
@@ -105,7 +106,7 @@ L6: statcraft_app        Графический интерфейс GUI (egui / e
 Склонируйте репозиторий и запустите настольное приложение:
 
 ```bash
-git clone https://github.com/storytold/StatCraft.git
+git clone https://github.com/kobaltgit/StatCraft.git
 cd StatCraft
 
 # Запуск StatCraft в релизном режиме с защитой от перегрузки CPU/RAM
@@ -160,6 +161,24 @@ cargo run -p xtask -j 1 -- parity
 
 ---
 
+## 💖 Поддержка и донаты
+
+**StatCraft** — это амбициозный, математически строгий статистический пакет, создаваемый с нуля на **100% чистом Safe Rust** без использования устаревших C/Fortran-библиотек. Разработка и аналитическая валидация математических алгоритмов (параметрические и непараметрические критерии, ANOVA, тест Ливиня, регрессия, синтаксис SPSS и сводные таблицы) требует колоссальных исследовательских усилий и времени.
+
+Если **StatCraft** полезен для вашей научной работы, университетских занятий или практических исследований, и вы хотите поддержать дальнейшее развитие проекта:
+
+<div align="center">
+
+[![Поддержать на Lava.top](https://img.shields.io/badge/Поддержать_проект-Lava.top-FF5C35?style=for-the-badge&logo=heart&logoColor=white)](https://app.lava.top/kobaltgit)
+
+**👉 [https://app.lava.top/kobaltgit](https://app.lava.top/kobaltgit)**
+
+*(Поддерживаются карты банков РФ, СНГ и зарубежные способы оплаты)*
+
+</div>
+
+---
+
 ## Лицензия
 
 Кодовая база проекта распространяется под двойной свободной лицензией:
@@ -168,4 +187,4 @@ cargo run -p xtask -j 1 -- parity
 
 Вы можете выбрать любую из лицензий по вашему усмотрению.
 
-Все графические ассеты, айдентика и логотипы в `assets/` и `docs/brand/` принадлежат проекту **storytold / ArtCraft** и регулируются правилами бренда.
+Все графические ассеты и логотипы в `assets/` принадлежат проекту **StatCraft** (kobaltGIT).
