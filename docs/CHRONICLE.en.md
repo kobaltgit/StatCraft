@@ -2742,6 +2742,119 @@ Conducted an in-depth Clean-Room audit and resilience stress-testing suite for t
    * Updated Section 57 in [`docs/CHECKLIST.md`](CHECKLIST.md);
    * 100% pass across all tests and linters: `cargo test --workspace -j 1` (all crates), `cargo clippy --workspace --all-targets -j 1 -- -D warnings` (0 warnings), `cargo run -p xtask -j 1 -- ci` (file-guard, design-guard, layers, parity, test-corpus — 100% OK).
 
+---
+
+### Phase 58: Batch Syntax Engine (.sps) & Clean-Room Evidentiary Audit (Microplans S-01 — S-05)
+*Time: November 6, 2026, 18:55 (~45 minutes)*
+
+Implemented and audited according to the *IBM SPSS Statistics 24 Command Syntax Reference* a comprehensive batch command syntax parser and dispatcher (**Batch Syntax Engine & Dispatcher**) in `crates/statcraft_syntax`. The engine delivers raw script `.sps` batch execution capabilities via `CommandBus`, activates the desktop `Syntax Editor` toolbar with real-time log echoing and statistical table insertion in `Output Viewer`, and guarantees a 100% reversible round-trip cycle `GUI -> to_sps -> SyntaxParser -> CommandBus`:
+
+1. **Command Block Lexer & Tokenizer (`statcraft_syntax::syntax_parser::lexer`):**
+   * Engineered streaming `SyntaxLexer` splitting script text into `RawCommandBlock` items bounded by command-terminating periods `.`;
+   * Complete isolation of non-terminator periods: decimal fractions in floating-point numbers (`3.14`, `0.95`) and dots inside single (`'path.sav'`) and double (`"model.v1"`) quoted strings do not truncate commands;
+   * Full support for quote escaping via doubling (`''` and `""`), with line and column tracking on unclosed string literals;
+   * Recognition of comments beginning with `*` or the keyword `COMMENT` spanning until the terminating period.
+
+2. **Subcommand & Variable Range Parser (`statcraft_syntax::syntax_parser::parser`):**
+   * Detection of compound command names (`SORT CASES`, `SPLIT FILE`);
+   * Structured parsing of subcommands with leading slash `/` and positional clauses;
+   * Parenthesized parameter tokenization (`GROUPS=gender(1 2)`, `CI(0.95)`, `salary (D)`);
+   * Automatic expansion of variable ranges `VAR1 TO VAR5` matching sequential column order in active dataset `VariableDictionary`;
+   * Expansion of the keyword `ALL` into all active dataset variables.
+
+3. **Modular Command Dispatcher & `CommandBus` Integration (`statcraft_syntax::syntax_parser::dispatcher`):**
+   * Modular command mappers `mappers/stats.rs` and `mappers/data.rs` strictly below 500 lines;
+   * Translation of parsed commands into strongly-typed `CommandBus::execute` calls with JSON parameters for 15+ procedures:
+     - `DESCRIPTIVES`, `FREQUENCIES`, `CROSSTABS`, `T-TEST` (Independent, Paired, One-Sample);
+     - `ONEWAY`, `CORRELATIONS`, `REGRESSION`, `RELIABILITY`, `FACTOR`, `MEANS`;
+     - `SORT CASES`, `WEIGHT`, `FILTER`, `SPLIT FILE`, `COMPUTE`, `GET`, `SAVE`, `EXECUTE`.
+
+4. **Batch Runner & Desktop GUI Integration (`statcraft_app::syntax_runner`):**
+   * Added interactive action toolbar in `Syntax Editor`: `[ Run All ]`, `[ Run Selection ]`, `[ Clear ]`;
+   * When selection is empty, `[ Run Selection ]` executes the statement currently under the cursor;
+   * Output Viewer echoing: each executed command block is logged into the report tree prefixed with `> `;
+   * Automated unpacking of statistical calculation results into interactive pivot tables in Output Viewer;
+   * 100% zero-hardcode bilingual localization via Fluent semantic keys (`locales/en.ftl` and `locales/ru.ftl`).
+
+5. **Evidentiary Clean-Room Audit, Fixtures & Fuzzing (DoD):**
+   * Created canonical test fixtures in `fixtures/syntax/` (`batch_analysis.sps`, `data_transform.sps`, `malformed.sps`);
+   * Integration test harness `syntax_roundtrip_and_fuzz_tests.rs`:
+     - 100% reversible round-trip: `to_sps -> SyntaxParser -> CommandBus -> Output`;
+     - Fuzzing across 20+ corrupted syntax vectors validating the `Never Crash` invariant (0 panics, 100% safe `Err(SyntaxError)`);
+   * Authored official bilingual audit reports: [`docs/SPSS_SYNTAX_PARSER_AUDIT.md`](SPSS_SYNTAX_PARSER_AUDIT.md) (EN) and [`docs/SPSS_SYNTAX_PARSER_AUDIT_RU.md`](SPSS_SYNTAX_PARSER_AUDIT_RU.md) (RU);
+   * Updated hypotheses in Craft Anything MCP and Section 58 in `docs/CHECKLIST.md`;
+   * 100% pass on all quality gates: `cargo test --workspace -j 1` (112 syntax tests, 37 dialog invariants, 11 output invariants, 12 session lifecycle — 0 failures), `cargo run -p xtask -j 1 -- file-guard` (279 files OK), `cargo run -p xtask -j 1 -- layers`, `cargo run -p xtask -j 1 -- design-guard`.
+
+---
+
+### Phase 59: Opening and Saving SPSS Command Syntax Files (`.sps`) on Disk (Syntax File I/O)
+*Time: November 6, 2026, 19:40 (~35 minutes)*
+
+Implemented complete desktop support for opening and saving external IBM SPSS Command Syntax scripts (`*.sps`, `*.txt`) to disk. Users can now open, edit, and save syntax files directly from the interactive `Syntax Editor` toolbar or via the classic top application `File` menu:
+
+1. **Syntax Editor View & Toolbar (`statcraft_app::views::syntax_editor`):**
+   * Added `pub current_file_path: Option<PathBuf>` to `SyntaxEditorState`;
+   * Expanded `SyntaxEditorAction` enum with `Open` and `Save` variants;
+   * Embedded action buttons `[ Open .sps ]` (`syntax-open`) and `[ Save .sps ]` (`syntax-save`) into the top toolbar;
+   * Rendered the active file name in muted italics (e.g., `batch_analysis.sps`) on the right side of the editor toolbar.
+
+2. **Safe File Dialogs & I/O Pipeline (`statcraft_app::app_session`):**
+   * Added `open_syntax_dialog` and `save_syntax_as` backed by native `rfd::FileDialog` with `*.sps` and `*.txt` filters and directory retention;
+   * Implemented one-click `save_syntax`: saves directly to the associated disk path when known, or delegates to `save_syntax_as` for unsaved scripts;
+   * Extended `load_file_from_path` to handle `.sps` script files, populate `RecentFiles`, and activate the `SyntaxEditor` tab in `egui_dock`;
+   * Output Viewer echoing: script loading and saving events are logged into the session outline tree (`* Syntax opened: ...`, `* Syntax saved: ...`).
+
+3. **Top Application Menu Integration (`statcraft_app::app_menus::file_edit_view`):**
+   * Added `File -> Open Syntax...` (`menu-file-open-syntax`);
+   * Added `File -> Save Syntax As...` (`menu-file-save-syntax-as`).
+
+4. **Zero-Hardcode Localization & Status Bar:**
+   * Added `StatusMessage::SyntaxOpened { name }` and `StatusMessage::SyntaxSaved { name }` with success indicator color `Tokens::MEASURE_NOMINAL`;
+   * Added full bilingual translations in Fluent catalogs `locales/en.ftl` and `locales/ru.ftl`.
+
+5. **Quality Control & Definition of Done:**
+   * Added regression test `test_syntax_save_and_load_lifecycle` in `crates/statcraft_app/tests/session_lifecycle_tests.rs`;
+   * Verified code formatting via `cargo fmt --check`;
+   * Passed `cargo clippy --workspace --all-targets -j 1 -- -D warnings` (0 warnings);
+   * Passed `xtask file-guard` (279 files within strict limits), `xtask layers`, `xtask design-guard`, and `cargo test --workspace -j 1` (100% tests passing).
+
+---
+
+### Phase 60 / Release v0.2.2: Comprehensive Feature Guides & Release Manifests Synchronization (Release v0.2.2)
+*Time: November 6, 2026, 21:00 (~30 minutes)*
+
+Prepared and released **StatCraft v0.2.2** with version bumps across all project packaging manifests, authored an exhaustive bilingual feature guide (`docs/FEATURES.md` and `docs/FEATURES_RU.md`), and integrated direct links into root documentation files `README.md` and `README.ru.md`:
+
+1. **Authored Comprehensive Feature Guides (`docs/FEATURES.md` and `docs/FEATURES_RU.md`):**
+   * Prepared structured end-to-end documentation covering all implemented application modules:
+     - Dual-view data management (streaming CSV/TSV reader, Calamine Excel, virtualized Data View with inline editing, Variable View supporting all 9 canonical SPSS types, value labels, and missing values);
+     - Dataset manipulations (Sort Cases, Select Cases with expression calculator, Split File, Weight Cases);
+     - Full Transform suite (Compute Variable, Recode, Automatic Recode, Shift Values, Count Values, Create Dummy Variables, Replace Missing Values, Time Series, Visual/Optimal Binning, Rank Cases, Date and Time Wizard, ADP, Programmability Transformations);
+     - Statistical calculation procedures in Analyze (Descriptives, Frequencies, Crosstabs with $\chi^2$ and Fisher's exact test, Means breakdown, One-Sample t-test, Independent Samples t-test with Levene's and Welch's tests, Paired Samples t-test, One-Way ANOVA, Bivariate Correlations with tie corrections, Nonparametric tests: Mann-Whitney, Kruskal-Wallis, Wilcoxon Signed-Rank, and Sign test, Multiple Linear Regression OLS/WLS with Tolerance/VIF collinearity diagnostics, Scale Reliability Analysis with Cronbach's $\alpha$, Factor Analysis PCA with KMO and Bartlett's test);
+     - Output Viewer with authentic multi-tier Pivot Tables, one-click TSV clipboard export for Excel, and interactive Outline tree navigation;
+     - Batch `.sps` command syntax execution and non-destructive Undo/Redo;
+     - Agent-ready architecture with typed `specs()` parameter schemas, batch syntax execution, and transparent isolation of in-development networking/charting modules on the Roadmap (`InDev`).
+
+2. **Repository Documentation Integration:**
+   * Embedded prominent feature guide link callouts in `README.md` and `README.ru.md` within the "Key Features" and "Documentation" sections;
+   * Updated `RELEASE_NOTES.md` for `v0.2.2` in English and Russian for GitHub Actions release publication.
+
+3. **Version Synchronization v0.2.2 (Packaging & CI):**
+   * Synchronized version `0.2.2` byte-for-byte across all 4 manifests:
+     - `Cargo.toml` (`[workspace.package] version = "0.2.2"`);
+     - `packaging/windows/installer.iss` (`#define MyAppVersion "0.2.2"`);
+     - `packaging/macos/Info.plist` (`CFBundleShortVersionString` and `CFBundleVersion` = `0.2.2`);
+     - `packaging/linux/control` (`Version: 0.2.2`);
+   * Updated `Cargo.lock`.
+
+4. **Quality Control & Definition of Done:**
+   * Validated all 281 repository files with `cargo run -p xtask -j 1 -- file-guard`;
+   * Verified architectural layering with `cargo run -p xtask -j 1 -- layers`, design system invariants with `cargo run -p xtask -j 1 -- design-guard`, and parity checklist with `cargo run -p xtask -j 1 -- parity`;
+   * 100% test pass across the entire workspace via `cargo test --workspace -j 1`.
+
+
+
+
 
 
 

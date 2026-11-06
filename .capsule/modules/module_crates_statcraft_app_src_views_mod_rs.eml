@@ -1,7 +1,7 @@
 From: CapsuleCraft Code Ingest <system@capsulecraft.local>
 To: Vault <vault@capsuleos.local>
 Subject: 📄 StatCraft / crates/statcraft_app/src/views/mod.rs
-Date: Fri, 6 Nov 2026 14:13:33 +0000
+Date: Fri, 6 Nov 2026 17:04:15 +0000
 Message-ID: <module-crates_statcraft_app_src_views_mod_rs@capsuleos.local>
 In-Reply-To: <subsystem-statcraft-crates_statcraft_app@capsuleos.local>
 X-Capsule-Page-Parent: <subsystem-statcraft-crates_statcraft_app@capsuleos.local>
@@ -34,7 +34,7 @@ Content-Disposition: inline; filename="canvas_state.json"
         "level": 1,
         "text": "📄 mod.rs"
       },
-      "id": "blk_native_heading_1793974413836007800",
+      "id": "blk_native_heading_1793984655364596500",
       "managed_by": "project_parser",
       "type": "heading"
     },
@@ -42,7 +42,7 @@ Content-Disposition: inline; filename="canvas_state.json"
       "data": {
         "text": "Path: `crates/statcraft_app/src/views/mod.rs` · 12 lines of code\nBelongs to project: [[📦 StatCraft (Overview) | 📦 StatCraft (Overview)]]"
       },
-      "id": "blk_native_paragraph_1793974413836009400",
+      "id": "blk_native_paragraph_1793984655364598500",
       "managed_by": "project_parser",
       "type": "paragraph"
     }

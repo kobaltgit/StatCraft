@@ -1,7 +1,7 @@
 From: CapsuleCraft Code Ingest <system@capsulecraft.local>
 To: Vault <vault@capsuleos.local>
 Subject: 📁 StatCraft / crates/statcraft_i18n
-Date: Fri, 6 Nov 2026 14:51:42 +0000
+Date: Fri, 6 Nov 2026 19:50:30 +0000
 Message-ID: <subsystem-statcraft-crates_statcraft_i18n@capsuleos.local>
 In-Reply-To: <project-index-statcraft@capsuleos.local>
 X-Capsule-Page-Parent: <project-index-statcraft@capsuleos.local>
@@ -34,7 +34,7 @@ Content-Disposition: inline; filename="canvas_state.json"
         "level": 1,
         "text": "📁 Subsystem: crates/statcraft_i18n"
       },
-      "id": "blk_native_heading_1793976702692366300",
+      "id": "blk_native_heading_1793994630666918500",
       "managed_by": "project_parser",
       "type": "heading"
     },
@@ -43,7 +43,7 @@ Content-Disposition: inline; filename="canvas_state.json"
         "icon": "folder",
         "text": "Part of [[📦 StatCraft (Overview) | 📦 StatCraft (Overview)]]\nContains 2 source module(s)."
       },
-      "id": "blk_native_callout_1793976702692368100",
+      "id": "blk_native_callout_1793994630666919800",
       "managed_by": "project_parser",
       "type": "callout"
     },
@@ -52,7 +52,7 @@ Content-Disposition: inline; filename="canvas_state.json"
         "level": 2,
         "text": "Modules in this Subsystem"
       },
-      "id": "blk_native_heading_1793976702692368700",
+      "id": "blk_native_heading_1793994630666920300",
       "managed_by": "project_parser",
       "type": "heading"
     },
@@ -60,7 +60,7 @@ Content-Disposition: inline; filename="canvas_state.json"
       "data": {
         "text": "- [[📄 StatCraft / crates/statcraft_i18n/src/lib.rs]] (`crates/statcraft_i18n/src/lib.rs`)\n- [[📄 StatCraft / crates/statcraft_i18n/tests/i18n_lint_test.rs]] (`crates/statcraft_i18n/tests/i18n_lint_test.rs`)\n"
       },
-      "id": "blk_native_paragraph_1793976702692370400",
+      "id": "blk_native_paragraph_1793994630666921800",
       "managed_by": "project_parser",
       "type": "paragraph"
     }

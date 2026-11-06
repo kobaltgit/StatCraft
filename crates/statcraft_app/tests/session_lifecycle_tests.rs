@@ -510,3 +510,51 @@ fn test_load_spss_sav_session_lifecycle() {
 
     let _ = std::fs::remove_file(sav_path);
 }
+
+#[test]
+fn test_syntax_save_and_load_lifecycle() {
+    let mut app = StatCraftApp::new_headless();
+    let temp_dir = std::env::temp_dir();
+    let sps_path = temp_dir.join(format!("test_script_{}.sps", std::process::id()));
+
+    app.syntax_editor_state.text =
+        "DESCRIPTIVES VARIABLES=salary.\nFREQUENCIES VARIABLES=gender.\n".to_string();
+    app.write_syntax_to_path(sps_path.clone());
+
+    assert!(sps_path.exists());
+    assert_eq!(
+        app.syntax_editor_state.current_file_path,
+        Some(sps_path.clone())
+    );
+    assert_eq!(app.recent_files.paths[0], sps_path);
+    assert!(matches!(
+        app.status_message,
+        statcraft_app::StatusMessage::SyntaxSaved { .. }
+    ));
+    assert_eq!(
+        app.status_message.color(),
+        statcraft_app::theme::Tokens::MEASURE_NOMINAL
+    );
+
+    // Clear syntax state
+    app.syntax_editor_state.clear();
+    assert!(app.syntax_editor_state.is_empty());
+    assert!(app.syntax_editor_state.current_file_path.is_none());
+
+    // Load .sps file
+    app.load_file_from_path(sps_path.clone());
+    assert_eq!(
+        app.syntax_editor_state.current_file_path,
+        Some(sps_path.clone())
+    );
+    assert_eq!(
+        app.syntax_editor_state.text,
+        "DESCRIPTIVES VARIABLES=salary.\nFREQUENCIES VARIABLES=gender.\n"
+    );
+    assert!(matches!(
+        app.status_message,
+        statcraft_app::StatusMessage::SyntaxOpened { .. }
+    ));
+
+    let _ = std::fs::remove_file(sps_path);
+}

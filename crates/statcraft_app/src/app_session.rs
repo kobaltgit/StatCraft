@@ -190,6 +190,46 @@ impl StatCraftApp {
         }
     }
 
+    pub fn open_syntax_dialog(&mut self) {
+        let mut dialog = rfd::FileDialog::new()
+            .set_title(t!("dialog-open-syntax-title"))
+            .add_filter(t!("dialog-filter-sps"), &["sps", "txt"]);
+        if let Some(parent) = self
+            .syntax_editor_state
+            .current_file_path
+            .as_ref()
+            .and_then(|p| p.parent())
+        {
+            dialog = dialog.set_directory(parent);
+        }
+        if let Some(path) = dialog.pick_file() {
+            match fs::read_to_string(&path) {
+                Ok(content) => {
+                    let file_name = path
+                        .file_name()
+                        .and_then(|n| n.to_str())
+                        .unwrap_or("syntax.sps")
+                        .to_string();
+                    self.syntax_editor_state.text = content;
+                    self.syntax_editor_state.current_file_path = Some(path.clone());
+                    self.syntax_editor_state.selected_text = None;
+                    self.syntax_editor_state.cursor_char_idx = 0;
+                    self.recent_files.add(path.clone());
+                    self.recent_files.save_default();
+                    if let Some(pos) = self.dock_state.find_tab(&Tab::SyntaxEditor) {
+                        self.dock_state.set_active_tab(pos);
+                    }
+                    self.status_message = StatusMessage::SyntaxOpened { name: file_name };
+                    self.output_view_state
+                        .add_log(format!("* Syntax opened: {}.", path.display()));
+                }
+                Err(e) => {
+                    self.status_message = StatusMessage::Error(e.to_string());
+                }
+            }
+        }
+    }
+
     pub fn save_project(&mut self) {
         if let Some(path) = self.current_file_path.clone() {
             let ext = path
@@ -253,6 +293,66 @@ impl StatCraftApp {
                 path.set_extension("csv");
             }
             self.save_to_path(path);
+        }
+    }
+
+    pub fn save_syntax(&mut self) {
+        if let Some(path) = self.syntax_editor_state.current_file_path.clone() {
+            self.write_syntax_to_path(path);
+        } else {
+            self.save_syntax_as();
+        }
+    }
+
+    pub fn save_syntax_as(&mut self) {
+        let initial_name = self
+            .syntax_editor_state
+            .current_file_path
+            .as_ref()
+            .and_then(|p| p.file_name())
+            .and_then(|n| n.to_str())
+            .unwrap_or("Syntax1.sps");
+
+        let mut dialog = rfd::FileDialog::new()
+            .set_title(t!("dialog-save-syntax-title"))
+            .add_filter(t!("dialog-filter-sps"), &["sps"])
+            .set_file_name(initial_name);
+
+        if let Some(parent) = self
+            .syntax_editor_state
+            .current_file_path
+            .as_ref()
+            .and_then(|p| p.parent())
+        {
+            dialog = dialog.set_directory(parent);
+        }
+
+        if let Some(mut path) = dialog.save_file() {
+            if path.extension().is_none() {
+                path.set_extension("sps");
+            }
+            self.write_syntax_to_path(path);
+        }
+    }
+
+    pub fn write_syntax_to_path(&mut self, path: PathBuf) {
+        match fs::write(&path, &self.syntax_editor_state.text) {
+            Ok(()) => {
+                let file_name = path
+                    .file_name()
+                    .and_then(|n| n.to_str())
+                    .unwrap_or("syntax.sps")
+                    .to_string();
+                self.syntax_editor_state.current_file_path = Some(path.clone());
+                self.recent_files.add(path.clone());
+                self.recent_files.save_default();
+                self.status_message = StatusMessage::SyntaxSaved { name: file_name };
+                self.output_view_state
+                    .add_log(format!("* Syntax saved: {}.", path.display()));
+            }
+            Err(e) => {
+                self.status_message = StatusMessage::Error(e.to_string());
+            }
         }
     }
 
@@ -352,6 +452,30 @@ impl StatCraftApp {
                         self.dock_state.set_active_tab(pos);
                     }
                     self.update_saved_checkpoint();
+                }
+                Err(e) => {
+                    self.status_message = StatusMessage::Error(e.to_string());
+                }
+            }
+            return;
+        }
+
+        if ext == "sps" {
+            match fs::read_to_string(&path) {
+                Ok(content) => {
+                    self.syntax_editor_state.text = content;
+                    self.syntax_editor_state.current_file_path = Some(path.clone());
+                    self.syntax_editor_state.selected_text = None;
+                    self.syntax_editor_state.cursor_char_idx = 0;
+                    self.recent_files.add(path.clone());
+                    self.recent_files.save_default();
+
+                    if let Some(pos) = self.dock_state.find_tab(&Tab::SyntaxEditor) {
+                        self.dock_state.set_active_tab(pos);
+                    }
+                    self.status_message = StatusMessage::SyntaxOpened { name: file_name };
+                    self.output_view_state
+                        .add_log(format!("* Syntax opened: {}.", path.display()));
                 }
                 Err(e) => {
                     self.status_message = StatusMessage::Error(e.to_string());

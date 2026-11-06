@@ -10,6 +10,7 @@ pub mod icon_data;
 pub mod icons;
 pub mod recent_files;
 pub mod status_message;
+pub mod syntax_runner;
 pub mod theme;
 pub mod views;
 pub mod widgets;

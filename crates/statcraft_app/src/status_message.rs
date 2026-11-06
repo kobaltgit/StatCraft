@@ -138,6 +138,15 @@ pub enum StatusMessage {
     OutputExported {
         path: String,
     },
+    SyntaxExecuted {
+        count: usize,
+    },
+    SyntaxOpened {
+        name: String,
+    },
+    SyntaxSaved {
+        name: String,
+    },
     Error(String),
 }
 
@@ -321,6 +330,15 @@ impl StatusMessage {
                     rows = *rows
                 )
             }
+            StatusMessage::SyntaxExecuted { count } => {
+                t!("syntax-batch-success", count = *count)
+            }
+            StatusMessage::SyntaxOpened { name } => {
+                t!("status-syntax-opened", name = name.as_str())
+            }
+            StatusMessage::SyntaxSaved { name } => {
+                t!("status-syntax-saved", name = name.as_str())
+            }
             StatusMessage::Error(e) => format!("{}: {}", t!("status-error"), e),
         }
     }
@@ -330,7 +348,8 @@ impl StatusMessage {
             StatusMessage::ProjectSaved { .. }
             | StatusMessage::DataSaved { .. }
             | StatusMessage::DataExported { .. }
-            | StatusMessage::OutputExported { .. } => Tokens::MEASURE_NOMINAL,
+            | StatusMessage::OutputExported { .. }
+            | StatusMessage::SyntaxSaved { .. } => Tokens::MEASURE_NOMINAL,
             StatusMessage::Error(_) => Color32::from_rgb(235, 80, 80),
             _ => Tokens::TEXT_MUTED,
         }
@@ -356,6 +375,20 @@ mod tests {
             }
             .color(),
             Tokens::MEASURE_NOMINAL
+        );
+        assert_eq!(
+            StatusMessage::SyntaxSaved {
+                name: "test.sps".to_string()
+            }
+            .color(),
+            Tokens::MEASURE_NOMINAL
+        );
+        assert_eq!(
+            StatusMessage::SyntaxOpened {
+                name: "test.sps".to_string()
+            }
+            .color(),
+            Tokens::TEXT_MUTED
         );
         assert_eq!(
             StatusMessage::Error("failed".to_string()).color(),

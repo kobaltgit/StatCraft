@@ -1,0 +1,194 @@
+From: CapsuleCraft Code Ingest <system@capsulecraft.local>
+To: Vault <vault@capsuleos.local>
+Subject: 📚 StatCraft / StatCraft — Real-World Corpora & Codecs Audit Report (Phase 4 / Codecs Audit)
+Date: Fri, 6 Nov 2026 16:00:23 +0000
+Message-ID: <doc-statcraft-docs_corpus_audit_report_md@capsuleos.local>
+In-Reply-To: <project-index-statcraft@capsuleos.local>
+X-Capsule-Page-Parent: <project-index-statcraft@capsuleos.local>
+References: <project-index-statcraft@capsuleos.local>
+X-Capsule-Tags: project, statcraft, docs
+X-Capsule-Status: Active
+MIME-Version: 1.0
+Content-Type: multipart/mixed; boundary="BOUNDARY_ROOT_1XFUEH1FM9"
+
+--BOUNDARY_ROOT_1XFUEH1FM9
+Content-Type: multipart/alternative; boundary="BOUNDARY_PAYLOAD_1JXNIIZFPD"
+
+--BOUNDARY_PAYLOAD_1JXNIIZFPD
+Content-Type: application/json; name="canvas_state.json"
+Content-Disposition: inline; filename="canvas_state.json"
+
+{
+  "version": "1.0",
+  "generator": "CapsuleCraft Native egui prototype (Zero-DB Pure-MIME)",
+  "messageId": "<doc-statcraft-docs_corpus_audit_report_md@capsuleos.local>",
+  "subject": "📚 StatCraft / StatCraft — Real-World Corpora & Codecs Audit Report (Phase 4 / Codecs Audit)",
+  "tags": [
+    "project",
+    "statcraft",
+    "docs"
+  ],
+  "blocks": [
+    {
+      "data": {
+        "icon": "book",
+        "text": "Documentation file: `docs/CORPUS_AUDIT_REPORT.md`\nBelongs to project: [[📦 StatCraft (Overview) | 📦 StatCraft (Overview)]]"
+      },
+      "id": "blk_native_callout_1793980823728344000",
+      "managed_by": "project_parser",
+      "type": "callout"
+    },
+    {
+      "data": {
+        "level": 1,
+        "text": "StatCraft — Real-World Corpora & Codecs Audit Report (Phase 4 / Codecs Audit)"
+      },
+      "id": "blk_native_heading_1793980823728322800",
+      "managed_by": "project_parser",
+      "type": "heading"
+    },
+    {
+      "data": {
+        "level": 2,
+        "text": "Executive Summary"
+      },
+      "id": "blk_native_heading_1793980823728324800",
+      "managed_by": "project_parser",
+      "type": "heading"
+    },
+    {
+      "data": {
+        "text": "This document provides the formal clean-room evidence report of the data ingestion and export subsystem `crates/statcraft_io` (SPSS `.sav`/`.zsav`, Excel `.xlsx`/`.xls`/`.ods`, CSV/TSV RFC 4180, and StatCraft `.stc` container) across real-world datasets, synthetically generated edge cases, and malformed fuzzing streams."
+      },
+      "id": "blk_native_paragraph_1793980823728326200",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    },
+    {
+      "data": {
+        "text": "The audit was conducted using the **Craft Anything MCP** in clean-room mode (`clean-room: true`), evaluating conformance against the *GNU PSPP System File Format Specification*, *RFC 4180*, and the *ArtCraft Never Crash Invariant*."
+      },
+      "id": "blk_native_paragraph_1793980823728327200",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    },
+    {
+      "data": {
+        "text": "---"
+      },
+      "id": "blk_native_paragraph_1793980823728327800",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    },
+    {
+      "data": {
+        "level": 2,
+        "text": "1. Audit Matrix & Findings (Microplans C-01 — C-05)"
+      },
+      "id": "blk_native_heading_1793980823728328400",
+      "managed_by": "project_parser",
+      "type": "heading"
+    },
+    {
+      "data": {
+        "text": "| Microplan | Subsystem / Target | Target Invariant | Finding & Verification Status |\n|---|---|---|---|\n| **C-01** | SPSS `.sav` / `.zsav` Bytecode Stream | Full opcode matrix (0..255), ZLIB block decompression | **RESOLVED (BUG-003):** Fixed opcode 254 decoding to numeric `0.0` (previously decoded to `Null`). Verified opcode 255 as `SYSMIS`, bias subtraction for codes 1..251, literal 253, and EOF 252. Decompressed `.zsav` blocks via zheader/ztrailer offsets. |\n| **C-02** | SPSS Extended Record 7 & Encodings | Record 7 subtypes 3, 11, 14, 20; CP1251 transcoding | **RESOLVED (BUG-004):** Corrected Record 7 subtype matching to canonical Subtype 11 for variable display parameters (measurement level, column width, alignment). Implemented Subtype 14 for Very Long Strings ($> 255$ bytes) across continuation slots. Added zero-dependency safe transcoders in `encoding.rs` for Windows-1251 (Cyrillic), Windows-1252, and KOI8-R. |\n| **C-03** | Excel Worksheets Ingestion (`.xlsx`, `.xls`, `.ods`) | Dirty columns casting, formula error cells, extreme dates | **VERIFIED:** Mixed columns with numbers and text safely cast to `RawDataType::Text`. Formula error cells (`#VALUE!`, `#REF!`, `#DIV/0!`, `#N/A`, `#NAME?`) and missing markers (`\"-\"`, `\"none\"`, `\"NA\"`) map to `RawValue::Null`. Column headers sanitized and deduplicated per SPSS rules. |\n| **C-04** | CSV / TSV Ingestion & Export | RFC 4180 multiline, quote escapes, BOM, roundtrip | **VERIFIED:** Multiline quoted fields (`\"line 1\\nline 2\"`) and escaped quotes (`\"\"`) preserved. Automatic delimiter detection (`,`, `;`, `\\t`, `|`). Stripping of UTF-8 BOM (`\\u{FEFF}`) from headers. Mathematical roundtrip invariant $\\text{RawTable} \\equiv \\text{reload}(\\text{export}(\\text{RawTable}))$ verified. |\n| **C-05** | Malformed Input Fuzzing & Corpus Runner | Never Crash invariant: 0 panics on corrupted inputs | **VERIFIED:** Implemented `cargo xtask test-corpus` runner and malformed fuzzing suite (11 fuzzed probe streams: truncated headers, bad magic, negative bias, corrupt gzip, invalid json). 100% of malformed inputs safely return typed `Err(IoError)` with 0 panics. |"
+      },
+      "id": "blk_native_paragraph_1793980823728330200",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    },
+    {
+      "data": {
+        "text": "---"
+      },
+      "id": "blk_native_paragraph_1793980823728330800",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    },
+    {
+      "data": {
+        "level": 2,
+        "text": "2. Automated Corpus Execution Results (`cargo xtask test-corpus`)"
+      },
+      "id": "blk_native_heading_1793980823728331300",
+      "managed_by": "project_parser",
+      "type": "heading"
+    },
+    {
+      "data": {
+        "text": "The automated corpus runner executed against `fixtures/corpus/` and `test_data/`:"
+      },
+      "id": "blk_native_paragraph_1793980823728332100",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    },
+    {
+      "data": {
+        "code": "=======================================================\n  StatCraft Real-World Corpora & Codecs Audit Runner  \n  Clean-Room Standards & Never Crash Verification     \n=======================================================\n\nFile                                | Format   | Status           | Dim (R x C)  | Time    \n------------------------------------+----------+------------------+--------------+---------\ncorrupt_bad_magic.sav               | sav      | [PASS] Safe Err  | Malformed... |     2 ms\ncorrupt_truncated.sav               | sav      | [PASS] Safe Err  | Io(\"Faile... |     0 ms\nmultiline_bom.csv                   | csv      | [PASS] Loaded OK | 2 x 3        |     2 ms\npipe_delimited.csv                  | csv      | [PASS] Loaded OK | 2 x 3        |     0 ms\nsemicolon_european.csv              | csv      | [PASS] Loaded OK | 3 x 3        |     0 ms\nsynthetic_clean.sav                 | sav      | [PASS] Loaded OK | 1 x 1        |     1 ms\nsynthetic_compressed.sav            | sav      | [PASS] Loaded OK | 3 x 1        |     0 ms\nsynthetic_cyrillic.sav              | sav      | [PASS] Loaded OK | 1 x 1        |     0 ms\nvalid_survey.csv                    | csv      | [PASS] Loaded OK | 4 x 4        |     0 ms\nvalid_survey.stc                    | stc      | [PASS] Loaded OK | 2 x 2        |     4 ms\n\n[INFO] Scanning supplementary dataset files in 'test_data/'...\nFile                                | Format   | Status           | Dim (R x C)  | Time    \n------------------------------------+----------+------------------+--------------+---------\nsample_survey.csv                   | csv      | [PASS] Loaded OK | 20 x 7       |     0 ms\nsample_survey.stc                   | stc      | [PASS] Loaded OK | 20 x 7       |     0 ms\n\n=== Running Malformed Input Fuzzing Suite (Never Crash Invariant) ===\n  [FUZZ OK] Zero bytes                     -> Safe typed Err (0 panics)\n  [FUZZ OK] Single null byte               -> Safe typed Err (0 panics)\n  [FUZZ OK] Truncated SPSS magic           -> Safe typed Err (0 panics)\n  [FUZZ OK] Random garbage 16B             -> Safe typed Err (0 panics)\n  [FUZZ OK] Truncated SPSS header 50B      -> Safe typed Err (0 panics)\n  [FUZZ OK] SPSS bad magic 176B            -> Safe typed Err (0 panics)\n  [FUZZ OK] SPSS negative bias 176B        -> Safe typed Err (0 panics)\n  [FUZZ OK] Corrupt GZIP header 4B         -> Safe typed Err (0 panics)\n  [FUZZ OK] Truncated JSON STC             -> Safe typed Err (0 panics)\n  [FUZZ OK] CSV unclosed quotes            -> Safe typed Err (0 panics)\n  [FUZZ OK] CSV null characters            -> Safe typed Err (0 panics)\n\n=======================================================\n  CORPUS AUDIT SUMMARY\n  Total Scanned Files : 12\n  Valid Files OK      : 10\n  Corrupt Safe Errors : 2\n  Fuzzed Probes OK    : 11\n  Panics Detected     : 0\n=======================================================\n>>> [SUCCESS] All corpora and codecs passed with ZERO panics!",
+        "language": "text"
+      },
+      "id": "blk_native_code_1793980823728335400",
+      "managed_by": "project_parser",
+      "type": "code"
+    },
+    {
+      "data": {
+        "text": "---"
+      },
+      "id": "blk_native_paragraph_1793980823728338900",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    },
+    {
+      "data": {
+        "level": 2,
+        "text": "3. Registered Bugs & Defect Corrections"
+      },
+      "id": "blk_native_heading_1793980823728339300",
+      "managed_by": "project_parser",
+      "type": "heading"
+    },
+    {
+      "data": {
+        "text": "- **BUG-003:** In compressed SPSS `.sav` files, opcode 254 was decoded as `None` (Null) instead of `Some(0.0)`. Corrected in `crates/statcraft_io/src/spss_loader/decompress.rs`.\n- **BUG-004:** In Record Type 7, Variable Display Parameters were erroneously matched on subtype 4 instead of canonical subtype 11. Corrected in `crates/statcraft_io/src/spss_loader/records.rs` with full support for Subtype 11, Subtype 14 (Very Long Strings), Subtype 3 (codepage), and Subtype 20 (encoding)."
+      },
+      "id": "blk_native_paragraph_1793980823728340400",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    },
+    {
+      "data": {
+        "text": "---"
+      },
+      "id": "blk_native_paragraph_1793980823728341000",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    },
+    {
+      "data": {
+        "level": 2,
+        "text": "4. Definition of Done (DoD) Verification"
+      },
+      "id": "blk_native_heading_1793980823728341400",
+      "managed_by": "project_parser",
+      "type": "heading"
+    },
+    {
+      "data": {
+        "text": "1. `cargo test --workspace -j 1` — 100% tests passed, 0 failed.\n2. `cargo fmt --all -- --check` — Clean formatting across all crates.\n3. `cargo clippy --workspace --all-targets -j 1 -- -D warnings` — Clean, zero warnings.\n4. `cargo run -p xtask -j 1 -- layers` — Strictly adheres to L0-L6 layering.\n5. `cargo run -p xtask -j 1 -- file-guard` — All 269 files within size limits.\n6. `cargo run -p xtask -j 1 -- design-guard` — 100% DialogKit compliance.\n7. `cargo run -p xtask -j 1 -- test-corpus` — 100% passed, 0 panics.\n8. `cargo run -p xtask -j 1 -- ci` — Full CI quality gate passed."
+      },
+      "id": "blk_native_paragraph_1793980823728342600",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    }
+  ]
+}
+
+--BOUNDARY_PAYLOAD_1JXNIIZFPD
+Content-Type: text/html; charset="utf-8"
+Content-Disposition: inline
+
+<!doctype html><html><head><meta charset="utf-8"><meta name="generator" content="CapsuleCraft Native"></head><body style="font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;max-width:720px;margin:32px auto;line-height:1.55;color:#23201c;background:#faf8f4;"><h1>📚 StatCraft / StatCraft — Real-World Corpora &amp; Codecs Audit Report (Phase 4 / Codecs Audit)</h1><p><em>[callout block — open in CapsuleCraft web for its canvas]</em></p><h1>StatCraft — Real-World Corpora &amp; Codecs Audit Report (Phase 4 / Codecs Audit)</h1><h2>Executive Summary</h2><p>This document provides the formal clean-room evidence report of the data ingestion and export subsystem `crates/statcraft_io` (SPSS `.sav`/`.zsav`, Excel `.xlsx`/`.xls`/`.ods`, CSV/TSV RFC 4180, and StatCraft `.stc` container) across real-world datasets, synthetically generated edge cases, and malformed fuzzing streams.</p><p>The audit was conducted using the **Craft Anything MCP** in clean-room mode (`clean-room: true`), evaluating conformance against the *GNU PSPP System File Format Specification*, *RFC 4180*, and the *ArtCraft Never Crash Invariant*.</p><p>---</p><h2>1. Audit Matrix &amp; Findings (Microplans C-01 — C-05)</h2><p>| Microplan | Subsystem / Target | Target Invariant | Finding &amp; Verification Status |<br>|---|---|---|---|<br>| **C-01** | SPSS `.sav` / `.zsav` Bytecode Stream | Full opcode matrix (0..255), ZLIB block decompression | **RESOLVED (BUG-003):** Fixed opcode 254 decoding to numeric `0.0` (previously decoded to `Null`). Verified opcode 255 as `SYSMIS`, bias subtraction for codes 1..251, literal 253, and EOF 252. Decompressed `.zsav` blocks via zheader/ztrailer offsets. |<br>| **C-02** | SPSS Extended Record 7 &amp; Encodings | Record 7 subtypes 3, 11, 14, 20; CP1251 transcoding | **RESOLVED (BUG-004):** Corrected Record 7 subtype matching to canonical Subtype 11 for variable display parameters (measurement level, column width, alignment). Implemented Subtype 14 for Very Long Strings ($&gt; 255$ bytes) across continuation slots. Added zero-dependency safe transcoders in `encoding.rs` for Windows-1251 (Cyrillic), Windows-1252, and KOI8-R. |<br>| **C-03** | Excel Worksheets Ingestion (`.xlsx`, `.xls`, `.ods`) | Dirty columns casting, formula error cells, extreme dates | **VERIFIED:** Mixed columns with numbers and text safely cast to `RawDataType::Text`. Formula error cells (`#VALUE!`, `#REF!`, `#DIV/0!`, `#N/A`, `#NAME?`) and missing markers (`&quot;-&quot;`, `&quot;none&quot;`, `&quot;NA&quot;`) map to `RawValue::Null`. Column headers sanitized and deduplicated per SPSS rules. |<br>| **C-04** | CSV / TSV Ingestion &amp; Export | RFC 4180 multiline, quote escapes, BOM, roundtrip | **VERIFIED:** Multiline quoted fields (`&quot;line 1\nline 2&quot;`) and escaped quotes (`&quot;&quot;`) preserved. Automatic delimiter detection (`,`, `;`, `\t`, `|`). Stripping of UTF-8 BOM (`\u{FEFF}`) from headers. Mathematical roundtrip invariant $\text{RawTable} \equiv \text{reload}(\text{export}(\text{RawTable}))$ verified. |<br>| **C-05** | Malformed Input Fuzzing &amp; Corpus Runner | Never Crash invariant: 0 panics on corrupted inputs | **VERIFIED:** Implemented `cargo xtask test-corpus` runner and malformed fuzzing suite (11 fuzzed probe streams: truncated headers, bad magic, negative bias, corrupt gzip, invalid json). 100% of malformed inputs safely return typed `Err(IoError)` with 0 panics. |</p><p>---</p><h2>2. Automated Corpus Execution Results (`cargo xtask test-corpus`)</h2><p>The automated corpus runner executed against `fixtures/corpus/` and `test_data/`:</p><p><em>[code block — open in CapsuleCraft web for its canvas]</em></p><p>---</p><h2>3. Registered Bugs &amp; Defect Corrections</h2><p>- **BUG-003:** In compressed SPSS `.sav` files, opcode 254 was decoded as `None` (Null) instead of `Some(0.0)`. Corrected in `crates/statcraft_io/src/spss_loader/decompress.rs`.<br>- **BUG-004:** In Record Type 7, Variable Display Parameters were erroneously matched on subtype 4 instead of canonical subtype 11. Corrected in `crates/statcraft_io/src/spss_loader/records.rs` with full support for Subtype 11, Subtype 14 (Very Long Strings), Subtype 3 (codepage), and Subtype 20 (encoding).</p><p>---</p><h2>4. Definition of Done (DoD) Verification</h2><p>1. `cargo test --workspace -j 1` — 100% tests passed, 0 failed.<br>2. `cargo fmt --all -- --check` — Clean formatting across all crates.<br>3. `cargo clippy --workspace --all-targets -j 1 -- -D warnings` — Clean, zero warnings.<br>4. `cargo run -p xtask -j 1 -- layers` — Strictly adheres to L0-L6 layering.<br>5. `cargo run -p xtask -j 1 -- file-guard` — All 269 files within size limits.<br>6. `cargo run -p xtask -j 1 -- design-guard` — 100% DialogKit compliance.<br>7. `cargo run -p xtask -j 1 -- test-corpus` — 100% passed, 0 panics.<br>8. `cargo run -p xtask -j 1 -- ci` — Full CI quality gate passed.</p><hr><p style="color:#8a8175;font-size:12px">Exported from CapsuleCraft Native · &lt;doc-statcraft-docs_corpus_audit_report_md@capsuleos.local&gt;</p></body></html>
+
+--BOUNDARY_PAYLOAD_1JXNIIZFPD--
+--BOUNDARY_ROOT_1XFUEH1FM9--

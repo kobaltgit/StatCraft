@@ -39,7 +39,7 @@ Whether you are conducting psychological research, analyzing clinical trials, te
 
 * **100% Safe Rust & Never Crash Guarantee:** Zero `unsafe` blocks, zero panics (`panic!`, `unwrap()`, `expect()`). Malformed datasets, empty samples, or division by zero yield explicit, typed `Result<T, E>` errors rather than application crashes.
 * **Commands, Not Handlers:** Every analytical procedure and user interaction is an atomic engine command (`EngineCommand`). All commands support non-destructive Undo/Redo, serialize to standard SPSS syntax (`.sps`), and can be scripted headlessly.
-* **Agent-First Architecture:** Integrated Model Context Protocol (MCP) server and local IPC socket allow AI agents (Antigravity, Claude, local LLMs) to discover variable schemas, execute complex pipelines, and insert interpreted results into the Output Viewer.
+* **Agent-Ready Architecture:** Engine procedures expose structured JSON parameter schemas via `specs()`, enabling AI agents to programmatically assemble analytical pipelines and execute batch SPSS syntax (`.sps`); the direct network bridge (`statcraft_bridge`) is scheduled on the Roadmap.
 * **SPSS-Style Canonical Output Viewer:** Hierarchical navigation outline tree paired with authentic multi-level pivot tables. Results can be copied to the clipboard with one click as structured TSV data that pastes cleanly into Microsoft Excel without distorted columns or unwanted date conversions.
 * **Vector-First UI:** Rendered with native `egui` via `ui.painter()` and vector SVG icons. Strict zero-emoji and zero-unsupported Unicode symbol policy eliminates tofu squares (`□`) across all platforms.
 * **Zero-Hardcode i18n:** 100% of user-facing strings are decoupled into Project Fluent catalogs (`locales/en.ftl`, `locales/ru.ftl`) with real-time runtime language switching.
@@ -48,6 +48,9 @@ Whether you are conducting psychological research, analyzing clinical trials, te
 ---
 
 ## Key Features
+
+> [!TIP]
+> 📖 **Comprehensive Feature Guide:** An exhaustive reference of all available analytical procedures, data manipulations, transformation algorithms, and keyboard shortcuts is available in **[FEATURES.md](docs/FEATURES.md)** (English) and **[FEATURES_RU.md](docs/FEATURES_RU.md)** (Русский).
 
 ### 1. Dual-View Data Management
 * **Data View:** High-performance, virtualized tabular grid displaying cases and variables. Supports instant toggling between raw numeric values and human-readable value labels (`1/A`).
@@ -84,15 +87,14 @@ StatCraft is engineered in strict compliance with the **ArtCraft Layering Law**.
 ```text
 L6: statcraft_app        Desktop GUI (egui / eframe / DialogKit / Output Viewer)
  └── L5: statcraft_syntax CommandBus, SPS syntax parser, engine transactions
-      ├── L4: statcraft_reporting Pivot table models, TSV / PDF / LaTeX export
-      ├── L3: statcraft_charts    Vector graphics, egui_plot, brushing & linking
+      ├── L4: statcraft_reporting Pivot table models, TSV / HTML / Text export
       └── L2: statcraft_algo      Pure statistical math (Golden Oracle vs SciPy)
-           └── L1: statcraft_core In-memory dataset, Arrow buffers, VariableDictionary
-                └── L0: statcraft_io  Data codecs (CSV/TSV streaming, Parquet, SPSS .SAV)
+           └── L1: statcraft_core In-memory dataset, RawTable, VariableDictionary
+                └── L0: statcraft_io  Data codecs (CSV/TSV streaming, Excel .xlsx/.xls/.ods, SPSS .sav/.zsav)
 
 Cross-cutting utility crates:
 * statcraft_i18n   Fluent localization engine with zero hardcoded strings
-* xtask            Developer tools: file-guard, layers-guard, design-guard, parity
+* xtask            Developer tools: file-guard, layers, design-guard, parity, test-corpus
 ```
 
 ---
@@ -142,9 +144,9 @@ cargo run -p xtask -j 1 -- parity
 |---|---|
 | [`crates/statcraft_app`](crates/statcraft_app) | Desktop user interface, docking windows, DialogKit, data grid, output viewer |
 | [`crates/statcraft_syntax`](crates/statcraft_syntax) | Engine command bus, transactions, undo/redo, SPSS syntax serializer |
-| [`crates/statcraft_algo`](crates/statcraft_algo) | Mathematical algorithms (t-tests, ANOVA, Levene, frequencies, descriptives) |
-| [`crates/statcraft_core`](crates/statcraft_core) | In-memory `DataSet`, `VariableDictionary`, measurement scales, metadata |
-| [`crates/statcraft_io`](crates/statcraft_io) | Fast CSV/TSV streaming reader, upcoming SPSS `.sav` and Parquet codecs |
+| [`crates/statcraft_algo`](crates/statcraft_algo) | Pure mathematical algorithms (t-tests, ANOVA, regression, correlations, factor PCA, nonparametrics, frequencies) |
+| [`crates/statcraft_core`](crates/statcraft_core) | In-memory `DataSet`, `RawTable`, `VariableDictionary`, measurement scales, metadata |
+| [`crates/statcraft_io`](crates/statcraft_io) | Data codecs: streaming CSV/TSV, Excel workbooks (.xlsx/.xls/.ods), and SPSS files (.sav/.zsav) |
 | [`crates/statcraft_i18n`](crates/statcraft_i18n) | Localization engine powered by Project Fluent (`locales/*.ftl`) |
 | [`xtask`](xtask) | CI/CD automation: `file-guard`, `layers`, `design-guard`, `parity` |
 | [`docs/`](docs) | Architecture guides, design specs, roadmaps, and development chronicle |
@@ -153,6 +155,7 @@ cargo run -p xtask -j 1 -- parity
 
 ## Documentation
 
+* **[Comprehensive Feature Guide (FEATURES.md)](docs/FEATURES.md)** / **[Справочник возможностей (RU)](docs/FEATURES_RU.md)** — Exhaustive catalog of all implemented statistical procedures, data transformations, formulas, and UI tools.
 * [Contributor Guide (CONTRIBUTING.md)](CONTRIBUTING.md) — Comprehensive development regulations, Resource Guard (-j 1), architecture rules, and Definition of Done.
 * [SPSS Feature Parity Checklist](docs/parity-checklist.md) — Comprehensive tracking of implemented SPSS commands and menus.
 * [SPSS Algorithms Mathematical Audit](docs/SPSS_ALGORITHMS_AUDIT.md) — Rigorous Clean-Room verification against IBM SPSS 24 Algorithms guide via [Craft Anything](https://github.com/storytold/craft-anything).

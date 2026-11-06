@@ -1,7 +1,7 @@
 From: CapsuleCraft Code Ingest <system@capsulecraft.local>
 To: Vault <vault@capsuleos.local>
 Subject: 📁 StatCraft / crates/statcraft_io
-Date: Fri, 6 Nov 2026 14:51:42 +0000
+Date: Fri, 6 Nov 2026 19:50:30 +0000
 Message-ID: <subsystem-statcraft-crates_statcraft_io@capsuleos.local>
 In-Reply-To: <project-index-statcraft@capsuleos.local>
 X-Capsule-Page-Parent: <project-index-statcraft@capsuleos.local>
@@ -34,7 +34,7 @@ Content-Disposition: inline; filename="canvas_state.json"
         "level": 1,
         "text": "📁 Subsystem: crates/statcraft_io"
       },
-      "id": "blk_native_heading_1793976702692790000",
+      "id": "blk_native_heading_1793994630667077400",
       "managed_by": "project_parser",
       "type": "heading"
     },
@@ -43,7 +43,7 @@ Content-Disposition: inline; filename="canvas_state.json"
         "icon": "folder",
         "text": "Part of [[📦 StatCraft (Overview) | 📦 StatCraft (Overview)]]\nContains 11 source module(s)."
       },
-      "id": "blk_native_callout_1793976702692793000",
+      "id": "blk_native_callout_1793994630667078700",
       "managed_by": "project_parser",
       "type": "callout"
     },
@@ -52,7 +52,7 @@ Content-Disposition: inline; filename="canvas_state.json"
         "level": 2,
         "text": "Modules in this Subsystem"
       },
-      "id": "blk_native_heading_1793976702692794100",
+      "id": "blk_native_heading_1793994630667079200",
       "managed_by": "project_parser",
       "type": "heading"
     },
@@ -60,7 +60,7 @@ Content-Disposition: inline; filename="canvas_state.json"
       "data": {
         "text": "- [[📄 StatCraft / crates/statcraft_io/src/csv_loader.rs]] (`crates/statcraft_io/src/csv_loader.rs`)\n- [[📄 StatCraft / crates/statcraft_io/src/csv_writer.rs]] (`crates/statcraft_io/src/csv_writer.rs`)\n- [[📄 StatCraft / crates/statcraft_io/src/excel_loader.rs]] (`crates/statcraft_io/src/excel_loader.rs`)\n- [[📄 StatCraft / crates/statcraft_io/src/lib.rs]] (`crates/statcraft_io/src/lib.rs`)\n- [[📄 StatCraft / crates/statcraft_io/src/spss_loader/decompress.rs]] (`crates/statcraft_io/src/spss_loader/decompress.rs`)\n- [[📄 StatCraft / crates/statcraft_io/src/spss_loader/encoding.rs]] (`crates/statcraft_io/src/spss_loader/encoding.rs`) — *String encoding transcoder for SPSS files.*\n- [[📄 StatCraft / crates/statcraft_io/src/spss_loader/header.rs]] (`crates/statcraft_io/src/spss_loader/header.rs`)\n- [[📄 StatCraft / crates/statcraft_io/src/spss_loader/mod.rs]] (`crates/statcraft_io/src/spss_loader/mod.rs`)\n- [[📄 StatCraft / crates/statcraft_io/src/spss_loader/records.rs]] (`crates/statcraft_io/src/spss_loader/records.rs`)\n- [[📄 StatCraft / crates/statcraft_io/src/spss_loader/tests.rs]] (`crates/statcraft_io/src/spss_loader/tests.rs`)\n- [[📄 StatCraft / crates/statcraft_io/src/stc_codec.rs]] (`crates/statcraft_io/src/stc_codec.rs`)\n"
       },
-      "id": "blk_native_paragraph_1793976702692810200",
+      "id": "blk_native_paragraph_1793994630667085800",
       "managed_by": "project_parser",
       "type": "paragraph"
     }

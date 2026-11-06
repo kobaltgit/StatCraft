@@ -1,7 +1,7 @@
 From: CapsuleCraft Code Ingest <system@capsulecraft.local>
 To: Vault <vault@capsuleos.local>
-Subject: 📚 StatCraft / StatCraft v0.2.1
-Date: Fri, 6 Nov 2026 14:13:34 +0000
+Subject: 📚 StatCraft / StatCraft v0.2.2
+Date: Fri, 6 Nov 2026 19:50:30 +0000
 Message-ID: <doc-statcraft-release_notes_md@capsuleos.local>
 In-Reply-To: <project-index-statcraft@capsuleos.local>
 X-Capsule-Page-Parent: <project-index-statcraft@capsuleos.local>
@@ -9,12 +9,12 @@ References: <project-index-statcraft@capsuleos.local>
 X-Capsule-Tags: project, statcraft, docs
 X-Capsule-Status: Active
 MIME-Version: 1.0
-Content-Type: multipart/mixed; boundary="BOUNDARY_ROOT_1OL0MEADYR"
+Content-Type: multipart/mixed; boundary="BOUNDARY_ROOT_12T6MMPDYQ"
 
---BOUNDARY_ROOT_1OL0MEADYR
-Content-Type: multipart/alternative; boundary="BOUNDARY_PAYLOAD_1T3QW00E0J"
+--BOUNDARY_ROOT_12T6MMPDYQ
+Content-Type: multipart/alternative; boundary="BOUNDARY_PAYLOAD_14KDEW7E0I"
 
---BOUNDARY_PAYLOAD_1T3QW00E0J
+--BOUNDARY_PAYLOAD_14KDEW7E0I
 Content-Type: application/json; name="canvas_state.json"
 Content-Disposition: inline; filename="canvas_state.json"
 
@@ -22,7 +22,7 @@ Content-Disposition: inline; filename="canvas_state.json"
   "version": "1.0",
   "generator": "CapsuleCraft Native egui prototype (Zero-DB Pure-MIME)",
   "messageId": "<doc-statcraft-release_notes_md@capsuleos.local>",
-  "subject": "📚 StatCraft / StatCraft v0.2.1",
+  "subject": "📚 StatCraft / StatCraft v0.2.2",
   "tags": [
     "project",
     "statcraft",
@@ -34,16 +34,16 @@ Content-Disposition: inline; filename="canvas_state.json"
         "icon": "book",
         "text": "Documentation file: `RELEASE_NOTES.md`\nBelongs to project: [[📦 StatCraft (Overview) | 📦 StatCraft (Overview)]]"
       },
-      "id": "blk_native_callout_1793974414004954100",
+      "id": "blk_native_callout_1793994630665241800",
       "managed_by": "project_parser",
       "type": "callout"
     },
     {
       "data": {
         "level": 1,
-        "text": "StatCraft v0.2.1"
+        "text": "StatCraft v0.2.2"
       },
-      "id": "blk_native_heading_1793974414004932200",
+      "id": "blk_native_heading_1793994630665221000",
       "managed_by": "project_parser",
       "type": "heading"
     },
@@ -51,7 +51,7 @@ Content-Disposition: inline; filename="canvas_state.json"
       "data": {
         "text": "[English](#english) | [Русский](#русский)"
       },
-      "id": "blk_native_paragraph_1793974414004934200",
+      "id": "blk_native_paragraph_1793994630665222800",
       "managed_by": "project_parser",
       "type": "paragraph"
     },
@@ -59,7 +59,7 @@ Content-Disposition: inline; filename="canvas_state.json"
       "data": {
         "text": "---"
       },
-      "id": "blk_native_paragraph_1793974414004935000",
+      "id": "blk_native_paragraph_1793994630665223500",
       "managed_by": "project_parser",
       "type": "paragraph"
     },
@@ -67,7 +67,7 @@ Content-Disposition: inline; filename="canvas_state.json"
       "data": {
         "text": "<a name=\"english\"></a>"
       },
-      "id": "blk_native_paragraph_1793974414004935700",
+      "id": "blk_native_paragraph_1793994630665224100",
       "managed_by": "project_parser",
       "type": "paragraph"
     },
@@ -76,65 +76,32 @@ Content-Disposition: inline; filename="canvas_state.json"
         "level": 2,
         "text": "English"
       },
-      "id": "blk_native_heading_1793974414004936100",
+      "id": "blk_native_heading_1793994630665224500",
       "managed_by": "project_parser",
       "type": "heading"
     },
     {
       "data": {
-        "text": "StatCraft v0.2.1 delivers an evidence-backed Clean-Room mathematical audit of our statistical calculation engine against the canonical *IBM SPSS Statistics 24 Algorithms Guide*, alongside complete production activation of the **Transform** procedure suite."
+        "text": "StatCraft v0.2.2 publishes the comprehensive, exhaustive bilingual feature catalog documentation ([`docs/FEATURES.md`](docs/FEATURES.md) and [`docs/FEATURES_RU.md`](docs/FEATURES_RU.md)) covering all analytical, data manipulation, and transformation procedures implemented across the entire application, alongside version synchronization and automated release packaging."
       },
-      "id": "blk_native_paragraph_1793974414004937000",
+      "id": "blk_native_paragraph_1793994630665225500",
       "managed_by": "project_parser",
       "type": "paragraph"
     },
     {
       "data": {
         "level": 3,
-        "text": "🔬 Clean-Room Mathematical Audit (Craft Anything)"
+        "text": "📖 Comprehensive Feature Guide (`FEATURES.md` & `FEATURES_RU.md`)"
       },
-      "id": "blk_native_heading_1793974414004937500",
+      "id": "blk_native_heading_1793994630665226000",
       "managed_by": "project_parser",
       "type": "heading"
     },
     {
       "data": {
-        "text": "All statistical algorithms implemented in `statcraft_algo` have undergone a page-by-page verification against the official *IBM SPSS Statistics 24 Algorithms Guide* (1,271 pp., IBM Corporation) using the open-source **[Craft Anything (`storytold/craft-anything`)](https://github.com/storytold/craft-anything)** verification engine operating in `clean-room: true` mode."
+        "text": "* Published detailed, end-to-end documentation of every feature available in StatCraft v0.2.2:\n  * **Dual-View Data Management:** Streaming CSV/TSV reader, Microsoft Excel reader (Calamine), Data View virtualized tabular grid with inline editing, row strike-through for filtered cases, and Variable View supporting all 9 canonical SPSS types, value labels, and missing value ranges.\n  * **Data Manipulation Suite (Data Menu):** Multi-column stable case sorting (`Sort Cases`), conditional case filtering (`Select Cases`), subgroup stratification (`Split File`), and frequency/sampling case weighting (`Weight Cases`).\n  * **Complete Transformation Suite (Transform Menu):** Variable computation (`Compute Variable` via RPN parser), in-place and target recoding (`Recode`), automatic integer recoding (`Automatic Recode`), lead/lag shifts (`Shift Values`), case value counting (`Count Values`), dummy variable generation (`Create Dummy Variables`), missing value imputation (`Replace Missing Values`), time series filters (`Create Time Series`), visual & optimal binning (`Visual Binning` & `Optimal Binning`), rank cases (`Rank Cases` with tie adjustments and normal scores), date/time wizard (`Date and Time Wizard`), automated data preparation (`ADP`), and programmability scripts (`Programmability Transformations`).\n  * **Statistical Calculation Suite (Analyze Menu):** Descriptives, Frequencies, Crosstabs (with $\\chi^2$, Fisher's exact, Likelihood Ratio, and Cramér's $V$), Means breakdown with ANOVA and $\\eta^2$, One-Sample $t$-test, Independent-Samples $t$-test (with Levene's test and Welch's $t$), Paired-Samples $t$-test, One-Way ANOVA, Bivariate Correlations (Pearson $r$, Spearman $\\rho$, Kendall $\\tau_b$), Nonparametric tests (Mann-Whitney $U$, Kruskal-Wallis $H$, Wilcoxon Signed-Rank, and Sign test), Multiple Linear Regression (OLS/WLS with Collinearity Tolerance & VIF), Scale Reliability Analysis (Cronbach's $\\alpha$ and Item-Total statistics), and Factor Analysis / PCA (with KMO, Bartlett's test, and Component Matrix).\n  * **Output Viewer & Export:** Authentic multi-tier SPSS Pivot Tables with one-click TSV clipboard export for Excel, collapsible Outline navigation tree, and command syntax execution logging.\n  * **SPSS Command Syntax & Agent Readiness:** Batch `.sps` syntax execution, script file loading/saving, non-destructive Undo/Redo (`Ctrl+Z` / `Ctrl+Y`), and typed parameter schemas `specs()` for AI agents."
       },
-      "id": "blk_native_paragraph_1793974414004938500",
-      "managed_by": "project_parser",
-      "type": "paragraph"
-    },
-    {
-      "data": {
-        "text": "Every mathematical formula, degrees-of-freedom rule, tie-correction variance, and significance level generator was confirmed to achieve **100% mathematical equivalence** under our Golden Oracle precision threshold ($\\le 10^{-6}$):\n1. **Descriptives, Frequencies, Crosstabs & Means:** Spicer (1972) provisional moments, Bliss sample excess kurtosis, HAVERAGE quartiles ($r = p(N+1)$), Yates continuity correction, Pearson $\\chi^2$, Fisher's exact test, and ANOVA $\\eta^2$.\n2. **Mean Comparisons & ANOVA:** Mean-centered Levene test of variance equality, Student's pooled $t$-test, Welch's separate variance $t$-test with Satterthwaite fractional $df$, paired-samples $t$-test, and One-Way ANOVA.\n3. **Correlations & Multivariates:** Bivariate Pearson $r$, Spearman $\\rho$, Kendall $\\tau_b$ with full tie corrections ($v_0, v_1, v_2$), OLS/WLS multiple regression with Tolerance & VIF diagnostics, cyclic Jacobi eigensolver for PCA, Bartlett's test of sphericity, Kaiser-Meyer-Olkin (KMO) measure, and Cronbach's $\\alpha$.\n4. **Nonparametric Tests:** Mann-Whitney $U$, Wilcoxon rank sum $W$, Kruskal-Wallis $H_{adj}$ with tie factor, Wilcoxon signed-rank test with tie-corrected variance, and exact binomial Sign test.\n5. **Data Transformations & Imputations:** Blom, Tukey, Rankit, and Van der Waerden normal scores via Peter J. Acklam's rational approximation ($\\le 1.15 \\times 10^{-9}$ error), MDLP entropy discretization (Fayyad & Irani), and missing value imputation (linear interpolation, series mean, mean/median of nearby points, linear trend)."
-      },
-      "id": "blk_native_paragraph_1793974414004940100",
-      "managed_by": "project_parser",
-      "type": "paragraph"
-    },
-    {
-      "data": {
-        "text": "Comprehensive bilingual audit records are available in:\n* Primary English Guide: [`docs/SPSS_ALGORITHMS_AUDIT.md`](docs/SPSS_ALGORITHMS_AUDIT.md)\n* Russian Mirror: [`docs/SPSS_ALGORITHMS_AUDIT_RU.md`](docs/SPSS_ALGORITHMS_AUDIT_RU.md)"
-      },
-      "id": "blk_native_paragraph_1793974414004941200",
-      "managed_by": "project_parser",
-      "type": "paragraph"
-    },
-    {
-      "data": {
-        "level": 3,
-        "text": "⚙️ Transform Suite Finalization"
-      },
-      "id": "blk_native_heading_1793974414004941700",
-      "managed_by": "project_parser",
-      "type": "heading"
-    },
-    {
-      "data": {
-        "text": "* **Automated Data Preparation (`adp`):** Supervised feature screening, optimal binning, and cross-validation partition breakdown with 4 authentic SPSS pivot tables.\n* **Programmability Transformations (`transform.programmability`):** Transactional script engine for custom variable computations and conditional rules (`IF ... THEN ... ELSE`), syntax generator (`BEGIN PROGRAM ... END PROGRAM.`), and real-time vector syntax verification.\n* All `[dev]` badges removed from the **Transform** menu; 100% of procedures now fully operational with DialogKit modal interfaces and Output Viewer pivot tables."
-      },
-      "id": "blk_native_paragraph_1793974414004942800",
+      "id": "blk_native_paragraph_1793994630665228300",
       "managed_by": "project_parser",
       "type": "paragraph"
     },
@@ -143,7 +110,7 @@ Content-Disposition: inline; filename="canvas_state.json"
         "level": 3,
         "text": "📦 Multi-Platform Artifacts"
       },
-      "id": "blk_native_heading_1793974414004943300",
+      "id": "blk_native_heading_1793994630665229000",
       "managed_by": "project_parser",
       "type": "heading"
     },
@@ -151,7 +118,7 @@ Content-Disposition: inline; filename="canvas_state.json"
       "data": {
         "text": "* **Windows (x64):** Inno Setup Installer (`.exe`) + Portable ZIP archive.\n* **Linux (x64):** Debian package (`.deb`) + Portable TAR.GZ archive.\n* **macOS (Apple Silicon ARM64 & Intel x64):** Apple DMG Disk Image + Application Bundle (`.app`) TAR.GZ."
       },
-      "id": "blk_native_paragraph_1793974414004944200",
+      "id": "blk_native_paragraph_1793994630665230000",
       "managed_by": "project_parser",
       "type": "paragraph"
     },
@@ -159,7 +126,7 @@ Content-Disposition: inline; filename="canvas_state.json"
       "data": {
         "text": "---"
       },
-      "id": "blk_native_paragraph_1793974414004944800",
+      "id": "blk_native_paragraph_1793994630665230600",
       "managed_by": "project_parser",
       "type": "paragraph"
     },
@@ -167,7 +134,7 @@ Content-Disposition: inline; filename="canvas_state.json"
       "data": {
         "text": "<a name=\"русский\"></a>"
       },
-      "id": "blk_native_paragraph_1793974414004945400",
+      "id": "blk_native_paragraph_1793994630665231200",
       "managed_by": "project_parser",
       "type": "paragraph"
     },
@@ -176,65 +143,32 @@ Content-Disposition: inline; filename="canvas_state.json"
         "level": 2,
         "text": "Русский"
       },
-      "id": "blk_native_heading_1793974414004945800",
+      "id": "blk_native_heading_1793994630665231600",
       "managed_by": "project_parser",
       "type": "heading"
     },
     {
       "data": {
-        "text": "Релиз StatCraft v0.2.1 представляет результаты доказательного Clean-Room математического аудита вычислительного ядра на полное соответствие каноническому руководству *IBM SPSS Statistics 24 Algorithms Guide*, а также завершает ввод в эксплуатацию всех процедур раздела **«Преобразование»** (`Transform`)."
+        "text": "Релиз StatCraft v0.2.2 публикует исчерпывающее двуязычное руководство по всем возможностям статистического пакета ([`docs/FEATURES_RU.md`](docs/FEATURES_RU.md) и [`docs/FEATURES.md`](docs/FEATURES.md)), охватывающее все аналитические процедуры, алгоритмы манипуляций и трансформаций данных, реализованные в системе, а также синхронизирует версии сборки и релизные пакеты."
       },
-      "id": "blk_native_paragraph_1793974414004946800",
+      "id": "blk_native_paragraph_1793994630665233100",
       "managed_by": "project_parser",
       "type": "paragraph"
     },
     {
       "data": {
         "level": 3,
-        "text": "🔬 Инструментальный математический аудит Clean-Room (Craft Anything)"
+        "text": "📖 Полный справочник возможностей (`FEATURES_RU.md` и `FEATURES.md`)"
       },
-      "id": "blk_native_heading_1793974414004947200",
+      "id": "blk_native_heading_1793994630665233500",
       "managed_by": "project_parser",
       "type": "heading"
     },
     {
       "data": {
-        "text": "Все статистические алгоритмы, реализованные в ядре `statcraft_algo`, прошли постраничную сверку с официальным математическим руководством *IBM SPSS Statistics 24 Algorithms Guide* (1271 стр., IBM Corporation) с помощью открытого движка **[Craft Anything (`storytold/craft-anything`)](https://github.com/storytold/craft-anything)** в режиме `clean-room: true`."
+        "text": "* Опубликовано детальное сквозное описание всех функциональных модулей StatCraft v0.2.2:\n  * **Двухрежимное управление данными:** потоковый загрузчик CSV/TSV, импорт Excel (Calamine), виртуализированный грид Data View с инлайн-редактированием ячеек, перечеркиванием отфильтрованных строк, и Variable View с поддержкой всех 9 типов переменных SPSS, меток значений и диапазонов пропусков.\n  * **Модуль манипуляций с данными (меню Data):** многоуровневая сортировка (`Sort Cases`), выборка и фильтрация по условиям (`Select Cases`), расщепление файла на подгруппы (`Split File`) и взвешивание наблюдений (`Weight Cases`).\n  * **Полный блок преобразований данных (меню Transform):** вычисление переменных (`Compute Variable` через Shunting-yard RPN), перекодирование в те же и другие переменные (`Recode`), автоматическое перекодирование (`Automatic Recode`), сдвиг значений (`Shift Values`), подсчет значений в наблюдениях (`Count Values`), дамми-переменные (`Create Dummy Variables`), восполнение пропущенных значений (`Replace Missing Values`), временные ряды (`Create Time Series`), визуальная и оптимальная дискретизация (`Visual Binning` и `Optimal Binning`), ранжирование наблюдений (`Rank Cases`), мастер даты и времени (`Date and Time Wizard`), автоматическая подготовка данных (`ADP`) и скриптовые трансформации (`Programmability Transformations`).\n  * **Блок статистических процедур (меню Analyze):** описательные статистики (`Descriptives`), частоты (`Frequencies`), таблицы сопряженности (`Crosstabs` с $\\chi^2$, точным тестом Фишера, поправкой Йейтса и мерами $\\phi$/$V$), сравнение средних (`Means Breakdown` с ANOVA и $\\eta^2$), одновыборочный $t$-критерий, $t$-критерий для независимых выборок (с критерием Левена и Уэлча), парный $t$-критерий, однофакторный дисперсионный анализ (`One-Way ANOVA`), парные корреляции (Пирсон, Спирмен, Кендалл $\\tau_b$), непараметрические критерии (Манн-Уитни $U$, Краскел-Уоллис $H$, знаковые ранги Вилкоксона и критерий знаков), множественная линейная регрессия (OLS/WLS с оценками мультиколлинеарности Tolerance и VIF), анализ надежности шкалы (альфа Кронбаха и статистики пунктов), факторный анализ и метод главных компонент (PCA с тестами KMO и Бартлетта).\n  * **Модуль вывода и интеграция с Excel:** аутентичные сводные таблицы SPSS (Pivot Tables) с копированием в TSV в один клик без поломки колонок в Excel, интерактивное дерево оглавления Outline и журнал синтаксиса.\n  * **Синтаксис SPSS и готовность к агентам:** исполнение синтаксиса `.sps`, сохранение и открытие скриптов на диске, кнопка `[ Paste ]` во всех диалогах, откат правок Undo/Redo (`Ctrl+Z`) и типизированные схемы параметров `specs()` для внешних скриптов и ИИ-ассистентов."
       },
-      "id": "blk_native_paragraph_1793974414004947800",
-      "managed_by": "project_parser",
-      "type": "paragraph"
-    },
-    {
-      "data": {
-        "text": "Для всех формул, расчетов степеней свободы, поправок на связки рангов и уровней значимости подтверждена **100% математическая эквивалентность** при соблюдении точности «Золотого оракула» ($\\le 10^{-6}$):\n1. **Описательные статистики, частоты, таблицы сопряженности и средние:** рекуррентные моменты Спайсера (1972), эксцесс Блисса, квартили HAVERAGE ($r = p(N+1)$), поправка Йейтса на непрерывность, критерий Пирсона $\\chi^2$, точный тест Фишера, ANOVA $\\eta^2$.\n2. **Сравнение средних и ANOVA:** центрированный по среднему критерий Левена, критерий Стьюдента, критерий Уэлча с раздельными дисперсиями и дробными степенями свободы Саттертуэйта, парный $t$-критерий, однофакторный дисперсионный анализ.\n3. **Корреляции и многомерные методы:** парный Пирсон, ранговый Спирмен, Кендалл $\\tau_b$ со всеми тремя поправками на связки ($v_0, v_1, v_2$), множественная регрессия OLS/WLS с диагностикой мультиколлинеарности (Tolerance, VIF), циклический метод Якоби для PCA, тест сферичности Бартлетта, индекс KMO, коэффициент надежности $\\alpha$ Кронбаха.\n4. **Непараметрические критерии:** Манн-Уитни $U$, Уилкоксон $W$, Краскел-Уоллис $H_{adj}$ с коэффициентом связок, знаково-ранговый критерий Уилкоксона со скорректированной дисперсией, точный биномиальный критерий знаков.\n5. **Трансформации данных и восполнение пропусков:** нормальные метки Блома, Тьюки, Ранкита, Ван дер Вардена через аппроксимацию Питера Дж. Акклама (погрешность $\\le 1.15 \\times 10^{-9}$), дискретизация MDLP по информационной энтропии Шеннона (Файяд и Ирани), методы восполнения пропусков (линейная интерполяция, среднее ряда, среднее/медиана окрестности, линейный тренд)."
-      },
-      "id": "blk_native_paragraph_1793974414004949500",
-      "managed_by": "project_parser",
-      "type": "paragraph"
-    },
-    {
-      "data": {
-        "text": "Полная двуязычная документация аудита доступна в репозитории:\n* Основной документ на английском языке: [`docs/SPSS_ALGORITHMS_AUDIT.md`](docs/SPSS_ALGORITHMS_AUDIT.md)\n* Русскоязычная версия: [`docs/SPSS_ALGORITHMS_AUDIT_RU.md`](docs/SPSS_ALGORITHMS_AUDIT_RU.md)"
-      },
-      "id": "blk_native_paragraph_1793974414004950400",
-      "managed_by": "project_parser",
-      "type": "paragraph"
-    },
-    {
-      "data": {
-        "level": 3,
-        "text": "⚙️ Финализация процедур преобразования данных (`Transform`)"
-      },
-      "id": "blk_native_heading_1793974414004950900",
-      "managed_by": "project_parser",
-      "type": "heading"
-    },
-    {
-      "data": {
-        "text": "* **Автоматическая подготовка данных (`adp`):** отбор предикторов, оптимальная дискретизация и разбиение на выборки с 4 аутентичными сводными таблицами вывода SPSS.\n* **Программируемые преобразования (`transform.programmability`):** транзакционный скриптовый движок пользовательских правил (`IF ... THEN ... ELSE`), генерация синтаксиса `BEGIN PROGRAM ... END PROGRAM.` и векторная проверка синтаксиса на лету.\n* Сняты все служебные бейджи `[dev]` в меню «Преобразование»; 100% процедур оснащены интерфейсами DialogKit и сводными таблицами Output Viewer."
-      },
-      "id": "blk_native_paragraph_1793974414004951800",
+      "id": "blk_native_paragraph_1793994630665236200",
       "managed_by": "project_parser",
       "type": "paragraph"
     },
@@ -243,7 +177,7 @@ Content-Disposition: inline; filename="canvas_state.json"
         "level": 3,
         "text": "📦 Дистрибутивы для всех операционных систем"
       },
-      "id": "blk_native_heading_1793974414004952300",
+      "id": "blk_native_heading_1793994630665237000",
       "managed_by": "project_parser",
       "type": "heading"
     },
@@ -251,18 +185,52 @@ Content-Disposition: inline; filename="canvas_state.json"
       "data": {
         "text": "* **Windows (x64):** Инсталлятор Inno Setup (`.exe`) + Портативный ZIP-архив.\n* **Linux (x64):** Пакет Debian (`.deb`) + Портативный архив TAR.GZ.\n* **macOS (Apple Silicon ARM64 и Intel x64):** Образ диска DMG + Приложение (`.app`) в архиве TAR.GZ."
       },
-      "id": "blk_native_paragraph_1793974414004953200",
+      "id": "blk_native_paragraph_1793994630665238200",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    },
+    {
+      "data": {
+        "text": "---"
+      },
+      "id": "blk_native_paragraph_1793994630665238900",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    },
+    {
+      "data": {
+        "level": 2,
+        "text": "Предыдущие релизы / Previous Releases"
+      },
+      "id": "blk_native_heading_1793994630665239400",
+      "managed_by": "project_parser",
+      "type": "heading"
+    },
+    {
+      "data": {
+        "level": 3,
+        "text": "StatCraft v0.2.1"
+      },
+      "id": "blk_native_heading_1793994630665240100",
+      "managed_by": "project_parser",
+      "type": "heading"
+    },
+    {
+      "data": {
+        "text": "* Доказательный Clean-Room математический аудит вычислительного ядра против *IBM SPSS Statistics 24 Algorithms Guide* (1271 стр.) с точностью «Золотого оракула» ($\\le 10^{-6}$).\n* Финализация блоков `adp` (Automated Data Preparation) и `transform.programmability`."
+      },
+      "id": "blk_native_paragraph_1793994630665240900",
       "managed_by": "project_parser",
       "type": "paragraph"
     }
   ]
 }
 
---BOUNDARY_PAYLOAD_1T3QW00E0J
+--BOUNDARY_PAYLOAD_14KDEW7E0I
 Content-Type: text/html; charset="utf-8"
 Content-Disposition: inline
 
-<!doctype html><html><head><meta charset="utf-8"><meta name="generator" content="CapsuleCraft Native"></head><body style="font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;max-width:720px;margin:32px auto;line-height:1.55;color:#23201c;background:#faf8f4;"><h1>📚 StatCraft / StatCraft v0.2.1</h1><p><em>[callout block — open in CapsuleCraft web for its canvas]</em></p><h1>StatCraft v0.2.1</h1><p>[English](#english) | [Русский](#русский)</p><p>---</p><p>&lt;a name=&quot;english&quot;&gt;&lt;/a&gt;</p><h2>English</h2><p>StatCraft v0.2.1 delivers an evidence-backed Clean-Room mathematical audit of our statistical calculation engine against the canonical *IBM SPSS Statistics 24 Algorithms Guide*, alongside complete production activation of the **Transform** procedure suite.</p><h3>🔬 Clean-Room Mathematical Audit (Craft Anything)</h3><p>All statistical algorithms implemented in `statcraft_algo` have undergone a page-by-page verification against the official *IBM SPSS Statistics 24 Algorithms Guide* (1,271 pp., IBM Corporation) using the open-source **[Craft Anything (`storytold/craft-anything`)](https://github.com/storytold/craft-anything)** verification engine operating in `clean-room: true` mode.</p><p>Every mathematical formula, degrees-of-freedom rule, tie-correction variance, and significance level generator was confirmed to achieve **100% mathematical equivalence** under our Golden Oracle precision threshold ($\le 10^{-6}$):<br>1. **Descriptives, Frequencies, Crosstabs &amp; Means:** Spicer (1972) provisional moments, Bliss sample excess kurtosis, HAVERAGE quartiles ($r = p(N+1)$), Yates continuity correction, Pearson $\chi^2$, Fisher&#39;s exact test, and ANOVA $\eta^2$.<br>2. **Mean Comparisons &amp; ANOVA:** Mean-centered Levene test of variance equality, Student&#39;s pooled $t$-test, Welch&#39;s separate variance $t$-test with Satterthwaite fractional $df$, paired-samples $t$-test, and One-Way ANOVA.<br>3. **Correlations &amp; Multivariates:** Bivariate Pearson $r$, Spearman $\rho$, Kendall $\tau_b$ with full tie corrections ($v_0, v_1, v_2$), OLS/WLS multiple regression with Tolerance &amp; VIF diagnostics, cyclic Jacobi eigensolver for PCA, Bartlett&#39;s test of sphericity, Kaiser-Meyer-Olkin (KMO) measure, and Cronbach&#39;s $\alpha$.<br>4. **Nonparametric Tests:** Mann-Whitney $U$, Wilcoxon rank sum $W$, Kruskal-Wallis $H_{adj}$ with tie factor, Wilcoxon signed-rank test with tie-corrected variance, and exact binomial Sign test.<br>5. **Data Transformations &amp; Imputations:** Blom, Tukey, Rankit, and Van der Waerden normal scores via Peter J. Acklam&#39;s rational approximation ($\le 1.15 \times 10^{-9}$ error), MDLP entropy discretization (Fayyad &amp; Irani), and missing value imputation (linear interpolation, series mean, mean/median of nearby points, linear trend).</p><p>Comprehensive bilingual audit records are available in:<br>* Primary English Guide: [`docs/SPSS_ALGORITHMS_AUDIT.md`](docs/SPSS_ALGORITHMS_AUDIT.md)<br>* Russian Mirror: [`docs/SPSS_ALGORITHMS_AUDIT_RU.md`](docs/SPSS_ALGORITHMS_AUDIT_RU.md)</p><h3>⚙️ Transform Suite Finalization</h3><p>* **Automated Data Preparation (`adp`):** Supervised feature screening, optimal binning, and cross-validation partition breakdown with 4 authentic SPSS pivot tables.<br>* **Programmability Transformations (`transform.programmability`):** Transactional script engine for custom variable computations and conditional rules (`IF ... THEN ... ELSE`), syntax generator (`BEGIN PROGRAM ... END PROGRAM.`), and real-time vector syntax verification.<br>* All `[dev]` badges removed from the **Transform** menu; 100% of procedures now fully operational with DialogKit modal interfaces and Output Viewer pivot tables.</p><h3>📦 Multi-Platform Artifacts</h3><p>* **Windows (x64):** Inno Setup Installer (`.exe`) + Portable ZIP archive.<br>* **Linux (x64):** Debian package (`.deb`) + Portable TAR.GZ archive.<br>* **macOS (Apple Silicon ARM64 &amp; Intel x64):** Apple DMG Disk Image + Application Bundle (`.app`) TAR.GZ.</p><p>---</p><p>&lt;a name=&quot;русский&quot;&gt;&lt;/a&gt;</p><h2>Русский</h2><p>Релиз StatCraft v0.2.1 представляет результаты доказательного Clean-Room математического аудита вычислительного ядра на полное соответствие каноническому руководству *IBM SPSS Statistics 24 Algorithms Guide*, а также завершает ввод в эксплуатацию всех процедур раздела **«Преобразование»** (`Transform`).</p><h3>🔬 Инструментальный математический аудит Clean-Room (Craft Anything)</h3><p>Все статистические алгоритмы, реализованные в ядре `statcraft_algo`, прошли постраничную сверку с официальным математическим руководством *IBM SPSS Statistics 24 Algorithms Guide* (1271 стр., IBM Corporation) с помощью открытого движка **[Craft Anything (`storytold/craft-anything`)](https://github.com/storytold/craft-anything)** в режиме `clean-room: true`.</p><p>Для всех формул, расчетов степеней свободы, поправок на связки рангов и уровней значимости подтверждена **100% математическая эквивалентность** при соблюдении точности «Золотого оракула» ($\le 10^{-6}$):<br>1. **Описательные статистики, частоты, таблицы сопряженности и средние:** рекуррентные моменты Спайсера (1972), эксцесс Блисса, квартили HAVERAGE ($r = p(N+1)$), поправка Йейтса на непрерывность, критерий Пирсона $\chi^2$, точный тест Фишера, ANOVA $\eta^2$.<br>2. **Сравнение средних и ANOVA:** центрированный по среднему критерий Левена, критерий Стьюдента, критерий Уэлча с раздельными дисперсиями и дробными степенями свободы Саттертуэйта, парный $t$-критерий, однофакторный дисперсионный анализ.<br>3. **Корреляции и многомерные методы:** парный Пирсон, ранговый Спирмен, Кендалл $\tau_b$ со всеми тремя поправками на связки ($v_0, v_1, v_2$), множественная регрессия OLS/WLS с диагностикой мультиколлинеарности (Tolerance, VIF), циклический метод Якоби для PCA, тест сферичности Бартлетта, индекс KMO, коэффициент надежности $\alpha$ Кронбаха.<br>4. **Непараметрические критерии:** Манн-Уитни $U$, Уилкоксон $W$, Краскел-Уоллис $H_{adj}$ с коэффициентом связок, знаково-ранговый критерий Уилкоксона со скорректированной дисперсией, точный биномиальный критерий знаков.<br>5. **Трансформации данных и восполнение пропусков:** нормальные метки Блома, Тьюки, Ранкита, Ван дер Вардена через аппроксимацию Питера Дж. Акклама (погрешность $\le 1.15 \times 10^{-9}$), дискретизация MDLP по информационной энтропии Шеннона (Файяд и Ирани), методы восполнения пропусков (линейная интерполяция, среднее ряда, среднее/медиана окрестности, линейный тренд).</p><p>Полная двуязычная документация аудита доступна в репозитории:<br>* Основной документ на английском языке: [`docs/SPSS_ALGORITHMS_AUDIT.md`](docs/SPSS_ALGORITHMS_AUDIT.md)<br>* Русскоязычная версия: [`docs/SPSS_ALGORITHMS_AUDIT_RU.md`](docs/SPSS_ALGORITHMS_AUDIT_RU.md)</p><h3>⚙️ Финализация процедур преобразования данных (`Transform`)</h3><p>* **Автоматическая подготовка данных (`adp`):** отбор предикторов, оптимальная дискретизация и разбиение на выборки с 4 аутентичными сводными таблицами вывода SPSS.<br>* **Программируемые преобразования (`transform.programmability`):** транзакционный скриптовый движок пользовательских правил (`IF ... THEN ... ELSE`), генерация синтаксиса `BEGIN PROGRAM ... END PROGRAM.` и векторная проверка синтаксиса на лету.<br>* Сняты все служебные бейджи `[dev]` в меню «Преобразование»; 100% процедур оснащены интерфейсами DialogKit и сводными таблицами Output Viewer.</p><h3>📦 Дистрибутивы для всех операционных систем</h3><p>* **Windows (x64):** Инсталлятор Inno Setup (`.exe`) + Портативный ZIP-архив.<br>* **Linux (x64):** Пакет Debian (`.deb`) + Портативный архив TAR.GZ.<br>* **macOS (Apple Silicon ARM64 и Intel x64):** Образ диска DMG + Приложение (`.app`) в архиве TAR.GZ.</p><hr><p style="color:#8a8175;font-size:12px">Exported from CapsuleCraft Native · &lt;doc-statcraft-release_notes_md@capsuleos.local&gt;</p></body></html>
+<!doctype html><html><head><meta charset="utf-8"><meta name="generator" content="CapsuleCraft Native"></head><body style="font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;max-width:720px;margin:32px auto;line-height:1.55;color:#23201c;background:#faf8f4;"><h1>📚 StatCraft / StatCraft v0.2.2</h1><p><em>[callout block — open in CapsuleCraft web for its canvas]</em></p><h1>StatCraft v0.2.2</h1><p>[English](#english) | [Русский](#русский)</p><p>---</p><p>&lt;a name=&quot;english&quot;&gt;&lt;/a&gt;</p><h2>English</h2><p>StatCraft v0.2.2 publishes the comprehensive, exhaustive bilingual feature catalog documentation ([`docs/FEATURES.md`](docs/FEATURES.md) and [`docs/FEATURES_RU.md`](docs/FEATURES_RU.md)) covering all analytical, data manipulation, and transformation procedures implemented across the entire application, alongside version synchronization and automated release packaging.</p><h3>📖 Comprehensive Feature Guide (`FEATURES.md` &amp; `FEATURES_RU.md`)</h3><p>* Published detailed, end-to-end documentation of every feature available in StatCraft v0.2.2:<br>  * **Dual-View Data Management:** Streaming CSV/TSV reader, Microsoft Excel reader (Calamine), Data View virtualized tabular grid with inline editing, row strike-through for filtered cases, and Variable View supporting all 9 canonical SPSS types, value labels, and missing value ranges.<br>  * **Data Manipulation Suite (Data Menu):** Multi-column stable case sorting (`Sort Cases`), conditional case filtering (`Select Cases`), subgroup stratification (`Split File`), and frequency/sampling case weighting (`Weight Cases`).<br>  * **Complete Transformation Suite (Transform Menu):** Variable computation (`Compute Variable` via RPN parser), in-place and target recoding (`Recode`), automatic integer recoding (`Automatic Recode`), lead/lag shifts (`Shift Values`), case value counting (`Count Values`), dummy variable generation (`Create Dummy Variables`), missing value imputation (`Replace Missing Values`), time series filters (`Create Time Series`), visual &amp; optimal binning (`Visual Binning` &amp; `Optimal Binning`), rank cases (`Rank Cases` with tie adjustments and normal scores), date/time wizard (`Date and Time Wizard`), automated data preparation (`ADP`), and programmability scripts (`Programmability Transformations`).<br>  * **Statistical Calculation Suite (Analyze Menu):** Descriptives, Frequencies, Crosstabs (with $\chi^2$, Fisher&#39;s exact, Likelihood Ratio, and Cramér&#39;s $V$), Means breakdown with ANOVA and $\eta^2$, One-Sample $t$-test, Independent-Samples $t$-test (with Levene&#39;s test and Welch&#39;s $t$), Paired-Samples $t$-test, One-Way ANOVA, Bivariate Correlations (Pearson $r$, Spearman $\rho$, Kendall $\tau_b$), Nonparametric tests (Mann-Whitney $U$, Kruskal-Wallis $H$, Wilcoxon Signed-Rank, and Sign test), Multiple Linear Regression (OLS/WLS with Collinearity Tolerance &amp; VIF), Scale Reliability Analysis (Cronbach&#39;s $\alpha$ and Item-Total statistics), and Factor Analysis / PCA (with KMO, Bartlett&#39;s test, and Component Matrix).<br>  * **Output Viewer &amp; Export:** Authentic multi-tier SPSS Pivot Tables with one-click TSV clipboard export for Excel, collapsible Outline navigation tree, and command syntax execution logging.<br>  * **SPSS Command Syntax &amp; Agent Readiness:** Batch `.sps` syntax execution, script file loading/saving, non-destructive Undo/Redo (`Ctrl+Z` / `Ctrl+Y`), and typed parameter schemas `specs()` for AI agents.</p><h3>📦 Multi-Platform Artifacts</h3><p>* **Windows (x64):** Inno Setup Installer (`.exe`) + Portable ZIP archive.<br>* **Linux (x64):** Debian package (`.deb`) + Portable TAR.GZ archive.<br>* **macOS (Apple Silicon ARM64 &amp; Intel x64):** Apple DMG Disk Image + Application Bundle (`.app`) TAR.GZ.</p><p>---</p><p>&lt;a name=&quot;русский&quot;&gt;&lt;/a&gt;</p><h2>Русский</h2><p>Релиз StatCraft v0.2.2 публикует исчерпывающее двуязычное руководство по всем возможностям статистического пакета ([`docs/FEATURES_RU.md`](docs/FEATURES_RU.md) и [`docs/FEATURES.md`](docs/FEATURES.md)), охватывающее все аналитические процедуры, алгоритмы манипуляций и трансформаций данных, реализованные в системе, а также синхронизирует версии сборки и релизные пакеты.</p><h3>📖 Полный справочник возможностей (`FEATURES_RU.md` и `FEATURES.md`)</h3><p>* Опубликовано детальное сквозное описание всех функциональных модулей StatCraft v0.2.2:<br>  * **Двухрежимное управление данными:** потоковый загрузчик CSV/TSV, импорт Excel (Calamine), виртуализированный грид Data View с инлайн-редактированием ячеек, перечеркиванием отфильтрованных строк, и Variable View с поддержкой всех 9 типов переменных SPSS, меток значений и диапазонов пропусков.<br>  * **Модуль манипуляций с данными (меню Data):** многоуровневая сортировка (`Sort Cases`), выборка и фильтрация по условиям (`Select Cases`), расщепление файла на подгруппы (`Split File`) и взвешивание наблюдений (`Weight Cases`).<br>  * **Полный блок преобразований данных (меню Transform):** вычисление переменных (`Compute Variable` через Shunting-yard RPN), перекодирование в те же и другие переменные (`Recode`), автоматическое перекодирование (`Automatic Recode`), сдвиг значений (`Shift Values`), подсчет значений в наблюдениях (`Count Values`), дамми-переменные (`Create Dummy Variables`), восполнение пропущенных значений (`Replace Missing Values`), временные ряды (`Create Time Series`), визуальная и оптимальная дискретизация (`Visual Binning` и `Optimal Binning`), ранжирование наблюдений (`Rank Cases`), мастер даты и времени (`Date and Time Wizard`), автоматическая подготовка данных (`ADP`) и скриптовые трансформации (`Programmability Transformations`).<br>  * **Блок статистических процедур (меню Analyze):** описательные статистики (`Descriptives`), частоты (`Frequencies`), таблицы сопряженности (`Crosstabs` с $\chi^2$, точным тестом Фишера, поправкой Йейтса и мерами $\phi$/$V$), сравнение средних (`Means Breakdown` с ANOVA и $\eta^2$), одновыборочный $t$-критерий, $t$-критерий для независимых выборок (с критерием Левена и Уэлча), парный $t$-критерий, однофакторный дисперсионный анализ (`One-Way ANOVA`), парные корреляции (Пирсон, Спирмен, Кендалл $\tau_b$), непараметрические критерии (Манн-Уитни $U$, Краскел-Уоллис $H$, знаковые ранги Вилкоксона и критерий знаков), множественная линейная регрессия (OLS/WLS с оценками мультиколлинеарности Tolerance и VIF), анализ надежности шкалы (альфа Кронбаха и статистики пунктов), факторный анализ и метод главных компонент (PCA с тестами KMO и Бартлетта).<br>  * **Модуль вывода и интеграция с Excel:** аутентичные сводные таблицы SPSS (Pivot Tables) с копированием в TSV в один клик без поломки колонок в Excel, интерактивное дерево оглавления Outline и журнал синтаксиса.<br>  * **Синтаксис SPSS и готовность к агентам:** исполнение синтаксиса `.sps`, сохранение и открытие скриптов на диске, кнопка `[ Paste ]` во всех диалогах, откат правок Undo/Redo (`Ctrl+Z`) и типизированные схемы параметров `specs()` для внешних скриптов и ИИ-ассистентов.</p><h3>📦 Дистрибутивы для всех операционных систем</h3><p>* **Windows (x64):** Инсталлятор Inno Setup (`.exe`) + Портативный ZIP-архив.<br>* **Linux (x64):** Пакет Debian (`.deb`) + Портативный архив TAR.GZ.<br>* **macOS (Apple Silicon ARM64 и Intel x64):** Образ диска DMG + Приложение (`.app`) в архиве TAR.GZ.</p><p>---</p><h2>Предыдущие релизы / Previous Releases</h2><h3>StatCraft v0.2.1</h3><p>* Доказательный Clean-Room математический аудит вычислительного ядра против *IBM SPSS Statistics 24 Algorithms Guide* (1271 стр.) с точностью «Золотого оракула» ($\le 10^{-6}$).<br>* Финализация блоков `adp` (Automated Data Preparation) и `transform.programmability`.</p><hr><p style="color:#8a8175;font-size:12px">Exported from CapsuleCraft Native · &lt;doc-statcraft-release_notes_md@capsuleos.local&gt;</p></body></html>
 
---BOUNDARY_PAYLOAD_1T3QW00E0J--
---BOUNDARY_ROOT_1OL0MEADYR--
+--BOUNDARY_PAYLOAD_14KDEW7E0I--
+--BOUNDARY_ROOT_12T6MMPDYQ--

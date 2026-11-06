@@ -1,4 +1,4 @@
-# StatCraft v0.2.1
+# StatCraft v0.2.2
 
 [English](#english) | [Русский](#русский)
 
@@ -7,26 +7,16 @@
 <a name="english"></a>
 ## English
 
-StatCraft v0.2.1 delivers an evidence-backed Clean-Room mathematical audit of our statistical calculation engine against the canonical *IBM SPSS Statistics 24 Algorithms Guide*, alongside complete production activation of the **Transform** procedure suite.
+StatCraft v0.2.2 publishes the comprehensive, exhaustive bilingual feature catalog documentation ([`docs/FEATURES.md`](docs/FEATURES.md) and [`docs/FEATURES_RU.md`](docs/FEATURES_RU.md)) covering all analytical, data manipulation, and transformation procedures implemented across the entire application, alongside version synchronization and automated release packaging.
 
-### 🔬 Clean-Room Mathematical Audit (Craft Anything)
-All statistical algorithms implemented in `statcraft_algo` have undergone a page-by-page verification against the official *IBM SPSS Statistics 24 Algorithms Guide* (1,271 pp., IBM Corporation) using the open-source **[Craft Anything (`storytold/craft-anything`)](https://github.com/storytold/craft-anything)** verification engine operating in `clean-room: true` mode.
-
-Every mathematical formula, degrees-of-freedom rule, tie-correction variance, and significance level generator was confirmed to achieve **100% mathematical equivalence** under our Golden Oracle precision threshold ($\le 10^{-6}$):
-1. **Descriptives, Frequencies, Crosstabs & Means:** Spicer (1972) provisional moments, Bliss sample excess kurtosis, HAVERAGE quartiles ($r = p(N+1)$), Yates continuity correction, Pearson $\chi^2$, Fisher's exact test, and ANOVA $\eta^2$.
-2. **Mean Comparisons & ANOVA:** Mean-centered Levene test of variance equality, Student's pooled $t$-test, Welch's separate variance $t$-test with Satterthwaite fractional $df$, paired-samples $t$-test, and One-Way ANOVA.
-3. **Correlations & Multivariates:** Bivariate Pearson $r$, Spearman $\rho$, Kendall $\tau_b$ with full tie corrections ($v_0, v_1, v_2$), OLS/WLS multiple regression with Tolerance & VIF diagnostics, cyclic Jacobi eigensolver for PCA, Bartlett's test of sphericity, Kaiser-Meyer-Olkin (KMO) measure, and Cronbach's $\alpha$.
-4. **Nonparametric Tests:** Mann-Whitney $U$, Wilcoxon rank sum $W$, Kruskal-Wallis $H_{adj}$ with tie factor, Wilcoxon signed-rank test with tie-corrected variance, and exact binomial Sign test.
-5. **Data Transformations & Imputations:** Blom, Tukey, Rankit, and Van der Waerden normal scores via Peter J. Acklam's rational approximation ($\le 1.15 \times 10^{-9}$ error), MDLP entropy discretization (Fayyad & Irani), and missing value imputation (linear interpolation, series mean, mean/median of nearby points, linear trend).
-
-Comprehensive bilingual audit records are available in:
-* Primary English Guide: [`docs/SPSS_ALGORITHMS_AUDIT.md`](docs/SPSS_ALGORITHMS_AUDIT.md)
-* Russian Mirror: [`docs/SPSS_ALGORITHMS_AUDIT_RU.md`](docs/SPSS_ALGORITHMS_AUDIT_RU.md)
-
-### ⚙️ Transform Suite Finalization
-* **Automated Data Preparation (`adp`):** Supervised feature screening, optimal binning, and cross-validation partition breakdown with 4 authentic SPSS pivot tables.
-* **Programmability Transformations (`transform.programmability`):** Transactional script engine for custom variable computations and conditional rules (`IF ... THEN ... ELSE`), syntax generator (`BEGIN PROGRAM ... END PROGRAM.`), and real-time vector syntax verification.
-* All `[dev]` badges removed from the **Transform** menu; 100% of procedures now fully operational with DialogKit modal interfaces and Output Viewer pivot tables.
+### 📖 Comprehensive Feature Guide (`FEATURES.md` & `FEATURES_RU.md`)
+* Published detailed, end-to-end documentation of every feature available in StatCraft v0.2.2:
+  * **Dual-View Data Management:** Streaming CSV/TSV reader, Microsoft Excel reader (Calamine), Data View virtualized tabular grid with inline editing, row strike-through for filtered cases, and Variable View supporting all 9 canonical SPSS types, value labels, and missing value ranges.
+  * **Data Manipulation Suite (Data Menu):** Multi-column stable case sorting (`Sort Cases`), conditional case filtering (`Select Cases`), subgroup stratification (`Split File`), and frequency/sampling case weighting (`Weight Cases`).
+  * **Complete Transformation Suite (Transform Menu):** Variable computation (`Compute Variable` via RPN parser), in-place and target recoding (`Recode`), automatic integer recoding (`Automatic Recode`), lead/lag shifts (`Shift Values`), case value counting (`Count Values`), dummy variable generation (`Create Dummy Variables`), missing value imputation (`Replace Missing Values`), time series filters (`Create Time Series`), visual & optimal binning (`Visual Binning` & `Optimal Binning`), rank cases (`Rank Cases` with tie adjustments and normal scores), date/time wizard (`Date and Time Wizard`), automated data preparation (`ADP`), and programmability scripts (`Programmability Transformations`).
+  * **Statistical Calculation Suite (Analyze Menu):** Descriptives, Frequencies, Crosstabs (with $\chi^2$, Fisher's exact, Likelihood Ratio, and Cramér's $V$), Means breakdown with ANOVA and $\eta^2$, One-Sample $t$-test, Independent-Samples $t$-test (with Levene's test and Welch's $t$), Paired-Samples $t$-test, One-Way ANOVA, Bivariate Correlations (Pearson $r$, Spearman $\rho$, Kendall $\tau_b$), Nonparametric tests (Mann-Whitney $U$, Kruskal-Wallis $H$, Wilcoxon Signed-Rank, and Sign test), Multiple Linear Regression (OLS/WLS with Collinearity Tolerance & VIF), Scale Reliability Analysis (Cronbach's $\alpha$ and Item-Total statistics), and Factor Analysis / PCA (with KMO, Bartlett's test, and Component Matrix).
+  * **Output Viewer & Export:** Authentic multi-tier SPSS Pivot Tables with one-click TSV clipboard export for Excel, collapsible Outline navigation tree, and command syntax execution logging.
+  * **SPSS Command Syntax & Agent Readiness:** Batch `.sps` syntax execution, script file loading/saving, non-destructive Undo/Redo (`Ctrl+Z` / `Ctrl+Y`), and typed parameter schemas `specs()` for AI agents.
 
 ### 📦 Multi-Platform Artifacts
 * **Windows (x64):** Inno Setup Installer (`.exe`) + Portable ZIP archive.
@@ -38,28 +28,26 @@ Comprehensive bilingual audit records are available in:
 <a name="русский"></a>
 ## Русский
 
-Релиз StatCraft v0.2.1 представляет результаты доказательного Clean-Room математического аудита вычислительного ядра на полное соответствие каноническому руководству *IBM SPSS Statistics 24 Algorithms Guide*, а также завершает ввод в эксплуатацию всех процедур раздела **«Преобразование»** (`Transform`).
+Релиз StatCraft v0.2.2 публикует исчерпывающее двуязычное руководство по всем возможностям статистического пакета ([`docs/FEATURES_RU.md`](docs/FEATURES_RU.md) и [`docs/FEATURES.md`](docs/FEATURES.md)), охватывающее все аналитические процедуры, алгоритмы манипуляций и трансформаций данных, реализованные в системе, а также синхронизирует версии сборки и релизные пакеты.
 
-### 🔬 Инструментальный математический аудит Clean-Room (Craft Anything)
-Все статистические алгоритмы, реализованные в ядре `statcraft_algo`, прошли постраничную сверку с официальным математическим руководством *IBM SPSS Statistics 24 Algorithms Guide* (1271 стр., IBM Corporation) с помощью открытого движка **[Craft Anything (`storytold/craft-anything`)](https://github.com/storytold/craft-anything)** в режиме `clean-room: true`.
-
-Для всех формул, расчетов степеней свободы, поправок на связки рангов и уровней значимости подтверждена **100% математическая эквивалентность** при соблюдении точности «Золотого оракула» ($\le 10^{-6}$):
-1. **Описательные статистики, частоты, таблицы сопряженности и средние:** рекуррентные моменты Спайсера (1972), эксцесс Блисса, квартили HAVERAGE ($r = p(N+1)$), поправка Йейтса на непрерывность, критерий Пирсона $\chi^2$, точный тест Фишера, ANOVA $\eta^2$.
-2. **Сравнение средних и ANOVA:** центрированный по среднему критерий Левена, критерий Стьюдента, критерий Уэлча с раздельными дисперсиями и дробными степенями свободы Саттертуэйта, парный $t$-критерий, однофакторный дисперсионный анализ.
-3. **Корреляции и многомерные методы:** парный Пирсон, ранговый Спирмен, Кендалл $\tau_b$ со всеми тремя поправками на связки ($v_0, v_1, v_2$), множественная регрессия OLS/WLS с диагностикой мультиколлинеарности (Tolerance, VIF), циклический метод Якоби для PCA, тест сферичности Бартлетта, индекс KMO, коэффициент надежности $\alpha$ Кронбаха.
-4. **Непараметрические критерии:** Манн-Уитни $U$, Уилкоксон $W$, Краскел-Уоллис $H_{adj}$ с коэффициентом связок, знаково-ранговый критерий Уилкоксона со скорректированной дисперсией, точный биномиальный критерий знаков.
-5. **Трансформации данных и восполнение пропусков:** нормальные метки Блома, Тьюки, Ранкита, Ван дер Вардена через аппроксимацию Питера Дж. Акклама (погрешность $\le 1.15 \times 10^{-9}$), дискретизация MDLP по информационной энтропии Шеннона (Файяд и Ирани), методы восполнения пропусков (линейная интерполяция, среднее ряда, среднее/медиана окрестности, линейный тренд).
-
-Полная двуязычная документация аудита доступна в репозитории:
-* Основной документ на английском языке: [`docs/SPSS_ALGORITHMS_AUDIT.md`](docs/SPSS_ALGORITHMS_AUDIT.md)
-* Русскоязычная версия: [`docs/SPSS_ALGORITHMS_AUDIT_RU.md`](docs/SPSS_ALGORITHMS_AUDIT_RU.md)
-
-### ⚙️ Финализация процедур преобразования данных (`Transform`)
-* **Автоматическая подготовка данных (`adp`):** отбор предикторов, оптимальная дискретизация и разбиение на выборки с 4 аутентичными сводными таблицами вывода SPSS.
-* **Программируемые преобразования (`transform.programmability`):** транзакционный скриптовый движок пользовательских правил (`IF ... THEN ... ELSE`), генерация синтаксиса `BEGIN PROGRAM ... END PROGRAM.` и векторная проверка синтаксиса на лету.
-* Сняты все служебные бейджи `[dev]` в меню «Преобразование»; 100% процедур оснащены интерфейсами DialogKit и сводными таблицами Output Viewer.
+### 📖 Полный справочник возможностей (`FEATURES_RU.md` и `FEATURES.md`)
+* Опубликовано детальное сквозное описание всех функциональных модулей StatCraft v0.2.2:
+  * **Двухрежимное управление данными:** потоковый загрузчик CSV/TSV, импорт Excel (Calamine), виртуализированный грид Data View с инлайн-редактированием ячеек, перечеркиванием отфильтрованных строк, и Variable View с поддержкой всех 9 типов переменных SPSS, меток значений и диапазонов пропусков.
+  * **Модуль манипуляций с данными (меню Data):** многоуровневая сортировка (`Sort Cases`), выборка и фильтрация по условиям (`Select Cases`), расщепление файла на подгруппы (`Split File`) и взвешивание наблюдений (`Weight Cases`).
+  * **Полный блок преобразований данных (меню Transform):** вычисление переменных (`Compute Variable` через Shunting-yard RPN), перекодирование в те же и другие переменные (`Recode`), автоматическое перекодирование (`Automatic Recode`), сдвиг значений (`Shift Values`), подсчет значений в наблюдениях (`Count Values`), дамми-переменные (`Create Dummy Variables`), восполнение пропущенных значений (`Replace Missing Values`), временные ряды (`Create Time Series`), визуальная и оптимальная дискретизация (`Visual Binning` и `Optimal Binning`), ранжирование наблюдений (`Rank Cases`), мастер даты и времени (`Date and Time Wizard`), автоматическая подготовка данных (`ADP`) и скриптовые трансформации (`Programmability Transformations`).
+  * **Блок статистических процедур (меню Analyze):** описательные статистики (`Descriptives`), частоты (`Frequencies`), таблицы сопряженности (`Crosstabs` с $\chi^2$, точным тестом Фишера, поправкой Йейтса и мерами $\phi$/$V$), сравнение средних (`Means Breakdown` с ANOVA и $\eta^2$), одновыборочный $t$-критерий, $t$-критерий для независимых выборок (с критерием Левена и Уэлча), парный $t$-критерий, однофакторный дисперсионный анализ (`One-Way ANOVA`), парные корреляции (Пирсон, Спирмен, Кендалл $\tau_b$), непараметрические критерии (Манн-Уитни $U$, Краскел-Уоллис $H$, знаковые ранги Вилкоксона и критерий знаков), множественная линейная регрессия (OLS/WLS с оценками мультиколлинеарности Tolerance и VIF), анализ надежности шкалы (альфа Кронбаха и статистики пунктов), факторный анализ и метод главных компонент (PCA с тестами KMO и Бартлетта).
+  * **Модуль вывода и интеграция с Excel:** аутентичные сводные таблицы SPSS (Pivot Tables) с копированием в TSV в один клик без поломки колонок в Excel, интерактивное дерево оглавления Outline и журнал синтаксиса.
+  * **Синтаксис SPSS и готовность к агентам:** исполнение синтаксиса `.sps`, сохранение и открытие скриптов на диске, кнопка `[ Paste ]` во всех диалогах, откат правок Undo/Redo (`Ctrl+Z`) и типизированные схемы параметров `specs()` для внешних скриптов и ИИ-ассистентов.
 
 ### 📦 Дистрибутивы для всех операционных систем
 * **Windows (x64):** Инсталлятор Inno Setup (`.exe`) + Портативный ZIP-архив.
 * **Linux (x64):** Пакет Debian (`.deb`) + Портативный архив TAR.GZ.
 * **macOS (Apple Silicon ARM64 и Intel x64):** Образ диска DMG + Приложение (`.app`) в архиве TAR.GZ.
+
+---
+
+## Предыдущие релизы / Previous Releases
+
+### StatCraft v0.2.1
+* Доказательный Clean-Room математический аудит вычислительного ядра против *IBM SPSS Statistics 24 Algorithms Guide* (1271 стр.) с точностью «Золотого оракула» ($\le 10^{-6}$).
+* Финализация блоков `adp` (Automated Data Preparation) и `transform.programmability`.

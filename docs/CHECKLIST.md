@@ -544,3 +544,31 @@
 - [x] Документация: создание двуязычных отчетов `docs/CORPUS_AUDIT_REPORT.md` (EN) и `docs/CORPUS_AUDIT_REPORT_RU.md` (RU), регистрация дефектов `BUG-003` и `BUG-004` в `docs/BUGS_AND_ISSUES.md`
 - [x] 100% прохождение всех тестов Definition of Done (`cargo test --workspace -j 1`, `xtask file-guard`, `xtask layers`, `xtask design-guard`, `xtask parity`, `xtask test-corpus`, `clippy --workspace -j 1 -- -D warnings`)
 
+## 58. Пакетный синтаксический движок и аудит (Batch Syntax Engine & Parser Audit: Микропланы S-01 — S-05)
+- [x] L5 `statcraft_syntax` (S-01): `SyntaxLexer` — разбиение скриптов на команды по завершающим точкам `.`, исключение точек в числах (`3.14`, `0.95`) и путях в кавычках (`'path.sav'`), разбор комментариев `*` и `COMMENT`, экранированные кавычки `''` и `""`
+- [x] L5 `statcraft_syntax` (S-02): `SyntaxParser` — разбор подкоманд `/SUBCOMMAND` и позиционных параметров, токенизация параметров в скобках, разворачивание диапазонов `VAR1 TO VAR5` по порядку колонок `VariableDictionary` и ключевого слова `ALL`
+- [x] L5 `statcraft_syntax` (S-03): `SyntaxDispatcher` — модульные мапперы `mappers/stats.rs` и `mappers/data.rs` в вызовы `CommandBus::execute` с типизированными JSON-параметрами для 15+ канонических процедур SPSS (`DESCRIPTIVES`, `FREQUENCIES`, `CROSSTABS`, `T-TEST`, `ONEWAY`, `CORRELATIONS`, `REGRESSION`, `RELIABILITY`, `FACTOR`, `MEANS`, `SORT CASES`, `WEIGHT`, `FILTER`, `SPLIT FILE`, `COMPUTE`, `GET`, `SAVE`, `EXECUTE`)
+- [x] L6 `statcraft_app` (S-04): Пакетный раннер и GUI (`syntax_runner.rs`, `views/syntax_editor.rs`) — кнопки действий `[ Run All ]`, `[ Run Selection ]`, `[ Clear ]`, эхо команд в журнал `Output Viewer` с префиксом `> ` и автоматическое прикрепление сводных таблиц результатов
+- [x] Clean-room аудит (S-05): фикстуры `fixtures/syntax/`, 100% round-trip интеграционные тесты и стресс-тестирование фаззингом без паник (`Never Crash`), создание отчетов `docs/SPSS_SYNTAX_PARSER_AUDIT.md` (EN) и `docs/SPSS_SYNTAX_PARSER_AUDIT_RU.md` (RU)
+- [x] 100% прохождение всех проверок Definition of Done (`cargo test --workspace -j 1`, `xtask file-guard`, `xtask layers`, `xtask design-guard`, `xtask parity`, `clippy --workspace -j 1 -- -D warnings`)
+
+## 59. Открытие и сохранение файлов синтаксиса SPSS (`.sps`) (Syntax File I/O)
+- [x] L6 `statcraft_app::views::syntax_editor`: поле `current_file_path: Option<PathBuf>`, расширение `SyntaxEditorAction` вариантами `Open` и `Save`, кнопки тулбара `[ Открыть .sps ]` (`syntax-open`) и `[ Сохранить .sps ]` (`syntax-save`) с отображением имени текущего файла
+- [x] L6 `statcraft_app::app_session`: безопасные диалоги файлового ввода-вывода `open_syntax_dialog`, `save_syntax`, `save_syntax_as`, `write_syntax_to_path` через `rfd::FileDialog`, поддержка расширения `.sps` в `load_file_from_path` с интеграцией в `RecentFiles` и автоматическим переключением на вкладку `SyntaxEditor`
+- [x] L6 Меню `Файл`: добавление канонических пунктов `menu-file-open-syntax` («Открыть синтаксис...») и `menu-file-save-syntax-as` («Сохранить синтаксис как...»)
+- [x] L6 Статусная строка: варианты `StatusMessage::SyntaxOpened` и `StatusMessage::SyntaxSaved` с зеленой индикацией `Tokens::MEASURE_NOMINAL`
+- [x] Локализация: двуязычные ключи в `locales/en.ftl` и `locales/ru.ftl` (`syntax-open`, `syntax-save`, `menu-file-open-syntax`, `menu-file-save-syntax-as`, `dialog-open-syntax-title`, `dialog-save-syntax-title`, `dialog-filter-sps`, `status-syntax-opened`, `status-syntax-saved`)
+- [x] Тесты жизненного цикла: интеграционный тест `test_syntax_save_and_load_lifecycle` в `session_lifecycle_tests.rs` и тесты состояния `syntax_editor.rs`
+- [x] 100% прохождение всех проверок Definition of Done (`cargo test --workspace -j 1`, `xtask file-guard`, `xtask layers`, `xtask design-guard`, `xtask parity`, `clippy --workspace -j 1 -- -D warnings`)
+
+## 60. Релиз v0.2.2: Полный каталог функциональных возможностей и синхронизация релизных манифестов
+- [x] Документация: создание исчерпывающего двуязычного справочника всех возможностей программы `docs/FEATURES_RU.md` (RU) и `docs/FEATURES.md` (EN) с подробным описанием всех 12 меню, редакторов, алгоритмов и аналитических процедур
+- [x] Документация: внедрение заметных блоков со ссылками на справочники возможностей в разделах «Key Features» / «Основной функционал» и «Documentation» / «Документация» файлов `README.md` и `README.ru.md`
+- [x] Релизные заметки: актуализация двуязычного файла `RELEASE_NOTES.md` под версию v0.2.2 для автоматической публикации релиза через GitHub Actions
+- [x] Синхронизация версий (Packaging): синхронизация версии `0.2.2` байт-в-байт в 4 файлах манифестов (`Cargo.toml`, `packaging/windows/installer.iss`, `packaging/macos/Info.plist`, `packaging/linux/control`) и обновление `Cargo.lock`
+- [x] Хроника разработки: синхронное добавление записи о релизе v0.2.2 в `docs/CHRONICLE.md` и `docs/CHRONICLE.en.md`
+- [x] 100% прохождение всех проверок Definition of Done (`cargo test --workspace -j 1`, `xtask file-guard`, `xtask layers`, `xtask design-guard`, `xtask parity`, `clippy --workspace -j 1 -- -D warnings`)
+
+
+
+

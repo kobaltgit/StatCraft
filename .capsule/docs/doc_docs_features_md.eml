@@ -1,0 +1,479 @@
+From: CapsuleCraft Code Ingest <system@capsulecraft.local>
+To: Vault <vault@capsuleos.local>
+Subject: 📚 StatCraft / StatCraft Feature Guide (v0.2.2)
+Date: Fri, 6 Nov 2026 19:50:30 +0000
+Message-ID: <doc-statcraft-docs_features_md@capsuleos.local>
+In-Reply-To: <project-index-statcraft@capsuleos.local>
+X-Capsule-Page-Parent: <project-index-statcraft@capsuleos.local>
+References: <project-index-statcraft@capsuleos.local>
+X-Capsule-Tags: project, statcraft, docs
+X-Capsule-Status: Active
+MIME-Version: 1.0
+Content-Type: multipart/mixed; boundary="BOUNDARY_ROOT_1L07J2UE1K"
+
+--BOUNDARY_ROOT_1L07J2UE1K
+Content-Type: multipart/alternative; boundary="BOUNDARY_PAYLOAD_YJP110E3MT"
+
+--BOUNDARY_PAYLOAD_YJP110E3MT
+Content-Type: application/json; name="canvas_state.json"
+Content-Disposition: inline; filename="canvas_state.json"
+
+{
+  "version": "1.0",
+  "generator": "CapsuleCraft Native egui prototype (Zero-DB Pure-MIME)",
+  "messageId": "<doc-statcraft-docs_features_md@capsuleos.local>",
+  "subject": "📚 StatCraft / StatCraft Feature Guide (v0.2.2)",
+  "tags": [
+    "project",
+    "statcraft",
+    "docs"
+  ],
+  "blocks": [
+    {
+      "data": {
+        "icon": "book",
+        "text": "Documentation file: `docs/FEATURES.md`\nBelongs to project: [[📦 StatCraft (Overview) | 📦 StatCraft (Overview)]]"
+      },
+      "id": "blk_native_callout_1793994630661171700",
+      "managed_by": "project_parser",
+      "type": "callout"
+    },
+    {
+      "data": {
+        "level": 1,
+        "text": "StatCraft Feature Guide (v0.2.2)"
+      },
+      "id": "blk_native_heading_1793994630661107400",
+      "managed_by": "project_parser",
+      "type": "heading"
+    },
+    {
+      "data": {
+        "text": "This document serves as an exhaustive reference of all implemented capabilities, analytical procedures, mathematical algorithms, and user interface features available in the **StatCraft** statistical package."
+      },
+      "id": "blk_native_paragraph_1793994630661110100",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    },
+    {
+      "data": {
+        "text": "---"
+      },
+      "id": "blk_native_paragraph_1793994630661111100",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    },
+    {
+      "data": {
+        "level": 2,
+        "text": "1. Dual-View Data Management & Tabular Editors"
+      },
+      "id": "blk_native_heading_1793994630661111600",
+      "managed_by": "project_parser",
+      "type": "heading"
+    },
+    {
+      "data": {
+        "text": "StatCraft provides a canonical SPSS-style workspace with instantaneous switching between the observational data grid (**Data View**) and the metadata dictionary (**Variable View**)."
+      },
+      "id": "blk_native_paragraph_1793994630661112600",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    },
+    {
+      "data": {
+        "level": 3,
+        "text": "1.1. Data Import & Creation"
+      },
+      "id": "blk_native_heading_1793994630661113300",
+      "managed_by": "project_parser",
+      "type": "heading"
+    },
+    {
+      "data": {
+        "text": "* **Streaming CSV / TSV Ingest:** High-performance streaming reader with automatic column type inference, configurable field delimiters (comma, semicolon, tab), and decimal point formatting.\n* **Microsoft Excel Import (`.xlsx`, `.xls`, `.ods`):** Direct workbook reader powered by the open-source Calamine engine, providing automated header sanitization to SPSS naming rules and column type inference.\n* **Blank Dataset Mode (`Blank Dataset`):** Instant instantiation of an empty observation matrix (40 cases by default) for manual tabular data entry without opening external files."
+      },
+      "id": "blk_native_paragraph_1793994630661114700",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    },
+    {
+      "data": {
+        "level": 3,
+        "text": "1.2. Data View"
+      },
+      "id": "blk_native_heading_1793994630661115400",
+      "managed_by": "project_parser",
+      "type": "heading"
+    },
+    {
+      "data": {
+        "text": "* **Virtualized Tabular Grid:** Fluid scrolling across tens of thousands of rows and hundreds of columns powered by `ScrollArea::show_rows`.\n* **In-Place Cell Editing:** Direct cell input with `Enter` (navigate down) and `Tab` (navigate right) keys, with automatic delimiter and currency normalization.\n* **Auto-Expanding Rows:** Automatic generation of new blank observations upon entering values into the bottom-most row.\n* **Insert & Delete Cases:** Row context menus and keyboard shortcuts for inserting (`Insert Case`) and deleting (`Delete Case`) observations.\n* **Value Labels Toggle (`1/A`):** Toolbar button for instant toggling between raw numeric codes and human-readable descriptive text labels across the entire grid.\n* **Filter Exclusion Masking:** Diagonal vector strike-through over row number headers for cases excluded by an active sample filter."
+      },
+      "id": "blk_native_paragraph_1793994630661116600",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    },
+    {
+      "data": {
+        "level": 3,
+        "text": "1.3. Variable View"
+      },
+      "id": "blk_native_heading_1793994630661117300",
+      "managed_by": "project_parser",
+      "type": "heading"
+    },
+    {
+      "data": {
+        "text": "Comprehensive variable metadata dictionary compliant with canonical IBM SPSS Statistics standards:\n* **Name (`Name`):** Strict identifier validation according to SPSS rules (letter start, prohibition of whitespace and special characters).\n* **Type (`Type`):** Full support for all 9 canonical variable types:\n  1. *Numeric* (Standard floating-point / integer numbers);\n  2. *Comma* (Numbers with comma-separated thousands and decimal period);\n  3. *Dot* (Numbers with dot-separated thousands and decimal comma);\n  4. *Scientific* (Exponential notation `1.23E+02`);\n  5. *Date* (Calendar dates formatted as `dd.mm.yyyy`, `yyyy-mm-dd`, etc.);\n  6. *Dollar* (Currency format with `\\$` prefix);\n  7. *Custom Currency* (Configurable user currency formats);\n  8. *String* (Arbitrary text character variables);\n  9. *Restricted Numeric* (Integer values with fixed leading zeros).\n* **Width & Decimals (`Width` & `Decimals`):** Dedicated vector spinners `▲ / ▼` for instant adjustment of column display width and decimal precision.\n* **Variable Label (`Label`):** Descriptive titles displayed in dialog pickers and analytical pivot table headers.\n* **Value Labels (`Values`):** Modal dialog mapping discrete numeric codes to descriptive category labels (e.g., `1 = \"Male\"`, `2 = \"Female\"`).\n* **Missing Values (`Missing`):** Configurable discrete user-missing values (up to 3 distinct codes) and continuous missing ranges (e.g., `90 through 99`).\n* **Alignment (`Align`):** Text and numeric cell alignment (*Left / Center / Right*).\n* **Measurement Scale (`Measure`):** Nominal (*Nominal*), Ordinal (*Ordinal*), and Scale (*Scale*) measurement classifications with authentic vector icons."
+      },
+      "id": "blk_native_paragraph_1793994630661119900",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    },
+    {
+      "data": {
+        "text": "---"
+      },
+      "id": "blk_native_paragraph_1793994630661120900",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    },
+    {
+      "data": {
+        "level": 2,
+        "text": "2. Dataset Management & Case Manipulations (Data Menu)"
+      },
+      "id": "blk_native_heading_1793994630661121400",
+      "managed_by": "project_parser",
+      "type": "heading"
+    },
+    {
+      "data": {
+        "text": "* **Sort Cases (`Sort Cases`):**\n  * Multi-column stable sorting across an unlimited number of sorting keys.\n  * Independent sorting direction per key: Ascending or Descending.\n  * Strict adherence to SPSS sorting standards: System-missing (`SYSMIS`, `NaN`) values sort first in ascending order and last in descending order.\n* **Select Cases (`Select Cases`):**\n  * Case filtering based on conditional expressions via an integrated modal condition calculator.\n  * Non-destructive filtering mode creating an active binary `filter_$` variable while preserving excluded cases.\n  * Permanent deletion mode for cases not satisfying the filtering condition.\n  * Status bar vector indicator: `Filter: ON (var)`.\n* **Split File (`Split File`):**\n  * Stratified analysis segmented across categorical subgroups (supporting multiple grouping variables).\n  * Modes: *Compare groups* (side-by-side grouped output tables) and *Organize output by groups* (separate sequential output blocks).\n  * Status bar vector indicator: `Split File: ON (var)`.\n* **Weight Cases (`Weight Cases`):**\n  * Frequency and sampling case weighting using values from a designated numeric variable.\n  * Automatic propagation of fractional and integer weights across all descriptive, frequency, and parametric procedures.\n  * Status bar vector indicator: `Weight: ON (var)`."
+      },
+      "id": "blk_native_paragraph_1793994630661123600",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    },
+    {
+      "data": {
+        "text": "---"
+      },
+      "id": "blk_native_paragraph_1793994630661124300",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    },
+    {
+      "data": {
+        "level": 2,
+        "text": "3. Data Transformations (Transform Menu)"
+      },
+      "id": "blk_native_heading_1793994630661124700",
+      "managed_by": "project_parser",
+      "type": "heading"
+    },
+    {
+      "data": {
+        "text": "All data transformations are powered by standardized `DialogKit` interfaces, syntax generators, and non-destructive Undo support (`Ctrl+Z`):"
+      },
+      "id": "blk_native_paragraph_1793994630661125500",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    },
+    {
+      "data": {
+        "text": "* **Compute Variable (`Compute Variable`):**\n  * Computation of new target variables or replacement of existing columns using mathematical expressions.\n  * Built-in Shunting-yard expression parser (Reverse Polish Notation / RPN).\n  * Support for addition, subtraction, multiplication, division, exponentiation (`**`, `^`), and unary operators.\n  * Standard function library: Arithmetic (`ABS`, `EXP`, `LN`, `LOG10`, `RND`, `SQRT`, `TRUNC`) and Statistical (`SUM`, `MEAN`, `MIN`, `MAX`).\n* **Recode into Same Variables (`Recode into Same Variables`):**\n  * In-place value reassignment for selected variables without creating new columns.\n* **Recode into Different Variables (`Recode into Different Variables`):**\n  * Generation of new transformed variables based on conditional recoding rules.\n  * *Old and New Values* subdialog: exact values, continuous ranges (*Range*), open-ended ranges (*Range Lowest through...* / *Range... through Highest*), system- and user-missing values, and fallback rules (*All other values*).\n* **Automatic Recode (`Automatic Recode`):**\n  * Conversion of string or non-contiguous numeric codes into consecutive integers $1, 2, \\dots, K$.\n  * Automatic generation of descriptive value labels preserving source categories.\n  * Direction selection: *Lowest value* or *Highest value*.\n* **Shift Values (`Shift Values`):**\n  * Creation of lagged (*Lag*) and lead (*Lead*) time series columns shifted by $K$ intervals.\n* **Count Values within Cases (`Count Values within Cases`):**\n  * Row-wise counting of occurrences matching specific values or ranges across a list of variables.\n* **Create Dummy Variables (`Create Dummy Variables` / One-Hot Encoding):**\n  * Binary (0/1) indicator generation for categorical scales.\n  * Configurable root names, prefixes, and reference category omission ($k-1$ indicators for linear models).\n* **Random Number Seed (`Set Random Number Seed`):**\n  * Thread-safe global pseudo-random number generator initialization for reproducible sampling and simulations.\n* **Replace Missing Values (`Replace Missing Values`):**\n  * Imputation algorithms: Series Mean, Mean of nearby points, Median of nearby points, Linear interpolation, and Linear trend at point.\n* **Create Time Series (`Create Time Series`):**\n  * First-order differences (`DIFF`), seasonal differences (`SDIFF`), simple moving averages (`SMA`), and cumulative sums (`CSUM`).\n* **Visual Binning (`Visual Binning`):**\n  * Continuous variable discretization: Equal Width intervals, Equal Percentiles (quantiles), and Standard Deviation cutpoints.\n  * Automatic generation of descriptive interval labels (e.g., `< 20`, `20 - 40`, `> 40`).\n* **Optimal Binning (`Optimal Binning`):**\n  * Supervised discretization of continuous predictors against a categorical target using the Fayyad & Irani MDLP entropy algorithm.\n* **Rank Cases (`Rank Cases`):**\n  * Rank assignment with tie handling: Mean (mid-ranks), Low, High, and Sequential.\n  * Rank types: Simple ranks, fractional ranks, percentages, Ntiles, and normal scores (Blom, Tukey, Rankit, Van der Waerden) with Acklam approximation ($\\le 1.15 \\times 10^{-9}$).\n* **Date and Time Wizard (`Date and Time Wizard`):**\n  * Date component extraction: Year, Month, Day, Hour, Minute, Second, Day of week, Quarter.\n  * Calculation of duration between two dates (`DATEDIFF`) in days, months, or years.\n  * Addition or subtraction of time intervals (`DATESUM`).\n* **Automated Data Preparation (`Automated Data Preparation / ADP`):**\n  * Comprehensive pipeline: predictor screening, outlier handling (winsorizing or set to sysmis), feature scaling (Z-score, Min-Max), sparse category merging, pairwise interactions, and validation partitioning.\n* **Programmability Transformations (`Programmability Transformations`):**\n  * Multi-line transformation script editor.\n  * Conditional `IF ... THEN ... ELSE` branching, vector assignments, and real-time syntax validation generating `BEGIN PROGRAM ... END PROGRAM.` blocks."
+      },
+      "id": "blk_native_paragraph_1793994630661136600",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    },
+    {
+      "data": {
+        "text": "---"
+      },
+      "id": "blk_native_paragraph_1793994630661138000",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    },
+    {
+      "data": {
+        "level": 2,
+        "text": "4. Statistical Procedures (Analyze Menu)"
+      },
+      "id": "blk_native_heading_1793994630661138500",
+      "managed_by": "project_parser",
+      "type": "heading"
+    },
+    {
+      "data": {
+        "text": "All statistical algorithms in StatCraft are implemented in **100% pure Safe Rust** and validated against Python `SciPy` and canonical *IBM SPSS Statistics 24 Algorithms Guide* standards to an absolute tolerance threshold of $\\le 10^{-6}$."
+      },
+      "id": "blk_native_paragraph_1793994630661139500",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    },
+    {
+      "data": {
+        "level": 3,
+        "text": "4.1. Descriptive Statistics & Cross-Tabulations"
+      },
+      "id": "blk_native_heading_1793994630661139900",
+      "managed_by": "project_parser",
+      "type": "heading"
+    },
+    {
+      "data": {
+        "text": "* **Descriptives (`Descriptives`):**\n  * Spicer (1972) recurrence moments: Valid $N$, Sum, Mean, Std. Error of Mean, Variance, Std. Deviation, Range, Minimum, Maximum, Skewness (with SE), and Bliss sample excess Kurtosis (with SE).\n* **Frequencies (`Frequencies`):**\n  * Authentic SPSS frequency tables: Counts, Percent, Valid Percent (excluding missings), Cumulative Percent.\n  * Quartiles ($Q_1, Q_2, Q_3$) and custom percentiles computed via the canonical HAVERAGE interpolation standard ($r = p(N+1)$).\n* **Crosstabs (`Crosstabs`):**\n  * Two-way $R \\times C$ contingency tables.\n  * Observed counts, expected counts, unstandardized residuals, row percentages, column percentages, and total percentages.\n  * Pearson Chi-Square ($\\chi^2$), Likelihood Ratio ($G^2$).\n  * Yates continuity correction and two-tailed Fisher's exact test for $2 \\times 2$ tables.\n  * Symmetric association measures: Phi ($\\phi$) and Cramér's $V$."
+      },
+      "id": "blk_native_paragraph_1793994630661141800",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    },
+    {
+      "data": {
+        "level": 3,
+        "text": "4.2. Mean Comparisons & Analysis of Variance (Compare Means)"
+      },
+      "id": "blk_native_heading_1793994630661142600",
+      "managed_by": "project_parser",
+      "type": "heading"
+    },
+    {
+      "data": {
+        "text": "* **Means Breakdown (`Means Breakdown`):**\n  * Subgroup descriptive breakdown (Mean, $N$, Variance, Median, Min, Max) across categorical factors.\n  * One-way ANOVA table (Between Groups, Within Groups, Total Sum of Squares, $df$, Mean Squares, $F$-statistic, significance).\n  * Association measures: $\\eta$ (Eta) and $\\eta^2$ (Eta Squared).\n* **One-Sample T-Test (`One-Sample T Test`):**\n  * Student's $t$-test comparing sample mean to a specified reference test value.\n  * Degrees of freedom, two-tailed $p$-value via regularized incomplete beta function, mean difference, and 95% (or custom) confidence interval of the difference.\n* **Independent-Samples T-Test (`Independent-Samples T Test`):**\n  * Two-group comparison with *Define Groups* subdialog.\n  * Automatic Levene's Test for Equality of Variances ($F$, Sig).\n  * Dual-row output table: Student's $t$-test (Equal variances assumed) and Welch's $t$-test (Equal variances not assumed with Satterthwaite fractional degrees of freedom).\n* **Paired-Samples T-Test (`Paired-Samples T Test`):**\n  * Comparison of matched pairs and repeated measures.\n  * Paired statistics, intra-pair Pearson correlation ($r$, Sig), and paired differences test ($t$, $df$, confidence interval).\n* **One-Way ANOVA (`One-Way ANOVA`):**\n  * Fisher's $F$-test comparing multiple treatment groups.\n  * Between-groups and within-groups sums of squares ($SS$) and mean squares ($MS$).\n  * Levene's Test of Homogeneity of Variances.\n  * Group descriptive statistics with 95% confidence intervals."
+      },
+      "id": "blk_native_paragraph_1793994630661144600",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    },
+    {
+      "data": {
+        "level": 3,
+        "text": "4.3. Bivariate Correlations (Correlate)"
+      },
+      "id": "blk_native_heading_1793994630661145400",
+      "managed_by": "project_parser",
+      "type": "heading"
+    },
+    {
+      "data": {
+        "text": "* **Bivariate Correlations (`Bivariate Correlations`):**\n  * Pearson linear correlation coefficient ($r$).\n  * Spearman rank-order correlation coefficient ($\\rho$).\n  * Kendall rank-order correlation coefficient ($\\tau_b$) with full tie adjustments ($v_0, v_1, v_2$).\n  * One-tailed and two-tailed significance levels.\n  * Automatic significance flagging (`*` for $p < 0.05$, `**` for $p < 0.01$).\n  * Cross-product deviations and covariances, pairwise and listwise missing exclusion modes."
+      },
+      "id": "blk_native_paragraph_1793994630661146600",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    },
+    {
+      "data": {
+        "level": 3,
+        "text": "4.4. Nonparametric Tests (Nonparametric Tests)"
+      },
+      "id": "blk_native_heading_1793994630661147200",
+      "managed_by": "project_parser",
+      "type": "heading"
+    },
+    {
+      "data": {
+        "text": "* **Two Independent Samples (`Two Independent Samples`):**\n  * Mann-Whitney $U$ test, Wilcoxon rank sum $W$.\n  * Pooled mid-ranking with tie adjustment $\\sum(t_i^3 - t_i)$.\n  * Calculation of expected values, adjusted variances, $Z$-score, and asymptotic two-tailed significance.\n* **K Independent Samples (`K Independent Samples`):**\n  * Kruskal-Wallis $H$ test with tie factor correction $H_{adj}$.\n  * Asymptotic significance computed from the $\\chi^2$ distribution with $df = k - 1$.\n* **Two Related Samples (`Two Related Samples`):**\n  * Wilcoxon Signed-Rank Test with tie-adjusted variance and continuity correction.\n  * Sign Test with exact two-tailed binomial significance via the beta distribution."
+      },
+      "id": "blk_native_paragraph_1793994630661148700",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    },
+    {
+      "data": {
+        "level": 3,
+        "text": "4.5. Linear Regression (Regression)"
+      },
+      "id": "blk_native_heading_1793994630661149400",
+      "managed_by": "project_parser",
+      "type": "heading"
+    },
+    {
+      "data": {
+        "text": "* **Multiple Linear Regression (`Linear Regression`):**\n  * Ordinary Least Squares (OLS) and Weighted Least Squares (WLS) solvers.\n  * *Model Summary* table: Multiple correlation $R$, $R^2$, Adjusted $R^2$, Std. Error of the Estimate.\n  * *ANOVA* table: Regression and residual sums of squares, mean squares, Fisher's $F$, significance.\n  * *Coefficients* table: Unstandardized coefficients $B$ and standard errors, standardized coefficients $\\beta$, $t$-statistics, significance levels, and 95% confidence intervals.\n  * Collinearity diagnostics: Tolerance and Variance Inflation Factor (VIF)."
+      },
+      "id": "blk_native_paragraph_1793994630661150800",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    },
+    {
+      "data": {
+        "level": 3,
+        "text": "4.6. Scale Reliability Analysis (Scale)"
+      },
+      "id": "blk_native_heading_1793994630661151500",
+      "managed_by": "project_parser",
+      "type": "heading"
+    },
+    {
+      "data": {
+        "text": "* **Reliability Analysis (`Reliability Analysis`):**\n  * Cronbach's Alpha ($\\alpha$) and standardized item alpha.\n  * *Item Statistics*: Mean, standard deviation, and valid $N$ per item.\n  * *Item-Total Statistics*: Scale mean if item deleted, scale variance if item deleted, corrected item-total correlation, Cronbach's alpha if item deleted.\n  * Overall summary *Scale Statistics*."
+      },
+      "id": "blk_native_paragraph_1793994630661152400",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    },
+    {
+      "data": {
+        "level": 3,
+        "text": "4.7. Dimension Reduction (Dimension Reduction)"
+      },
+      "id": "blk_native_heading_1793994630661153200",
+      "managed_by": "project_parser",
+      "type": "heading"
+    },
+    {
+      "data": {
+        "text": "* **Factor Analysis & Principal Component Analysis (`Factor Analysis / PCA`):**\n  * Principal Component Analysis via cyclical Jacobi eigensolver for symmetric correlation matrices.\n  * Kaiser-Meyer-Olkin (KMO) Measure of Sampling Adequacy.\n  * Bartlett's Test of Sphericity with exact $\\chi^2$ and significance.\n  * *Communalities* table: Initial and Extraction values.\n  * *Total Variance Explained* table: Eigenvalues, % of variance, and cumulative variance.\n  * Component Matrix showing unrotated factor loadings."
+      },
+      "id": "blk_native_paragraph_1793994630661154400",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    },
+    {
+      "data": {
+        "text": "---"
+      },
+      "id": "blk_native_paragraph_1793994630661155000",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    },
+    {
+      "data": {
+        "level": 2,
+        "text": "5. Output Management & Clipboard Integration (Output Viewer)"
+      },
+      "id": "blk_native_heading_1793994630661155400",
+      "managed_by": "project_parser",
+      "type": "heading"
+    },
+    {
+      "data": {
+        "text": "* **Interactive Outline Navigation:**\n  * Tree panel on the left reflecting document structure across procedures, syntax logs, and tables.\n  * Smooth scrolling and focus ring highlighting upon selecting any item in the tree.\n  * Synchronized two-way selection: clicking a table in the scroll canvas highlights its node in the outline.\n  * Outline toolstrip: collapse all, expand all, clear entire output, and delete selected nodes with the `Delete` key.\n* **Authentic Pivot Tables:**\n  * High-fidelity reproduction of IBM SPSS Statistics typography and layouts: nested multi-tier headers, alternating row striping, right-aligned numeric formatting, and criterion footnotes.\n* **One-Click Excel TSV Export:**\n  * Dedicated `[ Copy Table (TSV) ]` button in each table header.\n  * Structured Tab-Separated Values (TSV) format engineered for Microsoft Excel and Google Sheets: pastes cleanly with zero column shifting, date corruption, or text truncation.\n* **Syntax Execution Protocols (Log):**\n  * Automatic monospace log blocks documenting executed SPSS syntax (`GET DATA`, `DESCRIPTIVES`, `CROSSTABS`, `REGRESSION`, etc.) with timestamps."
+      },
+      "id": "blk_native_paragraph_1793994630661157200",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    },
+    {
+      "data": {
+        "text": "---"
+      },
+      "id": "blk_native_paragraph_1793994630661157800",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    },
+    {
+      "data": {
+        "level": 2,
+        "text": "6. SPSS Command Syntax (`.sps`) & Command Bus"
+      },
+      "id": "blk_native_heading_1793994630661158400",
+      "managed_by": "project_parser",
+      "type": "heading"
+    },
+    {
+      "data": {
+        "text": "* **Typed Command Bus (`CommandBus`):**\n  * Every user action is encapsulated as a typed `EngineCommand` providing parameter schemas for external agents (`specs()`).\n* **Canonical `[ Paste ]` Action:**\n  * Clicking `[ Paste ]` in any modal dialog translates configured parameters into valid SPSS command syntax and directs it into the Syntax Editor or Log.\n* **Syntax Editor:**\n  * Dedicated code editing tab with monospace styling, line execution, and batch processing.\n* **Non-Destructive History (`Undo / Redo`):**\n  * In-memory `DeltaBuffer` transaction engine enabling instant undo/redo of data edits and metadata modifications via `Ctrl+Z` / `Ctrl+Y`."
+      },
+      "id": "blk_native_paragraph_1793994630661159900",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    },
+    {
+      "data": {
+        "text": "---"
+      },
+      "id": "blk_native_paragraph_1793994630661160400",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    },
+    {
+      "data": {
+        "level": 2,
+        "text": "7. AI Readiness (Agent-Ready) & MCP Bridge Status"
+      },
+      "id": "blk_native_heading_1793994630661160800",
+      "managed_by": "project_parser",
+      "type": "heading"
+    },
+    {
+      "data": {
+        "text": "* **Parameter Schemas for Agents (`specs()`):**\n  * Every statistical and data engine procedure (`statcraft_syntax`) provides strongly-typed JSON parameter schemas via `specs()`, allowing external AI agents to validate arguments and construct pipelines headlessly.\n* **Batch Syntax Scripting:**\n  * AI assistants can assemble canonical SPSS command syntax (`.sps`) and run it through the engine command bus, yielding complete execution logs and authentic Output Viewer tables.\n* **Live Network Bridge Status (MCP & IPC Socket):**\n  * *In Development (`InDev` / Roadmap):* Direct runtime communication over a local IPC socket / embedded MCP server to control the running desktop GUI is currently in active development (the menu entry `Extensions -> MCP Bridge / Copilot` is flagged as `[dev]`). Live socket connectivity will arrive in subsequent roadmap phases."
+      },
+      "id": "blk_native_paragraph_1793994630661162200",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    },
+    {
+      "data": {
+        "text": "---"
+      },
+      "id": "blk_native_paragraph_1793994630661162900",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    },
+    {
+      "data": {
+        "level": 2,
+        "text": "8. Design System, Reliability, and Localization"
+      },
+      "id": "blk_native_heading_1793994630661163300",
+      "managed_by": "project_parser",
+      "type": "heading"
+    },
+    {
+      "data": {
+        "text": "* **Never-Crash Invariant (100% Safe Rust):**\n  * Complete absence of `unsafe`, `panic!`, `unwrap()`, and `expect()` in non-test code. Malformed data, singular matrices, or division by zero yield typed errors without terminating the application.\n* **Vector-First User Interface:**\n  * 100% vector rendering using `ui.painter()` and hardware-rasterized SVGs. Zero Unicode emojis or unsupported glyphs, completely eliminating \"tofu\" boxes (`□`) across all platforms.\n* **Zero-Hardcode Localization:**\n  * 100% of UI strings are externalized into Project Fluent catalogs (`locales/en.ftl`, `locales/ru.ftl`).\n  * On-the-fly language switching (English $\\leftrightarrow$ Russian) without application restart.\n* **Multi-Platform Support:**\n  * Single codebase with verified native binaries for Windows (x64), Linux (x64), and macOS (Apple Silicon ARM64 & Intel x64)."
+      },
+      "id": "blk_native_paragraph_1793994630661164800",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    },
+    {
+      "data": {
+        "text": "---"
+      },
+      "id": "blk_native_paragraph_1793994630661165700",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    },
+    {
+      "data": {
+        "level": 2,
+        "text": "9. Roadmap & Features in Development (InDev / Planned)"
+      },
+      "id": "blk_native_heading_1793994630661166400",
+      "managed_by": "project_parser",
+      "type": "heading"
+    },
+    {
+      "data": {
+        "text": "To guarantee complete technical honesty and transparency, the following modules and menu actions are currently under development in v0.2.2 (`MenuItemStatus::InDev`):"
+      },
+      "id": "blk_native_paragraph_1793994630661167100",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    },
+    {
+      "data": {
+        "text": "* **Vector Charting (`statcraft_charts`):**\n  * Interactive Chart Builder, histograms, scatter plots, line charts, boxplots, pie charts, and tabular brushing & linking.\n* **Runtime AI Network Bridge (`statcraft_bridge`):**\n  * Local IPC socket and native Model Context Protocol (MCP) server for live bidirectional communication with external LLMs and IDE assistants.\n* **Report Exporters:**\n  * Output Viewer export to PDF and LaTeX (v0.2.2 supports one-click TSV for Excel, HTML, and Plain Text).\n* **Advanced Statistical Procedures (Analyze):**\n  * General Linear Models (`GLM`: Univariate, Multivariate, Repeated Measures).\n  * Logistic Regression (Binary, Multinomial) and Curve Estimation.\n  * Cluster Analysis (*K-Means, Hierarchical Clustering*).\n  * Survival Analysis (*Life Tables, Kaplan-Meier, Cox Regression*).\n  * Exploratory Data Analysis (*Explore*) and Case Summaries / Codebook reports.\n* **Dataset Operations (Data):**\n  * File Merging (*Merge Files: Add Cases / Add Variables*).\n  * Data Restructuring (*Restructure*) and Aggregation (*Aggregate*).\n* **Clipboard & Search Tools (Edit):**\n  * Global cell Find & Replace, Go to Case / Variable navigation, application Preferences.\n* **Visual Theming (View):**\n  * Light / Dark / System theme toggles and display Zoom controls."
+      },
+      "id": "blk_native_paragraph_1793994630661169600",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    }
+  ]
+}
+
+--BOUNDARY_PAYLOAD_YJP110E3MT
+Content-Type: text/html; charset="utf-8"
+Content-Disposition: inline
+
+<!doctype html><html><head><meta charset="utf-8"><meta name="generator" content="CapsuleCraft Native"></head><body style="font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;max-width:720px;margin:32px auto;line-height:1.55;color:#23201c;background:#faf8f4;"><h1>📚 StatCraft / StatCraft Feature Guide (v0.2.2)</h1><p><em>[callout block — open in CapsuleCraft web for its canvas]</em></p><h1>StatCraft Feature Guide (v0.2.2)</h1><p>This document serves as an exhaustive reference of all implemented capabilities, analytical procedures, mathematical algorithms, and user interface features available in the **StatCraft** statistical package.</p><p>---</p><h2>1. Dual-View Data Management &amp; Tabular Editors</h2><p>StatCraft provides a canonical SPSS-style workspace with instantaneous switching between the observational data grid (**Data View**) and the metadata dictionary (**Variable View**).</p><h3>1.1. Data Import &amp; Creation</h3><p>* **Streaming CSV / TSV Ingest:** High-performance streaming reader with automatic column type inference, configurable field delimiters (comma, semicolon, tab), and decimal point formatting.<br>* **Microsoft Excel Import (`.xlsx`, `.xls`, `.ods`):** Direct workbook reader powered by the open-source Calamine engine, providing automated header sanitization to SPSS naming rules and column type inference.<br>* **Blank Dataset Mode (`Blank Dataset`):** Instant instantiation of an empty observation matrix (40 cases by default) for manual tabular data entry without opening external files.</p><h3>1.2. Data View</h3><p>* **Virtualized Tabular Grid:** Fluid scrolling across tens of thousands of rows and hundreds of columns powered by `ScrollArea::show_rows`.<br>* **In-Place Cell Editing:** Direct cell input with `Enter` (navigate down) and `Tab` (navigate right) keys, with automatic delimiter and currency normalization.<br>* **Auto-Expanding Rows:** Automatic generation of new blank observations upon entering values into the bottom-most row.<br>* **Insert &amp; Delete Cases:** Row context menus and keyboard shortcuts for inserting (`Insert Case`) and deleting (`Delete Case`) observations.<br>* **Value Labels Toggle (`1/A`):** Toolbar button for instant toggling between raw numeric codes and human-readable descriptive text labels across the entire grid.<br>* **Filter Exclusion Masking:** Diagonal vector strike-through over row number headers for cases excluded by an active sample filter.</p><h3>1.3. Variable View</h3><p>Comprehensive variable metadata dictionary compliant with canonical IBM SPSS Statistics standards:<br>* **Name (`Name`):** Strict identifier validation according to SPSS rules (letter start, prohibition of whitespace and special characters).<br>* **Type (`Type`):** Full support for all 9 canonical variable types:<br>  1. *Numeric* (Standard floating-point / integer numbers);<br>  2. *Comma* (Numbers with comma-separated thousands and decimal period);<br>  3. *Dot* (Numbers with dot-separated thousands and decimal comma);<br>  4. *Scientific* (Exponential notation `1.23E+02`);<br>  5. *Date* (Calendar dates formatted as `dd.mm.yyyy`, `yyyy-mm-dd`, etc.);<br>  6. *Dollar* (Currency format with `\$` prefix);<br>  7. *Custom Currency* (Configurable user currency formats);<br>  8. *String* (Arbitrary text character variables);<br>  9. *Restricted Numeric* (Integer values with fixed leading zeros).<br>* **Width &amp; Decimals (`Width` &amp; `Decimals`):** Dedicated vector spinners `▲ / ▼` for instant adjustment of column display width and decimal precision.<br>* **Variable Label (`Label`):** Descriptive titles displayed in dialog pickers and analytical pivot table headers.<br>* **Value Labels (`Values`):** Modal dialog mapping discrete numeric codes to descriptive category labels (e.g., `1 = &quot;Male&quot;`, `2 = &quot;Female&quot;`).<br>* **Missing Values (`Missing`):** Configurable discrete user-missing values (up to 3 distinct codes) and continuous missing ranges (e.g., `90 through 99`).<br>* **Alignment (`Align`):** Text and numeric cell alignment (*Left / Center / Right*).<br>* **Measurement Scale (`Measure`):** Nominal (*Nominal*), Ordinal (*Ordinal*), and Scale (*Scale*) measurement classifications with authentic vector icons.</p><p>---</p><h2>2. Dataset Management &amp; Case Manipulations (Data Menu)</h2><p>* **Sort Cases (`Sort Cases`):**<br>  * Multi-column stable sorting across an unlimited number of sorting keys.<br>  * Independent sorting direction per key: Ascending or Descending.<br>  * Strict adherence to SPSS sorting standards: System-missing (`SYSMIS`, `NaN`) values sort first in ascending order and last in descending order.<br>* **Select Cases (`Select Cases`):**<br>  * Case filtering based on conditional expressions via an integrated modal condition calculator.<br>  * Non-destructive filtering mode creating an active binary `filter_$` variable while preserving excluded cases.<br>  * Permanent deletion mode for cases not satisfying the filtering condition.<br>  * Status bar vector indicator: `Filter: ON (var)`.<br>* **Split File (`Split File`):**<br>  * Stratified analysis segmented across categorical subgroups (supporting multiple grouping variables).<br>  * Modes: *Compare groups* (side-by-side grouped output tables) and *Organize output by groups* (separate sequential output blocks).<br>  * Status bar vector indicator: `Split File: ON (var)`.<br>* **Weight Cases (`Weight Cases`):**<br>  * Frequency and sampling case weighting using values from a designated numeric variable.<br>  * Automatic propagation of fractional and integer weights across all descriptive, frequency, and parametric procedures.<br>  * Status bar vector indicator: `Weight: ON (var)`.</p><p>---</p><h2>3. Data Transformations (Transform Menu)</h2><p>All data transformations are powered by standardized `DialogKit` interfaces, syntax generators, and non-destructive Undo support (`Ctrl+Z`):</p><p>* **Compute Variable (`Compute Variable`):**<br>  * Computation of new target variables or replacement of existing columns using mathematical expressions.<br>  * Built-in Shunting-yard expression parser (Reverse Polish Notation / RPN).<br>  * Support for addition, subtraction, multiplication, division, exponentiation (`**`, `^`), and unary operators.<br>  * Standard function library: Arithmetic (`ABS`, `EXP`, `LN`, `LOG10`, `RND`, `SQRT`, `TRUNC`) and Statistical (`SUM`, `MEAN`, `MIN`, `MAX`).<br>* **Recode into Same Variables (`Recode into Same Variables`):**<br>  * In-place value reassignment for selected variables without creating new columns.<br>* **Recode into Different Variables (`Recode into Different Variables`):**<br>  * Generation of new transformed variables based on conditional recoding rules.<br>  * *Old and New Values* subdialog: exact values, continuous ranges (*Range*), open-ended ranges (*Range Lowest through...* / *Range... through Highest*), system- and user-missing values, and fallback rules (*All other values*).<br>* **Automatic Recode (`Automatic Recode`):**<br>  * Conversion of string or non-contiguous numeric codes into consecutive integers $1, 2, \dots, K$.<br>  * Automatic generation of descriptive value labels preserving source categories.<br>  * Direction selection: *Lowest value* or *Highest value*.<br>* **Shift Values (`Shift Values`):**<br>  * Creation of lagged (*Lag*) and lead (*Lead*) time series columns shifted by $K$ intervals.<br>* **Count Values within Cases (`Count Values within Cases`):**<br>  * Row-wise counting of occurrences matching specific values or ranges across a list of variables.<br>* **Create Dummy Variables (`Create Dummy Variables` / One-Hot Encoding):**<br>  * Binary (0/1) indicator generation for categorical scales.<br>  * Configurable root names, prefixes, and reference category omission ($k-1$ indicators for linear models).<br>* **Random Number Seed (`Set Random Number Seed`):**<br>  * Thread-safe global pseudo-random number generator initialization for reproducible sampling and simulations.<br>* **Replace Missing Values (`Replace Missing Values`):**<br>  * Imputation algorithms: Series Mean, Mean of nearby points, Median of nearby points, Linear interpolation, and Linear trend at point.<br>* **Create Time Series (`Create Time Series`):**<br>  * First-order differences (`DIFF`), seasonal differences (`SDIFF`), simple moving averages (`SMA`), and cumulative sums (`CSUM`).<br>* **Visual Binning (`Visual Binning`):**<br>  * Continuous variable discretization: Equal Width intervals, Equal Percentiles (quantiles), and Standard Deviation cutpoints.<br>  * Automatic generation of descriptive interval labels (e.g., `&lt; 20`, `20 - 40`, `&gt; 40`).<br>* **Optimal Binning (`Optimal Binning`):**<br>  * Supervised discretization of continuous predictors against a categorical target using the Fayyad &amp; Irani MDLP entropy algorithm.<br>* **Rank Cases (`Rank Cases`):**<br>  * Rank assignment with tie handling: Mean (mid-ranks), Low, High, and Sequential.<br>  * Rank types: Simple ranks, fractional ranks, percentages, Ntiles, and normal scores (Blom, Tukey, Rankit, Van der Waerden) with Acklam approximation ($\le 1.15 \times 10^{-9}$).<br>* **Date and Time Wizard (`Date and Time Wizard`):**<br>  * Date component extraction: Year, Month, Day, Hour, Minute, Second, Day of week, Quarter.<br>  * Calculation of duration between two dates (`DATEDIFF`) in days, months, or years.<br>  * Addition or subtraction of time intervals (`DATESUM`).<br>* **Automated Data Preparation (`Automated Data Preparation / ADP`):**<br>  * Comprehensive pipeline: predictor screening, outlier handling (winsorizing or set to sysmis), feature scaling (Z-score, Min-Max), sparse category merging, pairwise interactions, and validation partitioning.<br>* **Programmability Transformations (`Programmability Transformations`):**<br>  * Multi-line transformation script editor.<br>  * Conditional `IF ... THEN ... ELSE` branching, vector assignments, and real-time syntax validation generating `BEGIN PROGRAM ... END PROGRAM.` blocks.</p><p>---</p><h2>4. Statistical Procedures (Analyze Menu)</h2><p>All statistical algorithms in StatCraft are implemented in **100% pure Safe Rust** and validated against Python `SciPy` and canonical *IBM SPSS Statistics 24 Algorithms Guide* standards to an absolute tolerance threshold of $\le 10^{-6}$.</p><h3>4.1. Descriptive Statistics &amp; Cross-Tabulations</h3><p>* **Descriptives (`Descriptives`):**<br>  * Spicer (1972) recurrence moments: Valid $N$, Sum, Mean, Std. Error of Mean, Variance, Std. Deviation, Range, Minimum, Maximum, Skewness (with SE), and Bliss sample excess Kurtosis (with SE).<br>* **Frequencies (`Frequencies`):**<br>  * Authentic SPSS frequency tables: Counts, Percent, Valid Percent (excluding missings), Cumulative Percent.<br>  * Quartiles ($Q_1, Q_2, Q_3$) and custom percentiles computed via the canonical HAVERAGE interpolation standard ($r = p(N+1)$).<br>* **Crosstabs (`Crosstabs`):**<br>  * Two-way $R \times C$ contingency tables.<br>  * Observed counts, expected counts, unstandardized residuals, row percentages, column percentages, and total percentages.<br>  * Pearson Chi-Square ($\chi^2$), Likelihood Ratio ($G^2$).<br>  * Yates continuity correction and two-tailed Fisher&#39;s exact test for $2 \times 2$ tables.<br>  * Symmetric association measures: Phi ($\phi$) and Cramér&#39;s $V$.</p><h3>4.2. Mean Comparisons &amp; Analysis of Variance (Compare Means)</h3><p>* **Means Breakdown (`Means Breakdown`):**<br>  * Subgroup descriptive breakdown (Mean, $N$, Variance, Median, Min, Max) across categorical factors.<br>  * One-way ANOVA table (Between Groups, Within Groups, Total Sum of Squares, $df$, Mean Squares, $F$-statistic, significance).<br>  * Association measures: $\eta$ (Eta) and $\eta^2$ (Eta Squared).<br>* **One-Sample T-Test (`One-Sample T Test`):**<br>  * Student&#39;s $t$-test comparing sample mean to a specified reference test value.<br>  * Degrees of freedom, two-tailed $p$-value via regularized incomplete beta function, mean difference, and 95% (or custom) confidence interval of the difference.<br>* **Independent-Samples T-Test (`Independent-Samples T Test`):**<br>  * Two-group comparison with *Define Groups* subdialog.<br>  * Automatic Levene&#39;s Test for Equality of Variances ($F$, Sig).<br>  * Dual-row output table: Student&#39;s $t$-test (Equal variances assumed) and Welch&#39;s $t$-test (Equal variances not assumed with Satterthwaite fractional degrees of freedom).<br>* **Paired-Samples T-Test (`Paired-Samples T Test`):**<br>  * Comparison of matched pairs and repeated measures.<br>  * Paired statistics, intra-pair Pearson correlation ($r$, Sig), and paired differences test ($t$, $df$, confidence interval).<br>* **One-Way ANOVA (`One-Way ANOVA`):**<br>  * Fisher&#39;s $F$-test comparing multiple treatment groups.<br>  * Between-groups and within-groups sums of squares ($SS$) and mean squares ($MS$).<br>  * Levene&#39;s Test of Homogeneity of Variances.<br>  * Group descriptive statistics with 95% confidence intervals.</p><h3>4.3. Bivariate Correlations (Correlate)</h3><p>* **Bivariate Correlations (`Bivariate Correlations`):**<br>  * Pearson linear correlation coefficient ($r$).<br>  * Spearman rank-order correlation coefficient ($\rho$).<br>  * Kendall rank-order correlation coefficient ($\tau_b$) with full tie adjustments ($v_0, v_1, v_2$).<br>  * One-tailed and two-tailed significance levels.<br>  * Automatic significance flagging (`*` for $p &lt; 0.05$, `**` for $p &lt; 0.01$).<br>  * Cross-product deviations and covariances, pairwise and listwise missing exclusion modes.</p><h3>4.4. Nonparametric Tests (Nonparametric Tests)</h3><p>* **Two Independent Samples (`Two Independent Samples`):**<br>  * Mann-Whitney $U$ test, Wilcoxon rank sum $W$.<br>  * Pooled mid-ranking with tie adjustment $\sum(t_i^3 - t_i)$.<br>  * Calculation of expected values, adjusted variances, $Z$-score, and asymptotic two-tailed significance.<br>* **K Independent Samples (`K Independent Samples`):**<br>  * Kruskal-Wallis $H$ test with tie factor correction $H_{adj}$.<br>  * Asymptotic significance computed from the $\chi^2$ distribution with $df = k - 1$.<br>* **Two Related Samples (`Two Related Samples`):**<br>  * Wilcoxon Signed-Rank Test with tie-adjusted variance and continuity correction.<br>  * Sign Test with exact two-tailed binomial significance via the beta distribution.</p><h3>4.5. Linear Regression (Regression)</h3><p>* **Multiple Linear Regression (`Linear Regression`):**<br>  * Ordinary Least Squares (OLS) and Weighted Least Squares (WLS) solvers.<br>  * *Model Summary* table: Multiple correlation $R$, $R^2$, Adjusted $R^2$, Std. Error of the Estimate.<br>  * *ANOVA* table: Regression and residual sums of squares, mean squares, Fisher&#39;s $F$, significance.<br>  * *Coefficients* table: Unstandardized coefficients $B$ and standard errors, standardized coefficients $\beta$, $t$-statistics, significance levels, and 95% confidence intervals.<br>  * Collinearity diagnostics: Tolerance and Variance Inflation Factor (VIF).</p><h3>4.6. Scale Reliability Analysis (Scale)</h3><p>* **Reliability Analysis (`Reliability Analysis`):**<br>  * Cronbach&#39;s Alpha ($\alpha$) and standardized item alpha.<br>  * *Item Statistics*: Mean, standard deviation, and valid $N$ per item.<br>  * *Item-Total Statistics*: Scale mean if item deleted, scale variance if item deleted, corrected item-total correlation, Cronbach&#39;s alpha if item deleted.<br>  * Overall summary *Scale Statistics*.</p><h3>4.7. Dimension Reduction (Dimension Reduction)</h3><p>* **Factor Analysis &amp; Principal Component Analysis (`Factor Analysis / PCA`):**<br>  * Principal Component Analysis via cyclical Jacobi eigensolver for symmetric correlation matrices.<br>  * Kaiser-Meyer-Olkin (KMO) Measure of Sampling Adequacy.<br>  * Bartlett&#39;s Test of Sphericity with exact $\chi^2$ and significance.<br>  * *Communalities* table: Initial and Extraction values.<br>  * *Total Variance Explained* table: Eigenvalues, % of variance, and cumulative variance.<br>  * Component Matrix showing unrotated factor loadings.</p><p>---</p><h2>5. Output Management &amp; Clipboard Integration (Output Viewer)</h2><p>* **Interactive Outline Navigation:**<br>  * Tree panel on the left reflecting document structure across procedures, syntax logs, and tables.<br>  * Smooth scrolling and focus ring highlighting upon selecting any item in the tree.<br>  * Synchronized two-way selection: clicking a table in the scroll canvas highlights its node in the outline.<br>  * Outline toolstrip: collapse all, expand all, clear entire output, and delete selected nodes with the `Delete` key.<br>* **Authentic Pivot Tables:**<br>  * High-fidelity reproduction of IBM SPSS Statistics typography and layouts: nested multi-tier headers, alternating row striping, right-aligned numeric formatting, and criterion footnotes.<br>* **One-Click Excel TSV Export:**<br>  * Dedicated `[ Copy Table (TSV) ]` button in each table header.<br>  * Structured Tab-Separated Values (TSV) format engineered for Microsoft Excel and Google Sheets: pastes cleanly with zero column shifting, date corruption, or text truncation.<br>* **Syntax Execution Protocols (Log):**<br>  * Automatic monospace log blocks documenting executed SPSS syntax (`GET DATA`, `DESCRIPTIVES`, `CROSSTABS`, `REGRESSION`, etc.) with timestamps.</p><p>---</p><h2>6. SPSS Command Syntax (`.sps`) &amp; Command Bus</h2><p>* **Typed Command Bus (`CommandBus`):**<br>  * Every user action is encapsulated as a typed `EngineCommand` providing parameter schemas for external agents (`specs()`).<br>* **Canonical `[ Paste ]` Action:**<br>  * Clicking `[ Paste ]` in any modal dialog translates configured parameters into valid SPSS command syntax and directs it into the Syntax Editor or Log.<br>* **Syntax Editor:**<br>  * Dedicated code editing tab with monospace styling, line execution, and batch processing.<br>* **Non-Destructive History (`Undo / Redo`):**<br>  * In-memory `DeltaBuffer` transaction engine enabling instant undo/redo of data edits and metadata modifications via `Ctrl+Z` / `Ctrl+Y`.</p><p>---</p><h2>7. AI Readiness (Agent-Ready) &amp; MCP Bridge Status</h2><p>* **Parameter Schemas for Agents (`specs()`):**<br>  * Every statistical and data engine procedure (`statcraft_syntax`) provides strongly-typed JSON parameter schemas via `specs()`, allowing external AI agents to validate arguments and construct pipelines headlessly.<br>* **Batch Syntax Scripting:**<br>  * AI assistants can assemble canonical SPSS command syntax (`.sps`) and run it through the engine command bus, yielding complete execution logs and authentic Output Viewer tables.<br>* **Live Network Bridge Status (MCP &amp; IPC Socket):**<br>  * *In Development (`InDev` / Roadmap):* Direct runtime communication over a local IPC socket / embedded MCP server to control the running desktop GUI is currently in active development (the menu entry `Extensions -&gt; MCP Bridge / Copilot` is flagged as `[dev]`). Live socket connectivity will arrive in subsequent roadmap phases.</p><p>---</p><h2>8. Design System, Reliability, and Localization</h2><p>* **Never-Crash Invariant (100% Safe Rust):**<br>  * Complete absence of `unsafe`, `panic!`, `unwrap()`, and `expect()` in non-test code. Malformed data, singular matrices, or division by zero yield typed errors without terminating the application.<br>* **Vector-First User Interface:**<br>  * 100% vector rendering using `ui.painter()` and hardware-rasterized SVGs. Zero Unicode emojis or unsupported glyphs, completely eliminating &quot;tofu&quot; boxes (`□`) across all platforms.<br>* **Zero-Hardcode Localization:**<br>  * 100% of UI strings are externalized into Project Fluent catalogs (`locales/en.ftl`, `locales/ru.ftl`).<br>  * On-the-fly language switching (English $\leftrightarrow$ Russian) without application restart.<br>* **Multi-Platform Support:**<br>  * Single codebase with verified native binaries for Windows (x64), Linux (x64), and macOS (Apple Silicon ARM64 &amp; Intel x64).</p><p>---</p><h2>9. Roadmap &amp; Features in Development (InDev / Planned)</h2><p>To guarantee complete technical honesty and transparency, the following modules and menu actions are currently under development in v0.2.2 (`MenuItemStatus::InDev`):</p><p>* **Vector Charting (`statcraft_charts`):**<br>  * Interactive Chart Builder, histograms, scatter plots, line charts, boxplots, pie charts, and tabular brushing &amp; linking.<br>* **Runtime AI Network Bridge (`statcraft_bridge`):**<br>  * Local IPC socket and native Model Context Protocol (MCP) server for live bidirectional communication with external LLMs and IDE assistants.<br>* **Report Exporters:**<br>  * Output Viewer export to PDF and LaTeX (v0.2.2 supports one-click TSV for Excel, HTML, and Plain Text).<br>* **Advanced Statistical Procedures (Analyze):**<br>  * General Linear Models (`GLM`: Univariate, Multivariate, Repeated Measures).<br>  * Logistic Regression (Binary, Multinomial) and Curve Estimation.<br>  * Cluster Analysis (*K-Means, Hierarchical Clustering*).<br>  * Survival Analysis (*Life Tables, Kaplan-Meier, Cox Regression*).<br>  * Exploratory Data Analysis (*Explore*) and Case Summaries / Codebook reports.<br>* **Dataset Operations (Data):**<br>  * File Merging (*Merge Files: Add Cases / Add Variables*).<br>  * Data Restructuring (*Restructure*) and Aggregation (*Aggregate*).<br>* **Clipboard &amp; Search Tools (Edit):**<br>  * Global cell Find &amp; Replace, Go to Case / Variable navigation, application Preferences.<br>* **Visual Theming (View):**<br>  * Light / Dark / System theme toggles and display Zoom controls.</p><hr><p style="color:#8a8175;font-size:12px">Exported from CapsuleCraft Native · &lt;doc-statcraft-docs_features_md@capsuleos.local&gt;</p></body></html>
+
+--BOUNDARY_PAYLOAD_YJP110E3MT--
+--BOUNDARY_ROOT_1L07J2UE1K--

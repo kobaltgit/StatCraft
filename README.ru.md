@@ -39,7 +39,7 @@
 
 * **100% Safe Rust и гарантия «Never Crash»:** Полный отказ от `unsafe`, `panic!`, `unwrap()` и `expect()`. Любые поврежденные данные, пустые выборки или деление на ноль возвращают типизированную ошибку `Result<T, E>`, не приводя к падению программы.
 * **Команды вместо обработчиков (Commands, Not Handlers):** Любое действие пользователя или математическая процедура — это типизированная команда движка (`EngineCommand`). Все команды поддерживают неразрушающую историю (Undo/Redo), сериализуются в стандартный синтаксис SPSS (`.sps`) и могут выполняться в пакетном режиме.
-* **Agent-First архитектура:** Встроенный сервер Model Context Protocol (MCP) и локальный IPC-сокет позволяют современным ИИ-агентам (Antigravity, Claude, локальным LLM) напрямую исследовать структуру переменных, запускать вычисления и автоматически добавлять результаты и интерпретацию в Output Viewer.
+* **Agent-Ready архитектура:** Все команды движка предоставляют строгие JSON-схемы параметров `specs()`, позволяющие ИИ-агентам программно формировать аналитические пайплайны и исполнять пакетный синтаксис SPSS (`.sps`); сетевой мост (`statcraft_bridge`) для прямого подключения к запущенному окну запланирован в дорожной карте.
 * **Канонический Output Viewer в стиле SPSS:** Иерархическое дерево навигации совмещено с аутентичными сводными таблицами (Pivot Tables). Результаты копируются в буфер обмена в один клик в формате структурированного TSV, который вставляется в Microsoft Excel чисто и без склеивания колонок и искажения дат.
 * **Векторный интерфейс (Vector-First UI):** Чистая векторная отрисовка через `egui` (`ui.painter()`) и векторные SVG-иконки. Полный запрет на эмодзи и нестандартные Unicode-символы исключает появление уродливых квадратов «тофу» (`□`) на любых операционных системах.
 * **Нулевой хардкод строк (Zero-Hardcode i18n):** 100% текстовых строк вынесены в каталоги Project Fluent (`locales/ru.ftl`, `locales/en.ftl`) с поддержкой переключения языка «на лету» без перезапуска.
@@ -48,6 +48,9 @@
 ---
 
 ## Основной функционал
+
+> [!TIP]
+> 📖 **Исчерпывающий справочник возможностей:** Полное описание всех доступных аналитических процедур, манипуляций с данными, алгоритмов трансформации и горячих клавиш доступно в документах **[FEATURES_RU.md](docs/FEATURES_RU.md)** (Русский) и **[FEATURES.md](docs/FEATURES.md)** (English).
 
 ### 1. Двухрежимное управление данными
 * **Редактор данных (Data View):** Виртуализированная таблица наблюдений и переменных. Поддерживает мгновенное переключение между сырыми числовыми кодами и читаемыми текстовыми метками (`1/A`).
@@ -84,15 +87,14 @@ StatCraft строго следует архитектурному канону 
 ```text
 L6: statcraft_app        Графический интерфейс GUI (egui / eframe / DialogKit / Output Viewer)
  └── L5: statcraft_syntax Шина команд CommandBus, парсер синтаксиса .sps, транзакции
-      ├── L4: statcraft_reporting Модель сводных таблиц, экспорт TSV / PDF / LaTeX
-      ├── L3: statcraft_charts    Векторные графики egui_plot, Brushing & Linking
+      ├── L4: statcraft_reporting Модель сводных таблиц, экспорт TSV / HTML / Text
       └── L2: statcraft_algo      Чистая математика (Золотой Оракул против SciPy)
-           └── L1: statcraft_core Датасет в памяти, Arrow/Polars, VariableDictionary
-                └── L0: statcraft_io  Кодеки данных (потоковый CSV/TSV, Parquet, SPSS .SAV)
+           └── L1: statcraft_core Датасет в памяти, RawTable, VariableDictionary
+                └── L0: statcraft_io  Кодеки данных (потоковый CSV/TSV, Excel .xlsx/.xls/.ods, SPSS .sav/.zsav)
 
 Вспомогательные сквозные модули:
 * statcraft_i18n   Движок локализации на Fluent без хардкода строк в коде
-* xtask            Инструменты сборщика: file-guard, layers, design-guard, parity
+* xtask            Инструменты сборщика: file-guard, layers, design-guard, parity, test-corpus
 ```
 
 ---
@@ -142,9 +144,9 @@ cargo run -p xtask -j 1 -- parity
 |---|---|
 | [`crates/statcraft_app`](crates/statcraft_app) | Графический интерфейс пользователя, докинг, DialogKit, грид данных, Output Viewer |
 | [`crates/statcraft_syntax`](crates/statcraft_syntax) | Шина команд движка, транзакции, undo/redo, сериализатор синтаксиса SPSS |
-| [`crates/statcraft_algo`](crates/statcraft_algo) | Математические алгоритмы (t-тесты, ANOVA, тест Ливиня, частоты, описательные статистики) |
-| [`crates/statcraft_core`](crates/statcraft_core) | Структуры в памяти: `DataSet`, `VariableDictionary`, шкалы измерений, метаданные |
-| [`crates/statcraft_io`](crates/statcraft_io) | Быстрый потоковый загрузчик CSV/TSV, готовящиеся кодеки `.sav` и Parquet |
+| [`crates/statcraft_algo`](crates/statcraft_algo) | Чистые математические алгоритмы (t-тесты, ANOVA, регрессия, корреляции, факторный анализ, непараметрика, частоты) |
+| [`crates/statcraft_core`](crates/statcraft_core) | Структуры в памяти: `DataSet`, `RawTable`, `VariableDictionary`, шкалы измерений, метаданные |
+| [`crates/statcraft_io`](crates/statcraft_io) | Кодеки данных: потоковый CSV/TSV, книги Excel (.xlsx/.xls/.ods) и файлы SPSS (.sav/.zsav) |
 | [`crates/statcraft_i18n`](crates/statcraft_i18n) | Движок интернационализации на базе Project Fluent (`locales/*.ftl`) |
 | [`xtask`](xtask) | Утилиты проверки: `file-guard`, `layers`, `design-guard`, `parity` |
 | [`docs/`](docs) | Архитектурные руководства, гайдлайн дизайна диалогов, дорожная карта, летопись |
@@ -153,6 +155,7 @@ cargo run -p xtask -j 1 -- parity
 
 ## Документация
 
+* **[Полный справочник возможностей (FEATURES_RU.md)](docs/FEATURES_RU.md)** / **[Feature Guide (EN)](docs/FEATURES.md)** — Исчерпывающий каталог всех реализованных статистических процедур, преобразований данных, формул и интерфейсных инструментов.
 * [Руководство контрибьютора (CONTRIBUTING.md)](CONTRIBUTING.md) — Исчерпывающий регламент разработки, Resource Guard (-j 1), архитектурные слои и Definition of Done.
 * [Чек-лист паритета с SPSS (Parity Checklist)](docs/parity-checklist.md) — Детальное отслеживание соответствия команд и меню SPSS.
 * [Дорожная карта (Roadmap)](docs/ROADMAP.md) — Долгосрочные технические фазы и этапы развития.

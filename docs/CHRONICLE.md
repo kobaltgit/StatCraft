@@ -2031,6 +2031,118 @@
    * Отмечены все пункты раздела 57 в [`docs/CHECKLIST.md`](CHECKLIST.md);
    * 100% прохождение всех тестов и линтеров: `cargo test --workspace -j 1` (все крейты), `cargo clippy --workspace --all-targets -j 1 -- -D warnings` (0 предупреждений), `cargo run -p xtask -j 1 -- ci` (file-guard, design-guard, layers, parity, test-corpus — 100% OK).
 
+---
+
+### Этап 58: Пакетный синтаксический движок (.sps) и доказательный аудит (Batch Syntax Engine & Parser: S-01 — S-05)
+*Время: 06 ноября 2026, 18:55 (~45 минут)*
+
+Реализован и всесторонне проаудирован по стандарту *IBM SPSS Statistics 24 Command Syntax Reference* полнофункциональный пакетный синтаксический разборщик (**Batch Syntax Engine & Dispatcher**) в `crates/statcraft_syntax`. Он обеспечивает исполнение сырых скриптов `.sps` через шину команд `CommandBus`, активирует интерактивную панель управления в `Syntax Editor` с выводом эхо в `Output Viewer` и гарантирует 100% обратимый цикл `GUI -> to_sps -> SyntaxParser -> CommandBus`:
+
+1. **Лексер и токенизатор командных блоков (`statcraft_syntax::syntax_parser::lexer`):**
+   * Разработан потоковый лексер `SyntaxLexer`, разбивающий текст скрипта на отдельные блоки `RawCommandBlock` по завершающим точкам `.`;
+   * Полная изоляция ложных терминаторов: точки в вещественных числах (`3.14`, `0.95`), а также точки внутри одинарных `'file.sav'` и двойных `"model.v1"` кавычек не прерывают команду;
+   * Поддержка экранирования кавычек удвоением (`''` и `""`), диагностика незакрытых строк с фиксацией строки и колонки;
+   * Распознавание комментариев, начинающихся с символа `*` или ключевого слова `COMMENT`, до завершающей точки.
+
+2. **Парсер подкоманд и синтаксических диапазонов (`statcraft_syntax::syntax_parser::parser`):**
+   * Распознавание составных двухсловных команд (`SORT CASES`, `SPLIT FILE`);
+   * Структурный разбор подкоманд со слэшем `/` и позиционных параметров без начального слэша;
+   * Токенизация параметров в круглых скобках (`GROUPS=gender(1 2)`, `CI(0.95)`, `salary (D)`);
+   * Разворачивание диапазонов переменных `VAR1 TO VAR5` по порядку следования колонок в `VariableDictionary` активного датасета;
+   * Разворачивание ключевого слова `ALL` во все активные переменные датасета.
+
+3. **Модульный диспетчер команд и маппинг в `CommandBus` (`statcraft_syntax::syntax_parser::dispatcher`):**
+   * Декомпозированные модули маппинга `mappers/stats.rs` и `mappers/data.rs` строго в пределах 500 строк;
+   * Преобразование распарсенных команд в вызовы `CommandBus::execute` с JSON-параметрами для 15+ процедур SPSS:
+     - `DESCRIPTIVES`, `FREQUENCIES`, `CROSSTABS`, `T-TEST` (Independent, Paired, One-Sample);
+     - `ONEWAY`, `CORRELATIONS`, `REGRESSION`, `RELIABILITY`, `FACTOR`, `MEANS`;
+     - `SORT CASES`, `WEIGHT`, `FILTER`, `SPLIT FILE`, `COMPUTE`, `GET`, `SAVE`, `EXECUTE`.
+
+4. **Пакетный раннер и интеграция в GUI (`statcraft_app::syntax_runner`):**
+   * Тулбар `Syntax Editor` оснащен кнопками: `[ Run All ]`, `[ Run Selection ]`, `[ Clear ]`;
+   * При пустом выделении `[ Run Selection ]` автоматически выполняет строку под курсором;
+   * Эхо команд в `Output Viewer`: каждая выполненная инструкция логируется в дерево с префиксом `> `;
+   * Автоматическая распаковка результатов статистических процедур в интерактивные сводные таблицы Output Viewer;
+   * Локализация интерфейса через семантические ключи Fluent (`locales/ru.ftl` и `locales/en.ftl`).
+
+5. **Доказательный Clean-Room аудит, фикстуры и фаззинг (DoD):**
+   * Созданы референтные фикстуры `fixtures/syntax/` (`batch_analysis.sps`, `data_transform.sps`, `malformed.sps`);
+   * Пакет интеграционных тестов `syntax_roundtrip_and_fuzz_tests.rs`:
+     - 100% обратимый round-trip: `to_sps -> SyntaxParser -> CommandBus -> Результат`;
+     - Стресс-тест фаззингом на 20+ поврежденных синтаксических фрагментах (инвариант `Never Crash` — 0 паник, 100% safe `Err(SyntaxError)`);
+   * Оформлены официальные двуязычные протоколы аудита: [`docs/SPSS_SYNTAX_PARSER_AUDIT.md`](SPSS_SYNTAX_PARSER_AUDIT.md) (EN) и [`docs/SPSS_SYNTAX_PARSER_AUDIT_RU.md`](SPSS_SYNTAX_PARSER_AUDIT_RU.md) (RU);
+   * Обновлены гипотезы в Craft Anything MCP и раздел 58 в `docs/CHECKLIST.md`;
+   * 100% прохождение проверок: `cargo test --workspace -j 1` (112 тестов syntax, 37 dialog invariants, 11 output invariants, 12 session lifecycle — 0 сбоев), `cargo run -p xtask -j 1 -- file-guard` (279 файлов в норме), `cargo run -p xtask -j 1 -- layers`, `cargo run -p xtask -j 1 -- design-guard`.
+
+---
+
+### Этап 59: Открытие и сохранение файлов синтаксиса SPSS (`.sps`) на диске (Syntax File I/O)
+*Время: 6 ноября 2026, 19:40 (~35 минут)*
+
+Реализована полноценная поддержка открытия и сохранения внешних файлов синтаксиса IBM SPSS (`*.sps`, `*.txt`) на диске. Теперь скрипты можно открывать и сохранять как через интерактивный тулбар Редактора синтаксиса, так и через системное меню `Файл`:
+
+1. **Представление и тулбар Редактора синтаксиса (`statcraft_app::views::syntax_editor`):**
+   * В структуру состояния `SyntaxEditorState` добавлено поле `pub current_file_path: Option<PathBuf>`;
+   * Перечисление `SyntaxEditorAction` расширено действиями `Open` и `Save`;
+   * В горизонтальный тулбар редактора синтаксиса интегрированы кнопки `[ Открыть .sps ]` (`syntax-open`) и `[ Сохранить .sps ]` (`syntax-save`);
+   * Справа от управляющих кнопок выводится векторный разделитель и текущее имя открытого файла скрипта курсивом (например, `batch_analysis.sps`).
+
+2. **Безопасный файловый ввод-вывод (`statcraft_app::app_session`):**
+   * Методы `open_syntax_dialog` и `save_syntax_as` используют нативный системный проводник `rfd::FileDialog` с фильтром `*.sps`, `*.txt` и автоматической подстановкой директории последнего сохраненного скрипта;
+   * Метод `save_syntax` проверяет наличие ассоциированного пути: при наличии пути сохраняет напрямую на диск без повторного запроса пути, а для новых безымянных скриптов открывает диалог сохранения «как»;
+   * Функция `load_file_from_path` расширена для распознавания файлов с расширением `.sps`, обновляет список `RecentFiles` и автоматически активирует вкладку `SyntaxEditor` в док-панели;
+   * Обратная связь в `Output Viewer`: сохранение и открытие скрипта логируются в журнал (`* Syntax opened: ...`, `* Syntax saved: ...`).
+
+3. **Интеграция в верхнее меню `Файл` (`statcraft_app::app_menus::file_edit_view`):**
+   * Добавлен пункт меню `Файл -> Открыть синтаксис...` (`menu-file-open-syntax`);
+   * Добавлен пункт меню `Файл -> Сохранить синтаксис как...` (`menu-file-save-syntax-as`).
+
+4. **Локализация и строка состояния (Zero-Hardcode i18n):**
+   * В `StatusMessage` добавлены варианты `SyntaxOpened { name }` и `SyntaxSaved { name }` с зеленым цветом успеха `Tokens::MEASURE_NOMINAL`;
+   * Полные двуязычные переводы в каталогах Fluent `locales/en.ftl` и `locales/ru.ftl`.
+
+5. **Контроль качества (Definition of Done):**
+   * Разработан интеграционный тест `test_syntax_save_and_load_lifecycle` в `crates/statcraft_app/tests/session_lifecycle_tests.rs`;
+   * Все 279 файлов кодовой базы проверены линтером размеров `xtask file-guard`;
+   * Пройдены проверки `cargo fmt --check`, `cargo clippy --workspace --all-targets -j 1 -- -D warnings`, `xtask design-guard`, `xtask layers` и `cargo test --workspace -j 1` (100% тестов успешно).
+
+---
+
+### Релиз v0.2.2: Полный каталог функциональных возможностей и синхронизация релизных манифестов (Feature Guides & Release v0.2.2)
+*Время: 6 ноября 2026, 21:00 (~30 минут)*
+
+Подготовлен и опубликован релиз **StatCraft v0.2.2** с повышением версии во всех манифестах проекта, созданием исчерпывающего двуязычного каталога функциональных возможностей (`docs/FEATURES_RU.md` и `docs/FEATURES.md`) и интеграцией прямых ссылок в основные файлы `README.md` и `README.ru.md`:
+
+1. **Создание исчерпывающих руководств по возможностям (`docs/FEATURES_RU.md` и `docs/FEATURES.md`):**
+   * Подготовлен полный структурированный справочник всех возможностей программы:
+     - Двухрежимное управление данными (потоковый CSV/TSV ридер, Calamine Excel, Data View с инлайн-редактированием, Variable View со всеми 9 типами данных SPSS, метками значений и пропущенными значениями);
+     - Манипуляции с массивом (Sort Cases, Select Cases с формульным калькулятором, Split File, Weight Cases);
+     - Полный блок процедур преобразования данных Transform (Compute Variable, Recode, Automatic Recode, Shift Values, Count Values, Create Dummy Variables, Replace Missing Values, Time Series, Visual/Optimal Binning, Rank Cases, Date and Time Wizard, ADP, Programmability Transformations);
+     - Блок статистических процедур Analyze (Descriptives, Frequencies, Crosstabs с $\chi^2$ и точным Фишером, Means breakdown, One-Sample t-test, Independent Samples t-test с тестами Левена и Уэлча, Paired Samples t-test, One-Way ANOVA, Bivariate Correlations с поправками на связки, непараметрические критерии Манна-Уитни, Краскела-Уоллиса, Вилкоксона и знаков, множественная линейная регрессия OLS/WLS с оценками коллинеарности Tolerance/VIF, анализ надежности шкалы $\alpha$ Кронбаха, факторный анализ PCA с KMO и Бартлеттом);
+     - Модуль вывода Output Viewer со сводными таблицами (Pivot Tables), мгновенным копированием в буфер в формате TSV без сдвига колонок в Excel и навигационным деревом Outline;
+     - Исполнение пакетного синтаксиса `.sps` и откат правок Undo/Redo;
+     - Готовность к взаимодействию с ИИ через типизированные схемы параметров `specs()` и синтаксис `.sps` с прозрачной фиксацией сетевого моста MCP/IPC и графиков в Roadmap (`InDev`).
+
+2. **Интеграция в документацию репозитория:**
+   * В `README.md` и `README.ru.md` внедрены заметные блоки со ссылками на новые руководства в разделах «Key Features» / «Основной функционал» и «Documentation» / «Документация»;
+   * Актуализирован файл релизных заметок `RELEASE_NOTES.md` под версию `v0.2.2` на двух языках (EN / RU) для автоматического создания GitHub Release.
+
+3. **Синхронизация версии v0.2.2 (Packaging & CI):**
+   * Версия `0.2.2` синхронизирована байт-в-байт в 4 файлах манифестов:
+     - `Cargo.toml` (`[workspace.package] version = "0.2.2"`);
+     - `packaging/windows/installer.iss` (`#define MyAppVersion "0.2.2"`);
+     - `packaging/macos/Info.plist` (`CFBundleShortVersionString` и `CFBundleVersion` = `0.2.2`);
+     - `packaging/linux/control` (`Version: 0.2.2`);
+   * Обновлен `Cargo.lock`.
+
+4. **Контроль качества (Definition of Done):**
+   * Все 281 файл проверены линтером размеров `cargo run -p xtask -j 1 -- file-guard`;
+   * Пройдены проверки архитектуры `cargo run -p xtask -j 1 -- layers`, дизайн-системы `cargo run -p xtask -j 1 -- design-guard` и паритета `cargo run -p xtask -j 1 -- parity`;
+   * 100% успешное прохождение всех тестов воркспейса `cargo test --workspace -j 1`.
+
+
+
+
 
 
 

@@ -83,6 +83,16 @@ impl StatCraftApp {
                     }
                     if render_menu_item(
                         ui,
+                        t!("menu-file-open-syntax"),
+                        MenuItemStatus::Ready { shortcut: None },
+                    )
+                    .clicked()
+                    {
+                        ui.close_menu();
+                        self.open_syntax_dialog();
+                    }
+                    if render_menu_item(
+                        ui,
                         t!("menu-file-open-csv"),
                         MenuItemStatus::Ready { shortcut: None },
                     )
@@ -170,6 +180,16 @@ impl StatCraftApp {
                     {
                         ui.close_menu();
                         self.save_data_as();
+                    }
+                    if render_menu_item(
+                        ui,
+                        t!("menu-file-save-syntax-as"),
+                        MenuItemStatus::Ready { shortcut: None },
+                    )
+                    .clicked()
+                    {
+                        ui.close_menu();
+                        self.save_syntax_as();
                     }
                     ui.menu_button(t!("menu-file-export"), |ui| {
                         if render_menu_item(

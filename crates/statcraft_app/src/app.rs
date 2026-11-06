@@ -16,7 +16,8 @@ use crate::dialogs::{
 use crate::recent_files::RecentFiles;
 use crate::views::{
     render_data_view, render_output_view, render_syntax_editor, render_variable_view,
-    DataViewState, OutputViewerState, SyntaxEditorState, VariableViewAction, VariableViewState,
+    DataViewState, OutputViewerState, SyntaxEditorAction, SyntaxEditorState, VariableViewAction,
+    VariableViewState,
 };
 use crate::widgets::{
     render_caption_buttons, render_resize_zones, render_toolbar, title_x, MenuItemStatus,
@@ -89,6 +90,7 @@ pub struct StatCraftApp {
     pub current_file_path: Option<PathBuf>,
     pub recent_files: RecentFiles,
     pub syntax_editor_state: SyntaxEditorState,
+    pub pending_syntax_action: SyntaxEditorAction,
     pub confirm_save_dialog_state: ConfirmSaveDialogState,
     pub pending_session_action: Option<PendingSessionAction>,
     pub saved_checkpoint: Option<crate::app_session::SavedCheckpoint>,
@@ -151,6 +153,7 @@ impl StatCraftApp {
             current_file_path: None,
             recent_files: RecentFiles::default(),
             syntax_editor_state: SyntaxEditorState::default(),
+            pending_syntax_action: SyntaxEditorAction::None,
             confirm_save_dialog_state: ConfirmSaveDialogState::default(),
             pending_session_action: None,
             saved_checkpoint: None,
@@ -186,6 +189,7 @@ struct StatCraftTabViewer<'a> {
     output_view_state: &'a mut OutputViewerState,
     syntax_editor_state: &'a mut SyntaxEditorState,
     pending_variable_action: &'a mut VariableViewAction,
+    pending_syntax_action: &'a mut SyntaxEditorAction,
 }
 
 impl<'a> TabViewer for StatCraftTabViewer<'a> {
@@ -215,7 +219,10 @@ impl<'a> TabViewer for StatCraftTabViewer<'a> {
                 render_output_view(ui, self.output_view_state);
             }
             Tab::SyntaxEditor => {
-                render_syntax_editor(ui, self.syntax_editor_state);
+                let action = render_syntax_editor(ui, self.syntax_editor_state);
+                if action != SyntaxEditorAction::None {
+                    *self.pending_syntax_action = action;
+                }
             }
         }
     }
@@ -526,6 +533,7 @@ impl eframe::App for StatCraftApp {
                 output_view_state: &mut self.output_view_state,
                 syntax_editor_state: &mut self.syntax_editor_state,
                 pending_variable_action: &mut self.pending_variable_action,
+                pending_syntax_action: &mut self.pending_syntax_action,
             };
 
             let style = egui_dock::Style::from_egui(ui.style());
@@ -576,6 +584,51 @@ impl eframe::App for StatCraftApp {
                 self.pending_variable_action = VariableViewAction::None;
             }
             VariableViewAction::None => {}
+        }
+
+        // 4b. Handle Syntax Editor actions (running batch or selection)
+        match std::mem::replace(&mut self.pending_syntax_action, SyntaxEditorAction::None) {
+            SyntaxEditorAction::RunAll => {
+                let script = self.syntax_editor_state.text.clone();
+                match crate::syntax_runner::run_syntax_batch(
+                    &script,
+                    &mut self.dataset,
+                    &mut self.command_bus,
+                    &mut self.output_view_state,
+                ) {
+                    Ok(count) => {
+                        self.status_message = StatusMessage::SyntaxExecuted { count };
+                    }
+                    Err(e) => {
+                        self.status_message = StatusMessage::Error(e.to_string());
+                    }
+                }
+            }
+            SyntaxEditorAction::RunSelection(script) => {
+                match crate::syntax_runner::run_syntax_batch(
+                    &script,
+                    &mut self.dataset,
+                    &mut self.command_bus,
+                    &mut self.output_view_state,
+                ) {
+                    Ok(count) => {
+                        self.status_message = StatusMessage::SyntaxExecuted { count };
+                    }
+                    Err(e) => {
+                        self.status_message = StatusMessage::Error(e.to_string());
+                    }
+                }
+            }
+            SyntaxEditorAction::Clear => {
+                self.syntax_editor_state.clear();
+            }
+            SyntaxEditorAction::Open => {
+                self.open_syntax_dialog();
+            }
+            SyntaxEditorAction::Save => {
+                self.save_syntax();
+            }
+            SyntaxEditorAction::None => {}
         }
 
         // 5. Modal Dialogs
