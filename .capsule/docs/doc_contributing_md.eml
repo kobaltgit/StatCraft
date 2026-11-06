@@ -1,0 +1,877 @@
+From: CapsuleCraft Code Ingest <system@capsulecraft.local>
+To: Vault <vault@capsuleos.local>
+Subject: 📚 StatCraft / StatCraft Contributor Guide (CONTRIBUTING.md)
+Date: Fri, 6 Nov 2026 14:13:33 +0000
+Message-ID: <doc-statcraft-contributing_md@capsuleos.local>
+In-Reply-To: <project-index-statcraft@capsuleos.local>
+X-Capsule-Page-Parent: <project-index-statcraft@capsuleos.local>
+References: <project-index-statcraft@capsuleos.local>
+X-Capsule-Tags: project, statcraft, docs
+X-Capsule-Status: Active
+MIME-Version: 1.0
+Content-Type: multipart/mixed; boundary="BOUNDARY_ROOT_14CLFXIE1Y"
+
+--BOUNDARY_ROOT_14CLFXIE1Y
+Content-Type: multipart/alternative; boundary="BOUNDARY_PAYLOAD_KV2N8KE49O"
+
+--BOUNDARY_PAYLOAD_KV2N8KE49O
+Content-Type: application/json; name="canvas_state.json"
+Content-Disposition: inline; filename="canvas_state.json"
+
+{
+  "version": "1.0",
+  "generator": "CapsuleCraft Native egui prototype (Zero-DB Pure-MIME)",
+  "messageId": "<doc-statcraft-contributing_md@capsuleos.local>",
+  "subject": "📚 StatCraft / StatCraft Contributor Guide (CONTRIBUTING.md)",
+  "tags": [
+    "project",
+    "statcraft",
+    "docs"
+  ],
+  "blocks": [
+    {
+      "data": {
+        "icon": "book",
+        "text": "Documentation file: `CONTRIBUTING.md`\nBelongs to project: [[📦 StatCraft (Overview) | 📦 StatCraft (Overview)]]"
+      },
+      "id": "blk_native_callout_1793974413745692600",
+      "managed_by": "project_parser",
+      "type": "callout"
+    },
+    {
+      "data": {
+        "level": 1,
+        "text": "StatCraft Contributor Guide (CONTRIBUTING.md)"
+      },
+      "id": "blk_native_heading_1793974413745593400",
+      "managed_by": "project_parser",
+      "type": "heading"
+    },
+    {
+      "data": {
+        "level": 3,
+        "text": "The ArtCraft / storytold Ecosystem Engineering Standard"
+      },
+      "id": "blk_native_heading_1793974413745594600",
+      "managed_by": "project_parser",
+      "type": "heading"
+    },
+    {
+      "data": {
+        "text": "Welcome to **StatCraft** — a next-generation, high-performance, open-source statistical analysis package designed as a modern, safe, and uncompromising alternative to IBM SPSS Statistics, built from the ground up in pure Rust."
+      },
+      "id": "blk_native_paragraph_1793974413745595900",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    },
+    {
+      "data": {
+        "text": "This document establishes the **authoritative development regulations, architectural invariants, and Definition of Done (DoD)** that govern all contributions, pull requests, and automated agent workflows. Every commit and pull request must strictly pass the automated CI quality gate (`cargo xtask ci`)."
+      },
+      "id": "blk_native_paragraph_1793974413745597000",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    },
+    {
+      "data": {
+        "text": "---"
+      },
+      "id": "blk_native_paragraph_1793974413745597500",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    },
+    {
+      "data": {
+        "level": 2,
+        "text": "Table of Contents"
+      },
+      "id": "blk_native_heading_1793974413745598100",
+      "managed_by": "project_parser",
+      "type": "heading"
+    },
+    {
+      "data": {
+        "text": "1. [ArtCraft Ecosystem Foundations](#1-artcraft-ecosystem-foundations)\n2. [System Resource Guard (Compilation Limits)](#2-system-resource-guard-compilation-limits)\n3. [Reliability: The Never Crash Mandate](#3-reliability-the-never-crash-mandate)\n4. [Layered Engine Architecture (L0–L6)](#4-layered-engine-architecture-l0l6)\n5. [Command Architecture (Commands, Not Handlers)](#5-command-architecture-commands-not-handlers)\n6. [Dialog Design Standard (DialogKit) & Vector-First UI](#6-dialog-design-standard-dialogkit--vector-first-ui)\n7. [Zero-Hardcode i18n & Fluent Localization](#7-zero-hardcode-i18n--fluent-localization)\n8. [File Size Limits (File Size Guard)](#8-file-size-limits-file-size-guard)\n9. [Testing & The Mathematical Golden Oracle](#9-testing--the-mathematical-golden-oracle)\n10. [Automated Quality Gates & Tooling (`xtask`)](#10-automated-quality-gates--tooling-xtask)\n11. [Definition of Done (DoD) Checklist](#11-definition-of-done-dod-checklist)\n12. [Binary Distributions & Native Installers](#12-binary-distributions--native-installers)\n13. [Step-by-Step Procedure Cookbook](#13-step-by-step-procedure-cookbook)"
+      },
+      "id": "blk_native_paragraph_1793974413745600500",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    },
+    {
+      "data": {
+        "text": "---"
+      },
+      "id": "blk_native_paragraph_1793974413745601300",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    },
+    {
+      "data": {
+        "level": 2,
+        "text": "1. ArtCraft Ecosystem Foundations"
+      },
+      "id": "blk_native_heading_1793974413745601800",
+      "managed_by": "project_parser",
+      "type": "heading"
+    },
+    {
+      "data": {
+        "level": 3,
+        "text": "1.1. 100% Pure Safe Rust"
+      },
+      "id": "blk_native_heading_1793974413745602500",
+      "managed_by": "project_parser",
+      "type": "heading"
+    },
+    {
+      "data": {
+        "text": "* The entire project is written **exclusively in Rust** (2021 edition).\n* **Handwritten JavaScript or TypeScript is strictly prohibited.** WebAssembly targets must use `wasm-bindgen` with automatically generated glue code.\n* The codebase enforces `#![forbid(unsafe_code)]`. No `unsafe` blocks are permitted in production application code."
+      },
+      "id": "blk_native_paragraph_1793974413745603500",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    },
+    {
+      "data": {
+        "level": 3,
+        "text": "1.2. Licensing & Attribution"
+      },
+      "id": "blk_native_heading_1793974413745603900",
+      "managed_by": "project_parser",
+      "type": "heading"
+    },
+    {
+      "data": {
+        "text": "* The codebase is dual-licensed under: **MIT OR Apache-2.0** (`LICENSE-MIT`, `LICENSE-APACHE`, `NOTICE`).\n* All third-party assets (such as Lucide icons or open fonts) must carry permissive licenses, with copies retained alongside the assets and registered in `ATTRIBUTION.md`.\n* ArtCraft brand identity, logos, and trademarks in `assets/` and `docs/brand/` are proprietary and protected under `docs/brand/LICENSE-brand.txt`."
+      },
+      "id": "blk_native_paragraph_1793974413745604800",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    },
+    {
+      "data": {
+        "level": 3,
+        "text": "1.3. The Clean-Room Principle"
+      },
+      "id": "blk_native_heading_1793974413745605400",
+      "managed_by": "project_parser",
+      "type": "heading"
+    },
+    {
+      "data": {
+        "text": "* **STRICTLY FORBIDDEN:** Copying source code, shaders, binaries, icons, or proprietary assets from commercial software (such as IBM SPSS Statistics).\n* All algorithms, file formats, and behaviors are implemented **solely via independent observation, open specifications, and academic literature**:\n  - Statistical algorithms — classical literature (Kendall, Stuart, Agresti, Siegel, Fayyad & Irani);\n  - Data formats (`.sav`, `.zsav`) — open GNU PSPP specifications and the ReadStat library (MIT);\n  - Command syntax and menus — public user documentation without borrowing binary resources."
+      },
+      "id": "blk_native_paragraph_1793974413745606600",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    },
+    {
+      "data": {
+        "text": "---"
+      },
+      "id": "blk_native_paragraph_1793974413745607300",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    },
+    {
+      "data": {
+        "level": 2,
+        "text": "2. System Resource Guard (Compilation Limits)"
+      },
+      "id": "blk_native_heading_1793974413745608300",
+      "managed_by": "project_parser",
+      "type": "heading"
+    },
+    {
+      "data": {
+        "text": "To prevent resource exhaustion and protect developer machines and CI runners from freezing, the project enforces a **mandatory single-thread compilation constraint**:"
+      },
+      "id": "blk_native_paragraph_1793974413745609300",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    },
+    {
+      "data": {
+        "text": "* **NEVER execute `cargo build`, `cargo check`, `cargo test`, or `cargo clippy` without the `-j 1` flag:**"
+      },
+      "id": "blk_native_paragraph_1793974413745610000",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    },
+    {
+      "data": {
+        "code": "  cargo test --workspace -j 1\n  cargo check --workspace -j 1\n  cargo clippy --workspace --all-targets -j 1 -- -D warnings\n  cargo build --package statcraft_app --release -j 1",
+        "language": "bash"
+      },
+      "id": "blk_native_code_1793974413745611000",
+      "managed_by": "project_parser",
+      "type": "code"
+    },
+    {
+      "data": {
+        "text": "* Running with `-j 2` is permissible only with explicit maintainer approval.\n* Global configurations in `.cargo/config.toml` and `Cargo.toml` permanently fix `jobs = 1` and `codegen-units = 1`."
+      },
+      "id": "blk_native_paragraph_1793974413745612400",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    },
+    {
+      "data": {
+        "text": "---"
+      },
+      "id": "blk_native_paragraph_1793974413745613100",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    },
+    {
+      "data": {
+        "level": 2,
+        "text": "3. Reliability: The Never Crash Mandate"
+      },
+      "id": "blk_native_heading_1793974413745613500",
+      "managed_by": "project_parser",
+      "type": "heading"
+    },
+    {
+      "data": {
+        "text": "StatCraft is engineered for scientists, researchers, and data professionals working with mission-critical data. A crash resulting in data loss is unacceptable under any circumstances."
+      },
+      "id": "blk_native_paragraph_1793974413745614300",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    },
+    {
+      "data": {
+        "level": 3,
+        "text": "3.1. Prohibited Constructs in Production Code"
+      },
+      "id": "blk_native_heading_1793974413745614600",
+      "managed_by": "project_parser",
+      "type": "heading"
+    },
+    {
+      "data": {
+        "text": "Outside of `#[cfg(test)]` modules, the following constructs are **categorically prohibited**:\n* ❌ `unwrap()`\n* ❌ `expect(...)`\n* ❌ `panic!(...)`\n* ❌ `unreachable!(...)`\n* ❌ `todo!(...)`\n* ❌ `unimplemented!(...)`"
+      },
+      "id": "blk_native_paragraph_1793974413745615900",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    },
+    {
+      "data": {
+        "level": 3,
+        "text": "3.2. Error Handling & Boundary Defense"
+      },
+      "id": "blk_native_heading_1793974413745616400",
+      "managed_by": "project_parser",
+      "type": "heading"
+    },
+    {
+      "data": {
+        "text": "1. Every fallible operation returns a typed `Result<T, E>`.\n2. Errors are propagated upward using the `?` operator into strongly typed application domain errors (`CommandError`, `IoError`, `MathError`).\n3. All indices, column offsets, matrix slices, and file boundaries must be defensively checked:"
+      },
+      "id": "blk_native_paragraph_1793974413745617400",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    },
+    {
+      "data": {
+        "code": "   // CORRECT:\n   let col_idx = match dataset.find_column_index(var_name) {\n       Some(idx) => idx,\n       None => return Err(CommandError::ExecutionFailed(format!(\"Column not found: {}\", var_name))),\n   };\n\n   // STRICTLY PROHIBITED:\n   let col_idx = dataset.find_column_index(var_name).unwrap();",
+        "language": "rust"
+      },
+      "id": "blk_native_code_1793974413745618800",
+      "managed_by": "project_parser",
+      "type": "code"
+    },
+    {
+      "data": {
+        "text": "4. Mathematical algorithms must gracefully handle edge cases:\n   - Zero division ($s = 0$, $df = 0$, singular matrices) $\\to$ return `f64::NAN`, `None`, or `Null`, never panic;\n   - Degenerate samples ($N = 0$, $N = 1$);\n   - Missing data (`RawValue::Null`) — rigorous Listwise or Pairwise exclusion without panic."
+      },
+      "id": "blk_native_paragraph_1793974413745619900",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    },
+    {
+      "data": {
+        "text": "---"
+      },
+      "id": "blk_native_paragraph_1793974413745620500",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    },
+    {
+      "data": {
+        "level": 2,
+        "text": "4. Layered Engine Architecture (L0–L6)"
+      },
+      "id": "blk_native_heading_1793974413745621000",
+      "managed_by": "project_parser",
+      "type": "heading"
+    },
+    {
+      "data": {
+        "text": "StatCraft enforces a strict downward dependency hierarchy. Upward or circular dependencies are forbidden and caught by `cargo xtask layers`."
+      },
+      "id": "blk_native_paragraph_1793974413745621800",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    },
+    {
+      "data": {
+        "code": "L6: statcraft_app        (Desktop GUI: egui, eframe, egui_dock, DialogKit, Viewports)\n └── L5: statcraft_syntax (Engine CommandBus, .sps syntax parser & serializer)\n      ├── L4: statcraft_reporting (Multi-level Pivot Tables, HTML/TSV/TXT/MD export)\n      ├── L3: statcraft_charts    (Vector plotting, egui_plot, Brushing & Linking)\n      └── L2: statcraft_algo      (Pure statistical algorithms, statrs, faer)\n           └── L1: statcraft_core (In-memory structures: DataSet, VariableDictionary)\n                └── L0: statcraft_io (Codecs: Parquet .stc, SPSS .sav, CSV, Excel .xlsx)\n\nCross-Cutting Modules:\n* statcraft_i18n   (Zero-hardcode Fluent localization engine)\n* statcraft_bridge (Model Context Protocol / MCP server and local IPC socket)\n* xtask            (Automation harness: ci, layers, file-guard, design-guard, parity)",
+        "language": "text"
+      },
+      "id": "blk_native_code_1793974413745623400",
+      "managed_by": "project_parser",
+      "type": "code"
+    },
+    {
+      "data": {
+        "text": "**Architecture Rules:**\n* Layers L0 through L2 have zero knowledge of GUI frameworks (`egui`, `eframe`, windowing);\n* The statistical engine (`statcraft_algo`) does not depend on the command bus (`statcraft_syntax`) or reporting views;\n* Every new crate must be registered in `xtask/src/layers.rs`."
+      },
+      "id": "blk_native_paragraph_1793974413745625400",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    },
+    {
+      "data": {
+        "text": "---"
+      },
+      "id": "blk_native_paragraph_1793974413745626100",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    },
+    {
+      "data": {
+        "level": 2,
+        "text": "5. Command Architecture (Commands, Not Handlers)"
+      },
+      "id": "blk_native_heading_1793974413745626500",
+      "managed_by": "project_parser",
+      "type": "heading"
+    },
+    {
+      "data": {
+        "text": "StatCraft adheres strictly to the **Commands, Not Handlers** paradigm. The UI is completely decoupled from state mutation and cannot directly modify datasets or metadata."
+      },
+      "id": "blk_native_paragraph_1793974413745627400",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    },
+    {
+      "data": {
+        "level": 3,
+        "text": "5.1. Command Requirements"
+      },
+      "id": "blk_native_heading_1793974413745628200",
+      "managed_by": "project_parser",
+      "type": "heading"
+    },
+    {
+      "data": {
+        "text": "1. **Hierarchical Command Identifier:** Canonical SPSS-inspired path (`stat.descriptives`, `stat.ttest.independent`, `data.sort_cases`, `transform.optimal_binning`).\n2. **Schema for AI Agents (`specs()`):** Every command exposes a machine-readable JSON Schema of its input parameters for autonomous invocation via MCP and CLI.\n3. **Availability Predicate (`enabled()`):** Contextual validation logic determining whether the command is currently executable (e.g., Independent T-Test requires at least one scale variable and one grouping variable).\n4. **History & Undo/Redo:** Execution produces a typed outcome and appends exactly one discrete transaction to the undo stack (`undo()`). User interactions (such as dragging or typing) must coalesce.\n5. **Syntax Equivalence (`to_sps()`):** Every command must serialize to and deserialize from authentic SPSS syntax (`.sps`).\n6. **Parity Registration:** New procedures must be tracked in `docs/parity-checklist.md` (verified by `cargo xtask parity`)."
+      },
+      "id": "blk_native_paragraph_1793974413745629800",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    },
+    {
+      "data": {
+        "text": "---"
+      },
+      "id": "blk_native_paragraph_1793974413745630500",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    },
+    {
+      "data": {
+        "level": 2,
+        "text": "6. Dialog Design Standard (DialogKit) & Vector-First UI"
+      },
+      "id": "blk_native_heading_1793974413745631200",
+      "managed_by": "project_parser",
+      "type": "heading"
+    },
+    {
+      "data": {
+        "level": 3,
+        "text": "6.1. DialogKit Canonical Components"
+      },
+      "id": "blk_native_heading_1793974413745631800",
+      "managed_by": "project_parser",
+      "type": "heading"
+    },
+    {
+      "data": {
+        "text": "All modal dialogs must be built using the canonical components in `crates/statcraft_app/src/dialogs/common/`:\n* **`DialogShell`**: Manages window dimensions, centering, and modality:\n  - `DialogSize::Standard` — $560 \\times 430$ px (Standard procedure dialogs);\n  - `DialogSize::Subdialog` — $360 \\times 300$ px (Modal subdialogs: Statistics, Options);\n  - `DialogSize::Properties` — $460 \\times 380$ px;\n  - `DialogSize::Compute` — $620 \\times 480$ px.\n* **`VariablePicker`**: Unified variable list displaying measurement scale icons and formatted as `Label [Name]`.\n* **`TransferButton`**: Adaptive vector transfer button (`->` / `<-`), automatically oriented to the focused list.\n* **`DialogActionBar`**: Canonical Type 1 action row (`[ OK ] [ Paste ] [ Reset ] [ Cancel ] [ Help ]`), uniformly sized ($\\ge 80 \\times 26$ px, corner radius 3 px). Raw `ui.button()` calls for primary actions are forbidden.\n* **`SubdialogActionBar`**: Type 2 subdialog action row (`[ Continue ] [ Cancel ] [ Help ]`).\n* **`SubdialogSidebar`**: Right-hand settings column (`[ Statistics... ]`, `[ Options... ]`, $90 \\times 24$ px).\n* **`GroupBox`**: Visual frame grouping related options and radios."
+      },
+      "id": "blk_native_paragraph_1793974413745635900",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    },
+    {
+      "data": {
+        "level": 3,
+        "text": "6.2. Vector-First UI: Ban on Emoji and Non-Standard Glyphs"
+      },
+      "id": "blk_native_heading_1793974413745636800",
+      "managed_by": "project_parser",
+      "type": "heading"
+    },
+    {
+      "data": {
+        "text": "`egui`'s default fonts do not bundle color emoji or obscure Unicode glyphs. Attempting to render them results in broken tofu boxes (`□`):\n* **STRICTLY PROHIBITED — Color Emoji in UI text:**\n  ❌ `📊`, `📈`, `⏳`, `⚠️`, `💡`, `📁`, `💾`, `⚙`, `🔍`, `✨`.\n* **STRICTLY PROHIBITED — Obscure Unicode symbols:**\n  ❌ `●` (U+25CF), `•` (U+2022), `✓`, `✔`, `✕`, `✖`.\n* **RENDERING RULES:**\n  1. Measurement scale icons (Nominal, Ordinal, Scale), connection status dots, and badges must be drawn **using vector primitives** via `ui.painter()` (`circle_filled`, `line_segment`, `rect_stroke`) or cached SVGs (`SvgIconCache`).\n  2. Busy/Loading indicators must use `\"...\"` with active glow or an animated vector spinner."
+      },
+      "id": "blk_native_paragraph_1793974413745638400",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    },
+    {
+      "data": {
+        "text": "---"
+      },
+      "id": "blk_native_paragraph_1793974413745639400",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    },
+    {
+      "data": {
+        "level": 2,
+        "text": "7. Zero-Hardcode i18n & Fluent Localization"
+      },
+      "id": "blk_native_heading_1793974413745640000",
+      "managed_by": "project_parser",
+      "type": "heading"
+    },
+    {
+      "data": {
+        "level": 3,
+        "text": "7.1. Prohibition of Natural Language String Literals"
+      },
+      "id": "blk_native_heading_1793974413745640900",
+      "managed_by": "project_parser",
+      "type": "heading"
+    },
+    {
+      "data": {
+        "text": "In GUI source code (`crates/statcraft_app`, dialogs, menus, tooltips), **string literals in natural languages (English, Russian, or any other) are strictly forbidden**."
+      },
+      "id": "blk_native_paragraph_1793974413745641700",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    },
+    {
+      "data": {
+        "code": "// CORRECT:\nui.label(t!(\"dialog-optimal-binning-title\"));\nui.heading(t!(\"menu-transform-optimal-binning\"));\n\n// STRICTLY PROHIBITED:\nui.label(\"Optimal Binning\");\nui.heading(\"Оптимальная группировка\");",
+        "language": "rust"
+      },
+      "id": "blk_native_code_1793974413745642900",
+      "managed_by": "project_parser",
+      "type": "code"
+    },
+    {
+      "data": {
+        "level": 3,
+        "text": "7.2. Fluent Translation Catalogs (`.ftl`)"
+      },
+      "id": "blk_native_heading_1793974413745643800",
+      "managed_by": "project_parser",
+      "type": "heading"
+    },
+    {
+      "data": {
+        "text": "* Translations reside in declarative Fluent files: `locales/en.ftl` and `locales/ru.ftl`.\n* New keys must be added **synchronously to both language catalogs**.\n* Placeholder values (`TODO`, `FIXME`, `???`, `untranslated`) and missing keys cause `crates/statcraft_i18n/tests/i18n_lint_test.rs` to fail.\n* External contributors can introduce new language packs (e.g., `locales/de.ftl`, `locales/es.ftl`) simply by placing the file in `locales/`, without recompiling the program."
+      },
+      "id": "blk_native_paragraph_1793974413745645200",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    },
+    {
+      "data": {
+        "text": "---"
+      },
+      "id": "blk_native_paragraph_1793974413745645900",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    },
+    {
+      "data": {
+        "level": 2,
+        "text": "8. File Size Limits (File Size Guard)"
+      },
+      "id": "blk_native_heading_1793974413745646600",
+      "managed_by": "project_parser",
+      "type": "heading"
+    },
+    {
+      "data": {
+        "text": "To preserve codebase maintainability and prevent context degradation for LLMs and human reviewers, strict file size ceilings are enforced:"
+      },
+      "id": "blk_native_paragraph_1793974413745647200",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    },
+    {
+      "data": {
+        "text": "| Module Classification | Hard Line Limit | Target Locations |\n|---|---|---|\n| **Leaf Functional Modules** | $\\le 500$ lines | `crates/statcraft_algo/**`, `dialogs/**`, `views/output_view/**` |\n| **Complex Interactive Editors** | $\\le 1000$ lines | `data_view.rs`, `variable_view.rs`, `syntax_editor.rs` |\n| **Root Application Coordinator** | $\\le 1500$ lines | `crates/statcraft_app/src/app.rs` |\n| **All Other Modules** | $\\le 1000$ lines | `commands/**`, `model.rs`, `lib.rs` |"
+      },
+      "id": "blk_native_paragraph_1793974413745648200",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    },
+    {
+      "data": {
+        "level": 3,
+        "text": "\"Decompose, Don't Prune\" (Anti-Goodhart Counterweight)"
+      },
+      "id": "blk_native_heading_1793974413745648900",
+      "managed_by": "project_parser",
+      "type": "heading"
+    },
+    {
+      "data": {
+        "text": "* **Under no circumstances** may a module be squeezed under the line limit by stripping features, deleting table columns, or compressing logic into unreadable one-liners.\n* The only valid solution for an oversized module is **architectural decomposition**: splitting into submodules (e.g., creating a subdirectory with `mod.rs` and focused submodules), extracting subdialogs, or modularizing builders.\n* Verification: `cargo run -p xtask -j 1 -- file-guard`."
+      },
+      "id": "blk_native_paragraph_1793974413745649800",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    },
+    {
+      "data": {
+        "text": "---"
+      },
+      "id": "blk_native_paragraph_1793974413745650400",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    },
+    {
+      "data": {
+        "level": 2,
+        "text": "9. Testing & The Mathematical Golden Oracle"
+      },
+      "id": "blk_native_heading_1793974413745650800",
+      "managed_by": "project_parser",
+      "type": "heading"
+    },
+    {
+      "data": {
+        "level": 3,
+        "text": "9.1. Mathematical Golden Oracle Verification"
+      },
+      "id": "blk_native_heading_1793974413745651200",
+      "managed_by": "project_parser",
+      "type": "heading"
+    },
+    {
+      "data": {
+        "text": "Every statistical procedure implemented in `statcraft_algo` must include unit tests verifying numerical outputs against reference benchmarks (Python `scipy.stats`, GNU PSPP, or NIST reference datasets):\n* Test statistics ($t$, $F$, $\\chi^2$, $z$, $U$), degrees of freedom ($df$), $p$-values, effect sizes ($\\eta^2$), and confidence intervals must match reference standards to within **$\\le 10^{-6}$** absolute tolerance;\n* Edge cases must be tested: zero variance, identical ranks with tie-breaking, missing data (`Null`), and boundary sample sizes."
+      },
+      "id": "blk_native_paragraph_1793974413745652300",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    },
+    {
+      "data": {
+        "level": 3,
+        "text": "9.2. Interface Invariant Test Suites"
+      },
+      "id": "blk_native_heading_1793974413745653000",
+      "managed_by": "project_parser",
+      "type": "heading"
+    },
+    {
+      "data": {
+        "text": "* `crates/statcraft_app/tests/output_viewer_invariants.rs` — verifies that all table styles, Outline navigation trees, and TSV clipboard exports remain unbroken across changes;\n* `crates/statcraft_app/tests/dialog_invariants.rs` — verifies that all modal windows adhere to the DialogKit geometry and component standards."
+      },
+      "id": "blk_native_paragraph_1793974413745654000",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    },
+    {
+      "data": {
+        "text": "---"
+      },
+      "id": "blk_native_paragraph_1793974413745654800",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    },
+    {
+      "data": {
+        "level": 2,
+        "text": "10. Automated Quality Gates & Tooling (`xtask`)"
+      },
+      "id": "blk_native_heading_1793974413745655300",
+      "managed_by": "project_parser",
+      "type": "heading"
+    },
+    {
+      "data": {
+        "text": "StatCraft bundles an automated maintenance suite accessible via `cargo xtask`."
+      },
+      "id": "blk_native_paragraph_1793974413745656000",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    },
+    {
+      "data": {
+        "level": 3,
+        "text": "Full Quality Gate (Run this before committing):"
+      },
+      "id": "blk_native_heading_1793974413745656500",
+      "managed_by": "project_parser",
+      "type": "heading"
+    },
+    {
+      "data": {
+        "code": "cargo run -p xtask -j 1 -- ci",
+        "language": "bash"
+      },
+      "id": "blk_native_code_1793974413745657200",
+      "managed_by": "project_parser",
+      "type": "code"
+    },
+    {
+      "data": {
+        "text": "This single command executes the complete CI suite:\n1. `cargo fmt --all -- --check` (Formatting);\n2. `cargo clippy --workspace --all-targets -j 1 -- -D warnings` (Compiler linter across all targets);\n3. `xtask layers` (L0..L6 architectural layering rules);\n4. `xtask file-guard` (500 / 1000 / 1500 line limits);\n5. `xtask design-guard` (DialogKit component compliance);\n6. `cargo test --workspace -j 1` (100% test suite);\n7. `xtask parity` (SPSS feature parity synchronization)."
+      },
+      "id": "blk_native_paragraph_1793974413745658400",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    },
+    {
+      "data": {
+        "level": 3,
+        "text": "Dedicated Commands:"
+      },
+      "id": "blk_native_heading_1793974413745658900",
+      "managed_by": "project_parser",
+      "type": "heading"
+    },
+    {
+      "data": {
+        "code": "# Check architectural layering rules\ncargo run -p xtask -j 1 -- layers\n\n# Check file size limits\ncargo run -p xtask -j 1 -- file-guard\n\n# Check DialogKit standard compliance\ncargo run -p xtask -j 1 -- design-guard\n\n# Verify SPSS feature parity catalog\ncargo run -p xtask -j 1 -- parity\n\n# Regenerate assets/icon.ico and PNGs from assets/icon.svg\ncargo run -p xtask -j 1 -- icon",
+        "language": "bash"
+      },
+      "id": "blk_native_code_1793974413745660200",
+      "managed_by": "project_parser",
+      "type": "code"
+    },
+    {
+      "data": {
+        "text": "---"
+      },
+      "id": "blk_native_paragraph_1793974413745660900",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    },
+    {
+      "data": {
+        "level": 2,
+        "text": "11. Definition of Done (DoD) Checklist"
+      },
+      "id": "blk_native_heading_1793974413745661400",
+      "managed_by": "project_parser",
+      "type": "heading"
+    },
+    {
+      "data": {
+        "text": "A pull request, feature, or bugfix is considered complete **only when 100% of the following requirements are fulfilled**:"
+      },
+      "id": "blk_native_paragraph_1793974413745662000",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    },
+    {
+      "data": {
+        "text": "- [ ] **1. Compilation & Formatting:**"
+      },
+      "id": "blk_native_paragraph_1793974413745662600",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    },
+    {
+      "data": {
+        "code": "  cargo check --workspace -j 1\n  cargo clippy --workspace --all-targets -j 1 -- -D warnings\n  cargo fmt --all -- --check",
+        "language": "bash"
+      },
+      "id": "blk_native_code_1793974413745663200",
+      "managed_by": "project_parser",
+      "type": "code"
+    },
+    {
+      "data": {
+        "text": "- [ ] **2. 100% Test Suite Pass:**"
+      },
+      "id": "blk_native_paragraph_1793974413745663900",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    },
+    {
+      "data": {
+        "code": "  cargo test --workspace -j 1",
+        "language": "bash"
+      },
+      "id": "blk_native_code_1793974413745672600",
+      "managed_by": "project_parser",
+      "type": "code"
+    },
+    {
+      "data": {
+        "text": "- [ ] **3. Automated Quality Gate Pass:**"
+      },
+      "id": "blk_native_paragraph_1793974413745673500",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    },
+    {
+      "data": {
+        "code": "  cargo run -p xtask -j 1 -- ci",
+        "language": "bash"
+      },
+      "id": "blk_native_code_1793974413745674300",
+      "managed_by": "project_parser",
+      "type": "code"
+    },
+    {
+      "data": {
+        "text": "- [ ] **4. File Size Compliance:** Every file strictly adheres to the 500 / 1000 / 1500 line limits (`xtask file-guard`).\n- [ ] **5. Design Guard Compliance:** Dialogs use `DialogKit` exclusively with zero raw action buttons (`xtask design-guard`).\n- [ ] **6. Zero-Hardcode i18n:** Zero natural language literals in GUI code; all keys mirrored in `locales/en.ftl` and `locales/ru.ftl`.\n- [ ] **7. Documentation Synchronization:**\n  - `docs/CHECKLIST.md` — completed items checked;\n  - `docs/parity-checklist.md` — new procedures registered;\n  - `docs/CHRONICLE.md` & `docs/CHRONICLE.en.md` — synchronous bilingual entries logged with timestamps."
+      },
+      "id": "blk_native_paragraph_1793974413745675800",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    },
+    {
+      "data": {
+        "text": "---"
+      },
+      "id": "blk_native_paragraph_1793974413745676600",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    },
+    {
+      "data": {
+        "level": 2,
+        "text": "12. Binary Distributions & Native Installers"
+      },
+      "id": "blk_native_heading_1793974413745677200",
+      "managed_by": "project_parser",
+      "type": "heading"
+    },
+    {
+      "data": {
+        "text": "StatCraft generates both portable archives and native operating system installers for all major desktop platforms:"
+      },
+      "id": "blk_native_paragraph_1793974413745678500",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    },
+    {
+      "data": {
+        "text": "* **Windows:**\n  - Portable: `statcraft-windows-x64.zip`\n  - Installer: `statcraft-windows-x64-installer.exe` (Inno Setup via `packaging/windows/installer.iss`)\n* **Linux:**\n  - Portable: `statcraft-linux-x64.tar.gz`\n  - Package: `statcraft-linux-x64.deb` (`dpkg-deb` with menu integration via `packaging/linux/statcraft.desktop`)\n* **macOS:**\n  - Portable: `statcraft-macos-arm64.tar.gz` (Apple Silicon) & `statcraft-macos-x64.tar.gz` (Intel)\n  - Disk Image: `statcraft-macos-arm64.dmg` & `statcraft-macos-x64.dmg` (`StatCraft.app` bundle via `hdiutil`)"
+      },
+      "id": "blk_native_paragraph_1793974413745680400",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    },
+    {
+      "data": {
+        "level": 3,
+        "text": "Local Release Build:"
+      },
+      "id": "blk_native_heading_1793974413745681300",
+      "managed_by": "project_parser",
+      "type": "heading"
+    },
+    {
+      "data": {
+        "code": "cargo build --package statcraft_app --release -j 1",
+        "language": "bash"
+      },
+      "id": "blk_native_code_1793974413745682100",
+      "managed_by": "project_parser",
+      "type": "code"
+    },
+    {
+      "data": {
+        "text": "The compiled binary is placed at `target/release/statcraft_app.exe` (Windows) or `target/release/statcraft_app` (Unix)."
+      },
+      "id": "blk_native_paragraph_1793974413745683200",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    },
+    {
+      "data": {
+        "text": "---"
+      },
+      "id": "blk_native_paragraph_1793974413745685200",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    },
+    {
+      "data": {
+        "level": 2,
+        "text": "13. Step-by-Step Procedure Cookbook"
+      },
+      "id": "blk_native_heading_1793974413745685900",
+      "managed_by": "project_parser",
+      "type": "heading"
+    },
+    {
+      "data": {
+        "text": "Follow this 5-step workflow when adding any new statistical procedure or data transformation:"
+      },
+      "id": "blk_native_paragraph_1793974413745686700",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    },
+    {
+      "data": {
+        "text": "1. **L2: Algorithmic Core (`crates/statcraft_algo/src/<name>.rs`):**\n   - Write pure mathematical calculations using Safe Rust without panics;\n   - Implement Golden Oracle unit tests verified against SciPy ($\\le 10^{-6}$);\n   - Ensure file size is $\\le 500$ lines;\n   - Register module in `crates/statcraft_algo/src/lib.rs`."
+      },
+      "id": "blk_native_paragraph_1793974413745687700",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    },
+    {
+      "data": {
+        "text": "2. **L5: Engine Command (`crates/statcraft_syntax/src/commands/<name>_cmd.rs`):**\n   - Implement the `Command` trait (`execute`, `undo`, `specs`, `to_sps`);\n   - Register the command in `CommandBus` (`crates/statcraft_syntax/src/bus.rs`);\n   - Add command definition to `docs/parity-checklist.md`."
+      },
+      "id": "blk_native_paragraph_1793974413745688700",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    },
+    {
+      "data": {
+        "text": "3. **Localization (`locales/en.ftl` & `locales/ru.ftl`):**\n   - Add dialog titles, labels, option strings, and status messages in both English and Russian."
+      },
+      "id": "blk_native_paragraph_1793974413745689400",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    },
+    {
+      "data": {
+        "text": "4. **L6: Graphical Interface (`crates/statcraft_app/src/dialogs/<name>_dialog.rs`):**\n   - Implement the modal dialog using `DialogShell::standard`;\n   - Employ `VariablePicker`, `TransferButton`, `GroupBox`, and `DialogActionBar`;\n   - Hook dialog trigger into `app_menus` and event handler into `app_dialogs.rs`;\n   - Add invariant verification test to `tests/dialog_invariants.rs`."
+      },
+      "id": "blk_native_paragraph_1793974413745690400",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    },
+    {
+      "data": {
+        "text": "5. **Verification & Audit:**\n   - Execute `cargo run -p xtask -j 1 -- ci`;\n   - Append bilingual entries to `docs/CHRONICLE.md` and `docs/CHRONICLE.en.md`;\n   - Commit following Conventional Commits format (`feat(category): description`)."
+      },
+      "id": "blk_native_paragraph_1793974413745691400",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    }
+  ]
+}
+
+--BOUNDARY_PAYLOAD_KV2N8KE49O
+Content-Type: text/html; charset="utf-8"
+Content-Disposition: inline
+
+<!doctype html><html><head><meta charset="utf-8"><meta name="generator" content="CapsuleCraft Native"></head><body style="font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;max-width:720px;margin:32px auto;line-height:1.55;color:#23201c;background:#faf8f4;"><h1>📚 StatCraft / StatCraft Contributor Guide (CONTRIBUTING.md)</h1><p><em>[callout block — open in CapsuleCraft web for its canvas]</em></p><h1>StatCraft Contributor Guide (CONTRIBUTING.md)</h1><h3>The ArtCraft / storytold Ecosystem Engineering Standard</h3><p>Welcome to **StatCraft** — a next-generation, high-performance, open-source statistical analysis package designed as a modern, safe, and uncompromising alternative to IBM SPSS Statistics, built from the ground up in pure Rust.</p><p>This document establishes the **authoritative development regulations, architectural invariants, and Definition of Done (DoD)** that govern all contributions, pull requests, and automated agent workflows. Every commit and pull request must strictly pass the automated CI quality gate (`cargo xtask ci`).</p><p>---</p><h2>Table of Contents</h2><p>1. [ArtCraft Ecosystem Foundations](#1-artcraft-ecosystem-foundations)<br>2. [System Resource Guard (Compilation Limits)](#2-system-resource-guard-compilation-limits)<br>3. [Reliability: The Never Crash Mandate](#3-reliability-the-never-crash-mandate)<br>4. [Layered Engine Architecture (L0–L6)](#4-layered-engine-architecture-l0l6)<br>5. [Command Architecture (Commands, Not Handlers)](#5-command-architecture-commands-not-handlers)<br>6. [Dialog Design Standard (DialogKit) &amp; Vector-First UI](#6-dialog-design-standard-dialogkit--vector-first-ui)<br>7. [Zero-Hardcode i18n &amp; Fluent Localization](#7-zero-hardcode-i18n--fluent-localization)<br>8. [File Size Limits (File Size Guard)](#8-file-size-limits-file-size-guard)<br>9. [Testing &amp; The Mathematical Golden Oracle](#9-testing--the-mathematical-golden-oracle)<br>10. [Automated Quality Gates &amp; Tooling (`xtask`)](#10-automated-quality-gates--tooling-xtask)<br>11. [Definition of Done (DoD) Checklist](#11-definition-of-done-dod-checklist)<br>12. [Binary Distributions &amp; Native Installers](#12-binary-distributions--native-installers)<br>13. [Step-by-Step Procedure Cookbook](#13-step-by-step-procedure-cookbook)</p><p>---</p><h2>1. ArtCraft Ecosystem Foundations</h2><h3>1.1. 100% Pure Safe Rust</h3><p>* The entire project is written **exclusively in Rust** (2021 edition).<br>* **Handwritten JavaScript or TypeScript is strictly prohibited.** WebAssembly targets must use `wasm-bindgen` with automatically generated glue code.<br>* The codebase enforces `#![forbid(unsafe_code)]`. No `unsafe` blocks are permitted in production application code.</p><h3>1.2. Licensing &amp; Attribution</h3><p>* The codebase is dual-licensed under: **MIT OR Apache-2.0** (`LICENSE-MIT`, `LICENSE-APACHE`, `NOTICE`).<br>* All third-party assets (such as Lucide icons or open fonts) must carry permissive licenses, with copies retained alongside the assets and registered in `ATTRIBUTION.md`.<br>* ArtCraft brand identity, logos, and trademarks in `assets/` and `docs/brand/` are proprietary and protected under `docs/brand/LICENSE-brand.txt`.</p><h3>1.3. The Clean-Room Principle</h3><p>* **STRICTLY FORBIDDEN:** Copying source code, shaders, binaries, icons, or proprietary assets from commercial software (such as IBM SPSS Statistics).<br>* All algorithms, file formats, and behaviors are implemented **solely via independent observation, open specifications, and academic literature**:<br>  - Statistical algorithms — classical literature (Kendall, Stuart, Agresti, Siegel, Fayyad &amp; Irani);<br>  - Data formats (`.sav`, `.zsav`) — open GNU PSPP specifications and the ReadStat library (MIT);<br>  - Command syntax and menus — public user documentation without borrowing binary resources.</p><p>---</p><h2>2. System Resource Guard (Compilation Limits)</h2><p>To prevent resource exhaustion and protect developer machines and CI runners from freezing, the project enforces a **mandatory single-thread compilation constraint**:</p><p>* **NEVER execute `cargo build`, `cargo check`, `cargo test`, or `cargo clippy` without the `-j 1` flag:**</p><p><em>[code block — open in CapsuleCraft web for its canvas]</em></p><p>* Running with `-j 2` is permissible only with explicit maintainer approval.<br>* Global configurations in `.cargo/config.toml` and `Cargo.toml` permanently fix `jobs = 1` and `codegen-units = 1`.</p><p>---</p><h2>3. Reliability: The Never Crash Mandate</h2><p>StatCraft is engineered for scientists, researchers, and data professionals working with mission-critical data. A crash resulting in data loss is unacceptable under any circumstances.</p><h3>3.1. Prohibited Constructs in Production Code</h3><p>Outside of `#[cfg(test)]` modules, the following constructs are **categorically prohibited**:<br>* ❌ `unwrap()`<br>* ❌ `expect(...)`<br>* ❌ `panic!(...)`<br>* ❌ `unreachable!(...)`<br>* ❌ `todo!(...)`<br>* ❌ `unimplemented!(...)`</p><h3>3.2. Error Handling &amp; Boundary Defense</h3><p>1. Every fallible operation returns a typed `Result&lt;T, E&gt;`.<br>2. Errors are propagated upward using the `?` operator into strongly typed application domain errors (`CommandError`, `IoError`, `MathError`).<br>3. All indices, column offsets, matrix slices, and file boundaries must be defensively checked:</p><p><em>[code block — open in CapsuleCraft web for its canvas]</em></p><p>4. Mathematical algorithms must gracefully handle edge cases:<br>   - Zero division ($s = 0$, $df = 0$, singular matrices) $\to$ return `f64::NAN`, `None`, or `Null`, never panic;<br>   - Degenerate samples ($N = 0$, $N = 1$);<br>   - Missing data (`RawValue::Null`) — rigorous Listwise or Pairwise exclusion without panic.</p><p>---</p><h2>4. Layered Engine Architecture (L0–L6)</h2><p>StatCraft enforces a strict downward dependency hierarchy. Upward or circular dependencies are forbidden and caught by `cargo xtask layers`.</p><p><em>[code block — open in CapsuleCraft web for its canvas]</em></p><p>**Architecture Rules:**<br>* Layers L0 through L2 have zero knowledge of GUI frameworks (`egui`, `eframe`, windowing);<br>* The statistical engine (`statcraft_algo`) does not depend on the command bus (`statcraft_syntax`) or reporting views;<br>* Every new crate must be registered in `xtask/src/layers.rs`.</p><p>---</p><h2>5. Command Architecture (Commands, Not Handlers)</h2><p>StatCraft adheres strictly to the **Commands, Not Handlers** paradigm. The UI is completely decoupled from state mutation and cannot directly modify datasets or metadata.</p><h3>5.1. Command Requirements</h3><p>1. **Hierarchical Command Identifier:** Canonical SPSS-inspired path (`stat.descriptives`, `stat.ttest.independent`, `data.sort_cases`, `transform.optimal_binning`).<br>2. **Schema for AI Agents (`specs()`):** Every command exposes a machine-readable JSON Schema of its input parameters for autonomous invocation via MCP and CLI.<br>3. **Availability Predicate (`enabled()`):** Contextual validation logic determining whether the command is currently executable (e.g., Independent T-Test requires at least one scale variable and one grouping variable).<br>4. **History &amp; Undo/Redo:** Execution produces a typed outcome and appends exactly one discrete transaction to the undo stack (`undo()`). User interactions (such as dragging or typing) must coalesce.<br>5. **Syntax Equivalence (`to_sps()`):** Every command must serialize to and deserialize from authentic SPSS syntax (`.sps`).<br>6. **Parity Registration:** New procedures must be tracked in `docs/parity-checklist.md` (verified by `cargo xtask parity`).</p><p>---</p><h2>6. Dialog Design Standard (DialogKit) &amp; Vector-First UI</h2><h3>6.1. DialogKit Canonical Components</h3><p>All modal dialogs must be built using the canonical components in `crates/statcraft_app/src/dialogs/common/`:<br>* **`DialogShell`**: Manages window dimensions, centering, and modality:<br>  - `DialogSize::Standard` — $560 \times 430$ px (Standard procedure dialogs);<br>  - `DialogSize::Subdialog` — $360 \times 300$ px (Modal subdialogs: Statistics, Options);<br>  - `DialogSize::Properties` — $460 \times 380$ px;<br>  - `DialogSize::Compute` — $620 \times 480$ px.<br>* **`VariablePicker`**: Unified variable list displaying measurement scale icons and formatted as `Label [Name]`.<br>* **`TransferButton`**: Adaptive vector transfer button (`-&gt;` / `&lt;-`), automatically oriented to the focused list.<br>* **`DialogActionBar`**: Canonical Type 1 action row (`[ OK ] [ Paste ] [ Reset ] [ Cancel ] [ Help ]`), uniformly sized ($\ge 80 \times 26$ px, corner radius 3 px). Raw `ui.button()` calls for primary actions are forbidden.<br>* **`SubdialogActionBar`**: Type 2 subdialog action row (`[ Continue ] [ Cancel ] [ Help ]`).<br>* **`SubdialogSidebar`**: Right-hand settings column (`[ Statistics... ]`, `[ Options... ]`, $90 \times 24$ px).<br>* **`GroupBox`**: Visual frame grouping related options and radios.</p><h3>6.2. Vector-First UI: Ban on Emoji and Non-Standard Glyphs</h3><p>`egui`&#39;s default fonts do not bundle color emoji or obscure Unicode glyphs. Attempting to render them results in broken tofu boxes (`□`):<br>* **STRICTLY PROHIBITED — Color Emoji in UI text:**<br>  ❌ `📊`, `📈`, `⏳`, `⚠️`, `💡`, `📁`, `💾`, `⚙`, `🔍`, `✨`.<br>* **STRICTLY PROHIBITED — Obscure Unicode symbols:**<br>  ❌ `●` (U+25CF), `•` (U+2022), `✓`, `✔`, `✕`, `✖`.<br>* **RENDERING RULES:**<br>  1. Measurement scale icons (Nominal, Ordinal, Scale), connection status dots, and badges must be drawn **using vector primitives** via `ui.painter()` (`circle_filled`, `line_segment`, `rect_stroke`) or cached SVGs (`SvgIconCache`).<br>  2. Busy/Loading indicators must use `&quot;...&quot;` with active glow or an animated vector spinner.</p><p>---</p><h2>7. Zero-Hardcode i18n &amp; Fluent Localization</h2><h3>7.1. Prohibition of Natural Language String Literals</h3><p>In GUI source code (`crates/statcraft_app`, dialogs, menus, tooltips), **string literals in natural languages (English, Russian, or any other) are strictly forbidden**.</p><p><em>[code block — open in CapsuleCraft web for its canvas]</em></p><h3>7.2. Fluent Translation Catalogs (`.ftl`)</h3><p>* Translations reside in declarative Fluent files: `locales/en.ftl` and `locales/ru.ftl`.<br>* New keys must be added **synchronously to both language catalogs**.<br>* Placeholder values (`TODO`, `FIXME`, `???`, `untranslated`) and missing keys cause `crates/statcraft_i18n/tests/i18n_lint_test.rs` to fail.<br>* External contributors can introduce new language packs (e.g., `locales/de.ftl`, `locales/es.ftl`) simply by placing the file in `locales/`, without recompiling the program.</p><p>---</p><h2>8. File Size Limits (File Size Guard)</h2><p>To preserve codebase maintainability and prevent context degradation for LLMs and human reviewers, strict file size ceilings are enforced:</p><p>| Module Classification | Hard Line Limit | Target Locations |<br>|---|---|---|<br>| **Leaf Functional Modules** | $\le 500$ lines | `crates/statcraft_algo/**`, `dialogs/**`, `views/output_view/**` |<br>| **Complex Interactive Editors** | $\le 1000$ lines | `data_view.rs`, `variable_view.rs`, `syntax_editor.rs` |<br>| **Root Application Coordinator** | $\le 1500$ lines | `crates/statcraft_app/src/app.rs` |<br>| **All Other Modules** | $\le 1000$ lines | `commands/**`, `model.rs`, `lib.rs` |</p><h3>&quot;Decompose, Don&#39;t Prune&quot; (Anti-Goodhart Counterweight)</h3><p>* **Under no circumstances** may a module be squeezed under the line limit by stripping features, deleting table columns, or compressing logic into unreadable one-liners.<br>* The only valid solution for an oversized module is **architectural decomposition**: splitting into submodules (e.g., creating a subdirectory with `mod.rs` and focused submodules), extracting subdialogs, or modularizing builders.<br>* Verification: `cargo run -p xtask -j 1 -- file-guard`.</p><p>---</p><h2>9. Testing &amp; The Mathematical Golden Oracle</h2><h3>9.1. Mathematical Golden Oracle Verification</h3><p>Every statistical procedure implemented in `statcraft_algo` must include unit tests verifying numerical outputs against reference benchmarks (Python `scipy.stats`, GNU PSPP, or NIST reference datasets):<br>* Test statistics ($t$, $F$, $\chi^2$, $z$, $U$), degrees of freedom ($df$), $p$-values, effect sizes ($\eta^2$), and confidence intervals must match reference standards to within **$\le 10^{-6}$** absolute tolerance;<br>* Edge cases must be tested: zero variance, identical ranks with tie-breaking, missing data (`Null`), and boundary sample sizes.</p><h3>9.2. Interface Invariant Test Suites</h3><p>* `crates/statcraft_app/tests/output_viewer_invariants.rs` — verifies that all table styles, Outline navigation trees, and TSV clipboard exports remain unbroken across changes;<br>* `crates/statcraft_app/tests/dialog_invariants.rs` — verifies that all modal windows adhere to the DialogKit geometry and component standards.</p><p>---</p><h2>10. Automated Quality Gates &amp; Tooling (`xtask`)</h2><p>StatCraft bundles an automated maintenance suite accessible via `cargo xtask`.</p><h3>Full Quality Gate (Run this before committing):</h3><p><em>[code block — open in CapsuleCraft web for its canvas]</em></p><p>This single command executes the complete CI suite:<br>1. `cargo fmt --all -- --check` (Formatting);<br>2. `cargo clippy --workspace --all-targets -j 1 -- -D warnings` (Compiler linter across all targets);<br>3. `xtask layers` (L0..L6 architectural layering rules);<br>4. `xtask file-guard` (500 / 1000 / 1500 line limits);<br>5. `xtask design-guard` (DialogKit component compliance);<br>6. `cargo test --workspace -j 1` (100% test suite);<br>7. `xtask parity` (SPSS feature parity synchronization).</p><h3>Dedicated Commands:</h3><p><em>[code block — open in CapsuleCraft web for its canvas]</em></p><p>---</p><h2>11. Definition of Done (DoD) Checklist</h2><p>A pull request, feature, or bugfix is considered complete **only when 100% of the following requirements are fulfilled**:</p><p>- [ ] **1. Compilation &amp; Formatting:**</p><p><em>[code block — open in CapsuleCraft web for its canvas]</em></p><p>- [ ] **2. 100% Test Suite Pass:**</p><p><em>[code block — open in CapsuleCraft web for its canvas]</em></p><p>- [ ] **3. Automated Quality Gate Pass:**</p><p><em>[code block — open in CapsuleCraft web for its canvas]</em></p><p>- [ ] **4. File Size Compliance:** Every file strictly adheres to the 500 / 1000 / 1500 line limits (`xtask file-guard`).<br>- [ ] **5. Design Guard Compliance:** Dialogs use `DialogKit` exclusively with zero raw action buttons (`xtask design-guard`).<br>- [ ] **6. Zero-Hardcode i18n:** Zero natural language literals in GUI code; all keys mirrored in `locales/en.ftl` and `locales/ru.ftl`.<br>- [ ] **7. Documentation Synchronization:**<br>  - `docs/CHECKLIST.md` — completed items checked;<br>  - `docs/parity-checklist.md` — new procedures registered;<br>  - `docs/CHRONICLE.md` &amp; `docs/CHRONICLE.en.md` — synchronous bilingual entries logged with timestamps.</p><p>---</p><h2>12. Binary Distributions &amp; Native Installers</h2><p>StatCraft generates both portable archives and native operating system installers for all major desktop platforms:</p><p>* **Windows:**<br>  - Portable: `statcraft-windows-x64.zip`<br>  - Installer: `statcraft-windows-x64-installer.exe` (Inno Setup via `packaging/windows/installer.iss`)<br>* **Linux:**<br>  - Portable: `statcraft-linux-x64.tar.gz`<br>  - Package: `statcraft-linux-x64.deb` (`dpkg-deb` with menu integration via `packaging/linux/statcraft.desktop`)<br>* **macOS:**<br>  - Portable: `statcraft-macos-arm64.tar.gz` (Apple Silicon) &amp; `statcraft-macos-x64.tar.gz` (Intel)<br>  - Disk Image: `statcraft-macos-arm64.dmg` &amp; `statcraft-macos-x64.dmg` (`StatCraft.app` bundle via `hdiutil`)</p><h3>Local Release Build:</h3><p><em>[code block — open in CapsuleCraft web for its canvas]</em></p><p>The compiled binary is placed at `target/release/statcraft_app.exe` (Windows) or `target/release/statcraft_app` (Unix).</p><p>---</p><h2>13. Step-by-Step Procedure Cookbook</h2><p>Follow this 5-step workflow when adding any new statistical procedure or data transformation:</p><p>1. **L2: Algorithmic Core (`crates/statcraft_algo/src/&lt;name&gt;.rs`):**<br>   - Write pure mathematical calculations using Safe Rust without panics;<br>   - Implement Golden Oracle unit tests verified against SciPy ($\le 10^{-6}$);<br>   - Ensure file size is $\le 500$ lines;<br>   - Register module in `crates/statcraft_algo/src/lib.rs`.</p><p>2. **L5: Engine Command (`crates/statcraft_syntax/src/commands/&lt;name&gt;_cmd.rs`):**<br>   - Implement the `Command` trait (`execute`, `undo`, `specs`, `to_sps`);<br>   - Register the command in `CommandBus` (`crates/statcraft_syntax/src/bus.rs`);<br>   - Add command definition to `docs/parity-checklist.md`.</p><p>3. **Localization (`locales/en.ftl` &amp; `locales/ru.ftl`):**<br>   - Add dialog titles, labels, option strings, and status messages in both English and Russian.</p><p>4. **L6: Graphical Interface (`crates/statcraft_app/src/dialogs/&lt;name&gt;_dialog.rs`):**<br>   - Implement the modal dialog using `DialogShell::standard`;<br>   - Employ `VariablePicker`, `TransferButton`, `GroupBox`, and `DialogActionBar`;<br>   - Hook dialog trigger into `app_menus` and event handler into `app_dialogs.rs`;<br>   - Add invariant verification test to `tests/dialog_invariants.rs`.</p><p>5. **Verification &amp; Audit:**<br>   - Execute `cargo run -p xtask -j 1 -- ci`;<br>   - Append bilingual entries to `docs/CHRONICLE.md` and `docs/CHRONICLE.en.md`;<br>   - Commit following Conventional Commits format (`feat(category): description`).</p><hr><p style="color:#8a8175;font-size:12px">Exported from CapsuleCraft Native · &lt;doc-statcraft-contributing_md@capsuleos.local&gt;</p></body></html>
+
+--BOUNDARY_PAYLOAD_KV2N8KE49O--
+--BOUNDARY_ROOT_14CLFXIE1Y--

@@ -1,0 +1,249 @@
+From: CapsuleCraft Code Ingest <system@capsulecraft.local>
+To: Vault <vault@capsuleos.local>
+Subject: 📚 StatCraft / ТЗ для ИИ-агента: Этап 5 — Анализ связей и непараметрика (Phase 5)
+Date: Fri, 6 Nov 2026 14:13:33 +0000
+Message-ID: <doc-statcraft-docs_plans_phase_5_crosstabs_correlations_md@capsuleos.local>
+In-Reply-To: <project-index-statcraft@capsuleos.local>
+X-Capsule-Page-Parent: <project-index-statcraft@capsuleos.local>
+References: <project-index-statcraft@capsuleos.local>
+X-Capsule-Tags: project, statcraft, docs
+X-Capsule-Status: Active
+MIME-Version: 1.0
+Content-Type: multipart/mixed; boundary="BOUNDARY_ROOT_B6L4H5K625"
+
+--BOUNDARY_ROOT_B6L4H5K625
+Content-Type: multipart/alternative; boundary="BOUNDARY_PAYLOAD_EAGTPBK9AJ"
+
+--BOUNDARY_PAYLOAD_EAGTPBK9AJ
+Content-Type: application/json; name="canvas_state.json"
+Content-Disposition: inline; filename="canvas_state.json"
+
+{
+  "version": "1.0",
+  "generator": "CapsuleCraft Native egui prototype (Zero-DB Pure-MIME)",
+  "messageId": "<doc-statcraft-docs_plans_phase_5_crosstabs_correlations_md@capsuleos.local>",
+  "subject": "📚 StatCraft / ТЗ для ИИ-агента: Этап 5 — Анализ связей и непараметрика (Phase 5)",
+  "tags": [
+    "project",
+    "statcraft",
+    "docs"
+  ],
+  "blocks": [
+    {
+      "data": {
+        "icon": "book",
+        "text": "Documentation file: `docs/plans/PHASE_5_CROSSTABS_CORRELATIONS.md`\nBelongs to project: [[📦 StatCraft (Overview) | 📦 StatCraft (Overview)]]"
+      },
+      "id": "blk_native_callout_1793974413994760600",
+      "managed_by": "project_parser",
+      "type": "callout"
+    },
+    {
+      "data": {
+        "level": 1,
+        "text": "ТЗ для ИИ-агента: Этап 5 — Анализ связей и непараметрика (Phase 5)"
+      },
+      "id": "blk_native_heading_1793974413994740100",
+      "managed_by": "project_parser",
+      "type": "heading"
+    },
+    {
+      "data": {
+        "icon": "info",
+        "text": "**Стандарт экосистемы:** ArtCraft (`storytold`) | Двойная лицензия MIT OR Apache-2.0"
+      },
+      "id": "blk_native_callout_1793974413994741700",
+      "managed_by": "project_parser",
+      "type": "callout"
+    },
+    {
+      "data": {
+        "icon": "info",
+        "text": "**Генеральный регламент:** [AGENTS.md](file:///d:/Projects/active/StatCraft/AGENTS.md)"
+      },
+      "id": "blk_native_callout_1793974413994742500",
+      "managed_by": "project_parser",
+      "type": "callout"
+    },
+    {
+      "data": {
+        "icon": "info",
+        "text": "**Ограничение ресурсов:** ВСЕ команды сборки и тестов запускаются строго с флагом `-j 1`."
+      },
+      "id": "blk_native_callout_1793974413994743000",
+      "managed_by": "project_parser",
+      "type": "callout"
+    },
+    {
+      "data": {
+        "icon": "info",
+        "text": "**Принцип надежности:** 100% Safe Rust, Never Crash (0 `unwrap()`, 0 `expect()`, 0 `panic!()`, 0 `unsafe`)."
+      },
+      "id": "blk_native_callout_1793974413994743500",
+      "managed_by": "project_parser",
+      "type": "callout"
+    },
+    {
+      "data": {
+        "icon": "info",
+        "text": "**Локализация:** 0% строковых литералов на русском/английском в коде UI (строго макрос `t!()` и файлы `locales/ru.ftl`, `locales/en.ftl`)."
+      },
+      "id": "blk_native_callout_1793974413994744200",
+      "managed_by": "project_parser",
+      "type": "callout"
+    },
+    {
+      "data": {
+        "icon": "info",
+        "text": "**Интерфейс:** Vector-First UI (0 эмодзи, 0 квадратов «тофу»)."
+      },
+      "id": "blk_native_callout_1793974413994744800",
+      "managed_by": "project_parser",
+      "type": "callout"
+    },
+    {
+      "data": {
+        "text": "---"
+      },
+      "id": "blk_native_paragraph_1793974413994745700",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    },
+    {
+      "data": {
+        "level": 2,
+        "text": "1. Цели задачи"
+      },
+      "id": "blk_native_heading_1793974413994746300",
+      "managed_by": "project_parser",
+      "type": "heading"
+    },
+    {
+      "data": {
+        "text": "1. Реализовать процедуры анализа взаимосвязей в L2 `statcraft_algo`:\n   - **Таблицы сопряжённости** (*Crosstabs*):\n     * Двумерная матрица наблюдаемых и ожидаемых частот;\n     * Расчёт процентов по строкам (% within Row), колонкам (% within Column) и общего процента (% of Total);\n     * Критерий независимости Хи-квадрат Пирсона ($\\chi^2$), степени свободы $df$, точное асимптотическое $p$-value;\n     * Поправка Йейтса на непрерывность для таблиц $2 \\times 2$;\n     * Меры связи: коэффициент сопряженности Пирсона, $V$ Крамера, $\\phi$.\n   - **Парные корреляции** (*Bivariate Correlations*):\n     * Коэффициент линейной корреляции Пирсона ($r$);\n     * Ранговый коэффициент корреляции Спирмена ($\\rho$);\n     * Коэффициент тау Кендалла ($\\tau$);\n     * Двустороннее и одностороннее $p$-значение, автоматическая разметка статистической значимости ($* p < 0.05$, $** p < 0.01$).\n   - **Непараметрический критерий Манна-Уитни $U$** (*Mann-Whitney U Test*):\n     * Ранжирование объединенной выборки, сумма рангов $W$, $U$-статистика, $Z$-аппроксимация, асимптотическое $p$-значение.\n2. Зарегистрировать команды в L5 `statcraft_syntax`:\n   - `stat.crosstabs` (синтаксис `CROSSTABS /TABLES=row_var BY col_var /STATISTICS=CHISQ PHI /CELLS=COUNT ROW COLUMN TOTAL.`).\n   - `stat.correlations` (синтаксис `CORRELATIONS /VARIABLES=var1 var2 var3 /PRINT=TWOTAIL NOSIG.`).\n   - `stat.npar.mann_whitney`.\n3. Создать диалоги в `statcraft_app/src/dialogs/`:\n   - `crosstabs_dialog.rs`: списки строк (Row), колонок (Column), чекбоксы ячеек (Counts, Row %, Col %) и статистик (Chi-square, Phi/Cramer's V);\n   - `correlations_dialog.rs`: список переменных, чекбоксы методов (Пирсон, Спирмен, Кендалл), радиокнопки хвостов (двусторонний/односторонний).\n4. Вывести аутентичные сводные таблицы в `Output Viewer`:\n   - Итоги обработки наблюдений (*Case Processing Summary*);\n   - Таблица сопряженности со счетчиками и процентами;\n   - Таблица критериев Хи-квадрат (*Chi-Square Tests*);\n   - Симметричная матрица корреляций со звёздочками значимости."
+      },
+      "id": "blk_native_paragraph_1793974413994750000",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    },
+    {
+      "data": {
+        "text": "---"
+      },
+      "id": "blk_native_paragraph_1793974413994751000",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    },
+    {
+      "data": {
+        "level": 2,
+        "text": "2. Пошаговый план изменений"
+      },
+      "id": "blk_native_heading_1793974413994751400",
+      "managed_by": "project_parser",
+      "type": "heading"
+    },
+    {
+      "data": {
+        "level": 3,
+        "text": "2.1. L2 `statcraft_algo`"
+      },
+      "id": "blk_native_heading_1793974413994752000",
+      "managed_by": "project_parser",
+      "type": "heading"
+    },
+    {
+      "data": {
+        "text": "- Создать `crates/statcraft_algo/src/crosstabs.rs`:\n  * `compute_crosstabs(row_data, col_data, options) -> CrosstabsResult`;\n  * Расчёт $\\chi^2 = \\sum \\frac{(O - E)^2}{E}$, поправка Йейтса, $V$ Крамера;\n  * Golden Oracle unit-тесты со сверкой со `scipy.stats.chi2_contingency` с точностью $\\le 10^{-6}$.\n- Создать `crates/statcraft_algo/src/correlations.rs`:\n  * `compute_bivariate_correlations(matrix, method) -> CorrelationMatrixResult`;\n  * Golden Oracle unit-тесты со сверкой со `scipy.stats.pearsonr` и `scipy.stats.spearmanr`.\n- Создать `crates/statcraft_algo/src/nonparametric.rs`:\n  * `compute_mann_whitney_u(group1, group2) -> MannWhitneyResult`;\n  * Golden Oracle со сверкой со `scipy.stats.mannwhitneyu`."
+      },
+      "id": "blk_native_paragraph_1793974413994753600",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    },
+    {
+      "data": {
+        "level": 3,
+        "text": "2.2. L5 `statcraft_syntax`"
+      },
+      "id": "blk_native_heading_1793974413994754200",
+      "managed_by": "project_parser",
+      "type": "heading"
+    },
+    {
+      "data": {
+        "text": "- Создать `crates/statcraft_syntax/src/commands/crosstabs_cmd.rs` и `correlations_cmd.rs`.\n- Зарегистрировать в `CommandBus`."
+      },
+      "id": "blk_native_paragraph_1793974413994754900",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    },
+    {
+      "data": {
+        "level": 3,
+        "text": "2.3. L6 `statcraft_app`"
+      },
+      "id": "blk_native_heading_1793974413994755300",
+      "managed_by": "project_parser",
+      "type": "heading"
+    },
+    {
+      "data": {
+        "text": "- Создать `crates/statcraft_app/src/dialogs/crosstabs_dialog.rs` и `correlations_dialog.rs`.\n- В `crates/statcraft_app/src/views/output_view.rs`:\n  * Добавить рендеринг таблицы сопряжённости и корреляционной матрицы.\n- В `crates/statcraft_app/src/app.rs`:\n  * Добавить пункт меню `Analyze > Descriptive Statistics > Crosstabs...` и `Analyze > Correlate > Bivariate...`."
+      },
+      "id": "blk_native_paragraph_1793974413994756400",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    },
+    {
+      "data": {
+        "level": 3,
+        "text": "2.4. Локализация (`locales/ru.ftl` и `locales/en.ftl`)"
+      },
+      "id": "blk_native_heading_1793974413994756900",
+      "managed_by": "project_parser",
+      "type": "heading"
+    },
+    {
+      "data": {
+        "text": "- Все ключи меню, диалогов и таблиц на русском и английском языках."
+      },
+      "id": "blk_native_paragraph_1793974413994757500",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    },
+    {
+      "data": {
+        "text": "---"
+      },
+      "id": "blk_native_paragraph_1793974413994758100",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    },
+    {
+      "data": {
+        "level": 2,
+        "text": "3. Критерии приёмки и верификация (Definition of Done)"
+      },
+      "id": "blk_native_heading_1793974413994758500",
+      "managed_by": "project_parser",
+      "type": "heading"
+    },
+    {
+      "data": {
+        "text": "1. Строго `-j 1` на всех командах.\n2. `cargo test --workspace -j 1` — 100% тестов завершились с кодом 0.\n3. `cargo test --package statcraft_i18n --test i18n_lint_test -j 1` — 0% захардкоженных строк в UI.\n4. `cargo fmt --check` и `cargo clippy --workspace -j 1 -- -D warnings` — чисто.\n5. `cargo run --package xtask -j 1 -- layers` — без нарушений архитектуры.\n6. Обновить `docs/CHRONICLE.md` и `docs/CHRONICLE.en.md` с фиксацией выполненной работы."
+      },
+      "id": "blk_native_paragraph_1793974413994759500",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    }
+  ]
+}
+
+--BOUNDARY_PAYLOAD_EAGTPBK9AJ
+Content-Type: text/html; charset="utf-8"
+Content-Disposition: inline
+
+<!doctype html><html><head><meta charset="utf-8"><meta name="generator" content="CapsuleCraft Native"></head><body style="font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;max-width:720px;margin:32px auto;line-height:1.55;color:#23201c;background:#faf8f4;"><h1>📚 StatCraft / ТЗ для ИИ-агента: Этап 5 — Анализ связей и непараметрика (Phase 5)</h1><p><em>[callout block — open in CapsuleCraft web for its canvas]</em></p><h1>ТЗ для ИИ-агента: Этап 5 — Анализ связей и непараметрика (Phase 5)</h1><p><em>[callout block — open in CapsuleCraft web for its canvas]</em></p><p><em>[callout block — open in CapsuleCraft web for its canvas]</em></p><p><em>[callout block — open in CapsuleCraft web for its canvas]</em></p><p><em>[callout block — open in CapsuleCraft web for its canvas]</em></p><p><em>[callout block — open in CapsuleCraft web for its canvas]</em></p><p><em>[callout block — open in CapsuleCraft web for its canvas]</em></p><p>---</p><h2>1. Цели задачи</h2><p>1. Реализовать процедуры анализа взаимосвязей в L2 `statcraft_algo`:<br>   - **Таблицы сопряжённости** (*Crosstabs*):<br>     * Двумерная матрица наблюдаемых и ожидаемых частот;<br>     * Расчёт процентов по строкам (% within Row), колонкам (% within Column) и общего процента (% of Total);<br>     * Критерий независимости Хи-квадрат Пирсона ($\chi^2$), степени свободы $df$, точное асимптотическое $p$-value;<br>     * Поправка Йейтса на непрерывность для таблиц $2 \times 2$;<br>     * Меры связи: коэффициент сопряженности Пирсона, $V$ Крамера, $\phi$.<br>   - **Парные корреляции** (*Bivariate Correlations*):<br>     * Коэффициент линейной корреляции Пирсона ($r$);<br>     * Ранговый коэффициент корреляции Спирмена ($\rho$);<br>     * Коэффициент тау Кендалла ($\tau$);<br>     * Двустороннее и одностороннее $p$-значение, автоматическая разметка статистической значимости ($* p &lt; 0.05$, $** p &lt; 0.01$).<br>   - **Непараметрический критерий Манна-Уитни $U$** (*Mann-Whitney U Test*):<br>     * Ранжирование объединенной выборки, сумма рангов $W$, $U$-статистика, $Z$-аппроксимация, асимптотическое $p$-значение.<br>2. Зарегистрировать команды в L5 `statcraft_syntax`:<br>   - `stat.crosstabs` (синтаксис `CROSSTABS /TABLES=row_var BY col_var /STATISTICS=CHISQ PHI /CELLS=COUNT ROW COLUMN TOTAL.`).<br>   - `stat.correlations` (синтаксис `CORRELATIONS /VARIABLES=var1 var2 var3 /PRINT=TWOTAIL NOSIG.`).<br>   - `stat.npar.mann_whitney`.<br>3. Создать диалоги в `statcraft_app/src/dialogs/`:<br>   - `crosstabs_dialog.rs`: списки строк (Row), колонок (Column), чекбоксы ячеек (Counts, Row %, Col %) и статистик (Chi-square, Phi/Cramer&#39;s V);<br>   - `correlations_dialog.rs`: список переменных, чекбоксы методов (Пирсон, Спирмен, Кендалл), радиокнопки хвостов (двусторонний/односторонний).<br>4. Вывести аутентичные сводные таблицы в `Output Viewer`:<br>   - Итоги обработки наблюдений (*Case Processing Summary*);<br>   - Таблица сопряженности со счетчиками и процентами;<br>   - Таблица критериев Хи-квадрат (*Chi-Square Tests*);<br>   - Симметричная матрица корреляций со звёздочками значимости.</p><p>---</p><h2>2. Пошаговый план изменений</h2><h3>2.1. L2 `statcraft_algo`</h3><p>- Создать `crates/statcraft_algo/src/crosstabs.rs`:<br>  * `compute_crosstabs(row_data, col_data, options) -&gt; CrosstabsResult`;<br>  * Расчёт $\chi^2 = \sum \frac{(O - E)^2}{E}$, поправка Йейтса, $V$ Крамера;<br>  * Golden Oracle unit-тесты со сверкой со `scipy.stats.chi2_contingency` с точностью $\le 10^{-6}$.<br>- Создать `crates/statcraft_algo/src/correlations.rs`:<br>  * `compute_bivariate_correlations(matrix, method) -&gt; CorrelationMatrixResult`;<br>  * Golden Oracle unit-тесты со сверкой со `scipy.stats.pearsonr` и `scipy.stats.spearmanr`.<br>- Создать `crates/statcraft_algo/src/nonparametric.rs`:<br>  * `compute_mann_whitney_u(group1, group2) -&gt; MannWhitneyResult`;<br>  * Golden Oracle со сверкой со `scipy.stats.mannwhitneyu`.</p><h3>2.2. L5 `statcraft_syntax`</h3><p>- Создать `crates/statcraft_syntax/src/commands/crosstabs_cmd.rs` и `correlations_cmd.rs`.<br>- Зарегистрировать в `CommandBus`.</p><h3>2.3. L6 `statcraft_app`</h3><p>- Создать `crates/statcraft_app/src/dialogs/crosstabs_dialog.rs` и `correlations_dialog.rs`.<br>- В `crates/statcraft_app/src/views/output_view.rs`:<br>  * Добавить рендеринг таблицы сопряжённости и корреляционной матрицы.<br>- В `crates/statcraft_app/src/app.rs`:<br>  * Добавить пункт меню `Analyze &gt; Descriptive Statistics &gt; Crosstabs...` и `Analyze &gt; Correlate &gt; Bivariate...`.</p><h3>2.4. Локализация (`locales/ru.ftl` и `locales/en.ftl`)</h3><p>- Все ключи меню, диалогов и таблиц на русском и английском языках.</p><p>---</p><h2>3. Критерии приёмки и верификация (Definition of Done)</h2><p>1. Строго `-j 1` на всех командах.<br>2. `cargo test --workspace -j 1` — 100% тестов завершились с кодом 0.<br>3. `cargo test --package statcraft_i18n --test i18n_lint_test -j 1` — 0% захардкоженных строк в UI.<br>4. `cargo fmt --check` и `cargo clippy --workspace -j 1 -- -D warnings` — чисто.<br>5. `cargo run --package xtask -j 1 -- layers` — без нарушений архитектуры.<br>6. Обновить `docs/CHRONICLE.md` и `docs/CHRONICLE.en.md` с фиксацией выполненной работы.</p><hr><p style="color:#8a8175;font-size:12px">Exported from CapsuleCraft Native · &lt;doc-statcraft-docs_plans_phase_5_crosstabs_correlations_md@capsuleos.local&gt;</p></body></html>
+
+--BOUNDARY_PAYLOAD_EAGTPBK9AJ--
+--BOUNDARY_ROOT_B6L4H5K625--

@@ -2,6 +2,7 @@ use std::env;
 use std::path::PathBuf;
 
 mod ci;
+mod corpus;
 mod design_guard;
 mod file_guard;
 mod icon;
@@ -54,6 +55,13 @@ fn main() {
                 std::process::exit(1);
             }
         }
+        "test-corpus" => {
+            let custom_dir = args.get(2).map(PathBuf::from);
+            if let Err(e) = corpus::run_test_corpus(&workspace_root, custom_dir.as_deref()) {
+                eprintln!("\n[TEST-CORPUS FAILED] {}", e);
+                std::process::exit(1);
+            }
+        }
         _ => {
             println!("StatCraft xtask utility");
             println!("Usage:");
@@ -67,6 +75,7 @@ fn main() {
             );
             println!("  cargo xtask layers     Check L0..L6 architectural layering rules");
             println!("  cargo xtask parity     Check and update SPSS feature parity checklist");
+            println!("  cargo xtask test-corpus  Run real-world corpora and codec fuzzing audit");
         }
     }
 }

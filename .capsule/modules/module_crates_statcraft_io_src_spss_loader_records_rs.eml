@@ -1,0 +1,94 @@
+From: CapsuleCraft Code Ingest <system@capsulecraft.local>
+To: Vault <vault@capsuleos.local>
+Subject: 📄 StatCraft / crates/statcraft_io/src/spss_loader/records.rs
+Date: Fri, 6 Nov 2026 14:51:38 +0000
+Message-ID: <module-crates_statcraft_io_src_spss_loader_records_rs@capsuleos.local>
+In-Reply-To: <subsystem-statcraft-crates_statcraft_io@capsuleos.local>
+X-Capsule-Page-Parent: <subsystem-statcraft-crates_statcraft_io@capsuleos.local>
+References: <project-index-statcraft@capsuleos.local> <subsystem-statcraft-crates_statcraft_io@capsuleos.local>
+X-Capsule-Tags: project, statcraft, module
+X-Capsule-Status: Active
+MIME-Version: 1.0
+Content-Type: multipart/mixed; boundary="BOUNDARY_ROOT_1BZCHFLFVM"
+
+--BOUNDARY_ROOT_1BZCHFLFVM
+Content-Type: multipart/alternative; boundary="BOUNDARY_PAYLOAD_H5WWJBFYDT"
+
+--BOUNDARY_PAYLOAD_H5WWJBFYDT
+Content-Type: application/json; name="canvas_state.json"
+Content-Disposition: inline; filename="canvas_state.json"
+
+{
+  "version": "1.0",
+  "generator": "CapsuleCraft Native egui prototype (Zero-DB Pure-MIME)",
+  "messageId": "<module-crates_statcraft_io_src_spss_loader_records_rs@capsuleos.local>",
+  "subject": "📄 StatCraft / crates/statcraft_io/src/spss_loader/records.rs",
+  "tags": [
+    "project",
+    "statcraft",
+    "module"
+  ],
+  "blocks": [
+    {
+      "data": {
+        "level": 1,
+        "text": "📄 records.rs"
+      },
+      "id": "blk_native_heading_1793976698465933400",
+      "managed_by": "project_parser",
+      "type": "heading"
+    },
+    {
+      "data": {
+        "text": "Path: `crates/statcraft_io/src/spss_loader/records.rs` · 399 lines of code\nBelongs to project: [[📦 StatCraft (Overview) | 📦 StatCraft (Overview)]]"
+      },
+      "id": "blk_native_paragraph_1793976698465935100",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    },
+    {
+      "data": {
+        "level": 2,
+        "text": "Public Interface"
+      },
+      "id": "blk_native_heading_1793976698465935900",
+      "managed_by": "project_parser",
+      "type": "heading"
+    },
+    {
+      "data": {
+        "code": "pub struct RawVarRecord\npub struct ExtensionData\npub struct ReaderHelper<'a, R: Read>\npub fn read_i32(&mut self) -> Result<i32, IoError>\npub fn read_u32(&mut self) -> Result<u32, IoError>\npub fn read_i64(&mut self) -> Result<i64, IoError>\npub fn read_f64(&mut self) -> Result<f64, IoError>\npub fn skip(&mut self, len: usize) -> Result<(), IoError>\npub fn parse_variable_record<R: Read>( helper: &mut ReaderHelper<R>, ) -> Result<RawVarRecord, IoError>\npub type RawValueLabelList = Vec<(f64, Vec<u8>)>\npub fn parse_value_labels<R: Read>( helper: &mut ReaderHelper<R>, ) -> Result<(RawValueLabelList, Vec<usize>), IoError>\npub fn parse_extension_record<R: Read>( helper: &mut ReaderHelper<R>, ext: &mut ExtensionData, ) -> Result<(), IoError>",
+        "language": "rust"
+      },
+      "id": "blk_native_code_1793976698465937800",
+      "managed_by": "project_parser",
+      "type": "code"
+    },
+    {
+      "data": {
+        "level": 2,
+        "text": "Internal Dependencies"
+      },
+      "id": "blk_native_heading_1793976698465939200",
+      "managed_by": "project_parser",
+      "type": "heading"
+    },
+    {
+      "data": {
+        "text": "- `crate::csv_loader::IoError`\n"
+      },
+      "id": "blk_native_paragraph_1793976698465941800",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    }
+  ]
+}
+
+--BOUNDARY_PAYLOAD_H5WWJBFYDT
+Content-Type: text/html; charset="utf-8"
+Content-Disposition: inline
+
+<!doctype html><html><head><meta charset="utf-8"><meta name="generator" content="CapsuleCraft Native"></head><body style="font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;max-width:720px;margin:32px auto;line-height:1.55;color:#23201c;background:#faf8f4;"><h1>📄 StatCraft / crates/statcraft_io/src/spss_loader/records.rs</h1><h1>📄 records.rs</h1><p>Path: `crates/statcraft_io/src/spss_loader/records.rs` · 399 lines of code<br>Belongs to project: [[📦 StatCraft (Overview) | 📦 StatCraft (Overview)]]</p><h2>Public Interface</h2><p><em>[code block — open in CapsuleCraft web for its canvas]</em></p><h2>Internal Dependencies</h2><p>- `crate::csv_loader::IoError`<br></p><hr><p style="color:#8a8175;font-size:12px">Exported from CapsuleCraft Native · &lt;module-crates_statcraft_io_src_spss_loader_records_rs@capsuleos.local&gt;</p></body></html>
+
+--BOUNDARY_PAYLOAD_H5WWJBFYDT--
+--BOUNDARY_ROOT_1BZCHFLFVM--

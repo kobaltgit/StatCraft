@@ -1,0 +1,94 @@
+From: CapsuleCraft Code Ingest <system@capsulecraft.local>
+To: Vault <vault@capsuleos.local>
+Subject: 📄 StatCraft / crates/statcraft_algo/src/nonparam_related.rs
+Date: Fri, 6 Nov 2026 14:13:33 +0000
+Message-ID: <module-crates_statcraft_algo_src_nonparam_related_rs@capsuleos.local>
+In-Reply-To: <subsystem-statcraft-crates_statcraft_algo@capsuleos.local>
+X-Capsule-Page-Parent: <subsystem-statcraft-crates_statcraft_algo@capsuleos.local>
+References: <project-index-statcraft@capsuleos.local> <subsystem-statcraft-crates_statcraft_algo@capsuleos.local>
+X-Capsule-Tags: project, statcraft, module
+X-Capsule-Status: Active
+MIME-Version: 1.0
+Content-Type: multipart/mixed; boundary="BOUNDARY_ROOT_T3DU1DFSMN"
+
+--BOUNDARY_ROOT_T3DU1DFSMN
+Content-Type: multipart/alternative; boundary="BOUNDARY_PAYLOAD_DVKVZBFVC8"
+
+--BOUNDARY_PAYLOAD_DVKVZBFVC8
+Content-Type: application/json; name="canvas_state.json"
+Content-Disposition: inline; filename="canvas_state.json"
+
+{
+  "version": "1.0",
+  "generator": "CapsuleCraft Native egui prototype (Zero-DB Pure-MIME)",
+  "messageId": "<module-crates_statcraft_algo_src_nonparam_related_rs@capsuleos.local>",
+  "subject": "📄 StatCraft / crates/statcraft_algo/src/nonparam_related.rs",
+  "tags": [
+    "project",
+    "statcraft",
+    "module"
+  ],
+  "blocks": [
+    {
+      "data": {
+        "level": 1,
+        "text": "📄 nonparam_related.rs"
+      },
+      "id": "blk_native_heading_1793974413771438000",
+      "managed_by": "project_parser",
+      "type": "heading"
+    },
+    {
+      "data": {
+        "text": "Path: `crates/statcraft_algo/src/nonparam_related.rs` · 280 lines of code\nBelongs to project: [[📦 StatCraft (Overview) | 📦 StatCraft (Overview)]]"
+      },
+      "id": "blk_native_paragraph_1793974413771439700",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    },
+    {
+      "data": {
+        "level": 2,
+        "text": "Public Interface"
+      },
+      "id": "blk_native_heading_1793974413771440300",
+      "managed_by": "project_parser",
+      "type": "heading"
+    },
+    {
+      "data": {
+        "code": "pub fn compute_wilcoxon_signed_rank( var1_name: &str, var2_name: &str, pairs: &[(Option<f64>, Option<f64>)], ) -> WilcoxonSignedRankResult\npub fn compute_wilcoxon_signed_rank_from_slices( var1_name: &str, var2_name: &str, x: &[f64], y: &[f64], ) -> WilcoxonSignedRankResult\npub fn compute_sign_test( var1_name: &str, var2_name: &str, pairs: &[(Option<f64>, Option<f64>)], ) -> SignTestResult\npub fn compute_sign_test_from_slices( var1_name: &str, var2_name: &str, x: &[f64], y: &[f64], ) -> SignTestResult\npub fn compute_related_samples( var1_name: &str, var2_name: &str, pairs: &[(Option<f64>, Option<f64>)], do_wilcoxon: bool, do_sign: bool, ) -> RelatedPairTestResult",
+        "language": "rust"
+      },
+      "id": "blk_native_code_1793974413771442700",
+      "managed_by": "project_parser",
+      "type": "code"
+    },
+    {
+      "data": {
+        "level": 2,
+        "text": "Internal Dependencies"
+      },
+      "id": "blk_native_heading_1793974413771445000",
+      "managed_by": "project_parser",
+      "type": "heading"
+    },
+    {
+      "data": {
+        "text": "- `crate::crosstabs::regularized_incomplete_gamma_q`\n- `crate::nonparam_related_types::{`\n- `crate::nonparam_twosample::compute_midranks_with_ties`\n- `crate::nonparam_twosample_types::RankGroupStats`\n- `crate::ttest_onesample::regularized_incomplete_beta`\n"
+      },
+      "id": "blk_native_paragraph_1793974413771449000",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    }
+  ]
+}
+
+--BOUNDARY_PAYLOAD_DVKVZBFVC8
+Content-Type: text/html; charset="utf-8"
+Content-Disposition: inline
+
+<!doctype html><html><head><meta charset="utf-8"><meta name="generator" content="CapsuleCraft Native"></head><body style="font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;max-width:720px;margin:32px auto;line-height:1.55;color:#23201c;background:#faf8f4;"><h1>📄 StatCraft / crates/statcraft_algo/src/nonparam_related.rs</h1><h1>📄 nonparam_related.rs</h1><p>Path: `crates/statcraft_algo/src/nonparam_related.rs` · 280 lines of code<br>Belongs to project: [[📦 StatCraft (Overview) | 📦 StatCraft (Overview)]]</p><h2>Public Interface</h2><p><em>[code block — open in CapsuleCraft web for its canvas]</em></p><h2>Internal Dependencies</h2><p>- `crate::crosstabs::regularized_incomplete_gamma_q`<br>- `crate::nonparam_related_types::{`<br>- `crate::nonparam_twosample::compute_midranks_with_ties`<br>- `crate::nonparam_twosample_types::RankGroupStats`<br>- `crate::ttest_onesample::regularized_incomplete_beta`<br></p><hr><p style="color:#8a8175;font-size:12px">Exported from CapsuleCraft Native · &lt;module-crates_statcraft_algo_src_nonparam_related_rs@capsuleos.local&gt;</p></body></html>
+
+--BOUNDARY_PAYLOAD_DVKVZBFVC8--
+--BOUNDARY_ROOT_T3DU1DFSMN--

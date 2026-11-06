@@ -1,5 +1,5 @@
 use crate::csv_loader::IoError;
-use std::collections::{BTreeMap, HashMap};
+use std::collections::HashMap;
 use std::io::Read;
 
 #[derive(Debug, Clone, PartialEq)]
@@ -11,6 +11,7 @@ pub struct RawVarRecord {
     pub write_format: u32,
     pub name: String,
     pub label: String,
+    pub label_raw: Vec<u8>,
     pub missing_discrete: Vec<String>,
     pub missing_range: Option<(f64, f64)>,
 }
@@ -20,6 +21,8 @@ pub struct ExtensionData {
     pub long_names: HashMap<String, String>,
     pub display_params: Vec<(u8, usize, u8)>, // (measure, display_width, alignment)
     pub encoding: String,
+    pub codepage: Option<u32>,
+    pub very_long_strings: HashMap<String, usize>,
     pub zheader_ofs: i64,
     pub ztrailer_ofs: i64,
     pub ztrailer_len: i64,
@@ -110,6 +113,7 @@ pub fn parse_variable_record<R: Read>(
     let name = String::from_utf8_lossy(&name_buf).trim().to_string();
 
     let mut label = String::new();
+    let mut label_raw = Vec::new();
     if has_var_label {
         let label_len = helper.read_i32()?;
         if !(0..=1024 * 1024).contains(&label_len) {
@@ -124,6 +128,7 @@ pub fn parse_variable_record<R: Read>(
             .read_exact(&mut l_buf)
             .map_err(|e| IoError::Io(format!("Failed to read variable label: {}", e)))?;
         label = String::from_utf8_lossy(&l_buf).trim().to_string();
+        label_raw = l_buf;
 
         let pad = (4 - (label_len % 4)) % 4;
         if pad > 0 {
@@ -178,14 +183,17 @@ pub fn parse_variable_record<R: Read>(
         write_format,
         name,
         label,
+        label_raw,
         missing_discrete,
         missing_range,
     })
 }
 
+pub type RawValueLabelList = Vec<(f64, Vec<u8>)>;
+
 pub fn parse_value_labels<R: Read>(
     helper: &mut ReaderHelper<R>,
-) -> Result<(BTreeMap<String, String>, Vec<usize>), IoError> {
+) -> Result<(RawValueLabelList, Vec<usize>), IoError> {
     let label_count = helper.read_i32()?;
     if !(0..=1_000_000).contains(&label_count) {
         return Err(IoError::MalformedSpss(format!(
@@ -194,7 +202,7 @@ pub fn parse_value_labels<R: Read>(
         )));
     }
 
-    let mut labels = BTreeMap::new();
+    let mut raw_labels = Vec::with_capacity(label_count as usize);
     for _ in 0..label_count {
         let val = helper.read_f64()?;
         let mut len_b = [0u8; 1];
@@ -209,19 +217,13 @@ pub fn parse_value_labels<R: Read>(
             .reader
             .read_exact(&mut text_b)
             .map_err(|e| IoError::Io(format!("Failed to read value label text: {}", e)))?;
-        let label_text = String::from_utf8_lossy(&text_b).trim().to_string();
 
         let rem = (1 + len) % 8;
         if rem != 0 {
             helper.skip(8 - rem)?;
         }
 
-        let key = if val.fract() == 0.0 {
-            format!("{:.0}", val)
-        } else {
-            format!("{}", val)
-        };
-        labels.insert(key, label_text);
+        raw_labels.push((val, text_b));
     }
 
     let rec4_type = helper.read_i32()?;
@@ -248,7 +250,7 @@ pub fn parse_value_labels<R: Read>(
         }
     }
 
-    Ok((labels, var_indices))
+    Ok((raw_labels, var_indices))
 }
 
 pub fn parse_extension_record<R: Read>(
@@ -281,8 +283,28 @@ pub fn parse_extension_record<R: Read>(
         .map_err(|e| IoError::Io(format!("Failed to read extension record: {}", e)))?;
 
     match subtype {
-        4 => {
+        3 => {
+            // Machine integer info: size=4, count>=8
+            if size == 4 && total_len >= 32 {
+                let n_ints = total_len / 4;
+                let mut ints = Vec::with_capacity(n_ints);
+                let (chunks, _) = payload.as_chunks::<4>();
+                for chunk in chunks {
+                    let val = if helper.is_little_endian {
+                        i32::from_le_bytes(*chunk)
+                    } else {
+                        i32::from_be_bytes(*chunk)
+                    };
+                    ints.push(val);
+                }
+                if ints.len() >= 8 && ints[7] > 0 {
+                    ext.codepage = Some(ints[7] as u32);
+                }
+            }
+        }
+        11 | 4 => {
             // Display parameters: size=4, 3 ints (measure, width, alignment) or 2 ints
+            // Subtype 11 is canonical PSPP/SPSS; Subtype 4 is legacy fallback.
             if size == 4 && total_len >= 8 {
                 let n_ints = total_len / 4;
                 let mut ints = Vec::with_capacity(n_ints);
@@ -324,6 +346,19 @@ pub fn parse_extension_record<R: Read>(
                         short_name.trim().to_uppercase(),
                         long_name.trim().to_string(),
                     );
+                }
+            }
+        }
+        14 => {
+            // Very long string declarations: "VARNAME=00500\tVAR2=01000\t"
+            let text = String::from_utf8_lossy(&payload);
+            for entry in text.split(&['\t', '\0'][..]) {
+                let trimmed = entry.trim();
+                if let Some((var_name, len_str)) = trimmed.split_once('=') {
+                    if let Ok(length) = len_str.trim().parse::<usize>() {
+                        ext.very_long_strings
+                            .insert(var_name.trim().to_uppercase(), length);
+                    }
                 }
             }
         }

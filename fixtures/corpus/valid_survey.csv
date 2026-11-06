@@ -1,0 +1,5 @@
+id,age,salary,gender
+1,25,50000.0,Female
+2,34,65000.5,Male
+3,42,NA,Female
+4,28,48000.0,Male

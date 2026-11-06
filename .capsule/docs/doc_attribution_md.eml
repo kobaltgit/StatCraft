@@ -1,0 +1,76 @@
+From: CapsuleCraft Code Ingest <system@capsulecraft.local>
+To: Vault <vault@capsuleos.local>
+Subject: 📚 StatCraft / Third-Party Attributions
+Date: Fri, 6 Nov 2026 14:13:33 +0000
+Message-ID: <doc-statcraft-attribution_md@capsuleos.local>
+In-Reply-To: <project-index-statcraft@capsuleos.local>
+X-Capsule-Page-Parent: <project-index-statcraft@capsuleos.local>
+References: <project-index-statcraft@capsuleos.local>
+X-Capsule-Tags: project, statcraft, docs
+X-Capsule-Status: Active
+MIME-Version: 1.0
+Content-Type: multipart/mixed; boundary="BOUNDARY_ROOT_3S35QGDVN3"
+
+--BOUNDARY_ROOT_3S35QGDVN3
+Content-Type: multipart/alternative; boundary="BOUNDARY_PAYLOAD_1QL6TZEDXI"
+
+--BOUNDARY_PAYLOAD_1QL6TZEDXI
+Content-Type: application/json; name="canvas_state.json"
+Content-Disposition: inline; filename="canvas_state.json"
+
+{
+  "version": "1.0",
+  "generator": "CapsuleCraft Native egui prototype (Zero-DB Pure-MIME)",
+  "messageId": "<doc-statcraft-attribution_md@capsuleos.local>",
+  "subject": "📚 StatCraft / Third-Party Attributions",
+  "tags": [
+    "project",
+    "statcraft",
+    "docs"
+  ],
+  "blocks": [
+    {
+      "data": {
+        "icon": "book",
+        "text": "Documentation file: `ATTRIBUTION.md`\nBelongs to project: [[📦 StatCraft (Overview) | 📦 StatCraft (Overview)]]"
+      },
+      "id": "blk_native_callout_1793974413745332300",
+      "managed_by": "project_parser",
+      "type": "callout"
+    },
+    {
+      "data": {
+        "level": 1,
+        "text": "Third-Party Attributions"
+      },
+      "id": "blk_native_heading_1793974413745327800",
+      "managed_by": "project_parser",
+      "type": "heading"
+    },
+    {
+      "data": {
+        "text": "All third-party libraries, fonts, and assets used in StatCraft adhere strictly to permissive open-source licenses (MIT, Apache-2.0, BSD-3-Clause, OFL-1.1)."
+      },
+      "id": "blk_native_paragraph_1793974413745329600",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    },
+    {
+      "data": {
+        "text": "| Asset / Library | License | Usage | Link |\n|---|---|---|---|\n| `egui` / `eframe` / `egui_dock` | MIT OR Apache-2.0 | GUI, virtualized tables, docking workspace | https://github.com/emilk/egui |\n| `fluent` / `unic-langid` | Apache-2.0 / MIT | Localization catalogs and engine | https://github.com/projectfluent/fluent-rs |\n| `serde` / `serde_json` | MIT OR Apache-2.0 | Command specs, metadata serialization | https://github.com/serde-rs/serde |\n| `thiserror` | MIT OR Apache-2.0 | Typed error handling (Zero panic) | https://github.com/dtolnay/thiserror |\n| `csv` | MIT OR UNLICENSE | Streaming tabular CSV/TSV reader | https://github.com/BurntSushi/rust-csv |\n| `storytold/craft-fonts` | OFL-1.1 | Open typography for ArtCraft applications | https://github.com/storytold/craft-fonts |"
+      },
+      "id": "blk_native_paragraph_1793974413745331200",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    }
+  ]
+}
+
+--BOUNDARY_PAYLOAD_1QL6TZEDXI
+Content-Type: text/html; charset="utf-8"
+Content-Disposition: inline
+
+<!doctype html><html><head><meta charset="utf-8"><meta name="generator" content="CapsuleCraft Native"></head><body style="font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;max-width:720px;margin:32px auto;line-height:1.55;color:#23201c;background:#faf8f4;"><h1>📚 StatCraft / Third-Party Attributions</h1><p><em>[callout block — open in CapsuleCraft web for its canvas]</em></p><h1>Third-Party Attributions</h1><p>All third-party libraries, fonts, and assets used in StatCraft adhere strictly to permissive open-source licenses (MIT, Apache-2.0, BSD-3-Clause, OFL-1.1).</p><p>| Asset / Library | License | Usage | Link |<br>|---|---|---|---|<br>| `egui` / `eframe` / `egui_dock` | MIT OR Apache-2.0 | GUI, virtualized tables, docking workspace | https://github.com/emilk/egui |<br>| `fluent` / `unic-langid` | Apache-2.0 / MIT | Localization catalogs and engine | https://github.com/projectfluent/fluent-rs |<br>| `serde` / `serde_json` | MIT OR Apache-2.0 | Command specs, metadata serialization | https://github.com/serde-rs/serde |<br>| `thiserror` | MIT OR Apache-2.0 | Typed error handling (Zero panic) | https://github.com/dtolnay/thiserror |<br>| `csv` | MIT OR UNLICENSE | Streaming tabular CSV/TSV reader | https://github.com/BurntSushi/rust-csv |<br>| `storytold/craft-fonts` | OFL-1.1 | Open typography for ArtCraft applications | https://github.com/storytold/craft-fonts |</p><hr><p style="color:#8a8175;font-size:12px">Exported from CapsuleCraft Native · &lt;doc-statcraft-attribution_md@capsuleos.local&gt;</p></body></html>
+
+--BOUNDARY_PAYLOAD_1QL6TZEDXI--
+--BOUNDARY_ROOT_3S35QGDVN3--

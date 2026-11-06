@@ -1,0 +1,249 @@
+From: CapsuleCraft Code Ingest <system@capsulecraft.local>
+To: Vault <vault@capsuleos.local>
+Subject: 📚 StatCraft / ТЗ для ИИ-агента: Этап 4 — Сравнение средних и проверка гипотез (Phase 4)
+Date: Fri, 6 Nov 2026 14:13:33 +0000
+Message-ID: <doc-statcraft-docs_plans_phase_4_compare_means_ttest_anova_md@capsuleos.local>
+In-Reply-To: <project-index-statcraft@capsuleos.local>
+X-Capsule-Page-Parent: <project-index-statcraft@capsuleos.local>
+References: <project-index-statcraft@capsuleos.local>
+X-Capsule-Tags: project, statcraft, docs
+X-Capsule-Status: Active
+MIME-Version: 1.0
+Content-Type: multipart/mixed; boundary="BOUNDARY_ROOT_1H2S77YL41"
+
+--BOUNDARY_ROOT_1H2S77YL41
+Content-Type: multipart/alternative; boundary="BOUNDARY_PAYLOAD_41L5KCL7GL"
+
+--BOUNDARY_PAYLOAD_41L5KCL7GL
+Content-Type: application/json; name="canvas_state.json"
+Content-Disposition: inline; filename="canvas_state.json"
+
+{
+  "version": "1.0",
+  "generator": "CapsuleCraft Native egui prototype (Zero-DB Pure-MIME)",
+  "messageId": "<doc-statcraft-docs_plans_phase_4_compare_means_ttest_anova_md@capsuleos.local>",
+  "subject": "📚 StatCraft / ТЗ для ИИ-агента: Этап 4 — Сравнение средних и проверка гипотез (Phase 4)",
+  "tags": [
+    "project",
+    "statcraft",
+    "docs"
+  ],
+  "blocks": [
+    {
+      "data": {
+        "icon": "book",
+        "text": "Documentation file: `docs/plans/PHASE_4_COMPARE_MEANS_TTEST_ANOVA.md`\nBelongs to project: [[📦 StatCraft (Overview) | 📦 StatCraft (Overview)]]"
+      },
+      "id": "blk_native_callout_1793974413994115700",
+      "managed_by": "project_parser",
+      "type": "callout"
+    },
+    {
+      "data": {
+        "level": 1,
+        "text": "ТЗ для ИИ-агента: Этап 4 — Сравнение средних и проверка гипотез (Phase 4)"
+      },
+      "id": "blk_native_heading_1793974413994093000",
+      "managed_by": "project_parser",
+      "type": "heading"
+    },
+    {
+      "data": {
+        "icon": "info",
+        "text": "**Стандарт экосистемы:** ArtCraft (`storytold`) | Двойная лицензия MIT OR Apache-2.0"
+      },
+      "id": "blk_native_callout_1793974413994094600",
+      "managed_by": "project_parser",
+      "type": "callout"
+    },
+    {
+      "data": {
+        "icon": "info",
+        "text": "**Генеральный регламент:** [AGENTS.md](file:///d:/Projects/active/StatCraft/AGENTS.md)"
+      },
+      "id": "blk_native_callout_1793974413994095400",
+      "managed_by": "project_parser",
+      "type": "callout"
+    },
+    {
+      "data": {
+        "icon": "info",
+        "text": "**Ограничение ресурсов:** ВСЕ команды сборки и тестов запускаются строго с флагом `-j 1`."
+      },
+      "id": "blk_native_callout_1793974413994096000",
+      "managed_by": "project_parser",
+      "type": "callout"
+    },
+    {
+      "data": {
+        "icon": "info",
+        "text": "**Принцип надежности:** 100% Safe Rust, Never Crash (0 `unwrap()`, 0 `expect()`, 0 `panic!()`, 0 `unsafe`)."
+      },
+      "id": "blk_native_callout_1793974413994096700",
+      "managed_by": "project_parser",
+      "type": "callout"
+    },
+    {
+      "data": {
+        "icon": "info",
+        "text": "**Локализация:** 0% строковых литералов на русском/английском в коде UI (строго макрос `t!()` и файлы `locales/ru.ftl`, `locales/en.ftl`)."
+      },
+      "id": "blk_native_callout_1793974413994097900",
+      "managed_by": "project_parser",
+      "type": "callout"
+    },
+    {
+      "data": {
+        "icon": "info",
+        "text": "**Интерфейс:** Vector-First UI (0 эмодзи, 0 квадратов «тофу»)."
+      },
+      "id": "blk_native_callout_1793974413994098500",
+      "managed_by": "project_parser",
+      "type": "callout"
+    },
+    {
+      "data": {
+        "text": "---"
+      },
+      "id": "blk_native_paragraph_1793974413994099300",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    },
+    {
+      "data": {
+        "level": 2,
+        "text": "1. Цели задачи"
+      },
+      "id": "blk_native_heading_1793974413994099900",
+      "managed_by": "project_parser",
+      "type": "heading"
+    },
+    {
+      "data": {
+        "text": "1. Реализовать параметрические критерии сравнения средних в L2 `statcraft_algo`:\n   - **Двухвыборочный t-критерий для независимых выборок** (*Independent-Samples T-Test*):\n     * Критерий равенства дисперсий Ливиня (*Levene's Test*) с $F$-статистикой и $p$-значением;\n     * $t$-критерий Стьюдента для равных дисперсий ($df = n_1 + n_2 - 2$);\n     * $t$-критерий Уэлча для неравных дисперсий с поправкой Саттертуэйта на степени свободы;\n     * Разность средних, стандартная ошибка разности и 95% доверительный интервал.\n   - **Парный t-критерий** (*Paired-Samples T-Test*) для зависимых выборок (до / после воздействия).\n   - **Одновыборочный t-критерий** (*One-Sample T-Test*) со сравнением с тестовым числом $\\mu_0$.\n   - **Однофакторный дисперсионный анализ** (*One-Way ANOVA*): межгрупповая и внутригрупповая дисперсии, критерий Фишера $F$, точное $p$-value, критерий Тьюки (*Tukey HSD*).\n2. Зарегистрировать команды в L5 `statcraft_syntax`:\n   - `stat.ttest.independent`, `stat.ttest.paired`, `stat.ttest.one_sample`, `stat.anova.oneway`.\n   - Поддержка генерации классического синтаксиса SPSS:\n     * `T-TEST GROUPS=gender(1 2) /VARIABLES=salary.`\n     * `T-TEST PAIRS=pre_test WITH post_test (PAIRED).`\n     * `ONEWAY salary BY educ /STATISTICS DESCRIPTIVES.`\n3. Создать диалоги в `statcraft_app/src/dialogs/`:\n   - `ttest_ind_dialog.rs`: выбор тестовых переменных, группирующей переменной и кнопка «Задать группы...» (*Define Groups*);\n   - `ttest_paired_dialog.rs`: выбор связанных пар переменных;\n   - `anova_dialog.rs`: выбор зависимых переменных и категориального фактора.\n4. Вывести аутентичные сводные таблицы в `Output Viewer`:\n   - **Статистики групп** (*Group Statistics*): $N$, Mean, Std. Dev, Std. Error Mean;\n   - **Критерий для независимых выборок** (*Independent Samples Test*): двухстрочная таблица (с предположением и без предположения равенства дисперсий);\n   - **Таблица дисперсионного анализа** (*ANOVA Table*): Sum of Squares, df, Mean Square, F, Sig."
+      },
+      "id": "blk_native_paragraph_1793974413994103900",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    },
+    {
+      "data": {
+        "text": "---"
+      },
+      "id": "blk_native_paragraph_1793974413994105100",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    },
+    {
+      "data": {
+        "level": 2,
+        "text": "2. Пошаговый план изменений"
+      },
+      "id": "blk_native_heading_1793974413994105600",
+      "managed_by": "project_parser",
+      "type": "heading"
+    },
+    {
+      "data": {
+        "level": 3,
+        "text": "2.1. L2 `statcraft_algo`"
+      },
+      "id": "blk_native_heading_1793974413994106200",
+      "managed_by": "project_parser",
+      "type": "heading"
+    },
+    {
+      "data": {
+        "text": "- Создать `crates/statcraft_algo/src/ttest.rs`:\n  * Функции: `compute_independent_ttest`, `compute_paired_ttest`, `compute_one_sample_ttest`;\n  * Вспомогательный расчет критерия Ливиня (`compute_levene_test`);\n  * Golden Oracle unit-тесты со сверкой со `scipy.stats.ttest_ind`, `scipy.stats.levene` и `scipy.stats.ttest_rel` с точностью $\\le 10^{-6}$.\n- Создать `crates/statcraft_algo/src/anova.rs`:\n  * Функция `compute_oneway_anova`;\n  * Golden Oracle unit-тесты со сверкой со `scipy.stats.f_oneway`.\n- Зарегистрировать модули в `crates/statcraft_algo/src/lib.rs`."
+      },
+      "id": "blk_native_paragraph_1793974413994107500",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    },
+    {
+      "data": {
+        "level": 3,
+        "text": "2.2. L5 `statcraft_syntax`"
+      },
+      "id": "blk_native_heading_1793974413994108200",
+      "managed_by": "project_parser",
+      "type": "heading"
+    },
+    {
+      "data": {
+        "text": "- Создать `crates/statcraft_syntax/src/commands/ttest_cmds.rs`:\n  * `IndependentTTestCommand`, `PairedTTestCommand`, `OneSampleTTestCommand`, `OneWayAnovaCommand`;\n  * Валидация предиката `enabled` (например, для независимого t-теста в данных обязана быть хотя бы одна числовая колонка и одна группирующая переменная минимум с 2 группами);\n  * Генерация `.sps` синтаксиса.\n- Зарегистрировать в `CommandBus`."
+      },
+      "id": "blk_native_paragraph_1793974413994109300",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    },
+    {
+      "data": {
+        "level": 3,
+        "text": "2.3. L6 `statcraft_app`"
+      },
+      "id": "blk_native_heading_1793974413994109700",
+      "managed_by": "project_parser",
+      "type": "heading"
+    },
+    {
+      "data": {
+        "text": "- Создать `crates/statcraft_app/src/dialogs/ttest_ind_dialog.rs`:\n  * Компактное модальное окно;\n  * Список числовых переменных $\\to$ поле «Проверяемые переменные» (*Test Variables*);\n  * Поле «Группирующая переменная» (*Grouping Variable*);\n  * Вложенное модальное окно «Задать группы» (*Define Groups: Group 1, Group 2*).\n- Создать `crates/statcraft_app/src/dialogs/anova_dialog.rs`.\n- В `crates/statcraft_app/src/views/output_view.rs`:\n  * Добавить рендеринг таблицы `Group Statistics` и двухстрочной таблицы `Independent Samples Test`.\n- В `crates/statcraft_app/src/app.rs`:\n  * Добавить пункты в меню `Analyze > Compare Means > Independent-Samples T Test...` и `One-Way ANOVA...`."
+      },
+      "id": "blk_native_paragraph_1793974413994111300",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    },
+    {
+      "data": {
+        "level": 3,
+        "text": "2.4. Локализация (`locales/ru.ftl` и `locales/en.ftl`)"
+      },
+      "id": "blk_native_heading_1793974413994112000",
+      "managed_by": "project_parser",
+      "type": "heading"
+    },
+    {
+      "data": {
+        "text": "- Все ключи меню, диалогов и заголовков сводных таблиц."
+      },
+      "id": "blk_native_paragraph_1793974413994112600",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    },
+    {
+      "data": {
+        "text": "---"
+      },
+      "id": "blk_native_paragraph_1793974413994113100",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    },
+    {
+      "data": {
+        "level": 2,
+        "text": "3. Критерии приёмки и верификация (Definition of Done)"
+      },
+      "id": "blk_native_heading_1793974413994113500",
+      "managed_by": "project_parser",
+      "type": "heading"
+    },
+    {
+      "data": {
+        "text": "1. Строго `-j 1` на всех командах.\n2. `cargo test --workspace -j 1` — 100% тестов завершились с кодом 0.\n3. `cargo test --package statcraft_i18n --test i18n_lint_test -j 1` — 0% захардкоженных строк в UI.\n4. `cargo fmt --check` и `cargo clippy --workspace -j 1 -- -D warnings` — чисто.\n5. `cargo run --package xtask -j 1 -- layers` — без нарушений архитектуры.\n6. Обновить `docs/CHRONICLE.md` и `docs/CHRONICLE.en.md` с фиксацией выполненной работы."
+      },
+      "id": "blk_native_paragraph_1793974413994114600",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    }
+  ]
+}
+
+--BOUNDARY_PAYLOAD_41L5KCL7GL
+Content-Type: text/html; charset="utf-8"
+Content-Disposition: inline
+
+<!doctype html><html><head><meta charset="utf-8"><meta name="generator" content="CapsuleCraft Native"></head><body style="font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;max-width:720px;margin:32px auto;line-height:1.55;color:#23201c;background:#faf8f4;"><h1>📚 StatCraft / ТЗ для ИИ-агента: Этап 4 — Сравнение средних и проверка гипотез (Phase 4)</h1><p><em>[callout block — open in CapsuleCraft web for its canvas]</em></p><h1>ТЗ для ИИ-агента: Этап 4 — Сравнение средних и проверка гипотез (Phase 4)</h1><p><em>[callout block — open in CapsuleCraft web for its canvas]</em></p><p><em>[callout block — open in CapsuleCraft web for its canvas]</em></p><p><em>[callout block — open in CapsuleCraft web for its canvas]</em></p><p><em>[callout block — open in CapsuleCraft web for its canvas]</em></p><p><em>[callout block — open in CapsuleCraft web for its canvas]</em></p><p><em>[callout block — open in CapsuleCraft web for its canvas]</em></p><p>---</p><h2>1. Цели задачи</h2><p>1. Реализовать параметрические критерии сравнения средних в L2 `statcraft_algo`:<br>   - **Двухвыборочный t-критерий для независимых выборок** (*Independent-Samples T-Test*):<br>     * Критерий равенства дисперсий Ливиня (*Levene&#39;s Test*) с $F$-статистикой и $p$-значением;<br>     * $t$-критерий Стьюдента для равных дисперсий ($df = n_1 + n_2 - 2$);<br>     * $t$-критерий Уэлча для неравных дисперсий с поправкой Саттертуэйта на степени свободы;<br>     * Разность средних, стандартная ошибка разности и 95% доверительный интервал.<br>   - **Парный t-критерий** (*Paired-Samples T-Test*) для зависимых выборок (до / после воздействия).<br>   - **Одновыборочный t-критерий** (*One-Sample T-Test*) со сравнением с тестовым числом $\mu_0$.<br>   - **Однофакторный дисперсионный анализ** (*One-Way ANOVA*): межгрупповая и внутригрупповая дисперсии, критерий Фишера $F$, точное $p$-value, критерий Тьюки (*Tukey HSD*).<br>2. Зарегистрировать команды в L5 `statcraft_syntax`:<br>   - `stat.ttest.independent`, `stat.ttest.paired`, `stat.ttest.one_sample`, `stat.anova.oneway`.<br>   - Поддержка генерации классического синтаксиса SPSS:<br>     * `T-TEST GROUPS=gender(1 2) /VARIABLES=salary.`<br>     * `T-TEST PAIRS=pre_test WITH post_test (PAIRED).`<br>     * `ONEWAY salary BY educ /STATISTICS DESCRIPTIVES.`<br>3. Создать диалоги в `statcraft_app/src/dialogs/`:<br>   - `ttest_ind_dialog.rs`: выбор тестовых переменных, группирующей переменной и кнопка «Задать группы...» (*Define Groups*);<br>   - `ttest_paired_dialog.rs`: выбор связанных пар переменных;<br>   - `anova_dialog.rs`: выбор зависимых переменных и категориального фактора.<br>4. Вывести аутентичные сводные таблицы в `Output Viewer`:<br>   - **Статистики групп** (*Group Statistics*): $N$, Mean, Std. Dev, Std. Error Mean;<br>   - **Критерий для независимых выборок** (*Independent Samples Test*): двухстрочная таблица (с предположением и без предположения равенства дисперсий);<br>   - **Таблица дисперсионного анализа** (*ANOVA Table*): Sum of Squares, df, Mean Square, F, Sig.</p><p>---</p><h2>2. Пошаговый план изменений</h2><h3>2.1. L2 `statcraft_algo`</h3><p>- Создать `crates/statcraft_algo/src/ttest.rs`:<br>  * Функции: `compute_independent_ttest`, `compute_paired_ttest`, `compute_one_sample_ttest`;<br>  * Вспомогательный расчет критерия Ливиня (`compute_levene_test`);<br>  * Golden Oracle unit-тесты со сверкой со `scipy.stats.ttest_ind`, `scipy.stats.levene` и `scipy.stats.ttest_rel` с точностью $\le 10^{-6}$.<br>- Создать `crates/statcraft_algo/src/anova.rs`:<br>  * Функция `compute_oneway_anova`;<br>  * Golden Oracle unit-тесты со сверкой со `scipy.stats.f_oneway`.<br>- Зарегистрировать модули в `crates/statcraft_algo/src/lib.rs`.</p><h3>2.2. L5 `statcraft_syntax`</h3><p>- Создать `crates/statcraft_syntax/src/commands/ttest_cmds.rs`:<br>  * `IndependentTTestCommand`, `PairedTTestCommand`, `OneSampleTTestCommand`, `OneWayAnovaCommand`;<br>  * Валидация предиката `enabled` (например, для независимого t-теста в данных обязана быть хотя бы одна числовая колонка и одна группирующая переменная минимум с 2 группами);<br>  * Генерация `.sps` синтаксиса.<br>- Зарегистрировать в `CommandBus`.</p><h3>2.3. L6 `statcraft_app`</h3><p>- Создать `crates/statcraft_app/src/dialogs/ttest_ind_dialog.rs`:<br>  * Компактное модальное окно;<br>  * Список числовых переменных $\to$ поле «Проверяемые переменные» (*Test Variables*);<br>  * Поле «Группирующая переменная» (*Grouping Variable*);<br>  * Вложенное модальное окно «Задать группы» (*Define Groups: Group 1, Group 2*).<br>- Создать `crates/statcraft_app/src/dialogs/anova_dialog.rs`.<br>- В `crates/statcraft_app/src/views/output_view.rs`:<br>  * Добавить рендеринг таблицы `Group Statistics` и двухстрочной таблицы `Independent Samples Test`.<br>- В `crates/statcraft_app/src/app.rs`:<br>  * Добавить пункты в меню `Analyze &gt; Compare Means &gt; Independent-Samples T Test...` и `One-Way ANOVA...`.</p><h3>2.4. Локализация (`locales/ru.ftl` и `locales/en.ftl`)</h3><p>- Все ключи меню, диалогов и заголовков сводных таблиц.</p><p>---</p><h2>3. Критерии приёмки и верификация (Definition of Done)</h2><p>1. Строго `-j 1` на всех командах.<br>2. `cargo test --workspace -j 1` — 100% тестов завершились с кодом 0.<br>3. `cargo test --package statcraft_i18n --test i18n_lint_test -j 1` — 0% захардкоженных строк в UI.<br>4. `cargo fmt --check` и `cargo clippy --workspace -j 1 -- -D warnings` — чисто.<br>5. `cargo run --package xtask -j 1 -- layers` — без нарушений архитектуры.<br>6. Обновить `docs/CHRONICLE.md` и `docs/CHRONICLE.en.md` с фиксацией выполненной работы.</p><hr><p style="color:#8a8175;font-size:12px">Exported from CapsuleCraft Native · &lt;doc-statcraft-docs_plans_phase_4_compare_means_ttest_anova_md@capsuleos.local&gt;</p></body></html>
+
+--BOUNDARY_PAYLOAD_41L5KCL7GL--
+--BOUNDARY_ROOT_1H2S77YL41--

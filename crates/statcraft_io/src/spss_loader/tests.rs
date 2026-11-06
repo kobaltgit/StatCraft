@@ -180,3 +180,151 @@ fn test_malformed_spss_data_returns_error() {
         Err(IoError::MalformedSpss(_))
     ));
 }
+
+#[test]
+fn test_synthetic_sav_opcode_254_zero_and_255_sysmis() {
+    let mut file_bytes = build_synthetic_header(1, 2, 1, 100.0);
+    file_bytes.extend(build_var_record(0, "COUNT", Some("Item Count"), 0x00050800));
+
+    // Record 999: Data
+    file_bytes.extend_from_slice(&999i32.to_le_bytes());
+    file_bytes.extend_from_slice(&0i32.to_le_bytes());
+
+    // Case 1: opcode 254 (must be numeric 0.0)
+    // Case 2: opcode 255 (must be SYSMIS / Null)
+    // End: opcode 252
+    let mut opcodes = [0u8; 8];
+    opcodes[0] = 254; // 0.0
+    opcodes[1] = 255; // SYSMIS
+    opcodes[2] = 252; // EOF
+
+    file_bytes.extend_from_slice(&opcodes);
+
+    let mut cursor = Cursor::new(file_bytes);
+    let spss_data = load_spss_from_reader(&mut cursor).expect("Failed to load SPSS");
+
+    assert_eq!(spss_data.raw_table.row_count, 2);
+    assert_eq!(
+        spss_data.raw_table.columns[0].values[0],
+        RawValue::Number(0.0),
+        "Opcode 254 must decode to numeric 0.0, not Null"
+    );
+    assert_eq!(
+        spss_data.raw_table.columns[0].values[1],
+        RawValue::Null,
+        "Opcode 255 must decode to RawValue::Null (SYSMIS)"
+    );
+}
+
+#[test]
+fn test_synthetic_sav_cp1251_and_subtype11_display_params() {
+    let mut file_bytes = build_synthetic_header(1, 1, 1, 100.0);
+
+    // Variable with Russian label in CP1251: "Возраст" (C2 EE E7 F0 E0 F1 F2)
+    let cp1251_label = [0xC2, 0xEE, 0xE7, 0xF0, 0xE0, 0xF1, 0xF2];
+    let mut var_bytes = Vec::new();
+    var_bytes.extend_from_slice(&2i32.to_le_bytes()); // rec_type
+    var_bytes.extend_from_slice(&0i32.to_le_bytes()); // numeric
+    var_bytes.extend_from_slice(&1i32.to_le_bytes()); // has_label
+    var_bytes.extend_from_slice(&0i32.to_le_bytes()); // missing
+    var_bytes.extend_from_slice(&0x00050800u32.to_le_bytes()); // print format
+    var_bytes.extend_from_slice(&0x00050800u32.to_le_bytes()); // write format
+    var_bytes.extend_from_slice(b"AGE     ");
+    var_bytes.extend_from_slice(&(cp1251_label.len() as i32).to_le_bytes());
+    var_bytes.extend_from_slice(&cp1251_label);
+    let pad = (4 - (cp1251_label.len() % 4)) % 4;
+    var_bytes.resize(var_bytes.len() + pad, 0);
+
+    file_bytes.extend(var_bytes);
+
+    // Record 7 Subtype 3: Codepage 1251
+    file_bytes.extend_from_slice(&7i32.to_le_bytes());
+    file_bytes.extend_from_slice(&3i32.to_le_bytes()); // subtype 3
+    file_bytes.extend_from_slice(&4i32.to_le_bytes()); // size 4
+    file_bytes.extend_from_slice(&8i32.to_le_bytes()); // count 8
+    let int_info = [21i32, 0, 0, 1, 1, 1, 2, 1251]; // 1251 at index 7
+    for val in int_info {
+        file_bytes.extend_from_slice(&val.to_le_bytes());
+    }
+
+    // Record 7 Subtype 11: Display params (measure=2 [Ordinal], width=12, align=2 [Center])
+    file_bytes.extend_from_slice(&7i32.to_le_bytes());
+    file_bytes.extend_from_slice(&11i32.to_le_bytes()); // subtype 11
+    file_bytes.extend_from_slice(&4i32.to_le_bytes()); // size 4
+    file_bytes.extend_from_slice(&3i32.to_le_bytes()); // count 3
+    file_bytes.extend_from_slice(&2i32.to_le_bytes()); // measure: Ordinal
+    file_bytes.extend_from_slice(&12i32.to_le_bytes()); // display width: 12
+    file_bytes.extend_from_slice(&2i32.to_le_bytes()); // alignment: Center
+
+    // Record 999: Data
+    file_bytes.extend_from_slice(&999i32.to_le_bytes());
+    file_bytes.extend_from_slice(&0i32.to_le_bytes());
+
+    let mut opcodes = [0u8; 8];
+    opcodes[0] = 135; // 135 - 100 = 35
+    opcodes[1] = 252; // EOF
+    file_bytes.extend_from_slice(&opcodes);
+
+    let mut cursor = Cursor::new(file_bytes);
+    let spss_data = load_spss_from_reader(&mut cursor).expect("Failed to load SPSS");
+
+    assert_eq!(spss_data.variables.len(), 1);
+    assert_eq!(
+        spss_data.variables[0].label, "Возраст",
+        "CP1251 label must be decoded properly"
+    );
+    assert_eq!(
+        spss_data.variables[0].measure, 2,
+        "Ordinal measure from Subtype 11"
+    );
+    assert_eq!(spss_data.variables[0].display_width, 12);
+    assert_eq!(spss_data.variables[0].alignment, 2);
+    assert_eq!(
+        spss_data.raw_table.columns[0].values[0],
+        RawValue::Number(35.0)
+    );
+}
+
+#[test]
+fn test_synthetic_sav_very_long_strings_subtype14() {
+    let mut file_bytes = build_synthetic_header(1, 1, 2, 100.0);
+
+    // Variable 1: Long string root (type_code = 255)
+    file_bytes.extend(build_var_record(255, "COMMENT ", None, 0x0001FF00));
+    // Continuation slot (type_code = -1)
+    file_bytes.extend(build_var_record(-1, "        ", None, 0));
+
+    // Record 7 Subtype 14: Very long string declaration
+    // COMMENT=00300\t
+    let vls_decl = "COMMENT=00300\t\0";
+    let vls_bytes = vls_decl.as_bytes();
+    file_bytes.extend_from_slice(&7i32.to_le_bytes());
+    file_bytes.extend_from_slice(&14i32.to_le_bytes()); // subtype 14
+    file_bytes.extend_from_slice(&1i32.to_le_bytes()); // size 1
+    file_bytes.extend_from_slice(&(vls_bytes.len() as i32).to_le_bytes());
+    file_bytes.extend_from_slice(vls_bytes);
+
+    // Record 999: Data
+    file_bytes.extend_from_slice(&999i32.to_le_bytes());
+    file_bytes.extend_from_slice(&0i32.to_le_bytes());
+
+    // Root variable has length 255 (32 slots of 8 bytes = 256 bytes)
+    // Continuation has slots for the remainder
+    let mut opcodes = [0u8; 8];
+    opcodes[0] = 253; // literal 1
+    opcodes[1] = 253; // literal 2
+    opcodes[2] = 252; // EOF
+    file_bytes.extend_from_slice(&opcodes);
+    file_bytes.extend_from_slice(b"PartOne ");
+    file_bytes.extend_from_slice(b"PartTwo ");
+
+    let mut cursor = Cursor::new(file_bytes);
+    let spss_data = load_spss_from_reader(&mut cursor).expect("Failed to load VLS SPSS");
+
+    assert_eq!(spss_data.variables.len(), 1);
+    assert_eq!(
+        spss_data.variables[0].string_len, 300,
+        "Subtype 14 declares 300 bytes"
+    );
+    assert_eq!(spss_data.raw_table.row_count, 1);
+}

@@ -1,0 +1,169 @@
+From: CapsuleCraft Code Ingest <system@capsulecraft.local>
+To: Vault <vault@capsuleos.local>
+Subject: 📚 StatCraft / Investigation report
+Date: Fri, 6 Nov 2026 14:13:33 +0000
+Message-ID: <doc-statcraft-docs_craft_anything_audit_report_md@capsuleos.local>
+In-Reply-To: <project-index-statcraft@capsuleos.local>
+X-Capsule-Page-Parent: <project-index-statcraft@capsuleos.local>
+References: <project-index-statcraft@capsuleos.local>
+X-Capsule-Tags: project, statcraft, docs
+X-Capsule-Status: Active
+MIME-Version: 1.0
+Content-Type: multipart/mixed; boundary="BOUNDARY_ROOT_1CAKG71FDZ"
+
+--BOUNDARY_ROOT_1CAKG71FDZ
+Content-Type: multipart/alternative; boundary="BOUNDARY_PAYLOAD_10NWE5FFG7"
+
+--BOUNDARY_PAYLOAD_10NWE5FFG7
+Content-Type: application/json; name="canvas_state.json"
+Content-Disposition: inline; filename="canvas_state.json"
+
+{
+  "version": "1.0",
+  "generator": "CapsuleCraft Native egui prototype (Zero-DB Pure-MIME)",
+  "messageId": "<doc-statcraft-docs_craft_anything_audit_report_md@capsuleos.local>",
+  "subject": "📚 StatCraft / Investigation report",
+  "tags": [
+    "project",
+    "statcraft",
+    "docs"
+  ],
+  "blocks": [
+    {
+      "data": {
+        "icon": "book",
+        "text": "Documentation file: `docs/CRAFT_ANYTHING_AUDIT_REPORT.md`\nBelongs to project: [[📦 StatCraft (Overview) | 📦 StatCraft (Overview)]]"
+      },
+      "id": "blk_native_callout_1793974413991480500",
+      "managed_by": "project_parser",
+      "type": "callout"
+    },
+    {
+      "data": {
+        "level": 1,
+        "text": "Investigation report"
+      },
+      "id": "blk_native_heading_1793974413991463600",
+      "managed_by": "project_parser",
+      "type": "heading"
+    },
+    {
+      "data": {
+        "text": "**Question:** Соответствуют ли модули M-09 (Programmability) и M-10 (SET SEED & RNG) каноническим алгоритмам и поведению IBM SPSS Statistics?"
+      },
+      "id": "blk_native_paragraph_1793974413991465700",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    },
+    {
+      "data": {
+        "text": "**Purpose:** Математический и архитектурный аудит модулей M-09 (Programmability) и M-10 (SET SEED & RNG) по канону IBM SPSS."
+      },
+      "id": "blk_native_paragraph_1793974413991466600",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    },
+    {
+      "data": {
+        "text": "**Done when:** Построчный аудит модулей M-09 и M-10 против канона IBM SPSS Statistics, фиксация гипотез и findings, тесты пройдены без сбоев."
+      },
+      "id": "blk_native_paragraph_1793974413991467500",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    },
+    {
+      "data": {
+        "level": 2,
+        "text": "What we looked at"
+      },
+      "id": "blk_native_heading_1793974413991468100",
+      "managed_by": "project_parser",
+      "type": "heading"
+    },
+    {
+      "data": {
+        "text": "_No targets recorded._"
+      },
+      "id": "blk_native_paragraph_1793974413991469000",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    },
+    {
+      "data": {
+        "level": 2,
+        "text": "What we found"
+      },
+      "id": "blk_native_heading_1793974413991469500",
+      "managed_by": "project_parser",
+      "type": "heading"
+    },
+    {
+      "data": {
+        "text": "_No findings have been recorded yet._"
+      },
+      "id": "blk_native_paragraph_1793974413991470100",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    },
+    {
+      "data": {
+        "level": 2,
+        "text": "Open questions"
+      },
+      "id": "blk_native_heading_1793974413991470500",
+      "managed_by": "project_parser",
+      "type": "heading"
+    },
+    {
+      "data": {
+        "text": "_None outstanding._"
+      },
+      "id": "blk_native_paragraph_1793974413991471300",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    },
+    {
+      "data": {
+        "level": 2,
+        "text": "How this was done"
+      },
+      "id": "blk_native_heading_1793974413991471700",
+      "managed_by": "project_parser",
+      "type": "heading"
+    },
+    {
+      "data": {
+        "text": "- **Mode:** Clean room (nothing inside the original was read)"
+      },
+      "id": "blk_native_paragraph_1793974413991472400",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    },
+    {
+      "data": {
+        "level": 2,
+        "text": "Handoff"
+      },
+      "id": "blk_native_heading_1793974413991472800",
+      "managed_by": "project_parser",
+      "type": "heading"
+    },
+    {
+      "data": {
+        "text": "Все микропланы Фазы 2 (M-01 — M-20) полностью проаудированы построчно с фиксацией доказательств в Craft Anything MCP. Результаты:\n1. Раздел A (M-01 — M-10): M-01 (expr_eval): зафиксированы 3 расхождения (приоритеты ** и NOT, 3VL Клини, нехватка SIN/COS/TAN/MOD/LG10). M-02 (time_series): зафиксировано расхождение SMA (реализован как trailing PMA). M-03 (shift), M-04 (date_time), M-05 (recode), M-06 (autorecode), M-07 (count), M-08 (dummies) — 100% подтверждены. M-09 (programmability) и M-10 (rng) — 100% подтверждены, отмечено использование SplitMix64 вместо LCG.\n2. Раздел B (M-11 — M-15): M-11 (select_cases: FILTER/DELETE), M-12 (sort_cases: стабильная сортировка, Ordering::Less для Null/NaN как наименьших значений), M-13 (weight_cases: w <= 0/NaN отсекаются в row_weight), M-14 (split_file: LAYERED/SEPARATE с автосортировкой), M-15 (variable: 11 атрибутов словаря, дискретные и интервальные MissingValues) — 100% соответствие канону SPSS.\n3. Раздел C (M-16 — M-19): M-16 (spss_loader: $FL2/$FL3, типы 1,2,3/4,7, байт-код и zsav zlib декомпрессия), M-17 (excel_loader: V_, _, автовывод), M-18 (csv: RFC 4180, round-trip), M-19 (stc: Parquet + JSON metadata) — 100% подтверждены.\n4. Раздел D (M-20): M-20 (reporting: двухъярусные заголовки PivotTable, подавление нуля .000 для p-value, экспорт HTML/TSV/TXT) — 100% подтверждено.\nВсе тесты во всех затронутых крейтах (statcraft_algo, statcraft_core, statcraft_syntax, statcraft_io, statcraft_reporting) пройдены без ошибок (-j 1)."
+      },
+      "id": "blk_native_paragraph_1793974413991478800",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    }
+  ]
+}
+
+--BOUNDARY_PAYLOAD_10NWE5FFG7
+Content-Type: text/html; charset="utf-8"
+Content-Disposition: inline
+
+<!doctype html><html><head><meta charset="utf-8"><meta name="generator" content="CapsuleCraft Native"></head><body style="font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;max-width:720px;margin:32px auto;line-height:1.55;color:#23201c;background:#faf8f4;"><h1>📚 StatCraft / Investigation report</h1><p><em>[callout block — open in CapsuleCraft web for its canvas]</em></p><h1>Investigation report</h1><p>**Question:** Соответствуют ли модули M-09 (Programmability) и M-10 (SET SEED &amp; RNG) каноническим алгоритмам и поведению IBM SPSS Statistics?</p><p>**Purpose:** Математический и архитектурный аудит модулей M-09 (Programmability) и M-10 (SET SEED &amp; RNG) по канону IBM SPSS.</p><p>**Done when:** Построчный аудит модулей M-09 и M-10 против канона IBM SPSS Statistics, фиксация гипотез и findings, тесты пройдены без сбоев.</p><h2>What we looked at</h2><p>_No targets recorded._</p><h2>What we found</h2><p>_No findings have been recorded yet._</p><h2>Open questions</h2><p>_None outstanding._</p><h2>How this was done</h2><p>- **Mode:** Clean room (nothing inside the original was read)</p><h2>Handoff</h2><p>Все микропланы Фазы 2 (M-01 — M-20) полностью проаудированы построчно с фиксацией доказательств в Craft Anything MCP. Результаты:<br>1. Раздел A (M-01 — M-10): M-01 (expr_eval): зафиксированы 3 расхождения (приоритеты ** и NOT, 3VL Клини, нехватка SIN/COS/TAN/MOD/LG10). M-02 (time_series): зафиксировано расхождение SMA (реализован как trailing PMA). M-03 (shift), M-04 (date_time), M-05 (recode), M-06 (autorecode), M-07 (count), M-08 (dummies) — 100% подтверждены. M-09 (programmability) и M-10 (rng) — 100% подтверждены, отмечено использование SplitMix64 вместо LCG.<br>2. Раздел B (M-11 — M-15): M-11 (select_cases: FILTER/DELETE), M-12 (sort_cases: стабильная сортировка, Ordering::Less для Null/NaN как наименьших значений), M-13 (weight_cases: w &lt;= 0/NaN отсекаются в row_weight), M-14 (split_file: LAYERED/SEPARATE с автосортировкой), M-15 (variable: 11 атрибутов словаря, дискретные и интервальные MissingValues) — 100% соответствие канону SPSS.<br>3. Раздел C (M-16 — M-19): M-16 (spss_loader: $FL2/$FL3, типы 1,2,3/4,7, байт-код и zsav zlib декомпрессия), M-17 (excel_loader: V_, _, автовывод), M-18 (csv: RFC 4180, round-trip), M-19 (stc: Parquet + JSON metadata) — 100% подтверждены.<br>4. Раздел D (M-20): M-20 (reporting: двухъярусные заголовки PivotTable, подавление нуля .000 для p-value, экспорт HTML/TSV/TXT) — 100% подтверждено.<br>Все тесты во всех затронутых крейтах (statcraft_algo, statcraft_core, statcraft_syntax, statcraft_io, statcraft_reporting) пройдены без ошибок (-j 1).</p><hr><p style="color:#8a8175;font-size:12px">Exported from CapsuleCraft Native · &lt;doc-statcraft-docs_craft_anything_audit_report_md@capsuleos.local&gt;</p></body></html>
+
+--BOUNDARY_PAYLOAD_10NWE5FFG7--
+--BOUNDARY_ROOT_1CAKG71FDZ--

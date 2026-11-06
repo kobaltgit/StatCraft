@@ -1,0 +1,77 @@
+From: CapsuleCraft Code Ingest <system@capsulecraft.local>
+To: Vault <vault@capsuleos.local>
+Subject: 📁 StatCraft / crates/statcraft_core
+Date: Fri, 6 Nov 2026 14:51:42 +0000
+Message-ID: <subsystem-statcraft-crates_statcraft_core@capsuleos.local>
+In-Reply-To: <project-index-statcraft@capsuleos.local>
+X-Capsule-Page-Parent: <project-index-statcraft@capsuleos.local>
+References: <project-index-statcraft@capsuleos.local>
+X-Capsule-Tags: project, statcraft, subsystem
+X-Capsule-Status: Active
+MIME-Version: 1.0
+Content-Type: multipart/mixed; boundary="BOUNDARY_ROOT_N0IWD7ET0O"
+
+--BOUNDARY_ROOT_N0IWD7ET0O
+Content-Type: multipart/alternative; boundary="BOUNDARY_PAYLOAD_1K5WIBPEV2"
+
+--BOUNDARY_PAYLOAD_1K5WIBPEV2
+Content-Type: application/json; name="canvas_state.json"
+Content-Disposition: inline; filename="canvas_state.json"
+
+{
+  "version": "1.0",
+  "generator": "CapsuleCraft Native egui prototype (Zero-DB Pure-MIME)",
+  "messageId": "<subsystem-statcraft-crates_statcraft_core@capsuleos.local>",
+  "subject": "📁 StatCraft / crates/statcraft_core",
+  "tags": [
+    "project",
+    "statcraft",
+    "subsystem"
+  ],
+  "blocks": [
+    {
+      "data": {
+        "level": 1,
+        "text": "📁 Subsystem: crates/statcraft_core"
+      },
+      "id": "blk_native_heading_1793976702691151100",
+      "managed_by": "project_parser",
+      "type": "heading"
+    },
+    {
+      "data": {
+        "icon": "folder",
+        "text": "Part of [[📦 StatCraft (Overview) | 📦 StatCraft (Overview)]]\nContains 8 source module(s)."
+      },
+      "id": "blk_native_callout_1793976702691152500",
+      "managed_by": "project_parser",
+      "type": "callout"
+    },
+    {
+      "data": {
+        "level": 2,
+        "text": "Modules in this Subsystem"
+      },
+      "id": "blk_native_heading_1793976702691153300",
+      "managed_by": "project_parser",
+      "type": "heading"
+    },
+    {
+      "data": {
+        "text": "- [[📄 StatCraft / crates/statcraft_core/src/csv_export.rs]] (`crates/statcraft_core/src/csv_export.rs`)\n- [[📄 StatCraft / crates/statcraft_core/src/dataset.rs]] (`crates/statcraft_core/src/dataset.rs`)\n- [[📄 StatCraft / crates/statcraft_core/src/lib.rs]] (`crates/statcraft_core/src/lib.rs`)\n- [[📄 StatCraft / crates/statcraft_core/src/rng.rs]] (`crates/statcraft_core/src/rng.rs`)\n- [[📄 StatCraft / crates/statcraft_core/src/split.rs]] (`crates/statcraft_core/src/split.rs`)\n- [[📄 StatCraft / crates/statcraft_core/src/spss.rs]] (`crates/statcraft_core/src/spss.rs`)\n- [[📄 StatCraft / crates/statcraft_core/src/stc_codec.rs]] (`crates/statcraft_core/src/stc_codec.rs`)\n- [[📄 StatCraft / crates/statcraft_core/src/variable.rs]] (`crates/statcraft_core/src/variable.rs`)\n"
+      },
+      "id": "blk_native_paragraph_1793976702691159600",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    }
+  ]
+}
+
+--BOUNDARY_PAYLOAD_1K5WIBPEV2
+Content-Type: text/html; charset="utf-8"
+Content-Disposition: inline
+
+<!doctype html><html><head><meta charset="utf-8"><meta name="generator" content="CapsuleCraft Native"></head><body style="font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;max-width:720px;margin:32px auto;line-height:1.55;color:#23201c;background:#faf8f4;"><h1>📁 StatCraft / crates/statcraft_core</h1><h1>📁 Subsystem: crates/statcraft_core</h1><p><em>[callout block — open in CapsuleCraft web for its canvas]</em></p><h2>Modules in this Subsystem</h2><p>- [[📄 StatCraft / crates/statcraft_core/src/csv_export.rs]] (`crates/statcraft_core/src/csv_export.rs`)<br>- [[📄 StatCraft / crates/statcraft_core/src/dataset.rs]] (`crates/statcraft_core/src/dataset.rs`)<br>- [[📄 StatCraft / crates/statcraft_core/src/lib.rs]] (`crates/statcraft_core/src/lib.rs`)<br>- [[📄 StatCraft / crates/statcraft_core/src/rng.rs]] (`crates/statcraft_core/src/rng.rs`)<br>- [[📄 StatCraft / crates/statcraft_core/src/split.rs]] (`crates/statcraft_core/src/split.rs`)<br>- [[📄 StatCraft / crates/statcraft_core/src/spss.rs]] (`crates/statcraft_core/src/spss.rs`)<br>- [[📄 StatCraft / crates/statcraft_core/src/stc_codec.rs]] (`crates/statcraft_core/src/stc_codec.rs`)<br>- [[📄 StatCraft / crates/statcraft_core/src/variable.rs]] (`crates/statcraft_core/src/variable.rs`)<br></p><hr><p style="color:#8a8175;font-size:12px">Exported from CapsuleCraft Native · &lt;subsystem-statcraft-crates_statcraft_core@capsuleos.local&gt;</p></body></html>
+
+--BOUNDARY_PAYLOAD_1K5WIBPEV2--
+--BOUNDARY_ROOT_N0IWD7ET0O--

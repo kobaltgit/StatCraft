@@ -1,0 +1,77 @@
+From: CapsuleCraft Code Ingest <system@capsulecraft.local>
+To: Vault <vault@capsuleos.local>
+Subject: 📁 StatCraft / xtask/src
+Date: Fri, 6 Nov 2026 14:51:42 +0000
+Message-ID: <subsystem-statcraft-xtask_src@capsuleos.local>
+In-Reply-To: <project-index-statcraft@capsuleos.local>
+X-Capsule-Page-Parent: <project-index-statcraft@capsuleos.local>
+References: <project-index-statcraft@capsuleos.local>
+X-Capsule-Tags: project, statcraft, subsystem
+X-Capsule-Status: Active
+MIME-Version: 1.0
+Content-Type: multipart/mixed; boundary="BOUNDARY_ROOT_1KEMLWZDVC"
+
+--BOUNDARY_ROOT_1KEMLWZDVC
+Content-Type: multipart/alternative; boundary="BOUNDARY_PAYLOAD_1A63K59DWY"
+
+--BOUNDARY_PAYLOAD_1A63K59DWY
+Content-Type: application/json; name="canvas_state.json"
+Content-Disposition: inline; filename="canvas_state.json"
+
+{
+  "version": "1.0",
+  "generator": "CapsuleCraft Native egui prototype (Zero-DB Pure-MIME)",
+  "messageId": "<subsystem-statcraft-xtask_src@capsuleos.local>",
+  "subject": "📁 StatCraft / xtask/src",
+  "tags": [
+    "project",
+    "statcraft",
+    "subsystem"
+  ],
+  "blocks": [
+    {
+      "data": {
+        "level": 1,
+        "text": "📁 Subsystem: xtask/src"
+      },
+      "id": "blk_native_heading_1793976702693950400",
+      "managed_by": "project_parser",
+      "type": "heading"
+    },
+    {
+      "data": {
+        "icon": "folder",
+        "text": "Part of [[📦 StatCraft (Overview) | 📦 StatCraft (Overview)]]\nContains 8 source module(s)."
+      },
+      "id": "blk_native_callout_1793976702693952100",
+      "managed_by": "project_parser",
+      "type": "callout"
+    },
+    {
+      "data": {
+        "level": 2,
+        "text": "Modules in this Subsystem"
+      },
+      "id": "blk_native_heading_1793976702693952800",
+      "managed_by": "project_parser",
+      "type": "heading"
+    },
+    {
+      "data": {
+        "text": "- [[📄 StatCraft / xtask/src/ci.rs]] (`xtask/src/ci.rs`)\n- [[📄 StatCraft / xtask/src/corpus.rs]] (`xtask/src/corpus.rs`)\n- [[📄 StatCraft / xtask/src/design_guard.rs]] (`xtask/src/design_guard.rs`)\n- [[📄 StatCraft / xtask/src/file_guard.rs]] (`xtask/src/file_guard.rs`)\n- [[📄 StatCraft / xtask/src/icon.rs]] (`xtask/src/icon.rs`)\n- [[📄 StatCraft / xtask/src/layers.rs]] (`xtask/src/layers.rs`)\n- [[📄 StatCraft / xtask/src/main.rs]] (`xtask/src/main.rs`)\n- [[📄 StatCraft / xtask/src/parity.rs]] (`xtask/src/parity.rs`)\n"
+      },
+      "id": "blk_native_paragraph_1793976702693971700",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    }
+  ]
+}
+
+--BOUNDARY_PAYLOAD_1A63K59DWY
+Content-Type: text/html; charset="utf-8"
+Content-Disposition: inline
+
+<!doctype html><html><head><meta charset="utf-8"><meta name="generator" content="CapsuleCraft Native"></head><body style="font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;max-width:720px;margin:32px auto;line-height:1.55;color:#23201c;background:#faf8f4;"><h1>📁 StatCraft / xtask/src</h1><h1>📁 Subsystem: xtask/src</h1><p><em>[callout block — open in CapsuleCraft web for its canvas]</em></p><h2>Modules in this Subsystem</h2><p>- [[📄 StatCraft / xtask/src/ci.rs]] (`xtask/src/ci.rs`)<br>- [[📄 StatCraft / xtask/src/corpus.rs]] (`xtask/src/corpus.rs`)<br>- [[📄 StatCraft / xtask/src/design_guard.rs]] (`xtask/src/design_guard.rs`)<br>- [[📄 StatCraft / xtask/src/file_guard.rs]] (`xtask/src/file_guard.rs`)<br>- [[📄 StatCraft / xtask/src/icon.rs]] (`xtask/src/icon.rs`)<br>- [[📄 StatCraft / xtask/src/layers.rs]] (`xtask/src/layers.rs`)<br>- [[📄 StatCraft / xtask/src/main.rs]] (`xtask/src/main.rs`)<br>- [[📄 StatCraft / xtask/src/parity.rs]] (`xtask/src/parity.rs`)<br></p><hr><p style="color:#8a8175;font-size:12px">Exported from CapsuleCraft Native · &lt;subsystem-statcraft-xtask_src@capsuleos.local&gt;</p></body></html>
+
+--BOUNDARY_PAYLOAD_1A63K59DWY--
+--BOUNDARY_ROOT_1KEMLWZDVC--

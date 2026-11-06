@@ -226,11 +226,15 @@ pub fn detect_delimiter(sample: &str) -> u8 {
     let comma_count = sample.matches(',').count();
     let semicolon_count = sample.matches(';').count();
     let tab_count = sample.matches('\t').count();
+    let pipe_count = sample.matches('|').count();
 
-    if semicolon_count > comma_count && semicolon_count > tab_count {
+    if semicolon_count > comma_count && semicolon_count > tab_count && semicolon_count > pipe_count
+    {
         b';'
-    } else if tab_count > comma_count && tab_count > semicolon_count {
+    } else if tab_count > comma_count && tab_count > semicolon_count && tab_count > pipe_count {
         b'\t'
+    } else if pipe_count > comma_count && pipe_count > semicolon_count && pipe_count > tab_count {
+        b'|'
     } else {
         b','
     }
@@ -248,7 +252,8 @@ pub fn load_csv_from_reader<R: Read>(
         .read_to_string(&mut content)
         .map_err(|e| IoError::Io(e.to_string()))?;
 
-    let trimmed = content.trim();
+    let content_no_bom = content.trim_start_matches('\u{FEFF}');
+    let trimmed = content_no_bom.trim();
     if trimmed.is_empty() {
         return Err(IoError::EmptyFile("Input stream is empty".to_string()));
     }
@@ -452,5 +457,79 @@ mod tests {
         assert_eq!(table.get_value(1, 1), Some(&RawValue::Null));
         assert_eq!(table.get_value(2, 1), Some(&RawValue::Null));
         assert_eq!(table.get_value(3, 1), Some(&RawValue::Null));
+    }
+
+    #[test]
+    fn test_csv_utf8_bom() {
+        let bom_data = "\u{FEFF}id,name\n1,Alpha\n2,Beta\n";
+        let table = load_csv_from_reader(bom_data.as_bytes(), CsvOptions::default()).unwrap();
+        assert_eq!(table.row_count, 2);
+        assert_eq!(table.columns[0].name, "id");
+        assert_eq!(table.columns[1].name, "name");
+        assert_eq!(
+            table.get_value(0, 1),
+            Some(&RawValue::Text("Alpha".to_string()))
+        );
+    }
+
+    #[test]
+    fn test_csv_multiline_and_escaped_quotes() {
+        let data = "id,notes\n1,\"Line 1\nLine 2\"\n2,\"He said \"\"Hello\"\"\"\n";
+        let table = load_csv_from_reader(data.as_bytes(), CsvOptions::default()).unwrap();
+        assert_eq!(table.row_count, 2);
+        assert_eq!(
+            table.get_value(0, 1),
+            Some(&RawValue::Text("Line 1\nLine 2".to_string()))
+        );
+        assert_eq!(
+            table.get_value(1, 1),
+            Some(&RawValue::Text("He said \"Hello\"".to_string()))
+        );
+    }
+
+    #[test]
+    fn test_csv_pipe_delimiter() {
+        let data = "id|category|value\n1|Books|15.99\n2|Electronics|99.50\n";
+        let table = load_csv_from_reader(data.as_bytes(), CsvOptions::default()).unwrap();
+        assert_eq!(table.row_count, 2);
+        assert_eq!(table.col_count(), 3);
+        assert_eq!(table.columns[1].name, "category");
+        assert_eq!(table.get_value(0, 2), Some(&RawValue::Number(15.99)));
+    }
+
+    #[test]
+    fn test_csv_roundtrip_invariant() {
+        use crate::csv_writer::{export_raw_table_to_csv, CsvExportOptions};
+
+        let original = RawTable {
+            columns: vec![
+                RawColumn {
+                    name: "id".to_string(),
+                    data_type: RawDataType::Numeric,
+                    values: vec![RawValue::Number(1.0), RawValue::Number(2.0)],
+                },
+                RawColumn {
+                    name: "desc".to_string(),
+                    data_type: RawDataType::Text,
+                    values: vec![
+                        RawValue::Text("Item \"A\", with comma".to_string()),
+                        RawValue::Null,
+                    ],
+                },
+            ],
+            row_count: 2,
+        };
+
+        let mut buf = Vec::new();
+        export_raw_table_to_csv(&mut buf, &original, &CsvExportOptions::default()).unwrap();
+
+        let reloaded = load_csv_from_reader(buf.as_slice(), CsvOptions::default()).unwrap();
+        assert_eq!(reloaded.row_count, original.row_count);
+        assert_eq!(reloaded.col_count(), original.col_count());
+        assert_eq!(reloaded.columns[0].name, original.columns[0].name);
+        assert_eq!(reloaded.columns[1].name, original.columns[1].name);
+        assert_eq!(reloaded.get_value(0, 0), original.get_value(0, 0));
+        assert_eq!(reloaded.get_value(0, 1), original.get_value(0, 1));
+        assert_eq!(reloaded.get_value(1, 1), Some(&RawValue::Null));
     }
 }

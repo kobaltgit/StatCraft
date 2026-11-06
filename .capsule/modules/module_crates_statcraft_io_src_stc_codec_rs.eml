@@ -1,0 +1,94 @@
+From: CapsuleCraft Code Ingest <system@capsulecraft.local>
+To: Vault <vault@capsuleos.local>
+Subject: 📄 StatCraft / crates/statcraft_io/src/stc_codec.rs
+Date: Fri, 6 Nov 2026 14:13:33 +0000
+Message-ID: <module-crates_statcraft_io_src_stc_codec_rs@capsuleos.local>
+In-Reply-To: <subsystem-statcraft-crates_statcraft_io@capsuleos.local>
+X-Capsule-Page-Parent: <subsystem-statcraft-crates_statcraft_io@capsuleos.local>
+References: <project-index-statcraft@capsuleos.local> <subsystem-statcraft-crates_statcraft_io@capsuleos.local>
+X-Capsule-Tags: project, statcraft, module
+X-Capsule-Status: Active
+MIME-Version: 1.0
+Content-Type: multipart/mixed; boundary="BOUNDARY_ROOT_PVV5CJF1TD"
+
+--BOUNDARY_ROOT_PVV5CJF1TD
+Content-Type: multipart/alternative; boundary="BOUNDARY_PAYLOAD_1IHLDLPF46"
+
+--BOUNDARY_PAYLOAD_1IHLDLPF46
+Content-Type: application/json; name="canvas_state.json"
+Content-Disposition: inline; filename="canvas_state.json"
+
+{
+  "version": "1.0",
+  "generator": "CapsuleCraft Native egui prototype (Zero-DB Pure-MIME)",
+  "messageId": "<module-crates_statcraft_io_src_stc_codec_rs@capsuleos.local>",
+  "subject": "📄 StatCraft / crates/statcraft_io/src/stc_codec.rs",
+  "tags": [
+    "project",
+    "statcraft",
+    "module"
+  ],
+  "blocks": [
+    {
+      "data": {
+        "level": 1,
+        "text": "📄 stc_codec.rs"
+      },
+      "id": "blk_native_heading_1793974413915587900",
+      "managed_by": "project_parser",
+      "type": "heading"
+    },
+    {
+      "data": {
+        "text": "Path: `crates/statcraft_io/src/stc_codec.rs` · 194 lines of code\nBelongs to project: [[📦 StatCraft (Overview) | 📦 StatCraft (Overview)]]"
+      },
+      "id": "blk_native_paragraph_1793974413915589600",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    },
+    {
+      "data": {
+        "level": 2,
+        "text": "Public Interface"
+      },
+      "id": "blk_native_heading_1793974413915590200",
+      "managed_by": "project_parser",
+      "type": "heading"
+    },
+    {
+      "data": {
+        "code": "pub const STC_FORMAT_VERSION: u32 = 1\npub struct StcContainer\npub fn new( dataset_name: impl Into<String>, metadata_json: impl Into<String>, table: RawTable, active_filter_var: Option<String>, weight_var: Option<String>, split_file_json: Option<String>, ) -> Self\npub fn with_project_data( dataset_name: impl Into<String>, metadata_json: impl Into<String>, table: RawTable, active_filter_var: Option<String>, weight_var: Option<String>, split_file_json: Option<String>, output_viewer_json: Option<String>,\npub fn save_stc_container<W: Write>(writer: W, container: &StcContainer) -> Result<(), IoError>\npub fn load_stc_container<R: Read>(mut reader: R) -> Result<StcContainer, IoError>\npub fn save_stc_container_to_path<P: AsRef<Path>>( path: P, container: &StcContainer, ) -> Result<(), IoError>\npub fn load_stc_container_from_path<P: AsRef<Path>>(path: P) -> Result<StcContainer, IoError>",
+        "language": "rust"
+      },
+      "id": "blk_native_code_1793974413915593800",
+      "managed_by": "project_parser",
+      "type": "code"
+    },
+    {
+      "data": {
+        "level": 2,
+        "text": "Internal Dependencies"
+      },
+      "id": "blk_native_heading_1793974413915595700",
+      "managed_by": "project_parser",
+      "type": "heading"
+    },
+    {
+      "data": {
+        "text": "- `crate::csv_loader::{IoError, RawTable}`\n- `super::*`\n- `crate::csv_loader::{RawColumn, RawDataType, RawValue}`\n"
+      },
+      "id": "blk_native_paragraph_1793974413915597100",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    }
+  ]
+}
+
+--BOUNDARY_PAYLOAD_1IHLDLPF46
+Content-Type: text/html; charset="utf-8"
+Content-Disposition: inline
+
+<!doctype html><html><head><meta charset="utf-8"><meta name="generator" content="CapsuleCraft Native"></head><body style="font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;max-width:720px;margin:32px auto;line-height:1.55;color:#23201c;background:#faf8f4;"><h1>📄 StatCraft / crates/statcraft_io/src/stc_codec.rs</h1><h1>📄 stc_codec.rs</h1><p>Path: `crates/statcraft_io/src/stc_codec.rs` · 194 lines of code<br>Belongs to project: [[📦 StatCraft (Overview) | 📦 StatCraft (Overview)]]</p><h2>Public Interface</h2><p><em>[code block — open in CapsuleCraft web for its canvas]</em></p><h2>Internal Dependencies</h2><p>- `crate::csv_loader::{IoError, RawTable}`<br>- `super::*`<br>- `crate::csv_loader::{RawColumn, RawDataType, RawValue}`<br></p><hr><p style="color:#8a8175;font-size:12px">Exported from CapsuleCraft Native · &lt;module-crates_statcraft_io_src_stc_codec_rs@capsuleos.local&gt;</p></body></html>
+
+--BOUNDARY_PAYLOAD_1IHLDLPF46--
+--BOUNDARY_ROOT_PVV5CJF1TD--

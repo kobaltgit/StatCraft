@@ -179,9 +179,11 @@ fn cell_to_candidate(cell: &Data) -> RawValue {
             let trimmed = s.trim();
             if trimmed.is_empty()
                 || trimmed == "."
+                || trimmed == "-"
                 || trimmed.eq_ignore_ascii_case("na")
                 || trimmed.eq_ignore_ascii_case("nan")
                 || trimmed.eq_ignore_ascii_case("null")
+                || trimmed.eq_ignore_ascii_case("none")
             {
                 RawValue::Null
             } else if let Ok(n) = trimmed.parse::<f64>() {

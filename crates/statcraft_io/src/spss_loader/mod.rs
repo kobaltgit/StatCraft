@@ -1,4 +1,5 @@
 pub mod decompress;
+pub mod encoding;
 pub mod header;
 pub mod records;
 #[cfg(test)]
@@ -8,8 +9,8 @@ use crate::csv_loader::{IoError, RawColumn, RawDataType, RawTable, RawValue};
 use decompress::{decompress_zsav_stream, BytecodeReader, DecodedSlot};
 use header::{parse_header, SystemHeader};
 use records::{
-    parse_extension_record, parse_value_labels, parse_variable_record, ExtensionData, RawVarRecord,
-    ReaderHelper,
+    parse_extension_record, parse_value_labels, parse_variable_record, ExtensionData,
+    RawValueLabelList, RawVarRecord, ReaderHelper,
 };
 use std::collections::{BTreeMap, HashMap};
 use std::fs::File;
@@ -60,7 +61,7 @@ pub fn load_spss_from_reader<R: Read + Seek>(reader: &mut R) -> Result<SpssData,
     let header = parse_header(reader)?;
 
     let mut raw_vars: Vec<RawVarRecord> = Vec::new();
-    let mut val_labels_map: HashMap<usize, BTreeMap<String, String>> = HashMap::new();
+    let mut val_labels_map: HashMap<usize, RawValueLabelList> = HashMap::new();
     let mut ext_data = ExtensionData::default();
 
     loop {
@@ -74,47 +75,31 @@ pub fn load_spss_from_reader<R: Read + Seek>(reader: &mut R) -> Result<SpssData,
             i32::from_be_bytes(rec_type_b)
         };
 
+        let mut helper = ReaderHelper {
+            reader,
+            is_little_endian: header.is_little_endian,
+        };
         match rec_type {
             2 => {
-                let mut helper = ReaderHelper {
-                    reader,
-                    is_little_endian: header.is_little_endian,
-                };
                 let var_rec = parse_variable_record(&mut helper)?;
                 raw_vars.push(var_rec);
             }
             3 => {
-                let mut helper = ReaderHelper {
-                    reader,
-                    is_little_endian: header.is_little_endian,
-                };
                 let (labels, var_indices) = parse_value_labels(&mut helper)?;
                 for idx in var_indices {
                     val_labels_map.insert(idx, labels.clone());
                 }
             }
             6 => {
-                let mut helper = ReaderHelper {
-                    reader,
-                    is_little_endian: header.is_little_endian,
-                };
                 let n_lines = helper.read_i32()?;
                 if n_lines > 0 {
                     helper.skip((n_lines as usize).saturating_mul(80))?;
                 }
             }
             7 => {
-                let mut helper = ReaderHelper {
-                    reader,
-                    is_little_endian: header.is_little_endian,
-                };
                 parse_extension_record(&mut helper, &mut ext_data)?;
             }
             999 => {
-                let mut helper = ReaderHelper {
-                    reader,
-                    is_little_endian: header.is_little_endian,
-                };
                 let _filler = helper.read_i32()?;
                 break;
             }
@@ -141,7 +126,7 @@ pub fn load_spss_from_reader<R: Read + Seek>(reader: &mut R) -> Result<SpssData,
 
 fn build_variables(
     raw_vars: &[RawVarRecord],
-    val_labels: &HashMap<usize, BTreeMap<String, String>>,
+    val_labels: &HashMap<usize, RawValueLabelList>,
     ext: &ExtensionData,
     weight_index: i32,
 ) -> (
@@ -171,14 +156,19 @@ fn build_variables(
         }
 
         let is_string = raw.type_code > 0;
-        let string_len = if is_string { raw.type_code as usize } else { 0 };
+        let orig_name = raw.name.clone();
+        let string_len = ext
+            .very_long_strings
+            .get(&orig_name.to_uppercase())
+            .copied()
+            .unwrap_or(if is_string { raw.type_code as usize } else { 0 });
+
         let var_type = if is_string {
             RawDataType::Text
         } else {
             RawDataType::Numeric
         };
 
-        let orig_name = raw.name.clone();
         let name = ext
             .long_names
             .get(&orig_name.to_uppercase())
@@ -203,11 +193,32 @@ fn build_variables(
                 (m, w, a)
             };
 
-        let labels = val_labels
+        let mut labels = BTreeMap::new();
+        let labels_entry = val_labels
             .get(&(raw_idx + 1))
-            .or_else(|| val_labels.get(&slot_1based))
-            .cloned()
-            .unwrap_or_default();
+            .or_else(|| val_labels.get(&slot_1based));
+        if let Some(lbl_list) = labels_entry {
+            for (val, text_bytes) in lbl_list {
+                let dec =
+                    encoding::decode_spss_string(text_bytes, Some(&ext.encoding), ext.codepage)
+                        .trim()
+                        .to_string();
+                let key = if val.fract() == 0.0 {
+                    format!("{:.0}", val)
+                } else {
+                    format!("{}", val)
+                };
+                labels.insert(key, dec);
+            }
+        }
+
+        let label = if !raw.label_raw.is_empty() {
+            encoding::decode_spss_string(&raw.label_raw, Some(&ext.encoding), ext.codepage)
+                .trim()
+                .to_string()
+        } else {
+            raw.label.clone()
+        };
 
         variables.push(SpssVariableInfo {
             name,
@@ -218,7 +229,7 @@ fn build_variables(
             write_format: raw.write_format,
             decimals,
             width,
-            label: raw.label.clone(),
+            label,
             measure,
             alignment,
             display_width,
@@ -282,6 +293,7 @@ fn read_table_data<R: Read + Seek>(
             header.case_cnt,
             slot_map,
             variables,
+            ext,
             &mut columns,
             &mut row_count,
         )?;
@@ -292,6 +304,7 @@ fn read_table_data<R: Read + Seek>(
             header.case_cnt,
             slot_map,
             variables,
+            ext,
             &mut columns,
             &mut row_count,
         )?;
@@ -302,6 +315,7 @@ fn read_table_data<R: Read + Seek>(
             header.is_little_endian,
             slot_map,
             variables,
+            ext,
             &mut columns,
             &mut row_count,
         )?;
@@ -315,6 +329,7 @@ fn read_cases_bytecode<R: Read>(
     max_cases: i64,
     slot_map: &[LogicalVarSlotMap],
     variables: &[SpssVariableInfo],
+    ext: &ExtensionData,
     columns: &mut [RawColumn],
     row_count: &mut usize,
 ) -> Result<(), IoError> {
@@ -360,7 +375,10 @@ fn read_cases_bytecode<R: Read>(
             if var.var_type == RawDataType::Text {
                 let buf = &case_string_buffers[var_idx];
                 let len = var.string_len.min(buf.len());
-                let s = String::from_utf8_lossy(&buf[..len]).trim_end().to_string();
+                let s =
+                    encoding::decode_spss_string(&buf[..len], Some(&ext.encoding), ext.codepage)
+                        .trim_end()
+                        .to_string();
                 columns[var_idx].values.push(RawValue::Text(s));
             } else {
                 let v = case_values[var_idx].take().unwrap_or(RawValue::Null);
@@ -377,12 +395,14 @@ fn read_cases_bytecode<R: Read>(
     Ok(())
 }
 
+#[allow(clippy::too_many_arguments)]
 fn read_cases_uncompressed<R: Read>(
     reader: &mut R,
     max_cases: i64,
     is_little_endian: bool,
     slot_map: &[LogicalVarSlotMap],
     variables: &[SpssVariableInfo],
+    ext: &ExtensionData,
     columns: &mut [RawColumn],
     row_count: &mut usize,
 ) -> Result<(), IoError> {
@@ -441,7 +461,10 @@ fn read_cases_uncompressed<R: Read>(
             if var.var_type == RawDataType::Text {
                 let buf = &case_string_buffers[var_idx];
                 let len = var.string_len.min(buf.len());
-                let s = String::from_utf8_lossy(&buf[..len]).trim_end().to_string();
+                let s =
+                    encoding::decode_spss_string(&buf[..len], Some(&ext.encoding), ext.codepage)
+                        .trim_end()
+                        .to_string();
                 columns[var_idx].values.push(RawValue::Text(s));
             } else {
                 let v = case_values[var_idx].take().unwrap_or(RawValue::Null);

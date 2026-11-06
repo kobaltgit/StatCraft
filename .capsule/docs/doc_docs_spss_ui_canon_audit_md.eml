@@ -1,0 +1,452 @@
+From: CapsuleCraft Code Ingest <system@capsulecraft.local>
+To: Vault <vault@capsuleos.local>
+Subject: 📚 StatCraft / StatCraft — IBM SPSS Statistics Canonical UI & Design Audit (Phase 3)
+Date: Fri, 6 Nov 2026 14:13:34 +0000
+Message-ID: <doc-statcraft-docs_spss_ui_canon_audit_md@capsuleos.local>
+In-Reply-To: <project-index-statcraft@capsuleos.local>
+X-Capsule-Page-Parent: <project-index-statcraft@capsuleos.local>
+References: <project-index-statcraft@capsuleos.local>
+X-Capsule-Tags: project, statcraft, docs
+X-Capsule-Status: Active
+MIME-Version: 1.0
+Content-Type: multipart/mixed; boundary="BOUNDARY_ROOT_FNLHS5FJLU"
+
+--BOUNDARY_ROOT_FNLHS5FJLU
+Content-Type: multipart/alternative; boundary="BOUNDARY_PAYLOAD_WU71U3FMKT"
+
+--BOUNDARY_PAYLOAD_WU71U3FMKT
+Content-Type: application/json; name="canvas_state.json"
+Content-Disposition: inline; filename="canvas_state.json"
+
+{
+  "version": "1.0",
+  "generator": "CapsuleCraft Native egui prototype (Zero-DB Pure-MIME)",
+  "messageId": "<doc-statcraft-docs_spss_ui_canon_audit_md@capsuleos.local>",
+  "subject": "📚 StatCraft / StatCraft — IBM SPSS Statistics Canonical UI & Design Audit (Phase 3)",
+  "tags": [
+    "project",
+    "statcraft",
+    "docs"
+  ],
+  "blocks": [
+    {
+      "data": {
+        "icon": "book",
+        "text": "Documentation file: `docs/SPSS_UI_CANON_AUDIT.md`\nBelongs to project: [[📦 StatCraft (Overview) | 📦 StatCraft (Overview)]]"
+      },
+      "id": "blk_native_callout_1793974414002109500",
+      "managed_by": "project_parser",
+      "type": "callout"
+    },
+    {
+      "data": {
+        "level": 1,
+        "text": "StatCraft — IBM SPSS Statistics Canonical UI & Design Audit (Phase 3)"
+      },
+      "id": "blk_native_heading_1793974414002071100",
+      "managed_by": "project_parser",
+      "type": "heading"
+    },
+    {
+      "data": {
+        "text": "**English (Primary)** | [ Русский ](SPSS_UI_CANON_AUDIT_RU.md)"
+      },
+      "id": "blk_native_paragraph_1793974414002073000",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    },
+    {
+      "data": {
+        "icon": "info",
+        "text": "**Document Status:** Official evidence-backed GUI, Pivot Tables, DialogKit, and Distribution Audit Protocol."
+      },
+      "id": "blk_native_callout_1793974414002073700",
+      "managed_by": "project_parser",
+      "type": "callout"
+    },
+    {
+      "data": {
+        "icon": "info",
+        "text": "**Methodology:** Clean-Room Reverse Engineering & Verification with [Craft Anything (`storytold/craft-anything`)](https://github.com/storytold/craft-anything) MCP."
+      },
+      "id": "blk_native_callout_1793974414002074500",
+      "managed_by": "project_parser",
+      "type": "callout"
+    },
+    {
+      "data": {
+        "icon": "info",
+        "text": "**Reference Standards:** IBM SPSS Statistics Desktop Interface Guide, ArtCraft Canonical Design System ([`AGENTS.md`](../AGENTS.md)), and [`docs/DESIGN_GUIDE.md`](DESIGN_GUIDE.md)."
+      },
+      "id": "blk_native_callout_1793974414002075000",
+      "managed_by": "project_parser",
+      "type": "callout"
+    },
+    {
+      "data": {
+        "icon": "info",
+        "text": "**Resource Guard:** Strictly compiled and tested under `-j 1`."
+      },
+      "id": "blk_native_callout_1793974414002075700",
+      "managed_by": "project_parser",
+      "type": "callout"
+    },
+    {
+      "data": {
+        "text": "---"
+      },
+      "id": "blk_native_paragraph_1793974414002076400",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    },
+    {
+      "data": {
+        "level": 2,
+        "text": "1. Audit Overview & Verification Scope"
+      },
+      "id": "blk_native_heading_1793974414002076800",
+      "managed_by": "project_parser",
+      "type": "heading"
+    },
+    {
+      "data": {
+        "text": "Phase 3 concludes the comprehensive audit of StatCraft, evaluating the user-facing presentation tier, interactive data manipulation surfaces, procedural dialogs, localization system, and native deployment packages across 13 specialized microplans (M-21 through M-33):"
+      },
+      "id": "blk_native_paragraph_1793974414002077600",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    },
+    {
+      "data": {
+        "code": "┌────────────────────────────────────────────────────────────────────────────────────────────────────────┐\n│                        PHASE 3 AUDIT: OUTPUT VIEWER, SCREENS, DIALOGKIT & PACKAGING                    │\n├────────────────────────────┬─────────────────────────────┬────────────────────────┬────────────────────┤\n│         SECTION E          │          SECTION F          │        SECTION G       │      SECTION H     │\n│     Output Viewer Tables   │     Interactive Screens     │    DialogKit (SPSS)    │  i18n & Packaging  │\n│  • M-21: Base Statistics   │  • M-25: Data View Grid     │  • M-28: Common Shell  │  • M-30: Fluent FTL│\n│  • M-22: Compare Means     │  • M-26: Variable View      │  • M-29: 37 Dialogs    │  • M-31: Vector UI │\n│  • M-23: Advanced / Nonpar │  • M-27: Syntax Editor      │    (Design Guard)      │  • M-32: Session   │\n│  • M-24: Outline Tree      │                             │                        │  • M-33: Installer │\n└────────────────────────────┴─────────────────────────────┴────────────────────────┴────────────────────┘",
+        "language": "text"
+      },
+      "id": "blk_native_code_1793974414002079500",
+      "managed_by": "project_parser",
+      "type": "code"
+    },
+    {
+      "data": {
+        "text": "---"
+      },
+      "id": "blk_native_paragraph_1793974414002080600",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    },
+    {
+      "data": {
+        "level": 2,
+        "text": "2. Section E: Output Viewer & Canonical Pivot Tables"
+      },
+      "id": "blk_native_heading_1793974414002081100",
+      "managed_by": "project_parser",
+      "type": "heading"
+    },
+    {
+      "data": {
+        "level": 3,
+        "text": "M-21: Base Output Statistics Tables"
+      },
+      "id": "blk_native_heading_1793974414002081600",
+      "managed_by": "project_parser",
+      "type": "heading"
+    },
+    {
+      "data": {
+        "text": "* **Implementation:** `crates/statcraft_app/src/views/output_view/` (`tables_descriptives.rs`, `tables_frequencies.rs`, `tables_crosstabs.rs`, `tables_means.rs`, `tables_common.rs`)\n* **SPSS Reference:** *Base Statistics Output Tables Specification*\n* **Craft Anything Hypothesis:** `hyp_33` (Supported)\n* **Audited Invariants & Evidence:**\n  1. **Descriptives Table:** Renders standard columns (`N`, `Minimum`, `Maximum`, `Mean`, `Std. Deviation`, `Variance`, `Skewness`, `Kurtosis`) with proper right-alignment for values and dynamic width scaling via `i18n Shield`. Listwise `Valid N` footnote is preserved.\n  2. **Frequencies Table:** Implements the 4-column standard (`Frequency`, `Percent`, `Valid Percent`, `Cumulative Percent`) with dedicated rows for `Total Valid`, `Missing (System / User)`, and `Total`.\n  3. **Crosstabulation Table:** Multi-tier nested layout displaying `Count`, `Expected Count`, `% within Row`, `% within Column`, `% of Total`, and `Residuals`. Integrated `Chi-Square Tests` sub-table (Pearson, Continuity Correction, Likelihood Ratio, Fisher's Exact, Linear-by-Linear).\n  4. **P-Value Formatting:** Significance values below $0.001$ are formatted with leading-zero suppression as `< .001` per APA / SPSS conventions."
+      },
+      "id": "blk_native_paragraph_1793974414002083200",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    },
+    {
+      "data": {
+        "level": 3,
+        "text": "M-22: Compare Means Output Tables"
+      },
+      "id": "blk_native_heading_1793974414002083800",
+      "managed_by": "project_parser",
+      "type": "heading"
+    },
+    {
+      "data": {
+        "text": "* **Implementation:** `tables_ttest_onesample.rs`, `tables_ttest_indep.rs`, `tables_ttest_paired.rs`, `tables_anova.rs`\n* **SPSS Reference:** *Compare Means Output Tables Specification*\n* **Craft Anything Hypothesis:** `hyp_34` (Supported)\n* **Audited Invariants & Evidence:**\n  1. **Independent Samples Test:** Two-tier header grouping *Levene's Test for Equality of Variances* ($F$, Sig.) and *t-test for Equality of Means* ($t$, $df$, Sig., Mean Diff, Std. Error Diff, 95% CI). Features the two mutually exclusive canonical rows: `Equal variances assumed` and `Equal variances not assumed`.\n  2. **Paired Samples Test:** Renders the 3 distinct SPSS tables: *Paired Samples Statistics*, *Paired Samples Correlations*, and *Paired Samples Test* (Paired Differences).\n  3. **One-Way ANOVA:** Renders *Descriptives*, *Test of Homogeneity of Variances* (Levene), and the 3-section *ANOVA* table (`Between Groups`, `Within Groups`, `Total` with $SS$, $df$, $MS$, $F$, Sig.)."
+      },
+      "id": "blk_native_paragraph_1793974414002085100",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    },
+    {
+      "data": {
+        "level": 3,
+        "text": "M-23: Advanced & Nonparametric Output Tables"
+      },
+      "id": "blk_native_heading_1793974414002085700",
+      "managed_by": "project_parser",
+      "type": "heading"
+    },
+    {
+      "data": {
+        "text": "* **Implementation:** `tables_correlations.rs`, `tables_regression.rs`, `tables_factor.rs`, `tables_reliability.rs`, `tables_kruskal.rs`, `tables_nonparam.rs`, `tables_nonparam_related.rs`, `tables_adp.rs`, `tables_programmability.rs`\n* **SPSS Reference:** *Advanced Statistics Output Tables Specification*\n* **Craft Anything Hypothesis:** `hyp_35` (Supported)\n* **Audited Invariants & Evidence:**\n  1. **Bivariate Correlations:** Outputs correlation coefficient, 1-tailed/2-tailed significance, sample size $N$, and significance flag asterisks (`*` $p < .05$, `**` $p < .01$) with footnotes.\n  2. **Linear Regression:** 4 standard tables: *Variables Entered/Removed*, *Model Summary* ($R, R^2, \\text{Adj } R^2, SE$), *ANOVA*, and *Coefficients* ($B$, Std. Error, $\\beta$, $t$, Sig., 95% CI, Tolerance, VIF).\n  3. **Factor Analysis:** *KMO and Bartlett's Test*, *Communalities* (Initial, Extraction), *Total Variance Explained*, and *Component Matrix*.\n  4. **Reliability Analysis:** *Case Processing Summary*, *Reliability Statistics* (Cronbach's $\\alpha$), *Item Statistics*, and *Item-Total Statistics*.\n  5. **Nonparametric Suite:** Ranks and Test Statistics tables for Mann-Whitney $U$, Wilcoxon Signed Ranks ($W$), and Kruskal-Wallis ($H$)."
+      },
+      "id": "blk_native_paragraph_1793974414002087200",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    },
+    {
+      "data": {
+        "level": 3,
+        "text": "M-24: Outline Tree Navigation & Output Export"
+      },
+      "id": "blk_native_heading_1793974414002087700",
+      "managed_by": "project_parser",
+      "type": "heading"
+    },
+    {
+      "data": {
+        "text": "* **Implementation:** `outline.rs`, `blocks.rs`, `builder.rs`, `export.rs`, `model.rs`\n* **SPSS Reference:** *SPSS Viewer DOM & Export Framework*\n* **Craft Anything Hypothesis:** `hyp_36` (Supported)\n* **Audited Invariants & Evidence:**\n  1. **Outline Hierarchy:** Document Tree structure: `Output Root` $\\to$ `Procedure Node` $\\to$ `Log (.sps syntax)` $\\to$ `Notes` $\\to$ `Pivot Tables`.\n  2. **Interactive Navigation:** Clicking any tree item smooth-scrolls the canvas to target.\n  3. **Context Menu Actions:** Right-click support on individual nodes: Copy as TSV, Copy as Text, and Delete.\n  4. **Export Engine:** Full document or individual table export into TSV, styled HTML, and Plain Text via `statcraft_reporting`."
+      },
+      "id": "blk_native_paragraph_1793974414002088900",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    },
+    {
+      "data": {
+        "text": "---"
+      },
+      "id": "blk_native_paragraph_1793974414002089400",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    },
+    {
+      "data": {
+        "level": 2,
+        "text": "3. Section F: Interactive Data Screens"
+      },
+      "id": "blk_native_heading_1793974414002089900",
+      "managed_by": "project_parser",
+      "type": "heading"
+    },
+    {
+      "data": {
+        "level": 3,
+        "text": "M-25: Data View (Virtualized Grid)"
+      },
+      "id": "blk_native_heading_1793974414002090300",
+      "managed_by": "project_parser",
+      "type": "heading"
+    },
+    {
+      "data": {
+        "text": "* **Implementation:** `crates/statcraft_app/src/views/data_view.rs`\n* **SPSS Reference:** *SPSS Data Editor — Data View*\n* **Craft Anything Hypothesis:** `hyp_37` (Supported)\n* **Audited Invariants & Evidence:**\n  1. **Grid Virtualization:** High-performance `ScrollArea::vertical().show_rows(...)` rendering only visible rows, guaranteeing smooth 60 FPS scrolling on large datasets.\n  2. **Inline Cell Editing:** Double-click cell activation, keyboard navigation (Tab, Enter, Arrows), and atomic undo-history generation.\n  3. **Value Labels Toggle:** Toolbar button (`1/A`) toggling between raw codes and descriptive value labels.\n  4. **Filter Strikethrough:** Canonical diagonal strikethrough slash drawn across row header numbers for filtered (inactive) cases when `FILTER BY` is active."
+      },
+      "id": "blk_native_paragraph_1793974414002091500",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    },
+    {
+      "data": {
+        "level": 3,
+        "text": "M-26: Variable View (Metadata Dictionary Editor)"
+      },
+      "id": "blk_native_heading_1793974414002092000",
+      "managed_by": "project_parser",
+      "type": "heading"
+    },
+    {
+      "data": {
+        "text": "* **Implementation:** `crates/statcraft_app/src/views/variable_view.rs`\n* **SPSS Reference:** *SPSS Data Editor — Variable View*\n* **Craft Anything Hypothesis:** `hyp_38` (Supported)\n* **Audited Invariants & Evidence:**\n  1. **11 Metadata Columns:** Name, Type, Width, Decimals, Label, Values, Missing, Columns, Align, Measure, and Role.\n  2. **SPSS Name Validation:** Enforces naming restrictions (up to 64 chars, cannot begin with digit/period, no whitespace/symbols, forbids reserved words `ALL`, `AND`, `BY`, `EQ`, etc.).\n  3. **Modal Triggers:** Ellipsis buttons (`...`) invoking dedicated modal dialogs (`ValueLabelsDialog`, `MissingValuesDialog`, `VariableTypeDialog`)."
+      },
+      "id": "blk_native_paragraph_1793974414002092900",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    },
+    {
+      "data": {
+        "level": 3,
+        "text": "M-27: Syntax Editor"
+      },
+      "id": "blk_native_heading_1793974414002093400",
+      "managed_by": "project_parser",
+      "type": "heading"
+    },
+    {
+      "data": {
+        "text": "* **Implementation:** `crates/statcraft_app/src/views/syntax_editor.rs`\n* **SPSS Reference:** *SPSS Syntax Editor & Batch Processor*\n* **Craft Anything Hypothesis:** `hyp_39` (Supported)\n* **Audited Invariants & Evidence:**\n  1. **Monospace Code Surface:** Dedicated text area with automatic session header and timestamps.\n  2. **Command Execution:** Integration with `CommandBus` for executing whole scripts or selections, logging syntax echos to Output Viewer.\n  3. **Paste Pipeline:** Every procedural dialog features a `[ Paste ]` button generating canonical `.sps` commands into the syntax editor."
+      },
+      "id": "blk_native_paragraph_1793974414002094600",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    },
+    {
+      "data": {
+        "text": "---"
+      },
+      "id": "blk_native_paragraph_1793974414002095100",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    },
+    {
+      "data": {
+        "level": 2,
+        "text": "4. Section G: DialogKit Architecture & 37 Modal Dialogs"
+      },
+      "id": "blk_native_heading_1793974414002095500",
+      "managed_by": "project_parser",
+      "type": "heading"
+    },
+    {
+      "data": {
+        "level": 3,
+        "text": "M-28: DialogKit Canonical Primitives"
+      },
+      "id": "blk_native_heading_1793974414002095900",
+      "managed_by": "project_parser",
+      "type": "heading"
+    },
+    {
+      "data": {
+        "text": "* **Implementation:** `crates/statcraft_app/src/dialogs/common/` (`dialog_shell.rs`, `action_bar.rs`, `subdialog_action_bar.rs`, `subdialog_sidebar.rs`, `variable_picker.rs`, `transfer_button.rs`, `group_box.rs`)\n* **SPSS Reference:** *SPSS Canonical Dialog Architecture & Ergonomics*\n* **Craft Anything Hypothesis:** `hyp_40` (Supported)\n* **Audited Invariants & Evidence:**\n  1. **Fixed Dialog Sizes (`DialogSize`):** Standard ($560 \\times 430$), Subdialog ($360 \\times 300$), Properties ($460 \\times 380$), Compute ($620 \\times 480$), Alert ($440 \\times 170$).\n  2. **Type 1 Action Bar (`DialogActionBar`):** Canonical sequence `[ OK ] [ Paste ] [ Reset ] [ Cancel ] [ Help ]`.\n  3. **i18n Shield:** Uniform button width auto-calculated across localized labels ($\\ge 80 \\times 26$ px, 3px rounding).\n  4. **Precondition Guard:** `[ OK ]` button automatically disables when procedural inputs are invalid.\n  5. **VariablePicker & TransferButton:** Vector measure icons (Scale, Ordinal, Nominal) and adaptive transfer buttons (`->` / `<-`)."
+      },
+      "id": "blk_native_paragraph_1793974414002097300",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    },
+    {
+      "data": {
+        "level": 3,
+        "text": "M-29: Procedural Dialogs Suite (37 Dialogs)"
+      },
+      "id": "blk_native_heading_1793974414002097700",
+      "managed_by": "project_parser",
+      "type": "heading"
+    },
+    {
+      "data": {
+        "text": "* **Implementation:** `crates/statcraft_app/src/dialogs/*.rs`\n* **SPSS Reference:** *SPSS Procedural Dialogs Suite*\n* **Craft Anything Hypothesis:** `hyp_41` (Supported)\n* **Audited Invariants & Evidence:**\n  1. **Design Guard Linter (`cargo run -p xtask -j 1 -- design-guard`):** 0 violations. Zero raw button calls, 100% DialogKit compliance.\n  2. **Reset Idempotence:** Clicking `[ Reset ]` restores all parameters and lists to exact defaults across all 37 dialogs.\n  3. **Automated Suite:** Verified via `cargo test -p statcraft_app --test dialog_invariants -j 1` (37/37 passing)."
+      },
+      "id": "blk_native_paragraph_1793974414002099200",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    },
+    {
+      "data": {
+        "text": "---"
+      },
+      "id": "blk_native_paragraph_1793974414002099800",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    },
+    {
+      "data": {
+        "level": 2,
+        "text": "5. Section H: Localization, Vector UI, Session & Packaging"
+      },
+      "id": "blk_native_heading_1793974414002100200",
+      "managed_by": "project_parser",
+      "type": "heading"
+    },
+    {
+      "data": {
+        "level": 3,
+        "text": "M-30: Fluent Localization (Zero-Hardcode i18n)"
+      },
+      "id": "blk_native_heading_1793974414002100600",
+      "managed_by": "project_parser",
+      "type": "heading"
+    },
+    {
+      "data": {
+        "text": "* **Implementation:** `locales/en.ftl`, `locales/ru.ftl`, `crates/statcraft_i18n/`\n* **ArtCraft Standard:** *Zero-Hardcode i18n Regulation*\n* **Craft Anything Hypothesis:** `hyp_42` (Supported)\n* **Audited Invariants & Evidence:**\n  1. **100% Key Parity:** Full synchronization between English and Russian catalogs with zero missing or empty keys.\n  2. **Zero Raw UI Strings:** Strict linter check (`i18n_lint_test.rs`) confirms zero natural language literals in UI crates.\n  3. **On-the-Fly Switching:** Language dynamically toggles at runtime without restarting the application."
+      },
+      "id": "blk_native_paragraph_1793974414002101700",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    },
+    {
+      "data": {
+        "level": 3,
+        "text": "M-31: Vector-First UI & Tofu Glyph Prohibition"
+      },
+      "id": "blk_native_heading_1793974414002102200",
+      "managed_by": "project_parser",
+      "type": "heading"
+    },
+    {
+      "data": {
+        "text": "* **Implementation:** `scale_icon.rs`, `vector_arrow.rs`, `output_icons.rs`, `theme.rs`\n* **ArtCraft Standard:** *Vector-First UI Regulation*\n* **Craft Anything Hypothesis:** `hyp_43` (Supported)\n* **Audited Invariants & Evidence:**\n  1. **Vector Primitives:** All icons (Scale ruler, Ordinal bars, Nominal circles, arrows, folders, tables) drawn via `ui.painter()`.\n  2. **Zero Emoji / Tofu Prohibition:** 100% absence of Unicode emoji (`📊`, `📈`, `⚙`, `⚠️`, `💡`) and non-standard symbols (`●`, `•`, `✓`, `✔`, `✕`, `✖`), eliminating tofu squares (`□`) across all operating systems."
+      },
+      "id": "blk_native_paragraph_1793974414002103300",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    },
+    {
+      "data": {
+        "level": 3,
+        "text": "M-32: Session Management & Data Protection (Session Guard)"
+      },
+      "id": "blk_native_heading_1793974414002103800",
+      "managed_by": "project_parser",
+      "type": "heading"
+    },
+    {
+      "data": {
+        "text": "* **Implementation:** `app_session.rs`, `recent_files.rs`, `confirm_save_dialog.rs`\n* **ArtCraft Standard:** *Data Safety & Session Invariants*\n* **Craft Anything Hypothesis:** `hyp_44` (Supported)\n* **Audited Invariants & Evidence:**\n  1. **Dirty Flag Tracking:** Modifications trigger the unsaved indicator (`*`) in the window title.\n  2. **ConfirmSaveDialog Guard:** Prevents data loss during file open, new project, or application shutdown.\n  3. **Recent Files Queue:** Safe MRU tracking with file validation. Verified by `session_lifecycle_tests.rs` (12/12 passing)."
+      },
+      "id": "blk_native_paragraph_1793974414002104700",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    },
+    {
+      "data": {
+        "level": 3,
+        "text": "M-33: Native Packaging & CI Distribution"
+      },
+      "id": "blk_native_heading_1793974414002105200",
+      "managed_by": "project_parser",
+      "type": "heading"
+    },
+    {
+      "data": {
+        "text": "* **Implementation:** `packaging/windows/installer.iss`, `packaging/macos/Info.plist`, `packaging/linux/control`, `.github/workflows/release.yml`, `Cargo.toml`\n* **ArtCraft Standard:** *Native Desktop Packaging Canon*\n* **Craft Anything Hypothesis:** `hyp_45` (Supported)\n* **Audited Invariants & Evidence:**\n  1. **Version Synchronization:** Version `0.2.1` is synchronized byte-for-byte across all 4 manifests.\n  2. **File Associations:** Native shell handlers configured for `.sav`, `.zsav`, `.stc`, and `.sps`.\n  3. **Cross-Platform CI:** Automated matrix builds producing Windows installer (Inno Setup) + portable ZIP, Linux `.deb` + tarball, and macOS DMG + `.app` bundle."
+      },
+      "id": "blk_native_paragraph_1793974414002106200",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    },
+    {
+      "data": {
+        "text": "---"
+      },
+      "id": "blk_native_paragraph_1793974414002106700",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    },
+    {
+      "data": {
+        "level": 2,
+        "text": "6. Audit Verdict & DoD Sign-Off"
+      },
+      "id": "blk_native_heading_1793974414002107100",
+      "managed_by": "project_parser",
+      "type": "heading"
+    },
+    {
+      "data": {
+        "text": "* **Total Microplans Audited:** 13 (M-21 through M-33)\n* **Craft Anything Hypotheses Confirmed:** 13/13 (100% Supported)\n* **Automated Invariant Tests:**\n  - `dialog_invariants`: 37/37 PASSED\n  - `output_viewer_invariants`: 11/11 PASSED\n  - `session_lifecycle_tests`: 12/12 PASSED\n  - `i18n_lint_test`: 4/4 PASSED\n  - `xtask design-guard`: 0 violations PASSED\n  - `xtask file-guard`: 267 files PASSED\n  - `xtask layers`: PASSED\n* **Overall Phase 3 Verdict:** **FULL SPSS CANONICAL COMPLIANCE ACHIEVED**."
+      },
+      "id": "blk_native_paragraph_1793974414002108500",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    }
+  ]
+}
+
+--BOUNDARY_PAYLOAD_WU71U3FMKT
+Content-Type: text/html; charset="utf-8"
+Content-Disposition: inline
+
+<!doctype html><html><head><meta charset="utf-8"><meta name="generator" content="CapsuleCraft Native"></head><body style="font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;max-width:720px;margin:32px auto;line-height:1.55;color:#23201c;background:#faf8f4;"><h1>📚 StatCraft / StatCraft — IBM SPSS Statistics Canonical UI &amp; Design Audit (Phase 3)</h1><p><em>[callout block — open in CapsuleCraft web for its canvas]</em></p><h1>StatCraft — IBM SPSS Statistics Canonical UI &amp; Design Audit (Phase 3)</h1><p>**English (Primary)** | [ Русский ](SPSS_UI_CANON_AUDIT_RU.md)</p><p><em>[callout block — open in CapsuleCraft web for its canvas]</em></p><p><em>[callout block — open in CapsuleCraft web for its canvas]</em></p><p><em>[callout block — open in CapsuleCraft web for its canvas]</em></p><p><em>[callout block — open in CapsuleCraft web for its canvas]</em></p><p>---</p><h2>1. Audit Overview &amp; Verification Scope</h2><p>Phase 3 concludes the comprehensive audit of StatCraft, evaluating the user-facing presentation tier, interactive data manipulation surfaces, procedural dialogs, localization system, and native deployment packages across 13 specialized microplans (M-21 through M-33):</p><p><em>[code block — open in CapsuleCraft web for its canvas]</em></p><p>---</p><h2>2. Section E: Output Viewer &amp; Canonical Pivot Tables</h2><h3>M-21: Base Output Statistics Tables</h3><p>* **Implementation:** `crates/statcraft_app/src/views/output_view/` (`tables_descriptives.rs`, `tables_frequencies.rs`, `tables_crosstabs.rs`, `tables_means.rs`, `tables_common.rs`)<br>* **SPSS Reference:** *Base Statistics Output Tables Specification*<br>* **Craft Anything Hypothesis:** `hyp_33` (Supported)<br>* **Audited Invariants &amp; Evidence:**<br>  1. **Descriptives Table:** Renders standard columns (`N`, `Minimum`, `Maximum`, `Mean`, `Std. Deviation`, `Variance`, `Skewness`, `Kurtosis`) with proper right-alignment for values and dynamic width scaling via `i18n Shield`. Listwise `Valid N` footnote is preserved.<br>  2. **Frequencies Table:** Implements the 4-column standard (`Frequency`, `Percent`, `Valid Percent`, `Cumulative Percent`) with dedicated rows for `Total Valid`, `Missing (System / User)`, and `Total`.<br>  3. **Crosstabulation Table:** Multi-tier nested layout displaying `Count`, `Expected Count`, `% within Row`, `% within Column`, `% of Total`, and `Residuals`. Integrated `Chi-Square Tests` sub-table (Pearson, Continuity Correction, Likelihood Ratio, Fisher&#39;s Exact, Linear-by-Linear).<br>  4. **P-Value Formatting:** Significance values below $0.001$ are formatted with leading-zero suppression as `&lt; .001` per APA / SPSS conventions.</p><h3>M-22: Compare Means Output Tables</h3><p>* **Implementation:** `tables_ttest_onesample.rs`, `tables_ttest_indep.rs`, `tables_ttest_paired.rs`, `tables_anova.rs`<br>* **SPSS Reference:** *Compare Means Output Tables Specification*<br>* **Craft Anything Hypothesis:** `hyp_34` (Supported)<br>* **Audited Invariants &amp; Evidence:**<br>  1. **Independent Samples Test:** Two-tier header grouping *Levene&#39;s Test for Equality of Variances* ($F$, Sig.) and *t-test for Equality of Means* ($t$, $df$, Sig., Mean Diff, Std. Error Diff, 95% CI). Features the two mutually exclusive canonical rows: `Equal variances assumed` and `Equal variances not assumed`.<br>  2. **Paired Samples Test:** Renders the 3 distinct SPSS tables: *Paired Samples Statistics*, *Paired Samples Correlations*, and *Paired Samples Test* (Paired Differences).<br>  3. **One-Way ANOVA:** Renders *Descriptives*, *Test of Homogeneity of Variances* (Levene), and the 3-section *ANOVA* table (`Between Groups`, `Within Groups`, `Total` with $SS$, $df$, $MS$, $F$, Sig.).</p><h3>M-23: Advanced &amp; Nonparametric Output Tables</h3><p>* **Implementation:** `tables_correlations.rs`, `tables_regression.rs`, `tables_factor.rs`, `tables_reliability.rs`, `tables_kruskal.rs`, `tables_nonparam.rs`, `tables_nonparam_related.rs`, `tables_adp.rs`, `tables_programmability.rs`<br>* **SPSS Reference:** *Advanced Statistics Output Tables Specification*<br>* **Craft Anything Hypothesis:** `hyp_35` (Supported)<br>* **Audited Invariants &amp; Evidence:**<br>  1. **Bivariate Correlations:** Outputs correlation coefficient, 1-tailed/2-tailed significance, sample size $N$, and significance flag asterisks (`*` $p &lt; .05$, `**` $p &lt; .01$) with footnotes.<br>  2. **Linear Regression:** 4 standard tables: *Variables Entered/Removed*, *Model Summary* ($R, R^2, \text{Adj } R^2, SE$), *ANOVA*, and *Coefficients* ($B$, Std. Error, $\beta$, $t$, Sig., 95% CI, Tolerance, VIF).<br>  3. **Factor Analysis:** *KMO and Bartlett&#39;s Test*, *Communalities* (Initial, Extraction), *Total Variance Explained*, and *Component Matrix*.<br>  4. **Reliability Analysis:** *Case Processing Summary*, *Reliability Statistics* (Cronbach&#39;s $\alpha$), *Item Statistics*, and *Item-Total Statistics*.<br>  5. **Nonparametric Suite:** Ranks and Test Statistics tables for Mann-Whitney $U$, Wilcoxon Signed Ranks ($W$), and Kruskal-Wallis ($H$).</p><h3>M-24: Outline Tree Navigation &amp; Output Export</h3><p>* **Implementation:** `outline.rs`, `blocks.rs`, `builder.rs`, `export.rs`, `model.rs`<br>* **SPSS Reference:** *SPSS Viewer DOM &amp; Export Framework*<br>* **Craft Anything Hypothesis:** `hyp_36` (Supported)<br>* **Audited Invariants &amp; Evidence:**<br>  1. **Outline Hierarchy:** Document Tree structure: `Output Root` $\to$ `Procedure Node` $\to$ `Log (.sps syntax)` $\to$ `Notes` $\to$ `Pivot Tables`.<br>  2. **Interactive Navigation:** Clicking any tree item smooth-scrolls the canvas to target.<br>  3. **Context Menu Actions:** Right-click support on individual nodes: Copy as TSV, Copy as Text, and Delete.<br>  4. **Export Engine:** Full document or individual table export into TSV, styled HTML, and Plain Text via `statcraft_reporting`.</p><p>---</p><h2>3. Section F: Interactive Data Screens</h2><h3>M-25: Data View (Virtualized Grid)</h3><p>* **Implementation:** `crates/statcraft_app/src/views/data_view.rs`<br>* **SPSS Reference:** *SPSS Data Editor — Data View*<br>* **Craft Anything Hypothesis:** `hyp_37` (Supported)<br>* **Audited Invariants &amp; Evidence:**<br>  1. **Grid Virtualization:** High-performance `ScrollArea::vertical().show_rows(...)` rendering only visible rows, guaranteeing smooth 60 FPS scrolling on large datasets.<br>  2. **Inline Cell Editing:** Double-click cell activation, keyboard navigation (Tab, Enter, Arrows), and atomic undo-history generation.<br>  3. **Value Labels Toggle:** Toolbar button (`1/A`) toggling between raw codes and descriptive value labels.<br>  4. **Filter Strikethrough:** Canonical diagonal strikethrough slash drawn across row header numbers for filtered (inactive) cases when `FILTER BY` is active.</p><h3>M-26: Variable View (Metadata Dictionary Editor)</h3><p>* **Implementation:** `crates/statcraft_app/src/views/variable_view.rs`<br>* **SPSS Reference:** *SPSS Data Editor — Variable View*<br>* **Craft Anything Hypothesis:** `hyp_38` (Supported)<br>* **Audited Invariants &amp; Evidence:**<br>  1. **11 Metadata Columns:** Name, Type, Width, Decimals, Label, Values, Missing, Columns, Align, Measure, and Role.<br>  2. **SPSS Name Validation:** Enforces naming restrictions (up to 64 chars, cannot begin with digit/period, no whitespace/symbols, forbids reserved words `ALL`, `AND`, `BY`, `EQ`, etc.).<br>  3. **Modal Triggers:** Ellipsis buttons (`...`) invoking dedicated modal dialogs (`ValueLabelsDialog`, `MissingValuesDialog`, `VariableTypeDialog`).</p><h3>M-27: Syntax Editor</h3><p>* **Implementation:** `crates/statcraft_app/src/views/syntax_editor.rs`<br>* **SPSS Reference:** *SPSS Syntax Editor &amp; Batch Processor*<br>* **Craft Anything Hypothesis:** `hyp_39` (Supported)<br>* **Audited Invariants &amp; Evidence:**<br>  1. **Monospace Code Surface:** Dedicated text area with automatic session header and timestamps.<br>  2. **Command Execution:** Integration with `CommandBus` for executing whole scripts or selections, logging syntax echos to Output Viewer.<br>  3. **Paste Pipeline:** Every procedural dialog features a `[ Paste ]` button generating canonical `.sps` commands into the syntax editor.</p><p>---</p><h2>4. Section G: DialogKit Architecture &amp; 37 Modal Dialogs</h2><h3>M-28: DialogKit Canonical Primitives</h3><p>* **Implementation:** `crates/statcraft_app/src/dialogs/common/` (`dialog_shell.rs`, `action_bar.rs`, `subdialog_action_bar.rs`, `subdialog_sidebar.rs`, `variable_picker.rs`, `transfer_button.rs`, `group_box.rs`)<br>* **SPSS Reference:** *SPSS Canonical Dialog Architecture &amp; Ergonomics*<br>* **Craft Anything Hypothesis:** `hyp_40` (Supported)<br>* **Audited Invariants &amp; Evidence:**<br>  1. **Fixed Dialog Sizes (`DialogSize`):** Standard ($560 \times 430$), Subdialog ($360 \times 300$), Properties ($460 \times 380$), Compute ($620 \times 480$), Alert ($440 \times 170$).<br>  2. **Type 1 Action Bar (`DialogActionBar`):** Canonical sequence `[ OK ] [ Paste ] [ Reset ] [ Cancel ] [ Help ]`.<br>  3. **i18n Shield:** Uniform button width auto-calculated across localized labels ($\ge 80 \times 26$ px, 3px rounding).<br>  4. **Precondition Guard:** `[ OK ]` button automatically disables when procedural inputs are invalid.<br>  5. **VariablePicker &amp; TransferButton:** Vector measure icons (Scale, Ordinal, Nominal) and adaptive transfer buttons (`-&gt;` / `&lt;-`).</p><h3>M-29: Procedural Dialogs Suite (37 Dialogs)</h3><p>* **Implementation:** `crates/statcraft_app/src/dialogs/*.rs`<br>* **SPSS Reference:** *SPSS Procedural Dialogs Suite*<br>* **Craft Anything Hypothesis:** `hyp_41` (Supported)<br>* **Audited Invariants &amp; Evidence:**<br>  1. **Design Guard Linter (`cargo run -p xtask -j 1 -- design-guard`):** 0 violations. Zero raw button calls, 100% DialogKit compliance.<br>  2. **Reset Idempotence:** Clicking `[ Reset ]` restores all parameters and lists to exact defaults across all 37 dialogs.<br>  3. **Automated Suite:** Verified via `cargo test -p statcraft_app --test dialog_invariants -j 1` (37/37 passing).</p><p>---</p><h2>5. Section H: Localization, Vector UI, Session &amp; Packaging</h2><h3>M-30: Fluent Localization (Zero-Hardcode i18n)</h3><p>* **Implementation:** `locales/en.ftl`, `locales/ru.ftl`, `crates/statcraft_i18n/`<br>* **ArtCraft Standard:** *Zero-Hardcode i18n Regulation*<br>* **Craft Anything Hypothesis:** `hyp_42` (Supported)<br>* **Audited Invariants &amp; Evidence:**<br>  1. **100% Key Parity:** Full synchronization between English and Russian catalogs with zero missing or empty keys.<br>  2. **Zero Raw UI Strings:** Strict linter check (`i18n_lint_test.rs`) confirms zero natural language literals in UI crates.<br>  3. **On-the-Fly Switching:** Language dynamically toggles at runtime without restarting the application.</p><h3>M-31: Vector-First UI &amp; Tofu Glyph Prohibition</h3><p>* **Implementation:** `scale_icon.rs`, `vector_arrow.rs`, `output_icons.rs`, `theme.rs`<br>* **ArtCraft Standard:** *Vector-First UI Regulation*<br>* **Craft Anything Hypothesis:** `hyp_43` (Supported)<br>* **Audited Invariants &amp; Evidence:**<br>  1. **Vector Primitives:** All icons (Scale ruler, Ordinal bars, Nominal circles, arrows, folders, tables) drawn via `ui.painter()`.<br>  2. **Zero Emoji / Tofu Prohibition:** 100% absence of Unicode emoji (`📊`, `📈`, `⚙`, `⚠️`, `💡`) and non-standard symbols (`●`, `•`, `✓`, `✔`, `✕`, `✖`), eliminating tofu squares (`□`) across all operating systems.</p><h3>M-32: Session Management &amp; Data Protection (Session Guard)</h3><p>* **Implementation:** `app_session.rs`, `recent_files.rs`, `confirm_save_dialog.rs`<br>* **ArtCraft Standard:** *Data Safety &amp; Session Invariants*<br>* **Craft Anything Hypothesis:** `hyp_44` (Supported)<br>* **Audited Invariants &amp; Evidence:**<br>  1. **Dirty Flag Tracking:** Modifications trigger the unsaved indicator (`*`) in the window title.<br>  2. **ConfirmSaveDialog Guard:** Prevents data loss during file open, new project, or application shutdown.<br>  3. **Recent Files Queue:** Safe MRU tracking with file validation. Verified by `session_lifecycle_tests.rs` (12/12 passing).</p><h3>M-33: Native Packaging &amp; CI Distribution</h3><p>* **Implementation:** `packaging/windows/installer.iss`, `packaging/macos/Info.plist`, `packaging/linux/control`, `.github/workflows/release.yml`, `Cargo.toml`<br>* **ArtCraft Standard:** *Native Desktop Packaging Canon*<br>* **Craft Anything Hypothesis:** `hyp_45` (Supported)<br>* **Audited Invariants &amp; Evidence:**<br>  1. **Version Synchronization:** Version `0.2.1` is synchronized byte-for-byte across all 4 manifests.<br>  2. **File Associations:** Native shell handlers configured for `.sav`, `.zsav`, `.stc`, and `.sps`.<br>  3. **Cross-Platform CI:** Automated matrix builds producing Windows installer (Inno Setup) + portable ZIP, Linux `.deb` + tarball, and macOS DMG + `.app` bundle.</p><p>---</p><h2>6. Audit Verdict &amp; DoD Sign-Off</h2><p>* **Total Microplans Audited:** 13 (M-21 through M-33)<br>* **Craft Anything Hypotheses Confirmed:** 13/13 (100% Supported)<br>* **Automated Invariant Tests:**<br>  - `dialog_invariants`: 37/37 PASSED<br>  - `output_viewer_invariants`: 11/11 PASSED<br>  - `session_lifecycle_tests`: 12/12 PASSED<br>  - `i18n_lint_test`: 4/4 PASSED<br>  - `xtask design-guard`: 0 violations PASSED<br>  - `xtask file-guard`: 267 files PASSED<br>  - `xtask layers`: PASSED<br>* **Overall Phase 3 Verdict:** **FULL SPSS CANONICAL COMPLIANCE ACHIEVED**.</p><hr><p style="color:#8a8175;font-size:12px">Exported from CapsuleCraft Native · &lt;doc-statcraft-docs_spss_ui_canon_audit_md@capsuleos.local&gt;</p></body></html>
+
+--BOUNDARY_PAYLOAD_WU71U3FMKT--
+--BOUNDARY_ROOT_FNLHS5FJLU--

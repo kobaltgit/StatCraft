@@ -1,0 +1,641 @@
+From: CapsuleCraft Code Ingest <system@capsulecraft.local>
+To: Vault <vault@capsuleos.local>
+Subject: 📚 StatCraft / StatCraft — Генеральный регламент разработки (AGENTS.md)
+Date: Fri, 6 Nov 2026 14:51:42 +0000
+Message-ID: <doc-statcraft-agents_md@capsuleos.local>
+In-Reply-To: <project-index-statcraft@capsuleos.local>
+X-Capsule-Page-Parent: <project-index-statcraft@capsuleos.local>
+References: <project-index-statcraft@capsuleos.local>
+X-Capsule-Tags: project, statcraft, docs
+X-Capsule-Status: Active
+MIME-Version: 1.0
+Content-Type: multipart/mixed; boundary="BOUNDARY_ROOT_1JYAX5SFNA"
+
+--BOUNDARY_ROOT_1JYAX5SFNA
+Content-Type: multipart/alternative; boundary="BOUNDARY_PAYLOAD_TL5ABMFPOR"
+
+--BOUNDARY_PAYLOAD_TL5ABMFPOR
+Content-Type: application/json; name="canvas_state.json"
+Content-Disposition: inline; filename="canvas_state.json"
+
+{
+  "version": "1.0",
+  "generator": "CapsuleCraft Native egui prototype (Zero-DB Pure-MIME)",
+  "messageId": "<doc-statcraft-agents_md@capsuleos.local>",
+  "subject": "📚 StatCraft / StatCraft — Генеральный регламент разработки (AGENTS.md)",
+  "tags": [
+    "project",
+    "statcraft",
+    "docs"
+  ],
+  "blocks": [
+    {
+      "data": {
+        "icon": "book",
+        "text": "Documentation file: `AGENTS.md`\nBelongs to project: [[📦 StatCraft (Overview) | 📦 StatCraft (Overview)]]"
+      },
+      "id": "blk_native_callout_1793976702674767300",
+      "managed_by": "project_parser",
+      "type": "callout"
+    },
+    {
+      "data": {
+        "level": 1,
+        "text": "StatCraft — Генеральный регламент разработки (AGENTS.md)"
+      },
+      "id": "blk_native_heading_1793976702674571200",
+      "managed_by": "project_parser",
+      "type": "heading"
+    },
+    {
+      "data": {
+        "level": 1,
+        "text": "Стандарт экосистемы ArtCraft / storytold"
+      },
+      "id": "blk_native_heading_1793976702674578900",
+      "managed_by": "project_parser",
+      "type": "heading"
+    },
+    {
+      "data": {
+        "text": "Данный документ является **высшим нормативным актом (законом)** для Главного агента-оркестратора и всех специализированных субагентов, работающих с кодовой базой **StatCraft**."
+      },
+      "id": "blk_native_paragraph_1793976702674581900",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    },
+    {
+      "data": {
+        "text": "Каждое правило обязательно к неукоснительному соблюдению. Проект создается в строгом соответствии с каноном экосистемы **ArtCraft** (`{Function}Craft`)."
+      },
+      "id": "blk_native_paragraph_1793976702674583100",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    },
+    {
+      "data": {
+        "text": "---"
+      },
+      "id": "blk_native_paragraph_1793976702674584000",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    },
+    {
+      "data": {
+        "level": 2,
+        "text": "1. Канон экосистемы ArtCraft (Ecosystem Foundations)"
+      },
+      "id": "blk_native_heading_1793976702674585000",
+      "managed_by": "project_parser",
+      "type": "heading"
+    },
+    {
+      "data": {
+        "level": 3,
+        "text": "1.1. Языковой стек (Language: Rust Only)"
+      },
+      "id": "blk_native_heading_1793976702674587000",
+      "managed_by": "project_parser",
+      "type": "heading"
+    },
+    {
+      "data": {
+        "text": "* **Только Rust.** Никакого JavaScript или TypeScript.\n* Для сборки под Web (WebAssembly) используется `wasm-bindgen` с генерацией минимального загрузчика. Запрещено писать JS вручную.\n* Все вычисления, парсеры и UI компилируются нативно."
+      },
+      "id": "blk_native_paragraph_1793976702674591100",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    },
+    {
+      "data": {
+        "level": 3,
+        "text": "1.2. Лицензирование и бренд (Licence & Brand)"
+      },
+      "id": "blk_native_heading_1793976702674593600",
+      "managed_by": "project_parser",
+      "type": "heading"
+    },
+    {
+      "data": {
+        "text": "* Кодовая база лицензируется под двойной лицензией: **MIT OR Apache-2.0** (`LICENSE-MIT`, `LICENSE-APACHE`, `NOTICE`).\n* Все используемые сторонние ассеты (иконки Lucide, открытые шрифты) обязаны иметь пермиссивные лицензии, файл лицензии хранится рядом с ассетом (например, `assets/icons/LICENSE-lucide.txt`), и каждый ассет вносится в `ATTRIBUTION.md`.\n* Логотипы и айдентика ArtCraft в `docs/brand/` не являются open source (`docs/brand/LICENSE-brand.txt`).\n* Шрифты берутся из централизованного репозитория `storytold/craft-fonts` через переменную сборки `CRAFT_FONTS_DIR`, а не вшиваются в репозиторий."
+      },
+      "id": "blk_native_paragraph_1793976702674601300",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    },
+    {
+      "data": {
+        "level": 3,
+        "text": "1.3. Принцип Clean-room (Чистая комната)"
+      },
+      "id": "blk_native_heading_1793976702674603300",
+      "managed_by": "project_parser",
+      "type": "heading"
+    },
+    {
+      "data": {
+        "text": "* **СТРОГО ЗАПРЕЩЕНО** копировать исходный код, шейдеры, бинарники, иконки или иные ассеты из проприетарного ПО (такого как IBM SPSS Statistics).\n* Поведение, интерфейс и форматы воспроизводятся **исключительно путем наблюдения, открытых стандартов и академической литературы**:\n  - Математические процедуры — по открытым учебникам и публикациям;\n  - Форматы `.sav` / `.zsav` — по открытой спецификации GNU PSPP и библиотеке ReadStat (MIT);\n  - Логика команд и меню — по публичной документации SPSS без заимствования проприетарных ресурсов."
+      },
+      "id": "blk_native_paragraph_1793976702674606700",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    },
+    {
+      "data": {
+        "text": "---"
+      },
+      "id": "blk_native_paragraph_1793976702674607800",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    },
+    {
+      "data": {
+        "level": 2,
+        "text": "2. Надежность: Железный запрет паник (Never Crash)"
+      },
+      "id": "blk_native_heading_1793976702674610100",
+      "managed_by": "project_parser",
+      "type": "heading"
+    },
+    {
+      "data": {
+        "text": "* **В нетестовом коде категорически запрещены паники:**\n  * ❌ `unwrap()`\n  * ❌ `expect(...)`\n  * ❌ `panic!(...)`\n  * ❌ `unreachable!(...)`\n  * ❌ `todo!(...)`\n  * ❌ `unimplemented!(...)`\n* **Категорический запрет `unsafe`:** Кодовая база — 100% safe Rust.\n* **Обработка ошибок:** Все потенциальные сбои передаются через типизированные ошибки `Result<T, E>` и оператор `?`.\n* **Валидация входов:** Все индексы строк, столбцов, смещения и размеры файлов обязаны проходить строгую проверку границ перед обращением.\n* Любое исправление потенциального падения обязано сопровождаться регрессионным тестом."
+      },
+      "id": "blk_native_paragraph_1793976702674612500",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    },
+    {
+      "data": {
+        "text": "---"
+      },
+      "id": "blk_native_paragraph_1793976702674613600",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    },
+    {
+      "data": {
+        "level": 2,
+        "text": "3. Архитектура: Команды вместо обработчиков (Commands, Not Handlers)"
+      },
+      "id": "blk_native_heading_1793976702674614300",
+      "managed_by": "project_parser",
+      "type": "heading"
+    },
+    {
+      "data": {
+        "text": "* **Любая новая функциональность — это типизированная команда движка (Engine Command), а не изолированный UI-коллбэк.**\n* UI лишь запрашивает выполнение команды через `CommandBus`:\n  1. **Идентификатор команды:** Иерархический идентификатор в стиле SPSS (`stat.descriptives`, `stat.ttest.independent`, `data.sort_cases`, `transform.compute`). Позиция в меню задается путем каталога.\n  2. **Спецификация параметров (Schema for Agents):** Каждая команда предоставляет сигнатуру параметров `specs()` (например, `{\"vars\":[\"salary\"],\"ci\":0.95}`), доступную для чтения AI-агентам через MCP и командную строку.\n  3. **Предикат доступности (`enabled`):** Логика, определяющая, активна ли команда в текущем контексте (например, t-тест неактивен, если в датасете нет хотя бы одной количественной и одной группирующей переменной).\n  4. **История и Undo/Redo:** Выполнение команды возвращает JSON-результат и формирует ровно один шаг истории. Сессии ввода текста и перетаскивания объединяются (`coalesce`).\n  5. **Синтаксический эквивалент:** Каждая команда умеет сериализоваться в строку классического синтаксиса SPSS (`.sps`) и восстанавливаться из нее.\n  6. **Диалоговые окна:** Параметрические процедуры получают управляемые схемой диалоговые окна с живым предпросмотром (live preview).\n  7. **Паритет функций:** Обновление `docs/parity-checklist.md` через инструмент `cargo xtask parity`."
+      },
+      "id": "blk_native_paragraph_1793976702674621400",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    },
+    {
+      "data": {
+        "text": "---"
+      },
+      "id": "blk_native_paragraph_1793976702674623900",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    },
+    {
+      "data": {
+        "level": 2,
+        "text": "4. Слоистая архитектура и строгая проверка (Layering & xtask)"
+      },
+      "id": "blk_native_heading_1793976702674624700",
+      "managed_by": "project_parser",
+      "type": "heading"
+    },
+    {
+      "data": {
+        "text": "Кодовая база разделена на независимые слои (L0–L6). Зависимости идут **строго сверху вниз**:"
+      },
+      "id": "blk_native_paragraph_1793976702674625600",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    },
+    {
+      "data": {
+        "code": "L6: statcraft_app        (Десктопный GUI на egui / eframe / egui_dock)\n └── L5: statcraft_syntax (Командная шина CommandBus, парсер синтаксиса .sps)\n      ├── L4: statcraft_reporting (Модель Pivot Tables, экспорт PDF / DOCX / LaTeX)\n      ├── L3: statcraft_charts    (Векторные графики egui_plot, Brushing & Linking)\n      └── L2: statcraft_algo      (Математика, тесты, алгоритмы, statrs, faer)\n           └── L1: statcraft_core (Apache Arrow/Polars, DataSet, VariableDictionary)\n                └── L0: statcraft_io (Кодеки .stc Parquet, SPSS .sav, CSV, Excel)\n\nВспомогательные сквозные модули:\n* statcraft_i18n   (Движок локализации без хардкода строк)\n* statcraft_bridge (MCP-сервер и локальный IPC-сокет для AI-агентов)\n* xtask            (Утилиты сборщика: layers, parity, test-corpus)",
+        "language": "text"
+      },
+      "id": "blk_native_code_1793976702674627300",
+      "managed_by": "project_parser",
+      "type": "code"
+    },
+    {
+      "data": {
+        "text": "* **Проверка архитектуры:** Команда `cargo xtask layers` обязана проходить без ошибок. Новые крейты обязательно регистрируются в `xtask/src/layers.rs`. Нижние уровни (L0–L2) не знают о существовании UI."
+      },
+      "id": "blk_native_paragraph_1793976702674635100",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    },
+    {
+      "data": {
+        "text": "---"
+      },
+      "id": "blk_native_paragraph_1793976702674638900",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    },
+    {
+      "data": {
+        "level": 2,
+        "text": "5. Ограничение системных ресурсов (Resource Guard)"
+      },
+      "id": "blk_native_heading_1793976702674640900",
+      "managed_by": "project_parser",
+      "type": "heading"
+    },
+    {
+      "data": {
+        "text": "* **СТРОГО ЗАПРЕЩЕНО** запускать компиляцию, тесты или проверки без явного флага ограничения потоков:"
+      },
+      "id": "blk_native_paragraph_1793976702674642400",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    },
+    {
+      "data": {
+        "code": "  cargo test --workspace -j 1\n  cargo check --workspace -j 1\n  cargo clippy --workspace -j 1\n  cargo build --package statcraft_app --release -j 1",
+        "language": "powershell"
+      },
+      "id": "blk_native_code_1793976702674643700",
+      "managed_by": "project_parser",
+      "type": "code"
+    },
+    {
+      "data": {
+        "text": "* Максимально допустимое значение: `-j 2` — **только при прямом письменном согласовании с пользователем**.\n* В файлах конфигурации `.cargo/config.toml` и `Cargo.toml` всегда зафиксированы `jobs = 1` и `codegen-units = 1`."
+      },
+      "id": "blk_native_paragraph_1793976702674645900",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    },
+    {
+      "data": {
+        "text": "---"
+      },
+      "id": "blk_native_paragraph_1793976702674648300",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    },
+    {
+      "data": {
+        "level": 2,
+        "text": "6. Тестирование и «Золотой оракул» (Testing & Corpora)"
+      },
+      "id": "blk_native_heading_1793976702674649000",
+      "managed_by": "project_parser",
+      "type": "heading"
+    },
+    {
+      "data": {
+        "text": "* **Обязательные тесты на каждый коммит:**\n  - Кодеки форматов данных (`statcraft_io`) обязаны содержать тесты на round-trip (запись $\\to$ чтение $\\to$ равенство) и обработку поврежденных файлов (malformed input tests) без паник.\n  - **Математический Золотой Оракул (Golden Oracle):** Для всех статистических процедур (`statcraft_algo`) обязательна сверка результатов (значения критериев, $p$-value, степени свободы, доверительные интервалы) с референтными эталонами (Python `scipy.stats` / GNU PSPP) с точностью не хуже $10^{-6}$.\n  - **Корпусные тесты (Real-file Corpora):** Запуск `cargo xtask test-corpus` на реальных массивах `.sav` и `.csv`. Сами тяжелые файлы корпусов никогда не коммитятся в git-репозиторий.\n* **Качество кода:** Обязательное прохождение `cargo fmt --check`, `cargo clippy --workspace -j 1 -- -D warnings`, `cargo run -p xtask -j 1 -- file-guard` и `cargo test -p statcraft_app --test output_viewer_invariants -j 1`."
+      },
+      "id": "blk_native_paragraph_1793976702674664200",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    },
+    {
+      "data": {
+        "text": "---"
+      },
+      "id": "blk_native_paragraph_1793976702674665700",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    },
+    {
+      "data": {
+        "level": 2,
+        "text": "7. Нулевой хардкод строк и доступность локализации (Zero-Hardcode i18n)"
+      },
+      "id": "blk_native_heading_1793976702674666400",
+      "managed_by": "project_parser",
+      "type": "heading"
+    },
+    {
+      "data": {
+        "text": "* **ЖЕЛЕЗНЫЙ ЗАПРЕТ:** В исходном коде графического интерфейса (`crates/statcraft_app`, диалогах, меню, таблицах) **категорически запрещены строковые литералы на естественных языках** (как на русском, так и на английском).\n* Любой текст интерфейса запрашивается по семантическому ключу:"
+      },
+      "id": "blk_native_paragraph_1793976702674669600",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    },
+    {
+      "data": {
+        "code": "  // ПРАВИЛЬНО:\n  ui.label(t!(\"dialog.file.open_csv\"));\n  ui.button(t!(\"action.calculate\"));\n  \n  // КАТЕГОРИЧЕСКИ ЗАПРЕЩЕНО:\n  ui.label(\"Открыть CSV...\");\n  ui.button(\"Calculate\");",
+        "language": "rust"
+      },
+      "id": "blk_native_code_1793976702674672400",
+      "managed_by": "project_parser",
+      "type": "code"
+    },
+    {
+      "data": {
+        "text": "* Каталоги локализации хранятся в открытом декларативном формате Fluent (`locales/ru.ftl`, `locales/en.ftl`).\n* Любой контрибьютор может добавить перевод на новый язык (`locales/es.ftl`, `locales/de.ftl`), просто добавив файл в папку, **без изменения кода Rust и без перекомпиляции программы**.\n* Смена языка интерфейса происходит «на лету» без перезапуска."
+      },
+      "id": "blk_native_paragraph_1793976702674674600",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    },
+    {
+      "data": {
+        "text": "---"
+      },
+      "id": "blk_native_paragraph_1793976702674675700",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    },
+    {
+      "data": {
+        "level": 2,
+        "text": "8. Запрет невоспроизводимых глифов (Vector-First UI)"
+      },
+      "id": "blk_native_heading_1793976702674676400",
+      "managed_by": "project_parser",
+      "type": "heading"
+    },
+    {
+      "data": {
+        "text": "Базовый шрифт `egui` не содержит эмодзи и редких символов Unicode. Попытка их вывода приводит к появлению уродливых квадратов «тофу» (`□`).\n* **КАТЕГОРИЧЕСКИ ЗАПРЕЩЕНЫ любые Emoji в UI:**\n  ❌ `📊`, `📈`, `⏳`, `⚠️`, `💡`, `📁`, `💾`, `⚙`, `🔍`, `✨`.\n* **КАТЕГОРИЧЕСКИ ЗАПРЕЩЕНЫ нестандартные Unicode-символы:**\n  ❌ `●` (U+25CF), `•` (U+2022), `✓`, `✔`, `✕`, `✖`.\n* **ПРАВИЛА ОТРИСОВКИ:**\n  1. Все стили, цвета и отступы берутся из дизайн-системы `theme::Tokens` и компонентов `widgets::*`.\n  2. Все служебные иконки, индикаторы шкал (Nominal / Ordinal / Scale), стрелки и маркеры отрисовываются **векторными примитивами** через `ui.painter()` (`circle_filled`, `line_segment`, `rect_stroke`) либо через кэшированные векторные SVG.\n  3. Индикаторы прогресса и вычислений отображаются анимированным векторным спиннером или текстовым `\"...\"` с мягкой подсветкой.\n  4. Визуальная верификация перед сдачей задач."
+      },
+      "id": "blk_native_paragraph_1793976702674679700",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    },
+    {
+      "data": {
+        "text": "---"
+      },
+      "id": "blk_native_paragraph_1793976702674680700",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    },
+    {
+      "data": {
+        "level": 2,
+        "text": "9. Протоколы ИИ и «Agent-First» архитектура"
+      },
+      "id": "blk_native_heading_1793976702674681600",
+      "managed_by": "project_parser",
+      "type": "heading"
+    },
+    {
+      "data": {
+        "text": "* Встроенный **Model Context Protocol (MCP)** сервер и локальный IPC-сокет: внешние AI-агенты (Antigravity, Claude, локальные LLM) могут через стандартные инструменты исследовать структуру переменных, запускать тесты и автоматически вставлять результаты и их интерпретацию в Output Viewer."
+      },
+      "id": "blk_native_paragraph_1793976702674687000",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    },
+    {
+      "data": {
+        "text": "---"
+      },
+      "id": "blk_native_paragraph_1793976702674689500",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    },
+    {
+      "data": {
+        "level": 2,
+        "text": "10. Принцип технической честности (Zero-Yesman)"
+      },
+      "id": "blk_native_heading_1793976702674691500",
+      "managed_by": "project_parser",
+      "type": "heading"
+    },
+    {
+      "data": {
+        "text": "* Агенты обязаны **критически анализировать идеи и технические предложения**, а не слепо поддакивать.\n* Если предложение грозит потерей точности вычислений, ухудшением отзывчивости интерфейса при миллионах строк, утечкой памяти, паникой или нарушением clean-room:\n  1. Агент обязан провести краткое исследование;\n  2. Прямо и аргументированно предупредить разработчика о рисках;\n  3. Предложить промышленную, надежную альтернативу."
+      },
+      "id": "blk_native_paragraph_1793976702674692800",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    },
+    {
+      "data": {
+        "text": "---"
+      },
+      "id": "blk_native_paragraph_1793976702674693700",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    },
+    {
+      "data": {
+        "level": 2,
+        "text": "11. Проактивная оркестрация субагентов"
+      },
+      "id": "blk_native_heading_1793976702674694300",
+      "managed_by": "project_parser",
+      "type": "heading"
+    },
+    {
+      "data": {
+        "text": "Для сохранения чистоты контекста Главного агента-оркестратора разработка делится между специализированными ролями:\n* **`stat-math-specialist`**: реализация математических алгоритмов на Rust (`faer`, `statrs`) и валидация через Golden Oracle против SciPy;\n* **`data-engine-specialist`**: структуры данных в памяти (Arrow/Polars, буфер правок, `VariableDictionary`);\n* **`ui-specialist`**: интерфейс на `egui`, докинг `egui_dock`, виртуализированный грид таблицы, сводные Pivot Tables;\n* **`i18n-specialist`**: каталоги переводов (Fluent), модуль `statcraft_i18n`, линтер отсутствия хардкода строк;\n* **`quality-auditor`**: прогон тестов строго с `-j 1`, линтеры, слои (`xtask layers`), соответствие Definition of Done;\n* **`chronicle-writer`**: синхронное ведение двуязычной хроники проекта в `docs/CHRONICLE.md` и `docs/CHRONICLE.en.md`."
+      },
+      "id": "blk_native_paragraph_1793976702674696300",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    },
+    {
+      "data": {
+        "text": "*Независимые задачи запускаются параллельно в одном вызове `invoke_subagent`.*"
+      },
+      "id": "blk_native_paragraph_1793976702674700800",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    },
+    {
+      "data": {
+        "text": "---"
+      },
+      "id": "blk_native_paragraph_1793976702674701600",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    },
+    {
+      "data": {
+        "level": 2,
+        "text": "12. Защита от раздутия файлов и инварианты сохранения функционала (File Size Guard & Feature Retention)"
+      },
+      "id": "blk_native_heading_1793976702674703200",
+      "managed_by": "project_parser",
+      "type": "heading"
+    },
+    {
+      "data": {
+        "level": 3,
+        "text": "12.1. Дифференцированные лимиты строк (File Size Limits)"
+      },
+      "id": "blk_native_heading_1793976702674704000",
+      "managed_by": "project_parser",
+      "type": "heading"
+    },
+    {
+      "data": {
+        "text": "Для предотвращения деградации контекста LLM и монолитизации кодовой базы установлены предельные размеры файлов:\n* **Листовые функциональные модули** (`crates/statcraft_algo/**`, `crates/statcraft_syntax/**`, `dialogs/**`, `views/output_view/**`): жесткий лимит **500 строк** на файл.\n* **Комплексные интерактивные редакторы** (`views/data_view.rs`, `views/variable_view.rs`, `views/syntax_editor.rs`): лимит **1000 строк** на файл.\n* **Корневой координатор приложения** (`src/app.rs`): потолок **1500 строк**.\n* **Все остальные модули**: максимум **1000 строк** на файл.\n* Обязательное прохождение проверки:"
+      },
+      "id": "blk_native_paragraph_1793976702674705600",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    },
+    {
+      "data": {
+        "code": "  cargo run -p xtask -j 1 -- file-guard",
+        "language": "powershell"
+      },
+      "id": "blk_native_code_1793976702674709600",
+      "managed_by": "project_parser",
+      "type": "code"
+    },
+    {
+      "data": {
+        "level": 3,
+        "text": "12.2. Принцип «Разделяй, а не урезай» (Anti-Goodhart Counterweight)"
+      },
+      "id": "blk_native_heading_1793976702674710900",
+      "managed_by": "project_parser",
+      "type": "heading"
+    },
+    {
+      "data": {
+        "text": "* **КАТЕГОРИЧЕСКИ ЗАПРЕЩЕНО** «укладываться в лимит» ценой урезания функционала: удаления колонок, вырезания таблиц, сжатия кода в однострочники или превращения реализаций в заглушки (`todo!()`, `unimplemented!()`).\n* Единственным легитимным решением при превышении лимита является **архитектурная декомпозиция**: выделение изолированных подмодулей (подпапка с `mod.rs` и дочерними модулями, вынос поддиалогов, разделение процедурных таблиц)."
+      },
+      "id": "blk_native_paragraph_1793976702674718600",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    },
+    {
+      "data": {
+        "level": 3,
+        "text": "12.3. Инвариант сохранности функционала (Feature Retention Invariant)"
+      },
+      "id": "blk_native_heading_1793976702674722000",
+      "managed_by": "project_parser",
+      "type": "heading"
+    },
+    {
+      "data": {
+        "text": "* Запрещено изменять или удалять поведение ранее реализованных статистических процедур, истории и отображения сводных таблиц.\n* Обязательное прохождение пакета тестов интерфейсных инвариантов:"
+      },
+      "id": "blk_native_paragraph_1793976702674723300",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    },
+    {
+      "data": {
+        "code": "  cargo test -p statcraft_app --test output_viewer_invariants -j 1",
+        "language": "powershell"
+      },
+      "id": "blk_native_code_1793976702674724300",
+      "managed_by": "project_parser",
+      "type": "code"
+    },
+    {
+      "data": {
+        "text": "---"
+      },
+      "id": "blk_native_paragraph_1793976702674725200",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    },
+    {
+      "data": {
+        "level": 2,
+        "text": "13. Канон дизайн-системы диалоговых окон и защита от халтуры (DialogKit & Design Guard)"
+      },
+      "id": "blk_native_heading_1793976702674726000",
+      "managed_by": "project_parser",
+      "type": "heading"
+    },
+    {
+      "data": {
+        "level": 3,
+        "text": "13.1. Железный стандарт верстки окон (SPSS Canonical Design)"
+      },
+      "id": "blk_native_heading_1793976702674726800",
+      "managed_by": "project_parser",
+      "type": "heading"
+    },
+    {
+      "data": {
+        "text": "* Все диалоговые окна обязаны следовать каноническому руководству `docs/DESIGN_GUIDE.md` и строиться **исключительно на базе переиспользуемых компонентов `DialogKit`** (`crates/statcraft_app/src/dialogs/common/`):\n  - `DialogShell`: управление модальным окном, размерами (`DialogSize::Standard` 560 × 430, `Subdialog` 360 × 300, `Properties` 460 × 380, `Compute` 620 × 480), центрированием и модальностью;\n  - `VariablePicker`: унифицированный список переменных с отображением иконки шкалы измерения и формата `Метка [Имя]`;\n  - `TransferButton`: векторная адаптивная кнопка переноса (`->` / `<-`), автоматически ориентированная на активный список;\n  - `DialogActionBar`: нижний ряд кнопок действий Type 1 (`[ OK ] [ Paste ] [ Reset ] [ Cancel ] [ Help ]`) с автоматическим выравниванием по правилу `i18n Shield` (одинаковая ширина $\\ge 80 \\times 26$ px, скругление 3 px);\n  - `SubdialogActionBar`: нижняя панель поддиалогов Type 2 (`[ Continue ] [ Cancel ] [ Help ]`);\n  - `SubdialogSidebar`: правая колонка модальных настроек (`[ Statistics... ]`, `[ Options... ]`, 90 × 24 px);\n  - `GroupBox`: визуальная группировка переключателей и полей ввода."
+      },
+      "id": "blk_native_paragraph_1793976702674729100",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    },
+    {
+      "data": {
+        "level": 3,
+        "text": "13.2. Статический линтер дизайна (Design Guard)"
+      },
+      "id": "blk_native_heading_1793976702674730200",
+      "managed_by": "project_parser",
+      "type": "heading"
+    },
+    {
+      "data": {
+        "text": "* **КАТЕГОРИЧЕСКИ ЗАПРЕЩЕНО** создавать кнопки `OK`, `Paste`, `Reset`, `Cancel`, `Continue` сырыми вызовами `ui.button(...)`, а также хардкодить произвольные размеры окон в обход `DialogShell`.\n* Обязательное прохождение линтера дизайна и тестов инвариантов окон в Definition of Done:"
+      },
+      "id": "blk_native_paragraph_1793976702674731600",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    },
+    {
+      "data": {
+        "code": "  cargo run -p xtask -j 1 -- design-guard\n  cargo test -p statcraft_app --test dialog_invariants -j 1",
+        "language": "powershell"
+      },
+      "id": "blk_native_code_1793976702674734600",
+      "managed_by": "project_parser",
+      "type": "code"
+    },
+    {
+      "data": {
+        "text": "<!-- capsulecraft-start -->"
+      },
+      "id": "blk_native_paragraph_1793976702674735800",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    },
+    {
+      "data": {
+        "level": 2,
+        "text": "CapsuleCraft Knowledge Base & MCP Integration"
+      },
+      "id": "blk_native_heading_1793976702674736500",
+      "managed_by": "project_parser",
+      "type": "heading"
+    },
+    {
+      "data": {
+        "text": "This project `StatCraft` has an active CapsuleCraft knowledge base in `.capsule/`.\n- Project Overview: `.capsule/index.eml`\n- Tasks & Technical Debt: `.capsule/tasks_todo.eml`\n- Subsystems & Architecture: `.capsule/subsystem_*.eml`\n- Agent Skill definition: `.agents/skills/capsulecraft/SKILL.md`"
+      },
+      "id": "blk_native_paragraph_1793976702674739500",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    },
+    {
+      "data": {
+        "text": "Agents can query project architecture and tasks using CapsuleCraft MCP tools (`project_overview`, `capsule_search`, `capsule_read`, `capsule_tasks`).\n<!-- capsulecraft-end -->"
+      },
+      "id": "blk_native_paragraph_1793976702674761900",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    }
+  ]
+}
+
+--BOUNDARY_PAYLOAD_TL5ABMFPOR
+Content-Type: text/html; charset="utf-8"
+Content-Disposition: inline
+
+<!doctype html><html><head><meta charset="utf-8"><meta name="generator" content="CapsuleCraft Native"></head><body style="font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;max-width:720px;margin:32px auto;line-height:1.55;color:#23201c;background:#faf8f4;"><h1>📚 StatCraft / StatCraft — Генеральный регламент разработки (AGENTS.md)</h1><p><em>[callout block — open in CapsuleCraft web for its canvas]</em></p><h1>StatCraft — Генеральный регламент разработки (AGENTS.md)</h1><h1>Стандарт экосистемы ArtCraft / storytold</h1><p>Данный документ является **высшим нормативным актом (законом)** для Главного агента-оркестратора и всех специализированных субагентов, работающих с кодовой базой **StatCraft**.</p><p>Каждое правило обязательно к неукоснительному соблюдению. Проект создается в строгом соответствии с каноном экосистемы **ArtCraft** (`{Function}Craft`).</p><p>---</p><h2>1. Канон экосистемы ArtCraft (Ecosystem Foundations)</h2><h3>1.1. Языковой стек (Language: Rust Only)</h3><p>* **Только Rust.** Никакого JavaScript или TypeScript.<br>* Для сборки под Web (WebAssembly) используется `wasm-bindgen` с генерацией минимального загрузчика. Запрещено писать JS вручную.<br>* Все вычисления, парсеры и UI компилируются нативно.</p><h3>1.2. Лицензирование и бренд (Licence &amp; Brand)</h3><p>* Кодовая база лицензируется под двойной лицензией: **MIT OR Apache-2.0** (`LICENSE-MIT`, `LICENSE-APACHE`, `NOTICE`).<br>* Все используемые сторонние ассеты (иконки Lucide, открытые шрифты) обязаны иметь пермиссивные лицензии, файл лицензии хранится рядом с ассетом (например, `assets/icons/LICENSE-lucide.txt`), и каждый ассет вносится в `ATTRIBUTION.md`.<br>* Логотипы и айдентика ArtCraft в `docs/brand/` не являются open source (`docs/brand/LICENSE-brand.txt`).<br>* Шрифты берутся из централизованного репозитория `storytold/craft-fonts` через переменную сборки `CRAFT_FONTS_DIR`, а не вшиваются в репозиторий.</p><h3>1.3. Принцип Clean-room (Чистая комната)</h3><p>* **СТРОГО ЗАПРЕЩЕНО** копировать исходный код, шейдеры, бинарники, иконки или иные ассеты из проприетарного ПО (такого как IBM SPSS Statistics).<br>* Поведение, интерфейс и форматы воспроизводятся **исключительно путем наблюдения, открытых стандартов и академической литературы**:<br>  - Математические процедуры — по открытым учебникам и публикациям;<br>  - Форматы `.sav` / `.zsav` — по открытой спецификации GNU PSPP и библиотеке ReadStat (MIT);<br>  - Логика команд и меню — по публичной документации SPSS без заимствования проприетарных ресурсов.</p><p>---</p><h2>2. Надежность: Железный запрет паник (Never Crash)</h2><p>* **В нетестовом коде категорически запрещены паники:**<br>  * ❌ `unwrap()`<br>  * ❌ `expect(...)`<br>  * ❌ `panic!(...)`<br>  * ❌ `unreachable!(...)`<br>  * ❌ `todo!(...)`<br>  * ❌ `unimplemented!(...)`<br>* **Категорический запрет `unsafe`:** Кодовая база — 100% safe Rust.<br>* **Обработка ошибок:** Все потенциальные сбои передаются через типизированные ошибки `Result&lt;T, E&gt;` и оператор `?`.<br>* **Валидация входов:** Все индексы строк, столбцов, смещения и размеры файлов обязаны проходить строгую проверку границ перед обращением.<br>* Любое исправление потенциального падения обязано сопровождаться регрессионным тестом.</p><p>---</p><h2>3. Архитектура: Команды вместо обработчиков (Commands, Not Handlers)</h2><p>* **Любая новая функциональность — это типизированная команда движка (Engine Command), а не изолированный UI-коллбэк.**<br>* UI лишь запрашивает выполнение команды через `CommandBus`:<br>  1. **Идентификатор команды:** Иерархический идентификатор в стиле SPSS (`stat.descriptives`, `stat.ttest.independent`, `data.sort_cases`, `transform.compute`). Позиция в меню задается путем каталога.<br>  2. **Спецификация параметров (Schema for Agents):** Каждая команда предоставляет сигнатуру параметров `specs()` (например, `{&quot;vars&quot;:[&quot;salary&quot;],&quot;ci&quot;:0.95}`), доступную для чтения AI-агентам через MCP и командную строку.<br>  3. **Предикат доступности (`enabled`):** Логика, определяющая, активна ли команда в текущем контексте (например, t-тест неактивен, если в датасете нет хотя бы одной количественной и одной группирующей переменной).<br>  4. **История и Undo/Redo:** Выполнение команды возвращает JSON-результат и формирует ровно один шаг истории. Сессии ввода текста и перетаскивания объединяются (`coalesce`).<br>  5. **Синтаксический эквивалент:** Каждая команда умеет сериализоваться в строку классического синтаксиса SPSS (`.sps`) и восстанавливаться из нее.<br>  6. **Диалоговые окна:** Параметрические процедуры получают управляемые схемой диалоговые окна с живым предпросмотром (live preview).<br>  7. **Паритет функций:** Обновление `docs/parity-checklist.md` через инструмент `cargo xtask parity`.</p><p>---</p><h2>4. Слоистая архитектура и строгая проверка (Layering &amp; xtask)</h2><p>Кодовая база разделена на независимые слои (L0–L6). Зависимости идут **строго сверху вниз**:</p><p><em>[code block — open in CapsuleCraft web for its canvas]</em></p><p>* **Проверка архитектуры:** Команда `cargo xtask layers` обязана проходить без ошибок. Новые крейты обязательно регистрируются в `xtask/src/layers.rs`. Нижние уровни (L0–L2) не знают о существовании UI.</p><p>---</p><h2>5. Ограничение системных ресурсов (Resource Guard)</h2><p>* **СТРОГО ЗАПРЕЩЕНО** запускать компиляцию, тесты или проверки без явного флага ограничения потоков:</p><p><em>[code block — open in CapsuleCraft web for its canvas]</em></p><p>* Максимально допустимое значение: `-j 2` — **только при прямом письменном согласовании с пользователем**.<br>* В файлах конфигурации `.cargo/config.toml` и `Cargo.toml` всегда зафиксированы `jobs = 1` и `codegen-units = 1`.</p><p>---</p><h2>6. Тестирование и «Золотой оракул» (Testing &amp; Corpora)</h2><p>* **Обязательные тесты на каждый коммит:**<br>  - Кодеки форматов данных (`statcraft_io`) обязаны содержать тесты на round-trip (запись $\to$ чтение $\to$ равенство) и обработку поврежденных файлов (malformed input tests) без паник.<br>  - **Математический Золотой Оракул (Golden Oracle):** Для всех статистических процедур (`statcraft_algo`) обязательна сверка результатов (значения критериев, $p$-value, степени свободы, доверительные интервалы) с референтными эталонами (Python `scipy.stats` / GNU PSPP) с точностью не хуже $10^{-6}$.<br>  - **Корпусные тесты (Real-file Corpora):** Запуск `cargo xtask test-corpus` на реальных массивах `.sav` и `.csv`. Сами тяжелые файлы корпусов никогда не коммитятся в git-репозиторий.<br>* **Качество кода:** Обязательное прохождение `cargo fmt --check`, `cargo clippy --workspace -j 1 -- -D warnings`, `cargo run -p xtask -j 1 -- file-guard` и `cargo test -p statcraft_app --test output_viewer_invariants -j 1`.</p><p>---</p><h2>7. Нулевой хардкод строк и доступность локализации (Zero-Hardcode i18n)</h2><p>* **ЖЕЛЕЗНЫЙ ЗАПРЕТ:** В исходном коде графического интерфейса (`crates/statcraft_app`, диалогах, меню, таблицах) **категорически запрещены строковые литералы на естественных языках** (как на русском, так и на английском).<br>* Любой текст интерфейса запрашивается по семантическому ключу:</p><p><em>[code block — open in CapsuleCraft web for its canvas]</em></p><p>* Каталоги локализации хранятся в открытом декларативном формате Fluent (`locales/ru.ftl`, `locales/en.ftl`).<br>* Любой контрибьютор может добавить перевод на новый язык (`locales/es.ftl`, `locales/de.ftl`), просто добавив файл в папку, **без изменения кода Rust и без перекомпиляции программы**.<br>* Смена языка интерфейса происходит «на лету» без перезапуска.</p><p>---</p><h2>8. Запрет невоспроизводимых глифов (Vector-First UI)</h2><p>Базовый шрифт `egui` не содержит эмодзи и редких символов Unicode. Попытка их вывода приводит к появлению уродливых квадратов «тофу» (`□`).<br>* **КАТЕГОРИЧЕСКИ ЗАПРЕЩЕНЫ любые Emoji в UI:**<br>  ❌ `📊`, `📈`, `⏳`, `⚠️`, `💡`, `📁`, `💾`, `⚙`, `🔍`, `✨`.<br>* **КАТЕГОРИЧЕСКИ ЗАПРЕЩЕНЫ нестандартные Unicode-символы:**<br>  ❌ `●` (U+25CF), `•` (U+2022), `✓`, `✔`, `✕`, `✖`.<br>* **ПРАВИЛА ОТРИСОВКИ:**<br>  1. Все стили, цвета и отступы берутся из дизайн-системы `theme::Tokens` и компонентов `widgets::*`.<br>  2. Все служебные иконки, индикаторы шкал (Nominal / Ordinal / Scale), стрелки и маркеры отрисовываются **векторными примитивами** через `ui.painter()` (`circle_filled`, `line_segment`, `rect_stroke`) либо через кэшированные векторные SVG.<br>  3. Индикаторы прогресса и вычислений отображаются анимированным векторным спиннером или текстовым `&quot;...&quot;` с мягкой подсветкой.<br>  4. Визуальная верификация перед сдачей задач.</p><p>---</p><h2>9. Протоколы ИИ и «Agent-First» архитектура</h2><p>* Встроенный **Model Context Protocol (MCP)** сервер и локальный IPC-сокет: внешние AI-агенты (Antigravity, Claude, локальные LLM) могут через стандартные инструменты исследовать структуру переменных, запускать тесты и автоматически вставлять результаты и их интерпретацию в Output Viewer.</p><p>---</p><h2>10. Принцип технической честности (Zero-Yesman)</h2><p>* Агенты обязаны **критически анализировать идеи и технические предложения**, а не слепо поддакивать.<br>* Если предложение грозит потерей точности вычислений, ухудшением отзывчивости интерфейса при миллионах строк, утечкой памяти, паникой или нарушением clean-room:<br>  1. Агент обязан провести краткое исследование;<br>  2. Прямо и аргументированно предупредить разработчика о рисках;<br>  3. Предложить промышленную, надежную альтернативу.</p><p>---</p><h2>11. Проактивная оркестрация субагентов</h2><p>Для сохранения чистоты контекста Главного агента-оркестратора разработка делится между специализированными ролями:<br>* **`stat-math-specialist`**: реализация математических алгоритмов на Rust (`faer`, `statrs`) и валидация через Golden Oracle против SciPy;<br>* **`data-engine-specialist`**: структуры данных в памяти (Arrow/Polars, буфер правок, `VariableDictionary`);<br>* **`ui-specialist`**: интерфейс на `egui`, докинг `egui_dock`, виртуализированный грид таблицы, сводные Pivot Tables;<br>* **`i18n-specialist`**: каталоги переводов (Fluent), модуль `statcraft_i18n`, линтер отсутствия хардкода строк;<br>* **`quality-auditor`**: прогон тестов строго с `-j 1`, линтеры, слои (`xtask layers`), соответствие Definition of Done;<br>* **`chronicle-writer`**: синхронное ведение двуязычной хроники проекта в `docs/CHRONICLE.md` и `docs/CHRONICLE.en.md`.</p><p>*Независимые задачи запускаются параллельно в одном вызове `invoke_subagent`.*</p><p>---</p><h2>12. Защита от раздутия файлов и инварианты сохранения функционала (File Size Guard &amp; Feature Retention)</h2><h3>12.1. Дифференцированные лимиты строк (File Size Limits)</h3><p>Для предотвращения деградации контекста LLM и монолитизации кодовой базы установлены предельные размеры файлов:<br>* **Листовые функциональные модули** (`crates/statcraft_algo/**`, `crates/statcraft_syntax/**`, `dialogs/**`, `views/output_view/**`): жесткий лимит **500 строк** на файл.<br>* **Комплексные интерактивные редакторы** (`views/data_view.rs`, `views/variable_view.rs`, `views/syntax_editor.rs`): лимит **1000 строк** на файл.<br>* **Корневой координатор приложения** (`src/app.rs`): потолок **1500 строк**.<br>* **Все остальные модули**: максимум **1000 строк** на файл.<br>* Обязательное прохождение проверки:</p><p><em>[code block — open in CapsuleCraft web for its canvas]</em></p><h3>12.2. Принцип «Разделяй, а не урезай» (Anti-Goodhart Counterweight)</h3><p>* **КАТЕГОРИЧЕСКИ ЗАПРЕЩЕНО** «укладываться в лимит» ценой урезания функционала: удаления колонок, вырезания таблиц, сжатия кода в однострочники или превращения реализаций в заглушки (`todo!()`, `unimplemented!()`).<br>* Единственным легитимным решением при превышении лимита является **архитектурная декомпозиция**: выделение изолированных подмодулей (подпапка с `mod.rs` и дочерними модулями, вынос поддиалогов, разделение процедурных таблиц).</p><h3>12.3. Инвариант сохранности функционала (Feature Retention Invariant)</h3><p>* Запрещено изменять или удалять поведение ранее реализованных статистических процедур, истории и отображения сводных таблиц.<br>* Обязательное прохождение пакета тестов интерфейсных инвариантов:</p><p><em>[code block — open in CapsuleCraft web for its canvas]</em></p><p>---</p><h2>13. Канон дизайн-системы диалоговых окон и защита от халтуры (DialogKit &amp; Design Guard)</h2><h3>13.1. Железный стандарт верстки окон (SPSS Canonical Design)</h3><p>* Все диалоговые окна обязаны следовать каноническому руководству `docs/DESIGN_GUIDE.md` и строиться **исключительно на базе переиспользуемых компонентов `DialogKit`** (`crates/statcraft_app/src/dialogs/common/`):<br>  - `DialogShell`: управление модальным окном, размерами (`DialogSize::Standard` 560 × 430, `Subdialog` 360 × 300, `Properties` 460 × 380, `Compute` 620 × 480), центрированием и модальностью;<br>  - `VariablePicker`: унифицированный список переменных с отображением иконки шкалы измерения и формата `Метка [Имя]`;<br>  - `TransferButton`: векторная адаптивная кнопка переноса (`-&gt;` / `&lt;-`), автоматически ориентированная на активный список;<br>  - `DialogActionBar`: нижний ряд кнопок действий Type 1 (`[ OK ] [ Paste ] [ Reset ] [ Cancel ] [ Help ]`) с автоматическим выравниванием по правилу `i18n Shield` (одинаковая ширина $\ge 80 \times 26$ px, скругление 3 px);<br>  - `SubdialogActionBar`: нижняя панель поддиалогов Type 2 (`[ Continue ] [ Cancel ] [ Help ]`);<br>  - `SubdialogSidebar`: правая колонка модальных настроек (`[ Statistics... ]`, `[ Options... ]`, 90 × 24 px);<br>  - `GroupBox`: визуальная группировка переключателей и полей ввода.</p><h3>13.2. Статический линтер дизайна (Design Guard)</h3><p>* **КАТЕГОРИЧЕСКИ ЗАПРЕЩЕНО** создавать кнопки `OK`, `Paste`, `Reset`, `Cancel`, `Continue` сырыми вызовами `ui.button(...)`, а также хардкодить произвольные размеры окон в обход `DialogShell`.<br>* Обязательное прохождение линтера дизайна и тестов инвариантов окон в Definition of Done:</p><p><em>[code block — open in CapsuleCraft web for its canvas]</em></p><p>&lt;!-- capsulecraft-start --&gt;</p><h2>CapsuleCraft Knowledge Base &amp; MCP Integration</h2><p>This project `StatCraft` has an active CapsuleCraft knowledge base in `.capsule/`.<br>- Project Overview: `.capsule/index.eml`<br>- Tasks &amp; Technical Debt: `.capsule/tasks_todo.eml`<br>- Subsystems &amp; Architecture: `.capsule/subsystem_*.eml`<br>- Agent Skill definition: `.agents/skills/capsulecraft/SKILL.md`</p><p>Agents can query project architecture and tasks using CapsuleCraft MCP tools (`project_overview`, `capsule_search`, `capsule_read`, `capsule_tasks`).<br>&lt;!-- capsulecraft-end --&gt;</p><hr><p style="color:#8a8175;font-size:12px">Exported from CapsuleCraft Native · &lt;doc-statcraft-agents_md@capsuleos.local&gt;</p></body></html>
+
+--BOUNDARY_PAYLOAD_TL5ABMFPOR--
+--BOUNDARY_ROOT_1JYAX5SFNA--

@@ -535,3 +535,12 @@
 - [x] Документация: создание официальных двуязычных протоколов аудита интерфейса `docs/SPSS_UI_CANON_AUDIT.md` (EN) и `docs/SPSS_UI_CANON_AUDIT_RU.md` (RU)
 - [x] 100% прохождение всех тестов Definition of Done (`cargo test --workspace -j 1`, `xtask file-guard`, `xtask layers`, `xtask design-guard`, `xtask parity`, `clippy -D warnings`)
 
+## 57. Корпусный аудит форматов данных (Real-World Corpora & Codecs Audit: Микропланы C-01 — C-05)
+- [x] L0 `statcraft_io` (C-01): SPSS `.sav`/`.zsav` Stream — полная матрица байт-кодов 0..255, исправление декодирования опкода 254 (`0.0`), верификация опкода 255 (`SYSMIS`), блочная ZLIB декомпрессия zheader/ztrailer, поддержка порядка байт Little/Big Endian (`BUG-003`)
+- [x] L0 `statcraft_io` (C-02): Метаданные, кодировки и Very Long Strings — каноническая поддержка Record 7 Subtype 11 (шкала, ширина, выравнивание, `BUG-004`), Subtype 14 (длинные строки $> 255$ байт), Subtype 3 (codepage), Subtype 20 (encoding) и транскодер `encoding.rs` для Windows-1251 (русский), Windows-1252 и KOI8-R
+- [x] L0 `statcraft_io` (C-03): Excel Sheets Ingest — обработка "грязных" колонок (числа + текст), безопасная трансляция формульных ошибок (`#VALUE!`, `#REF!`, `#DIV/0!`, `#N/A`, `#NAME?`) в `RawValue::Null`, парсинг экстремальных дат, санирование и дедупликация заголовков по канону SPSS
+- [x] L0 `statcraft_io` (C-04): CSV/TSV кодек RFC 4180 — разбор многострочных ячеек в кавычках (`"line 1\nline 2"`), экранированных кавычек (`""`), автоопределение разделителей (`,`, `;`, `\t`, `|`), отсечение сигнатуры UTF-8 BOM (`\u{FEFF}`) и инвариант обратимости (round-trip)
+- [x] Утилита сборщика (C-05): реализация раннера `cargo xtask test-corpus` и стресс-тестирование фаззингом (11 аномальных потоков, усеченные заголовки, битые ZLIB/JSON/BOM) с подтверждением инварианта `Never Crash` (0 паник, 100% safe Err)
+- [x] Документация: создание двуязычных отчетов `docs/CORPUS_AUDIT_REPORT.md` (EN) и `docs/CORPUS_AUDIT_REPORT_RU.md` (RU), регистрация дефектов `BUG-003` и `BUG-004` в `docs/BUGS_AND_ISSUES.md`
+- [x] 100% прохождение всех тестов Definition of Done (`cargo test --workspace -j 1`, `xtask file-guard`, `xtask layers`, `xtask design-guard`, `xtask parity`, `xtask test-corpus`, `clippy --workspace -j 1 -- -D warnings`)
+

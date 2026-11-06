@@ -1,0 +1,68 @@
+From: CapsuleCraft Code Ingest <system@capsulecraft.local>
+To: Vault <vault@capsuleos.local>
+Subject: 📚 StatCraft / StatCraft — Журнал дефектов и решений (Bugs & Issues)
+Date: Fri, 6 Nov 2026 14:13:33 +0000
+Message-ID: <doc-statcraft-docs_bugs_and_issues_md@capsuleos.local>
+In-Reply-To: <project-index-statcraft@capsuleos.local>
+X-Capsule-Page-Parent: <project-index-statcraft@capsuleos.local>
+References: <project-index-statcraft@capsuleos.local>
+X-Capsule-Tags: project, statcraft, docs
+X-Capsule-Status: Active
+MIME-Version: 1.0
+Content-Type: multipart/mixed; boundary="BOUNDARY_ROOT_NQ3CZDGFD8"
+
+--BOUNDARY_ROOT_NQ3CZDGFD8
+Content-Type: multipart/alternative; boundary="BOUNDARY_PAYLOAD_C7AOCVGHY4"
+
+--BOUNDARY_PAYLOAD_C7AOCVGHY4
+Content-Type: application/json; name="canvas_state.json"
+Content-Disposition: inline; filename="canvas_state.json"
+
+{
+  "version": "1.0",
+  "generator": "CapsuleCraft Native egui prototype (Zero-DB Pure-MIME)",
+  "messageId": "<doc-statcraft-docs_bugs_and_issues_md@capsuleos.local>",
+  "subject": "📚 StatCraft / StatCraft — Журнал дефектов и решений (Bugs & Issues)",
+  "tags": [
+    "project",
+    "statcraft",
+    "docs"
+  ],
+  "blocks": [
+    {
+      "data": {
+        "icon": "book",
+        "text": "Documentation file: `docs/BUGS_AND_ISSUES.md`\nBelongs to project: [[📦 StatCraft (Overview) | 📦 StatCraft (Overview)]]"
+      },
+      "id": "blk_native_callout_1793974413976150900",
+      "managed_by": "project_parser",
+      "type": "callout"
+    },
+    {
+      "data": {
+        "level": 1,
+        "text": "StatCraft — Журнал дефектов и решений (Bugs & Issues)"
+      },
+      "id": "blk_native_heading_1793974413976139000",
+      "managed_by": "project_parser",
+      "type": "heading"
+    },
+    {
+      "data": {
+        "text": "| Код | Описание | Статус | Первопричина и Решение |\n|---|---|---|---|\n| `BUG-001` | Раздутие `output_view.rs` (3000+ строк) и риск скрытых регрессий интерфейса при контекстном редактировании агентами | RESOLVED | **Первопричина:** Отсутствие контроля размера файлов и отсутствие UI-тестов инвариантов вывода.<br>**Решение:** Внедрен линтер `cargo xtask file-guard` (500/1000/1500 строк), декомпозирован `tables_ttest.rs` на три изолированных модуля (`tables_ttest_onesample.rs`, `tables_ttest_indep.rs`, `tables_ttest_paired.rs` $\\le 204$ строк), разделен `model.rs` на структуры данных и процедурный `builder.rs`, декомпозированы `ttest_indep_dialog.rs` и `var_cmds.rs`. Реализован пакет интеграционных тестов `output_viewer_invariants.rs` (аккумуляция истории, headless-рендер всех вариантов `OutputItemKind`, золотые TSV-заголовки, навигация Outline). Правила закреплены в `AGENTS.md`. |\n| `BUG-002` | Визуальный и размерный разнобой модальных окон и кнопок действий в диалогах процедур и свойств | RESOLVED | **Первопричина:** Отсутствие единой дизайн-системы модальных окон, разнокалиберные вызовы `Window::new` с произвольными размерами (`500x380`, `500x420`, `520x440`), смещение кнопок действий при смене языков (RU $\\leftrightarrow$ EN), самодельные виджеты переноса переменных.<br>**Решение:** Разработан канон `docs/DESIGN_GUIDE.md` (4 архетипа, правило `i18n Shield`), создана библиотека компонентов `DialogKit` (`DialogShell`, `TransferButton`, `DialogActionBar`, `SubdialogActionBar`, `SubdialogSidebar`, `GroupBox`, `VariablePicker`), статический линтер `xtask design-guard` и headless-тесты `dialog_invariants.rs`. Все 9 процедурных и параметрических диалогов переведены на канонические компоненты. |"
+      },
+      "id": "blk_native_paragraph_1793974413976146700",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    }
+  ]
+}
+
+--BOUNDARY_PAYLOAD_C7AOCVGHY4
+Content-Type: text/html; charset="utf-8"
+Content-Disposition: inline
+
+<!doctype html><html><head><meta charset="utf-8"><meta name="generator" content="CapsuleCraft Native"></head><body style="font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;max-width:720px;margin:32px auto;line-height:1.55;color:#23201c;background:#faf8f4;"><h1>📚 StatCraft / StatCraft — Журнал дефектов и решений (Bugs &amp; Issues)</h1><p><em>[callout block — open in CapsuleCraft web for its canvas]</em></p><h1>StatCraft — Журнал дефектов и решений (Bugs &amp; Issues)</h1><p>| Код | Описание | Статус | Первопричина и Решение |<br>|---|---|---|---|<br>| `BUG-001` | Раздутие `output_view.rs` (3000+ строк) и риск скрытых регрессий интерфейса при контекстном редактировании агентами | RESOLVED | **Первопричина:** Отсутствие контроля размера файлов и отсутствие UI-тестов инвариантов вывода.&lt;br&gt;**Решение:** Внедрен линтер `cargo xtask file-guard` (500/1000/1500 строк), декомпозирован `tables_ttest.rs` на три изолированных модуля (`tables_ttest_onesample.rs`, `tables_ttest_indep.rs`, `tables_ttest_paired.rs` $\le 204$ строк), разделен `model.rs` на структуры данных и процедурный `builder.rs`, декомпозированы `ttest_indep_dialog.rs` и `var_cmds.rs`. Реализован пакет интеграционных тестов `output_viewer_invariants.rs` (аккумуляция истории, headless-рендер всех вариантов `OutputItemKind`, золотые TSV-заголовки, навигация Outline). Правила закреплены в `AGENTS.md`. |<br>| `BUG-002` | Визуальный и размерный разнобой модальных окон и кнопок действий в диалогах процедур и свойств | RESOLVED | **Первопричина:** Отсутствие единой дизайн-системы модальных окон, разнокалиберные вызовы `Window::new` с произвольными размерами (`500x380`, `500x420`, `520x440`), смещение кнопок действий при смене языков (RU $\leftrightarrow$ EN), самодельные виджеты переноса переменных.&lt;br&gt;**Решение:** Разработан канон `docs/DESIGN_GUIDE.md` (4 архетипа, правило `i18n Shield`), создана библиотека компонентов `DialogKit` (`DialogShell`, `TransferButton`, `DialogActionBar`, `SubdialogActionBar`, `SubdialogSidebar`, `GroupBox`, `VariablePicker`), статический линтер `xtask design-guard` и headless-тесты `dialog_invariants.rs`. Все 9 процедурных и параметрических диалогов переведены на канонические компоненты. |</p><hr><p style="color:#8a8175;font-size:12px">Exported from CapsuleCraft Native · &lt;doc-statcraft-docs_bugs_and_issues_md@capsuleos.local&gt;</p></body></html>
+
+--BOUNDARY_PAYLOAD_C7AOCVGHY4--
+--BOUNDARY_ROOT_NQ3CZDGFD8--

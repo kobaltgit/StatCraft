@@ -1,0 +1,94 @@
+From: CapsuleCraft Code Ingest <system@capsulecraft.local>
+To: Vault <vault@capsuleos.local>
+Subject: 📄 StatCraft / crates/statcraft_app/src/views/output_view/export.rs
+Date: Fri, 6 Nov 2026 14:13:33 +0000
+Message-ID: <module-crates_statcraft_app_src_views_output_view_export_rs@capsuleos.local>
+In-Reply-To: <subsystem-statcraft-crates_statcraft_app@capsuleos.local>
+X-Capsule-Page-Parent: <subsystem-statcraft-crates_statcraft_app@capsuleos.local>
+References: <project-index-statcraft@capsuleos.local> <subsystem-statcraft-crates_statcraft_app@capsuleos.local>
+X-Capsule-Tags: project, statcraft, module
+X-Capsule-Status: Active
+MIME-Version: 1.0
+Content-Type: multipart/mixed; boundary="BOUNDARY_ROOT_1BYNQWXGE6"
+
+--BOUNDARY_ROOT_1BYNQWXGE6
+Content-Type: multipart/alternative; boundary="BOUNDARY_PAYLOAD_FM2NP3GH5B"
+
+--BOUNDARY_PAYLOAD_FM2NP3GH5B
+Content-Type: application/json; name="canvas_state.json"
+Content-Disposition: inline; filename="canvas_state.json"
+
+{
+  "version": "1.0",
+  "generator": "CapsuleCraft Native egui prototype (Zero-DB Pure-MIME)",
+  "messageId": "<module-crates_statcraft_app_src_views_output_view_export_rs@capsuleos.local>",
+  "subject": "📄 StatCraft / crates/statcraft_app/src/views/output_view/export.rs",
+  "tags": [
+    "project",
+    "statcraft",
+    "module"
+  ],
+  "blocks": [
+    {
+      "data": {
+        "level": 1,
+        "text": "📄 export.rs"
+      },
+      "id": "blk_native_heading_1793974413837728100",
+      "managed_by": "project_parser",
+      "type": "heading"
+    },
+    {
+      "data": {
+        "text": "Path: `crates/statcraft_app/src/views/output_view/export.rs` · 184 lines of code\nBelongs to project: [[📦 StatCraft (Overview) | 📦 StatCraft (Overview)]]"
+      },
+      "id": "blk_native_paragraph_1793974413837729800",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    },
+    {
+      "data": {
+        "level": 2,
+        "text": "Public Interface"
+      },
+      "id": "blk_native_heading_1793974413837730400",
+      "managed_by": "project_parser",
+      "type": "heading"
+    },
+    {
+      "data": {
+        "code": "pub fn output_viewer_to_report_document(state: &OutputViewerState) -> ReportDocument\npub fn export_output_to_html(state: &OutputViewerState) -> String\npub fn export_output_to_txt(state: &OutputViewerState) -> String\npub fn export_output_to_tsv(state: &OutputViewerState) -> String",
+        "language": "rust"
+      },
+      "id": "blk_native_code_1793974413837731000",
+      "managed_by": "project_parser",
+      "type": "code"
+    },
+    {
+      "data": {
+        "level": 2,
+        "text": "Internal Dependencies"
+      },
+      "id": "blk_native_heading_1793974413837731600",
+      "managed_by": "project_parser",
+      "type": "heading"
+    },
+    {
+      "data": {
+        "text": "- `super::extract_item_tsv`\n- `super::model::{OutputItemKind, OutputViewerState}`\n- `super::*`\n- `crate::views::output_view::model::{OutputItem, OutputNotes, OutputProcedure}`\n"
+      },
+      "id": "blk_native_paragraph_1793974413837733300",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    }
+  ]
+}
+
+--BOUNDARY_PAYLOAD_FM2NP3GH5B
+Content-Type: text/html; charset="utf-8"
+Content-Disposition: inline
+
+<!doctype html><html><head><meta charset="utf-8"><meta name="generator" content="CapsuleCraft Native"></head><body style="font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;max-width:720px;margin:32px auto;line-height:1.55;color:#23201c;background:#faf8f4;"><h1>📄 StatCraft / crates/statcraft_app/src/views/output_view/export.rs</h1><h1>📄 export.rs</h1><p>Path: `crates/statcraft_app/src/views/output_view/export.rs` · 184 lines of code<br>Belongs to project: [[📦 StatCraft (Overview) | 📦 StatCraft (Overview)]]</p><h2>Public Interface</h2><p><em>[code block — open in CapsuleCraft web for its canvas]</em></p><h2>Internal Dependencies</h2><p>- `super::extract_item_tsv`<br>- `super::model::{OutputItemKind, OutputViewerState}`<br>- `super::*`<br>- `crate::views::output_view::model::{OutputItem, OutputNotes, OutputProcedure}`<br></p><hr><p style="color:#8a8175;font-size:12px">Exported from CapsuleCraft Native · &lt;module-crates_statcraft_app_src_views_output_view_export_rs@capsuleos.local&gt;</p></body></html>
+
+--BOUNDARY_PAYLOAD_FM2NP3GH5B--
+--BOUNDARY_ROOT_1BYNQWXGE6--

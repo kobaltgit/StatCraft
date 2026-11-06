@@ -1,0 +1,249 @@
+From: CapsuleCraft Code Ingest <system@capsulecraft.local>
+To: Vault <vault@capsuleos.local>
+Subject: 📚 StatCraft / ТЗ для ИИ-агента: Этап 3 — Частотный анализ и словарь метаданных (Phase 3)
+Date: Fri, 6 Nov 2026 14:13:33 +0000
+Message-ID: <doc-statcraft-docs_plans_phase_3_frequencies_metadata_md@capsuleos.local>
+In-Reply-To: <project-index-statcraft@capsuleos.local>
+X-Capsule-Page-Parent: <project-index-statcraft@capsuleos.local>
+References: <project-index-statcraft@capsuleos.local>
+X-Capsule-Tags: project, statcraft, docs
+X-Capsule-Status: Active
+MIME-Version: 1.0
+Content-Type: multipart/mixed; boundary="BOUNDARY_ROOT_VN26W6KO8V"
+
+--BOUNDARY_ROOT_VN26W6KO8V
+Content-Type: multipart/alternative; boundary="BOUNDARY_PAYLOAD_DEY5R8KRLA"
+
+--BOUNDARY_PAYLOAD_DEY5R8KRLA
+Content-Type: application/json; name="canvas_state.json"
+Content-Disposition: inline; filename="canvas_state.json"
+
+{
+  "version": "1.0",
+  "generator": "CapsuleCraft Native egui prototype (Zero-DB Pure-MIME)",
+  "messageId": "<doc-statcraft-docs_plans_phase_3_frequencies_metadata_md@capsuleos.local>",
+  "subject": "📚 StatCraft / ТЗ для ИИ-агента: Этап 3 — Частотный анализ и словарь метаданных (Phase 3)",
+  "tags": [
+    "project",
+    "statcraft",
+    "docs"
+  ],
+  "blocks": [
+    {
+      "data": {
+        "icon": "book",
+        "text": "Documentation file: `docs/plans/PHASE_3_FREQUENCIES_METADATA.md`\nBelongs to project: [[📦 StatCraft (Overview) | 📦 StatCraft (Overview)]]"
+      },
+      "id": "blk_native_callout_1793974413993424800",
+      "managed_by": "project_parser",
+      "type": "callout"
+    },
+    {
+      "data": {
+        "level": 1,
+        "text": "ТЗ для ИИ-агента: Этап 3 — Частотный анализ и словарь метаданных (Phase 3)"
+      },
+      "id": "blk_native_heading_1793974413993403200",
+      "managed_by": "project_parser",
+      "type": "heading"
+    },
+    {
+      "data": {
+        "icon": "info",
+        "text": "**Стандарт экосистемы:** ArtCraft (`storytold`) | Двойная лицензия MIT OR Apache-2.0"
+      },
+      "id": "blk_native_callout_1793974413993404900",
+      "managed_by": "project_parser",
+      "type": "callout"
+    },
+    {
+      "data": {
+        "icon": "info",
+        "text": "**Генеральный регламент:** [AGENTS.md](file:///d:/Projects/active/StatCraft/AGENTS.md)"
+      },
+      "id": "blk_native_callout_1793974413993405700",
+      "managed_by": "project_parser",
+      "type": "callout"
+    },
+    {
+      "data": {
+        "icon": "info",
+        "text": "**Ограничение ресурсов:** ВСЕ команды сборки и тестов запускаются строго с флагом `-j 1`."
+      },
+      "id": "blk_native_callout_1793974413993406200",
+      "managed_by": "project_parser",
+      "type": "callout"
+    },
+    {
+      "data": {
+        "icon": "info",
+        "text": "**Принцип надежности:** 100% Safe Rust, Never Crash (0 `unwrap()`, 0 `expect()`, 0 `panic!()`, 0 `unsafe`)."
+      },
+      "id": "blk_native_callout_1793974413993406700",
+      "managed_by": "project_parser",
+      "type": "callout"
+    },
+    {
+      "data": {
+        "icon": "info",
+        "text": "**Локализация:** 0% строковых литералов на русском/английском в коде UI (строго макрос `t!()` и файлы `locales/ru.ftl`, `locales/en.ftl`)."
+      },
+      "id": "blk_native_callout_1793974413993407500",
+      "managed_by": "project_parser",
+      "type": "callout"
+    },
+    {
+      "data": {
+        "icon": "info",
+        "text": "**Интерфейс:** Vector-First UI (0 эмодзи, 0 квадратов «тофу»)."
+      },
+      "id": "blk_native_callout_1793974413993408100",
+      "managed_by": "project_parser",
+      "type": "callout"
+    },
+    {
+      "data": {
+        "text": "---"
+      },
+      "id": "blk_native_paragraph_1793974413993409000",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    },
+    {
+      "data": {
+        "level": 2,
+        "text": "1. Цели задачи"
+      },
+      "id": "blk_native_heading_1793974413993409600",
+      "managed_by": "project_parser",
+      "type": "heading"
+    },
+    {
+      "data": {
+        "text": "1. Реализовать статистическую процедуру **Частотного анализа** (*Frequencies*):\n   - Расчёт частот, процентов, валидных процентов и накопленных (кумулятивных) процентов;\n   - Расчёт квартилей ($Q_1 = 25\\%$, $Q_2 = 50\\%$ медиана, $Q_3 = 75\\%$) и перцентилей.\n2. Создать типизированную команду `FrequenciesCommand` (`stat.frequencies`) в L5 с генерацией SPSS-синтаксиса `FREQUENCIES VARIABLES=... /STATISTICS=STDDEV MEAN MEDIAN /ORDER=ANALYSIS.`.\n3. Создать центрированный диалог выбора переменных `FrequenciesDialog` в `statcraft_app/src/dialogs/frequencies_dialog.rs`.\n4. Реализовать рендеринг классических таблиц частот SPSS в `Output Viewer` на всю высоту вкладки.\n5. Реализовать диалог **«Метки значений»** (*Value Labels*) при нажатии на кнопку `[...]` в колонке «Значения» в представлении переменных (*Variable View*):\n   - Добавление, редактирование и удаление пар `Код -> Метка` (например, `1 = Мужской`, `2 = Женский`).\n   - Команда `VarSetValueLabelsCommand` с Undo/Redo.\n6. Реализовать диалог **«Пропущенные значения»** (*Missing Values*) при клике на `[...]` в колонке «Пропуски»:\n   - Задание до 3 дискретных значений пропусков или диапазона.\n   - Команда `VarSetMissingValuesCommand` с Undo/Redo.\n7. Подключить кнопку `1/A` на панели инструментов Data View для мгновенного переключения между сырыми кодами и метками значений."
+      },
+      "id": "blk_native_paragraph_1793974413993412700",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    },
+    {
+      "data": {
+        "text": "---"
+      },
+      "id": "blk_native_paragraph_1793974413993413700",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    },
+    {
+      "data": {
+        "level": 2,
+        "text": "2. Пошаговый план изменений"
+      },
+      "id": "blk_native_heading_1793974413993414200",
+      "managed_by": "project_parser",
+      "type": "heading"
+    },
+    {
+      "data": {
+        "level": 3,
+        "text": "2.1. L2 `statcraft_algo` (`crates/statcraft_algo/src/frequencies.rs`)"
+      },
+      "id": "blk_native_heading_1793974413993414700",
+      "managed_by": "project_parser",
+      "type": "heading"
+    },
+    {
+      "data": {
+        "text": "- Расширить структуру `FrequencyResult`:\n  * Список строк категорий `FrequencyCategory { value: String, count: usize, percent: f64, valid_percent: f64, cumulative_percent: f64 }`;\n  * Квартили `quartiles: Option<(f64, f64, f64)>` для числовых переменных;\n  * Общее число валидных $N$ и пропущенных наблюдений.\n- Написать модульные тесты `#[cfg(test)] mod tests` со сверкой с Python `scipy.stats` / `pandas.value_counts(normalize=True)`."
+      },
+      "id": "blk_native_paragraph_1793974413993415900",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    },
+    {
+      "data": {
+        "level": 3,
+        "text": "2.2. L5 `statcraft_syntax` (`crates/statcraft_syntax/src/commands/`)"
+      },
+      "id": "blk_native_heading_1793974413993416400",
+      "managed_by": "project_parser",
+      "type": "heading"
+    },
+    {
+      "data": {
+        "text": "- Создать `frequencies_cmd.rs`:\n  * Реализация `EngineCommand` для `stat.frequencies`;\n  * Сериализация спецификации параметров `specs()`;\n  * Метод `to_sps_syntax(&self) -> String`;\n  * Зарегистрировать команду в `CommandBus::with_defaults()`.\n- Создать команды метаданных `var_metadata_cmds.rs`:\n  * `VarSetValueLabelsCommand` (`var.set_value_labels`);\n  * `VarSetMissingValuesCommand` (`var.set_missing_values`)."
+      },
+      "id": "blk_native_paragraph_1793974413993417800",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    },
+    {
+      "data": {
+        "level": 3,
+        "text": "2.3. L6 `statcraft_app`"
+      },
+      "id": "blk_native_heading_1793974413993418300",
+      "managed_by": "project_parser",
+      "type": "heading"
+    },
+    {
+      "data": {
+        "text": "- Создать `crates/statcraft_app/src/dialogs/frequencies_dialog.rs`:\n  * Центрированное окно $500 \\times 420$ px;\n  * Списки доступных и выбранных переменных с иконками шкал и двойным кликом;\n  * Чекбокс «Выводить таблицы частот» (*Display frequency tables*);\n  * Кнопки `OK`, `Вставить (Paste)`, `Сброс (Reset)`, `Отмена (Cancel)`.\n- Создать `crates/statcraft_app/src/dialogs/value_labels_dialog.rs`:\n  * Модальное окно: поле ввода значения (Value), поле ввода метки (Label);\n  * Кнопки `[ Добавить ]`, `[ Изменить ]`, `[ Удалить ]`;\n  * Список уже назначенных меток с прокруткой.\n- Создать `crates/statcraft_app/src/dialogs/missing_values_dialog.rs`:\n  * Радиокнопки: «Нет пропущенных значений», «Дискретные пропущенные значения» (3 поля ввода), «Диапазон плюс одно дискретное значение».\n- В `crates/statcraft_app/src/views/output_view.rs`:\n  * Добавить рендеринг таблицы частот SPSS: колонки `Значение | Частота | Процент | Валидный процент | Накопленный процент`."
+      },
+      "id": "blk_native_paragraph_1793974413993420300",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    },
+    {
+      "data": {
+        "level": 3,
+        "text": "2.4. Локализация (`locales/ru.ftl` и `locales/en.ftl`)"
+      },
+      "id": "blk_native_heading_1793974413993421000",
+      "managed_by": "project_parser",
+      "type": "heading"
+    },
+    {
+      "data": {
+        "text": "- Добавить все ключи для диалогов частот, меток значений и пропусков на русском и английском языках."
+      },
+      "id": "blk_native_paragraph_1793974413993421700",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    },
+    {
+      "data": {
+        "text": "---"
+      },
+      "id": "blk_native_paragraph_1793974413993422200",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    },
+    {
+      "data": {
+        "level": 2,
+        "text": "3. Критерии приёмки и верификация (Definition of Done)"
+      },
+      "id": "blk_native_heading_1793974413993422600",
+      "managed_by": "project_parser",
+      "type": "heading"
+    },
+    {
+      "data": {
+        "text": "1. Строго `-j 1` на всех командах.\n2. `cargo test --workspace -j 1` — 100% тестов завершились с кодом 0.\n3. `cargo test --package statcraft_i18n --test i18n_lint_test -j 1` — 0% захардкоженных строк в UI.\n4. `cargo fmt --check` и `cargo clippy --workspace -j 1 -- -D warnings` — чисто.\n5. `cargo run --package xtask -j 1 -- layers` — без нарушений архитектуры.\n6. Обновить `docs/CHRONICLE.md` и `docs/CHRONICLE.en.md` с фиксацией выполненной работы."
+      },
+      "id": "blk_native_paragraph_1793974413993423700",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    }
+  ]
+}
+
+--BOUNDARY_PAYLOAD_DEY5R8KRLA
+Content-Type: text/html; charset="utf-8"
+Content-Disposition: inline
+
+<!doctype html><html><head><meta charset="utf-8"><meta name="generator" content="CapsuleCraft Native"></head><body style="font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;max-width:720px;margin:32px auto;line-height:1.55;color:#23201c;background:#faf8f4;"><h1>📚 StatCraft / ТЗ для ИИ-агента: Этап 3 — Частотный анализ и словарь метаданных (Phase 3)</h1><p><em>[callout block — open in CapsuleCraft web for its canvas]</em></p><h1>ТЗ для ИИ-агента: Этап 3 — Частотный анализ и словарь метаданных (Phase 3)</h1><p><em>[callout block — open in CapsuleCraft web for its canvas]</em></p><p><em>[callout block — open in CapsuleCraft web for its canvas]</em></p><p><em>[callout block — open in CapsuleCraft web for its canvas]</em></p><p><em>[callout block — open in CapsuleCraft web for its canvas]</em></p><p><em>[callout block — open in CapsuleCraft web for its canvas]</em></p><p><em>[callout block — open in CapsuleCraft web for its canvas]</em></p><p>---</p><h2>1. Цели задачи</h2><p>1. Реализовать статистическую процедуру **Частотного анализа** (*Frequencies*):<br>   - Расчёт частот, процентов, валидных процентов и накопленных (кумулятивных) процентов;<br>   - Расчёт квартилей ($Q_1 = 25\%$, $Q_2 = 50\%$ медиана, $Q_3 = 75\%$) и перцентилей.<br>2. Создать типизированную команду `FrequenciesCommand` (`stat.frequencies`) в L5 с генерацией SPSS-синтаксиса `FREQUENCIES VARIABLES=... /STATISTICS=STDDEV MEAN MEDIAN /ORDER=ANALYSIS.`.<br>3. Создать центрированный диалог выбора переменных `FrequenciesDialog` в `statcraft_app/src/dialogs/frequencies_dialog.rs`.<br>4. Реализовать рендеринг классических таблиц частот SPSS в `Output Viewer` на всю высоту вкладки.<br>5. Реализовать диалог **«Метки значений»** (*Value Labels*) при нажатии на кнопку `[...]` в колонке «Значения» в представлении переменных (*Variable View*):<br>   - Добавление, редактирование и удаление пар `Код -&gt; Метка` (например, `1 = Мужской`, `2 = Женский`).<br>   - Команда `VarSetValueLabelsCommand` с Undo/Redo.<br>6. Реализовать диалог **«Пропущенные значения»** (*Missing Values*) при клике на `[...]` в колонке «Пропуски»:<br>   - Задание до 3 дискретных значений пропусков или диапазона.<br>   - Команда `VarSetMissingValuesCommand` с Undo/Redo.<br>7. Подключить кнопку `1/A` на панели инструментов Data View для мгновенного переключения между сырыми кодами и метками значений.</p><p>---</p><h2>2. Пошаговый план изменений</h2><h3>2.1. L2 `statcraft_algo` (`crates/statcraft_algo/src/frequencies.rs`)</h3><p>- Расширить структуру `FrequencyResult`:<br>  * Список строк категорий `FrequencyCategory { value: String, count: usize, percent: f64, valid_percent: f64, cumulative_percent: f64 }`;<br>  * Квартили `quartiles: Option&lt;(f64, f64, f64)&gt;` для числовых переменных;<br>  * Общее число валидных $N$ и пропущенных наблюдений.<br>- Написать модульные тесты `#[cfg(test)] mod tests` со сверкой с Python `scipy.stats` / `pandas.value_counts(normalize=True)`.</p><h3>2.2. L5 `statcraft_syntax` (`crates/statcraft_syntax/src/commands/`)</h3><p>- Создать `frequencies_cmd.rs`:<br>  * Реализация `EngineCommand` для `stat.frequencies`;<br>  * Сериализация спецификации параметров `specs()`;<br>  * Метод `to_sps_syntax(&amp;self) -&gt; String`;<br>  * Зарегистрировать команду в `CommandBus::with_defaults()`.<br>- Создать команды метаданных `var_metadata_cmds.rs`:<br>  * `VarSetValueLabelsCommand` (`var.set_value_labels`);<br>  * `VarSetMissingValuesCommand` (`var.set_missing_values`).</p><h3>2.3. L6 `statcraft_app`</h3><p>- Создать `crates/statcraft_app/src/dialogs/frequencies_dialog.rs`:<br>  * Центрированное окно $500 \times 420$ px;<br>  * Списки доступных и выбранных переменных с иконками шкал и двойным кликом;<br>  * Чекбокс «Выводить таблицы частот» (*Display frequency tables*);<br>  * Кнопки `OK`, `Вставить (Paste)`, `Сброс (Reset)`, `Отмена (Cancel)`.<br>- Создать `crates/statcraft_app/src/dialogs/value_labels_dialog.rs`:<br>  * Модальное окно: поле ввода значения (Value), поле ввода метки (Label);<br>  * Кнопки `[ Добавить ]`, `[ Изменить ]`, `[ Удалить ]`;<br>  * Список уже назначенных меток с прокруткой.<br>- Создать `crates/statcraft_app/src/dialogs/missing_values_dialog.rs`:<br>  * Радиокнопки: «Нет пропущенных значений», «Дискретные пропущенные значения» (3 поля ввода), «Диапазон плюс одно дискретное значение».<br>- В `crates/statcraft_app/src/views/output_view.rs`:<br>  * Добавить рендеринг таблицы частот SPSS: колонки `Значение | Частота | Процент | Валидный процент | Накопленный процент`.</p><h3>2.4. Локализация (`locales/ru.ftl` и `locales/en.ftl`)</h3><p>- Добавить все ключи для диалогов частот, меток значений и пропусков на русском и английском языках.</p><p>---</p><h2>3. Критерии приёмки и верификация (Definition of Done)</h2><p>1. Строго `-j 1` на всех командах.<br>2. `cargo test --workspace -j 1` — 100% тестов завершились с кодом 0.<br>3. `cargo test --package statcraft_i18n --test i18n_lint_test -j 1` — 0% захардкоженных строк в UI.<br>4. `cargo fmt --check` и `cargo clippy --workspace -j 1 -- -D warnings` — чисто.<br>5. `cargo run --package xtask -j 1 -- layers` — без нарушений архитектуры.<br>6. Обновить `docs/CHRONICLE.md` и `docs/CHRONICLE.en.md` с фиксацией выполненной работы.</p><hr><p style="color:#8a8175;font-size:12px">Exported from CapsuleCraft Native · &lt;doc-statcraft-docs_plans_phase_3_frequencies_metadata_md@capsuleos.local&gt;</p></body></html>
+
+--BOUNDARY_PAYLOAD_DEY5R8KRLA--
+--BOUNDARY_ROOT_VN26W6KO8V--

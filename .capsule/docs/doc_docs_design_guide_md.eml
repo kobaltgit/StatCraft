@@ -1,0 +1,312 @@
+From: CapsuleCraft Code Ingest <system@capsulecraft.local>
+To: Vault <vault@capsuleos.local>
+Subject: 📚 StatCraft / StatCraft Canonical Dialog Design Guide (DialogKit Standard)
+Date: Fri, 6 Nov 2026 14:13:33 +0000
+Message-ID: <doc-statcraft-docs_design_guide_md@capsuleos.local>
+In-Reply-To: <project-index-statcraft@capsuleos.local>
+X-Capsule-Page-Parent: <project-index-statcraft@capsuleos.local>
+References: <project-index-statcraft@capsuleos.local>
+X-Capsule-Tags: project, statcraft, docs
+X-Capsule-Status: Active
+MIME-Version: 1.0
+Content-Type: multipart/mixed; boundary="BOUNDARY_ROOT_VIQB7ZEJEQ"
+
+--BOUNDARY_ROOT_VIQB7ZEJEQ
+Content-Type: multipart/alternative; boundary="BOUNDARY_PAYLOAD_17CHDCPEM2"
+
+--BOUNDARY_PAYLOAD_17CHDCPEM2
+Content-Type: application/json; name="canvas_state.json"
+Content-Disposition: inline; filename="canvas_state.json"
+
+{
+  "version": "1.0",
+  "generator": "CapsuleCraft Native egui prototype (Zero-DB Pure-MIME)",
+  "messageId": "<doc-statcraft-docs_design_guide_md@capsuleos.local>",
+  "subject": "📚 StatCraft / StatCraft Canonical Dialog Design Guide (DialogKit Standard)",
+  "tags": [
+    "project",
+    "statcraft",
+    "docs"
+  ],
+  "blocks": [
+    {
+      "data": {
+        "icon": "book",
+        "text": "Documentation file: `docs/DESIGN_GUIDE.md`\nBelongs to project: [[📦 StatCraft (Overview) | 📦 StatCraft (Overview)]]"
+      },
+      "id": "blk_native_callout_1793974413991978300",
+      "managed_by": "project_parser",
+      "type": "callout"
+    },
+    {
+      "data": {
+        "level": 1,
+        "text": "StatCraft Canonical Dialog Design Guide (DialogKit Standard)"
+      },
+      "id": "blk_native_heading_1793974413991944600",
+      "managed_by": "project_parser",
+      "type": "heading"
+    },
+    {
+      "data": {
+        "level": 1,
+        "text": "Стандарт экосистемы ArtCraft / storytold"
+      },
+      "id": "blk_native_heading_1793974413991946200",
+      "managed_by": "project_parser",
+      "type": "heading"
+    },
+    {
+      "data": {
+        "text": "Данный документ устанавливает официальный визуальный и архитектурный канон построения диалоговых окон в приложении **StatCraft** на базе классического эталона IBM SPSS Statistics с учётом эргономики современных десктопных интерфейсов."
+      },
+      "id": "blk_native_paragraph_1793974413991947500",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    },
+    {
+      "data": {
+        "text": "---"
+      },
+      "id": "blk_native_paragraph_1793974413991948300",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    },
+    {
+      "data": {
+        "level": 2,
+        "text": "1. Архитектурные архетипы диалоговых окон"
+      },
+      "id": "blk_native_heading_1793974413991948800",
+      "managed_by": "project_parser",
+      "type": "heading"
+    },
+    {
+      "data": {
+        "text": "В StatCraft все диалоговые окна делятся на 4 строгих архетипа:"
+      },
+      "id": "blk_native_paragraph_1793974413991949900",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    },
+    {
+      "data": {
+        "text": "| Архетип | Назначение | Базовый размер ($W \\times H$) | Компоновка |\n| :--- | :--- | :--- | :--- |\n| **Type 1: Statistical Procedure** | Запуск статистических процедур (Frequencies, Descriptives, T-Tests, ANOVA) | **$560 \\times 430\\text{ px}$** | 3 колонки: список доступных переменных $\\to$ кнопка переноса $\\to$ целевой список + правая колонка вызова поддиалогов + нижний Action Bar |\n| **Type 2: Subdialog / Options** | Модальные параметры процедур (Options, Statistics, Define Groups) | **$360 \\times 300\\text{ px}$** | Модальное окно поверх родительского: сгруппированные чекбоксы/поля (GroupBox) + нижний ряд `[ Continue ] [ Cancel ] [ Help ]` |\n| **Type 3: Variable Properties** | Редактирование метаданных в Variable View (Value Labels, Missing Values, Variable Type) | **$460 \\times 380\\text{ px}$** | Специфическая форма свойств с переключателями режимов и списком значений |\n| **Type 4: Compute & Transform** | Вычисление выражений, рекодирование, фильтрация | **$620 \\times 480\\text{ px}$** | Расширенное окно с калькулятором, деревом функций и списком аргументов |"
+      },
+      "id": "blk_native_paragraph_1793974413991951500",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    },
+    {
+      "data": {
+        "text": "---"
+      },
+      "id": "blk_native_paragraph_1793974413991952200",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    },
+    {
+      "data": {
+        "level": 2,
+        "text": "2. Сетка, отступы и геометрия (Grid & Spacing)"
+      },
+      "id": "blk_native_heading_1793974413991952600",
+      "managed_by": "project_parser",
+      "type": "heading"
+    },
+    {
+      "data": {
+        "level": 3,
+        "text": "2.1. Внешние и внутренние отступы"
+      },
+      "id": "blk_native_heading_1793974413991953500",
+      "managed_by": "project_parser",
+      "type": "heading"
+    },
+    {
+      "data": {
+        "text": "* **Outer Window Margin / Padding:** $12\\text{ px}$ со всех четырех сторон окна.\n* **Column Gap:** $8\\text{ px}$ между списками и панелью переноса; $12\\text{ px}$ перед правой колонкой поддиалогов.\n* **Vertical Gap:** $8\\text{ px}$ между логическими строками внутри блоков, $12\\text{ px}$ между крупными блоками.\n* **Separators:** тонкая разделительная линия `Tokens::BORDER` толщиной $1\\text{ px}$ над нижней панелью кнопок с отступом $8\\text{ px}$ сверху и снизу."
+      },
+      "id": "blk_native_paragraph_1793974413991954700",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    },
+    {
+      "data": {
+        "level": 3,
+        "text": "2.2. Размеры панелей в Type 1 (SPSS 3-Column Layout)"
+      },
+      "id": "blk_native_heading_1793974413991955200",
+      "managed_by": "project_parser",
+      "type": "heading"
+    },
+    {
+      "data": {
+        "text": "* **Левая панель (Available Variables):** ширина $200\\text{ px}$, высота $240\\text{ px}$. Включает заголовок `Variables:` и рамку со списком `Tokens::BG_PANEL`.\n* **Центральный разделитель (Transfer Zone):** ширина $36\\text{ px}$, центрированная адаптивная кнопка переноса $28 \\times 28\\text{ px}$.\n* **Центральная панель (Target Variables / Factors):** ширина $200\\text{ px}$, высота $240\\text{ px}$.\n* **Правая колонка (Subdialog Sidebar):** ширина $94\\text{ px}$, вертикальный стек кнопок $90 \\times 24\\text{ px}$ с зазором $6\\text{ px}$.\n* **Нижняя панель (Action Bar):** высота $36\\text{ px}$, горизонтальный ряд кнопок действий с выравниванием по левому краю или по центру."
+      },
+      "id": "blk_native_paragraph_1793974413991959300",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    },
+    {
+      "data": {
+        "text": "---"
+      },
+      "id": "blk_native_paragraph_1793974413991960000",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    },
+    {
+      "data": {
+        "level": 2,
+        "text": "3. Кнопки и интерактивные элементы"
+      },
+      "id": "blk_native_heading_1793974413991960700",
+      "managed_by": "project_parser",
+      "type": "heading"
+    },
+    {
+      "data": {
+        "level": 3,
+        "text": "3.1. Нижний Action Bar процедур (i18n Shield)"
+      },
+      "id": "blk_native_heading_1793974413991961400",
+      "managed_by": "project_parser",
+      "type": "heading"
+    },
+    {
+      "data": {
+        "text": "Каждый диалог статистической процедуры обязан содержать канонический набор кнопок в строгом порядке:\n1. `[ OK ]` — запуск процедуры (активна только при валидном наборе параметров `can_run == true`);\n2. `[ Paste ]` — вставка синтаксиса `.sps` в буфер или Syntax Editor (активна при `can_run == true`);\n3. `[ Reset ]` — сброс всех выбранных переменных и настроек к заводским дефолтам SPSS;\n4. `[ Cancel ]` — закрытие окна без сохранения изменений;\n5. `[ Help ]` — открытие контекстной справки."
+      },
+      "id": "blk_native_paragraph_1793974413991962700",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    },
+    {
+      "data": {
+        "text": "**Правило «i18n Shield» (равная ширина с запасом):**\n* Векторные и текстовые кнопки не должны «плясать» при переключении между английским (`OK`, `Paste`, `Reset`, `Cancel`) и русским (`OK`, `Вставить`, `Сброс`, `Отмена`) языками.\n* Вычисляется ширина текста для каждой кнопки; все кнопки ряда получают **единую фиксированную ширину** $\\max(\\text{text\\_width}) + 20\\text{ px}$ (не менее $80\\text{ px}$ ширины и $26\\text{ px}$ высоты).\n* Скругление углов: строго $3.0\\text{ px}$."
+      },
+      "id": "blk_native_paragraph_1793974413991963900",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    },
+    {
+      "data": {
+        "level": 3,
+        "text": "3.2. Нижняя панель поддиалогов (Subdialog Action Bar)"
+      },
+      "id": "blk_native_heading_1793974413991964400",
+      "managed_by": "project_parser",
+      "type": "heading"
+    },
+    {
+      "data": {
+        "text": "Поддиалоги модальных настроек содержат 3 кнопки:\n1. `[ Continue ]` — применение настроек и возврат в родительское окно;\n2. `[ Cancel ]` — отмена изменений в поддиалоге;\n3. `[ Help ]` — справка по параметрам.\nМинимальный размер кнопок: $80 \\times 26\\text{ px}$, скругление $3.0\\text{ px}$."
+      },
+      "id": "blk_native_paragraph_1793974413991965500",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    },
+    {
+      "data": {
+        "level": 3,
+        "text": "3.3. Кнопка переноса (Transfer Button)"
+      },
+      "id": "blk_native_heading_1793974413991966200",
+      "managed_by": "project_parser",
+      "type": "heading"
+    },
+    {
+      "data": {
+        "text": "* Одиночная квадратная кнопка $28 \\times 28\\text{ px}$ со скруглением $3.0\\text{ px}$.\n* Отрисовывается векторной стрелкой через `paint_vector_arrow`:\n  * Направлена вправо `->`, когда фокус/выбор в левом списке;\n  * Автоматически разворачивается влево `<-`, когда фокус/выбор в правом (целевом) списке;\n  * При отсутствии выбора — светло-серая (отключена, `Tokens::TEXT_MUTED`).\n* При двойном клике на переменную в списке перенос происходит мгновенно без нажатия кнопки."
+      },
+      "id": "blk_native_paragraph_1793974413991970000",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    },
+    {
+      "data": {
+        "level": 3,
+        "text": "3.4. Правая колонка поддиалогов (Subdialog Sidebar)"
+      },
+      "id": "blk_native_heading_1793974413991970700",
+      "managed_by": "project_parser",
+      "type": "heading"
+    },
+    {
+      "data": {
+        "text": "* Кнопки: `[ Statistics... ]`, `[ Options... ]`, `[ Charts... ]`, `[ Define Groups... ]`.\n* Фиксированный размер: $90 \\times 24\\text{ px}$.\n* Текст центрирован, размер шрифта $11\\text{ pt}$, скругление $3.0\\text{ px}$."
+      },
+      "id": "blk_native_paragraph_1793974413991971400",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    },
+    {
+      "data": {
+        "text": "---"
+      },
+      "id": "blk_native_paragraph_1793974413991972000",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    },
+    {
+      "data": {
+        "level": 2,
+        "text": "4. Списки переменных и визуальные индикаторы (Vector-First)"
+      },
+      "id": "blk_native_heading_1793974413991972400",
+      "managed_by": "project_parser",
+      "type": "heading"
+    },
+    {
+      "data": {
+        "text": "* Каждый элемент списка переменных отображается в формате:\n  `[Иконка шкалы] Метка переменной [Имя переменной]`\n  (если метка отсутствует — только имя).\n* Иконка шкалы (`Measure::Scale`, `Ordinal`, `Nominal`) рисуется строго векторно (`paint_measure_icon`) размером $14 \\times 14\\text{ px}$.\n* Запрещены любые Unicode-эмодзи и псевдографика (строгое правило Раздела 8 `AGENTS.md`).\n* Цвета фона строк:\n  * Обычная строка: прозрачный;\n  * Наведение: `Tokens::BG_HEADER`;\n  * Выделение: `Tokens::ACCENT_MUTED` (или полупрозрачный `Tokens::ACCENT`);\n  * Рамка фокуса: $1\\text{ px}$ `Tokens::ACCENT`."
+      },
+      "id": "blk_native_paragraph_1793974413991974200",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    },
+    {
+      "data": {
+        "text": "---"
+      },
+      "id": "blk_native_paragraph_1793974413991975100",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    },
+    {
+      "data": {
+        "level": 2,
+        "text": "5. Модули DialogKit"
+      },
+      "id": "blk_native_heading_1793974413991975500",
+      "managed_by": "project_parser",
+      "type": "heading"
+    },
+    {
+      "data": {
+        "text": "Все диалоговые окна обязаны использовать компоненты из `crates/statcraft_app/src/dialogs/common/`:\n* `DialogShell`: управление окном, центрированием, заголовком и модальностью;\n* `VariablePicker`: двухпанельный список переменных с фильтрацией и Drag & Drop;\n* `TransferButton`: векторная адаптивная кнопка переноса;\n* `DialogActionBar`: нижний ряд кнопок Type 1 с защитой i18n Shield;\n* `SubdialogActionBar`: нижний ряд кнопок Type 2 (`Continue / Cancel / Help`);\n* `SubdialogSidebar`: правая колонка кнопок вызова настроек;\n* `GroupBox`: рамка визуального объединения радио-кнопок и опций."
+      },
+      "id": "blk_native_paragraph_1793974413991976600",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    },
+    {
+      "data": {
+        "text": "Прямое использование сырых кнопок `ui.button(...)` для системных действий и произвольных размеров окон запрещено линтером `cargo run -p xtask -j 1 -- design-guard`."
+      },
+      "id": "blk_native_paragraph_1793974413991977400",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    }
+  ]
+}
+
+--BOUNDARY_PAYLOAD_17CHDCPEM2
+Content-Type: text/html; charset="utf-8"
+Content-Disposition: inline
+
+<!doctype html><html><head><meta charset="utf-8"><meta name="generator" content="CapsuleCraft Native"></head><body style="font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;max-width:720px;margin:32px auto;line-height:1.55;color:#23201c;background:#faf8f4;"><h1>📚 StatCraft / StatCraft Canonical Dialog Design Guide (DialogKit Standard)</h1><p><em>[callout block — open in CapsuleCraft web for its canvas]</em></p><h1>StatCraft Canonical Dialog Design Guide (DialogKit Standard)</h1><h1>Стандарт экосистемы ArtCraft / storytold</h1><p>Данный документ устанавливает официальный визуальный и архитектурный канон построения диалоговых окон в приложении **StatCraft** на базе классического эталона IBM SPSS Statistics с учётом эргономики современных десктопных интерфейсов.</p><p>---</p><h2>1. Архитектурные архетипы диалоговых окон</h2><p>В StatCraft все диалоговые окна делятся на 4 строгих архетипа:</p><p>| Архетип | Назначение | Базовый размер ($W \times H$) | Компоновка |<br>| :--- | :--- | :--- | :--- |<br>| **Type 1: Statistical Procedure** | Запуск статистических процедур (Frequencies, Descriptives, T-Tests, ANOVA) | **$560 \times 430\text{ px}$** | 3 колонки: список доступных переменных $\to$ кнопка переноса $\to$ целевой список + правая колонка вызова поддиалогов + нижний Action Bar |<br>| **Type 2: Subdialog / Options** | Модальные параметры процедур (Options, Statistics, Define Groups) | **$360 \times 300\text{ px}$** | Модальное окно поверх родительского: сгруппированные чекбоксы/поля (GroupBox) + нижний ряд `[ Continue ] [ Cancel ] [ Help ]` |<br>| **Type 3: Variable Properties** | Редактирование метаданных в Variable View (Value Labels, Missing Values, Variable Type) | **$460 \times 380\text{ px}$** | Специфическая форма свойств с переключателями режимов и списком значений |<br>| **Type 4: Compute &amp; Transform** | Вычисление выражений, рекодирование, фильтрация | **$620 \times 480\text{ px}$** | Расширенное окно с калькулятором, деревом функций и списком аргументов |</p><p>---</p><h2>2. Сетка, отступы и геометрия (Grid &amp; Spacing)</h2><h3>2.1. Внешние и внутренние отступы</h3><p>* **Outer Window Margin / Padding:** $12\text{ px}$ со всех четырех сторон окна.<br>* **Column Gap:** $8\text{ px}$ между списками и панелью переноса; $12\text{ px}$ перед правой колонкой поддиалогов.<br>* **Vertical Gap:** $8\text{ px}$ между логическими строками внутри блоков, $12\text{ px}$ между крупными блоками.<br>* **Separators:** тонкая разделительная линия `Tokens::BORDER` толщиной $1\text{ px}$ над нижней панелью кнопок с отступом $8\text{ px}$ сверху и снизу.</p><h3>2.2. Размеры панелей в Type 1 (SPSS 3-Column Layout)</h3><p>* **Левая панель (Available Variables):** ширина $200\text{ px}$, высота $240\text{ px}$. Включает заголовок `Variables:` и рамку со списком `Tokens::BG_PANEL`.<br>* **Центральный разделитель (Transfer Zone):** ширина $36\text{ px}$, центрированная адаптивная кнопка переноса $28 \times 28\text{ px}$.<br>* **Центральная панель (Target Variables / Factors):** ширина $200\text{ px}$, высота $240\text{ px}$.<br>* **Правая колонка (Subdialog Sidebar):** ширина $94\text{ px}$, вертикальный стек кнопок $90 \times 24\text{ px}$ с зазором $6\text{ px}$.<br>* **Нижняя панель (Action Bar):** высота $36\text{ px}$, горизонтальный ряд кнопок действий с выравниванием по левому краю или по центру.</p><p>---</p><h2>3. Кнопки и интерактивные элементы</h2><h3>3.1. Нижний Action Bar процедур (i18n Shield)</h3><p>Каждый диалог статистической процедуры обязан содержать канонический набор кнопок в строгом порядке:<br>1. `[ OK ]` — запуск процедуры (активна только при валидном наборе параметров `can_run == true`);<br>2. `[ Paste ]` — вставка синтаксиса `.sps` в буфер или Syntax Editor (активна при `can_run == true`);<br>3. `[ Reset ]` — сброс всех выбранных переменных и настроек к заводским дефолтам SPSS;<br>4. `[ Cancel ]` — закрытие окна без сохранения изменений;<br>5. `[ Help ]` — открытие контекстной справки.</p><p>**Правило «i18n Shield» (равная ширина с запасом):**<br>* Векторные и текстовые кнопки не должны «плясать» при переключении между английским (`OK`, `Paste`, `Reset`, `Cancel`) и русским (`OK`, `Вставить`, `Сброс`, `Отмена`) языками.<br>* Вычисляется ширина текста для каждой кнопки; все кнопки ряда получают **единую фиксированную ширину** $\max(\text{text\_width}) + 20\text{ px}$ (не менее $80\text{ px}$ ширины и $26\text{ px}$ высоты).<br>* Скругление углов: строго $3.0\text{ px}$.</p><h3>3.2. Нижняя панель поддиалогов (Subdialog Action Bar)</h3><p>Поддиалоги модальных настроек содержат 3 кнопки:<br>1. `[ Continue ]` — применение настроек и возврат в родительское окно;<br>2. `[ Cancel ]` — отмена изменений в поддиалоге;<br>3. `[ Help ]` — справка по параметрам.<br>Минимальный размер кнопок: $80 \times 26\text{ px}$, скругление $3.0\text{ px}$.</p><h3>3.3. Кнопка переноса (Transfer Button)</h3><p>* Одиночная квадратная кнопка $28 \times 28\text{ px}$ со скруглением $3.0\text{ px}$.<br>* Отрисовывается векторной стрелкой через `paint_vector_arrow`:<br>  * Направлена вправо `-&gt;`, когда фокус/выбор в левом списке;<br>  * Автоматически разворачивается влево `&lt;-`, когда фокус/выбор в правом (целевом) списке;<br>  * При отсутствии выбора — светло-серая (отключена, `Tokens::TEXT_MUTED`).<br>* При двойном клике на переменную в списке перенос происходит мгновенно без нажатия кнопки.</p><h3>3.4. Правая колонка поддиалогов (Subdialog Sidebar)</h3><p>* Кнопки: `[ Statistics... ]`, `[ Options... ]`, `[ Charts... ]`, `[ Define Groups... ]`.<br>* Фиксированный размер: $90 \times 24\text{ px}$.<br>* Текст центрирован, размер шрифта $11\text{ pt}$, скругление $3.0\text{ px}$.</p><p>---</p><h2>4. Списки переменных и визуальные индикаторы (Vector-First)</h2><p>* Каждый элемент списка переменных отображается в формате:<br>  `[Иконка шкалы] Метка переменной [Имя переменной]`<br>  (если метка отсутствует — только имя).<br>* Иконка шкалы (`Measure::Scale`, `Ordinal`, `Nominal`) рисуется строго векторно (`paint_measure_icon`) размером $14 \times 14\text{ px}$.<br>* Запрещены любые Unicode-эмодзи и псевдографика (строгое правило Раздела 8 `AGENTS.md`).<br>* Цвета фона строк:<br>  * Обычная строка: прозрачный;<br>  * Наведение: `Tokens::BG_HEADER`;<br>  * Выделение: `Tokens::ACCENT_MUTED` (или полупрозрачный `Tokens::ACCENT`);<br>  * Рамка фокуса: $1\text{ px}$ `Tokens::ACCENT`.</p><p>---</p><h2>5. Модули DialogKit</h2><p>Все диалоговые окна обязаны использовать компоненты из `crates/statcraft_app/src/dialogs/common/`:<br>* `DialogShell`: управление окном, центрированием, заголовком и модальностью;<br>* `VariablePicker`: двухпанельный список переменных с фильтрацией и Drag &amp; Drop;<br>* `TransferButton`: векторная адаптивная кнопка переноса;<br>* `DialogActionBar`: нижний ряд кнопок Type 1 с защитой i18n Shield;<br>* `SubdialogActionBar`: нижний ряд кнопок Type 2 (`Continue / Cancel / Help`);<br>* `SubdialogSidebar`: правая колонка кнопок вызова настроек;<br>* `GroupBox`: рамка визуального объединения радио-кнопок и опций.</p><p>Прямое использование сырых кнопок `ui.button(...)` для системных действий и произвольных размеров окон запрещено линтером `cargo run -p xtask -j 1 -- design-guard`.</p><hr><p style="color:#8a8175;font-size:12px">Exported from CapsuleCraft Native · &lt;doc-statcraft-docs_design_guide_md@capsuleos.local&gt;</p></body></html>
+
+--BOUNDARY_PAYLOAD_17CHDCPEM2--
+--BOUNDARY_ROOT_VIQB7ZEJEQ--

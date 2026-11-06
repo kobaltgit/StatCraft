@@ -72,6 +72,11 @@ pub fn run_ci(root: &Path) -> Result<(), String> {
     crate::parity::check_parity(root)?;
     println!(">>> [OK] Parity checklist");
 
+    // 8. Corpora and codecs audit (Never Crash verification)
+    println!("\n=== [CI Gate] Corpora & Codecs Audit (xtask test-corpus) ===");
+    crate::corpus::run_test_corpus(root, None)?;
+    println!(">>> [OK] Test corpus & Never Crash fuzzing audit");
+
     println!("\n=======================================================");
     println!("  ALL CI QUALITY GATES PASSED! (ArtCraft DoD: 100% OK) ");
     println!("=======================================================\n");

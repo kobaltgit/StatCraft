@@ -2699,5 +2699,49 @@ Successfully completed the final Phase 3 of the comprehensive evidence-backed au
    * Updated [`docs/CHECKLIST.md`](CHECKLIST.md) and Craft Anything ledger;
    * 100% pass across all tests and linters: `cargo test --workspace -j 1`, `xtask design-guard`, `xtask file-guard` (267 files), `xtask layers` (L0–L6), `xtask parity`.
 
+---
+
+### Phase 57: Real-World Corpora & Data Codecs Audit (Microplans C-01 — C-05)
+*Time: November 6, 2026, 16:50 (~45 minutes)*
+
+Conducted an in-depth Clean-Room audit and resilience stress-testing suite for the data input/output codecs subsystem (`crates/statcraft_io`) across real-world and synthetic data corpora (`.sav`/`.zsav`, `.xlsx`/`.xls`/`.ods`, `.csv`/`.tsv`, `.stc`). Resolved critical hidden SPSS specification defects, engineered a zero-dependency national encoding transcoder, hardened CSV and Excel loaders, and implemented an automated corpus runner `cargo xtask test-corpus` featuring an 11-probe malformed input fuzzing harness validating the Never Crash invariant:
+
+1. **SPSS Compressed Bytecode Opcode 254 Resolution (`BUG-003`, `statcraft_io::spss_loader::decompress`):**
+   * **Identified Defect:** In SPSS compressed data streams, opcode 254 was mistakenly decoded to `None` (`SYSMIS`). According to the open GNU PSPP specification, opcode 254 designates an 8-byte field of zeros — representing floating-point numeric `0.0` (or 8 spaces for string fields), whereas system-missing `SYSMIS` is represented exclusively by opcode 255;
+   * **Resolution:** Opcode 254 decoding mapped directly to `DecodedSlot::Numeric(Some(0.0))`. Numeric zeros in compressed SPSS files are now accurately preserved.
+
+2. **SPSS Record Type 7 Canonical Subtypes & Very Long Strings (`BUG-004`, `statcraft_io::spss_loader::records`):**
+   * **Subtype 11 (Variable Display Parameters):** Corrected record matching to read variable measurement scale, display width, and text alignment from canonical Subtype 11 rather than legacy Subtype 4 (machine floating-point info), while maintaining backward fallback;
+   * **Subtype 14 (Very Long String Declarations):** Implemented parsing for extended string declarations (`VAR=LENGTH\t`) exceeding the 255-byte slot barrier. In the case reader, continuation slot stitching (`type_code == -1`) now ensures lengthy respondent text is not truncated;
+   * **Subtypes 3 & 20 (Codepage & UTF-8):** Added robust extraction of dataset codepage from Subtype 3 and UTF-8 flags from Subtype 20.
+
+3. **Zero-Dependency National Character Transcoder (`statcraft_io::spss_loader::encoding`):**
+   * Engineered a safe Rust character transcoder with zero external crate dependencies for legacy non-UTF-8 SPSS archives:
+     - **Windows-1251 (Cyrillic):** complete mapping for Russian, Ukrainian, and Belarusian;
+     - **Windows-1252 (Western European):** standard Western Latin character map;
+     - **KOI8-R:** Russian Unix/Internet encoding;
+   * Automatic graceful fallback to UTF-8 when codepage is unspecified; raw byte caching (`label_raw`, `RawValueLabelList`) enables accurate deferred transcoding.
+
+4. **Excel Loader Hardening (`statcraft_io::excel_loader`):**
+   * Added token recognition for `"-"` and `"none"` alongside spreadsheet formula errors (`#VALUE!`, `#REF!`, `#DIV/0!`, `#N/A`, `#NAME?`, `#NUM!`, `#NULL!`);
+   * Sanitized variable header extraction: blank cell headers map to `VAR00001`, invalid symbols are replaced with `_`, and leading digits are prefixed with `V_`.
+
+5. **RFC 4180 Compliant CSV Loader (`statcraft_io::csv_loader`):**
+   * Added automatic UTF-8 BOM (`\u{FEFF}`) stripping;
+   * Supported robust auto-detection of column delimiters: comma `,`, semicolon `;`, tab `\t`, and pipe `|`;
+   * Verified multiline cell values, escaped quote parsing (`""`), and lossless round-trip invariant.
+
+6. **Corpus Testing Runner & Fuzzing Harness (`xtask/src/corpus.rs`):**
+   * Implemented `cargo xtask test-corpus [--dir <PATH>]` scanner for local corpus directories (`fixtures/corpus/`, `test_data/`);
+   * Generated realistic synthetic fixture corpus (`valid_survey.csv`, `valid_survey.stc`, `multiline_bom.csv`, `pipe_delimited.csv`, `semicolon_european.csv`, `synthetic_clean.sav`, `synthetic_compressed.sav`, `synthetic_cyrillic.sav`, `corrupt_truncated.sav`, `corrupt_bad_magic.sav`);
+   * Built an 11-probe in-memory malformed input fuzzing harness running under `catch_unwind` — 0 panics across all corruption vectors (100% Never Crash compliant).
+
+7. **Quality Control & Definition of Done:**
+   * Published comprehensive bilingual evidentiary audit reports: [`docs/CORPUS_AUDIT_REPORT.md`](CORPUS_AUDIT_REPORT.md) (EN) and [`docs/CORPUS_AUDIT_REPORT_RU.md`](CORPUS_AUDIT_REPORT_RU.md) (RU);
+   * Registered `BUG-003` and `BUG-004` in [`docs/BUGS_AND_ISSUES.md`](BUGS_AND_ISSUES.md);
+   * Updated Section 57 in [`docs/CHECKLIST.md`](CHECKLIST.md);
+   * 100% pass across all tests and linters: `cargo test --workspace -j 1` (all crates), `cargo clippy --workspace --all-targets -j 1 -- -D warnings` (0 warnings), `cargo run -p xtask -j 1 -- ci` (file-guard, design-guard, layers, parity, test-corpus — 100% OK).
+
+
 
 

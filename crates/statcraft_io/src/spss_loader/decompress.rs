@@ -127,7 +127,7 @@ impl<R: Read> BytecodeReader<R> {
                     if is_string {
                         return Ok(DecodedSlot::StringBytes([b' '; 8]));
                     } else {
-                        return Ok(DecodedSlot::Numeric(None));
+                        return Ok(DecodedSlot::Numeric(Some(0.0)));
                     }
                 }
                 255 => {

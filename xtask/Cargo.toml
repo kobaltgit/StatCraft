@@ -8,3 +8,4 @@ publish = false
 [dependencies]
 resvg = "0.45"
 ico = "0.5"
+statcraft_io = { path = "../crates/statcraft_io" }

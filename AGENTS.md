@@ -204,4 +204,13 @@ L6: statcraft_app        (Десктопный GUI на egui / eframe / egui_doc
   cargo test -p statcraft_app --test dialog_invariants -j 1
   ```
 
+<!-- capsulecraft-start -->
+## CapsuleCraft Knowledge Base & MCP Integration
+This project `StatCraft` has an active CapsuleCraft knowledge base in `.capsule/`.
+- Project Overview: `.capsule/index.eml`
+- Tasks & Technical Debt: `.capsule/tasks_todo.eml`
+- Subsystems & Architecture: `.capsule/subsystem_*.eml`
+- Agent Skill definition: `.agents/skills/capsulecraft/SKILL.md`
 
+Agents can query project architecture and tasks using CapsuleCraft MCP tools (`project_overview`, `capsule_search`, `capsule_read`, `capsule_tasks`).
+<!-- capsulecraft-end -->
