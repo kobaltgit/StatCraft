@@ -42,7 +42,11 @@ pub fn render_variable_view(
     let measure_header_width = |title: &str, min_w: f32| -> f32 {
         let measured = ui
             .painter()
-            .layout_no_wrap(title.to_string(), font_header.clone(), Tokens::TEXT_PRIMARY)
+            .layout_no_wrap(
+                title.to_string(),
+                font_header.clone(),
+                Tokens::text_primary(),
+            )
             .rect
             .width();
         min_w.max(measured + 18.0_f32)
@@ -108,9 +112,9 @@ pub fn render_variable_view(
                 for (idx, (title, width)) in headers.iter().enumerate() {
                     let (rect, _) =
                         ui.allocate_exact_size(vec2(*width, row_height), Sense::hover());
-                    ui.painter().rect_filled(rect, 0.0_f32, Tokens::BG_HEADER);
+                    ui.painter().rect_filled(rect, 0.0_f32, Tokens::bg_header());
                     ui.painter()
-                        .rect_stroke(rect, 0.0_f32, Stroke::new(1.0_f32, Tokens::BORDER));
+                        .rect_stroke(rect, 0.0_f32, Stroke::new(1.0_f32, Tokens::border()));
 
                     let align = if idx == 0 || idx == 3 || idx == 4 {
                         Align2::CENTER_CENTER
@@ -129,7 +133,7 @@ pub fn render_variable_view(
                         align,
                         title.as_str(),
                         FontId::proportional(12.0),
-                        Tokens::TEXT_PRIMARY,
+                        Tokens::text_primary(),
                     );
                 }
             });
@@ -141,9 +145,9 @@ pub fn render_variable_view(
                 .show_rows(ui, row_height, total_rows, |ui, row_range| {
                     for i in row_range {
                         let bg_color = if i % 2 == 0 {
-                            Tokens::BG_ROW_EVEN
+                            Tokens::bg_row_even()
                         } else {
-                            Tokens::BG_ROW_ODD
+                            Tokens::bg_row_odd()
                         };
 
                         if i < var_count {
@@ -164,18 +168,18 @@ pub fn render_variable_view(
                                         vec2(headers[0].1, row_height),
                                         Sense::click(),
                                     );
-                                    ui.painter().rect_filled(rect, 0.0_f32, Tokens::BG_HEADER);
+                                    ui.painter().rect_filled(rect, 0.0_f32, Tokens::bg_header());
                                     ui.painter().rect_stroke(
                                         rect,
                                         0.0_f32,
-                                        Stroke::new(0.5_f32, Tokens::BORDER),
+                                        Stroke::new(0.5_f32, Tokens::border()),
                                     );
                                     ui.painter().text(
                                         rect.center(),
                                         Align2::CENTER_CENTER,
                                         format!("{}", i + 1),
                                         FontId::proportional(11.0),
-                                        Tokens::TEXT_MUTED,
+                                        Tokens::text_muted(),
                                     );
 
                                     res.context_menu(|ui| {
@@ -198,7 +202,7 @@ pub fn render_variable_view(
                                     ui.painter().rect_stroke(
                                         rect,
                                         0.0_f32,
-                                        Stroke::new(0.5_f32, Tokens::BORDER),
+                                        Stroke::new(0.5_f32, Tokens::border()),
                                     );
 
                                     let inner_rect = rect.shrink2(vec2(2.0_f32, 1.0_f32));
@@ -257,7 +261,7 @@ pub fn render_variable_view(
                                     ui.painter().rect_stroke(
                                         rect,
                                         0.0_f32,
-                                        Stroke::new(0.5_f32, Tokens::BORDER),
+                                        Stroke::new(0.5_f32, Tokens::border()),
                                     );
                                     let type_str = t!(var.var_type.as_key());
                                     let clip = Rect::from_min_max(
@@ -269,7 +273,7 @@ pub fn render_variable_view(
                                         Align2::LEFT_CENTER,
                                         type_str,
                                         FontId::proportional(12.0),
-                                        Tokens::TEXT_PRIMARY,
+                                        Tokens::text_primary(),
                                     );
 
                                     let btn_type_rect = Rect::from_min_max(
@@ -279,22 +283,22 @@ pub fn render_variable_view(
                                     let btn_type_res =
                                         ui.allocate_rect(btn_type_rect, Sense::click());
                                     let btn_bg = if btn_type_res.hovered() {
-                                        Tokens::ACCENT
+                                        Tokens::accent()
                                     } else {
-                                        Tokens::BG_HEADER
+                                        Tokens::bg_header()
                                     };
                                     ui.painter().rect_filled(btn_type_rect, 2.0_f32, btn_bg);
                                     ui.painter().rect_stroke(
                                         btn_type_rect,
                                         2.0_f32,
-                                        Stroke::new(1.0_f32, Tokens::BORDER),
+                                        Stroke::new(1.0_f32, Tokens::border()),
                                     );
                                     ui.painter().text(
                                         btn_type_rect.center(),
                                         Align2::CENTER_CENTER,
                                         "...",
                                         FontId::proportional(10.0),
-                                        Tokens::TEXT_PRIMARY,
+                                        Tokens::text_primary(),
                                     );
 
                                     if btn_type_res.clicked() || res.double_clicked() {
@@ -310,7 +314,7 @@ pub fn render_variable_view(
                                     ui.painter().rect_stroke(
                                         rect,
                                         0.0_f32,
-                                        Stroke::new(0.5_f32, Tokens::BORDER),
+                                        Stroke::new(0.5_f32, Tokens::border()),
                                     );
 
                                     ui.painter().text(
@@ -318,7 +322,7 @@ pub fn render_variable_view(
                                         Align2::CENTER_CENTER,
                                         format!("{}", var.width),
                                         FontId::proportional(12.0),
-                                        Tokens::TEXT_PRIMARY,
+                                        Tokens::text_primary(),
                                     );
 
                                     let up_rect = Rect::from_min_max(
@@ -345,9 +349,9 @@ pub fn render_variable_view(
                                         "^",
                                         FontId::proportional(9.0),
                                         if up_res.hovered() {
-                                            Tokens::ACCENT
+                                            Tokens::accent()
                                         } else {
-                                            Tokens::TEXT_MUTED
+                                            Tokens::text_muted()
                                         },
                                     );
                                     ui.painter().text(
@@ -356,9 +360,9 @@ pub fn render_variable_view(
                                         "v",
                                         FontId::proportional(9.0),
                                         if dn_res.hovered() {
-                                            Tokens::ACCENT
+                                            Tokens::accent()
                                         } else {
-                                            Tokens::TEXT_MUTED
+                                            Tokens::text_muted()
                                         },
                                     );
 
@@ -371,7 +375,7 @@ pub fn render_variable_view(
                                     ui.painter().rect_stroke(
                                         rect,
                                         0.0_f32,
-                                        Stroke::new(0.5_f32, Tokens::BORDER),
+                                        Stroke::new(0.5_f32, Tokens::border()),
                                     );
 
                                     let allows_dec = var.var_type.allows_decimals();
@@ -387,9 +391,9 @@ pub fn render_variable_view(
                                         dec_text,
                                         FontId::proportional(12.0),
                                         if allows_dec {
-                                            Tokens::TEXT_PRIMARY
+                                            Tokens::text_primary()
                                         } else {
-                                            Tokens::TEXT_MUTED
+                                            Tokens::text_muted()
                                         },
                                     );
 
@@ -418,9 +422,9 @@ pub fn render_variable_view(
                                             "^",
                                             FontId::proportional(9.0),
                                             if up_res.hovered() {
-                                                Tokens::ACCENT
+                                                Tokens::accent()
                                             } else {
-                                                Tokens::TEXT_MUTED
+                                                Tokens::text_muted()
                                             },
                                         );
                                         ui.painter().text(
@@ -429,9 +433,9 @@ pub fn render_variable_view(
                                             "v",
                                             FontId::proportional(9.0),
                                             if dn_res.hovered() {
-                                                Tokens::ACCENT
+                                                Tokens::accent()
                                             } else {
-                                                Tokens::TEXT_MUTED
+                                                Tokens::text_muted()
                                             },
                                         );
                                     }
@@ -445,7 +449,7 @@ pub fn render_variable_view(
                                     ui.painter().rect_stroke(
                                         rect,
                                         0.0_f32,
-                                        Stroke::new(0.5_f32, Tokens::BORDER),
+                                        Stroke::new(0.5_f32, Tokens::border()),
                                     );
                                     let inner_rect = rect.shrink2(vec2(2.0_f32, 2.0_f32));
                                     ui.allocate_new_ui(
@@ -473,7 +477,7 @@ pub fn render_variable_view(
                                     ui.painter().rect_stroke(
                                         rect,
                                         0.0_f32,
-                                        Stroke::new(0.5_f32, Tokens::BORDER),
+                                        Stroke::new(0.5_f32, Tokens::border()),
                                     );
                                     let values_summary = if var.values.is_empty() {
                                         t!("values-none")
@@ -489,7 +493,7 @@ pub fn render_variable_view(
                                         Align2::LEFT_CENTER,
                                         values_summary,
                                         FontId::proportional(11.0),
-                                        Tokens::TEXT_PRIMARY,
+                                        Tokens::text_primary(),
                                     );
 
                                     let btn_val_rect = Rect::from_min_max(
@@ -499,22 +503,22 @@ pub fn render_variable_view(
                                     let btn_val_res =
                                         ui.allocate_rect(btn_val_rect, Sense::click());
                                     let btn_val_bg = if btn_val_res.hovered() {
-                                        Tokens::ACCENT
+                                        Tokens::accent()
                                     } else {
-                                        Tokens::BG_HEADER
+                                        Tokens::bg_header()
                                     };
                                     ui.painter().rect_filled(btn_val_rect, 2.0_f32, btn_val_bg);
                                     ui.painter().rect_stroke(
                                         btn_val_rect,
                                         2.0_f32,
-                                        Stroke::new(1.0_f32, Tokens::BORDER),
+                                        Stroke::new(1.0_f32, Tokens::border()),
                                     );
                                     ui.painter().text(
                                         btn_val_rect.center(),
                                         Align2::CENTER_CENTER,
                                         "...",
                                         FontId::proportional(10.0),
-                                        Tokens::TEXT_PRIMARY,
+                                        Tokens::text_primary(),
                                     );
                                     if btn_val_res.clicked() {
                                         view_action = VariableViewAction::OpenValueLabels(i);
@@ -529,7 +533,7 @@ pub fn render_variable_view(
                                     ui.painter().rect_stroke(
                                         rect,
                                         0.0_f32,
-                                        Stroke::new(0.5_f32, Tokens::BORDER),
+                                        Stroke::new(0.5_f32, Tokens::border()),
                                     );
                                     let missing_summary =
                                         if let Some((low, high)) = var.missing.range {
@@ -551,7 +555,7 @@ pub fn render_variable_view(
                                         Align2::LEFT_CENTER,
                                         missing_summary,
                                         FontId::proportional(11.0),
-                                        Tokens::TEXT_PRIMARY,
+                                        Tokens::text_primary(),
                                     );
 
                                     let btn_miss_rect = Rect::from_min_max(
@@ -561,23 +565,23 @@ pub fn render_variable_view(
                                     let btn_miss_res =
                                         ui.allocate_rect(btn_miss_rect, Sense::click());
                                     let btn_miss_bg = if btn_miss_res.hovered() {
-                                        Tokens::ACCENT
+                                        Tokens::accent()
                                     } else {
-                                        Tokens::BG_HEADER
+                                        Tokens::bg_header()
                                     };
                                     ui.painter()
                                         .rect_filled(btn_miss_rect, 2.0_f32, btn_miss_bg);
                                     ui.painter().rect_stroke(
                                         btn_miss_rect,
                                         2.0_f32,
-                                        Stroke::new(1.0_f32, Tokens::BORDER),
+                                        Stroke::new(1.0_f32, Tokens::border()),
                                     );
                                     ui.painter().text(
                                         btn_miss_rect.center(),
                                         Align2::CENTER_CENTER,
                                         "...",
                                         FontId::proportional(10.0),
-                                        Tokens::TEXT_PRIMARY,
+                                        Tokens::text_primary(),
                                     );
                                     if btn_miss_res.clicked() {
                                         view_action = VariableViewAction::OpenMissingValues(i);
@@ -592,7 +596,7 @@ pub fn render_variable_view(
                                     ui.painter().rect_stroke(
                                         rect,
                                         0.0_f32,
-                                        Stroke::new(0.5_f32, Tokens::BORDER),
+                                        Stroke::new(0.5_f32, Tokens::border()),
                                     );
 
                                     let align_label = match var.align {
@@ -605,7 +609,7 @@ pub fn render_variable_view(
                                         Align2::LEFT_CENTER,
                                         align_label,
                                         FontId::proportional(11.0),
-                                        Tokens::TEXT_PRIMARY,
+                                        Tokens::text_primary(),
                                     );
 
                                     if res.clicked() {
@@ -626,7 +630,7 @@ pub fn render_variable_view(
                                     ui.painter().rect_stroke(
                                         rect,
                                         0.0_f32,
-                                        Stroke::new(0.5_f32, Tokens::BORDER),
+                                        Stroke::new(0.5_f32, Tokens::border()),
                                     );
 
                                     let icon_rect = Rect::from_min_size(
@@ -641,7 +645,7 @@ pub fn render_variable_view(
                                         Align2::LEFT_CENTER,
                                         measure_text,
                                         FontId::proportional(11.0),
-                                        Tokens::TEXT_PRIMARY,
+                                        Tokens::text_primary(),
                                     );
 
                                     if res.clicked() {
@@ -662,7 +666,7 @@ pub fn render_variable_view(
                                     ui.painter().rect_stroke(
                                         rect,
                                         0.0_f32,
-                                        Stroke::new(0.5_f32, Tokens::BORDER),
+                                        Stroke::new(0.5_f32, Tokens::border()),
                                     );
 
                                     let role_text = match var.role {
@@ -678,7 +682,7 @@ pub fn render_variable_view(
                                         Align2::LEFT_CENTER,
                                         role_text,
                                         FontId::proportional(11.0),
-                                        Tokens::TEXT_PRIMARY,
+                                        Tokens::text_primary(),
                                     );
 
                                     if res.clicked() {
@@ -730,18 +734,18 @@ pub fn render_variable_view(
                                     vec2(headers[0].1, row_height),
                                     Sense::hover(),
                                 );
-                                ui.painter().rect_filled(rect, 0.0_f32, Tokens::BG_HEADER);
+                                ui.painter().rect_filled(rect, 0.0_f32, Tokens::bg_header());
                                 ui.painter().rect_stroke(
                                     rect,
                                     0.0_f32,
-                                    Stroke::new(0.5_f32, Tokens::BORDER),
+                                    Stroke::new(0.5_f32, Tokens::border()),
                                 );
                                 ui.painter().text(
                                     rect.center(),
                                     Align2::CENTER_CENTER,
                                     "*",
                                     FontId::proportional(12.0),
-                                    Tokens::TEXT_MUTED,
+                                    Tokens::text_muted(),
                                 );
 
                                 // 1. Name input placeholder
@@ -753,7 +757,7 @@ pub fn render_variable_view(
                                 ui.painter().rect_stroke(
                                     rect,
                                     0.0_f32,
-                                    Stroke::new(0.5_f32, Tokens::BORDER),
+                                    Stroke::new(0.5_f32, Tokens::border()),
                                 );
 
                                 let inner_rect = rect.shrink2(vec2(2.0_f32, 1.0_f32));
@@ -790,7 +794,7 @@ pub fn render_variable_view(
                                     ui.painter().rect_stroke(
                                         rect,
                                         0.0_f32,
-                                        Stroke::new(0.5_f32, Tokens::BORDER),
+                                        Stroke::new(0.5_f32, Tokens::border()),
                                     );
                                 }
                             });

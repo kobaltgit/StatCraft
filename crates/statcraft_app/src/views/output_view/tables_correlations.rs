@@ -1,4 +1,4 @@
-use super::model::{
+﻿use super::model::{
     OutputItem, OutputItemKind, OutputNotes, OutputProcedure, OutputViewerState, SelectedTarget,
 };
 use super::tables_common::{
@@ -112,9 +112,9 @@ fn render_descriptives_table(ui: &mut Ui, desc_list: &[VarDescriptives]) {
 
                 for (idx, item) in desc_list.iter().enumerate() {
                     let bg = if idx % 2 == 0 {
-                        Tokens::BG_ROW_EVEN
+                        Tokens::bg_row_even()
                     } else {
-                        Tokens::BG_ROW_ODD
+                        Tokens::bg_row_odd()
                     };
                     let vals = [
                         (item.var_name.clone(), Align2::LEFT_CENTER),
@@ -162,9 +162,9 @@ fn render_single_matrix(
                 for (i, row_var) in mat.variables.iter().enumerate() {
                     let is_even_block = i % 2 == 0;
                     let bg = if is_even_block {
-                        Tokens::BG_ROW_EVEN
+                        Tokens::bg_row_even()
                     } else {
-                        Tokens::BG_ROW_ODD
+                        Tokens::bg_row_odd()
                     };
 
                     // Sub-row 1: Correlation coefficient

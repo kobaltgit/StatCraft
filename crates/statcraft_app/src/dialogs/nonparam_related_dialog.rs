@@ -1,4 +1,4 @@
-use super::common::{
+﻿use super::common::{
     format_var_display, render_variable_list_panel, ActionBarAction, DialogActionBar, DialogShell,
     GroupBox, ListEvent, TransferButton, VariableListItem,
 };
@@ -186,8 +186,8 @@ pub fn render_nonparam_related_dialog(
                 |ui| {
                     ui.label(t!("dialog-npar-related-test-pairs"));
                     egui::Frame::canvas(ui.style())
-                        .fill(Tokens::BG_PANEL)
-                        .stroke(Stroke::new(1.0_f32, Tokens::BORDER))
+                        .fill(Tokens::bg_panel())
+                        .stroke(Stroke::new(1.0_f32, Tokens::border()))
                         .show(ui, |ui| {
                             ui.set_min_size(vec2(276.0, 150.0));
                             ui.set_max_size(vec2(276.0, 150.0));

@@ -2,14 +2,15 @@ use super::app::{StatCraftApp, StatusMessage};
 use super::dialogs::{
     render_anova_oneway_dialog, render_correlations_dialog, render_crosstabs_dialog,
     render_descriptives_dialog, render_factor_dialog, render_frequencies_dialog,
-    render_kruskal_wallis_dialog, render_linear_regression_dialog, render_means_dialog,
-    render_nonparam_related_dialog, render_nonparam_twosample_dialog, render_reliability_dialog,
-    render_ttest_indep_dialog, render_ttest_onesample_dialog, render_ttest_paired_dialog,
-    CorrelationsDialogAction, CrosstabsDialogAction, DescriptivesDialogAction, FactorDialogAction,
-    FrequenciesDialogAction, IndependentSamplesTTestDialogAction, KruskalWallisDialogAction,
-    LinearRegressionDialogAction, MeansDialogAction, NonparamRelatedDialogAction,
-    NonparamTwoSampleDialogAction, OneSampleTTestDialogAction, OneWayAnovaDialogAction,
-    PairedSamplesTTestDialogAction, ReliabilityDialogAction,
+    render_kruskal_wallis_dialog, render_linear_regression_dialog, render_mcp_bridge_dialog,
+    render_means_dialog, render_nonparam_related_dialog, render_nonparam_twosample_dialog,
+    render_reliability_dialog, render_ttest_indep_dialog, render_ttest_onesample_dialog,
+    render_ttest_paired_dialog, CorrelationsDialogAction, CrosstabsDialogAction,
+    DescriptivesDialogAction, FactorDialogAction, FrequenciesDialogAction,
+    IndependentSamplesTTestDialogAction, KruskalWallisDialogAction, LinearRegressionDialogAction,
+    MeansDialogAction, NonparamRelatedDialogAction, NonparamTwoSampleDialogAction,
+    OneSampleTTestDialogAction, OneWayAnovaDialogAction, PairedSamplesTTestDialogAction,
+    ReliabilityDialogAction,
 };
 use serde_json::json;
 use statcraft_i18n::t;
@@ -833,5 +834,12 @@ impl StatCraftApp {
 
         // 17. Transform Dialogs
         self.handle_transform_dialogs(ctx);
+
+        // 18. AI MCP & Socket Bridge Dialog
+        render_mcp_bridge_dialog(
+            ctx,
+            &mut self.mcp_bridge_dialog_state,
+            &mut self.bridge_service,
+        );
     }
 }

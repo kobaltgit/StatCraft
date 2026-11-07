@@ -1,7 +1,7 @@
 From: CapsuleCraft Code Ingest <system@capsulecraft.local>
 To: Vault <vault@capsuleos.local>
 Subject: 📁 StatCraft / crates/statcraft_i18n
-Date: Fri, 6 Nov 2026 19:50:30 +0000
+Date: Sat, 7 Nov 2026 15:01:46 +0000
 Message-ID: <subsystem-statcraft-crates_statcraft_i18n@capsuleos.local>
 In-Reply-To: <project-index-statcraft@capsuleos.local>
 X-Capsule-Page-Parent: <project-index-statcraft@capsuleos.local>
@@ -34,16 +34,16 @@ Content-Disposition: inline; filename="canvas_state.json"
         "level": 1,
         "text": "📁 Subsystem: crates/statcraft_i18n"
       },
-      "id": "blk_native_heading_1793994630666918500",
+      "id": "blk_native_heading_1794063706699969700",
       "managed_by": "project_parser",
       "type": "heading"
     },
     {
       "data": {
         "icon": "folder",
-        "text": "Part of [[📦 StatCraft (Overview) | 📦 StatCraft (Overview)]]\nContains 2 source module(s)."
+        "text": "Part of [[📦 StatCraft (Overview) | 📦 StatCraft (Overview)]]\nContains 3 source module(s)."
       },
-      "id": "blk_native_callout_1793994630666919800",
+      "id": "blk_native_callout_1794063706699970900",
       "managed_by": "project_parser",
       "type": "callout"
     },
@@ -52,15 +52,15 @@ Content-Disposition: inline; filename="canvas_state.json"
         "level": 2,
         "text": "Modules in this Subsystem"
       },
-      "id": "blk_native_heading_1793994630666920300",
+      "id": "blk_native_heading_1794063706699971400",
       "managed_by": "project_parser",
       "type": "heading"
     },
     {
       "data": {
-        "text": "- [[📄 StatCraft / crates/statcraft_i18n/src/lib.rs]] (`crates/statcraft_i18n/src/lib.rs`)\n- [[📄 StatCraft / crates/statcraft_i18n/tests/i18n_lint_test.rs]] (`crates/statcraft_i18n/tests/i18n_lint_test.rs`)\n"
+        "text": "- [[📄 StatCraft / crates/statcraft_i18n/src/detect.rs]] (`crates/statcraft_i18n/src/detect.rs`)\n- [[📄 StatCraft / crates/statcraft_i18n/src/lib.rs]] (`crates/statcraft_i18n/src/lib.rs`)\n- [[📄 StatCraft / crates/statcraft_i18n/tests/i18n_lint_test.rs]] (`crates/statcraft_i18n/tests/i18n_lint_test.rs`)\n"
       },
-      "id": "blk_native_paragraph_1793994630666921800",
+      "id": "blk_native_paragraph_1794063706699973300",
       "managed_by": "project_parser",
       "type": "paragraph"
     }
@@ -71,7 +71,7 @@ Content-Disposition: inline; filename="canvas_state.json"
 Content-Type: text/html; charset="utf-8"
 Content-Disposition: inline
 
-<!doctype html><html><head><meta charset="utf-8"><meta name="generator" content="CapsuleCraft Native"></head><body style="font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;max-width:720px;margin:32px auto;line-height:1.55;color:#23201c;background:#faf8f4;"><h1>📁 StatCraft / crates/statcraft_i18n</h1><h1>📁 Subsystem: crates/statcraft_i18n</h1><p><em>[callout block — open in CapsuleCraft web for its canvas]</em></p><h2>Modules in this Subsystem</h2><p>- [[📄 StatCraft / crates/statcraft_i18n/src/lib.rs]] (`crates/statcraft_i18n/src/lib.rs`)<br>- [[📄 StatCraft / crates/statcraft_i18n/tests/i18n_lint_test.rs]] (`crates/statcraft_i18n/tests/i18n_lint_test.rs`)<br></p><hr><p style="color:#8a8175;font-size:12px">Exported from CapsuleCraft Native · &lt;subsystem-statcraft-crates_statcraft_i18n@capsuleos.local&gt;</p></body></html>
+<!doctype html><html><head><meta charset="utf-8"><meta name="generator" content="CapsuleCraft Native"></head><body style="font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;max-width:720px;margin:32px auto;line-height:1.55;color:#23201c;background:#faf8f4;"><h1>📁 StatCraft / crates/statcraft_i18n</h1><h1>📁 Subsystem: crates/statcraft_i18n</h1><p><em>[callout block — open in CapsuleCraft web for its canvas]</em></p><h2>Modules in this Subsystem</h2><p>- [[📄 StatCraft / crates/statcraft_i18n/src/detect.rs]] (`crates/statcraft_i18n/src/detect.rs`)<br>- [[📄 StatCraft / crates/statcraft_i18n/src/lib.rs]] (`crates/statcraft_i18n/src/lib.rs`)<br>- [[📄 StatCraft / crates/statcraft_i18n/tests/i18n_lint_test.rs]] (`crates/statcraft_i18n/tests/i18n_lint_test.rs`)<br></p><hr><p style="color:#8a8175;font-size:12px">Exported from CapsuleCraft Native · &lt;subsystem-statcraft-crates_statcraft_i18n@capsuleos.local&gt;</p></body></html>
 
 --BOUNDARY_PAYLOAD_15R2XG9EUQ--
 --BOUNDARY_ROOT_XMW7KFESOS--

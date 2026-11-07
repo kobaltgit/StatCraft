@@ -1,4 +1,4 @@
-use crate::theme::Tokens;
+﻿use crate::theme::Tokens;
 use crate::widgets::paint_measure_icon;
 use egui::{pos2, vec2, Align2, FontId, Key, Rect, ScrollArea, Sense, Stroke, Ui};
 use statcraft_core::DataSet;
@@ -90,15 +90,15 @@ pub fn render_data_view(ui: &mut Ui, dataset: &mut Option<DataSet>, state: &mut 
                 // Top-left corner (Row number column header)
                 let (rect, _) =
                     ui.allocate_exact_size(vec2(row_header_width, row_height), Sense::hover());
-                ui.painter().rect_filled(rect, 0.0_f32, Tokens::BG_HEADER);
+                ui.painter().rect_filled(rect, 0.0_f32, Tokens::bg_header());
                 ui.painter()
-                    .rect_stroke(rect, 0.0_f32, Stroke::new(1.0_f32, Tokens::BORDER));
+                    .rect_stroke(rect, 0.0_f32, Stroke::new(1.0_f32, Tokens::border()));
                 ui.painter().text(
                     rect.center(),
                     Align2::CENTER_CENTER,
                     t!("header-row"),
                     FontId::proportional(12.0),
-                    Tokens::TEXT_PRIMARY,
+                    Tokens::text_primary(),
                 );
 
                 // Variable column headers
@@ -111,9 +111,9 @@ pub fn render_data_view(ui: &mut Ui, dataset: &mut Option<DataSet>, state: &mut 
 
                     let (rect, _) =
                         ui.allocate_exact_size(vec2(col_width, row_height), Sense::hover());
-                    ui.painter().rect_filled(rect, 0.0_f32, Tokens::BG_HEADER);
+                    ui.painter().rect_filled(rect, 0.0_f32, Tokens::bg_header());
                     ui.painter()
-                        .rect_stroke(rect, 0.0_f32, Stroke::new(1.0_f32, Tokens::BORDER));
+                        .rect_stroke(rect, 0.0_f32, Stroke::new(1.0_f32, Tokens::border()));
 
                     // Vector measure icon
                     let icon_rect = Rect::from_min_size(
@@ -130,7 +130,7 @@ pub fn render_data_view(ui: &mut Ui, dataset: &mut Option<DataSet>, state: &mut 
                         Align2::LEFT_CENTER,
                         col_name,
                         FontId::proportional(12.0),
-                        Tokens::TEXT_PRIMARY,
+                        Tokens::text_primary(),
                     );
                 }
             });
@@ -149,11 +149,11 @@ pub fn render_data_view(ui: &mut Ui, dataset: &mut Option<DataSet>, state: &mut 
                                 vec2(row_header_width, row_height),
                                 Sense::click(),
                             );
-                            ui.painter().rect_filled(rect, 0.0_f32, Tokens::BG_HEADER);
+                            ui.painter().rect_filled(rect, 0.0_f32, Tokens::bg_header());
                             ui.painter().rect_stroke(
                                 rect,
                                 0.0_f32,
-                                Stroke::new(0.5_f32, Tokens::BORDER),
+                                Stroke::new(0.5_f32, Tokens::border()),
                             );
 
                             let row_label = if row_idx < total_rows {
@@ -167,11 +167,11 @@ pub fn render_data_view(ui: &mut Ui, dataset: &mut Option<DataSet>, state: &mut 
                                 Align2::CENTER_CENTER,
                                 row_label,
                                 FontId::proportional(11.0),
-                                Tokens::TEXT_MUTED,
+                                Tokens::text_muted(),
                             );
 
                             if row_idx < total_rows && !ds.is_row_active(row_idx) {
-                                let stroke = Stroke::new(1.0_f32, Tokens::TEXT_MUTED);
+                                let stroke = Stroke::new(1.0_f32, Tokens::text_muted());
                                 let slash_start =
                                     egui::pos2(rect.center().x - 12.0, rect.center().y + 7.0);
                                 let slash_end =
@@ -198,11 +198,11 @@ pub fn render_data_view(ui: &mut Ui, dataset: &mut Option<DataSet>, state: &mut 
                                 let is_editing = state.editing_cell == Some((row_idx, col_idx));
 
                                 let bg_color = if is_selected {
-                                    Tokens::BG_SELECTED
+                                    Tokens::bg_selected()
                                 } else if row_idx % 2 == 0 {
-                                    Tokens::BG_ROW_EVEN
+                                    Tokens::bg_row_even()
                                 } else {
-                                    Tokens::BG_ROW_ODD
+                                    Tokens::bg_row_odd()
                                 };
 
                                 let (rect, response) = ui.allocate_exact_size(
@@ -239,7 +239,7 @@ pub fn render_data_view(ui: &mut Ui, dataset: &mut Option<DataSet>, state: &mut 
                                 ui.painter().rect_stroke(
                                     rect,
                                     0.0_f32,
-                                    Stroke::new(0.5_f32, Tokens::BORDER),
+                                    Stroke::new(0.5_f32, Tokens::border()),
                                 );
 
                                 if is_editing {
@@ -324,7 +324,7 @@ pub fn render_data_view(ui: &mut Ui, dataset: &mut Option<DataSet>, state: &mut 
                                         Align2::LEFT_CENTER,
                                         display_val,
                                         FontId::proportional(12.0),
-                                        Tokens::TEXT_PRIMARY,
+                                        Tokens::text_primary(),
                                     );
                                 }
                             }

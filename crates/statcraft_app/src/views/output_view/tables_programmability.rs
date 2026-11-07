@@ -1,4 +1,4 @@
-use super::model::{
+﻿use super::model::{
     OutputItem, OutputItemKind, OutputNotes, OutputProcedure, OutputViewerState, SelectedTarget,
 };
 use super::tables_common::{adjust_widths, render_data_row, render_header_row};
@@ -84,7 +84,7 @@ fn render_summary_table(ui: &mut Ui, res: &ProgrammabilityResult) {
         egui::RichText::new(t!("output-programmability-summary-title"))
             .font(FontId::proportional(13.0))
             .strong()
-            .color(Tokens::TEXT_PRIMARY),
+            .color(Tokens::text_primary()),
     );
     ui.add_space(4.0);
 
@@ -128,9 +128,9 @@ fn render_summary_table(ui: &mut Ui, res: &ProgrammabilityResult) {
     for (idx, (key, val)) in rows.into_iter().enumerate() {
         let cells = vec![(t!(key), Align2::LEFT_CENTER), (val, Align2::LEFT_CENTER)];
         let bg = if idx % 2 == 0 {
-            Tokens::BG_ROW_EVEN
+            Tokens::bg_row_even()
         } else {
-            Tokens::BG_ROW_ODD
+            Tokens::bg_row_odd()
         };
         render_data_row(ui, &cols, &cells, row_height, bg);
     }
@@ -141,7 +141,7 @@ fn render_logs_table(ui: &mut Ui, res: &ProgrammabilityResult) {
         egui::RichText::new(t!("output-programmability-logs-title"))
             .font(FontId::proportional(13.0))
             .strong()
-            .color(Tokens::TEXT_PRIMARY),
+            .color(Tokens::text_primary()),
     );
     ui.add_space(4.0);
 
@@ -159,9 +159,9 @@ fn render_logs_table(ui: &mut Ui, res: &ProgrammabilityResult) {
             (log_entry.clone(), Align2::LEFT_CENTER),
         ];
         let bg = if idx % 2 == 0 {
-            Tokens::BG_ROW_EVEN
+            Tokens::bg_row_even()
         } else {
-            Tokens::BG_ROW_ODD
+            Tokens::bg_row_odd()
         };
         render_data_row(ui, &cols, &cells, row_height, bg);
     }

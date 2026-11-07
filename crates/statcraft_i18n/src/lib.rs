@@ -7,6 +7,9 @@ use std::path::Path;
 use std::sync::atomic::{AtomicBool, Ordering};
 use unic_langid::LanguageIdentifier;
 
+pub mod detect;
+pub use detect::{detect_system_language, normalize_language_tag};
+
 pub static EMBEDDED_EN: &str = include_str!("../../../locales/en.ftl");
 pub static EMBEDDED_RU: &str = include_str!("../../../locales/ru.ftl");
 
@@ -20,8 +23,17 @@ pub struct I18nCatalog {
 
 impl I18nCatalog {
     pub fn new_with_defaults() -> Result<Self, String> {
+        let mut initial_lang = "ru".to_string();
+        if let Some(sys_lang) = detect_system_language() {
+            if sys_lang == "ru" || sys_lang == "en" {
+                initial_lang = sys_lang;
+            } else {
+                initial_lang = "en".to_string();
+            }
+        }
+
         let mut catalog = Self {
-            current_lang: "ru".to_string(), // Default Russian for ArtCraft, switchable to EN
+            current_lang: initial_lang,
             bundles: HashMap::new(),
         };
 
@@ -208,6 +220,14 @@ impl I18nCatalog {
 pub fn init_i18n() -> Result<(), String> {
     let mut catalog = I18nCatalog::new_with_defaults()?;
     catalog.discover_and_load_locales();
+
+    // If an external locale was discovered that matches detected system language, activate it
+    if let Some(sys_lang) = detect_system_language() {
+        if catalog.bundles.contains_key(&sys_lang) {
+            catalog.set_language(&sys_lang);
+        }
+    }
+
     let mut lock = GLOBAL_I18N.write();
     if let Some(existing) = lock.as_ref() {
         catalog.set_language(existing.current_language());
@@ -217,7 +237,14 @@ pub fn init_i18n() -> Result<(), String> {
     Ok(())
 }
 
+fn ensure_initialized() {
+    if !INITIALIZED.load(Ordering::SeqCst) {
+        let _ = init_i18n();
+    }
+}
+
 pub fn language_name(lang_code: &str) -> String {
+    ensure_initialized();
     let lock = GLOBAL_I18N.read();
     if let Some(catalog) = lock.as_ref() {
         catalog.language_display_name(lang_code)
@@ -227,6 +254,7 @@ pub fn language_name(lang_code: &str) -> String {
 }
 
 pub fn reload_locales() -> Result<usize, String> {
+    ensure_initialized();
     let mut lock = GLOBAL_I18N.write();
     if let Some(catalog) = lock.as_mut() {
         Ok(catalog.discover_and_load_locales())
@@ -236,6 +264,7 @@ pub fn reload_locales() -> Result<usize, String> {
 }
 
 pub fn set_language(lang_code: &str) -> bool {
+    ensure_initialized();
     let mut lock = GLOBAL_I18N.write();
     if let Some(catalog) = lock.as_mut() {
         catalog.set_language(lang_code)
@@ -245,6 +274,7 @@ pub fn set_language(lang_code: &str) -> bool {
 }
 
 pub fn current_language() -> String {
+    ensure_initialized();
     let lock = GLOBAL_I18N.read();
     if let Some(catalog) = lock.as_ref() {
         catalog.current_language().to_string()
@@ -254,6 +284,7 @@ pub fn current_language() -> String {
 }
 
 pub fn available_languages() -> Vec<String> {
+    ensure_initialized();
     let lock = GLOBAL_I18N.read();
     if let Some(catalog) = lock.as_ref() {
         catalog.available_languages()
@@ -263,10 +294,7 @@ pub fn available_languages() -> Vec<String> {
 }
 
 pub fn tr(key: &str) -> String {
-    if !INITIALIZED.load(Ordering::SeqCst) {
-        let _ = init_i18n();
-    }
-
+    ensure_initialized();
     let lock = GLOBAL_I18N.read();
     if let Some(catalog) = lock.as_ref() {
         catalog.translate(key, None)
@@ -276,10 +304,7 @@ pub fn tr(key: &str) -> String {
 }
 
 pub fn tr_args(key: &str, args: &FluentArgs) -> String {
-    if !INITIALIZED.load(Ordering::SeqCst) {
-        let _ = init_i18n();
-    }
-
+    ensure_initialized();
     let lock = GLOBAL_I18N.read();
     if let Some(catalog) = lock.as_ref() {
         catalog.translate(key, Some(args))
@@ -309,9 +334,12 @@ mod tests {
     use super::*;
 
     #[test]
-    fn test_global_t_macro_default_is_russian() {
+    fn test_global_t_macro_translation() {
         let _ = init_i18n();
+        set_language("ru");
         assert_eq!(t!("menu-file"), "Файл");
+        set_language("en");
+        assert_eq!(t!("menu-file"), "File");
     }
 
     #[test]

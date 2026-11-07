@@ -1,7 +1,7 @@
 From: CapsuleCraft Code Ingest <system@capsulecraft.local>
 To: Vault <vault@capsuleos.local>
 Subject: 📄 StatCraft / crates/statcraft_syntax/src/commands/mod.rs
-Date: Fri, 6 Nov 2026 14:13:33 +0000
+Date: Sat, 7 Nov 2026 13:04:33 +0000
 Message-ID: <module-crates_statcraft_syntax_src_commands_mod_rs@capsuleos.local>
 In-Reply-To: <subsystem-statcraft-crates_statcraft_syntax@capsuleos.local>
 X-Capsule-Page-Parent: <subsystem-statcraft-crates_statcraft_syntax@capsuleos.local>
@@ -34,15 +34,15 @@ Content-Disposition: inline; filename="canvas_state.json"
         "level": 1,
         "text": "📄 mod.rs"
       },
-      "id": "blk_native_heading_1793974413955966200",
+      "id": "blk_native_heading_1794056673859248600",
       "managed_by": "project_parser",
       "type": "heading"
     },
     {
       "data": {
-        "text": "Path: `crates/statcraft_syntax/src/commands/mod.rs` · 93 lines of code\nBelongs to project: [[📦 StatCraft (Overview) | 📦 StatCraft (Overview)]]"
+        "text": "Path: `crates/statcraft_syntax/src/commands/mod.rs` · 95 lines of code\nBelongs to project: [[📦 StatCraft (Overview) | 📦 StatCraft (Overview)]]"
       },
-      "id": "blk_native_paragraph_1793974413955967900",
+      "id": "blk_native_paragraph_1794056673859250500",
       "managed_by": "project_parser",
       "type": "paragraph"
     }
@@ -53,7 +53,7 @@ Content-Disposition: inline; filename="canvas_state.json"
 Content-Type: text/html; charset="utf-8"
 Content-Disposition: inline
 
-<!doctype html><html><head><meta charset="utf-8"><meta name="generator" content="CapsuleCraft Native"></head><body style="font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;max-width:720px;margin:32px auto;line-height:1.55;color:#23201c;background:#faf8f4;"><h1>📄 StatCraft / crates/statcraft_syntax/src/commands/mod.rs</h1><h1>📄 mod.rs</h1><p>Path: `crates/statcraft_syntax/src/commands/mod.rs` · 93 lines of code<br>Belongs to project: [[📦 StatCraft (Overview) | 📦 StatCraft (Overview)]]</p><hr><p style="color:#8a8175;font-size:12px">Exported from CapsuleCraft Native · &lt;module-crates_statcraft_syntax_src_commands_mod_rs@capsuleos.local&gt;</p></body></html>
+<!doctype html><html><head><meta charset="utf-8"><meta name="generator" content="CapsuleCraft Native"></head><body style="font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;max-width:720px;margin:32px auto;line-height:1.55;color:#23201c;background:#faf8f4;"><h1>📄 StatCraft / crates/statcraft_syntax/src/commands/mod.rs</h1><h1>📄 mod.rs</h1><p>Path: `crates/statcraft_syntax/src/commands/mod.rs` · 95 lines of code<br>Belongs to project: [[📦 StatCraft (Overview) | 📦 StatCraft (Overview)]]</p><hr><p style="color:#8a8175;font-size:12px">Exported from CapsuleCraft Native · &lt;module-crates_statcraft_syntax_src_commands_mod_rs@capsuleos.local&gt;</p></body></html>
 
 --BOUNDARY_PAYLOAD_124PL0ZFP8--
 --BOUNDARY_ROOT_1GQBDT9FML--

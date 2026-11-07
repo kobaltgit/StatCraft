@@ -6,13 +6,14 @@ members = [
     "crates/statcraft_algo",
     "crates/statcraft_syntax",
     "crates/statcraft_reporting",
+    "crates/statcraft_bridge",
     "crates/statcraft_app",
     "xtask",
 ]
 resolver = "2"
 
 [workspace.package]
-version = "0.2.2"
+version = "0.3.0"
 edition = "2021"
 license = "MIT OR Apache-2.0"
 authors = ["StatCraft Contributors"]

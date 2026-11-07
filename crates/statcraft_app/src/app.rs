@@ -1,11 +1,12 @@
-use crate::app_session::PendingSessionAction;
+﻿use crate::app_session::PendingSessionAction;
+use crate::bridge_service::BridgeService;
 use crate::dialogs::ConfirmSaveDialogState;
 use crate::dialogs::{
     AdpDialogState, AutoRecodeDialogState, ComputeDialogState, CorrelationsDialogState,
     CountValuesDialogState, CrosstabsDialogState, DateTimeDialogState, DescriptivesDialogState,
     DummyDialogState, FactorDialogState, FrequenciesDialogState,
     IndependentSamplesTTestDialogState, KruskalWallisDialogState, LinearRegressionDialogState,
-    MeansDialogState, MissingValuesDialogState, NonparamRelatedDialogState,
+    McpBridgeDialogState, MeansDialogState, MissingValuesDialogState, NonparamRelatedDialogState,
     NonparamTwoSampleDialogState, OneSampleTTestDialogState, OneWayAnovaDialogState,
     OptimalBinningDialogState, PairedSamplesTTestDialogState, ProgrammabilityDialogState,
     RandomSeedDialogState, RankCasesDialogState, RecodeDialogState, ReliabilityDialogState,
@@ -39,6 +40,8 @@ pub enum Tab {
 }
 
 pub use crate::status_message::StatusMessage;
+
+pub const STORAGE_KEY_THEME: &str = "statcraft_theme";
 
 pub struct StatCraftApp {
     pub dataset: Option<DataSet>,
@@ -84,6 +87,8 @@ pub struct StatCraftApp {
     pub means_dialog_state: MeansDialogState,
     pub programmability_dialog_state: ProgrammabilityDialogState,
     pub random_seed_dialog_state: RandomSeedDialogState,
+    pub mcp_bridge_dialog_state: McpBridgeDialogState,
+    pub bridge_service: BridgeService,
     pub pending_variable_action: VariableViewAction,
     pub status_message: StatusMessage,
     pub toolbar_position: ToolbarPosition,
@@ -94,7 +99,12 @@ pub struct StatCraftApp {
     pub confirm_save_dialog_state: ConfirmSaveDialogState,
     pub pending_session_action: Option<PendingSessionAction>,
     pub saved_checkpoint: Option<crate::app_session::SavedCheckpoint>,
+    pub theme_mode: crate::theme::ThemeMode,
+    applied_dark_mode: Option<bool>,
 }
+
+pub const STORAGE_KEY_LANGUAGE: &str = "statcraft_language";
+pub const STORAGE_KEY_BRIDGE_AUTOSTART: &str = "statcraft_mcp_bridge_autostart";
 
 impl StatCraftApp {
     pub fn new_headless() -> Self {
@@ -147,6 +157,8 @@ impl StatCraftApp {
             means_dialog_state: MeansDialogState::default(),
             programmability_dialog_state: ProgrammabilityDialogState::default(),
             random_seed_dialog_state: RandomSeedDialogState::default(),
+            mcp_bridge_dialog_state: McpBridgeDialogState::default(),
+            bridge_service: BridgeService::new(false),
             pending_variable_action: VariableViewAction::None,
             status_message: StatusMessage::Ready,
             toolbar_position: ToolbarPosition::Top,
@@ -157,17 +169,61 @@ impl StatCraftApp {
             confirm_save_dialog_state: ConfirmSaveDialogState::default(),
             pending_session_action: None,
             saved_checkpoint: None,
+            theme_mode: crate::theme::ThemeMode::Dark,
+            applied_dark_mode: None,
         }
     }
 
     pub fn new(cc: &eframe::CreationContext<'_>) -> Self {
         egui_extras::install_image_loaders(&cc.egui_ctx);
         let mut app = Self::new_headless();
+
+        if let Some(saved_lang) = cc.storage.and_then(|s| s.get_string(STORAGE_KEY_LANGUAGE)) {
+            statcraft_i18n::set_language(&saved_lang);
+        }
+
+        if let Some(saved_theme) = cc
+            .storage
+            .and_then(|s| s.get_string(STORAGE_KEY_THEME))
+            .and_then(|raw| serde_json::from_str::<crate::theme::ThemeMode>(&raw).ok())
+        {
+            app.theme_mode = saved_theme;
+        }
+
+        let is_dark = match app.theme_mode {
+            crate::theme::ThemeMode::Dark => true,
+            crate::theme::ThemeMode::Light => false,
+            crate::theme::ThemeMode::System => cc
+                .egui_ctx
+                .system_theme()
+                .map(|t| t == egui::Theme::Dark)
+                .unwrap_or(true),
+        };
+        crate::theme::set_dark_mode(is_dark);
+        cc.egui_ctx.set_visuals(if is_dark {
+            egui::Visuals::dark()
+        } else {
+            egui::Visuals::light()
+        });
+        app.applied_dark_mode = Some(is_dark);
+
         app.recent_files = cc
             .storage
             .and_then(|s| s.get_string(RecentFiles::STORAGE_KEY))
             .and_then(|s| serde_json::from_str::<RecentFiles>(&s).ok())
             .unwrap_or_else(RecentFiles::load_default);
+
+        let bridge_autostart = cc
+            .storage
+            .and_then(|s| s.get_string(STORAGE_KEY_BRIDGE_AUTOSTART))
+            .and_then(|s| s.parse::<bool>().ok())
+            .unwrap_or(true);
+
+        app.bridge_service.set_autostart(bridge_autostart);
+        if bridge_autostart {
+            app.bridge_service.start();
+        }
+
         app
     }
 
@@ -230,6 +286,35 @@ impl<'a> TabViewer for StatCraftTabViewer<'a> {
 
 impl eframe::App for StatCraftApp {
     fn update(&mut self, ctx: &egui::Context, _frame: &mut eframe::Frame) {
+        let is_dark = match self.theme_mode {
+            crate::theme::ThemeMode::Dark => true,
+            crate::theme::ThemeMode::Light => false,
+            crate::theme::ThemeMode::System => ctx
+                .system_theme()
+                .map(|t| t == egui::Theme::Dark)
+                .unwrap_or(true),
+        };
+        if self.applied_dark_mode != Some(is_dark) {
+            self.applied_dark_mode = Some(is_dark);
+            crate::theme::set_dark_mode(is_dark);
+            ctx.set_visuals(if is_dark {
+                egui::Visuals::dark()
+            } else {
+                egui::Visuals::light()
+            });
+        }
+
+        self.bridge_service.process_requests(
+            &mut self.dataset,
+            &mut self.command_bus,
+            &mut self.output_view_state,
+            &mut self.dock_state,
+        );
+
+        if self.bridge_service.is_active() {
+            ctx.request_repaint_after(std::time::Duration::from_millis(50));
+        }
+
         let is_maximized = ctx.input(|i| i.viewport().maximized.unwrap_or(false));
         render_resize_zones(ctx, is_maximized);
 
@@ -290,7 +375,7 @@ impl eframe::App for StatCraftApp {
         // 1. Top Custom Title Bar (CSD)
         TopBottomPanel::top("title_bar")
             .exact_height(CAPTION_BAR_HEIGHT)
-            .frame(egui::Frame::none().fill(crate::theme::Tokens::BG_HEADER))
+            .frame(egui::Frame::none().fill(crate::theme::Tokens::bg_header()))
             .show(ctx, |ui| {
                 let bar_rect = ui.max_rect();
                 let center_x = bar_rect.center().x;
@@ -373,27 +458,27 @@ impl eframe::App for StatCraftApp {
                 let galley = ui.painter().layout_no_wrap(
                     project_title.clone(),
                     font_id.clone(),
-                    crate::theme::Tokens::TEXT_MUTED,
+                    crate::theme::Tokens::text_muted(),
                 );
                 let text_w = galley.size().x;
 
                 if let Some(x) = title_x(center_x, menus_end_x, controls_start_x, text_w) {
                     let text_pos = egui::pos2(x, bar_rect.center().y - galley.size().y / 2.0);
                     ui.painter()
-                        .galley(text_pos, galley, crate::theme::Tokens::TEXT_MUTED);
+                        .galley(text_pos, galley, crate::theme::Tokens::text_muted());
                 } else if controls_start_x - menus_end_x > 80.0 {
                     let avail = controls_start_x - menus_end_x - 24.0;
                     let mut job = egui::text::LayoutJob::simple_singleline(
                         project_title,
                         font_id,
-                        crate::theme::Tokens::TEXT_MUTED,
+                        crate::theme::Tokens::text_muted(),
                     );
                     job.wrap = egui::text::TextWrapping::truncate_at_width(avail);
                     let g = ui.painter().layout_job(job);
                     let text_pos =
                         egui::pos2(menus_end_x + 12.0, bar_rect.center().y - g.size().y / 2.0);
                     ui.painter()
-                        .galley(text_pos, g, crate::theme::Tokens::TEXT_MUTED);
+                        .galley(text_pos, g, crate::theme::Tokens::text_muted());
                 }
             });
 
@@ -416,7 +501,7 @@ impl eframe::App for StatCraftApp {
                 .exact_height(32.0)
                 .frame(
                     egui::Frame::none()
-                        .fill(crate::theme::Tokens::BG_PANEL)
+                        .fill(crate::theme::Tokens::bg_panel())
                         .inner_margin(egui::Margin::symmetric(4.0, 3.0)),
                 )
                 .show(ctx, |ui| {
@@ -469,7 +554,7 @@ impl eframe::App for StatCraftApp {
                 .resizable(false)
                 .frame(
                     egui::Frame::none()
-                        .fill(crate::theme::Tokens::BG_PANEL)
+                        .fill(crate::theme::Tokens::bg_panel())
                         .inner_margin(egui::Margin::symmetric(4.0, 4.0)),
                 )
                 .show(ctx, |ui| {
@@ -596,8 +681,10 @@ impl eframe::App for StatCraftApp {
                     &mut self.command_bus,
                     &mut self.output_view_state,
                 ) {
-                    Ok(count) => {
-                        self.status_message = StatusMessage::SyntaxExecuted { count };
+                    Ok(outcome) => {
+                        self.status_message = StatusMessage::SyntaxExecuted {
+                            count: outcome.count,
+                        };
                     }
                     Err(e) => {
                         self.status_message = StatusMessage::Error(e.to_string());
@@ -611,8 +698,10 @@ impl eframe::App for StatCraftApp {
                     &mut self.command_bus,
                     &mut self.output_view_state,
                 ) {
-                    Ok(count) => {
-                        self.status_message = StatusMessage::SyntaxExecuted { count };
+                    Ok(outcome) => {
+                        self.status_message = StatusMessage::SyntaxExecuted {
+                            count: outcome.count,
+                        };
                     }
                     Err(e) => {
                         self.status_message = StatusMessage::Error(e.to_string());
@@ -640,5 +729,13 @@ impl eframe::App for StatCraftApp {
         if let Ok(json_str) = serde_json::to_string(&self.recent_files) {
             storage.set_string(RecentFiles::STORAGE_KEY, json_str);
         }
+        storage.set_string(STORAGE_KEY_LANGUAGE, statcraft_i18n::current_language());
+        if let Ok(theme_str) = serde_json::to_string(&self.theme_mode) {
+            storage.set_string(STORAGE_KEY_THEME, theme_str);
+        }
+        storage.set_string(
+            STORAGE_KEY_BRIDGE_AUTOSTART,
+            self.bridge_service.autostart().to_string(),
+        );
     }
 }

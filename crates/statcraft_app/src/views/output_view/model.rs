@@ -97,6 +97,14 @@ pub enum OutputItemKind {
         title: String,
         content: String,
     },
+    GenericReport {
+        command_id: String,
+        status: String,
+        summary: String,
+        key_values: Vec<(String, String)>,
+        table_headers: Vec<String>,
+        table_rows: Vec<Vec<String>>,
+    },
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]

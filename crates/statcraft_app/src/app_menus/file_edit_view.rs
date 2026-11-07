@@ -326,9 +326,30 @@ impl StatCraftApp {
                     render_menu_item(ui, t!("menu-view-zoom-reset"), MenuItemStatus::InDev);
                     ui.separator();
                     ui.menu_button(t!("menu-view-theme"), |ui| {
-                        render_menu_item(ui, t!("menu-view-theme-light"), MenuItemStatus::InDev);
-                        render_menu_item(ui, t!("menu-view-theme-dark"), MenuItemStatus::InDev);
-                        render_menu_item(ui, t!("menu-view-theme-system"), MenuItemStatus::InDev);
+                        let is_light = self.theme_mode == crate::theme::ThemeMode::Light;
+                        if ui
+                            .selectable_label(is_light, t!("menu-view-theme-light"))
+                            .clicked()
+                        {
+                            self.theme_mode = crate::theme::ThemeMode::Light;
+                            ui.close_menu();
+                        }
+                        let is_dark = self.theme_mode == crate::theme::ThemeMode::Dark;
+                        if ui
+                            .selectable_label(is_dark, t!("menu-view-theme-dark"))
+                            .clicked()
+                        {
+                            self.theme_mode = crate::theme::ThemeMode::Dark;
+                            ui.close_menu();
+                        }
+                        let is_sys = self.theme_mode == crate::theme::ThemeMode::System;
+                        if ui
+                            .selectable_label(is_sys, t!("menu-view-theme-system"))
+                            .clicked()
+                        {
+                            self.theme_mode = crate::theme::ThemeMode::System;
+                            ui.close_menu();
+                        }
                     });
                     ui.separator();
                     // Language Submenu

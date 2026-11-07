@@ -1,4 +1,4 @@
-use super::common::{
+﻿use super::common::{
     format_var_display, render_variable_list_panel, ActionBarAction, DialogActionBar, DialogShell,
     GroupBox, ListEvent, SubdialogAction, SubdialogActionBar, SubdialogSidebar, TransferButton,
     VariableListItem,
@@ -206,8 +206,8 @@ pub fn render_linear_regression_dialog(
 
                     let dep_box_size = vec2(170.0, 26.0);
                     egui::Frame::group(ui.style())
-                        .fill(Tokens::BG_PANEL)
-                        .stroke(egui::Stroke::new(1.0_f32, Tokens::BORDER))
+                        .fill(Tokens::bg_panel())
+                        .stroke(egui::Stroke::new(1.0_f32, Tokens::border()))
                         .show(ui, |ui| {
                             ui.set_min_size(dep_box_size);
                             ui.set_max_size(dep_box_size);
@@ -227,7 +227,7 @@ pub fn render_linear_regression_dialog(
                                 }
                             } else {
                                 ui.colored_label(
-                                    Tokens::TEXT_MUTED,
+                                    Tokens::text_muted(),
                                     t!("dialog-regression-placeholder-dep"),
                                 );
                             }

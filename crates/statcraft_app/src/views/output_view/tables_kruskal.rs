@@ -1,4 +1,4 @@
-use super::model::{
+﻿use super::model::{
     OutputItem, OutputItemKind, OutputNotes, OutputProcedure, OutputViewerState, SelectedTarget,
 };
 use super::tables_common::{
@@ -110,9 +110,9 @@ pub fn render_spss_kruskal_wallis_tables(
 
                     for (r_idx, res) in results.iter().enumerate() {
                         let bg = if r_idx % 2 == 0 {
-                            Tokens::BG_ROW_EVEN
+                            Tokens::bg_row_even()
                         } else {
-                            Tokens::BG_ROW_ODD
+                            Tokens::bg_row_odd()
                         };
 
                         for (g_idx, group) in res.groups.iter().enumerate() {
@@ -165,21 +165,21 @@ pub fn render_spss_kruskal_wallis_tables(
                     for res in results {
                         row_h.push((format_opt(Some(res.kruskal_wallis_h)), Align2::RIGHT_CENTER));
                     }
-                    render_data_row(ui, &cols_stats, &row_h, row_height, Tokens::BG_ROW_EVEN);
+                    render_data_row(ui, &cols_stats, &row_h, row_height, Tokens::bg_row_even());
 
                     // Row: df
                     let mut row_df = vec![(t!("output-row-df"), Align2::LEFT_CENTER)];
                     for res in results {
                         row_df.push((format!("{}", res.df), Align2::RIGHT_CENTER));
                     }
-                    render_data_row(ui, &cols_stats, &row_df, row_height, Tokens::BG_ROW_ODD);
+                    render_data_row(ui, &cols_stats, &row_df, row_height, Tokens::bg_row_odd());
 
                     // Row: Asymp. Sig.
                     let mut row_p = vec![(t!("output-row-asymp-sig"), Align2::LEFT_CENTER)];
                     for res in results {
                         row_p.push((format_sig(Some(res.asymp_sig)), Align2::RIGHT_CENTER));
                     }
-                    render_data_row(ui, &cols_stats, &row_p, row_height, Tokens::BG_ROW_EVEN);
+                    render_data_row(ui, &cols_stats, &row_p, row_height, Tokens::bg_row_even());
                 });
             });
 
@@ -187,7 +187,7 @@ pub fn render_spss_kruskal_wallis_tables(
         ui.label(
             egui::RichText::new(t!("output-footnote-kruskal-a"))
                 .size(11.0)
-                .color(Tokens::TEXT_MUTED),
+                .color(Tokens::text_muted()),
         );
         ui.label(
             egui::RichText::new(format!(
@@ -196,7 +196,7 @@ pub fn render_spss_kruskal_wallis_tables(
                 grouping_var
             ))
             .size(11.0)
-            .color(Tokens::TEXT_MUTED),
+            .color(Tokens::text_muted()),
         );
         ui.add_space(16.0_f32);
     });

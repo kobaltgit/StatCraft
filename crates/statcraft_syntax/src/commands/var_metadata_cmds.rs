@@ -58,13 +58,47 @@ impl EngineCommand for VarSetValueLabelsCommand {
             .as_mut()
             .ok_or_else(|| CommandError::Disabled(self.id().to_string()))?;
 
-        let col_index = params
-            .get("col_index")
-            .and_then(|v| v.as_u64())
-            .ok_or_else(|| CommandError::InvalidParams {
+        if let Some(assignments) = params.get("assignments").and_then(|v| v.as_array()) {
+            for item in assignments {
+                let col_idx = if let Some(idx) = item.get("col_index").and_then(|v| v.as_u64()) {
+                    idx as usize
+                } else if let Some(name) = item.get("var_name").and_then(|v| v.as_str()) {
+                    match ds.dictionary.find_index(name) {
+                        Some(i) => i,
+                        None => continue,
+                    }
+                } else {
+                    continue;
+                };
+
+                if let Some(labels_map) = item.get("labels").and_then(|v| v.as_object()) {
+                    let mut new_labels = ValueLabels::new();
+                    for (code, lbl) in labels_map {
+                        if let Some(s) = lbl.as_str() {
+                            new_labels.insert(code, s);
+                        }
+                    }
+                    ds.dictionary.set_value_labels(col_idx, new_labels)?;
+                }
+            }
+            return Ok(json!({ "status": "success" }));
+        }
+
+        let col_index = if let Some(v) = params.get("col_index").and_then(|v| v.as_u64()) {
+            v as usize
+        } else if let Some(name) = params.get("var_name").and_then(|v| v.as_str()) {
+            ds.dictionary
+                .find_index(name)
+                .ok_or_else(|| CommandError::InvalidParams {
+                    id: self.id(),
+                    reason: format!("Variable '{}' not found", name),
+                })?
+        } else {
+            return Err(CommandError::InvalidParams {
                 id: self.id(),
-                reason: "Missing 'col_index'".to_string(),
-            })? as usize;
+                reason: "Missing 'col_index' or 'var_name'".to_string(),
+            });
+        };
 
         let labels_map = params
             .get("labels")
@@ -182,13 +216,63 @@ impl EngineCommand for VarSetMissingValuesCommand {
             .as_mut()
             .ok_or_else(|| CommandError::Disabled(self.id().to_string()))?;
 
-        let col_index = params
-            .get("col_index")
-            .and_then(|v| v.as_u64())
-            .ok_or_else(|| CommandError::InvalidParams {
+        if let Some(assignments) = params.get("assignments").and_then(|v| v.as_array()) {
+            for item in assignments {
+                let col_idx = if let Some(idx) = item.get("col_index").and_then(|v| v.as_u64()) {
+                    idx as usize
+                } else if let Some(name) = item.get("var_name").and_then(|v| v.as_str()) {
+                    match ds.dictionary.find_index(name) {
+                        Some(i) => i,
+                        None => continue,
+                    }
+                } else {
+                    continue;
+                };
+
+                let discrete: Vec<String> = item
+                    .get("discrete")
+                    .and_then(|v| v.as_array())
+                    .map(|arr| {
+                        arr.iter()
+                            .filter_map(|x| x.as_str().map(|s| s.trim().to_string()))
+                            .collect()
+                    })
+                    .unwrap_or_default();
+
+                let range = item
+                    .get("range")
+                    .and_then(|v| v.as_array())
+                    .and_then(|arr| {
+                        if arr.len() == 2 {
+                            let low = arr[0].as_f64()?;
+                            let high = arr[1].as_f64()?;
+                            Some((low, high))
+                        } else {
+                            None
+                        }
+                    });
+
+                ds.dictionary
+                    .set_missing_values(col_idx, MissingValues { discrete, range })?;
+            }
+            return Ok(json!({ "status": "success" }));
+        }
+
+        let col_index = if let Some(v) = params.get("col_index").and_then(|v| v.as_u64()) {
+            v as usize
+        } else if let Some(name) = params.get("var_name").and_then(|v| v.as_str()) {
+            ds.dictionary
+                .find_index(name)
+                .ok_or_else(|| CommandError::InvalidParams {
+                    id: self.id(),
+                    reason: format!("Variable '{}' not found", name),
+                })?
+        } else {
+            return Err(CommandError::InvalidParams {
                 id: self.id(),
-                reason: "Missing 'col_index'".to_string(),
-            })? as usize;
+                reason: "Missing 'col_index' or 'var_name'".to_string(),
+            });
+        };
 
         let var_meta = ds
             .dictionary

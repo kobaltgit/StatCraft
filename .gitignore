@@ -11,3 +11,5 @@ Thumbs.db
 crates/statcraft_app/.statcraft
 *.pdf
 /.gemini
+scratch/
+test_data/Dataset.stc

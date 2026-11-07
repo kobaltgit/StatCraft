@@ -1,4 +1,4 @@
-use super::model::{
+﻿use super::model::{
     OutputItem, OutputItemKind, OutputNotes, OutputProcedure, OutputViewerState, SelectedTarget,
 };
 use super::tables_common::{adjust_widths, format_opt, render_data_row, render_header_row};
@@ -131,19 +131,19 @@ fn render_case_processing_table(ui: &mut Ui, res: &ReliabilityResult) {
                         t!("output-reliability-row-valid"),
                         res.case_processing.n_valid.to_string(),
                         format!("{:.1}", res.case_processing.percent_valid),
-                        Tokens::BG_ROW_EVEN,
+                        Tokens::bg_row_even(),
                     ),
                     (
                         t!("output-reliability-row-excluded"),
                         res.case_processing.n_excluded.to_string(),
                         format!("{:.1}", res.case_processing.percent_excluded),
-                        Tokens::BG_ROW_ODD,
+                        Tokens::bg_row_odd(),
                     ),
                     (
                         t!("output-col-total"),
                         res.case_processing.n_total.to_string(),
                         format!("{:.1}", res.case_processing.percent_total),
-                        Tokens::BG_ROW_EVEN,
+                        Tokens::bg_row_even(),
                     ),
                 ];
 
@@ -193,7 +193,7 @@ fn render_reliability_stats_table(ui: &mut Ui, res: &ReliabilityResult) {
                         Align2::CENTER_CENTER,
                     ),
                 ];
-                render_data_row(ui, &cols, &vals, row_height, Tokens::BG_ROW_EVEN);
+                render_data_row(ui, &cols, &vals, row_height, Tokens::bg_row_even());
             });
         });
 }
@@ -218,9 +218,9 @@ fn render_item_stats_table(ui: &mut Ui, res: &ReliabilityResult) {
                 render_header_row(ui, &cols, row_height);
                 for (idx, item) in res.item_stats.iter().enumerate() {
                     let bg = if idx % 2 == 0 {
-                        Tokens::BG_ROW_EVEN
+                        Tokens::bg_row_even()
                     } else {
-                        Tokens::BG_ROW_ODD
+                        Tokens::bg_row_odd()
                     };
                     let vals: Vec<(String, Align2)> = vec![
                         (item.item_name.clone(), Align2::LEFT_CENTER),
@@ -255,9 +255,9 @@ fn render_item_total_stats_table(ui: &mut Ui, res: &ReliabilityResult) {
                 render_header_row(ui, &cols, row_height);
                 for (idx, it) in res.item_total_stats.iter().enumerate() {
                     let bg = if idx % 2 == 0 {
-                        Tokens::BG_ROW_EVEN
+                        Tokens::bg_row_even()
                     } else {
-                        Tokens::BG_ROW_ODD
+                        Tokens::bg_row_odd()
                     };
                     let vals: Vec<(String, Align2)> = vec![
                         (it.item_name.clone(), Align2::LEFT_CENTER),
@@ -308,7 +308,7 @@ fn render_scale_stats_table(ui: &mut Ui, s: &statcraft_algo::ScaleStatistics) {
                     (format!("{:.4}", s.std_dev), Align2::RIGHT_CENTER),
                     (s.n_of_items.to_string(), Align2::CENTER_CENTER),
                 ];
-                render_data_row(ui, &cols, &vals, row_height, Tokens::BG_ROW_EVEN);
+                render_data_row(ui, &cols, &vals, row_height, Tokens::bg_row_even());
             });
         });
 }

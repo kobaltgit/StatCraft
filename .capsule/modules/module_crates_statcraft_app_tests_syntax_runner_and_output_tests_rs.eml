@@ -1,0 +1,59 @@
+From: CapsuleCraft Code Ingest <system@capsulecraft.local>
+To: Vault <vault@capsuleos.local>
+Subject: 📄 StatCraft / crates/statcraft_app/tests/syntax_runner_and_output_tests.rs
+Date: Sat, 7 Nov 2026 13:04:33 +0000
+Message-ID: <module-crates_statcraft_app_tests_syntax_runner_and_output_tests_rs@capsuleos.local>
+In-Reply-To: <subsystem-statcraft-crates_statcraft_app@capsuleos.local>
+X-Capsule-Page-Parent: <subsystem-statcraft-crates_statcraft_app@capsuleos.local>
+References: <project-index-statcraft@capsuleos.local> <subsystem-statcraft-crates_statcraft_app@capsuleos.local>
+X-Capsule-Tags: project, statcraft, module
+X-Capsule-Status: Active
+MIME-Version: 1.0
+Content-Type: multipart/mixed; boundary="BOUNDARY_ROOT_1RRKKZDH3I"
+
+--BOUNDARY_ROOT_1RRKKZDH3I
+Content-Type: multipart/alternative; boundary="BOUNDARY_PAYLOAD_17XNWR3H6S"
+
+--BOUNDARY_PAYLOAD_17XNWR3H6S
+Content-Type: application/json; name="canvas_state.json"
+Content-Disposition: inline; filename="canvas_state.json"
+
+{
+  "version": "1.0",
+  "generator": "CapsuleCraft Native egui prototype (Zero-DB Pure-MIME)",
+  "messageId": "<module-crates_statcraft_app_tests_syntax_runner_and_output_tests_rs@capsuleos.local>",
+  "subject": "📄 StatCraft / crates/statcraft_app/tests/syntax_runner_and_output_tests.rs",
+  "tags": [
+    "project",
+    "statcraft",
+    "module"
+  ],
+  "blocks": [
+    {
+      "data": {
+        "level": 1,
+        "text": "📄 syntax_runner_and_output_tests.rs"
+      },
+      "id": "blk_native_heading_1794056673852455000",
+      "managed_by": "project_parser",
+      "type": "heading"
+    },
+    {
+      "data": {
+        "text": "Path: `crates/statcraft_app/tests/syntax_runner_and_output_tests.rs` · 76 lines of code\nBelongs to project: [[📦 StatCraft (Overview) | 📦 StatCraft (Overview)]]"
+      },
+      "id": "blk_native_paragraph_1794056673852457100",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    }
+  ]
+}
+
+--BOUNDARY_PAYLOAD_17XNWR3H6S
+Content-Type: text/html; charset="utf-8"
+Content-Disposition: inline
+
+<!doctype html><html><head><meta charset="utf-8"><meta name="generator" content="CapsuleCraft Native"></head><body style="font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;max-width:720px;margin:32px auto;line-height:1.55;color:#23201c;background:#faf8f4;"><h1>📄 StatCraft / crates/statcraft_app/tests/syntax_runner_and_output_tests.rs</h1><h1>📄 syntax_runner_and_output_tests.rs</h1><p>Path: `crates/statcraft_app/tests/syntax_runner_and_output_tests.rs` · 76 lines of code<br>Belongs to project: [[📦 StatCraft (Overview) | 📦 StatCraft (Overview)]]</p><hr><p style="color:#8a8175;font-size:12px">Exported from CapsuleCraft Native · &lt;module-crates_statcraft_app_tests_syntax_runner_and_output_tests_rs@capsuleos.local&gt;</p></body></html>
+
+--BOUNDARY_PAYLOAD_17XNWR3H6S--
+--BOUNDARY_ROOT_1RRKKZDH3I--

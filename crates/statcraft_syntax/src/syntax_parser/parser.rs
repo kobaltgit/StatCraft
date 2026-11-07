@@ -72,8 +72,25 @@ impl SyntaxParser {
 
         let second = words.next();
         let two_word = match (first.to_ascii_uppercase().as_str(), second) {
+            ("RUN", Some(s)) if s.eq_ignore_ascii_case("COMMAND") => Some("RUN COMMAND"),
             ("SORT", Some(s)) if s.eq_ignore_ascii_case("CASES") => Some("SORT CASES"),
             ("SPLIT", Some(s)) if s.eq_ignore_ascii_case("FILE") => Some("SPLIT FILE"),
+            ("VARIABLE", Some(s)) if s.eq_ignore_ascii_case("LEVEL") => Some("VARIABLE LEVEL"),
+            ("VARIABLE", Some(s))
+                if s.eq_ignore_ascii_case("LABELS") || s.eq_ignore_ascii_case("LABEL") =>
+            {
+                Some("VARIABLE LABELS")
+            }
+            ("VALUE", Some(s))
+                if s.eq_ignore_ascii_case("LABELS") || s.eq_ignore_ascii_case("LABEL") =>
+            {
+                Some("VALUE LABELS")
+            }
+            ("MISSING", Some(s))
+                if s.eq_ignore_ascii_case("VALUES") || s.eq_ignore_ascii_case("VALUE") =>
+            {
+                Some("MISSING VALUES")
+            }
             _ => None,
         };
 

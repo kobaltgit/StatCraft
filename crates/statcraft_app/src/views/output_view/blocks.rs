@@ -9,9 +9,10 @@ pub fn render_log_block(ui: &mut Ui, sps: &str) {
     let height = (lines_count as f32 * 16.0 + 12.0).max(24.0);
 
     let (rect, _) = ui.allocate_exact_size(vec2(block_w, height), Sense::hover());
-    ui.painter().rect_filled(rect, 2.0_f32, Tokens::BG_ROW_EVEN);
     ui.painter()
-        .rect_stroke(rect, 2.0_f32, Stroke::new(1.0_f32, Tokens::BORDER));
+        .rect_filled(rect, 2.0_f32, Tokens::bg_row_even());
+    ui.painter()
+        .rect_stroke(rect, 2.0_f32, Stroke::new(1.0_f32, Tokens::border()));
 
     let mut y = rect.min.y + 6.0;
     for line in sps.lines() {
@@ -20,7 +21,7 @@ pub fn render_log_block(ui: &mut Ui, sps: &str) {
             Align2::LEFT_TOP,
             line,
             FontId::monospace(11.0),
-            Tokens::TEXT_PRIMARY,
+            Tokens::text_primary(),
         );
         y += 16.0;
     }
@@ -44,27 +45,27 @@ pub fn render_notes_block(ui: &mut Ui, notes: &OutputNotes) {
                 ui.spacing_mut().item_spacing = vec2(0.0, 0.0);
 
                 let (r1, _) = ui.allocate_exact_size(vec2(label_w, row_h), Sense::hover());
-                ui.painter().rect_filled(r1, 0.0_f32, Tokens::BG_HEADER);
+                ui.painter().rect_filled(r1, 0.0_f32, Tokens::bg_header());
                 ui.painter()
-                    .rect_stroke(r1, 0.0_f32, Stroke::new(1.0_f32, Tokens::BORDER));
+                    .rect_stroke(r1, 0.0_f32, Stroke::new(1.0_f32, Tokens::border()));
                 ui.painter().text(
                     pos2(r1.min.x + 6.0, r1.center().y),
                     Align2::LEFT_CENTER,
                     *label,
                     FontId::proportional(11.0),
-                    Tokens::TEXT_MUTED,
+                    Tokens::text_muted(),
                 );
 
                 let (r2, _) = ui.allocate_exact_size(vec2(val_w, row_h), Sense::hover());
-                ui.painter().rect_filled(r2, 0.0_f32, Tokens::BG_ROW_EVEN);
+                ui.painter().rect_filled(r2, 0.0_f32, Tokens::bg_row_even());
                 ui.painter()
-                    .rect_stroke(r2, 0.0_f32, Stroke::new(1.0_f32, Tokens::BORDER));
+                    .rect_stroke(r2, 0.0_f32, Stroke::new(1.0_f32, Tokens::border()));
                 ui.painter().text(
                     pos2(r2.min.x + 6.0, r2.center().y),
                     Align2::LEFT_CENTER,
                     val,
                     FontId::proportional(11.0),
-                    Tokens::TEXT_PRIMARY,
+                    Tokens::text_primary(),
                 );
             });
         }

@@ -1,4 +1,4 @@
-use super::common::{
+﻿use super::common::{
     format_var_display, render_variable_list_panel, ActionBarAction, DialogActionBar, DialogShell,
     ListEvent, TransferButton, VariableListItem,
 };
@@ -211,8 +211,8 @@ pub fn render_compute_dialog(
                     .collect();
 
                 egui::Frame::canvas(ui.style())
-                    .fill(crate::theme::Tokens::BG_PANEL)
-                    .stroke(Stroke::new(1.0_f32, crate::theme::Tokens::BORDER))
+                    .fill(crate::theme::Tokens::bg_panel())
+                    .stroke(Stroke::new(1.0_f32, crate::theme::Tokens::border()))
                     .show(ui, |ui| {
                         ui.set_min_size(vec2(130.0, 195.0));
                         ui.set_max_size(vec2(130.0, 195.0));

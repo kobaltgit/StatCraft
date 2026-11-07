@@ -302,13 +302,11 @@ fn map_oneway(
     Ok(Some((
         "stat.anova.oneway",
         json!({
-            "dep_vars": dep_vars,
+            "dependent_vars": dep_vars,
             "factor_var": factor_var,
             "ci": ci,
-            "options": {
-                "descriptives": desc,
-                "homogeneity": homog
-            }
+            "descriptives": desc,
+            "homogeneity": homog
         }),
     )))
 }
@@ -379,7 +377,10 @@ fn map_reliability(
     let raw_vars = cmd.subcommand_tokens("VARIABLES").unwrap_or(&[]);
     let vars = SyntaxParser::expand_variables(raw_vars, dataset)?;
 
-    Ok(Some(("stat.scale.reliability", json!({ "vars": vars }))))
+    Ok(Some((
+        "stat.scale.reliability",
+        json!({ "variables": vars }),
+    )))
 }
 
 fn map_factor(
@@ -389,7 +390,7 @@ fn map_factor(
     let raw_vars = cmd.subcommand_tokens("VARIABLES").unwrap_or(&[]);
     let vars = SyntaxParser::expand_variables(raw_vars, dataset)?;
 
-    Ok(Some(("stat.factor", json!({ "vars": vars }))))
+    Ok(Some(("stat.factor", json!({ "variables": vars }))))
 }
 
 fn map_means(
@@ -424,16 +425,14 @@ fn map_means(
         json!({
             "dependent_vars": dep_vars,
             "factor_vars": factor_vars,
-            "options": {
-                "cell_mean": true,
-                "cell_count": true,
-                "cell_stddev": true,
-                "cell_variance": false,
-                "cell_median": false,
-                "cell_min": false,
-                "cell_max": false,
-                "anova": anova
-            }
+            "cell_mean": true,
+            "cell_count": true,
+            "cell_stddev": true,
+            "cell_variance": false,
+            "cell_median": false,
+            "cell_min": false,
+            "cell_max": false,
+            "anova": anova
         }),
     )))
 }

@@ -1,4 +1,4 @@
-use crate::theme::Tokens;
+﻿use crate::theme::Tokens;
 use egui::{pos2, vec2, Align2, FontId, ScrollArea, Sense, Stroke, Ui};
 use statcraft_algo::DescriptivesResult;
 use statcraft_i18n::t;
@@ -40,7 +40,7 @@ pub fn render_spss_descriptives_pivot_table(ui: &mut Ui, results: &[Descriptives
                 .layout_no_wrap(
                     col_name.clone(),
                     FontId::proportional(12.0),
-                    Tokens::TEXT_PRIMARY,
+                    Tokens::text_primary(),
                 )
                 .rect
                 .width();
@@ -59,18 +59,18 @@ pub fn render_spss_descriptives_pivot_table(ui: &mut Ui, results: &[Descriptives
                         for (col_name, width) in &cols {
                             let (rect, _) =
                                 ui.allocate_exact_size(vec2(*width, row_height), Sense::hover());
-                            ui.painter().rect_filled(rect, 0.0_f32, Tokens::BG_HEADER);
+                            ui.painter().rect_filled(rect, 0.0_f32, Tokens::bg_header());
                             ui.painter().rect_stroke(
                                 rect,
                                 0.0_f32,
-                                Stroke::new(1.0_f32, Tokens::BORDER),
+                                Stroke::new(1.0_f32, Tokens::border()),
                             );
                             ui.painter().text(
                                 rect.center(),
                                 Align2::CENTER_CENTER,
                                 col_name,
                                 FontId::proportional(12.0),
-                                Tokens::TEXT_PRIMARY,
+                                Tokens::text_primary(),
                             );
                         }
                     });
@@ -78,9 +78,9 @@ pub fn render_spss_descriptives_pivot_table(ui: &mut Ui, results: &[Descriptives
                     // 2. Data Rows
                     for (row_idx, res) in results.iter().enumerate() {
                         let bg = if row_idx % 2 == 0 {
-                            Tokens::BG_ROW_EVEN
+                            Tokens::bg_row_even()
                         } else {
-                            Tokens::BG_ROW_ODD
+                            Tokens::bg_row_odd()
                         };
 
                         ui.horizontal(|ui| {
@@ -133,7 +133,7 @@ pub fn render_spss_descriptives_pivot_table(ui: &mut Ui, results: &[Descriptives
                                 ui.painter().rect_stroke(
                                     rect,
                                     0.0_f32,
-                                    Stroke::new(1.0_f32, Tokens::BORDER),
+                                    Stroke::new(1.0_f32, Tokens::border()),
                                 );
 
                                 let (align, pos) = if c_idx == 0 {
@@ -150,7 +150,7 @@ pub fn render_spss_descriptives_pivot_table(ui: &mut Ui, results: &[Descriptives
                                     align,
                                     val,
                                     FontId::proportional(11.5),
-                                    Tokens::TEXT_PRIMARY,
+                                    Tokens::text_primary(),
                                 );
                             }
                         });

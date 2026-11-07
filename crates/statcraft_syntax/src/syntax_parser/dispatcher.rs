@@ -1,7 +1,9 @@
 use crate::bus::CommandBus;
 use crate::syntax_parser::error::SyntaxError;
 use crate::syntax_parser::lexer::SyntaxLexer;
-use crate::syntax_parser::mappers::{map_data_command, map_stat_command};
+use crate::syntax_parser::mappers::{
+    map_data_command, map_help_command, map_stat_command, map_variable_command,
+};
 use crate::syntax_parser::parser::{ParsedCommand, SyntaxParser};
 use serde_json::{json, Value};
 use statcraft_core::DataSet;
@@ -15,18 +17,38 @@ impl SyntaxDispatcher {
         dataset: &mut Option<DataSet>,
         bus: &mut CommandBus,
     ) -> Result<Value, SyntaxError> {
-        let mapped = match map_stat_command(cmd, dataset.as_ref())? {
-            Some(pair) => Some(pair),
-            None => map_data_command(cmd, dataset.as_ref())?,
-        };
+        let (cmd_id, params) = if cmd.name == "RUN COMMAND"
+            || cmd.name == "CALL"
+            || cmd.name == "RUN"
+        {
+            parse_run_command_directive(cmd)?
+        } else {
+            let mapped = if let Some(pair) = map_stat_command(cmd, dataset.as_ref())? {
+                Some(pair)
+            } else if let Some(pair) = map_data_command(cmd, dataset.as_ref())? {
+                Some(pair)
+            } else if let Some(pair) = map_variable_command(cmd, dataset.as_ref())? {
+                Some(pair)
+            } else {
+                map_help_command(cmd)?
+            };
 
-        let (cmd_id, params) = match mapped {
-            Some(pair) => pair,
-            None => {
-                return Err(SyntaxError::UnknownCommand {
-                    line: cmd.line_num,
-                    command: cmd.name.clone(),
-                });
+            match mapped {
+                Some((id, params)) => (id.to_string(), params),
+                None => {
+                    // Check if command is registered in bus by syntax keyword
+                    if let Some(reg_cmd) = bus.find_by_syntax_keyword(&cmd.name) {
+                        (reg_cmd.id().to_string(), json!({}))
+                    } else {
+                        let suggestion =
+                            crate::syntax_parser::mappers::help::find_closest_command(&cmd.name);
+                        return Err(SyntaxError::UnknownCommand {
+                            line: cmd.line_num,
+                            command: cmd.name.clone(),
+                            suggestion: suggestion.to_string(),
+                        });
+                    }
+                }
             }
         };
 
@@ -36,7 +58,7 @@ impl SyntaxDispatcher {
         }
 
         // Execute via CommandBus
-        bus.execute(cmd_id, dataset, params)
+        bus.execute(&cmd_id, dataset, params)
             .map_err(|err| SyntaxError::ExecutionFailed {
                 line: cmd.line_num,
                 command: cmd.name.clone(),
@@ -74,6 +96,96 @@ impl SyntaxDispatcher {
 
         Ok(executed)
     }
+}
+
+fn parse_run_command_directive(cmd: &ParsedCommand) -> Result<(String, Value), SyntaxError> {
+    let raw = cmd.raw_text.trim();
+    let stripped = if let Some(rest) = raw.strip_prefix("RUN COMMAND") {
+        rest
+    } else if let Some(rest) = raw.strip_prefix("run command") {
+        rest
+    } else if let Some(rest) = raw.strip_prefix("Run Command") {
+        rest
+    } else if let Some(rest) = raw.strip_prefix("CALL") {
+        rest
+    } else if let Some(rest) = raw.strip_prefix("call") {
+        rest
+    } else if let Some(rest) = raw.strip_prefix("RUN") {
+        rest
+    } else if let Some(rest) = raw.strip_prefix("run") {
+        rest
+    } else {
+        let upper_raw = raw.to_ascii_uppercase();
+        let upper_name = cmd.name.to_ascii_uppercase();
+        if upper_raw.starts_with(&upper_name) {
+            &raw[upper_name.len()..]
+        } else {
+            raw
+        }
+    };
+
+    let trimmed = stripped.trim();
+    if trimmed.is_empty() {
+        return Err(SyntaxError::ExecutionFailed {
+            line: cmd.line_num,
+            command: cmd.name.clone(),
+            reason:
+                "Expected command ID in quotes (e.g. RUN COMMAND \"stat.descriptives\" { ... })."
+                    .to_string(),
+        });
+    }
+
+    let (command_id, rest) = if trimmed.starts_with('"') || trimmed.starts_with('\'') {
+        let quote = trimmed.chars().next().unwrap_or('"');
+        let after_first = &trimmed[quote.len_utf8()..];
+        if let Some(end_idx) = after_first.find(quote) {
+            let id = &after_first[..end_idx];
+            let after_quote = &after_first[end_idx + quote.len_utf8()..];
+            (id.trim().to_string(), after_quote.trim())
+        } else {
+            return Err(SyntaxError::ExecutionFailed {
+                line: cmd.line_num,
+                command: cmd.name.clone(),
+                reason: "Unclosed quote in command ID".to_string(),
+            });
+        }
+    } else {
+        let end_idx = trimmed
+            .find(|c: char| c.is_whitespace() || c == '{' || c == '.')
+            .unwrap_or(trimmed.len());
+        let id = &trimmed[..end_idx];
+        let after_id = &trimmed[end_idx..];
+        (id.trim().to_string(), after_id.trim())
+    };
+
+    if command_id.is_empty() {
+        return Err(SyntaxError::ExecutionFailed {
+            line: cmd.line_num,
+            command: cmd.name.clone(),
+            reason: "Empty command ID in RUN COMMAND directive".to_string(),
+        });
+    }
+
+    let rest_clean = rest.trim().trim_end_matches('.').trim();
+    let params = if rest_clean.is_empty() {
+        json!({})
+    } else {
+        let json_str = if let Some(start_brace) = rest_clean.find('{') {
+            &rest_clean[start_brace..]
+        } else {
+            rest_clean
+        };
+        serde_json::from_str::<Value>(json_str).map_err(|e| SyntaxError::ExecutionFailed {
+            line: cmd.line_num,
+            command: cmd.name.clone(),
+            reason: format!(
+                "Failed to parse JSON parameters for command '{}': {}",
+                command_id, e
+            ),
+        })?
+    };
+
+    Ok((command_id, params))
 }
 
 #[cfg(test)]
@@ -140,5 +252,19 @@ mod tests {
             }
             _ => panic!("Expected UnknownCommand error"),
         }
+    }
+
+    #[test]
+    fn test_run_command_directive_execution() {
+        let mut bus = CommandBus::with_defaults();
+        let mut ds = Some(make_test_dataset());
+
+        let sps = r#"RUN COMMAND "stat.descriptives" { "vars": ["salary"] }."#;
+        let results = SyntaxDispatcher::execute_batch(sps, &mut ds, &mut bus).unwrap();
+        assert_eq!(results.len(), 1);
+        let (_cmd, val) = &results[0];
+        let desc: Vec<DescriptivesResult> = serde_json::from_value(val.clone()).unwrap();
+        assert_eq!(desc.len(), 1);
+        assert_eq!(desc[0].variable, "salary");
     }
 }

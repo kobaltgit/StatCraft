@@ -1,7 +1,7 @@
 From: CapsuleCraft Code Ingest <system@capsulecraft.local>
 To: Vault <vault@capsuleos.local>
 Subject: 📄 StatCraft / crates/statcraft_syntax/src/lib.rs
-Date: Fri, 6 Nov 2026 17:04:15 +0000
+Date: Sat, 7 Nov 2026 13:04:33 +0000
 Message-ID: <module-crates_statcraft_syntax_src_lib_rs@capsuleos.local>
 In-Reply-To: <subsystem-statcraft-crates_statcraft_syntax@capsuleos.local>
 X-Capsule-Page-Parent: <subsystem-statcraft-crates_statcraft_syntax@capsuleos.local>
@@ -34,7 +34,7 @@ Content-Disposition: inline; filename="canvas_state.json"
         "level": 1,
         "text": "📄 lib.rs"
       },
-      "id": "blk_native_heading_1793984655370982700",
+      "id": "blk_native_heading_1794056673861316300",
       "managed_by": "project_parser",
       "type": "heading"
     },
@@ -42,7 +42,7 @@ Content-Disposition: inline; filename="canvas_state.json"
       "data": {
         "text": "Path: `crates/statcraft_syntax/src/lib.rs` · 15 lines of code\nBelongs to project: [[📦 StatCraft (Overview) | 📦 StatCraft (Overview)]]"
       },
-      "id": "blk_native_paragraph_1793984655370985800",
+      "id": "blk_native_paragraph_1794056673861317800",
       "managed_by": "project_parser",
       "type": "paragraph"
     }

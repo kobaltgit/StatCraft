@@ -1,7 +1,7 @@
 From: CapsuleCraft Code Ingest <system@capsulecraft.local>
 To: Vault <vault@capsuleos.local>
 Subject: 📄 StatCraft / crates/statcraft_syntax/src/bus.rs
-Date: Fri, 6 Nov 2026 14:13:33 +0000
+Date: Sat, 7 Nov 2026 13:04:33 +0000
 Message-ID: <module-crates_statcraft_syntax_src_bus_rs@capsuleos.local>
 In-Reply-To: <subsystem-statcraft-crates_statcraft_syntax@capsuleos.local>
 X-Capsule-Page-Parent: <subsystem-statcraft-crates_statcraft_syntax@capsuleos.local>
@@ -34,15 +34,15 @@ Content-Disposition: inline; filename="canvas_state.json"
         "level": 1,
         "text": "📄 bus.rs"
       },
-      "id": "blk_native_heading_1793974413919849100",
+      "id": "blk_native_heading_1794056673857442400",
       "managed_by": "project_parser",
       "type": "heading"
     },
     {
       "data": {
-        "text": "Path: `crates/statcraft_syntax/src/bus.rs` · 239 lines of code\nBelongs to project: [[📦 StatCraft (Overview) | 📦 StatCraft (Overview)]]"
+        "text": "Path: `crates/statcraft_syntax/src/bus.rs` · 273 lines of code\nBelongs to project: [[📦 StatCraft (Overview) | 📦 StatCraft (Overview)]]"
       },
-      "id": "blk_native_paragraph_1793974413919851000",
+      "id": "blk_native_paragraph_1794056673857444200",
       "managed_by": "project_parser",
       "type": "paragraph"
     },
@@ -51,16 +51,16 @@ Content-Disposition: inline; filename="canvas_state.json"
         "level": 2,
         "text": "Public Interface"
       },
-      "id": "blk_native_heading_1793974413919851600",
+      "id": "blk_native_heading_1794056673857444900",
       "managed_by": "project_parser",
       "type": "heading"
     },
     {
       "data": {
-        "code": "pub struct CommandHistoryEntry\npub struct CommandBus\npub fn new() -> Self\npub fn with_defaults() -> Self\npub fn register(&mut self, cmd: Box<dyn EngineCommand>)\npub fn get(&self, id: &str) -> Option<&dyn EngineCommand>\npub fn is_enabled(&self, id: &str, dataset: Option<&DataSet>) -> bool\npub fn execute( &mut self, id: &str, dataset: &mut Option<DataSet>, params: Value, ) -> Result<Value, CommandError>\npub fn undo(&mut self, dataset: &mut Option<DataSet>) -> Result<(), CommandError>\npub fn list_specs(&self) -> Vec<Value>\npub fn history(&self) -> &[CommandHistoryEntry]",
+        "code": "pub struct CommandHistoryEntry\npub struct CommandBus\npub fn new() -> Self\npub fn with_defaults() -> Self\npub fn register(&mut self, cmd: Box<dyn EngineCommand>)\npub fn get(&self, id: &str) -> Option<&dyn EngineCommand>\npub fn is_enabled(&self, id: &str, dataset: Option<&DataSet>) -> bool\npub fn execute( &mut self, id: &str, dataset: &mut Option<DataSet>, params: Value, ) -> Result<Value, CommandError>\npub fn undo(&mut self, dataset: &mut Option<DataSet>) -> Result<(), CommandError>\npub fn list_specs(&self) -> Vec<Value>\npub fn find_by_syntax_keyword(&self, keyword: &str) -> Option<&dyn EngineCommand>\npub fn all_syntax_keywords(&self) -> Vec<(&'static str, &'static str)>\npub fn full_catalog_metadata(&self) -> Value\npub fn history(&self) -> &[CommandHistoryEntry]",
         "language": "rust"
       },
-      "id": "blk_native_code_1793974413919852800",
+      "id": "blk_native_code_1794056673857445800",
       "managed_by": "project_parser",
       "type": "code"
     },
@@ -69,7 +69,7 @@ Content-Disposition: inline; filename="canvas_state.json"
         "level": 2,
         "text": "Internal Dependencies"
       },
-      "id": "blk_native_heading_1793974413919853500",
+      "id": "blk_native_heading_1794056673857446700",
       "managed_by": "project_parser",
       "type": "heading"
     },
@@ -77,7 +77,7 @@ Content-Disposition: inline; filename="canvas_state.json"
       "data": {
         "text": "- `crate::command::{CommandError, EngineCommand}`\n- `crate::commands::{`\n- `super::*`\n"
       },
-      "id": "blk_native_paragraph_1793974413919854700",
+      "id": "blk_native_paragraph_1794056673857448000",
       "managed_by": "project_parser",
       "type": "paragraph"
     }
@@ -88,7 +88,7 @@ Content-Disposition: inline; filename="canvas_state.json"
 Content-Type: text/html; charset="utf-8"
 Content-Disposition: inline
 
-<!doctype html><html><head><meta charset="utf-8"><meta name="generator" content="CapsuleCraft Native"></head><body style="font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;max-width:720px;margin:32px auto;line-height:1.55;color:#23201c;background:#faf8f4;"><h1>📄 StatCraft / crates/statcraft_syntax/src/bus.rs</h1><h1>📄 bus.rs</h1><p>Path: `crates/statcraft_syntax/src/bus.rs` · 239 lines of code<br>Belongs to project: [[📦 StatCraft (Overview) | 📦 StatCraft (Overview)]]</p><h2>Public Interface</h2><p><em>[code block — open in CapsuleCraft web for its canvas]</em></p><h2>Internal Dependencies</h2><p>- `crate::command::{CommandError, EngineCommand}`<br>- `crate::commands::{`<br>- `super::*`<br></p><hr><p style="color:#8a8175;font-size:12px">Exported from CapsuleCraft Native · &lt;module-crates_statcraft_syntax_src_bus_rs@capsuleos.local&gt;</p></body></html>
+<!doctype html><html><head><meta charset="utf-8"><meta name="generator" content="CapsuleCraft Native"></head><body style="font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;max-width:720px;margin:32px auto;line-height:1.55;color:#23201c;background:#faf8f4;"><h1>📄 StatCraft / crates/statcraft_syntax/src/bus.rs</h1><h1>📄 bus.rs</h1><p>Path: `crates/statcraft_syntax/src/bus.rs` · 273 lines of code<br>Belongs to project: [[📦 StatCraft (Overview) | 📦 StatCraft (Overview)]]</p><h2>Public Interface</h2><p><em>[code block — open in CapsuleCraft web for its canvas]</em></p><h2>Internal Dependencies</h2><p>- `crate::command::{CommandError, EngineCommand}`<br>- `crate::commands::{`<br>- `super::*`<br></p><hr><p style="color:#8a8175;font-size:12px">Exported from CapsuleCraft Native · &lt;module-crates_statcraft_syntax_src_bus_rs@capsuleos.local&gt;</p></body></html>
 
 --BOUNDARY_PAYLOAD_CRDRS5EYGY--
 --BOUNDARY_ROOT_10F4GOREW6--

@@ -1,7 +1,7 @@
 From: CapsuleCraft Code Ingest <system@capsulecraft.local>
 To: Vault <vault@capsuleos.local>
 Subject: 📄 StatCraft / crates/statcraft_syntax/src/syntax_parser/parser.rs
-Date: Fri, 6 Nov 2026 17:04:15 +0000
+Date: Sat, 7 Nov 2026 13:04:33 +0000
 Message-ID: <module-crates_statcraft_syntax_src_syntax_parser_parser_rs@capsuleos.local>
 In-Reply-To: <subsystem-statcraft-crates_statcraft_syntax@capsuleos.local>
 X-Capsule-Page-Parent: <subsystem-statcraft-crates_statcraft_syntax@capsuleos.local>
@@ -34,15 +34,15 @@ Content-Disposition: inline; filename="canvas_state.json"
         "level": 1,
         "text": "📄 parser.rs"
       },
-      "id": "blk_native_heading_1793984655374032600",
+      "id": "blk_native_heading_1794056673864826400",
       "managed_by": "project_parser",
       "type": "heading"
     },
     {
       "data": {
-        "text": "Path: `crates/statcraft_syntax/src/syntax_parser/parser.rs` · 406 lines of code\nBelongs to project: [[📦 StatCraft (Overview) | 📦 StatCraft (Overview)]]"
+        "text": "Path: `crates/statcraft_syntax/src/syntax_parser/parser.rs` · 423 lines of code\nBelongs to project: [[📦 StatCraft (Overview) | 📦 StatCraft (Overview)]]"
       },
-      "id": "blk_native_paragraph_1793984655374034500",
+      "id": "blk_native_paragraph_1794056673864828200",
       "managed_by": "project_parser",
       "type": "paragraph"
     },
@@ -51,7 +51,7 @@ Content-Disposition: inline; filename="canvas_state.json"
         "level": 2,
         "text": "Public Interface"
       },
-      "id": "blk_native_heading_1793984655374042600",
+      "id": "blk_native_heading_1794056673864828800",
       "managed_by": "project_parser",
       "type": "heading"
     },
@@ -60,7 +60,7 @@ Content-Disposition: inline; filename="canvas_state.json"
         "code": "pub struct Subcommand\npub struct ParsedCommand\npub fn subcommand(&self, name: &str) -> Option<&Subcommand>\npub fn subcommand_value(&self, name: &str) -> Option<&str>\npub fn subcommand_tokens(&self, name: &str) -> Option<&[String]>\npub fn has_subcommand(&self, name: &str) -> bool\npub fn has_token(&self, subcmd_name: &str, token: &str) -> bool\npub struct SyntaxParser\npub fn parse_command(block: &RawCommandBlock) -> Result<ParsedCommand, SyntaxError>\npub fn tokenize_values(input: &str) -> Vec<String>\npub fn expand_variables( tokens: &[String], dataset: Option<&DataSet>, ) -> Result<Vec<String>, SyntaxError>",
         "language": "rust"
       },
-      "id": "blk_native_code_1793984655374049500",
+      "id": "blk_native_code_1794056673864829900",
       "managed_by": "project_parser",
       "type": "code"
     },
@@ -69,7 +69,7 @@ Content-Disposition: inline; filename="canvas_state.json"
         "level": 2,
         "text": "Internal Dependencies"
       },
-      "id": "blk_native_heading_1793984655374054700",
+      "id": "blk_native_heading_1794056673864830700",
       "managed_by": "project_parser",
       "type": "heading"
     },
@@ -77,7 +77,7 @@ Content-Disposition: inline; filename="canvas_state.json"
       "data": {
         "text": "- `crate::syntax_parser::error::SyntaxError`\n- `crate::syntax_parser::lexer::RawCommandBlock`\n- `super::*`\n"
       },
-      "id": "blk_native_paragraph_1793984655374056400",
+      "id": "blk_native_paragraph_1794056673864832200",
       "managed_by": "project_parser",
       "type": "paragraph"
     }
@@ -88,7 +88,7 @@ Content-Disposition: inline; filename="canvas_state.json"
 Content-Type: text/html; charset="utf-8"
 Content-Disposition: inline
 
-<!doctype html><html><head><meta charset="utf-8"><meta name="generator" content="CapsuleCraft Native"></head><body style="font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;max-width:720px;margin:32px auto;line-height:1.55;color:#23201c;background:#faf8f4;"><h1>📄 StatCraft / crates/statcraft_syntax/src/syntax_parser/parser.rs</h1><h1>📄 parser.rs</h1><p>Path: `crates/statcraft_syntax/src/syntax_parser/parser.rs` · 406 lines of code<br>Belongs to project: [[📦 StatCraft (Overview) | 📦 StatCraft (Overview)]]</p><h2>Public Interface</h2><p><em>[code block — open in CapsuleCraft web for its canvas]</em></p><h2>Internal Dependencies</h2><p>- `crate::syntax_parser::error::SyntaxError`<br>- `crate::syntax_parser::lexer::RawCommandBlock`<br>- `super::*`<br></p><hr><p style="color:#8a8175;font-size:12px">Exported from CapsuleCraft Native · &lt;module-crates_statcraft_syntax_src_syntax_parser_parser_rs@capsuleos.local&gt;</p></body></html>
+<!doctype html><html><head><meta charset="utf-8"><meta name="generator" content="CapsuleCraft Native"></head><body style="font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;max-width:720px;margin:32px auto;line-height:1.55;color:#23201c;background:#faf8f4;"><h1>📄 StatCraft / crates/statcraft_syntax/src/syntax_parser/parser.rs</h1><h1>📄 parser.rs</h1><p>Path: `crates/statcraft_syntax/src/syntax_parser/parser.rs` · 423 lines of code<br>Belongs to project: [[📦 StatCraft (Overview) | 📦 StatCraft (Overview)]]</p><h2>Public Interface</h2><p><em>[code block — open in CapsuleCraft web for its canvas]</em></p><h2>Internal Dependencies</h2><p>- `crate::syntax_parser::error::SyntaxError`<br>- `crate::syntax_parser::lexer::RawCommandBlock`<br>- `super::*`<br></p><hr><p style="color:#8a8175;font-size:12px">Exported from CapsuleCraft Native · &lt;module-crates_statcraft_syntax_src_syntax_parser_parser_rs@capsuleos.local&gt;</p></body></html>
 
 --BOUNDARY_PAYLOAD_1XSOPKBGE2--
 --BOUNDARY_ROOT_1OGQMXXGB5--

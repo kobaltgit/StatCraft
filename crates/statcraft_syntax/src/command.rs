@@ -35,4 +35,10 @@ pub trait EngineCommand: Send + Sync {
     fn enabled(&self, dataset: Option<&DataSet>) -> bool;
     fn execute(&self, dataset: &mut Option<DataSet>, params: Value) -> Result<Value, CommandError>;
     fn undo(&self, dataset: &mut Option<DataSet>) -> Result<(), CommandError>;
+    fn syntax_names(&self) -> &'static [&'static str] {
+        &[]
+    }
+    fn category(&self) -> &'static str {
+        "General"
+    }
 }

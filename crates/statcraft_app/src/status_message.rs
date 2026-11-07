@@ -1,4 +1,4 @@
-use crate::theme::Tokens;
+﻿use crate::theme::Tokens;
 use egui::Color32;
 use statcraft_i18n::t;
 
@@ -349,9 +349,9 @@ impl StatusMessage {
             | StatusMessage::DataSaved { .. }
             | StatusMessage::DataExported { .. }
             | StatusMessage::OutputExported { .. }
-            | StatusMessage::SyntaxSaved { .. } => Tokens::MEASURE_NOMINAL,
+            | StatusMessage::SyntaxSaved { .. } => Tokens::measure_nominal(),
             StatusMessage::Error(_) => Color32::from_rgb(235, 80, 80),
-            _ => Tokens::TEXT_MUTED,
+            _ => Tokens::text_muted(),
         }
     }
 }
@@ -367,33 +367,33 @@ mod tests {
                 path: "test.stc".to_string()
             }
             .color(),
-            Tokens::MEASURE_NOMINAL
+            Tokens::measure_nominal()
         );
         assert_eq!(
             StatusMessage::DataSaved {
                 path: "test.csv".to_string()
             }
             .color(),
-            Tokens::MEASURE_NOMINAL
+            Tokens::measure_nominal()
         );
         assert_eq!(
             StatusMessage::SyntaxSaved {
                 name: "test.sps".to_string()
             }
             .color(),
-            Tokens::MEASURE_NOMINAL
+            Tokens::measure_nominal()
         );
         assert_eq!(
             StatusMessage::SyntaxOpened {
                 name: "test.sps".to_string()
             }
             .color(),
-            Tokens::TEXT_MUTED
+            Tokens::text_muted()
         );
         assert_eq!(
             StatusMessage::Error("failed".to_string()).color(),
             Color32::from_rgb(235, 80, 80)
         );
-        assert_eq!(StatusMessage::Ready.color(), Tokens::TEXT_MUTED);
+        assert_eq!(StatusMessage::Ready.color(), Tokens::text_muted());
     }
 }

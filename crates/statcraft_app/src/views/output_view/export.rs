@@ -1,14 +1,14 @@
 use super::extract_item_tsv;
-use super::model::{OutputItemKind, OutputViewerState};
+use super::model::{OutputItemKind, OutputProcedure, OutputViewerState};
 use statcraft_reporting::{
     export_document_to_html, export_document_to_tsv, export_document_to_txt, CellAlignment,
     ReportDocument, ReportItem, ReportNotes, ReportSection, ReportTable,
 };
 
-pub fn output_viewer_to_report_document(state: &OutputViewerState) -> ReportDocument {
+pub fn procedures_to_report_document(procedures: &[OutputProcedure]) -> ReportDocument {
     let mut doc = ReportDocument::new("StatCraft Output Report");
 
-    for proc in &state.procedures {
+    for proc in procedures {
         let mut section = ReportSection::new(proc.title());
 
         for item in &proc.items {
@@ -107,6 +107,15 @@ pub fn output_viewer_to_report_document(state: &OutputViewerState) -> ReportDocu
     }
 
     doc
+}
+
+pub fn export_procedures_to_txt(procedures: &[OutputProcedure]) -> String {
+    let doc = procedures_to_report_document(procedures);
+    export_document_to_txt(&doc)
+}
+
+pub fn output_viewer_to_report_document(state: &OutputViewerState) -> ReportDocument {
+    procedures_to_report_document(&state.procedures)
 }
 
 pub fn export_output_to_html(state: &OutputViewerState) -> String {

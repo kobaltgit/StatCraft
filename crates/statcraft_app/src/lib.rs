@@ -4,6 +4,7 @@ pub mod app_dialogs_data;
 pub mod app_dialogs_transform;
 pub mod app_menus;
 pub mod app_session;
+pub mod bridge_service;
 pub mod dialogs;
 pub mod export_handlers;
 pub mod icon_data;

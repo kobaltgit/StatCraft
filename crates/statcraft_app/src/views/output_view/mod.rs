@@ -1,4 +1,4 @@
-pub mod blocks;
+﻿pub mod blocks;
 pub mod builder;
 pub mod export;
 pub mod model;
@@ -11,6 +11,7 @@ pub mod tables_crosstabs;
 pub mod tables_descriptives;
 pub mod tables_factor;
 pub mod tables_frequencies;
+pub mod tables_generic;
 pub mod tables_kruskal;
 pub mod tables_means;
 pub mod tables_nonparam;
@@ -24,7 +25,7 @@ pub mod tables_ttest_paired;
 
 pub use blocks::{render_item_context_menu, render_log_block, render_notes_block};
 pub use export::{
-    export_output_to_html, export_output_to_tsv, export_output_to_txt,
+    export_output_to_html, export_output_to_tsv, export_output_to_txt, export_procedures_to_txt,
     output_viewer_to_report_document,
 };
 pub use model::{
@@ -38,6 +39,7 @@ pub use tables_crosstabs::{crosstabs_to_tsv, render_crosstabs_item};
 pub use tables_descriptives::{descriptives_to_tsv, render_spss_descriptives_pivot_table};
 pub use tables_factor::{factor_to_tsv, render_spss_factor};
 pub use tables_frequencies::{frequencies_to_tsv, render_spss_frequencies_tables};
+pub use tables_generic::{generic_report_to_tsv, render_spss_generic_report};
 pub use tables_kruskal::{kruskal_wallis_to_tsv, render_spss_kruskal_wallis_tables};
 pub use tables_means::{means_to_tsv, render_spss_means};
 pub use tables_nonparam::{mann_whitney_to_tsv, render_spss_mann_whitney_tables};
@@ -78,6 +80,21 @@ pub fn extract_item_tsv(kind: &OutputItemKind) -> Option<String> {
         OutputItemKind::Means(res) => Some(means_to_tsv(res)),
         OutputItemKind::Adp(res) => Some(adp_to_tsv(res)),
         OutputItemKind::Programmability(res) => Some(programmability_to_tsv(res)),
+        OutputItemKind::GenericReport {
+            command_id,
+            status,
+            summary,
+            key_values,
+            table_headers,
+            table_rows,
+        } => Some(generic_report_to_tsv(
+            command_id,
+            status,
+            summary,
+            key_values,
+            table_headers,
+            table_rows,
+        )),
         _ => None,
     }
 }
@@ -104,7 +121,7 @@ pub fn render_output_view(ui: &mut Ui, state: &mut OutputViewerState) {
     let sep_x = full_rect.min.x + outline_width;
     ui.painter().line_segment(
         [pos2(sep_x, full_rect.min.y), pos2(sep_x, full_rect.max.y)],
-        Stroke::new(1.0_f32, Tokens::BORDER),
+        Stroke::new(1.0_f32, Tokens::border()),
     );
 
     // 3. Right continuous vertical scroll of all procedures
@@ -153,7 +170,7 @@ pub fn render_output_view(ui: &mut Ui, state: &mut OutputViewerState) {
                             Align2::LEFT_CENTER,
                             proc.title(),
                             FontId::proportional(15.0),
-                            Tokens::ACCENT,
+                            Tokens::accent(),
                         );
 
                         ui.add_space(4.0_f32);
@@ -202,7 +219,7 @@ pub fn render_output_view(ui: &mut Ui, state: &mut OutputViewerState) {
                                     if let Some(tsv_data) = &maybe_tsv {
                                         let btn_label = if is_item_copied {
                                             egui::RichText::new(t!("output-menu-copied"))
-                                                .color(Tokens::ACCENT)
+                                                .color(Tokens::accent())
                                         } else {
                                             egui::RichText::new(t!("output-menu-copy-tsv"))
                                         };
@@ -324,10 +341,28 @@ pub fn render_output_view(ui: &mut Ui, state: &mut OutputViewerState) {
                                         render_spss_programmability_tables(ui, res);
                                     }
                                     OutputItemKind::Warning(msg) => {
-                                        ui.colored_label(Tokens::CAPTION_CLOSE_HOVER, msg);
+                                        ui.colored_label(Tokens::caption_close_hover(), msg);
                                     }
                                     OutputItemKind::CustomText { content, .. } => {
                                         ui.label(content);
+                                    }
+                                    OutputItemKind::GenericReport {
+                                        command_id,
+                                        status,
+                                        summary,
+                                        key_values,
+                                        table_headers,
+                                        table_rows,
+                                    } => {
+                                        render_spss_generic_report(
+                                            ui,
+                                            command_id,
+                                            status,
+                                            summary,
+                                            key_values,
+                                            table_headers,
+                                            table_rows,
+                                        );
                                     }
                                 }
 
@@ -372,7 +407,7 @@ pub fn render_output_view(ui: &mut Ui, state: &mut OutputViewerState) {
                                     ui.painter().rect_stroke(
                                         total_item_rect,
                                         2.0_f32,
-                                        Stroke::new(1.5_f32, Tokens::ACCENT),
+                                        Stroke::new(1.5_f32, Tokens::accent()),
                                     );
                                 }
                             });

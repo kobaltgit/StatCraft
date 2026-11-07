@@ -1,0 +1,646 @@
+From: CapsuleCraft Code Ingest <system@capsulecraft.local>
+To: Vault <vault@capsuleos.local>
+Subject: 📚 StatCraft / План реализации: Сетевой мост StatCraft (Code Mode, Семантический лог & Agent Kit)
+Date: Sat, 7 Nov 2026 08:36:28 +0000
+Message-ID: <doc-statcraft-docs_statcraft_bridge_plan_md@capsuleos.local>
+In-Reply-To: <project-index-statcraft@capsuleos.local>
+X-Capsule-Page-Parent: <project-index-statcraft@capsuleos.local>
+References: <project-index-statcraft@capsuleos.local>
+X-Capsule-Tags: project, statcraft, docs
+X-Capsule-Status: Active
+MIME-Version: 1.0
+Content-Type: multipart/mixed; boundary="BOUNDARY_ROOT_1APPPWSI55"
+
+--BOUNDARY_ROOT_1APPPWSI55
+Content-Type: multipart/alternative; boundary="BOUNDARY_PAYLOAD_1ROYKE6I8E"
+
+--BOUNDARY_PAYLOAD_1ROYKE6I8E
+Content-Type: application/json; name="canvas_state.json"
+Content-Disposition: inline; filename="canvas_state.json"
+
+{
+  "version": "1.0",
+  "generator": "CapsuleCraft Native egui prototype (Zero-DB Pure-MIME)",
+  "messageId": "<doc-statcraft-docs_statcraft_bridge_plan_md@capsuleos.local>",
+  "subject": "📚 StatCraft / План реализации: Сетевой мост StatCraft (Code Mode, Семантический лог & Agent Kit)",
+  "tags": [
+    "project",
+    "statcraft",
+    "docs"
+  ],
+  "blocks": [
+    {
+      "data": {
+        "icon": "book",
+        "text": "Documentation file: `docs/statcraft_bridge_plan.md`\nBelongs to project: [[📦 StatCraft (Overview) | 📦 StatCraft (Overview)]]"
+      },
+      "id": "blk_native_callout_1794040588161858600",
+      "managed_by": "project_parser",
+      "type": "callout"
+    },
+    {
+      "data": {
+        "level": 1,
+        "text": "План реализации: Сетевой мост StatCraft (Code Mode, Семантический лог & Agent Kit)"
+      },
+      "id": "blk_native_heading_1794040588161727100",
+      "managed_by": "project_parser",
+      "type": "heading"
+    },
+    {
+      "data": {
+        "level": 2,
+        "text": "Описание цели"
+      },
+      "id": "blk_native_heading_1794040588161730200",
+      "managed_by": "project_parser",
+      "type": "heading"
+    },
+    {
+      "data": {
+        "text": "Реализовать крейт **`statcraft_bridge`** и интеграцию с графическим интерфейсом StatCraft в парадигме **Code Mode (не классический раздутый MCP, а сверхкомпактный исполняемый интерфейс)**:\n1. **Философия Code Mode вместо классического MCP:**\n   - *Классический MCP* плодит десятки узких микро-инструментов (`set_var_name`, `set_var_type`, `set_var_decimals`, `set_var_labels`, `run_ttest`, `run_anova`...), что забивает контекстное окно LLM сотнями токенов схемы, путает модель и требует многократных сетевых вызовов туда-обратно.\n   - *Code Mode в StatCraft* предоставляет компактный набор из **6 высокоуровневых инструментов**, где ядром является пакетный синтаксис SPSS (`statcraft_run_syntax`). Один вызов синтаксиса способен на лету создать датасет с нуля, настроить любые шкалы/метки переменных, провести сложную серию статистических тестов и построить таблицы в отчете.\n2. **Полный цикл управления данными для агента:**\n   - Построение датасета и словаря переменных с нуля по текстовому запросу пользователя;\n   - Мгновенное внедрение готовых таблиц пользователя (Excel/CSV/Markdown) в память активного окна без промежуточных файлов на диске;\n   - Интеллектуальный аудит переменных: совет по исправлению шкал/меток/пропусков и пакетное применение по согласованию с пользователем.\n3. **Интерактивный семантический журнал активности агента (Live Activity Log):**\n   - Накопление действий агента в памяти приложения в фоновом режиме (даже когда окно настроек закрыто);\n   - При открытии окна отображение полной хронологии с поддержкой мгновенной смены языка (RU/EN) «на лету» через каталоги Fluent без потери истории.\n4. **Безопасный и деликатный жизненный цикл:**\n   - Сервер внутри процесса StatCraft на `127.0.0.1:18493`, гарантированное освобождение порта и потока при закрытии программы (`Drop`);\n   - Запуск через единый бинарник `statcraft.exe --mcp`;\n   - Деликатность: агент не срывает фокус и не переключает вкладки у пользователя во время расчетов;\n   - Адаптивный таймаут (дефолт 45с, опционально до 300с для тяжелых массивов)."
+      },
+      "id": "blk_native_paragraph_1794040588161736500",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    },
+    {
+      "data": {
+        "text": "---"
+      },
+      "id": "blk_native_paragraph_1794040588161738200",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    },
+    {
+      "data": {
+        "level": 2,
+        "text": "Архитектура: Согласованные решения (по итогам /grill-me)"
+      },
+      "id": "blk_native_heading_1794040588161739000",
+      "managed_by": "project_parser",
+      "type": "heading"
+    },
+    {
+      "data": {
+        "level": 3,
+        "text": "1. Парадигма Code Mode (Инструменты MCP)"
+      },
+      "id": "blk_native_heading_1794040588161740500",
+      "managed_by": "project_parser",
+      "type": "heading"
+    },
+    {
+      "data": {
+        "text": "Схема `tools/list` оптимизирована под минимальное потребление контекста (всего 6 инструментов):"
+      },
+      "id": "blk_native_paragraph_1794040588161742100",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    },
+    {
+      "data": {
+        "text": "| Инструмент | Назначение в парадигме Code Mode |\n|---|---|\n| **`statcraft_run_syntax`** | **Главное ядро Code Mode.** Пакетное исполнение SPSS-синтаксиса (`.sps`). Управляет данными (`DATA LIST`, `COMPUTE`, `RECODE`), переменными (`VARIABLE LEVEL`, `VALUE LABELS`, `MISSING VALUES`, `VARIABLE LABELS`) и расчетами (`FREQUENCIES`, `DESCRIPTIVES`, `CROSSTABS`, `T-TEST`, `ONEWAY`, `REGRESSION`, `RELIABILITY`). Поддерживает параметр `timeout_seconds` (дефолт 45с, до 300с). |\n| **`statcraft_load_dataset`** | Прямой импорт сырых данных пользователя: принимает текст таблицы (`csv_content: String`, разделители запятая/точка с запятой/табуляция) и опциональное имя. Создает `DataSet` в памяти активного окна в 1 клик. |\n| **`statcraft_list_variables`** | Сверхкомпактная инспекция словаря переменных: имена, типы данных, шкалы (`Scale`/`Nominal`/`Ordinal`), текстовые метки, метки значений (Value Labels) и фильтры пропусков (Missing Values). |\n| **`statcraft_get_data_preview`** | Инспекция среза данных: первые $N$ строк (по умолчанию 10) для экспресс-анализа распределений, пропусков и типов данных. |\n| **`statcraft_insert_output_note`** | Добавление аналитических выводов агента в дерево Output Viewer в виде канонического блока `Notes` с форматированной карточкой. |\n| **`statcraft_set_active_tab`** | Деликатная навигация: переключение вкладок (`data`, `variable`, `output`, `syntax`) **только** по осознанному решению агента при презентации итогов анализа (фокус не срывается автоматически). |"
+      },
+      "id": "blk_native_paragraph_1794040588161746100",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    },
+    {
+      "data": {
+        "text": "---"
+      },
+      "id": "blk_native_paragraph_1794040588161747400",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    },
+    {
+      "data": {
+        "level": 3,
+        "text": "2. Сценарии работы агента через Code Mode"
+      },
+      "id": "blk_native_heading_1794040588161748700",
+      "managed_by": "project_parser",
+      "type": "heading"
+    },
+    {
+      "data": {
+        "text": "#### Сценарий А: Создание данных и переменных с нуля\nПользователь просит: *«Сделай мне учебный датасет для исследования стресса на 30 сотрудников»*.\n1. Агент формирует и запускает `statcraft_run_syntax`:"
+      },
+      "id": "blk_native_paragraph_1794040588161750100",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    },
+    {
+      "data": {
+        "code": "   DATA LIST FREE / id (F3.0) age (F3.0) gender (F1.0) department (F1.0) stress (F2.0).\n   BEGIN DATA\n   1 24 1 1 7\n   2 35 2 2 4\n   ...\n   30 42 1 3 8\n   END DATA.\n   VARIABLE LEVEL age (SCALE) / stress (ORDINAL) / gender, department (NOMINAL).\n   VALUE LABELS gender 1 \"Мужской\" 2 \"Женский\"\n     / department 1 \"IT\" 2 \"HR\" 3 \"Sales\".\n   VARIABLE LABELS stress \"Уровень стресса (1-10)\".",
+        "language": "sps"
+      },
+      "id": "blk_native_code_1794040588161752600",
+      "managed_by": "project_parser",
+      "type": "code"
+    },
+    {
+      "data": {
+        "text": "2. В окне StatCraft сразу заполняются Data View и Variable View со всеми шкалами и метками."
+      },
+      "id": "blk_native_paragraph_1794040588161754700",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    },
+    {
+      "data": {
+        "text": "#### Сценарий Б: Внедрение готовых таблиц пользователя\nПользователь вставляет Markdown или CSV из Excel прямо в диалог: *«Вот выгрузка, залей в программу»*.\n1. Агент парсит таблицу в CSV-формат и вызывает `statcraft_load_dataset(csv_content = \"id,name,score\\n1,Alpha,85\\n2,Beta,92\")`.\n2. Мост передает данные в `DataSet::from_raw_table()`, и таблица мгновенно открывается в Data View."
+      },
+      "id": "blk_native_paragraph_1794040588161756300",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    },
+    {
+      "data": {
+        "text": "#### Сценарий В: Аудит словаря переменных и консультирование\n1. Агент инспектирует структуру через `statcraft_list_variables` и `statcraft_get_data_preview`.\n2. Находит аномалии: числовая переменная `status` имеет шкалу Scale, а пропуски в `salary` забиты кодом `-999`.\n3. Агент пишет пользователю:"
+      },
+      "id": "blk_native_paragraph_1794040588161758400",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    },
+    {
+      "data": {
+        "icon": "info",
+        "text": "*«Я обнаружил, что `status` — это номинальный код, а в `salary` значение `-999` исказит расчет средней. Предлагаю:*"
+      },
+      "id": "blk_native_callout_1794040588161759200",
+      "managed_by": "project_parser",
+      "type": "callout"
+    },
+    {
+      "data": {
+        "icon": "info",
+        "text": "1. *Сменить шкалу `status` на Nominal и добавить метки (1='Active', 2='Pending');*"
+      },
+      "id": "blk_native_callout_1794040588161760600",
+      "managed_by": "project_parser",
+      "type": "callout"
+    },
+    {
+      "data": {
+        "icon": "info",
+        "text": "2. *Объявить `-999` в `salary` как Missing Value.*"
+      },
+      "id": "blk_native_callout_1794040588161762200",
+      "managed_by": "project_parser",
+      "type": "callout"
+    },
+    {
+      "data": {
+        "icon": "info",
+        "text": "*Применить изменения?»*"
+      },
+      "id": "blk_native_callout_1794040588161762900",
+      "managed_by": "project_parser",
+      "type": "callout"
+    },
+    {
+      "data": {
+        "text": "4. После согласия пользователя агент запускает `statcraft_run_syntax`:"
+      },
+      "id": "blk_native_paragraph_1794040588161764000",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    },
+    {
+      "data": {
+        "code": "   VARIABLE LEVEL status (NOMINAL).\n   VALUE LABELS status 1 \"Active\" 2 \"Pending\".\n   MISSING VALUES salary (-999).",
+        "language": "sps"
+      },
+      "id": "blk_native_code_1794040588161765000",
+      "managed_by": "project_parser",
+      "type": "code"
+    },
+    {
+      "data": {
+        "text": "5. В Variable View мгновенно обновляются иконки шкал и свойства ячеек."
+      },
+      "id": "blk_native_paragraph_1794040588161765900",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    },
+    {
+      "data": {
+        "text": "---"
+      },
+      "id": "blk_native_paragraph_1794040588161766800",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    },
+    {
+      "data": {
+        "level": 3,
+        "text": "3. Семантический журнал активности агента (Semantic Live Activity Log)"
+      },
+      "id": "blk_native_heading_1794040588161767500",
+      "managed_by": "project_parser",
+      "type": "heading"
+    },
+    {
+      "data": {
+        "text": "* **Принцип долгоживущего хранения:**\n  Журнал живет в фоновом сервисе `BridgeService` внутри `StatCraftApp`. Он активен и пополняется **всегда**, даже когда окно настроек моста закрыто.\n* **Структура в памяти:**"
+      },
+      "id": "blk_native_paragraph_1794040588161769100",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    },
+    {
+      "data": {
+        "code": "  pub struct BridgeLogEntry {\n      pub timestamp: String,\n      pub event: BridgeLogEvent,\n  }\n\n  pub enum BridgeLogEvent {\n      ClientConnected { address: String },\n      ClientDisconnected { address: String },\n      VariablesRequested { count: usize },\n      DataPreviewRequested { limit: usize },\n      DatasetLoaded { rows: usize, cols: usize },\n      SyntaxExecuted { preview: String, count: usize },\n      CommandExecuted { command_id: String },\n      OutputNoteAdded { title: String },\n      TabSwitched { tab: String },\n      ServerStarted { address: String },\n      ServerStopped,\n      Error { message: String },\n  }",
+        "language": "rust"
+      },
+      "id": "blk_native_code_1794040588161774600",
+      "managed_by": "project_parser",
+      "type": "code"
+    },
+    {
+      "data": {
+        "text": "* **Мгновенный перевод на лету (Fluent i18n):**\n  Хранятся не захардкоженные строки, а перечисление `BridgeLogEvent`. Рендеринг в UI происходит динамически через `t!(\"bridge-log-...\", time = ..., ...)`. При смене языка `Вид -> Язык -> English` **вся накопленная история журнала на экране мгновенно переводится на английский язык**.\n* **Кольцевой буфер:**\n  Хранятся последние 100 записей (`VecDeque<BridgeLogEntry>`) строго в оперативной памяти (не оставляя мусора на диске и обеспечивая приватность). Кнопка `[ Очистить журнал ]` сбрасывает буфер."
+      },
+      "id": "blk_native_paragraph_1794040588161778500",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    },
+    {
+      "data": {
+        "text": "---"
+      },
+      "id": "blk_native_paragraph_1794040588161779600",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    },
+    {
+      "data": {
+        "level": 3,
+        "text": "4. Жизненный цикл, сеть и предохранители"
+      },
+      "id": "blk_native_heading_1794040588161780200",
+      "managed_by": "project_parser",
+      "type": "heading"
+    },
+    {
+      "data": {
+        "text": "* **Транспорт и бинарник:**\n  - Запуск через единый исполняемый файл: `statcraft.exe --mcp`. Процесс мгновенно запускает stdio-проксирование без инициализации UI/eframe.\n  - Локальный TCP-сокет: `127.0.0.1:18493` (Loopback, полная сетевая изоляция от внешней сети без необходимости токенов).\n* **Предохранитель занятого порта:**\n  - Первый запущенный экземпляр StatCraft занимает порт 18493 и является активным.\n  - При случайном запуске второго экземпляра он не перехватывает команды, а отображает статус: *«Порт 18493 занят первичным экземпляром StatCraft»* с кнопкой *«Повторить»*.\n* **Гарантия чистого выхода (Zero Zombie Processes):**\n  - Сервер работает в легковесном потоке `std::thread` внутри процесса.\n  - Сокет настраивается в неблокирующем режиме (`set_nonblocking(true)`) или с прерыванием по флагу `AtomicBool`.\n  - В `Drop` сервиса моста сокет закрывается, поток завершается (`join`), порт освобождается.\n* **Поведение при закрытом GUI:**\n  - Если агент обращается через MCP, а окно StatCraft не запущено, агент получает понятный вежливый ответ:\n    `\"StatCraft GUI не запущен или мост выключен. Пожалуйста, запустите StatCraft для выполнения команд.\"`"
+      },
+      "id": "blk_native_paragraph_1794040588161783100",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    },
+    {
+      "data": {
+        "text": "---"
+      },
+      "id": "blk_native_paragraph_1794040588161784400",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    },
+    {
+      "data": {
+        "level": 2,
+        "text": "Архитектура и поток данных"
+      },
+      "id": "blk_native_heading_1794040588161785300",
+      "managed_by": "project_parser",
+      "type": "heading"
+    },
+    {
+      "data": {
+        "code": "sequenceDiagram\n    autonumber\n    actor Agent as ИИ-агент (Antigravity / Claude)\n    participant MCP as MCP Stdio (statcraft.exe --mcp)\n    participant Socket as TCP Мост (127.0.0.1:18493)\n    participant GUI as StatCraftApp (UI-поток egui)\n    participant Log as Семантический лог (BridgeLogRing)\n    participant Output as Окно вывода (Output Viewer)\n\n    Agent->>MCP: tools/call (\"statcraft_run_syntax\", {syntax: \"FREQUENCIES...\"})\n    MCP->>Socket: JSON-RPC 2.0 {\"method\": \"syntax.execute\", \"params\": {...}}\n    Socket->>GUI: BridgeAppRequest через std::sync::mpsc + ctx.request_repaint()\n    Note over GUI: egui update() выполняет синтаксис\n    GUI->>Log: Запись BridgeLogEvent::SyntaxExecuted в память\n    GUI->>Output: Добавление команды в лог + Генерация Pivot Tables\n    GUI-->>Socket: BridgeAppResponse {status: \"ok\", count: 1}\n    Socket-->>MCP: JSON-RPC ответ {result: {...}}\n    Agent<<--MCP: Результат выполнения (таблицы сгенерированы в окне)",
+        "language": "mermaid"
+      },
+      "id": "blk_native_code_1794040588161787400",
+      "managed_by": "project_parser",
+      "type": "code"
+    },
+    {
+      "data": {
+        "text": "---"
+      },
+      "id": "blk_native_paragraph_1794040588161789500",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    },
+    {
+      "data": {
+        "level": 2,
+        "text": "Предлагаемые изменения по компонентам"
+      },
+      "id": "blk_native_heading_1794040588161790400",
+      "managed_by": "project_parser",
+      "type": "heading"
+    },
+    {
+      "data": {
+        "level": 3,
+        "text": "1. Архитектура слоев и манифесты (`Cargo.toml`, `xtask`)"
+      },
+      "id": "blk_native_heading_1794040588161791300",
+      "managed_by": "project_parser",
+      "type": "heading"
+    },
+    {
+      "data": {
+        "text": "#### [MODIFY] [Cargo.toml](file:///d:/Projects/active/StatCraft/Cargo.toml)\n* Добавить `\"crates/statcraft_bridge\"` в `workspace.members`."
+      },
+      "id": "blk_native_paragraph_1794040588161792600",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    },
+    {
+      "data": {
+        "text": "#### [MODIFY] [xtask/src/layers.rs](file:///d:/Projects/active/StatCraft/xtask/src/layers.rs)\n* Зарегистрировать крейт `statcraft_bridge` в реестре `CRATE_REGISTRY`:"
+      },
+      "id": "blk_native_paragraph_1794040588161793700",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    },
+    {
+      "data": {
+        "code": "  CrateSpec {\n      name: \"statcraft_bridge\",\n      level: LayerLevel::Utility,\n      allowed_dependencies: &[\"statcraft_core\", \"statcraft_syntax\"],\n  },",
+        "language": "rust"
+      },
+      "id": "blk_native_code_1794040588161794900",
+      "managed_by": "project_parser",
+      "type": "code"
+    },
+    {
+      "data": {
+        "text": "* Добавить `\"statcraft_bridge\"` в `allowed_dependencies` для `statcraft_app`."
+      },
+      "id": "blk_native_paragraph_1794040588161795900",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    },
+    {
+      "data": {
+        "text": "---"
+      },
+      "id": "blk_native_paragraph_1794040588161796600",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    },
+    {
+      "data": {
+        "level": 3,
+        "text": "2. Новый крейт: `statcraft_bridge` (`crates/statcraft_bridge/`)"
+      },
+      "id": "blk_native_heading_1794040588161797500",
+      "managed_by": "project_parser",
+      "type": "heading"
+    },
+    {
+      "data": {
+        "text": "#### [NEW] `crates/statcraft_bridge/Cargo.toml`\n* `license.workspace = true` (MIT OR Apache-2.0).\n* Зависимости: `statcraft_core`, `statcraft_syntax`, `serde`, `serde_json`, `thiserror`."
+      },
+      "id": "blk_native_paragraph_1794040588161798800",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    },
+    {
+      "data": {
+        "text": "#### [NEW] `crates/statcraft_bridge/src/lib.rs`\n* Экспорт модулей: `protocol`, `server`, `client`, `channel`, `mcp`, `events`."
+      },
+      "id": "blk_native_paragraph_1794040588161799600",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    },
+    {
+      "data": {
+        "text": "#### [NEW] `crates/statcraft_bridge/src/events.rs`\n* Типизированный enum `BridgeLogEvent` и структура `BridgeLogEntry`.\n* Ограниченный кольцевой буфер `BridgeLogRing` (`VecDeque`, емкость 100 элементов)."
+      },
+      "id": "blk_native_paragraph_1794040588161800900",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    },
+    {
+      "data": {
+        "text": "#### [NEW] `crates/statcraft_bridge/src/protocol.rs`\n* Структуры JSON-RPC 2.0 (`RpcRequest`, `RpcResponse`, `RpcError`).\n* Методы протокола Code Mode:\n  - `dataset.get_info`: статус датасета, строки/колонки;\n  - `dataset.get_variables`: словарь переменных со шкалами, метками и пропусками;\n  - `dataset.get_data_preview`: первые строки данных;\n  - `dataset.load_csv`: прямой импорт таблицы из CSV-текста;\n  - `syntax.execute`: пакетное выполнение SPSS-синтаксиса (Code Mode);\n  - `output.add_note`: вставка блока Notes в дерево отчета;\n  - `ui.set_active_tab`: переключение вкладок."
+      },
+      "id": "blk_native_paragraph_1794040588161805300",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    },
+    {
+      "data": {
+        "text": "#### [NEW] `crates/statcraft_bridge/src/channel.rs`\n* Типизированный межпоточный канал передачи запросов `BridgeAppRequest` и ответов `oneshot` между сокетом и UI-потоком."
+      },
+      "id": "blk_native_paragraph_1794040588161806500",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    },
+    {
+      "data": {
+        "text": "#### [NEW] `crates/statcraft_bridge/src/server.rs`\n* `BridgeServer`:\n  - Прослушивание `127.0.0.1:18493`;\n  - Неблокирующая обработка с мягким выходом по флагу `Arc<AtomicBool>`;\n  - Потокобезопасная остановка сокета и освобождение порта при `stop()` и `Drop`."
+      },
+      "id": "blk_native_paragraph_1794040588161808500",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    },
+    {
+      "data": {
+        "text": "#### [NEW] `crates/statcraft_bridge/src/client.rs`\n* `BridgeClient`: локальный клиент для интеграционных тестов и stdio-проксирования."
+      },
+      "id": "blk_native_paragraph_1794040588161809700",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    },
+    {
+      "data": {
+        "text": "#### [NEW] `crates/statcraft_bridge/src/mcp.rs`\n* Реализация stdio MCP сервера:\n  - Обработка `initialize`, `tools/list`, `tools/call`;\n  - Экспорт 6 инструментов Code Mode;\n  - Адаптивный таймаут (дефолт 45с, опционально до 300с);\n  - Вежливое текстовое уведомление при недоступности GUI."
+      },
+      "id": "blk_native_paragraph_1794040588161811100",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    },
+    {
+      "data": {
+        "text": "---"
+      },
+      "id": "blk_native_paragraph_1794040588161812100",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    },
+    {
+      "data": {
+        "level": 3,
+        "text": "3. Графический интерфейс и сервис (`crates/statcraft_app/`)"
+      },
+      "id": "blk_native_heading_1794040588161812800",
+      "managed_by": "project_parser",
+      "type": "heading"
+    },
+    {
+      "data": {
+        "text": "#### [MODIFY] [crates/statcraft_app/Cargo.toml](file:///d:/Projects/active/StatCraft/crates/statcraft_app/Cargo.toml)\n* Добавить `statcraft_bridge = { path = \"../statcraft_bridge\" }`."
+      },
+      "id": "blk_native_paragraph_1794040588161813600",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    },
+    {
+      "data": {
+        "text": "#### [NEW] `crates/statcraft_app/src/bridge_service.rs`\n* Долгоживущий сервис в приложении:\n  - Управление потоком сервера и реализация `Drop`;\n  - Хранение `BridgeLogRing` в памяти сессии;\n  - Обработка запросов `process_bridge_requests()` в кадре `update()`:\n    * Запуск синтаксиса через `syntax_runner::run_syntax_batch`;\n    * Прямой импорт таблицы через `DataSet::from_raw_table`;\n    * Чтение словаря из `DataSet`;\n    * Добавление заметок в `OutputViewerState`;\n    * Переключение вкладок в `dock_state`."
+      },
+      "id": "blk_native_paragraph_1794040588161815800",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    },
+    {
+      "data": {
+        "text": "#### [MODIFY] [crates/statcraft_app/src/app.rs](file:///d:/Projects/active/StatCraft/crates/statcraft_app/src/app.rs)\n* Добавить поля:\n  - `bridge_service: BridgeService`;\n  - `mcp_bridge_dialog_state: McpBridgeDialogState`.\n* В `update()` вызывать обработку запросов моста.\n* Загрузка и сохранение настройки автозапуска (`autostart: true` по умолчанию) через `eframe::Storage` и `.statcraft/`."
+      },
+      "id": "blk_native_paragraph_1794040588161818000",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    },
+    {
+      "data": {
+        "text": "#### [NEW] `crates/statcraft_app/src/dialogs/mcp_bridge_dialog.rs`\n* Модульный диалог на базе `DialogKit` (**строго $\\le 500$ строк** для `xtask file-guard`):\n  - Обертка `DialogShell::standard(...)`;\n  - Векторный круговой индикатор статуса (`ui.painter().circle_filled`);\n  - Кнопки управления `[ Остановить мост ]` / `[ Запустить мост ]`;\n  - Чекбокс `[x] Запускать автоматически при старте программы`;\n  - Выбор формата конфигурации (Claude Desktop / Antigravity / Python) с автоопределением пути к `statcraft.exe`;\n  - Кнопки `[ Скопировать конфигурацию MCP ]` и `[ Скопировать инструкцию (Skill) ]`;\n  - **Прокручиваемый семантический журнал активности агента** с локализацией на лету через `t!(...)`;\n  - Кнопка `[ Очистить журнал ]`."
+      },
+      "id": "blk_native_paragraph_1794040588161822500",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    },
+    {
+      "data": {
+        "text": "#### [MODIFY] [crates/statcraft_app/src/app_menus/analyze_etc.rs](file:///d:/Projects/active/StatCraft/crates/statcraft_app/src/app_menus/analyze_etc.rs)\n* Активировать пункт меню `menu-extensions-mcp-bridge` (статус `Ready`, открытие диалога)."
+      },
+      "id": "blk_native_paragraph_1794040588161824500",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    },
+    {
+      "data": {
+        "text": "#### [MODIFY] [crates/statcraft_app/src/main.rs](file:///d:/Projects/active/StatCraft/crates/statcraft_app/src/main.rs)\n* Перехват флага `--mcp`: вызов `statcraft_bridge::mcp::run_stdio()` без запуска eframe/DirectX."
+      },
+      "id": "blk_native_paragraph_1794040588161825900",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    },
+    {
+      "data": {
+        "text": "---"
+      },
+      "id": "blk_native_paragraph_1794040588161826900",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    },
+    {
+      "data": {
+        "level": 3,
+        "text": "4. Навык агента и локализация (`.agents/skills/`, `locales/`)"
+      },
+      "id": "blk_native_heading_1794040588161827700",
+      "managed_by": "project_parser",
+      "type": "heading"
+    },
+    {
+      "data": {
+        "text": "#### [NEW] `.agents/skills/statcraft-assistant/SKILL.md`\n* Документированный системный навык для ИИ-аналитика данных:\n  - Роль эксперта-статистика в StatCraft;\n  - Правила составления SPSS-синтаксиса (структура команд, подкоманды через слеш `/`, обязательная точка `.` в конце);\n  - Каталог процедур: `DATA LIST`, `VARIABLE LEVEL`, `VALUE LABELS`, `MISSING VALUES`, `FREQUENCIES`, `DESCRIPTIVES`, `CROSSTABS`, `CORRELATIONS`, `T-TEST`, `ONEWAY`, `REGRESSION`, `RELIABILITY`;\n  - Рекомендации по формулированию ясных и емких выводов в блоках Notes по стандартам научной отчетности (APA)."
+      },
+      "id": "blk_native_paragraph_1794040588161835600",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    },
+    {
+      "data": {
+        "text": "#### [MODIFY] [locales/en.ftl](file:///d:/Projects/active/StatCraft/locales/en.ftl) & [locales/ru.ftl](file:///d:/Projects/active/StatCraft/locales/ru.ftl)\n* Ключи интерфейса и семантического журнала:\n  - `dialog-mcp-bridge-title`\n  - `dialog-mcp-bridge-status-active`\n  - `dialog-mcp-bridge-status-stopped`\n  - `dialog-mcp-bridge-status-port-busy`\n  - `dialog-mcp-bridge-btn-start`\n  - `dialog-mcp-bridge-btn-stop`\n  - `dialog-mcp-bridge-btn-retry`\n  - `dialog-mcp-bridge-autostart`\n  - `dialog-mcp-bridge-copy-config`\n  - `dialog-mcp-bridge-copy-skill`\n  - `dialog-mcp-bridge-copied`\n  - `dialog-mcp-bridge-log-title`\n  - `dialog-mcp-bridge-clear-log`\n  - `bridge-log-client-connected = { $time } [Подключение] Агент подключился ({ $addr })`\n  - `bridge-log-client-disconnected = { $time } [Отключение] Сессия агента завершена ({ $addr })`\n  - `bridge-log-vars-requested = { $time } [Инспекция] Передан словарь переменных ({ $count } колонок)`\n  - `bridge-log-preview-requested = { $time } [Инспекция] Передан предпросмотр данных ({ $limit } строк)`\n  - `bridge-log-dataset-loaded = { $time } [Данные] Загружен массив данных ({ $rows } строк, { $cols } колонок)`\n  - `bridge-log-syntax-executed = { $time } [Синтаксис] Выполнен синтаксис: { $cmd } (команд: { $count })`\n  - `bridge-log-note-added = { $time } [Отчет] Добавлено аналитическое примечание: \"{ $title }\"`\n  - `bridge-log-tab-switched = { $time } [Интерфейс] Переключена вкладка на \"{ $tab }\"`\n  - `bridge-log-server-started = { $time } [Сервер] Мост запущен на { $addr }`\n  - `bridge-log-server-stopped = { $time } [Сервер] Мост остановлен`"
+      },
+      "id": "blk_native_paragraph_1794040588161844300",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    },
+    {
+      "data": {
+        "text": "---"
+      },
+      "id": "blk_native_paragraph_1794040588161845200",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    },
+    {
+      "data": {
+        "level": 2,
+        "text": "План проверки и критерии готовности (Definition of Done)"
+      },
+      "id": "blk_native_heading_1794040588161845900",
+      "managed_by": "project_parser",
+      "type": "heading"
+    },
+    {
+      "data": {
+        "level": 3,
+        "text": "Автоматические тесты"
+      },
+      "id": "blk_native_heading_1794040588161847200",
+      "managed_by": "project_parser",
+      "type": "heading"
+    },
+    {
+      "data": {
+        "text": "1. **Тесты крейта `statcraft_bridge`:**"
+      },
+      "id": "blk_native_paragraph_1794040588161848400",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    },
+    {
+      "data": {
+        "code": "   cargo test -p statcraft_bridge -j 1",
+        "language": "powershell"
+      },
+      "id": "blk_native_code_1794040588161849500",
+      "managed_by": "project_parser",
+      "type": "code"
+    },
+    {
+      "data": {
+        "text": "- Сериализация и десериализация протокола JSON-RPC 2.0;\n   - Запуск и остановка сервера: освобождение сокета, выход потока без паник;\n   - Сквозной тест через `BridgeClient`: загрузка CSV, выполнение синтаксиса, добавление заметок, проверка ответа;\n   - Проверка форматирования семантического лога при переключении языков RU/EN.\n2. **Инварианты архитектуры и кода:**"
+      },
+      "id": "blk_native_paragraph_1794040588161851700",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    },
+    {
+      "data": {
+        "code": "   cargo run -p xtask -j 1 -- layers\n   cargo run -p xtask -j 1 -- file-guard\n   cargo run -p xtask -j 1 -- design-guard\n   cargo run -p xtask -j 1 -- parity\n   cargo test -p statcraft_app --test output_viewer_invariants -j 1\n   cargo test --workspace -j 1\n   cargo clippy --workspace -j 1 -- -D warnings",
+        "language": "powershell"
+      },
+      "id": "blk_native_code_1794040588161852900",
+      "managed_by": "project_parser",
+      "type": "code"
+    },
+    {
+      "data": {
+        "level": 3,
+        "text": "Ручная верификация"
+      },
+      "id": "blk_native_heading_1794040588161853800",
+      "managed_by": "project_parser",
+      "type": "heading"
+    },
+    {
+      "data": {
+        "text": "1. Запуск StatCraft GUI: `cargo run -p statcraft_app -j 1`.\n2. Меню `Расширения -> Мост для ИИ-агентов и MCP...`:\n   - Векторный зеленый индикатор, статус «Активен», порт 18493;\n   - Нажатие `[ Остановить мост ]` $\\to$ статус «Остановлен», запись в логе;\n   - Нажатие `[ Запустить мост ]` $\\to$ статус «Активен»;\n   - Закрытие диалога;\n3. Внешний запуск `statcraft.exe --mcp`:\n   - Вызов `statcraft_load_dataset` с сырым CSV $\\to$ проверка появления данных в Data View;\n   - Вызов `statcraft_run_syntax` с настройкой шкал и расчетом $\\to$ проверка появления таблиц в Output Viewer;\n   - Открытие диалога моста $\\to$ вся история действий отображается в журнале;\n   - Переключение `Вид -> Язык -> English` $\\to$ вся история в журнале мгновенно переведена на английский язык.\n4. Проверка жизненного цикла: закрытие окна StatCraft $\\to$ проверка в PowerShell, что порт 18493 освобожден и зомби-процессов нет."
+      },
+      "id": "blk_native_paragraph_1794040588161856300",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    }
+  ]
+}
+
+--BOUNDARY_PAYLOAD_1ROYKE6I8E
+Content-Type: text/html; charset="utf-8"
+Content-Disposition: inline
+
+<!doctype html><html><head><meta charset="utf-8"><meta name="generator" content="CapsuleCraft Native"></head><body style="font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;max-width:720px;margin:32px auto;line-height:1.55;color:#23201c;background:#faf8f4;"><h1>📚 StatCraft / План реализации: Сетевой мост StatCraft (Code Mode, Семантический лог &amp; Agent Kit)</h1><p><em>[callout block — open in CapsuleCraft web for its canvas]</em></p><h1>План реализации: Сетевой мост StatCraft (Code Mode, Семантический лог &amp; Agent Kit)</h1><h2>Описание цели</h2><p>Реализовать крейт **`statcraft_bridge`** и интеграцию с графическим интерфейсом StatCraft в парадигме **Code Mode (не классический раздутый MCP, а сверхкомпактный исполняемый интерфейс)**:<br>1. **Философия Code Mode вместо классического MCP:**<br>   - *Классический MCP* плодит десятки узких микро-инструментов (`set_var_name`, `set_var_type`, `set_var_decimals`, `set_var_labels`, `run_ttest`, `run_anova`...), что забивает контекстное окно LLM сотнями токенов схемы, путает модель и требует многократных сетевых вызовов туда-обратно.<br>   - *Code Mode в StatCraft* предоставляет компактный набор из **6 высокоуровневых инструментов**, где ядром является пакетный синтаксис SPSS (`statcraft_run_syntax`). Один вызов синтаксиса способен на лету создать датасет с нуля, настроить любые шкалы/метки переменных, провести сложную серию статистических тестов и построить таблицы в отчете.<br>2. **Полный цикл управления данными для агента:**<br>   - Построение датасета и словаря переменных с нуля по текстовому запросу пользователя;<br>   - Мгновенное внедрение готовых таблиц пользователя (Excel/CSV/Markdown) в память активного окна без промежуточных файлов на диске;<br>   - Интеллектуальный аудит переменных: совет по исправлению шкал/меток/пропусков и пакетное применение по согласованию с пользователем.<br>3. **Интерактивный семантический журнал активности агента (Live Activity Log):**<br>   - Накопление действий агента в памяти приложения в фоновом режиме (даже когда окно настроек закрыто);<br>   - При открытии окна отображение полной хронологии с поддержкой мгновенной смены языка (RU/EN) «на лету» через каталоги Fluent без потери истории.<br>4. **Безопасный и деликатный жизненный цикл:**<br>   - Сервер внутри процесса StatCraft на `127.0.0.1:18493`, гарантированное освобождение порта и потока при закрытии программы (`Drop`);<br>   - Запуск через единый бинарник `statcraft.exe --mcp`;<br>   - Деликатность: агент не срывает фокус и не переключает вкладки у пользователя во время расчетов;<br>   - Адаптивный таймаут (дефолт 45с, опционально до 300с для тяжелых массивов).</p><p>---</p><h2>Архитектура: Согласованные решения (по итогам /grill-me)</h2><h3>1. Парадигма Code Mode (Инструменты MCP)</h3><p>Схема `tools/list` оптимизирована под минимальное потребление контекста (всего 6 инструментов):</p><p>| Инструмент | Назначение в парадигме Code Mode |<br>|---|---|<br>| **`statcraft_run_syntax`** | **Главное ядро Code Mode.** Пакетное исполнение SPSS-синтаксиса (`.sps`). Управляет данными (`DATA LIST`, `COMPUTE`, `RECODE`), переменными (`VARIABLE LEVEL`, `VALUE LABELS`, `MISSING VALUES`, `VARIABLE LABELS`) и расчетами (`FREQUENCIES`, `DESCRIPTIVES`, `CROSSTABS`, `T-TEST`, `ONEWAY`, `REGRESSION`, `RELIABILITY`). Поддерживает параметр `timeout_seconds` (дефолт 45с, до 300с). |<br>| **`statcraft_load_dataset`** | Прямой импорт сырых данных пользователя: принимает текст таблицы (`csv_content: String`, разделители запятая/точка с запятой/табуляция) и опциональное имя. Создает `DataSet` в памяти активного окна в 1 клик. |<br>| **`statcraft_list_variables`** | Сверхкомпактная инспекция словаря переменных: имена, типы данных, шкалы (`Scale`/`Nominal`/`Ordinal`), текстовые метки, метки значений (Value Labels) и фильтры пропусков (Missing Values). |<br>| **`statcraft_get_data_preview`** | Инспекция среза данных: первые $N$ строк (по умолчанию 10) для экспресс-анализа распределений, пропусков и типов данных. |<br>| **`statcraft_insert_output_note`** | Добавление аналитических выводов агента в дерево Output Viewer в виде канонического блока `Notes` с форматированной карточкой. |<br>| **`statcraft_set_active_tab`** | Деликатная навигация: переключение вкладок (`data`, `variable`, `output`, `syntax`) **только** по осознанному решению агента при презентации итогов анализа (фокус не срывается автоматически). |</p><p>---</p><h3>2. Сценарии работы агента через Code Mode</h3><p>#### Сценарий А: Создание данных и переменных с нуля<br>Пользователь просит: *«Сделай мне учебный датасет для исследования стресса на 30 сотрудников»*.<br>1. Агент формирует и запускает `statcraft_run_syntax`:</p><p><em>[code block — open in CapsuleCraft web for its canvas]</em></p><p>2. В окне StatCraft сразу заполняются Data View и Variable View со всеми шкалами и метками.</p><p>#### Сценарий Б: Внедрение готовых таблиц пользователя<br>Пользователь вставляет Markdown или CSV из Excel прямо в диалог: *«Вот выгрузка, залей в программу»*.<br>1. Агент парсит таблицу в CSV-формат и вызывает `statcraft_load_dataset(csv_content = &quot;id,name,score\n1,Alpha,85\n2,Beta,92&quot;)`.<br>2. Мост передает данные в `DataSet::from_raw_table()`, и таблица мгновенно открывается в Data View.</p><p>#### Сценарий В: Аудит словаря переменных и консультирование<br>1. Агент инспектирует структуру через `statcraft_list_variables` и `statcraft_get_data_preview`.<br>2. Находит аномалии: числовая переменная `status` имеет шкалу Scale, а пропуски в `salary` забиты кодом `-999`.<br>3. Агент пишет пользователю:</p><p><em>[callout block — open in CapsuleCraft web for its canvas]</em></p><p><em>[callout block — open in CapsuleCraft web for its canvas]</em></p><p><em>[callout block — open in CapsuleCraft web for its canvas]</em></p><p><em>[callout block — open in CapsuleCraft web for its canvas]</em></p><p>4. После согласия пользователя агент запускает `statcraft_run_syntax`:</p><p><em>[code block — open in CapsuleCraft web for its canvas]</em></p><p>5. В Variable View мгновенно обновляются иконки шкал и свойства ячеек.</p><p>---</p><h3>3. Семантический журнал активности агента (Semantic Live Activity Log)</h3><p>* **Принцип долгоживущего хранения:**<br>  Журнал живет в фоновом сервисе `BridgeService` внутри `StatCraftApp`. Он активен и пополняется **всегда**, даже когда окно настроек моста закрыто.<br>* **Структура в памяти:**</p><p><em>[code block — open in CapsuleCraft web for its canvas]</em></p><p>* **Мгновенный перевод на лету (Fluent i18n):**<br>  Хранятся не захардкоженные строки, а перечисление `BridgeLogEvent`. Рендеринг в UI происходит динамически через `t!(&quot;bridge-log-...&quot;, time = ..., ...)`. При смене языка `Вид -&gt; Язык -&gt; English` **вся накопленная история журнала на экране мгновенно переводится на английский язык**.<br>* **Кольцевой буфер:**<br>  Хранятся последние 100 записей (`VecDeque&lt;BridgeLogEntry&gt;`) строго в оперативной памяти (не оставляя мусора на диске и обеспечивая приватность). Кнопка `[ Очистить журнал ]` сбрасывает буфер.</p><p>---</p><h3>4. Жизненный цикл, сеть и предохранители</h3><p>* **Транспорт и бинарник:**<br>  - Запуск через единый исполняемый файл: `statcraft.exe --mcp`. Процесс мгновенно запускает stdio-проксирование без инициализации UI/eframe.<br>  - Локальный TCP-сокет: `127.0.0.1:18493` (Loopback, полная сетевая изоляция от внешней сети без необходимости токенов).<br>* **Предохранитель занятого порта:**<br>  - Первый запущенный экземпляр StatCraft занимает порт 18493 и является активным.<br>  - При случайном запуске второго экземпляра он не перехватывает команды, а отображает статус: *«Порт 18493 занят первичным экземпляром StatCraft»* с кнопкой *«Повторить»*.<br>* **Гарантия чистого выхода (Zero Zombie Processes):**<br>  - Сервер работает в легковесном потоке `std::thread` внутри процесса.<br>  - Сокет настраивается в неблокирующем режиме (`set_nonblocking(true)`) или с прерыванием по флагу `AtomicBool`.<br>  - В `Drop` сервиса моста сокет закрывается, поток завершается (`join`), порт освобождается.<br>* **Поведение при закрытом GUI:**<br>  - Если агент обращается через MCP, а окно StatCraft не запущено, агент получает понятный вежливый ответ:<br>    `&quot;StatCraft GUI не запущен или мост выключен. Пожалуйста, запустите StatCraft для выполнения команд.&quot;`</p><p>---</p><h2>Архитектура и поток данных</h2><p><em>[code block — open in CapsuleCraft web for its canvas]</em></p><p>---</p><h2>Предлагаемые изменения по компонентам</h2><h3>1. Архитектура слоев и манифесты (`Cargo.toml`, `xtask`)</h3><p>#### [MODIFY] [Cargo.toml](file:///d:/Projects/active/StatCraft/Cargo.toml)<br>* Добавить `&quot;crates/statcraft_bridge&quot;` в `workspace.members`.</p><p>#### [MODIFY] [xtask/src/layers.rs](file:///d:/Projects/active/StatCraft/xtask/src/layers.rs)<br>* Зарегистрировать крейт `statcraft_bridge` в реестре `CRATE_REGISTRY`:</p><p><em>[code block — open in CapsuleCraft web for its canvas]</em></p><p>* Добавить `&quot;statcraft_bridge&quot;` в `allowed_dependencies` для `statcraft_app`.</p><p>---</p><h3>2. Новый крейт: `statcraft_bridge` (`crates/statcraft_bridge/`)</h3><p>#### [NEW] `crates/statcraft_bridge/Cargo.toml`<br>* `license.workspace = true` (MIT OR Apache-2.0).<br>* Зависимости: `statcraft_core`, `statcraft_syntax`, `serde`, `serde_json`, `thiserror`.</p><p>#### [NEW] `crates/statcraft_bridge/src/lib.rs`<br>* Экспорт модулей: `protocol`, `server`, `client`, `channel`, `mcp`, `events`.</p><p>#### [NEW] `crates/statcraft_bridge/src/events.rs`<br>* Типизированный enum `BridgeLogEvent` и структура `BridgeLogEntry`.<br>* Ограниченный кольцевой буфер `BridgeLogRing` (`VecDeque`, емкость 100 элементов).</p><p>#### [NEW] `crates/statcraft_bridge/src/protocol.rs`<br>* Структуры JSON-RPC 2.0 (`RpcRequest`, `RpcResponse`, `RpcError`).<br>* Методы протокола Code Mode:<br>  - `dataset.get_info`: статус датасета, строки/колонки;<br>  - `dataset.get_variables`: словарь переменных со шкалами, метками и пропусками;<br>  - `dataset.get_data_preview`: первые строки данных;<br>  - `dataset.load_csv`: прямой импорт таблицы из CSV-текста;<br>  - `syntax.execute`: пакетное выполнение SPSS-синтаксиса (Code Mode);<br>  - `output.add_note`: вставка блока Notes в дерево отчета;<br>  - `ui.set_active_tab`: переключение вкладок.</p><p>#### [NEW] `crates/statcraft_bridge/src/channel.rs`<br>* Типизированный межпоточный канал передачи запросов `BridgeAppRequest` и ответов `oneshot` между сокетом и UI-потоком.</p><p>#### [NEW] `crates/statcraft_bridge/src/server.rs`<br>* `BridgeServer`:<br>  - Прослушивание `127.0.0.1:18493`;<br>  - Неблокирующая обработка с мягким выходом по флагу `Arc&lt;AtomicBool&gt;`;<br>  - Потокобезопасная остановка сокета и освобождение порта при `stop()` и `Drop`.</p><p>#### [NEW] `crates/statcraft_bridge/src/client.rs`<br>* `BridgeClient`: локальный клиент для интеграционных тестов и stdio-проксирования.</p><p>#### [NEW] `crates/statcraft_bridge/src/mcp.rs`<br>* Реализация stdio MCP сервера:<br>  - Обработка `initialize`, `tools/list`, `tools/call`;<br>  - Экспорт 6 инструментов Code Mode;<br>  - Адаптивный таймаут (дефолт 45с, опционально до 300с);<br>  - Вежливое текстовое уведомление при недоступности GUI.</p><p>---</p><h3>3. Графический интерфейс и сервис (`crates/statcraft_app/`)</h3><p>#### [MODIFY] [crates/statcraft_app/Cargo.toml](file:///d:/Projects/active/StatCraft/crates/statcraft_app/Cargo.toml)<br>* Добавить `statcraft_bridge = { path = &quot;../statcraft_bridge&quot; }`.</p><p>#### [NEW] `crates/statcraft_app/src/bridge_service.rs`<br>* Долгоживущий сервис в приложении:<br>  - Управление потоком сервера и реализация `Drop`;<br>  - Хранение `BridgeLogRing` в памяти сессии;<br>  - Обработка запросов `process_bridge_requests()` в кадре `update()`:<br>    * Запуск синтаксиса через `syntax_runner::run_syntax_batch`;<br>    * Прямой импорт таблицы через `DataSet::from_raw_table`;<br>    * Чтение словаря из `DataSet`;<br>    * Добавление заметок в `OutputViewerState`;<br>    * Переключение вкладок в `dock_state`.</p><p>#### [MODIFY] [crates/statcraft_app/src/app.rs](file:///d:/Projects/active/StatCraft/crates/statcraft_app/src/app.rs)<br>* Добавить поля:<br>  - `bridge_service: BridgeService`;<br>  - `mcp_bridge_dialog_state: McpBridgeDialogState`.<br>* В `update()` вызывать обработку запросов моста.<br>* Загрузка и сохранение настройки автозапуска (`autostart: true` по умолчанию) через `eframe::Storage` и `.statcraft/`.</p><p>#### [NEW] `crates/statcraft_app/src/dialogs/mcp_bridge_dialog.rs`<br>* Модульный диалог на базе `DialogKit` (**строго $\le 500$ строк** для `xtask file-guard`):<br>  - Обертка `DialogShell::standard(...)`;<br>  - Векторный круговой индикатор статуса (`ui.painter().circle_filled`);<br>  - Кнопки управления `[ Остановить мост ]` / `[ Запустить мост ]`;<br>  - Чекбокс `[x] Запускать автоматически при старте программы`;<br>  - Выбор формата конфигурации (Claude Desktop / Antigravity / Python) с автоопределением пути к `statcraft.exe`;<br>  - Кнопки `[ Скопировать конфигурацию MCP ]` и `[ Скопировать инструкцию (Skill) ]`;<br>  - **Прокручиваемый семантический журнал активности агента** с локализацией на лету через `t!(...)`;<br>  - Кнопка `[ Очистить журнал ]`.</p><p>#### [MODIFY] [crates/statcraft_app/src/app_menus/analyze_etc.rs](file:///d:/Projects/active/StatCraft/crates/statcraft_app/src/app_menus/analyze_etc.rs)<br>* Активировать пункт меню `menu-extensions-mcp-bridge` (статус `Ready`, открытие диалога).</p><p>#### [MODIFY] [crates/statcraft_app/src/main.rs](file:///d:/Projects/active/StatCraft/crates/statcraft_app/src/main.rs)<br>* Перехват флага `--mcp`: вызов `statcraft_bridge::mcp::run_stdio()` без запуска eframe/DirectX.</p><p>---</p><h3>4. Навык агента и локализация (`.agents/skills/`, `locales/`)</h3><p>#### [NEW] `.agents/skills/statcraft-assistant/SKILL.md`<br>* Документированный системный навык для ИИ-аналитика данных:<br>  - Роль эксперта-статистика в StatCraft;<br>  - Правила составления SPSS-синтаксиса (структура команд, подкоманды через слеш `/`, обязательная точка `.` в конце);<br>  - Каталог процедур: `DATA LIST`, `VARIABLE LEVEL`, `VALUE LABELS`, `MISSING VALUES`, `FREQUENCIES`, `DESCRIPTIVES`, `CROSSTABS`, `CORRELATIONS`, `T-TEST`, `ONEWAY`, `REGRESSION`, `RELIABILITY`;<br>  - Рекомендации по формулированию ясных и емких выводов в блоках Notes по стандартам научной отчетности (APA).</p><p>#### [MODIFY] [locales/en.ftl](file:///d:/Projects/active/StatCraft/locales/en.ftl) &amp; [locales/ru.ftl](file:///d:/Projects/active/StatCraft/locales/ru.ftl)<br>* Ключи интерфейса и семантического журнала:<br>  - `dialog-mcp-bridge-title`<br>  - `dialog-mcp-bridge-status-active`<br>  - `dialog-mcp-bridge-status-stopped`<br>  - `dialog-mcp-bridge-status-port-busy`<br>  - `dialog-mcp-bridge-btn-start`<br>  - `dialog-mcp-bridge-btn-stop`<br>  - `dialog-mcp-bridge-btn-retry`<br>  - `dialog-mcp-bridge-autostart`<br>  - `dialog-mcp-bridge-copy-config`<br>  - `dialog-mcp-bridge-copy-skill`<br>  - `dialog-mcp-bridge-copied`<br>  - `dialog-mcp-bridge-log-title`<br>  - `dialog-mcp-bridge-clear-log`<br>  - `bridge-log-client-connected = { $time } [Подключение] Агент подключился ({ $addr })`<br>  - `bridge-log-client-disconnected = { $time } [Отключение] Сессия агента завершена ({ $addr })`<br>  - `bridge-log-vars-requested = { $time } [Инспекция] Передан словарь переменных ({ $count } колонок)`<br>  - `bridge-log-preview-requested = { $time } [Инспекция] Передан предпросмотр данных ({ $limit } строк)`<br>  - `bridge-log-dataset-loaded = { $time } [Данные] Загружен массив данных ({ $rows } строк, { $cols } колонок)`<br>  - `bridge-log-syntax-executed = { $time } [Синтаксис] Выполнен синтаксис: { $cmd } (команд: { $count })`<br>  - `bridge-log-note-added = { $time } [Отчет] Добавлено аналитическое примечание: &quot;{ $title }&quot;`<br>  - `bridge-log-tab-switched = { $time } [Интерфейс] Переключена вкладка на &quot;{ $tab }&quot;`<br>  - `bridge-log-server-started = { $time } [Сервер] Мост запущен на { $addr }`<br>  - `bridge-log-server-stopped = { $time } [Сервер] Мост остановлен`</p><p>---</p><h2>План проверки и критерии готовности (Definition of Done)</h2><h3>Автоматические тесты</h3><p>1. **Тесты крейта `statcraft_bridge`:**</p><p><em>[code block — open in CapsuleCraft web for its canvas]</em></p><p>- Сериализация и десериализация протокола JSON-RPC 2.0;<br>   - Запуск и остановка сервера: освобождение сокета, выход потока без паник;<br>   - Сквозной тест через `BridgeClient`: загрузка CSV, выполнение синтаксиса, добавление заметок, проверка ответа;<br>   - Проверка форматирования семантического лога при переключении языков RU/EN.<br>2. **Инварианты архитектуры и кода:**</p><p><em>[code block — open in CapsuleCraft web for its canvas]</em></p><h3>Ручная верификация</h3><p>1. Запуск StatCraft GUI: `cargo run -p statcraft_app -j 1`.<br>2. Меню `Расширения -&gt; Мост для ИИ-агентов и MCP...`:<br>   - Векторный зеленый индикатор, статус «Активен», порт 18493;<br>   - Нажатие `[ Остановить мост ]` $\to$ статус «Остановлен», запись в логе;<br>   - Нажатие `[ Запустить мост ]` $\to$ статус «Активен»;<br>   - Закрытие диалога;<br>3. Внешний запуск `statcraft.exe --mcp`:<br>   - Вызов `statcraft_load_dataset` с сырым CSV $\to$ проверка появления данных в Data View;<br>   - Вызов `statcraft_run_syntax` с настройкой шкал и расчетом $\to$ проверка появления таблиц в Output Viewer;<br>   - Открытие диалога моста $\to$ вся история действий отображается в журнале;<br>   - Переключение `Вид -&gt; Язык -&gt; English` $\to$ вся история в журнале мгновенно переведена на английский язык.<br>4. Проверка жизненного цикла: закрытие окна StatCraft $\to$ проверка в PowerShell, что порт 18493 освобожден и зомби-процессов нет.</p><hr><p style="color:#8a8175;font-size:12px">Exported from CapsuleCraft Native · &lt;doc-statcraft-docs_statcraft_bridge_plan_md@capsuleos.local&gt;</p></body></html>
+
+--BOUNDARY_PAYLOAD_1ROYKE6I8E--
+--BOUNDARY_ROOT_1APPPWSI55--

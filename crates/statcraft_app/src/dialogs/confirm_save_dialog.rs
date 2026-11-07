@@ -1,4 +1,4 @@
-use crate::dialogs::common::DialogShell;
+﻿use crate::dialogs::common::DialogShell;
 use crate::theme::Tokens;
 use egui::{vec2, Align, Button, Context, Layout, TextStyle};
 use statcraft_i18n::t;
@@ -46,7 +46,7 @@ pub fn render_confirm_save_dialog(
                 let galley = ui.painter().layout_no_wrap(
                     lbl.to_string(),
                     font_id.clone(),
-                    Tokens::TEXT_PRIMARY,
+                    Tokens::text_primary(),
                 );
                 let w = galley.rect.width() + 24.0;
                 if w > max_btn_w {
@@ -110,7 +110,7 @@ mod tests {
                     let galley = ui.painter().layout_no_wrap(
                         lbl.to_string(),
                         font_id.clone(),
-                        Tokens::TEXT_PRIMARY,
+                        Tokens::text_primary(),
                     );
                     let w = galley.rect.width() + 24.0;
                     if w > max_btn_w {

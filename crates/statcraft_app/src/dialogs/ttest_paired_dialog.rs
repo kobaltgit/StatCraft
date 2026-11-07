@@ -1,4 +1,4 @@
-use super::common::{
+﻿use super::common::{
     format_var_display, render_variable_list_panel, ActionBarAction, DialogActionBar, DialogShell,
     GroupBox, ListEvent, SubdialogAction, SubdialogActionBar, SubdialogSidebar, TransferButton,
     VariableListItem,
@@ -209,8 +209,8 @@ pub fn render_ttest_paired_dialog(
                 |ui| {
                     ui.label(t!("dialog-ttest-paired-pairs-list"));
                     egui::Frame::canvas(ui.style())
-                        .fill(Tokens::BG_PANEL)
-                        .stroke(Stroke::new(1.0_f32, Tokens::BORDER))
+                        .fill(Tokens::bg_panel())
+                        .stroke(Stroke::new(1.0_f32, Tokens::border()))
                         .show(ui, |ui| {
                             ui.set_min_size(vec2(196.0, 160.0));
                             ui.set_max_size(vec2(196.0, 160.0));
@@ -250,12 +250,12 @@ pub fn render_ttest_paired_dialog(
                     ui.horizontal(|ui| {
                         let is_s1 = state.active_slot == 0;
                         let stroke1 = if is_s1 {
-                            Stroke::new(1.0_f32, Tokens::ACCENT)
+                            Stroke::new(1.0_f32, Tokens::accent())
                         } else {
-                            Stroke::new(1.0_f32, Tokens::BORDER)
+                            Stroke::new(1.0_f32, Tokens::border())
                         };
                         egui::Frame::canvas(ui.style())
-                            .fill(Tokens::BG_PANEL)
+                            .fill(Tokens::bg_panel())
                             .stroke(stroke1)
                             .show(ui, |ui| {
                                 ui.set_min_size(vec2(94.0, 24.0));
@@ -273,12 +273,12 @@ pub fn render_ttest_paired_dialog(
 
                         let is_s2 = state.active_slot == 1;
                         let stroke2 = if is_s2 {
-                            Stroke::new(1.0_f32, Tokens::ACCENT)
+                            Stroke::new(1.0_f32, Tokens::accent())
                         } else {
-                            Stroke::new(1.0_f32, Tokens::BORDER)
+                            Stroke::new(1.0_f32, Tokens::border())
                         };
                         egui::Frame::canvas(ui.style())
-                            .fill(Tokens::BG_PANEL)
+                            .fill(Tokens::bg_panel())
                             .stroke(stroke2)
                             .show(ui, |ui| {
                                 ui.set_min_size(vec2(94.0, 24.0));

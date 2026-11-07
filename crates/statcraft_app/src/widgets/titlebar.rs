@@ -1,4 +1,4 @@
-use crate::theme::Tokens;
+﻿use crate::theme::Tokens;
 use egui::{
     pos2, vec2, Color32, CursorIcon, Id, Pos2, Rect, ResizeDirection, Sense, Stroke, Ui,
     ViewportCommand,
@@ -109,10 +109,10 @@ pub fn render_caption_buttons(ui: &mut Ui, bar_rect: Rect, is_maximized: bool) {
         let is_down = resp.is_pointer_button_down_on();
 
         let bg_color = match (is_down, is_hovered) {
-            (true, _) if is_close => Tokens::CAPTION_CLOSE_PRESSED,
-            (_, true) if is_close => Tokens::CAPTION_CLOSE_HOVER,
-            (true, _) => Tokens::CAPTION_PRESSED,
-            (_, true) => Tokens::CAPTION_HOVER,
+            (true, _) if is_close => Tokens::caption_close_pressed(),
+            (_, true) if is_close => Tokens::caption_close_hover(),
+            (true, _) => Tokens::caption_pressed(),
+            (_, true) => Tokens::caption_hover(),
             _ => Color32::TRANSPARENT,
         };
 
@@ -123,7 +123,7 @@ pub fn render_caption_buttons(ui: &mut Ui, bar_rect: Rect, is_maximized: bool) {
         let glyph_color = if is_close && is_hovered {
             Color32::WHITE
         } else {
-            Tokens::TEXT_PRIMARY
+            Tokens::text_primary()
         };
 
         paint_windows_glyph(

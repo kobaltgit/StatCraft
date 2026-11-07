@@ -973,3 +973,19 @@ fn test_headless_render_optimal_binning_dialog() {
     assert_eq!(state.selected_vars, vec!["salary".to_string()]);
     assert_eq!(state.guide_var.as_deref(), Some("gender"));
 }
+
+#[test]
+fn test_headless_render_mcp_bridge_dialog() {
+    let ctx = egui::Context::default();
+    let mut state = statcraft_app::dialogs::McpBridgeDialogState {
+        is_open: true,
+        copied_banner: false,
+    };
+    let mut bridge = statcraft_app::bridge_service::BridgeService::new(false);
+
+    let _ = ctx.run(Default::default(), |ctx| {
+        statcraft_app::dialogs::render_mcp_bridge_dialog(ctx, &mut state, &mut bridge);
+    });
+
+    assert!(state.is_open);
+}

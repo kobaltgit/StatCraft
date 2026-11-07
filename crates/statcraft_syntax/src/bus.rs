@@ -3,16 +3,17 @@ use crate::commands::{
     AutoRecodeCommand, CellEditCommand, ComputeVariableCommand, CorrelationsCommand,
     CountValuesCommand, CreateDummiesCommand, CreateTimeSeriesCommand, CrosstabsCommand,
     DataAddRowCommand, DataDeleteRowCommand, DateTimeWizardCommand, DescriptivesCommand,
-    FactorCommand, FrequenciesCommand, ImportCsvCommand, ImportExcelCommand, ImportSpssCommand,
-    IndependentSamplesTTestCommand, KruskalWallisCommand, LinearRegressionCommand,
-    MannWhitneyCommand, MeansCommand, OneSampleTTestCommand, OneWayAnovaCommand, OpenFileCommand,
-    OptimalBinningCommand, PairedSamplesTTestCommand, PrepareDataModelingCommand,
-    ProgrammabilityCommand, RandomSeedCommand, RankCasesCommand, RecodeIntoDifferentCommand,
-    RecodeIntoSameCommand, RelatedSamplesTestCommand, ReliabilityCommand, ReplaceMissingCommand,
-    SaveFileCommand, SelectCasesCommand, SetLabelCommand, SetMeasureCommand, ShiftValuesCommand,
-    SortCasesCommand, SplitFileCommand, VarAddCommand, VarDeleteCommand, VarRenameCommand,
-    VarSetAlignCommand, VarSetDecimalsCommand, VarSetMissingValuesCommand, VarSetTypeCommand,
-    VarSetValueLabelsCommand, VarSetWidthCommand, VisualBinningCommand, WeightCasesCommand,
+    FactorCommand, FrequenciesCommand, HelpCommand, ImportCsvCommand, ImportExcelCommand,
+    ImportSpssCommand, IndependentSamplesTTestCommand, KruskalWallisCommand,
+    LinearRegressionCommand, MannWhitneyCommand, MeansCommand, OneSampleTTestCommand,
+    OneWayAnovaCommand, OpenFileCommand, OptimalBinningCommand, PairedSamplesTTestCommand,
+    PrepareDataModelingCommand, ProgrammabilityCommand, RandomSeedCommand, RankCasesCommand,
+    RecodeIntoDifferentCommand, RecodeIntoSameCommand, RelatedSamplesTestCommand,
+    ReliabilityCommand, ReplaceMissingCommand, SaveFileCommand, SelectCasesCommand,
+    SetLabelCommand, SetMeasureCommand, ShiftValuesCommand, SortCasesCommand, SplitFileCommand,
+    VarAddCommand, VarDeleteCommand, VarRenameCommand, VarSetAlignCommand, VarSetDecimalsCommand,
+    VarSetMissingValuesCommand, VarSetTypeCommand, VarSetValueLabelsCommand, VarSetWidthCommand,
+    VisualBinningCommand, WeightCasesCommand,
 };
 use serde::{Deserialize, Serialize};
 use serde_json::{json, Value};
@@ -101,6 +102,7 @@ impl CommandBus {
         bus.register(Box::new(WeightCasesCommand::new()));
         bus.register(Box::new(SaveFileCommand));
         bus.register(Box::new(OpenFileCommand));
+        bus.register(Box::new(HelpCommand));
         bus
     }
 
@@ -161,6 +163,8 @@ impl CommandBus {
                 "id": id,
                 "menu_path": cmd.menu_path(),
                 "shortcut": cmd.default_shortcut(),
+                "category": cmd.category(),
+                "syntax_names": cmd.syntax_names(),
                 "schema": cmd.specs()
             }));
         }
@@ -171,6 +175,36 @@ impl CommandBus {
                 .cmp(b["id"].as_str().unwrap_or(""))
         });
         specs
+    }
+
+    pub fn find_by_syntax_keyword(&self, keyword: &str) -> Option<&dyn EngineCommand> {
+        let kw_upper = keyword.trim().to_ascii_uppercase();
+        for cmd in self.commands.values() {
+            for name in cmd.syntax_names() {
+                if name.eq_ignore_ascii_case(&kw_upper) {
+                    return Some(cmd.as_ref());
+                }
+            }
+        }
+        None
+    }
+
+    pub fn all_syntax_keywords(&self) -> Vec<(&'static str, &'static str)> {
+        let mut list = Vec::new();
+        for (id, cmd) in &self.commands {
+            for name in cmd.syntax_names() {
+                list.push((*name, *id));
+            }
+        }
+        list
+    }
+
+    pub fn full_catalog_metadata(&self) -> Value {
+        json!({
+            "version": env!("CARGO_PKG_VERSION"),
+            "total_commands": self.commands.len(),
+            "commands": self.list_specs()
+        })
     }
 
     pub fn history(&self) -> &[CommandHistoryEntry] {

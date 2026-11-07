@@ -10,6 +10,6 @@ pub use commands::{
     SplitFileCommand,
 };
 pub use syntax_parser::{
-    ParsedCommand, RawCommandBlock, Subcommand, SyntaxDispatcher, SyntaxError, SyntaxLexer,
-    SyntaxParser,
+    generate_full_syntax_reference, generate_help, ParsedCommand, RawCommandBlock, Subcommand,
+    SyntaxDispatcher, SyntaxError, SyntaxLexer, SyntaxParser,
 };

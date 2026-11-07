@@ -1,4 +1,4 @@
-use super::common::{
+﻿use super::common::{
     format_var_display, render_variable_list_panel, ActionBarAction, DialogActionBar, DialogShell,
     GroupBox, ListEvent, SubdialogAction, SubdialogActionBar, SubdialogSidebar, TransferButton,
     VariableListItem,
@@ -270,8 +270,8 @@ pub fn render_ttest_indep_dialog(
                     // Grouping Variable Box
                     ui.label(t!("dialog-ttest-indep-grouping-var"));
                     egui::Frame::canvas(ui.style())
-                        .fill(Tokens::BG_PANEL)
-                        .stroke(egui::Stroke::new(1.0_f32, Tokens::BORDER))
+                        .fill(Tokens::bg_panel())
+                        .stroke(egui::Stroke::new(1.0_f32, Tokens::border()))
                         .show(ui, |ui| {
                             ui.set_min_size(vec2(196.0, 32.0));
                             ui.set_max_size(vec2(196.0, 32.0));

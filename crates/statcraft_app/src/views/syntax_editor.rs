@@ -1,4 +1,4 @@
-use egui::{ScrollArea, TextEdit, TextStyle, Ui};
+﻿use egui::{ScrollArea, TextEdit, TextStyle, Ui};
 use statcraft_i18n::t;
 use std::path::PathBuf;
 use std::time::{SystemTime, UNIX_EPOCH};
@@ -109,7 +109,7 @@ pub fn render_syntax_editor(ui: &mut Ui, state: &mut SyntaxEditorState) -> Synta
                 ui.label(
                     egui::RichText::new(name)
                         .italics()
-                        .color(crate::theme::Tokens::TEXT_MUTED),
+                        .color(crate::theme::Tokens::text_muted()),
                 );
             }
         });

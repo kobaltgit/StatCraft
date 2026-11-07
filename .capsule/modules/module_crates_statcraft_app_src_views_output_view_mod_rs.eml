@@ -1,7 +1,7 @@
 From: CapsuleCraft Code Ingest <system@capsulecraft.local>
 To: Vault <vault@capsuleos.local>
 Subject: 📄 StatCraft / crates/statcraft_app/src/views/output_view/mod.rs
-Date: Fri, 6 Nov 2026 14:13:33 +0000
+Date: Sat, 7 Nov 2026 14:43:34 +0000
 Message-ID: <module-crates_statcraft_app_src_views_output_view_mod_rs@capsuleos.local>
 In-Reply-To: <subsystem-statcraft-crates_statcraft_app@capsuleos.local>
 X-Capsule-Page-Parent: <subsystem-statcraft-crates_statcraft_app@capsuleos.local>
@@ -34,15 +34,15 @@ Content-Disposition: inline; filename="canvas_state.json"
         "level": 1,
         "text": "📄 mod.rs"
       },
-      "id": "blk_native_heading_1793974413838483200",
+      "id": "blk_native_heading_1794062614473359500",
       "managed_by": "project_parser",
       "type": "heading"
     },
     {
       "data": {
-        "text": "Path: `crates/statcraft_app/src/views/output_view/mod.rs` · 422 lines of code\nBelongs to project: [[📦 StatCraft (Overview) | 📦 StatCraft (Overview)]]"
+        "text": "Path: `crates/statcraft_app/src/views/output_view/mod.rs` · 457 lines of code\nBelongs to project: [[📦 StatCraft (Overview) | 📦 StatCraft (Overview)]]"
       },
-      "id": "blk_native_paragraph_1793974413838484800",
+      "id": "blk_native_paragraph_1794062614473361100",
       "managed_by": "project_parser",
       "type": "paragraph"
     },
@@ -51,7 +51,7 @@ Content-Disposition: inline; filename="canvas_state.json"
         "level": 2,
         "text": "Public Interface"
       },
-      "id": "blk_native_heading_1793974413838485400",
+      "id": "blk_native_heading_1794062614473361700",
       "managed_by": "project_parser",
       "type": "heading"
     },
@@ -60,7 +60,7 @@ Content-Disposition: inline; filename="canvas_state.json"
         "code": "pub fn extract_item_tsv(kind: &OutputItemKind) -> Option<String>\npub fn render_output_view(ui: &mut Ui, state: &mut OutputViewerState)",
         "language": "rust"
       },
-      "id": "blk_native_code_1793974413838485900",
+      "id": "blk_native_code_1794062614473362300",
       "managed_by": "project_parser",
       "type": "code"
     },
@@ -69,7 +69,7 @@ Content-Disposition: inline; filename="canvas_state.json"
         "level": 2,
         "text": "Internal Dependencies"
       },
-      "id": "blk_native_heading_1793974413838486500",
+      "id": "blk_native_heading_1794062614473363000",
       "managed_by": "project_parser",
       "type": "heading"
     },
@@ -77,7 +77,7 @@ Content-Disposition: inline; filename="canvas_state.json"
       "data": {
         "text": "- `crate::theme::Tokens`\n"
       },
-      "id": "blk_native_paragraph_1793974413838487400",
+      "id": "blk_native_paragraph_1794062614473363900",
       "managed_by": "project_parser",
       "type": "paragraph"
     }
@@ -88,7 +88,7 @@ Content-Disposition: inline; filename="canvas_state.json"
 Content-Type: text/html; charset="utf-8"
 Content-Disposition: inline
 
-<!doctype html><html><head><meta charset="utf-8"><meta name="generator" content="CapsuleCraft Native"></head><body style="font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;max-width:720px;margin:32px auto;line-height:1.55;color:#23201c;background:#faf8f4;"><h1>📄 StatCraft / crates/statcraft_app/src/views/output_view/mod.rs</h1><h1>📄 mod.rs</h1><p>Path: `crates/statcraft_app/src/views/output_view/mod.rs` · 422 lines of code<br>Belongs to project: [[📦 StatCraft (Overview) | 📦 StatCraft (Overview)]]</p><h2>Public Interface</h2><p><em>[code block — open in CapsuleCraft web for its canvas]</em></p><h2>Internal Dependencies</h2><p>- `crate::theme::Tokens`<br></p><hr><p style="color:#8a8175;font-size:12px">Exported from CapsuleCraft Native · &lt;module-crates_statcraft_app_src_views_output_view_mod_rs@capsuleos.local&gt;</p></body></html>
+<!doctype html><html><head><meta charset="utf-8"><meta name="generator" content="CapsuleCraft Native"></head><body style="font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;max-width:720px;margin:32px auto;line-height:1.55;color:#23201c;background:#faf8f4;"><h1>📄 StatCraft / crates/statcraft_app/src/views/output_view/mod.rs</h1><h1>📄 mod.rs</h1><p>Path: `crates/statcraft_app/src/views/output_view/mod.rs` · 457 lines of code<br>Belongs to project: [[📦 StatCraft (Overview) | 📦 StatCraft (Overview)]]</p><h2>Public Interface</h2><p><em>[code block — open in CapsuleCraft web for its canvas]</em></p><h2>Internal Dependencies</h2><p>- `crate::theme::Tokens`<br></p><hr><p style="color:#8a8175;font-size:12px">Exported from CapsuleCraft Native · &lt;module-crates_statcraft_app_src_views_output_view_mod_rs@capsuleos.local&gt;</p></body></html>
 
 --BOUNDARY_PAYLOAD_1NBCTJ7G7O--
 --BOUNDARY_ROOT_C4VVTPG4T6--

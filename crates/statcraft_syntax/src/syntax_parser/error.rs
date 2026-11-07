@@ -12,8 +12,12 @@ pub enum SyntaxError {
     #[error("Unclosed string literal starting at line {line}, col {col}")]
     UnclosedString { line: usize, col: usize },
 
-    #[error("Unknown or unsupported command '{command}' at line {line}")]
-    UnknownCommand { line: usize, command: String },
+    #[error("Unknown or unsupported command '{command}' at line {line}. Did you mean '{suggestion}'? Type 'HELP.' for available commands.")]
+    UnknownCommand {
+        line: usize,
+        command: String,
+        suggestion: String,
+    },
 
     #[error("Invalid subcommand '{subcommand}' for command '{command}' at line {line}: {reason}")]
     InvalidSubcommand {

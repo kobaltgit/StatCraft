@@ -1,4 +1,4 @@
-use super::model::{
+﻿use super::model::{
     OutputItem, OutputItemKind, OutputNotes, OutputProcedure, OutputViewerState, SelectedTarget,
 };
 use super::tables_common::{adjust_widths, render_data_row, render_header_row};
@@ -102,7 +102,7 @@ fn render_kmo_bartlett_table(ui: &mut Ui, kb: &statcraft_algo::KmoBartlettResult
     ui.label(
         egui::RichText::new(t!("output-factor-kmo-title"))
             .font(egui::FontId::proportional(13.0))
-            .color(Tokens::TEXT_PRIMARY),
+            .color(Tokens::text_primary()),
     );
     ui.add_space(3.0);
 
@@ -127,9 +127,9 @@ fn render_kmo_bartlett_table(ui: &mut Ui, kb: &statcraft_algo::KmoBartlettResult
 
     for (idx, (key, val)) in rows.iter().enumerate() {
         let bg = if idx % 2 == 0 {
-            Tokens::BG_ROW_EVEN
+            Tokens::bg_row_even()
         } else {
-            Tokens::BG_ROW_ODD
+            Tokens::bg_row_odd()
         };
         let vals = vec![
             (t!(key), Align2::LEFT_CENTER),
@@ -143,7 +143,7 @@ fn render_communalities_table(ui: &mut Ui, res: &FactorAnalysisResult) {
     ui.label(
         egui::RichText::new(t!("output-factor-communalities-title"))
             .font(egui::FontId::proportional(13.0))
-            .color(Tokens::TEXT_PRIMARY),
+            .color(Tokens::text_primary()),
     );
     ui.add_space(3.0);
 
@@ -159,9 +159,9 @@ fn render_communalities_table(ui: &mut Ui, res: &FactorAnalysisResult) {
 
     for (idx, row) in res.communalities.iter().enumerate() {
         let bg = if idx % 2 == 0 {
-            Tokens::BG_ROW_EVEN
+            Tokens::bg_row_even()
         } else {
-            Tokens::BG_ROW_ODD
+            Tokens::bg_row_odd()
         };
         let vals = vec![
             (row.variable.clone(), Align2::LEFT_CENTER),
@@ -176,7 +176,7 @@ fn render_variance_explained_table(ui: &mut Ui, res: &FactorAnalysisResult) {
     ui.label(
         egui::RichText::new(t!("output-factor-total-variance-title"))
             .font(egui::FontId::proportional(13.0))
-            .color(Tokens::TEXT_PRIMARY),
+            .color(Tokens::text_primary()),
     );
     ui.add_space(3.0);
 
@@ -196,9 +196,9 @@ fn render_variance_explained_table(ui: &mut Ui, res: &FactorAnalysisResult) {
 
     for (idx, row) in res.total_variance_explained.iter().enumerate() {
         let bg = if idx % 2 == 0 {
-            Tokens::BG_ROW_EVEN
+            Tokens::bg_row_even()
         } else {
-            Tokens::BG_ROW_ODD
+            Tokens::bg_row_odd()
         };
         let vals = vec![
             (row.component.to_string(), Align2::CENTER_CENTER),
@@ -226,7 +226,7 @@ fn render_component_matrix_table(ui: &mut Ui, res: &FactorAnalysisResult) {
     ui.label(
         egui::RichText::new(t!("output-factor-component-matrix-title"))
             .font(egui::FontId::proportional(13.0))
-            .color(Tokens::TEXT_PRIMARY),
+            .color(Tokens::text_primary()),
     );
     ui.add_space(3.0);
 
@@ -241,9 +241,9 @@ fn render_component_matrix_table(ui: &mut Ui, res: &FactorAnalysisResult) {
 
     for (idx, row) in res.component_matrix.iter().enumerate() {
         let bg = if idx % 2 == 0 {
-            Tokens::BG_ROW_EVEN
+            Tokens::bg_row_even()
         } else {
-            Tokens::BG_ROW_ODD
+            Tokens::bg_row_odd()
         };
         let mut vals = vec![(row.variable.clone(), Align2::LEFT_CENTER)];
         for &load in &row.loadings {

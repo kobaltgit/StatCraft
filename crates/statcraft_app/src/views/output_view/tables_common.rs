@@ -1,4 +1,4 @@
-use crate::theme::Tokens;
+﻿use crate::theme::Tokens;
 use egui::{pos2, vec2, Align2, FontId, Sense, Stroke, Ui};
 
 pub fn adjust_widths(ui: &mut Ui, cols: &mut [(String, f32)]) {
@@ -8,7 +8,7 @@ pub fn adjust_widths(ui: &mut Ui, cols: &mut [(String, f32)]) {
             .layout_no_wrap(
                 name.clone(),
                 FontId::proportional(12.0),
-                Tokens::TEXT_PRIMARY,
+                Tokens::text_primary(),
             )
             .rect
             .width();
@@ -21,15 +21,15 @@ pub fn render_header_row(ui: &mut Ui, cols: &[(String, f32)], row_height: f32) {
         ui.spacing_mut().item_spacing = vec2(0.0, 0.0);
         for (col_name, width) in cols {
             let (rect, _) = ui.allocate_exact_size(vec2(*width, row_height), Sense::hover());
-            ui.painter().rect_filled(rect, 0.0_f32, Tokens::BG_HEADER);
+            ui.painter().rect_filled(rect, 0.0_f32, Tokens::bg_header());
             ui.painter()
-                .rect_stroke(rect, 0.0_f32, Stroke::new(1.0_f32, Tokens::BORDER));
+                .rect_stroke(rect, 0.0_f32, Stroke::new(1.0_f32, Tokens::border()));
             ui.painter().text(
                 rect.center(),
                 Align2::CENTER_CENTER,
                 col_name,
                 FontId::proportional(11.5),
-                Tokens::TEXT_PRIMARY,
+                Tokens::text_primary(),
             );
         }
     });
@@ -49,7 +49,7 @@ pub fn render_data_row(
             let (rect, _) = ui.allocate_exact_size(vec2(width, row_height), Sense::hover());
             ui.painter().rect_filled(rect, 0.0_f32, bg_color);
             ui.painter()
-                .rect_stroke(rect, 0.0_f32, Stroke::new(0.5_f32, Tokens::BORDER));
+                .rect_stroke(rect, 0.0_f32, Stroke::new(0.5_f32, Tokens::border()));
 
             let pos = if *align == Align2::LEFT_CENTER {
                 pos2(rect.min.x + 6.0_f32, rect.center().y)
@@ -65,7 +65,7 @@ pub fn render_data_row(
                 *align,
                 text.as_str(),
                 FontId::proportional(11.5),
-                Tokens::TEXT_PRIMARY,
+                Tokens::text_primary(),
             );
         }
     });

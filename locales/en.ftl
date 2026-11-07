@@ -324,6 +324,8 @@ dialog-open-excel-title = Select Excel Spreadsheet (*.xlsx, *.xls, *.ods)
 dialog-open-spss-title = Select SPSS Data File (*.sav, *.zsav)
 output-title = Output Viewer
 output-log = Log
+output-table = Report
+output-generic-title = Command Execution
 output-dataset-imported = Dataset imported successfully: { $name } ({ $rows } rows, { $cols } variables).
 output-no-analysis = No analysis has been performed yet. Choose a procedure from the Analyze menu.
 
@@ -1259,3 +1261,32 @@ output-programmability-logs-title = Execution Action Log
 output-programmability-log-num = #
 output-programmability-log-detail = Action Detail
 output-programmability-executed = Programmability transformations completed: { $statements } statements, { $rows } rows affected.
+
+# AI MCP & Socket Bridge
+dialog-mcp-bridge-title = AI MCP Hub & Socket Bridge
+dialog-mcp-bridge-status-active = Active (127.0.0.1:{ $port })
+dialog-mcp-bridge-status-stopped = Stopped
+dialog-mcp-bridge-status-port-busy = Port { $port } is in use by primary StatCraft instance
+dialog-mcp-bridge-btn-start = Start Bridge
+dialog-mcp-bridge-btn-stop = Stop Bridge
+dialog-mcp-bridge-btn-retry = Retry
+dialog-mcp-bridge-autostart = Launch automatically on application startup
+dialog-mcp-bridge-config-title = AI Agent Connection (MCP Stdio):
+dialog-mcp-bridge-copy-config = Copy MCP Config
+dialog-mcp-bridge-copy-skill = Copy Agent Skill
+dialog-mcp-bridge-copied = Copied to clipboard!
+dialog-mcp-bridge-log-title = Bridge Activity Log (Live):
+dialog-mcp-bridge-clear-log = Clear Log
+dialog-mcp-bridge-log-empty = No events yet. Bridge is awaiting agent connection.
+
+bridge-log-client-connected = { $time } [Connect] Agent connected ({ $addr })
+bridge-log-client-disconnected = { $time } [Disconnect] Agent session closed ({ $addr })
+bridge-log-vars-requested = { $time } [Inspect] Variable dictionary returned ({ $count } columns)
+bridge-log-preview-requested = { $time } [Inspect] Data preview returned ({ $limit } rows)
+bridge-log-dataset-loaded = { $time } [Data] Dataset loaded ({ $rows } rows, { $cols } columns)
+bridge-log-syntax-executed = { $time } [Syntax] Syntax executed: { $cmd } ({ $count } commands)
+bridge-log-note-added = { $time } [Report] Added analytical note: "{ $title }"
+bridge-log-tab-switched = { $time } [UI] Switched active tab to "{ $tab }"
+bridge-log-server-started = { $time } [Server] Bridge server started on { $addr }
+bridge-log-server-stopped = { $time } [Server] Bridge server stopped
+bridge-log-error = { $time } [Error] { $message }

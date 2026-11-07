@@ -53,6 +53,11 @@ pub const CRATE_REGISTRY: &[CrateSpec] = &[
         allowed_dependencies: &["statcraft_core", "statcraft_io", "statcraft_algo"],
     },
     CrateSpec {
+        name: "statcraft_bridge",
+        level: LayerLevel::Utility,
+        allowed_dependencies: &["statcraft_core", "statcraft_syntax"],
+    },
+    CrateSpec {
         name: "statcraft_app",
         level: LayerLevel::L6App,
         allowed_dependencies: &[
@@ -62,6 +67,7 @@ pub const CRATE_REGISTRY: &[CrateSpec] = &[
             "statcraft_i18n",
             "statcraft_algo",
             "statcraft_reporting",
+            "statcraft_bridge",
         ],
     },
 ];

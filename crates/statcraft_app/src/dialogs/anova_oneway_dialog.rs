@@ -1,4 +1,4 @@
-use super::common::{
+﻿use super::common::{
     format_var_display, render_variable_list_panel, ActionBarAction, DialogActionBar, DialogShell,
     GroupBox, ListEvent, SubdialogAction, SubdialogActionBar, SubdialogSidebar, TransferButton,
     VariableListItem,
@@ -266,8 +266,8 @@ pub fn render_anova_oneway_dialog(
                     // Factor Variable Box
                     ui.label(t!("dialog-anova-factor"));
                     egui::Frame::canvas(ui.style())
-                        .fill(Tokens::BG_PANEL)
-                        .stroke(egui::Stroke::new(1.0_f32, Tokens::BORDER))
+                        .fill(Tokens::bg_panel())
+                        .stroke(egui::Stroke::new(1.0_f32, Tokens::border()))
                         .show(ui, |ui| {
                             ui.set_min_size(vec2(196.0, 32.0));
                             ui.set_max_size(vec2(196.0, 32.0));
@@ -280,7 +280,7 @@ pub fn render_anova_oneway_dialog(
                                         state.factor_var = None;
                                     }
                                 } else {
-                                    ui.label(egui::RichText::new("-").color(Tokens::TEXT_MUTED));
+                                    ui.label(egui::RichText::new("-").color(Tokens::text_muted()));
                                 }
                             });
                         });

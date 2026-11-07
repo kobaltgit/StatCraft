@@ -1,4 +1,4 @@
-use super::common::{
+﻿use super::common::{
     format_var_display, render_variable_list_panel, ActionBarAction, DialogActionBar, DialogShell,
     GroupBox, ListEvent, SubdialogSidebar, TransferButton, VariableListItem,
 };
@@ -186,8 +186,8 @@ pub fn render_count_values_dialog(
             ui.allocate_ui_with_layout(vec2(185.0, 270.0), Layout::top_down(Align::Min), |ui| {
                 ui.label(t!("dialog-count-variables"));
                 egui::Frame::canvas(ui.style())
-                    .fill(Tokens::BG_PANEL)
-                    .stroke(Stroke::new(1.0_f32, Tokens::BORDER))
+                    .fill(Tokens::bg_panel())
+                    .stroke(Stroke::new(1.0_f32, Tokens::border()))
                     .show(ui, |ui| {
                         let list_sz = vec2(181.0, 245.0);
                         ui.set_min_size(list_sz);

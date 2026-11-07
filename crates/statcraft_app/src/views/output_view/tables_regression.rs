@@ -1,4 +1,4 @@
-use super::model::{
+﻿use super::model::{
     OutputItem, OutputItemKind, OutputNotes, OutputProcedure, OutputViewerState, SelectedTarget,
 };
 use super::tables_common::{
@@ -109,7 +109,7 @@ fn render_variables_entered_table(ui: &mut Ui, res: &LinearRegressionResult) {
                     (t!("output-regression-none"), Align2::CENTER_CENTER),
                     (res.method.clone(), Align2::CENTER_CENTER),
                 ];
-                render_data_row(ui, &cols, &vals, row_height, Tokens::BG_ROW_EVEN);
+                render_data_row(ui, &cols, &vals, row_height, Tokens::bg_row_even());
             });
         });
 
@@ -151,7 +151,7 @@ fn render_model_summary_table(ui: &mut Ui, res: &LinearRegressionResult) {
                         Align2::RIGHT_CENTER,
                     ),
                 ];
-                render_data_row(ui, &cols, &vals, row_height, Tokens::BG_ROW_EVEN);
+                render_data_row(ui, &cols, &vals, row_height, Tokens::bg_row_even());
             });
         });
 
@@ -206,7 +206,7 @@ fn render_anova_table(ui: &mut Ui, res: &LinearRegressionResult) {
                         Align2::RIGHT_CENTER,
                     ),
                 ];
-                render_data_row(ui, &cols, &vals_reg, row_height, Tokens::BG_ROW_EVEN);
+                render_data_row(ui, &cols, &vals_reg, row_height, Tokens::bg_row_even());
 
                 // Row 2: Residual
                 let vals_res: Vec<(String, Align2)> = vec![
@@ -223,7 +223,7 @@ fn render_anova_table(ui: &mut Ui, res: &LinearRegressionResult) {
                     (String::new(), Align2::CENTER_CENTER),
                     (String::new(), Align2::CENTER_CENTER),
                 ];
-                render_data_row(ui, &cols, &vals_res, row_height, Tokens::BG_ROW_ODD);
+                render_data_row(ui, &cols, &vals_res, row_height, Tokens::bg_row_odd());
 
                 // Row 3: Total
                 let vals_tot: Vec<(String, Align2)> = vec![
@@ -237,7 +237,7 @@ fn render_anova_table(ui: &mut Ui, res: &LinearRegressionResult) {
                     (String::new(), Align2::CENTER_CENTER),
                     (String::new(), Align2::CENTER_CENTER),
                 ];
-                render_data_row(ui, &cols, &vals_tot, row_height, Tokens::BG_ROW_EVEN);
+                render_data_row(ui, &cols, &vals_tot, row_height, Tokens::bg_row_even());
             });
         });
 
@@ -284,9 +284,9 @@ fn render_coefficients_table(ui: &mut Ui, res: &LinearRegressionResult) {
 
                 for (idx, coeff) in res.coefficients.iter().enumerate() {
                     let bg = if idx % 2 == 0 {
-                        Tokens::BG_ROW_EVEN
+                        Tokens::bg_row_even()
                     } else {
-                        Tokens::BG_ROW_ODD
+                        Tokens::bg_row_odd()
                     };
 
                     let var_display = if coeff.var_name == "(Constant)" {

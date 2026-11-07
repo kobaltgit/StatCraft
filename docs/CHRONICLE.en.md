@@ -2852,9 +2852,200 @@ Prepared and released **StatCraft v0.2.2** with version bumps across all project
    * Verified architectural layering with `cargo run -p xtask -j 1 -- layers`, design system invariants with `cargo run -p xtask -j 1 -- design-guard`, and parity checklist with `cargo run -p xtask -j 1 -- parity`;
    * 100% test pass across the entire workspace via `cargo test --workspace -j 1`.
 
+---
+
+### Phase 61: StatCraft Socket Bridge — Code Mode, Semantic Activity Log & Agent Kit (`statcraft_bridge`)
+*Time: November 7, 2026, 10:45 (~45 minutes)*
+
+Implemented the new **`statcraft_bridge`** crate and integrated it into the StatCraft desktop GUI following the **Code Mode** paradigm (compact, high-level executable interface instead of classic bloated MCP micro-tools):
+
+1. **Code Mode Philosophy & `statcraft_bridge` Crate:**
+   - Designed a streamlined suite of 6 high-level tools:
+     1. `statcraft_run_syntax`: core Code Mode execution engine for batch SPSS syntax scripts (`.sps`) handling data creation (`DATA LIST`), transforms (`COMPUTE`, `RECODE`), dictionary metadata (`VARIABLE LEVEL`, `VALUE LABELS`, `MISSING VALUES`), and full statistical analysis (`FREQUENCIES`, `DESCRIPTIVES`, `CROSSTABS`, `T-TEST`, `ONEWAY`, `REGRESSION`, `RELIABILITY`);
+     2. `statcraft_load_dataset`: direct injection of raw tabular data (CSV/TSV text) into active memory without intermediate disk files;
+     3. `statcraft_list_variables`: inspection of variable dictionary metadata (measures, types, labels, missing values);
+     4. `statcraft_get_data_preview`: preview sample of the first $N$ rows for rapid distribution checks;
+     5. `statcraft_insert_output_note`: insertion of formatted analytical findings and scientific conclusion cards into the Output Viewer tree;
+     6. `statcraft_set_active_tab`: intentional tab switching (`data`, `variable`, `output`, `syntax`) without stealing user focus.
+   - JSON-RPC 2.0 wire protocol over local TCP socket `127.0.0.1:18493` (Loopback);
+   - Non-blocking socket listener with clean `AtomicBool` exit and guaranteed socket liberation upon `Drop`.
+
+2. **Long-Running Service in App (`statcraft_app::bridge_service`):**
+   - Dedicated `BridgeService` managing the server lifecycle within `StatCraftApp`;
+   - Inter-thread channels (`BridgeAppRequest` and `oneshot` responders) bridging the TCP server thread to the UI frame loop in `update()`;
+   - Direct execution via `syntax_runner::run_syntax_batch` and `DataSet::from_raw_table`;
+   - In-memory ring buffer `BridgeLogRing` holding up to 100 entries with zero disk footprint.
+
+3. **Interactive Semantic Activity Log & Dialog (`dialogs/mcp_bridge_dialog`):**
+   - Modular dialog built on canonical `DialogKit` (`DialogShell::standard`, `GroupBox`, `SubdialogActionBar`);
+   - 100% vector-first UI: circular status indicator (`ui.painter().circle_filled`) with dynamic colors (emerald green / amber / gray) and zero Unicode tofu emojis;
+   - One-click copy buttons for MCP configuration and agent Skill prompts;
+   - Semantic live activity log: stores typed `BridgeLogEvent` variants, enabling on-the-fly bilingual translation of historical log entries via Fluent catalogs (`en.ftl` / `ru.ftl`).
+
+4. **CLI Flag and Agent Assistant Skill:**
+   - Added `--mcp` CLI flag to `main.rs`: `statcraft.exe --mcp` launches a lightweight stdio MCP proxy without initializing DirectX/GUI;
+   - Authored system skill `.agents/skills/statcraft-assistant/SKILL.md` documenting agent workflows, syntax rules, and data auditing scenarios.
+
+5. **Quality Control & Definition of Done:**
+   - 100% test pass across the entire workspace via `cargo test --workspace -j 1`;
+   - Static architecture and design checks: `cargo run -p xtask -j 1 -- layers`, `cargo run -p xtask -j 1 -- file-guard` (289 files strictly within size limits), `cargo run -p xtask -j 1 -- design-guard`, and `cargo run -p xtask -j 1 -- parity`;
+   - Strict compiler and linting gate: `cargo clippy --workspace -j 1 -- -D warnings` (0 warnings).
+
+---
+
+### Phase 62: StatCraft Bridge v2 — Autonomous Code Mode, Output Return & Dynamic Self-Documentation
+*Time: November 7, 2026, 12:00 (~50 minutes)*
+
+Delivered a comprehensive architectural modernization of the StatCraft Socket Bridge (Bridge v2), transforming the bridge interface into an **autonomous Code Mode (SPSS Syntax REPL)**. External AI agents (Claude, Antigravity, local LLMs) are now 100% self-sufficient without access to Rust source code or manual documentation:
+
+1. **Closing the Feedback Loop (Code Mode REPL Output Return):**
+   - Extended the batch syntax execution engine `syntax_runner::run_syntax_batch` with `SyntaxBatchOutcome { count: usize, output_text: String }`;
+   - Formatted all newly created procedures (SPSS Pivot Tables: ANOVA, Descriptives, Frequencies, T-Tests, Regression, Reliability) into clean monospace ASCII tables via `export_procedures_to_txt` and returned them directly in the text body of `statcraft_run_syntax`;
+   - External agents immediately receive exact sample sizes, means, standard errors, Student's $t$ and Fisher's $F$ statistics, exact $p$-values, and confidence intervals in their conversation context.
+
+2. **Dynamic Self-Documentation & MCP Resources (Zero-Manual-Docs):**
+   - Implemented syntax commands `HELP.` (general catalog of analytical procedure categories) and `HELP <COMMAND>.` (canonical syntax template, subcommands, and usage examples, e.g. `HELP ONEWAY.`);
+   - Registered `HelpCommand` (`util.help`) in `CommandBus`, making syntax help accessible through both the parser and direct command execution;
+   - Added native MCP Resources support to the stdio bridge server (`statcraft.exe --mcp`):
+     - `resources/list`: exposes dynamic resource descriptor `statcraft://syntax-reference`;
+     - `resources/read`: dynamically compiles comprehensive syntax and procedure manuals via `statcraft_syntax::generate_full_syntax_reference()` directly from the binary;
+   - Intelligent Self-Correction: when encountering an unknown command or typo, the parser evaluates Levenshtein distance against known commands and suggests the closest valid procedure (`Did you mean 'ONEWAY'? Type 'HELP.' for available commands.`).
+
+3. **SPSS Variable Dictionary Syntax Mappers (`variables.rs`):**
+   - Implemented syntax mappers for dataset variable metadata management:
+     - `VARIABLE LEVEL varlist (SCALE | ORDINAL | NOMINAL).` -> `"var.set_measure"`;
+     - `VARIABLE LABELS var 'Label'.` -> `"var.set_label"`;
+     - `VALUE LABELS var code 'Label'.` -> `"var.set_value_labels"`;
+     - `MISSING VALUES var (val1, val2) | (low THRU high).` -> `"var.set_missing_values"`;
+   - Upgraded core commands `SetMeasureCommand`, `SetLabelCommand`, `VarSetValueLabelsCommand`, and `VarSetMissingValuesCommand` to accept variable names (`var_name`, `variables`, `assignments`) alongside column indices.
+
+4. **Statistical Procedure Mapping Fixes:**
+   - `ONEWAY`: aligned parameter keys with canonical `OneWayAnovaCommand` schema (`dependent_vars`, top-level `descriptives`, `homogeneity`, `ci`);
+   - `RELIABILITY`: aligned variable list key with `variables`;
+   - `FACTOR`: aligned variable list key with `variables`;
+   - `MEANS`: lifted summary options (`cell_mean`, `cell_count`, `cell_stddev`, `anova`) to top-level command arguments.
+
+5. **Quality Control & Definition of Done:**
+   - 100% test pass across the workspace via `cargo test --workspace -j 1` (0 failures, 0 regressions);
+   - New integration test suites: `syntax_bridge_v2_tests.rs` and `syntax_runner_and_output_tests.rs`;
+   - Static linters and architectural guards: `cargo run -p xtask -j 1 -- layers`, `cargo run -p xtask -j 1 -- file-guard` (294 files strictly within limits), `cargo run -p xtask -j 1 -- design-guard`, `cargo fmt --check`;
+   - Zero-warning compiler policy: `cargo clippy --workspace -j 1 -- -D warnings` (0 warnings);
+   - Refactored agent skill `.agents/skills/statcraft-assistant/SKILL.md` to guide agents toward autonomous Code Mode REPL workflows.
 
 
 
 
+
+
+
+
+
+---
+
+### Phase 63: Self-Sufficient Introspective Bridge Engine & Universal Code Mode (Zero-Maintenance Introspective Bridge)
+*Time: November 7, 2026, 15:05 (~35 minutes)*
+
+Eliminated the architectural bottleneck of manual command registry maintenance and hardcoded procedure matchers in the socket bridge and output runner. Established the core principle of **"Write Once — Works for All Future Functions"**:
+1. **Live Runtime Introspection from Compiled Binary (Zero-Code Base Discovery):**
+   - Extended `CommandBus::list_specs()` with categories and syntax keywords, generating a dynamic live catalog of all engine commands registered in the core;
+   - Added `statcraft_list_commands` tool and `statcraft://commands` dynamic resource to `statcraft_bridge`: external agents receive the exact catalog of all available procedures and JSON parameter schemas on the fly, eliminating the need to read or guess the codebase;
+   - Added `CommandBus::find_by_syntax_keyword` for dynamic command resolution.
+2. **Universal Code Mode (`statcraft_execute_command` & `RUN COMMAND` Directive):**
+   - Added universal execution tool `statcraft_execute_command` to the MCP bridge and IPC protocol: agents can invoke any engine command by `command_id` and JSON arguments with automatic parameter validation;
+   - Added universal syntax directive in `SyntaxParser` and `SyntaxDispatcher`:
+     `RUN COMMAND "<command_id>" { <json_params> }.` (with `CALL "<command_id>" { ... }.` alias);
+   - Every newly registered `EngineCommand` becomes instantly executable both directly through MCP and inside batch `.sps` syntax scripts without requiring dedicated syntax mappers.
+3. **Universal Output Viewer Renderer (Zero-Match Fallback):**
+   - Replaced hardcoded `match parsed.name.as_str()` in `syntax_runner.rs` with an open two-tier rendering model;
+   - Introduced `OutputItemKind::GenericReport` and isolated rendering module `tables_generic.rs`: arbitrary command results are automatically formatted into SPSS-styled summary tables and key-value cards, recorded into the `OutputViewer` tree, and streamed to `output_text` in bridge responses;
+   - Synchronously updated Fluent localization catalogs `locales/en.ftl` and `locales/ru.ftl` with `output-generic-title` and `output-table`.
+4. **Quality Control & Definition of Done:**
+   - 100% test pass across the workspace via `cargo test --workspace -j 1` (0 failures, 0 regressions);
+   - Full pass of dialog and output viewer invariant suites: `cargo test -p statcraft_app --test dialog_invariants -j 1` and `output_viewer_invariants -j 1`;
+   - Architecture and code guard verifications: `cargo run -p xtask -j 1 -- layers`, `cargo run -p xtask -j 1 -- file-guard` (295 files strictly within size limits), `cargo run -p xtask -j 1 -- design-guard`, and `cargo fmt --check`;
+   - Strict compiler and linting gate: `cargo clippy --workspace -j 1 -- -D warnings` (0 warnings);
+   - Localization linter pass: `cargo test -p statcraft_i18n -j 1` (4/4 passed).
+
+---
+
+### Phase 64: System Language Auto-Detection & Session Storage Persistence (Auto-Locale & Storage Persistence)
+*Time: November 7, 2026, 15:50 (~40 minutes)*
+
+Implemented seamless adaptation of the application to the user's OS language environment and guaranteed reliable persistence of user settings across restarts:
+1. **System Language Auto-Detection (`statcraft_i18n::detect`):**
+   - Added an isolated autodetection module `detect.rs` in `statcraft_i18n` adhering strictly to the `file-guard` limit ($\le 500$ lines);
+   - Tiered cascade for OS language discovery:
+     1. `STATCRAFT_LANG` environment variable (explicit process override for CI/headless runs);
+     2. Native OS API call via cached `sys-locale` (`GetUserDefaultLocaleName` on Windows, `CFBundleCopyLocalizationsForPreferences` on macOS, POSIX API on Linux);
+     3. Standard POSIX environment variables `LC_ALL`, `LC_MESSAGES`, `LANG`;
+   - Added language tag normalizer `normalize_language_tag` stripping encodings (`.UTF-8`), modifiers (`@euro`), and country subtags (`-RU`, `_US` $\to$ `ru`, `en`, `de`);
+   - Automatic activation of detected language during initial catalog setup `I18nCatalog::new_with_defaults()` with graceful international fallback to English (`en`) for non-Russian locales.
+2. **Ensure Initialized Guard:**
+   - Functions `set_language`, `current_language`, `available_languages`, `language_name`, `reload_locales`, `tr`, and `tr_args` now guarantee catalog initialization via atomic flag `INITIALIZED`, preventing multi-thread race conditions.
+3. **Session State Persistence in `eframe::Storage`:**
+   - Introduced persistent storage keys in `crates/statcraft_app/src/app.rs`:
+     * `STORAGE_KEY_LANGUAGE = "statcraft_language"`;
+     * `STORAGE_KEY_BRIDGE_AUTOSTART = "statcraft_mcp_bridge_autostart"`;
+   - In `StatCraftApp::save`, serialized the current language and bridge autostart flag on window close and autosave ticks;
+   - In `StatCraftApp::new`, restored the user's explicitly selected language (taking precedence over system autodetection) and bridge autostart flag (defaulting to `true` for seamless pairing with AI agents);
+   - Created dedicated integration test `crates/statcraft_app/tests/storage_persistence_test.rs` using `MockStorage` validating persistence of language and bridge autostart across sessions.
+4. **Quality Control & Definition of Done:**
+   - 100% test pass across workspace: `cargo test --workspace -j 1` (140+ unit and integration tests passing);
+   - `cargo run -p xtask -j 1 -- layers`, `file-guard` (296 files), `design-guard` — 0 violations;
+   - `cargo fmt --check` and `cargo clippy --workspace -j 1 -- -D warnings` — 0 warnings;
+   - Optimized release binaries `target/release/statcraft_app.exe` and `target/release/statcraft.exe` compiled and synchronized.
+
+---
+
+### Phase 65: Universal Theme System (Dark, Light, System)
+*Time: November 7, 2026, 16:40 (~45 minutes)*
+
+Implemented complete theme system support across the application — **Dark (Dark Pro)**, **Light (SPSS Classic Light)**, and **System (System Auto)** with persistent storage and autonomous out-of-the-box styling for all future windows:
+1. **High-Performance Lock-Free Theme Engine (`statcraft_app::theme`):**
+   * Added `ThemeMode` enum (`Dark`, `Light`, `System`) with automated `serde` serialization/deserialization;
+   * Developed academic `LIGHT_PALETTE` (SPSS Classic Light): pure white background `#FFFFFF`, soft gray panels/dialogs background `#F7F8FA`, high-contrast header gray `#E9ECEF`, subtle cyan selection `#DDF4FF`, and accent blue `#0969DA`;
+   * Guaranteed WCAG AAA contrast ratio: primary text to background $\ge 15.6:1$ (exceeding AAA $7:1$), muted text $\ge 5.1:1$ (exceeding AA $4.5:1$);
+   * Built on 100% Safe Rust without mutexes or `unsafe`: global atomic flag `IS_DARK_MODE: AtomicBool` with `Ordering::Relaxed` delivers zero-allocation, instant static reference access to `&DARK_PALETTE` / `&LIGHT_PALETTE` on the hot egui frame rendering path.
+2. **Exhaustive Codebase Migration (Zero-Core Hardcoding for Themes):**
+   * Migrated all static `Tokens::BG_*`, `Tokens::TEXT_*`, `Tokens::BORDER` constants to dynamic accessor methods `Tokens::bg_app()`, `Tokens::bg_panel()`, `Tokens::border()`, `Tokens::text_primary()`, etc.;
+   * Updated all 53 application source files across the workspace (DataView, VariableView, Output Viewer, Custom Titlebar, Toolbar, DialogKit, and all 16 statistical procedure dialogs);
+   * **Autonomy Principle:** Any future window or dialog built using `DialogKit` or `Tokens::*()` automatically adopts the active theme without modifying the theme engine.
+3. **FPS Guard & Preference Persistence:**
+   * In `StatCraftApp::update`, `ctx.set_visuals` and `theme::set_dark_mode` calls are protected by `applied_dark_mode != Some(is_dark)` caching, eliminating redundant egui style invalidations and protecting FPS;
+   * Theme configuration persists in `eframe::Storage` under `STORAGE_KEY_THEME = "statcraft_theme"` and seamlessly restores on relaunch;
+   * Menu `View -> Theme` activated from `MenuItemStatus::InDev` stubs to active `ui.selectable_label` toggles with 100% Fluent key coverage `t!("menu-view-theme-*")`.
+4. **Quality Control & Definition of Done:**
+   * Unit tests `theme::tests::test_theme_mode_switching` and `theme::tests::test_wcag_contrast` verify runtime switching and mathematical WCAG compliance;
+   * Integration test `test_theme_mode_persistence_serialization` validates `ThemeMode` serde roundtrips;
+   * 100% workspace test suite pass: `cargo test --workspace -j 1` (0 failures, 0 regressions);
+   * Architecture and static guards: `cargo run -p xtask -j 1 -- layers`, `cargo run -p xtask -j 1 -- file-guard` (297 files within limits), `cargo run -p xtask -j 1 -- design-guard`, `cargo fmt --check`, `cargo clippy --workspace -j 1 -- -D warnings`.
+
+---
+
+### Release v0.3.0: Network Bridge via MCP, Universal Themes & Auto-Locale (Release v0.3.0)
+*Time: November 7, 2026, 16:55 (~30 minutes)*
+
+Prepared and published the major release **StatCraft v0.3.0**, marking the application's transition into the era of direct AI agent-assisted statistics via the Model Context Protocol and unveiling the universal theme system:
+1. **StatCraft Network Bridge & Autonomous AI Copilot (Code Mode & MCP):**
+   * Implemented full-featured local TCP socket server (port 18493) and headless stdio MCP server (`statcraft.exe --mcp`);
+   * Shipped comprehensive MCP toolset (`statcraft_run_syntax`, `statcraft_execute_command`, `statcraft_list_commands`, `statcraft_list_variables`, `statcraft_load_dataset`, `statcraft_get_data_preview`, `statcraft_insert_output_note`);
+   * Users with zero SPSS experience can conduct rigorous statistical analyses in natural language using their favorite AI assistants (Antigravity, Claude, ChatGPT, Ollama), obtaining mathematically exact results ($\le 10^{-6}$ vs SciPy) while watching interactive tables update live on-screen;
+   * Added an exhaustive explanatory spoiler to `README.md` and `README.ru.md` detailing the benefits and workflow of the bridge for general researchers.
+2. **Universal Theme System (Dark, Light, System):**
+   * Engineered academic `LIGHT_PALETTE` (SPSS Classic Light) with WCAG AAA contrast $\ge 15.6:1$;
+   * Lock-free atomic switch `IS_DARK_MODE` (100% Safe Rust, zero overhead);
+   * FPS Guard style caching and persistent preference storage in `eframe::Storage`.
+3. **Version Synchronization v0.3.0 (Packaging & CI):**
+   * Synchronized version `0.3.0` byte-for-byte across all 4 manifests:
+     - `Cargo.toml` (`[workspace.package] version = "0.3.0"`);
+     - `packaging/windows/installer.iss` (`#define MyAppVersion "0.3.0"`);
+     - `packaging/macos/Info.plist` (`CFBundleShortVersionString` and `CFBundleVersion` = `0.3.0`);
+     - `packaging/linux/control` (`Version: 0.3.0`);
+   * Updated GitHub Actions workflow `.github/workflows/release.yml` with default tag `v0.3.0`;
+   * Authored bilingual release notes manifest in `RELEASE_NOTES.md` for automated GitHub Release publishing;
+   * Compiled and synced optimized release binaries `statcraft_app.exe` and `statcraft.exe` (15.0 MB).
+4. **Quality Control & Definition of Done:**
+   * `cargo test --workspace -j 1` — 100% tests passing across all crates;
+   * `cargo run -p xtask -j 1 -- layers`, `file-guard`, `design-guard`, `cargo fmt --check`, `cargo clippy --workspace -j 1 -- -D warnings` — 0 violations.
 
 

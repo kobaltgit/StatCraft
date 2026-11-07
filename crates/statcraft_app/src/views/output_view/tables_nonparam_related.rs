@@ -1,4 +1,4 @@
-use super::model::{
+﻿use super::model::{
     OutputItem, OutputItemKind, OutputNotes, OutputProcedure, OutputViewerState, SelectedTarget,
 };
 use super::tables_common::{
@@ -112,9 +112,9 @@ pub fn render_spss_related_samples_tables(ui: &mut Ui, results: &[RelatedPairTes
                         for (r_idx, res) in results.iter().enumerate() {
                             if let Some(w) = &res.wilcoxon {
                                 let bg = if r_idx % 2 == 0 {
-                                    Tokens::BG_ROW_EVEN
+                                    Tokens::bg_row_even()
                                 } else {
-                                    Tokens::BG_ROW_ODD
+                                    Tokens::bg_row_odd()
                                 };
 
                                 let pair_label = format!("{} - {}", w.var2, w.var1);
@@ -195,7 +195,7 @@ pub fn render_spss_related_samples_tables(ui: &mut Ui, results: &[RelatedPairTes
                             w.var2, w.var1, w.var2, w.var1, w.var2, w.var1
                         ))
                         .size(11.0)
-                        .color(Tokens::TEXT_MUTED),
+                        .color(Tokens::text_muted()),
                     );
                 }
             }
@@ -227,7 +227,7 @@ pub fn render_spss_related_samples_tables(ui: &mut Ui, results: &[RelatedPairTes
                                 row_z.push((format_opt(Some(w.z_stat)), Align2::RIGHT_CENTER));
                             }
                         }
-                        render_data_row(ui, &cols_stats, &row_z, row_height, Tokens::BG_ROW_EVEN);
+                        render_data_row(ui, &cols_stats, &row_z, row_height, Tokens::bg_row_even());
 
                         // Row: Asymp. Sig. (2-tailed)
                         let mut row_p = vec![(t!("output-row-asymp-sig"), Align2::LEFT_CENTER)];
@@ -239,7 +239,7 @@ pub fn render_spss_related_samples_tables(ui: &mut Ui, results: &[RelatedPairTes
                                 ));
                             }
                         }
-                        render_data_row(ui, &cols_stats, &row_p, row_height, Tokens::BG_ROW_ODD);
+                        render_data_row(ui, &cols_stats, &row_p, row_height, Tokens::bg_row_odd());
                     });
                 });
 
@@ -247,7 +247,7 @@ pub fn render_spss_related_samples_tables(ui: &mut Ui, results: &[RelatedPairTes
             ui.label(
                 egui::RichText::new(format!("a. {}", t!("output-npar-footnote-wilcoxon")))
                     .size(11.0)
-                    .color(Tokens::TEXT_MUTED),
+                    .color(Tokens::text_muted()),
             );
             for res in results {
                 if let Some(w) = &res.wilcoxon {
@@ -259,7 +259,7 @@ pub fn render_spss_related_samples_tables(ui: &mut Ui, results: &[RelatedPairTes
                     ui.label(
                         egui::RichText::new(format!("b. {}", footnote_b))
                             .size(11.0)
-                            .color(Tokens::TEXT_MUTED),
+                            .color(Tokens::text_muted()),
                     );
                 }
             }
@@ -290,9 +290,9 @@ pub fn render_spss_related_samples_tables(ui: &mut Ui, results: &[RelatedPairTes
                         for (r_idx, res) in results.iter().enumerate() {
                             if let Some(s) = &res.sign {
                                 let bg = if r_idx % 2 == 0 {
-                                    Tokens::BG_ROW_EVEN
+                                    Tokens::bg_row_even()
                                 } else {
-                                    Tokens::BG_ROW_ODD
+                                    Tokens::bg_row_odd()
                                 };
 
                                 let pair_label = format!("{} - {}", s.var2, s.var1);
@@ -347,7 +347,7 @@ pub fn render_spss_related_samples_tables(ui: &mut Ui, results: &[RelatedPairTes
                             s.var2, s.var1, s.var2, s.var1, s.var2, s.var1
                         ))
                         .size(11.0)
-                        .color(Tokens::TEXT_MUTED),
+                        .color(Tokens::text_muted()),
                     );
                 }
             }
@@ -387,7 +387,7 @@ pub fn render_spss_related_samples_tables(ui: &mut Ui, results: &[RelatedPairTes
                             &cols_sign_stats,
                             &row_p,
                             row_height,
-                            Tokens::BG_ROW_EVEN,
+                            Tokens::bg_row_even(),
                         );
                     });
                 });
@@ -396,7 +396,7 @@ pub fn render_spss_related_samples_tables(ui: &mut Ui, results: &[RelatedPairTes
             ui.label(
                 egui::RichText::new(format!("a. {}", t!("output-npar-footnote-sign")))
                     .size(11.0)
-                    .color(Tokens::TEXT_MUTED),
+                    .color(Tokens::text_muted()),
             );
         }
     });

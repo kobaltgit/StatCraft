@@ -1,4 +1,4 @@
-use crate::theme::Tokens;
+﻿use crate::theme::Tokens;
 use crate::widgets::paint_measure_icon;
 use egui::{vec2, Align, Layout, ScrollArea, Sense, Stroke, Ui, Vec2};
 use statcraft_core::Measure;
@@ -38,8 +38,8 @@ pub fn render_variable_list_panel(
     ui.allocate_ui_with_layout(panel_size, Layout::top_down(Align::Min), |ui| {
         ui.label(title.as_ref());
         egui::Frame::canvas(ui.style())
-            .fill(Tokens::BG_PANEL)
-            .stroke(Stroke::new(1.0_f32, Tokens::BORDER))
+            .fill(Tokens::bg_panel())
+            .stroke(Stroke::new(1.0_f32, Tokens::border()))
             .show(ui, |ui| {
                 let inner_size = vec2(panel_size.x - 4.0, panel_size.y - 24.0);
                 ui.set_min_size(inner_size);

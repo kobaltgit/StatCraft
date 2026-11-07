@@ -1,4 +1,4 @@
-use crate::theme::Tokens;
+﻿use crate::theme::Tokens;
 use egui::{vec2, Button, TextStyle, Ui};
 use statcraft_i18n::t;
 
@@ -82,7 +82,7 @@ impl DialogActionBar {
             let galley = ui.painter().layout_no_wrap(
                 label.to_string(),
                 font_id.clone(),
-                Tokens::TEXT_PRIMARY,
+                Tokens::text_primary(),
             );
             let w = galley.rect.width() + 20.0;
             if w > max_width {

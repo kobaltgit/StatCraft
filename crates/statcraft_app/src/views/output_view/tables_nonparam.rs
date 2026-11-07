@@ -1,4 +1,4 @@
-use super::model::{
+﻿use super::model::{
     OutputItem, OutputItemKind, OutputNotes, OutputProcedure, OutputViewerState, SelectedTarget,
 };
 use super::tables_common::{
@@ -111,9 +111,9 @@ pub fn render_spss_mann_whitney_tables(
 
                     for (r_idx, res) in results.iter().enumerate() {
                         let bg = if r_idx % 2 == 0 {
-                            Tokens::BG_ROW_EVEN
+                            Tokens::bg_row_even()
                         } else {
-                            Tokens::BG_ROW_ODD
+                            Tokens::bg_row_odd()
                         };
 
                         let row1 = [
@@ -181,21 +181,21 @@ pub fn render_spss_mann_whitney_tables(
                     for res in results {
                         row_u.push((format_opt(Some(res.mann_whitney_u)), Align2::RIGHT_CENTER));
                     }
-                    render_data_row(ui, &cols_stats, &row_u, row_height, Tokens::BG_ROW_EVEN);
+                    render_data_row(ui, &cols_stats, &row_u, row_height, Tokens::bg_row_even());
 
                     // Row: Wilcoxon W
                     let mut row_w = vec![(t!("output-row-wilcoxon-w"), Align2::LEFT_CENTER)];
                     for res in results {
                         row_w.push((format_opt(Some(res.wilcoxon_w)), Align2::RIGHT_CENTER));
                     }
-                    render_data_row(ui, &cols_stats, &row_w, row_height, Tokens::BG_ROW_ODD);
+                    render_data_row(ui, &cols_stats, &row_w, row_height, Tokens::bg_row_odd());
 
                     // Row: Z
                     let mut row_z = vec![(t!("output-row-z"), Align2::LEFT_CENTER)];
                     for res in results {
                         row_z.push((format_opt(Some(res.z_stat)), Align2::RIGHT_CENTER));
                     }
-                    render_data_row(ui, &cols_stats, &row_z, row_height, Tokens::BG_ROW_EVEN);
+                    render_data_row(ui, &cols_stats, &row_z, row_height, Tokens::bg_row_even());
 
                     // Row: Asymp. Sig. (2-tailed)
                     let mut row_p = vec![(t!("output-row-asymp-sig"), Align2::LEFT_CENTER)];
@@ -205,7 +205,7 @@ pub fn render_spss_mann_whitney_tables(
                             Align2::RIGHT_CENTER,
                         ));
                     }
-                    render_data_row(ui, &cols_stats, &row_p, row_height, Tokens::BG_ROW_ODD);
+                    render_data_row(ui, &cols_stats, &row_p, row_height, Tokens::bg_row_odd());
                 });
             });
 
@@ -217,7 +217,7 @@ pub fn render_spss_mann_whitney_tables(
                 grouping_var
             ))
             .size(11.0)
-            .color(Tokens::TEXT_MUTED),
+            .color(Tokens::text_muted()),
         );
         ui.add_space(16.0_f32);
     });

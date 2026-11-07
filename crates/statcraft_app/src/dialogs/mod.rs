@@ -16,6 +16,7 @@ pub mod factor_dialog;
 pub mod frequencies_dialog;
 pub mod kruskal_define_range;
 pub mod kruskal_wallis_dialog;
+pub mod mcp_bridge_dialog;
 pub mod means_dialog;
 pub mod missing_values_dialog;
 pub mod nonparam_define_groups;
@@ -163,3 +164,4 @@ pub mod confirm_save_dialog;
 pub use confirm_save_dialog::{
     render_confirm_save_dialog, ConfirmSaveAction, ConfirmSaveDialogState,
 };
+pub use mcp_bridge_dialog::{render_mcp_bridge_dialog, McpBridgeDialogState};

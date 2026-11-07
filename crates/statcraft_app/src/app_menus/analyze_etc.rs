@@ -281,7 +281,16 @@ impl StatCraftApp {
                         t!("menu-extensions-dialog-builder"),
                         MenuItemStatus::InDev,
                     );
-                    render_menu_item(ui, t!("menu-extensions-mcp-bridge"), MenuItemStatus::InDev);
+                    if render_menu_item(
+                        ui,
+                        t!("menu-extensions-mcp-bridge"),
+                        MenuItemStatus::Ready { shortcut: None },
+                    )
+                    .clicked()
+                    {
+                        ui.close_menu();
+                        self.mcp_bridge_dialog_state.open();
+                    }
                     render_menu_item(ui, t!("menu-extensions-scripting"), MenuItemStatus::InDev);
                 });
             }

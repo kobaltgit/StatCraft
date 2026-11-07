@@ -1,4 +1,4 @@
-use crate::theme::Tokens;
+﻿use crate::theme::Tokens;
 use egui::{pos2, vec2, Color32, Painter, Pos2, Rect, Stroke};
 use statcraft_core::Measure;
 
@@ -9,7 +9,7 @@ pub fn paint_measure_icon(painter: &Painter, rect: Rect, measure: Measure) {
     match measure {
         Measure::Scale => {
             // Ruler icon: diagonal or horizontal line with ticks
-            let color = Tokens::MEASURE_SCALE;
+            let color = Tokens::measure_scale();
             let stroke = Stroke::new(stroke_width, color);
 
             let left = pos2(center.x - 6.0, center.y + 4.0);
@@ -30,7 +30,7 @@ pub fn paint_measure_icon(painter: &Painter, rect: Rect, measure: Measure) {
         }
         Measure::Ordinal => {
             // Bar chart icon: 3 vertical bars of ascending heights
-            let color = Tokens::MEASURE_ORDINAL;
+            let color = Tokens::measure_ordinal();
             let bar_width = 2.5;
 
             // Bar 1 (Short)
@@ -50,7 +50,7 @@ pub fn paint_measure_icon(painter: &Painter, rect: Rect, measure: Measure) {
         }
         Measure::Nominal => {
             // Three clustered colored dots (categorical values)
-            let color = Tokens::MEASURE_NOMINAL;
+            let color = Tokens::measure_nominal();
             let radius = 2.0;
 
             let c1 = pos2(center.x - 3.5, center.y + 2.5);

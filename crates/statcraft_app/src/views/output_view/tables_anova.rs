@@ -56,9 +56,9 @@ fn render_anova_descriptives_table(ui: &mut Ui, res: &OneWayAnovaResult, _ci: f6
 
                 for (r_idx, grp) in res.descriptives.iter().enumerate() {
                     let bg = if r_idx % 2 == 0 {
-                        Tokens::BG_ROW_EVEN
+                        Tokens::bg_row_even()
                     } else {
-                        Tokens::BG_ROW_ODD
+                        Tokens::bg_row_odd()
                     };
                     render_desc_group_row(ui, &cols, grp, row_height, bg);
                 }
@@ -66,7 +66,7 @@ fn render_anova_descriptives_table(ui: &mut Ui, res: &OneWayAnovaResult, _ci: f6
                 if let Some(ref total) = res.total_descriptives {
                     let mut grp_copy = total.clone();
                     grp_copy.group_label = t!("output-col-total");
-                    render_desc_group_row(ui, &cols, &grp_copy, row_height, Tokens::BG_HEADER);
+                    render_desc_group_row(ui, &cols, &grp_copy, row_height, Tokens::bg_header());
                 }
             });
         });
@@ -98,7 +98,7 @@ fn render_desc_group_row(
             let (rect, _) = ui.allocate_exact_size(vec2(width, row_height), Sense::hover());
             ui.painter().rect_filled(rect, 0.0_f32, bg_color);
             ui.painter()
-                .rect_stroke(rect, 0.0_f32, Stroke::new(0.5_f32, Tokens::BORDER));
+                .rect_stroke(rect, 0.0_f32, Stroke::new(0.5_f32, Tokens::border()));
 
             let pos = if *align == Align2::LEFT_CENTER {
                 pos2(rect.min.x + 6.0_f32, rect.center().y)
@@ -112,7 +112,7 @@ fn render_desc_group_row(
                 *align,
                 text.as_str(),
                 FontId::proportional(11.5),
-                Tokens::TEXT_PRIMARY,
+                Tokens::text_primary(),
             );
         }
     });
@@ -157,11 +157,12 @@ fn render_anova_homogeneity_table(
                         let width = cols.get(c_idx).map(|c| c.1).unwrap_or(80.0_f32);
                         let (rect, _) =
                             ui.allocate_exact_size(vec2(width, row_height), Sense::hover());
-                        ui.painter().rect_filled(rect, 0.0_f32, Tokens::BG_ROW_EVEN);
+                        ui.painter()
+                            .rect_filled(rect, 0.0_f32, Tokens::bg_row_even());
                         ui.painter().rect_stroke(
                             rect,
                             0.0_f32,
-                            Stroke::new(0.5_f32, Tokens::BORDER),
+                            Stroke::new(0.5_f32, Tokens::border()),
                         );
 
                         let pos = if *align == Align2::LEFT_CENTER {
@@ -176,7 +177,7 @@ fn render_anova_homogeneity_table(
                             *align,
                             text.as_str(),
                             FontId::proportional(11.5),
-                            Tokens::TEXT_PRIMARY,
+                            Tokens::text_primary(),
                         );
                     }
                 });
@@ -219,7 +220,7 @@ fn render_anova_summary_table(ui: &mut Ui, res: &OneWayAnovaResult) {
                     (format_opt(between.f_stat), Align2::RIGHT_CENTER),
                     (format_sig(between.p_value), Align2::RIGHT_CENTER),
                 ];
-                render_summary_row(ui, &cols, &vals_b, row_height, Tokens::BG_ROW_EVEN);
+                render_summary_row(ui, &cols, &vals_b, row_height, Tokens::bg_row_even());
 
                 // 2. Within Groups
                 let within = &res.within_groups;
@@ -234,7 +235,7 @@ fn render_anova_summary_table(ui: &mut Ui, res: &OneWayAnovaResult) {
                     ("-".to_string(), Align2::CENTER_CENTER),
                     ("-".to_string(), Align2::CENTER_CENTER),
                 ];
-                render_summary_row(ui, &cols, &vals_w, row_height, Tokens::BG_ROW_ODD);
+                render_summary_row(ui, &cols, &vals_w, row_height, Tokens::bg_row_odd());
 
                 // 3. Total
                 let total = &res.total;
@@ -246,7 +247,7 @@ fn render_anova_summary_table(ui: &mut Ui, res: &OneWayAnovaResult) {
                     ("-".to_string(), Align2::CENTER_CENTER),
                     ("-".to_string(), Align2::CENTER_CENTER),
                 ];
-                render_summary_row(ui, &cols, &vals_t, row_height, Tokens::BG_HEADER);
+                render_summary_row(ui, &cols, &vals_t, row_height, Tokens::bg_header());
             });
         });
 }
@@ -258,7 +259,7 @@ fn adjust_widths(ui: &mut Ui, cols: &mut [(String, f32)]) {
             .layout_no_wrap(
                 name.clone(),
                 FontId::proportional(12.0),
-                Tokens::TEXT_PRIMARY,
+                Tokens::text_primary(),
             )
             .rect
             .width();
@@ -271,15 +272,15 @@ fn render_header(ui: &mut Ui, cols: &[(String, f32)], row_height: f32) {
         ui.spacing_mut().item_spacing = vec2(0.0, 0.0);
         for (col_name, width) in cols {
             let (rect, _) = ui.allocate_exact_size(vec2(*width, row_height), Sense::hover());
-            ui.painter().rect_filled(rect, 0.0_f32, Tokens::BG_HEADER);
+            ui.painter().rect_filled(rect, 0.0_f32, Tokens::bg_header());
             ui.painter()
-                .rect_stroke(rect, 0.0_f32, Stroke::new(1.0_f32, Tokens::BORDER));
+                .rect_stroke(rect, 0.0_f32, Stroke::new(1.0_f32, Tokens::border()));
             ui.painter().text(
                 rect.center(),
                 Align2::CENTER_CENTER,
                 col_name,
                 FontId::proportional(11.5),
-                Tokens::TEXT_PRIMARY,
+                Tokens::text_primary(),
             );
         }
     });
@@ -299,7 +300,7 @@ fn render_summary_row(
             let (rect, _) = ui.allocate_exact_size(vec2(width, row_height), Sense::hover());
             ui.painter().rect_filled(rect, 0.0_f32, bg_color);
             ui.painter()
-                .rect_stroke(rect, 0.0_f32, Stroke::new(0.5_f32, Tokens::BORDER));
+                .rect_stroke(rect, 0.0_f32, Stroke::new(0.5_f32, Tokens::border()));
 
             let pos = if *align == Align2::LEFT_CENTER {
                 pos2(rect.min.x + 6.0_f32, rect.center().y)
@@ -315,7 +316,7 @@ fn render_summary_row(
                 *align,
                 text.as_str(),
                 FontId::proportional(11.5),
-                Tokens::TEXT_PRIMARY,
+                Tokens::text_primary(),
             );
         }
     });

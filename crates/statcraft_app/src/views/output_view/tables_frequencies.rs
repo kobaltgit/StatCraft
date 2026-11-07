@@ -50,7 +50,7 @@ fn render_single_frequency_table(ui: &mut Ui, res: &FrequencyResult) {
             .layout_no_wrap(
                 col_name.clone(),
                 FontId::proportional(12.0),
-                Tokens::TEXT_PRIMARY,
+                Tokens::text_primary(),
             )
             .rect
             .width();
@@ -69,18 +69,18 @@ fn render_single_frequency_table(ui: &mut Ui, res: &FrequencyResult) {
                     for (col_name, width) in &cols {
                         let (rect, _) =
                             ui.allocate_exact_size(vec2(*width, row_height), Sense::hover());
-                        ui.painter().rect_filled(rect, 0.0_f32, Tokens::BG_HEADER);
+                        ui.painter().rect_filled(rect, 0.0_f32, Tokens::bg_header());
                         ui.painter().rect_stroke(
                             rect,
                             0.0_f32,
-                            Stroke::new(1.0_f32, Tokens::BORDER),
+                            Stroke::new(1.0_f32, Tokens::border()),
                         );
                         ui.painter().text(
                             rect.center(),
                             Align2::CENTER_CENTER,
                             col_name,
                             FontId::proportional(12.0),
-                            Tokens::TEXT_PRIMARY,
+                            Tokens::text_primary(),
                         );
                     }
                 });
@@ -88,9 +88,9 @@ fn render_single_frequency_table(ui: &mut Ui, res: &FrequencyResult) {
                 // Categories
                 for (r_idx, cat) in res.categories.iter().enumerate() {
                     let bg_color = if r_idx % 2 == 0 {
-                        Tokens::BG_ROW_EVEN
+                        Tokens::bg_row_even()
                     } else {
-                        Tokens::BG_ROW_ODD
+                        Tokens::bg_row_odd()
                     };
 
                     ui.horizontal(|ui| {
@@ -122,7 +122,7 @@ fn render_single_frequency_table(ui: &mut Ui, res: &FrequencyResult) {
                             ui.painter().rect_stroke(
                                 rect,
                                 0.0_f32,
-                                Stroke::new(0.5_f32, Tokens::BORDER),
+                                Stroke::new(0.5_f32, Tokens::border()),
                             );
 
                             let pos = if *align == Align2::LEFT_CENTER {
@@ -137,7 +137,7 @@ fn render_single_frequency_table(ui: &mut Ui, res: &FrequencyResult) {
                                 *align,
                                 text.as_str(),
                                 FontId::proportional(11.5),
-                                Tokens::TEXT_PRIMARY,
+                                Tokens::text_primary(),
                             );
                         }
                     });
@@ -158,11 +158,12 @@ fn render_single_frequency_table(ui: &mut Ui, res: &FrequencyResult) {
                         let width = cols[c_idx].1;
                         let (rect, _) =
                             ui.allocate_exact_size(vec2(width, row_height), Sense::hover());
-                        ui.painter().rect_filled(rect, 0.0_f32, Tokens::BG_ROW_EVEN);
+                        ui.painter()
+                            .rect_filled(rect, 0.0_f32, Tokens::bg_row_even());
                         ui.painter().rect_stroke(
                             rect,
                             0.0_f32,
-                            Stroke::new(1.0_f32, Tokens::BORDER),
+                            Stroke::new(1.0_f32, Tokens::border()),
                         );
 
                         let pos = if *align == Align2::LEFT_CENTER {
@@ -176,7 +177,7 @@ fn render_single_frequency_table(ui: &mut Ui, res: &FrequencyResult) {
                             *align,
                             text,
                             FontId::proportional(11.5),
-                            Tokens::TEXT_PRIMARY,
+                            Tokens::text_primary(),
                         );
                     }
                 });
@@ -197,11 +198,12 @@ fn render_single_frequency_table(ui: &mut Ui, res: &FrequencyResult) {
                             let width = cols[c_idx].1;
                             let (rect, _) =
                                 ui.allocate_exact_size(vec2(width, row_height), Sense::hover());
-                            ui.painter().rect_filled(rect, 0.0_f32, Tokens::BG_ROW_ODD);
+                            ui.painter()
+                                .rect_filled(rect, 0.0_f32, Tokens::bg_row_odd());
                             ui.painter().rect_stroke(
                                 rect,
                                 0.0_f32,
-                                Stroke::new(0.5_f32, Tokens::BORDER),
+                                Stroke::new(0.5_f32, Tokens::border()),
                             );
 
                             let pos = if *align == Align2::LEFT_CENTER {
@@ -215,7 +217,7 @@ fn render_single_frequency_table(ui: &mut Ui, res: &FrequencyResult) {
                                 *align,
                                 text,
                                 FontId::proportional(11.5),
-                                Tokens::TEXT_PRIMARY,
+                                Tokens::text_primary(),
                             );
                         }
                     });
@@ -236,11 +238,11 @@ fn render_single_frequency_table(ui: &mut Ui, res: &FrequencyResult) {
                         let width = cols[c_idx].1;
                         let (rect, _) =
                             ui.allocate_exact_size(vec2(width, row_height), Sense::hover());
-                        ui.painter().rect_filled(rect, 0.0_f32, Tokens::BG_HEADER);
+                        ui.painter().rect_filled(rect, 0.0_f32, Tokens::bg_header());
                         ui.painter().rect_stroke(
                             rect,
                             0.0_f32,
-                            Stroke::new(1.0_f32, Tokens::BORDER),
+                            Stroke::new(1.0_f32, Tokens::border()),
                         );
 
                         let pos = if *align == Align2::LEFT_CENTER {
@@ -254,7 +256,7 @@ fn render_single_frequency_table(ui: &mut Ui, res: &FrequencyResult) {
                             *align,
                             text,
                             FontId::proportional(11.5),
-                            Tokens::TEXT_PRIMARY,
+                            Tokens::text_primary(),
                         );
                     }
                 });
@@ -277,27 +279,27 @@ fn render_quartiles_table(ui: &mut Ui, var_name: &str, q1: f64, q2: f64, q3: f64
 
         for (label, val) in &quartiles {
             let (r1, _) = ui.allocate_exact_size(vec2(col_w, row_height), Sense::hover());
-            ui.painter().rect_filled(r1, 0.0_f32, Tokens::BG_HEADER);
+            ui.painter().rect_filled(r1, 0.0_f32, Tokens::bg_header());
             ui.painter()
-                .rect_stroke(r1, 0.0_f32, Stroke::new(1.0_f32, Tokens::BORDER));
+                .rect_stroke(r1, 0.0_f32, Stroke::new(1.0_f32, Tokens::border()));
             ui.painter().text(
                 r1.center(),
                 Align2::CENTER_CENTER,
                 *label,
                 FontId::proportional(11.0),
-                Tokens::TEXT_PRIMARY,
+                Tokens::text_primary(),
             );
 
             let (r2, _) = ui.allocate_exact_size(vec2(col_w, row_height), Sense::hover());
-            ui.painter().rect_filled(r2, 0.0_f32, Tokens::BG_ROW_EVEN);
+            ui.painter().rect_filled(r2, 0.0_f32, Tokens::bg_row_even());
             ui.painter()
-                .rect_stroke(r2, 0.0_f32, Stroke::new(1.0_f32, Tokens::BORDER));
+                .rect_stroke(r2, 0.0_f32, Stroke::new(1.0_f32, Tokens::border()));
             ui.painter().text(
                 r2.center(),
                 Align2::CENTER_CENTER,
                 format!("{:.4}", val),
                 FontId::proportional(11.0),
-                Tokens::TEXT_PRIMARY,
+                Tokens::text_primary(),
             );
         }
     });

@@ -1,4 +1,4 @@
-use super::tables_common::{
+﻿use super::tables_common::{
     adjust_widths, format_opt, format_opt_2dec, format_sig, render_data_row, render_header_row,
 };
 use crate::theme::Tokens;
@@ -43,9 +43,9 @@ pub fn render_spss_indep_ttest_tables(
 
                     for (r_idx, res) in results.iter().enumerate() {
                         let bg = if r_idx % 2 == 0 {
-                            Tokens::BG_ROW_EVEN
+                            Tokens::bg_row_even()
                         } else {
-                            Tokens::BG_ROW_ODD
+                            Tokens::bg_row_odd()
                         };
 
                         let row1 = [
@@ -100,9 +100,9 @@ pub fn render_spss_indep_ttest_tables(
 
                     for (r_idx, res) in results.iter().enumerate() {
                         let bg = if r_idx % 2 == 0 {
-                            Tokens::BG_ROW_EVEN
+                            Tokens::bg_row_even()
                         } else {
-                            Tokens::BG_ROW_ODD
+                            Tokens::bg_row_odd()
                         };
                         let eq = &res.equal_variances_assumed;
                         let neq = &res.equal_variances_not_assumed;

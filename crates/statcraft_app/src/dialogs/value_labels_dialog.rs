@@ -1,4 +1,4 @@
-use super::common::{ActionBarAction, DialogActionBar, DialogShell, GroupBox};
+﻿use super::common::{ActionBarAction, DialogActionBar, DialogShell, GroupBox};
 use crate::theme::Tokens;
 use egui::{vec2, ScrollArea, Stroke};
 use statcraft_i18n::t;
@@ -141,8 +141,8 @@ pub fn render_value_labels_dialog(
         ui.label(t!("dialog-value-labels-list-title"));
 
         egui::Frame::canvas(ui.style())
-            .fill(Tokens::BG_PANEL)
-            .stroke(Stroke::new(1.0_f32, Tokens::BORDER))
+            .fill(Tokens::bg_panel())
+            .stroke(Stroke::new(1.0_f32, Tokens::border()))
             .show(ui, |ui| {
                 ui.set_min_size(vec2(410.0, 110.0));
                 ui.set_max_size(vec2(410.0, 110.0));

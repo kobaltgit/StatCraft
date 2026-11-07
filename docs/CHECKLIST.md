@@ -569,6 +569,61 @@
 - [x] Хроника разработки: синхронное добавление записи о релизе v0.2.2 в `docs/CHRONICLE.md` и `docs/CHRONICLE.en.md`
 - [x] 100% прохождение всех проверок Definition of Done (`cargo test --workspace -j 1`, `xtask file-guard`, `xtask layers`, `xtask design-guard`, `xtask parity`, `clippy --workspace -j 1 -- -D warnings`)
 
+## 61. Сетевой мост StatCraft: Code Mode, Семантический лог & Agent Kit (`statcraft_bridge`)
+- [x] L-Utility `statcraft_bridge`: архитектура Code Mode (6 компактных инструментов: `statcraft_run_syntax`, `statcraft_load_dataset`, `statcraft_list_variables`, `statcraft_get_data_preview`, `statcraft_insert_output_note`, `statcraft_set_active_tab`), протокол JSON-RPC 2.0, TCP-сервер на 127.0.0.1:18493 с неблокирующим сокетом, `BridgeClient` и stdio MCP-сервер (`statcraft.exe --mcp`)
+- [x] L6 `statcraft_app::bridge_service`: сервис моста в `StatCraftApp`, канал запросов `BridgeAppRequest` и ответов `oneshot`, обработка в кадре `update()`, диспетчеризация пакетного синтаксиса, прямой импорт сырых CSV в память, кольцевой буфер `BridgeLogRing`
+- [x] L6 UI `dialogs/mcp_bridge_dialog`: модульный диалог на базе `DialogKit` (`DialogShell::standard`, `GroupBox`, `SubdialogActionBar`), векторный индикатор статуса, копирование конфигурации и навыка, прокручиваемый семантический журнал активности с динамической локализацией на лету
+- [x] Меню и флаги CLI: активация пункта меню `menu-extensions-mcp-bridge`, флаг командной строки `--mcp` в `main.rs` для запуска stdio MCP без создания графического окна
+- [x] Agent Kit и локализация: системный навык `.agents/skills/statcraft-assistant/SKILL.md`, синхронизированные ключи в `locales/en.ftl` и `locales/ru.ftl`
+- [x] 100% прохождение всех проверок Definition of Done (`cargo test --workspace -j 1`, `xtask layers`, `xtask file-guard`, `xtask design-guard`, `xtask parity`, `clippy --workspace -j 1 -- -D warnings`)
+
+## 62. Модернизация моста StatCraft Bridge v2: Автономный Code Mode, Output Return & Dynamic Self-Documentation
+- [x] L5 `statcraft_syntax`: исправление маппингов процедур `ONEWAY` (`dependent_vars`, плоские `descriptives`/`homogeneity`), `RELIABILITY` (`variables`), `FACTOR` (`variables`) и `MEANS` (плоские `cell_*` опции) под схемы параметров `CommandBus`
+- [x] L5 `statcraft_syntax`: синтаксические мапперы для словаря переменных `VARIABLE LEVEL`, `VARIABLE LABELS`, `VALUE LABELS`, `MISSING VALUES` с поддержкой назначения по именам столбцов и блочной передачи
+- [x] L5 `statcraft_syntax`: синтаксическая самодокументация `HELP.` и `HELP <COMMAND>.`, команда `HelpCommand` (`util.help`) и подсказки самокоррекции `Did you mean ...?` на базе расстояния Левенштейна
+- [x] L-Utility `statcraft_bridge`: поддержка MCP Resources (`resources/list`, `resources/read`) для динамического справочника `statcraft://syntax-reference` и возврат отформатированных ASCII-таблиц `output_text` прямо в ответе `statcraft_run_syntax`
+- [x] L6 `statcraft_app`: расширение `syntax_runner::run_syntax_batch` структурой `SyntaxBatchOutcome`, автоматический экспорт созданных процедур через `export_procedures_to_txt` и передача в `bridge_service`
+- [x] Документация и навыки: рефакторинг манифеста `.agents/skills/statcraft-assistant/SKILL.md` под автономный Code Mode REPL
+- [x] 100% прохождение всех проверок Definition of Done (`cargo test --workspace -j 1`, `xtask layers`, `xtask file-guard` (294 файла в лимитах), `xtask design-guard`, `cargo fmt --check`, `clippy --workspace -j 1 -- -D warnings`)
 
 
 
+
+
+
+
+
+## 63. Самодостаточный интроспективный движок моста и универсальный Code Mode (Zero-Maintenance Introspective Bridge)
+- [x] L5 `statcraft_syntax`: добавление `syntax_names` и `category` в типаж `EngineCommand`, динамическая интроспекция `CommandBus::list_specs()`, `find_by_syntax_keyword` и `all_syntax_keywords`
+- [x] L5 `statcraft_syntax`: реализация универсальной директивы `RUN COMMAND "<command_id>" { <json_params> }.` и `CALL "<command_id>" { ... }.` в `SyntaxParser` и `SyntaxDispatcher` для прямого вызова любых зарегистрированных команд ядра
+- [x] L-Utility `statcraft_bridge`: универсальный инструмент вызова `statcraft_execute_command`, инструмент интроспекции `statcraft_list_commands` и динамический ресурс `statcraft://commands` с форматированием каталога в Markdown
+- [x] L6 `statcraft_app`: ликвидация хардкода в `syntax_runner.rs`, внедрение универсального элемента вывода `OutputItemKind::GenericReport` и модуля `tables_generic.rs` (Zero-Match Fallback для любых существующих и будущих процедур)
+- [x] L6 `statcraft_app::bridge_service`: обработка запросов `ListCommands` и `ExecuteCommand` с автоматической регистрацией результатов в `OutputViewer` и отдачей форматированного текста `output_text`
+- [x] Локализация: добавление ключей `output-generic-title` и `output-table` в `locales/en.ftl` и `locales/ru.ftl`
+- [x] 100% прохождение проверок Definition of Done (`cargo test --workspace -j 1`, `cargo test -p statcraft_i18n -j 1`, `xtask layers`, `xtask file-guard` [295 файлов], `xtask design-guard`, `cargo fmt --check`, `clippy --workspace -j 1 -- -D warnings`)
+
+## 64. Автоматическое определение языка системы и сохранение настроек сессии (Auto-Locale & Storage Persistence)
+- [x] L-Cross `statcraft_i18n`: изолированный модуль автоопределения языка системы `detect.rs` (`STATCRAFT_LANG`, нативный вызов через локальный `sys-locale`, переменные `LC_ALL`, `LC_MESSAGES`, `LANG`), нормализация тегов `normalize_language_tag` и автоматическая активация при старте
+- [x] L-Cross `statcraft_i18n`: гарантированная ленивая инициализация каталога при любых вызовах `ensure_initialized()` для исключения гонок потоков в тестах
+- [x] L6 `statcraft_app::app`: ключи хранилища `STORAGE_KEY_LANGUAGE` и `STORAGE_KEY_BRIDGE_AUTOSTART`
+- [x] L6 `statcraft_app::app`: сохранение в `save(&mut self, storage)` и восстановление в `new(cc)` сохранённого языка и состояния чекбокса автозапуска MCP моста
+- [x] L6 `statcraft_app`: автономный интеграционный тест `tests/storage_persistence_test.rs` для проверки сохранения и восстановления параметров сессии
+- [x] 100% прохождение всех проверок Definition of Done (`cargo test --workspace -j 1`, `cargo test -p statcraft_i18n -j 1`, `xtask layers`, `xtask file-guard` [296 файлов], `xtask design-guard`, `cargo fmt --check`, `clippy --workspace -j 1 -- -D warnings`)
+- [x] Обновление релизного бинарника `target/release/statcraft_app.exe` и `target/release/statcraft.exe`
+
+## 65. Универсальная система тем оформления (Dark, Light, System Theme System)
+- [x] L6 `statcraft_app::theme`: масштабируемый движок тем `ThemeMode` (`Dark`, `Light`, `System`), палитры `DARK_PALETTE` и `LIGHT_PALETTE` (SPSS Classic Light с WCAG-контрастностью AAA $\ge 7:1$ для основного текста и AA $\ge 4.5:1$ для вторичного)
+- [x] L6 `statcraft_app::theme`: динамические методы `Tokens::bg_app()`, `Tokens::bg_panel()`, `Tokens::border()`, `Tokens::text_primary()` и др. на базе атомарного безопасного переключателя `IS_DARK_MODE: AtomicBool` (100% Safe Rust, zero-allocation на горячем пути рендеринга egui)
+- [x] L6 `statcraft_app`: миграция всех 53 файлов кодовой базы с констант на динамические методы `Tokens::*()`, гарантирующая автоматическую адаптацию всех существующих и будущих диалогов `DialogKit`
+- [x] L6 `statcraft_app::app`: FPS Guard — вызов `ctx.set_visuals` и `set_dark_mode` только при фактическом изменении режима темы, кэширование в `applied_dark_mode`
+- [x] L6 `statcraft_app::app`: сохранение `STORAGE_KEY_THEME = "statcraft_theme"` в `eframe::Storage` и восстановление темы при перезапуске
+- [x] L6 `statcraft_app::app_menus::file_edit_view`: активация переключения тем в меню `Вид -> Тема` (`menu-view-theme-light`, `menu-view-theme-dark`, `menu-view-theme-system`) строго по семантическим ключам Fluent без хардкода строк
+- [x] 100% прохождение всех проверок Definition of Done (`cargo test --workspace -j 1`, `cargo test -p statcraft_app -j 1`, `xtask layers`, `xtask file-guard` [297 файлов], `xtask design-guard`, `cargo fmt --check`, `clippy --workspace -j 1 -- -D warnings`)
+
+## 66. Релиз v0.3.0: Сетевой мост MCP, универсальные темы и автоопределение языка (Release v0.3.0)
+- [x] Синхронизация версии `0.3.0` байт-в-байт в 4 манифестах пакетирования (`Cargo.toml`, `packaging/windows/installer.iss`, `packaging/macos/Info.plist`, `packaging/linux/control`) и обновление `Cargo.lock`
+- [x] Обновление тега релиза по умолчанию в `.github/workflows/release.yml` (`v0.3.0`)
+- [x] Подробное описание релиза в `RELEASE_NOTES.md` на русском и английском языках (Bridge, Theme System, Auto-Locale, Universal Code Mode)
+- [x] Интеграция подробного описания сетевого моста MCP и работы с ИИ-агентами под спойлером в `README.ru.md` и `README.md`
+- [x] Сборка оптимизированных релизных бинарников `target/release/statcraft_app.exe` и `target/release/statcraft.exe`
+- [x] Хроника разработки: синхронное добавление записи о релизе v0.3.0 в `docs/CHRONICLE.md` и `docs/CHRONICLE.en.md`

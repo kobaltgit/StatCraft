@@ -1,4 +1,4 @@
-use super::model::{
+﻿use super::model::{
     OutputItem, OutputItemKind, OutputNotes, OutputProcedure, OutputViewerState, SelectedTarget,
 };
 use super::tables_common::{
@@ -143,7 +143,7 @@ fn render_means_case_summary(ui: &mut Ui, table: &MeansTableResult, idx: usize) 
                         Align2::RIGHT_CENTER,
                     ),
                 ];
-                render_data_row(ui, &cols, &vals, row_h, Tokens::BG_ROW_EVEN);
+                render_data_row(ui, &cols, &vals, row_h, Tokens::bg_row_even());
             });
         });
 }
@@ -188,9 +188,9 @@ fn render_means_report_table(ui: &mut Ui, table: &MeansTableResult, idx: usize) 
 
                 for (r_idx, cell) in table.cells.iter().enumerate() {
                     let bg = if r_idx % 2 == 0 {
-                        Tokens::BG_ROW_EVEN
+                        Tokens::bg_row_even()
                     } else {
-                        Tokens::BG_ROW_ODD
+                        Tokens::bg_row_odd()
                     };
                     let mut vals = vec![
                         (cell.group_label.clone(), Align2::LEFT_CENTER),
@@ -224,7 +224,7 @@ fn render_means_report_table(ui: &mut Ui, table: &MeansTableResult, idx: usize) 
                     tot_vals.push((format_opt(table.total.min), Align2::RIGHT_CENTER));
                     tot_vals.push((format_opt(table.total.max), Align2::RIGHT_CENTER));
                 }
-                render_data_row(ui, &cols, &tot_vals, row_h, Tokens::BG_HEADER);
+                render_data_row(ui, &cols, &tot_vals, row_h, Tokens::bg_header());
             });
         });
 }
@@ -268,7 +268,7 @@ fn render_means_anova_table(
                         anova.between_groups.mean_square,
                         anova.between_groups.f_stat,
                         anova.between_groups.p_value,
-                        Tokens::BG_ROW_EVEN,
+                        Tokens::bg_row_even(),
                     ),
                     (
                         t!("output-col-within-groups"),
@@ -277,7 +277,7 @@ fn render_means_anova_table(
                         anova.within_groups.mean_square,
                         anova.within_groups.f_stat,
                         anova.within_groups.p_value,
-                        Tokens::BG_ROW_ODD,
+                        Tokens::bg_row_odd(),
                     ),
                     (
                         t!("output-col-total"),
@@ -286,7 +286,7 @@ fn render_means_anova_table(
                         anova.total.mean_square,
                         anova.total.f_stat,
                         anova.total.p_value,
-                        Tokens::BG_HEADER,
+                        Tokens::bg_header(),
                     ),
                 ];
 
@@ -341,7 +341,7 @@ fn render_means_measures_of_association(
                     (format!("{:.3}", assoc.eta), Align2::RIGHT_CENTER),
                     (format!("{:.3}", assoc.eta_squared), Align2::RIGHT_CENTER),
                 ];
-                render_data_row(ui, &cols, &vals, row_h, Tokens::BG_ROW_EVEN);
+                render_data_row(ui, &cols, &vals, row_h, Tokens::bg_row_even());
             });
         });
 }

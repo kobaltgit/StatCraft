@@ -1,7 +1,7 @@
 From: CapsuleCraft Code Ingest <system@capsulecraft.local>
 To: Vault <vault@capsuleos.local>
-Subject: 📚 StatCraft / StatCraft v0.2.2
-Date: Fri, 6 Nov 2026 19:50:30 +0000
+Subject: 📚 StatCraft / StatCraft v0.3.0
+Date: Sat, 7 Nov 2026 14:58:03 +0000
 Message-ID: <doc-statcraft-release_notes_md@capsuleos.local>
 In-Reply-To: <project-index-statcraft@capsuleos.local>
 X-Capsule-Page-Parent: <project-index-statcraft@capsuleos.local>
@@ -9,12 +9,12 @@ References: <project-index-statcraft@capsuleos.local>
 X-Capsule-Tags: project, statcraft, docs
 X-Capsule-Status: Active
 MIME-Version: 1.0
-Content-Type: multipart/mixed; boundary="BOUNDARY_ROOT_12T6MMPDYQ"
+Content-Type: multipart/mixed; boundary="BOUNDARY_ROOT_W8EDUZDYQY"
 
---BOUNDARY_ROOT_12T6MMPDYQ
-Content-Type: multipart/alternative; boundary="BOUNDARY_PAYLOAD_14KDEW7E0I"
+--BOUNDARY_ROOT_W8EDUZDYQY
+Content-Type: multipart/alternative; boundary="BOUNDARY_PAYLOAD_ETWXHE0IZ8"
 
---BOUNDARY_PAYLOAD_14KDEW7E0I
+--BOUNDARY_PAYLOAD_ETWXHE0IZ8
 Content-Type: application/json; name="canvas_state.json"
 Content-Disposition: inline; filename="canvas_state.json"
 
@@ -22,7 +22,7 @@ Content-Disposition: inline; filename="canvas_state.json"
   "version": "1.0",
   "generator": "CapsuleCraft Native egui prototype (Zero-DB Pure-MIME)",
   "messageId": "<doc-statcraft-release_notes_md@capsuleos.local>",
-  "subject": "📚 StatCraft / StatCraft v0.2.2",
+  "subject": "📚 StatCraft / StatCraft v0.3.0",
   "tags": [
     "project",
     "statcraft",
@@ -34,16 +34,16 @@ Content-Disposition: inline; filename="canvas_state.json"
         "icon": "book",
         "text": "Documentation file: `RELEASE_NOTES.md`\nBelongs to project: [[📦 StatCraft (Overview) | 📦 StatCraft (Overview)]]"
       },
-      "id": "blk_native_callout_1793994630665241800",
+      "id": "blk_native_callout_1794063483765827600",
       "managed_by": "project_parser",
       "type": "callout"
     },
     {
       "data": {
         "level": 1,
-        "text": "StatCraft v0.2.2"
+        "text": "StatCraft v0.3.0"
       },
-      "id": "blk_native_heading_1793994630665221000",
+      "id": "blk_native_heading_1794063483765800600",
       "managed_by": "project_parser",
       "type": "heading"
     },
@@ -51,7 +51,7 @@ Content-Disposition: inline; filename="canvas_state.json"
       "data": {
         "text": "[English](#english) | [Русский](#русский)"
       },
-      "id": "blk_native_paragraph_1793994630665222800",
+      "id": "blk_native_paragraph_1794063483765802200",
       "managed_by": "project_parser",
       "type": "paragraph"
     },
@@ -59,7 +59,7 @@ Content-Disposition: inline; filename="canvas_state.json"
       "data": {
         "text": "---"
       },
-      "id": "blk_native_paragraph_1793994630665223500",
+      "id": "blk_native_paragraph_1794063483765802900",
       "managed_by": "project_parser",
       "type": "paragraph"
     },
@@ -67,7 +67,7 @@ Content-Disposition: inline; filename="canvas_state.json"
       "data": {
         "text": "<a name=\"english\"></a>"
       },
-      "id": "blk_native_paragraph_1793994630665224100",
+      "id": "blk_native_paragraph_1794063483765803500",
       "managed_by": "project_parser",
       "type": "paragraph"
     },
@@ -76,41 +76,75 @@ Content-Disposition: inline; filename="canvas_state.json"
         "level": 2,
         "text": "English"
       },
-      "id": "blk_native_heading_1793994630665224500",
+      "id": "blk_native_heading_1794063483765803800",
       "managed_by": "project_parser",
       "type": "heading"
     },
     {
       "data": {
-        "text": "StatCraft v0.2.2 publishes the comprehensive, exhaustive bilingual feature catalog documentation ([`docs/FEATURES.md`](docs/FEATURES.md) and [`docs/FEATURES_RU.md`](docs/FEATURES_RU.md)) covering all analytical, data manipulation, and transformation procedures implemented across the entire application, alongside version synchronization and automated release packaging."
+        "text": "StatCraft v0.3.0 marks a monumental milestone in statistical computing: the official release of the **StatCraft Network Bridge & Autonomous Code Mode via Model Context Protocol (MCP)**, alongside a brand-new **Universal Theme System (Dark Pro, SPSS Classic Light, System Auto)** and **Automatic System Language Detection**."
       },
-      "id": "blk_native_paragraph_1793994630665225500",
+      "id": "blk_native_paragraph_1794063483765804800",
       "managed_by": "project_parser",
       "type": "paragraph"
     },
     {
       "data": {
         "level": 3,
-        "text": "📖 Comprehensive Feature Guide (`FEATURES.md` & `FEATURES_RU.md`)"
+        "text": "🤖 StatCraft Network Bridge & Autonomous AI Copilot (MCP / Code Mode)"
       },
-      "id": "blk_native_heading_1793994630665226000",
+      "id": "blk_native_heading_1794063483765805200",
       "managed_by": "project_parser",
       "type": "heading"
     },
     {
       "data": {
-        "text": "* Published detailed, end-to-end documentation of every feature available in StatCraft v0.2.2:\n  * **Dual-View Data Management:** Streaming CSV/TSV reader, Microsoft Excel reader (Calamine), Data View virtualized tabular grid with inline editing, row strike-through for filtered cases, and Variable View supporting all 9 canonical SPSS types, value labels, and missing value ranges.\n  * **Data Manipulation Suite (Data Menu):** Multi-column stable case sorting (`Sort Cases`), conditional case filtering (`Select Cases`), subgroup stratification (`Split File`), and frequency/sampling case weighting (`Weight Cases`).\n  * **Complete Transformation Suite (Transform Menu):** Variable computation (`Compute Variable` via RPN parser), in-place and target recoding (`Recode`), automatic integer recoding (`Automatic Recode`), lead/lag shifts (`Shift Values`), case value counting (`Count Values`), dummy variable generation (`Create Dummy Variables`), missing value imputation (`Replace Missing Values`), time series filters (`Create Time Series`), visual & optimal binning (`Visual Binning` & `Optimal Binning`), rank cases (`Rank Cases` with tie adjustments and normal scores), date/time wizard (`Date and Time Wizard`), automated data preparation (`ADP`), and programmability scripts (`Programmability Transformations`).\n  * **Statistical Calculation Suite (Analyze Menu):** Descriptives, Frequencies, Crosstabs (with $\\chi^2$, Fisher's exact, Likelihood Ratio, and Cramér's $V$), Means breakdown with ANOVA and $\\eta^2$, One-Sample $t$-test, Independent-Samples $t$-test (with Levene's test and Welch's $t$), Paired-Samples $t$-test, One-Way ANOVA, Bivariate Correlations (Pearson $r$, Spearman $\\rho$, Kendall $\\tau_b$), Nonparametric tests (Mann-Whitney $U$, Kruskal-Wallis $H$, Wilcoxon Signed-Rank, and Sign test), Multiple Linear Regression (OLS/WLS with Collinearity Tolerance & VIF), Scale Reliability Analysis (Cronbach's $\\alpha$ and Item-Total statistics), and Factor Analysis / PCA (with KMO, Bartlett's test, and Component Matrix).\n  * **Output Viewer & Export:** Authentic multi-tier SPSS Pivot Tables with one-click TSV clipboard export for Excel, collapsible Outline navigation tree, and command syntax execution logging.\n  * **SPSS Command Syntax & Agent Readiness:** Batch `.sps` syntax execution, script file loading/saving, non-destructive Undo/Redo (`Ctrl+Z` / `Ctrl+Y`), and typed parameter schemas `specs()` for AI agents."
+        "text": "* **Zero SPSS Experience Required:** Users can now perform complex statistical analyses using natural language in their favorite AI assistants (Antigravity, Claude, ChatGPT, Ollama). The agent queries dataset schemas, formulates statistical pipelines, executes computations through StatCraft, and interprets $p$-values and effect sizes.\n* **Deterministic Math vs. LLM Hallucinations:** Large language models guide the investigation, while StatCraft's verified native Rust calculation engine performs the mathematics with $\\le 10^{-6}$ precision verified against SciPy and SPSS.\n* **Dual Bridge Interfaces:**\n  * **Headless stdio MCP Server:** Run `statcraft.exe --mcp` inside any MCP client (Claude Desktop, Cursor, Antigravity).\n  * **Local IPC Socket Server:** Background TCP socket (`127.0.0.1:18493`) enabling live two-way control of the running StatCraft graphical window.\n* **Rich MCP Toolset:**\n  * `statcraft_run_syntax` — execute batch SPSS syntax (`.sps`) and stream back ASCII tables;\n  * `statcraft_execute_command` — universal dynamic invocation of any registered core engine command;\n  * `statcraft_list_commands` & `statcraft_list_variables` — live introspection of command schemas and variable metadata;\n  * `statcraft_load_dataset` — directly import raw CSV/TSV data into the active session;\n  * `statcraft_get_data_preview` & `statcraft_insert_output_note` — live data slicing and markdown notes insertion.\n* **Desktop UI (`Extensions -> MCP Bridge / Copilot`):** In-app bridge management dialog built with DialogKit, featuring vector status indicators, real-time activity log, and one-click JSON configuration snippets."
       },
-      "id": "blk_native_paragraph_1793994630665228300",
+      "id": "blk_native_paragraph_1794063483765807600",
       "managed_by": "project_parser",
       "type": "paragraph"
     },
     {
       "data": {
         "level": 3,
-        "text": "📦 Multi-Platform Artifacts"
+        "text": "🎨 Universal Theme System (Dark, Light, System)"
       },
-      "id": "blk_native_heading_1793994630665229000",
+      "id": "blk_native_heading_1794063483765808200",
+      "managed_by": "project_parser",
+      "type": "heading"
+    },
+    {
+      "data": {
+        "text": "* **Three Complete Visual Modes:**\n  * **Dark Pro:** Modern ArtCraft deep dark theme;\n  * **SPSS Classic Light:** Academic high-contrast light theme (`#FFFFFF` app canvas, `#F7F8FA` dialogs, `#E9ECEF` matrix headers, `#DDF4FF` soft-blue selection);\n  * **System Auto:** Seamless real-time tracking of OS light/dark mode preference.\n* **Strict WCAG Compliance:** Contrast ratio of primary text exceeds AAA ($15.6:1$ vs $7.0:1$ standard); muted text exceeds AA ($5.1:1$ vs $4.5:1$ standard).\n* **Lock-Free Atomic Architecture:** 100% Safe Rust global atomic switch (`AtomicBool` with `Ordering::Relaxed`) delivering static reference palette lookups with zero allocation overhead.\n* **Autonomous DialogKit Theming:** All existing 16 dialogs and all future extensions automatically adopt the active theme out of the box without engine changes.\n* **FPS Guard & Persistence:** Visual style updates cached to protect render loop FPS; theme choice saved to `eframe::Storage` (`STORAGE_KEY_THEME = \"statcraft_theme\"`)."
+      },
+      "id": "blk_native_paragraph_1794063483765809700",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    },
+    {
+      "data": {
+        "level": 3,
+        "text": "🌐 Automatic System Language Detection & Session Persistence"
+      },
+      "id": "blk_native_heading_1794063483765810300",
+      "managed_by": "project_parser",
+      "type": "heading"
+    },
+    {
+      "data": {
+        "text": "* **Smart Auto-Locale:** Automatically detects user operating system language (Windows API, macOS preferences, POSIX environment variables) with seamless English fallback for international users.\n* **Persistent Preferences:** User language choice and bridge autostart flag reliably persist across sessions in `eframe::Storage`."
+      },
+      "id": "blk_native_paragraph_1794063483765811000",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    },
+    {
+      "data": {
+        "level": 3,
+        "text": "📦 Multi-Platform Release Artifacts"
+      },
+      "id": "blk_native_heading_1794063483765811400",
       "managed_by": "project_parser",
       "type": "heading"
     },
@@ -118,7 +152,7 @@ Content-Disposition: inline; filename="canvas_state.json"
       "data": {
         "text": "* **Windows (x64):** Inno Setup Installer (`.exe`) + Portable ZIP archive.\n* **Linux (x64):** Debian package (`.deb`) + Portable TAR.GZ archive.\n* **macOS (Apple Silicon ARM64 & Intel x64):** Apple DMG Disk Image + Application Bundle (`.app`) TAR.GZ."
       },
-      "id": "blk_native_paragraph_1793994630665230000",
+      "id": "blk_native_paragraph_1794063483765812200",
       "managed_by": "project_parser",
       "type": "paragraph"
     },
@@ -126,7 +160,7 @@ Content-Disposition: inline; filename="canvas_state.json"
       "data": {
         "text": "---"
       },
-      "id": "blk_native_paragraph_1793994630665230600",
+      "id": "blk_native_paragraph_1794063483765812700",
       "managed_by": "project_parser",
       "type": "paragraph"
     },
@@ -134,7 +168,7 @@ Content-Disposition: inline; filename="canvas_state.json"
       "data": {
         "text": "<a name=\"русский\"></a>"
       },
-      "id": "blk_native_paragraph_1793994630665231200",
+      "id": "blk_native_paragraph_1794063483765813300",
       "managed_by": "project_parser",
       "type": "paragraph"
     },
@@ -143,32 +177,66 @@ Content-Disposition: inline; filename="canvas_state.json"
         "level": 2,
         "text": "Русский"
       },
-      "id": "blk_native_heading_1793994630665231600",
+      "id": "blk_native_heading_1794063483765813700",
       "managed_by": "project_parser",
       "type": "heading"
     },
     {
       "data": {
-        "text": "Релиз StatCraft v0.2.2 публикует исчерпывающее двуязычное руководство по всем возможностям статистического пакета ([`docs/FEATURES_RU.md`](docs/FEATURES_RU.md) и [`docs/FEATURES.md`](docs/FEATURES.md)), охватывающее все аналитические процедуры, алгоритмы манипуляций и трансформаций данных, реализованные в системе, а также синхронизирует версии сборки и релизные пакеты."
+        "text": "Релиз StatCraft v0.3.0 представляет важнейшую веху в развитии проекта: официальный запуск **сетевого моста StatCraft Bridge и автономного режима Code Mode на базе Model Context Protocol (MCP)**, внедрение **универсальной системы тем оформления (Dark Pro, SPSS Classic Light, System Auto)** и **автоматического определения языка операционной системы**."
       },
-      "id": "blk_native_paragraph_1793994630665233100",
+      "id": "blk_native_paragraph_1794063483765814600",
       "managed_by": "project_parser",
       "type": "paragraph"
     },
     {
       "data": {
         "level": 3,
-        "text": "📖 Полный справочник возможностей (`FEATURES_RU.md` и `FEATURES.md`)"
+        "text": "🤖 Сетевой мост StatCraft Bridge и ИИ-ассистенты (MCP / Code Mode)"
       },
-      "id": "blk_native_heading_1793994630665233500",
+      "id": "blk_native_heading_1794063483765815000",
       "managed_by": "project_parser",
       "type": "heading"
     },
     {
       "data": {
-        "text": "* Опубликовано детальное сквозное описание всех функциональных модулей StatCraft v0.2.2:\n  * **Двухрежимное управление данными:** потоковый загрузчик CSV/TSV, импорт Excel (Calamine), виртуализированный грид Data View с инлайн-редактированием ячеек, перечеркиванием отфильтрованных строк, и Variable View с поддержкой всех 9 типов переменных SPSS, меток значений и диапазонов пропусков.\n  * **Модуль манипуляций с данными (меню Data):** многоуровневая сортировка (`Sort Cases`), выборка и фильтрация по условиям (`Select Cases`), расщепление файла на подгруппы (`Split File`) и взвешивание наблюдений (`Weight Cases`).\n  * **Полный блок преобразований данных (меню Transform):** вычисление переменных (`Compute Variable` через Shunting-yard RPN), перекодирование в те же и другие переменные (`Recode`), автоматическое перекодирование (`Automatic Recode`), сдвиг значений (`Shift Values`), подсчет значений в наблюдениях (`Count Values`), дамми-переменные (`Create Dummy Variables`), восполнение пропущенных значений (`Replace Missing Values`), временные ряды (`Create Time Series`), визуальная и оптимальная дискретизация (`Visual Binning` и `Optimal Binning`), ранжирование наблюдений (`Rank Cases`), мастер даты и времени (`Date and Time Wizard`), автоматическая подготовка данных (`ADP`) и скриптовые трансформации (`Programmability Transformations`).\n  * **Блок статистических процедур (меню Analyze):** описательные статистики (`Descriptives`), частоты (`Frequencies`), таблицы сопряженности (`Crosstabs` с $\\chi^2$, точным тестом Фишера, поправкой Йейтса и мерами $\\phi$/$V$), сравнение средних (`Means Breakdown` с ANOVA и $\\eta^2$), одновыборочный $t$-критерий, $t$-критерий для независимых выборок (с критерием Левена и Уэлча), парный $t$-критерий, однофакторный дисперсионный анализ (`One-Way ANOVA`), парные корреляции (Пирсон, Спирмен, Кендалл $\\tau_b$), непараметрические критерии (Манн-Уитни $U$, Краскел-Уоллис $H$, знаковые ранги Вилкоксона и критерий знаков), множественная линейная регрессия (OLS/WLS с оценками мультиколлинеарности Tolerance и VIF), анализ надежности шкалы (альфа Кронбаха и статистики пунктов), факторный анализ и метод главных компонент (PCA с тестами KMO и Бартлетта).\n  * **Модуль вывода и интеграция с Excel:** аутентичные сводные таблицы SPSS (Pivot Tables) с копированием в TSV в один клик без поломки колонок в Excel, интерактивное дерево оглавления Outline и журнал синтаксиса.\n  * **Синтаксис SPSS и готовность к агентам:** исполнение синтаксиса `.sps`, сохранение и открытие скриптов на диске, кнопка `[ Paste ]` во всех диалогах, откат правок Undo/Redo (`Ctrl+Z`) и типизированные схемы параметров `specs()` для внешних скриптов и ИИ-ассистентов."
+        "text": "* **Статистика без знания SPSS:** Пользователи могут проводить полный статистический анализ на простом человеческом языке через ИИ-агентов (Antigravity, Claude, ChatGPT, Ollama). Агент сам исследует метаданные, отправляет команды, считывает таблицы вывода и профессионально интерпретирует уровни значимости ($p$-value).\n* **Математическая строгость против галлюцинаций LLM:** Языковая модель формирует логику исследования, а вычисления выполняет нативный Rust-движок StatCraft со строгой погрешностью $\\le 10^{-6}$ (верифицирован против SciPy и канонических алгоритмов SPSS).\n* **Два режима подключения:**\n  * **Консольный stdio MCP-сервер:** Запуск `statcraft.exe --mcp` в конфигурации любого MCP-клиента (Claude Desktop, Cursor, Antigravity).\n  * **Локальный IPC-сокет:** Фоновый TCP-сервер (`127.0.0.1:18493`), позволяющий ИИ-агенту управлять открытым окном StatCraft в реальном времени.\n* **Набор инструментов MCP:**\n  * `statcraft_run_syntax` — выполнение пакетного синтаксиса SPSS (`.sps`) с получением текстовых таблиц вывода;\n  * `statcraft_execute_command` — универсальный вызов любой зарегистрированной команды ядра;\n  * `statcraft_list_commands` и `statcraft_list_variables` — интроспекция схем команд и метаданных переменных;\n  * `statcraft_load_dataset` — прямая загрузка сырых массивов данных в память активной сессии;\n  * `statcraft_get_data_preview` и `statcraft_insert_output_note` — срез наблюдений и вставка аналитических заметок в Output Viewer.\n* **Интерфейс в программе (`Расширения -> Мост MCP / Copilot`):** Модальное окно управления мостом на базе DialogKit с векторным индикатором статуса, журналом активности и кнопками копирования готовых настроек подключения."
       },
-      "id": "blk_native_paragraph_1793994630665236200",
+      "id": "blk_native_paragraph_1794063483765816900",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    },
+    {
+      "data": {
+        "level": 3,
+        "text": "🎨 Универсальная система тем оформления (Dark, Light, System)"
+      },
+      "id": "blk_native_heading_1794063483765818400",
+      "managed_by": "project_parser",
+      "type": "heading"
+    },
+    {
+      "data": {
+        "text": "* **Три полноценных режима:**\n  * **Dark Pro:** Современная тёмная тема ArtCraft;\n  * **SPSS Classic Light:** Академическая высококонтрастная светлая тема (`#FFFFFF` фон холста, `#F7F8FA` фон диалогов, `#E9ECEF` заголовки матриц, `#DDF4FF` выделение);\n  * **System Auto:** Автоматическое следование за системной темой операционной системы.\n* **Высокая контрастность по WCAG:** Контрастность основного текста превосходит стандарт AAA ($15.6:1$ при норме $7.0:1$); вторичного текста — превосходит AA ($5.1:1$ при норме $4.5:1$).\n* **Атомарная архитектура без блокировок:** 100% Safe Rust глобальный переключатель (`AtomicBool` с `Ordering::Relaxed`), обеспечивающий мгновенный доступ к палитрам без аллокаций и оверхеда на горячем пути кадра egui.\n* **Автономность для всех диалогов:** Все существующие 16 диалогов и любые будущие расширения автоматически поддерживают активную тему без модификации ядра.\n* **Защита FPS и сохранение настроек:** Обновление стилей кэшируется в `applied_dark_mode` для защиты плавности интерфейса; выбор темы сохраняется в `eframe::Storage` (`STORAGE_KEY_THEME = \"statcraft_theme\"`)."
+      },
+      "id": "blk_native_paragraph_1794063483765820100",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    },
+    {
+      "data": {
+        "level": 3,
+        "text": "🌐 Автоопределение языка системы и персистентность настроек"
+      },
+      "id": "blk_native_heading_1794063483765820600",
+      "managed_by": "project_parser",
+      "type": "heading"
+    },
+    {
+      "data": {
+        "text": "* **Умный автодетект:** Автоматическое определение языка ОС (Windows API, macOS preferences, переменные окружения POSIX) с корректным фоллбэком на английский язык для международных пользователей.\n* **Надёжная персистентность:** Выбранный пользователем язык и статус автозапуска моста MCP сохраняются между перезапусками приложения в `eframe::Storage`."
+      },
+      "id": "blk_native_paragraph_1794063483765821600",
       "managed_by": "project_parser",
       "type": "paragraph"
     },
@@ -177,7 +245,7 @@ Content-Disposition: inline; filename="canvas_state.json"
         "level": 3,
         "text": "📦 Дистрибутивы для всех операционных систем"
       },
-      "id": "blk_native_heading_1793994630665237000",
+      "id": "blk_native_heading_1794063483765822100",
       "managed_by": "project_parser",
       "type": "heading"
     },
@@ -185,7 +253,7 @@ Content-Disposition: inline; filename="canvas_state.json"
       "data": {
         "text": "* **Windows (x64):** Инсталлятор Inno Setup (`.exe`) + Портативный ZIP-архив.\n* **Linux (x64):** Пакет Debian (`.deb`) + Портативный архив TAR.GZ.\n* **macOS (Apple Silicon ARM64 и Intel x64):** Образ диска DMG + Приложение (`.app`) в архиве TAR.GZ."
       },
-      "id": "blk_native_paragraph_1793994630665238200",
+      "id": "blk_native_paragraph_1794063483765822900",
       "managed_by": "project_parser",
       "type": "paragraph"
     },
@@ -193,7 +261,7 @@ Content-Disposition: inline; filename="canvas_state.json"
       "data": {
         "text": "---"
       },
-      "id": "blk_native_paragraph_1793994630665238900",
+      "id": "blk_native_paragraph_1794063483765823400",
       "managed_by": "project_parser",
       "type": "paragraph"
     },
@@ -202,16 +270,33 @@ Content-Disposition: inline; filename="canvas_state.json"
         "level": 2,
         "text": "Предыдущие релизы / Previous Releases"
       },
-      "id": "blk_native_heading_1793994630665239400",
+      "id": "blk_native_heading_1794063483765823900",
       "managed_by": "project_parser",
       "type": "heading"
     },
     {
       "data": {
         "level": 3,
+        "text": "StatCraft v0.2.2"
+      },
+      "id": "blk_native_heading_1794063483765824300",
+      "managed_by": "project_parser",
+      "type": "heading"
+    },
+    {
+      "data": {
+        "text": "* Исчерпывающий двуязычный каталог функциональных возможностей (`docs/FEATURES.md` и `docs/FEATURES_RU.md`).\n* Синхронизация версий в 4 манифестах пакетирования и релизные сборки."
+      },
+      "id": "blk_native_paragraph_1794063483765825000",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    },
+    {
+      "data": {
+        "level": 3,
         "text": "StatCraft v0.2.1"
       },
-      "id": "blk_native_heading_1793994630665240100",
+      "id": "blk_native_heading_1794063483765825400",
       "managed_by": "project_parser",
       "type": "heading"
     },
@@ -219,18 +304,18 @@ Content-Disposition: inline; filename="canvas_state.json"
       "data": {
         "text": "* Доказательный Clean-Room математический аудит вычислительного ядра против *IBM SPSS Statistics 24 Algorithms Guide* (1271 стр.) с точностью «Золотого оракула» ($\\le 10^{-6}$).\n* Финализация блоков `adp` (Automated Data Preparation) и `transform.programmability`."
       },
-      "id": "blk_native_paragraph_1793994630665240900",
+      "id": "blk_native_paragraph_1794063483765826500",
       "managed_by": "project_parser",
       "type": "paragraph"
     }
   ]
 }
 
---BOUNDARY_PAYLOAD_14KDEW7E0I
+--BOUNDARY_PAYLOAD_ETWXHE0IZ8
 Content-Type: text/html; charset="utf-8"
 Content-Disposition: inline
 
-<!doctype html><html><head><meta charset="utf-8"><meta name="generator" content="CapsuleCraft Native"></head><body style="font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;max-width:720px;margin:32px auto;line-height:1.55;color:#23201c;background:#faf8f4;"><h1>📚 StatCraft / StatCraft v0.2.2</h1><p><em>[callout block — open in CapsuleCraft web for its canvas]</em></p><h1>StatCraft v0.2.2</h1><p>[English](#english) | [Русский](#русский)</p><p>---</p><p>&lt;a name=&quot;english&quot;&gt;&lt;/a&gt;</p><h2>English</h2><p>StatCraft v0.2.2 publishes the comprehensive, exhaustive bilingual feature catalog documentation ([`docs/FEATURES.md`](docs/FEATURES.md) and [`docs/FEATURES_RU.md`](docs/FEATURES_RU.md)) covering all analytical, data manipulation, and transformation procedures implemented across the entire application, alongside version synchronization and automated release packaging.</p><h3>📖 Comprehensive Feature Guide (`FEATURES.md` &amp; `FEATURES_RU.md`)</h3><p>* Published detailed, end-to-end documentation of every feature available in StatCraft v0.2.2:<br>  * **Dual-View Data Management:** Streaming CSV/TSV reader, Microsoft Excel reader (Calamine), Data View virtualized tabular grid with inline editing, row strike-through for filtered cases, and Variable View supporting all 9 canonical SPSS types, value labels, and missing value ranges.<br>  * **Data Manipulation Suite (Data Menu):** Multi-column stable case sorting (`Sort Cases`), conditional case filtering (`Select Cases`), subgroup stratification (`Split File`), and frequency/sampling case weighting (`Weight Cases`).<br>  * **Complete Transformation Suite (Transform Menu):** Variable computation (`Compute Variable` via RPN parser), in-place and target recoding (`Recode`), automatic integer recoding (`Automatic Recode`), lead/lag shifts (`Shift Values`), case value counting (`Count Values`), dummy variable generation (`Create Dummy Variables`), missing value imputation (`Replace Missing Values`), time series filters (`Create Time Series`), visual &amp; optimal binning (`Visual Binning` &amp; `Optimal Binning`), rank cases (`Rank Cases` with tie adjustments and normal scores), date/time wizard (`Date and Time Wizard`), automated data preparation (`ADP`), and programmability scripts (`Programmability Transformations`).<br>  * **Statistical Calculation Suite (Analyze Menu):** Descriptives, Frequencies, Crosstabs (with $\chi^2$, Fisher&#39;s exact, Likelihood Ratio, and Cramér&#39;s $V$), Means breakdown with ANOVA and $\eta^2$, One-Sample $t$-test, Independent-Samples $t$-test (with Levene&#39;s test and Welch&#39;s $t$), Paired-Samples $t$-test, One-Way ANOVA, Bivariate Correlations (Pearson $r$, Spearman $\rho$, Kendall $\tau_b$), Nonparametric tests (Mann-Whitney $U$, Kruskal-Wallis $H$, Wilcoxon Signed-Rank, and Sign test), Multiple Linear Regression (OLS/WLS with Collinearity Tolerance &amp; VIF), Scale Reliability Analysis (Cronbach&#39;s $\alpha$ and Item-Total statistics), and Factor Analysis / PCA (with KMO, Bartlett&#39;s test, and Component Matrix).<br>  * **Output Viewer &amp; Export:** Authentic multi-tier SPSS Pivot Tables with one-click TSV clipboard export for Excel, collapsible Outline navigation tree, and command syntax execution logging.<br>  * **SPSS Command Syntax &amp; Agent Readiness:** Batch `.sps` syntax execution, script file loading/saving, non-destructive Undo/Redo (`Ctrl+Z` / `Ctrl+Y`), and typed parameter schemas `specs()` for AI agents.</p><h3>📦 Multi-Platform Artifacts</h3><p>* **Windows (x64):** Inno Setup Installer (`.exe`) + Portable ZIP archive.<br>* **Linux (x64):** Debian package (`.deb`) + Portable TAR.GZ archive.<br>* **macOS (Apple Silicon ARM64 &amp; Intel x64):** Apple DMG Disk Image + Application Bundle (`.app`) TAR.GZ.</p><p>---</p><p>&lt;a name=&quot;русский&quot;&gt;&lt;/a&gt;</p><h2>Русский</h2><p>Релиз StatCraft v0.2.2 публикует исчерпывающее двуязычное руководство по всем возможностям статистического пакета ([`docs/FEATURES_RU.md`](docs/FEATURES_RU.md) и [`docs/FEATURES.md`](docs/FEATURES.md)), охватывающее все аналитические процедуры, алгоритмы манипуляций и трансформаций данных, реализованные в системе, а также синхронизирует версии сборки и релизные пакеты.</p><h3>📖 Полный справочник возможностей (`FEATURES_RU.md` и `FEATURES.md`)</h3><p>* Опубликовано детальное сквозное описание всех функциональных модулей StatCraft v0.2.2:<br>  * **Двухрежимное управление данными:** потоковый загрузчик CSV/TSV, импорт Excel (Calamine), виртуализированный грид Data View с инлайн-редактированием ячеек, перечеркиванием отфильтрованных строк, и Variable View с поддержкой всех 9 типов переменных SPSS, меток значений и диапазонов пропусков.<br>  * **Модуль манипуляций с данными (меню Data):** многоуровневая сортировка (`Sort Cases`), выборка и фильтрация по условиям (`Select Cases`), расщепление файла на подгруппы (`Split File`) и взвешивание наблюдений (`Weight Cases`).<br>  * **Полный блок преобразований данных (меню Transform):** вычисление переменных (`Compute Variable` через Shunting-yard RPN), перекодирование в те же и другие переменные (`Recode`), автоматическое перекодирование (`Automatic Recode`), сдвиг значений (`Shift Values`), подсчет значений в наблюдениях (`Count Values`), дамми-переменные (`Create Dummy Variables`), восполнение пропущенных значений (`Replace Missing Values`), временные ряды (`Create Time Series`), визуальная и оптимальная дискретизация (`Visual Binning` и `Optimal Binning`), ранжирование наблюдений (`Rank Cases`), мастер даты и времени (`Date and Time Wizard`), автоматическая подготовка данных (`ADP`) и скриптовые трансформации (`Programmability Transformations`).<br>  * **Блок статистических процедур (меню Analyze):** описательные статистики (`Descriptives`), частоты (`Frequencies`), таблицы сопряженности (`Crosstabs` с $\chi^2$, точным тестом Фишера, поправкой Йейтса и мерами $\phi$/$V$), сравнение средних (`Means Breakdown` с ANOVA и $\eta^2$), одновыборочный $t$-критерий, $t$-критерий для независимых выборок (с критерием Левена и Уэлча), парный $t$-критерий, однофакторный дисперсионный анализ (`One-Way ANOVA`), парные корреляции (Пирсон, Спирмен, Кендалл $\tau_b$), непараметрические критерии (Манн-Уитни $U$, Краскел-Уоллис $H$, знаковые ранги Вилкоксона и критерий знаков), множественная линейная регрессия (OLS/WLS с оценками мультиколлинеарности Tolerance и VIF), анализ надежности шкалы (альфа Кронбаха и статистики пунктов), факторный анализ и метод главных компонент (PCA с тестами KMO и Бартлетта).<br>  * **Модуль вывода и интеграция с Excel:** аутентичные сводные таблицы SPSS (Pivot Tables) с копированием в TSV в один клик без поломки колонок в Excel, интерактивное дерево оглавления Outline и журнал синтаксиса.<br>  * **Синтаксис SPSS и готовность к агентам:** исполнение синтаксиса `.sps`, сохранение и открытие скриптов на диске, кнопка `[ Paste ]` во всех диалогах, откат правок Undo/Redo (`Ctrl+Z`) и типизированные схемы параметров `specs()` для внешних скриптов и ИИ-ассистентов.</p><h3>📦 Дистрибутивы для всех операционных систем</h3><p>* **Windows (x64):** Инсталлятор Inno Setup (`.exe`) + Портативный ZIP-архив.<br>* **Linux (x64):** Пакет Debian (`.deb`) + Портативный архив TAR.GZ.<br>* **macOS (Apple Silicon ARM64 и Intel x64):** Образ диска DMG + Приложение (`.app`) в архиве TAR.GZ.</p><p>---</p><h2>Предыдущие релизы / Previous Releases</h2><h3>StatCraft v0.2.1</h3><p>* Доказательный Clean-Room математический аудит вычислительного ядра против *IBM SPSS Statistics 24 Algorithms Guide* (1271 стр.) с точностью «Золотого оракула» ($\le 10^{-6}$).<br>* Финализация блоков `adp` (Automated Data Preparation) и `transform.programmability`.</p><hr><p style="color:#8a8175;font-size:12px">Exported from CapsuleCraft Native · &lt;doc-statcraft-release_notes_md@capsuleos.local&gt;</p></body></html>
+<!doctype html><html><head><meta charset="utf-8"><meta name="generator" content="CapsuleCraft Native"></head><body style="font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;max-width:720px;margin:32px auto;line-height:1.55;color:#23201c;background:#faf8f4;"><h1>📚 StatCraft / StatCraft v0.3.0</h1><p><em>[callout block — open in CapsuleCraft web for its canvas]</em></p><h1>StatCraft v0.3.0</h1><p>[English](#english) | [Русский](#русский)</p><p>---</p><p>&lt;a name=&quot;english&quot;&gt;&lt;/a&gt;</p><h2>English</h2><p>StatCraft v0.3.0 marks a monumental milestone in statistical computing: the official release of the **StatCraft Network Bridge &amp; Autonomous Code Mode via Model Context Protocol (MCP)**, alongside a brand-new **Universal Theme System (Dark Pro, SPSS Classic Light, System Auto)** and **Automatic System Language Detection**.</p><h3>🤖 StatCraft Network Bridge &amp; Autonomous AI Copilot (MCP / Code Mode)</h3><p>* **Zero SPSS Experience Required:** Users can now perform complex statistical analyses using natural language in their favorite AI assistants (Antigravity, Claude, ChatGPT, Ollama). The agent queries dataset schemas, formulates statistical pipelines, executes computations through StatCraft, and interprets $p$-values and effect sizes.<br>* **Deterministic Math vs. LLM Hallucinations:** Large language models guide the investigation, while StatCraft&#39;s verified native Rust calculation engine performs the mathematics with $\le 10^{-6}$ precision verified against SciPy and SPSS.<br>* **Dual Bridge Interfaces:**<br>  * **Headless stdio MCP Server:** Run `statcraft.exe --mcp` inside any MCP client (Claude Desktop, Cursor, Antigravity).<br>  * **Local IPC Socket Server:** Background TCP socket (`127.0.0.1:18493`) enabling live two-way control of the running StatCraft graphical window.<br>* **Rich MCP Toolset:**<br>  * `statcraft_run_syntax` — execute batch SPSS syntax (`.sps`) and stream back ASCII tables;<br>  * `statcraft_execute_command` — universal dynamic invocation of any registered core engine command;<br>  * `statcraft_list_commands` &amp; `statcraft_list_variables` — live introspection of command schemas and variable metadata;<br>  * `statcraft_load_dataset` — directly import raw CSV/TSV data into the active session;<br>  * `statcraft_get_data_preview` &amp; `statcraft_insert_output_note` — live data slicing and markdown notes insertion.<br>* **Desktop UI (`Extensions -&gt; MCP Bridge / Copilot`):** In-app bridge management dialog built with DialogKit, featuring vector status indicators, real-time activity log, and one-click JSON configuration snippets.</p><h3>🎨 Universal Theme System (Dark, Light, System)</h3><p>* **Three Complete Visual Modes:**<br>  * **Dark Pro:** Modern ArtCraft deep dark theme;<br>  * **SPSS Classic Light:** Academic high-contrast light theme (`#FFFFFF` app canvas, `#F7F8FA` dialogs, `#E9ECEF` matrix headers, `#DDF4FF` soft-blue selection);<br>  * **System Auto:** Seamless real-time tracking of OS light/dark mode preference.<br>* **Strict WCAG Compliance:** Contrast ratio of primary text exceeds AAA ($15.6:1$ vs $7.0:1$ standard); muted text exceeds AA ($5.1:1$ vs $4.5:1$ standard).<br>* **Lock-Free Atomic Architecture:** 100% Safe Rust global atomic switch (`AtomicBool` with `Ordering::Relaxed`) delivering static reference palette lookups with zero allocation overhead.<br>* **Autonomous DialogKit Theming:** All existing 16 dialogs and all future extensions automatically adopt the active theme out of the box without engine changes.<br>* **FPS Guard &amp; Persistence:** Visual style updates cached to protect render loop FPS; theme choice saved to `eframe::Storage` (`STORAGE_KEY_THEME = &quot;statcraft_theme&quot;`).</p><h3>🌐 Automatic System Language Detection &amp; Session Persistence</h3><p>* **Smart Auto-Locale:** Automatically detects user operating system language (Windows API, macOS preferences, POSIX environment variables) with seamless English fallback for international users.<br>* **Persistent Preferences:** User language choice and bridge autostart flag reliably persist across sessions in `eframe::Storage`.</p><h3>📦 Multi-Platform Release Artifacts</h3><p>* **Windows (x64):** Inno Setup Installer (`.exe`) + Portable ZIP archive.<br>* **Linux (x64):** Debian package (`.deb`) + Portable TAR.GZ archive.<br>* **macOS (Apple Silicon ARM64 &amp; Intel x64):** Apple DMG Disk Image + Application Bundle (`.app`) TAR.GZ.</p><p>---</p><p>&lt;a name=&quot;русский&quot;&gt;&lt;/a&gt;</p><h2>Русский</h2><p>Релиз StatCraft v0.3.0 представляет важнейшую веху в развитии проекта: официальный запуск **сетевого моста StatCraft Bridge и автономного режима Code Mode на базе Model Context Protocol (MCP)**, внедрение **универсальной системы тем оформления (Dark Pro, SPSS Classic Light, System Auto)** и **автоматического определения языка операционной системы**.</p><h3>🤖 Сетевой мост StatCraft Bridge и ИИ-ассистенты (MCP / Code Mode)</h3><p>* **Статистика без знания SPSS:** Пользователи могут проводить полный статистический анализ на простом человеческом языке через ИИ-агентов (Antigravity, Claude, ChatGPT, Ollama). Агент сам исследует метаданные, отправляет команды, считывает таблицы вывода и профессионально интерпретирует уровни значимости ($p$-value).<br>* **Математическая строгость против галлюцинаций LLM:** Языковая модель формирует логику исследования, а вычисления выполняет нативный Rust-движок StatCraft со строгой погрешностью $\le 10^{-6}$ (верифицирован против SciPy и канонических алгоритмов SPSS).<br>* **Два режима подключения:**<br>  * **Консольный stdio MCP-сервер:** Запуск `statcraft.exe --mcp` в конфигурации любого MCP-клиента (Claude Desktop, Cursor, Antigravity).<br>  * **Локальный IPC-сокет:** Фоновый TCP-сервер (`127.0.0.1:18493`), позволяющий ИИ-агенту управлять открытым окном StatCraft в реальном времени.<br>* **Набор инструментов MCP:**<br>  * `statcraft_run_syntax` — выполнение пакетного синтаксиса SPSS (`.sps`) с получением текстовых таблиц вывода;<br>  * `statcraft_execute_command` — универсальный вызов любой зарегистрированной команды ядра;<br>  * `statcraft_list_commands` и `statcraft_list_variables` — интроспекция схем команд и метаданных переменных;<br>  * `statcraft_load_dataset` — прямая загрузка сырых массивов данных в память активной сессии;<br>  * `statcraft_get_data_preview` и `statcraft_insert_output_note` — срез наблюдений и вставка аналитических заметок в Output Viewer.<br>* **Интерфейс в программе (`Расширения -&gt; Мост MCP / Copilot`):** Модальное окно управления мостом на базе DialogKit с векторным индикатором статуса, журналом активности и кнопками копирования готовых настроек подключения.</p><h3>🎨 Универсальная система тем оформления (Dark, Light, System)</h3><p>* **Три полноценных режима:**<br>  * **Dark Pro:** Современная тёмная тема ArtCraft;<br>  * **SPSS Classic Light:** Академическая высококонтрастная светлая тема (`#FFFFFF` фон холста, `#F7F8FA` фон диалогов, `#E9ECEF` заголовки матриц, `#DDF4FF` выделение);<br>  * **System Auto:** Автоматическое следование за системной темой операционной системы.<br>* **Высокая контрастность по WCAG:** Контрастность основного текста превосходит стандарт AAA ($15.6:1$ при норме $7.0:1$); вторичного текста — превосходит AA ($5.1:1$ при норме $4.5:1$).<br>* **Атомарная архитектура без блокировок:** 100% Safe Rust глобальный переключатель (`AtomicBool` с `Ordering::Relaxed`), обеспечивающий мгновенный доступ к палитрам без аллокаций и оверхеда на горячем пути кадра egui.<br>* **Автономность для всех диалогов:** Все существующие 16 диалогов и любые будущие расширения автоматически поддерживают активную тему без модификации ядра.<br>* **Защита FPS и сохранение настроек:** Обновление стилей кэшируется в `applied_dark_mode` для защиты плавности интерфейса; выбор темы сохраняется в `eframe::Storage` (`STORAGE_KEY_THEME = &quot;statcraft_theme&quot;`).</p><h3>🌐 Автоопределение языка системы и персистентность настроек</h3><p>* **Умный автодетект:** Автоматическое определение языка ОС (Windows API, macOS preferences, переменные окружения POSIX) с корректным фоллбэком на английский язык для международных пользователей.<br>* **Надёжная персистентность:** Выбранный пользователем язык и статус автозапуска моста MCP сохраняются между перезапусками приложения в `eframe::Storage`.</p><h3>📦 Дистрибутивы для всех операционных систем</h3><p>* **Windows (x64):** Инсталлятор Inno Setup (`.exe`) + Портативный ZIP-архив.<br>* **Linux (x64):** Пакет Debian (`.deb`) + Портативный архив TAR.GZ.<br>* **macOS (Apple Silicon ARM64 и Intel x64):** Образ диска DMG + Приложение (`.app`) в архиве TAR.GZ.</p><p>---</p><h2>Предыдущие релизы / Previous Releases</h2><h3>StatCraft v0.2.2</h3><p>* Исчерпывающий двуязычный каталог функциональных возможностей (`docs/FEATURES.md` и `docs/FEATURES_RU.md`).<br>* Синхронизация версий в 4 манифестах пакетирования и релизные сборки.</p><h3>StatCraft v0.2.1</h3><p>* Доказательный Clean-Room математический аудит вычислительного ядра против *IBM SPSS Statistics 24 Algorithms Guide* (1271 стр.) с точностью «Золотого оракула» ($\le 10^{-6}$).<br>* Финализация блоков `adp` (Automated Data Preparation) и `transform.programmability`.</p><hr><p style="color:#8a8175;font-size:12px">Exported from CapsuleCraft Native · &lt;doc-statcraft-release_notes_md@capsuleos.local&gt;</p></body></html>
 
---BOUNDARY_PAYLOAD_14KDEW7E0I--
---BOUNDARY_ROOT_12T6MMPDYQ--
+--BOUNDARY_PAYLOAD_ETWXHE0IZ8--
+--BOUNDARY_ROOT_W8EDUZDYQY--

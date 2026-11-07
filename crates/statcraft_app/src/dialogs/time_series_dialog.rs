@@ -1,4 +1,4 @@
-use super::common::{
+﻿use super::common::{
     format_var_display, render_variable_list_panel, ActionBarAction, DialogActionBar, DialogShell,
     GroupBox, ListEvent, TransferButton, VariableListItem,
 };
@@ -273,8 +273,8 @@ fn render_content(
         ui.allocate_ui_with_layout(vec2(320.0, 310.0), Layout::top_down(Align::Min), |ui| {
             ui.label(t!("dialog-timeseries-new-vars"));
             egui::Frame::canvas(ui.style())
-                .fill(Tokens::BG_PANEL)
-                .stroke(Stroke::new(1.0_f32, Tokens::BORDER))
+                .fill(Tokens::bg_panel())
+                .stroke(Stroke::new(1.0_f32, Tokens::border()))
                 .show(ui, |ui| {
                     let list_sz = vec2(316.0, 95.0);
                     ui.set_min_size(list_sz);

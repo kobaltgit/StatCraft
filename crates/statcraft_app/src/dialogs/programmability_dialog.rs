@@ -1,4 +1,4 @@
-use super::common::{
+﻿use super::common::{
     format_var_display, render_variable_list_panel, ActionBarAction, DialogActionBar, DialogShell,
     ListEvent, TransferButton, VariableListItem,
 };
@@ -186,7 +186,7 @@ pub fn render_programmability_dialog(
                             ),
                         ),
                         Err(statcraft_algo::ProgrammabilityError::EmptyScript) => (
-                            Tokens::TEXT_MUTED,
+                            Tokens::text_muted(),
                             t!("dialog-programmability-status-empty"),
                         ),
                         Err(e) => (

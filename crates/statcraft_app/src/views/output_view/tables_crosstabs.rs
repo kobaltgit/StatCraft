@@ -1,4 +1,4 @@
-use super::model::{
+﻿use super::model::{
     OutputItem, OutputItemKind, OutputNotes, OutputProcedure, OutputViewerState, SelectedTarget,
 };
 use super::tables_common::{
@@ -82,9 +82,9 @@ pub fn render_crosstabs_item(ui: &mut Ui, results: &[CrosstabResult], selected: 
                     .font(FontId::proportional(12.5))
                     .strong()
                     .color(if selected {
-                        Tokens::ACCENT
+                        Tokens::accent()
                     } else {
-                        Tokens::TEXT_PRIMARY
+                        Tokens::text_primary()
                     }),
             );
         });
@@ -131,7 +131,7 @@ pub fn render_crosstabs_item(ui: &mut Ui, results: &[CrosstabResult], selected: 
             &summary_cols,
             &summary_vals,
             row_height,
-            Tokens::BG_ROW_EVEN,
+            Tokens::bg_row_even(),
         );
 
         ui.add_space(12.0);
@@ -147,9 +147,9 @@ pub fn render_crosstabs_item(ui: &mut Ui, results: &[CrosstabResult], selected: 
                 .font(FontId::proportional(12.5))
                 .strong()
                 .color(if selected {
-                    Tokens::ACCENT
+                    Tokens::accent()
                 } else {
-                    Tokens::TEXT_PRIMARY
+                    Tokens::text_primary()
                 }),
         );
         ui.add_space(2.0);
@@ -181,9 +181,9 @@ pub fn render_crosstabs_item(ui: &mut Ui, results: &[CrosstabResult], selected: 
 
             // Layer 1: Count
             let bg = if row_flip {
-                Tokens::BG_ROW_ODD
+                Tokens::bg_row_odd()
             } else {
-                Tokens::BG_ROW_EVEN
+                Tokens::bg_row_even()
             };
             let mut c_vals = vec![
                 (row_name.clone(), Align2::LEFT_CENTER),
@@ -296,9 +296,9 @@ pub fn render_crosstabs_item(ui: &mut Ui, results: &[CrosstabResult], selected: 
 
         // Summary Total Row
         let bg = if row_flip {
-            Tokens::BG_ROW_ODD
+            Tokens::bg_row_odd()
         } else {
-            Tokens::BG_ROW_EVEN
+            Tokens::bg_row_even()
         };
         let mut tot_vals = vec![
             (t!("output-crosstabs-total"), Align2::LEFT_CENTER),
@@ -319,9 +319,9 @@ pub fn render_crosstabs_item(ui: &mut Ui, results: &[CrosstabResult], selected: 
                     .font(FontId::proportional(12.5))
                     .strong()
                     .color(if selected {
-                        Tokens::ACCENT
+                        Tokens::accent()
                     } else {
-                        Tokens::TEXT_PRIMARY
+                        Tokens::text_primary()
                     }),
             );
             ui.add_space(2.0);
@@ -338,9 +338,9 @@ pub fn render_crosstabs_item(ui: &mut Ui, results: &[CrosstabResult], selected: 
 
             for (i, t_row) in res.chi_square_tests.iter().enumerate() {
                 let bg_c = if i % 2 == 0 {
-                    Tokens::BG_ROW_EVEN
+                    Tokens::bg_row_even()
                 } else {
-                    Tokens::BG_ROW_ODD
+                    Tokens::bg_row_odd()
                 };
                 let val_str = if t_row.name == "Fisher's Exact Test" {
                     "".to_string()
@@ -376,9 +376,9 @@ pub fn render_crosstabs_item(ui: &mut Ui, results: &[CrosstabResult], selected: 
                     .font(FontId::proportional(12.5))
                     .strong()
                     .color(if selected {
-                        Tokens::ACCENT
+                        Tokens::accent()
                     } else {
-                        Tokens::TEXT_PRIMARY
+                        Tokens::text_primary()
                     }),
             );
             ui.add_space(2.0);
@@ -393,9 +393,9 @@ pub fn render_crosstabs_item(ui: &mut Ui, results: &[CrosstabResult], selected: 
 
             for (i, m) in res.association_measures.iter().enumerate() {
                 let bg_c = if i % 2 == 0 {
-                    Tokens::BG_ROW_EVEN
+                    Tokens::bg_row_even()
                 } else {
-                    Tokens::BG_ROW_ODD
+                    Tokens::bg_row_odd()
                 };
                 let m_vals = vec![
                     (m.name.clone(), Align2::LEFT_CENTER),

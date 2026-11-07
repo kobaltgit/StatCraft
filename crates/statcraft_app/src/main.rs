@@ -4,6 +4,15 @@ use statcraft_i18n::{init_i18n, t};
 use std::sync::Arc;
 
 fn main() -> eframe::Result<()> {
+    let args: Vec<String> = std::env::args().collect();
+    if args.iter().any(|arg| arg == "--mcp") {
+        let _ = init_i18n();
+        if let Err(e) = statcraft_bridge::mcp::run_stdio() {
+            eprintln!("MCP stdio error: {}", e);
+        }
+        return Ok(());
+    }
+
     let _ = init_i18n();
 
     let mut viewport = egui::ViewportBuilder::default()

@@ -1,7 +1,7 @@
 From: CapsuleCraft Code Ingest <system@capsulecraft.local>
 To: Vault <vault@capsuleos.local>
 Subject: 📚 StatCraft / StatCraft — Генеральный регламент разработки (AGENTS.md)
-Date: Fri, 6 Nov 2026 19:50:30 +0000
+Date: Sat, 7 Nov 2026 15:01:46 +0000
 Message-ID: <doc-statcraft-agents_md@capsuleos.local>
 In-Reply-To: <project-index-statcraft@capsuleos.local>
 X-Capsule-Page-Parent: <project-index-statcraft@capsuleos.local>
@@ -34,7 +34,7 @@ Content-Disposition: inline; filename="canvas_state.json"
         "icon": "book",
         "text": "Documentation file: `AGENTS.md`\nBelongs to project: [[📦 StatCraft (Overview) | 📦 StatCraft (Overview)]]"
       },
-      "id": "blk_native_callout_1793994630636810400",
+      "id": "blk_native_callout_1794063706681207800",
       "managed_by": "project_parser",
       "type": "callout"
     },
@@ -43,7 +43,7 @@ Content-Disposition: inline; filename="canvas_state.json"
         "level": 1,
         "text": "StatCraft — Генеральный регламент разработки (AGENTS.md)"
       },
-      "id": "blk_native_heading_1793994630636722000",
+      "id": "blk_native_heading_1794063706681113300",
       "managed_by": "project_parser",
       "type": "heading"
     },
@@ -52,7 +52,7 @@ Content-Disposition: inline; filename="canvas_state.json"
         "level": 1,
         "text": "Стандарт экосистемы ArtCraft / storytold"
       },
-      "id": "blk_native_heading_1793994630636727300",
+      "id": "blk_native_heading_1794063706681119400",
       "managed_by": "project_parser",
       "type": "heading"
     },
@@ -60,7 +60,7 @@ Content-Disposition: inline; filename="canvas_state.json"
       "data": {
         "text": "Данный документ является **высшим нормативным актом (законом)** для Главного агента-оркестратора и всех специализированных субагентов, работающих с кодовой базой **StatCraft**."
       },
-      "id": "blk_native_paragraph_1793994630636729800",
+      "id": "blk_native_paragraph_1794063706681122100",
       "managed_by": "project_parser",
       "type": "paragraph"
     },
@@ -68,7 +68,7 @@ Content-Disposition: inline; filename="canvas_state.json"
       "data": {
         "text": "Каждое правило обязательно к неукоснительному соблюдению. Проект создается в строгом соответствии с каноном экосистемы **ArtCraft** (`{Function}Craft`)."
       },
-      "id": "blk_native_paragraph_1793994630636731900",
+      "id": "blk_native_paragraph_1794063706681124100",
       "managed_by": "project_parser",
       "type": "paragraph"
     },
@@ -76,7 +76,7 @@ Content-Disposition: inline; filename="canvas_state.json"
       "data": {
         "text": "---"
       },
-      "id": "blk_native_paragraph_1793994630636732700",
+      "id": "blk_native_paragraph_1794063706681124900",
       "managed_by": "project_parser",
       "type": "paragraph"
     },
@@ -85,7 +85,7 @@ Content-Disposition: inline; filename="canvas_state.json"
         "level": 2,
         "text": "1. Канон экосистемы ArtCraft (Ecosystem Foundations)"
       },
-      "id": "blk_native_heading_1793994630636733600",
+      "id": "blk_native_heading_1794063706681125900",
       "managed_by": "project_parser",
       "type": "heading"
     },
@@ -94,7 +94,7 @@ Content-Disposition: inline; filename="canvas_state.json"
         "level": 3,
         "text": "1.1. Языковой стек (Language: Rust Only)"
       },
-      "id": "blk_native_heading_1793994630636734900",
+      "id": "blk_native_heading_1794063706681127000",
       "managed_by": "project_parser",
       "type": "heading"
     },
@@ -102,7 +102,7 @@ Content-Disposition: inline; filename="canvas_state.json"
       "data": {
         "text": "* **Только Rust.** Никакого JavaScript или TypeScript.\n* Для сборки под Web (WebAssembly) используется `wasm-bindgen` с генерацией минимального загрузчика. Запрещено писать JS вручную.\n* Все вычисления, парсеры и UI компилируются нативно."
       },
-      "id": "blk_native_paragraph_1793994630636736400",
+      "id": "blk_native_paragraph_1794063706681128500",
       "managed_by": "project_parser",
       "type": "paragraph"
     },
@@ -111,7 +111,7 @@ Content-Disposition: inline; filename="canvas_state.json"
         "level": 3,
         "text": "1.2. Лицензирование и бренд (Licence & Brand)"
       },
-      "id": "blk_native_heading_1793994630636737000",
+      "id": "blk_native_heading_1794063706681129200",
       "managed_by": "project_parser",
       "type": "heading"
     },
@@ -119,7 +119,7 @@ Content-Disposition: inline; filename="canvas_state.json"
       "data": {
         "text": "* Кодовая база лицензируется под двойной лицензией: **MIT OR Apache-2.0** (`LICENSE-MIT`, `LICENSE-APACHE`, `NOTICE`).\n* Все используемые сторонние ассеты (иконки Lucide, открытые шрифты) обязаны иметь пермиссивные лицензии, файл лицензии хранится рядом с ассетом (например, `assets/icons/LICENSE-lucide.txt`), и каждый ассет вносится в `ATTRIBUTION.md`.\n* Логотипы и айдентика ArtCraft в `docs/brand/` не являются open source (`docs/brand/LICENSE-brand.txt`).\n* Шрифты берутся из централизованного репозитория `storytold/craft-fonts` через переменную сборки `CRAFT_FONTS_DIR`, а не вшиваются в репозиторий."
       },
-      "id": "blk_native_paragraph_1793994630636738900",
+      "id": "blk_native_paragraph_1794063706681131100",
       "managed_by": "project_parser",
       "type": "paragraph"
     },
@@ -128,7 +128,7 @@ Content-Disposition: inline; filename="canvas_state.json"
         "level": 3,
         "text": "1.3. Принцип Clean-room (Чистая комната)"
       },
-      "id": "blk_native_heading_1793994630636739700",
+      "id": "blk_native_heading_1794063706681132100",
       "managed_by": "project_parser",
       "type": "heading"
     },
@@ -136,7 +136,7 @@ Content-Disposition: inline; filename="canvas_state.json"
       "data": {
         "text": "* **СТРОГО ЗАПРЕЩЕНО** копировать исходный код, шейдеры, бинарники, иконки или иные ассеты из проприетарного ПО (такого как IBM SPSS Statistics).\n* Поведение, интерфейс и форматы воспроизводятся **исключительно путем наблюдения, открытых стандартов и академической литературы**:\n  - Математические процедуры — по открытым учебникам и публикациям;\n  - Форматы `.sav` / `.zsav` — по открытой спецификации GNU PSPP и библиотеке ReadStat (MIT);\n  - Логика команд и меню — по публичной документации SPSS без заимствования проприетарных ресурсов."
       },
-      "id": "blk_native_paragraph_1793994630636741500",
+      "id": "blk_native_paragraph_1794063706681134900",
       "managed_by": "project_parser",
       "type": "paragraph"
     },
@@ -144,7 +144,7 @@ Content-Disposition: inline; filename="canvas_state.json"
       "data": {
         "text": "---"
       },
-      "id": "blk_native_paragraph_1793994630636742200",
+      "id": "blk_native_paragraph_1794063706681136300",
       "managed_by": "project_parser",
       "type": "paragraph"
     },
@@ -153,7 +153,7 @@ Content-Disposition: inline; filename="canvas_state.json"
         "level": 2,
         "text": "2. Надежность: Железный запрет паник (Never Crash)"
       },
-      "id": "blk_native_heading_1793994630636742900",
+      "id": "blk_native_heading_1794063706681137000",
       "managed_by": "project_parser",
       "type": "heading"
     },
@@ -161,7 +161,7 @@ Content-Disposition: inline; filename="canvas_state.json"
       "data": {
         "text": "* **В нетестовом коде категорически запрещены паники:**\n  * ❌ `unwrap()`\n  * ❌ `expect(...)`\n  * ❌ `panic!(...)`\n  * ❌ `unreachable!(...)`\n  * ❌ `todo!(...)`\n  * ❌ `unimplemented!(...)`\n* **Категорический запрет `unsafe`:** Кодовая база — 100% safe Rust.\n* **Обработка ошибок:** Все потенциальные сбои передаются через типизированные ошибки `Result<T, E>` и оператор `?`.\n* **Валидация входов:** Все индексы строк, столбцов, смещения и размеры файлов обязаны проходить строгую проверку границ перед обращением.\n* Любое исправление потенциального падения обязано сопровождаться регрессионным тестом."
       },
-      "id": "blk_native_paragraph_1793994630636745200",
+      "id": "blk_native_paragraph_1794063706681139600",
       "managed_by": "project_parser",
       "type": "paragraph"
     },
@@ -169,7 +169,7 @@ Content-Disposition: inline; filename="canvas_state.json"
       "data": {
         "text": "---"
       },
-      "id": "blk_native_paragraph_1793994630636746100",
+      "id": "blk_native_paragraph_1794063706681140600",
       "managed_by": "project_parser",
       "type": "paragraph"
     },
@@ -178,7 +178,7 @@ Content-Disposition: inline; filename="canvas_state.json"
         "level": 2,
         "text": "3. Архитектура: Команды вместо обработчиков (Commands, Not Handlers)"
       },
-      "id": "blk_native_heading_1793994630636746700",
+      "id": "blk_native_heading_1794063706681141400",
       "managed_by": "project_parser",
       "type": "heading"
     },
@@ -186,7 +186,7 @@ Content-Disposition: inline; filename="canvas_state.json"
       "data": {
         "text": "* **Любая новая функциональность — это типизированная команда движка (Engine Command), а не изолированный UI-коллбэк.**\n* UI лишь запрашивает выполнение команды через `CommandBus`:\n  1. **Идентификатор команды:** Иерархический идентификатор в стиле SPSS (`stat.descriptives`, `stat.ttest.independent`, `data.sort_cases`, `transform.compute`). Позиция в меню задается путем каталога.\n  2. **Спецификация параметров (Schema for Agents):** Каждая команда предоставляет сигнатуру параметров `specs()` (например, `{\"vars\":[\"salary\"],\"ci\":0.95}`), доступную для чтения AI-агентам через MCP и командную строку.\n  3. **Предикат доступности (`enabled`):** Логика, определяющая, активна ли команда в текущем контексте (например, t-тест неактивен, если в датасете нет хотя бы одной количественной и одной группирующей переменной).\n  4. **История и Undo/Redo:** Выполнение команды возвращает JSON-результат и формирует ровно один шаг истории. Сессии ввода текста и перетаскивания объединяются (`coalesce`).\n  5. **Синтаксический эквивалент:** Каждая команда умеет сериализоваться в строку классического синтаксиса SPSS (`.sps`) и восстанавливаться из нее.\n  6. **Диалоговые окна:** Параметрические процедуры получают управляемые схемой диалоговые окна с живым предпросмотром (live preview).\n  7. **Паритет функций:** Обновление `docs/parity-checklist.md` через инструмент `cargo xtask parity`."
       },
-      "id": "blk_native_paragraph_1793994630636749400",
+      "id": "blk_native_paragraph_1794063706681144800",
       "managed_by": "project_parser",
       "type": "paragraph"
     },
@@ -194,7 +194,7 @@ Content-Disposition: inline; filename="canvas_state.json"
       "data": {
         "text": "---"
       },
-      "id": "blk_native_paragraph_1793994630636750700",
+      "id": "blk_native_paragraph_1794063706681145900",
       "managed_by": "project_parser",
       "type": "paragraph"
     },
@@ -203,7 +203,7 @@ Content-Disposition: inline; filename="canvas_state.json"
         "level": 2,
         "text": "4. Слоистая архитектура и строгая проверка (Layering & xtask)"
       },
-      "id": "blk_native_heading_1793994630636751400",
+      "id": "blk_native_heading_1794063706681146600",
       "managed_by": "project_parser",
       "type": "heading"
     },
@@ -211,7 +211,7 @@ Content-Disposition: inline; filename="canvas_state.json"
       "data": {
         "text": "Кодовая база разделена на независимые слои (L0–L6). Зависимости идут **строго сверху вниз**:"
       },
-      "id": "blk_native_paragraph_1793994630636752300",
+      "id": "blk_native_paragraph_1794063706681147700",
       "managed_by": "project_parser",
       "type": "paragraph"
     },
@@ -220,7 +220,7 @@ Content-Disposition: inline; filename="canvas_state.json"
         "code": "L6: statcraft_app        (Десктопный GUI на egui / eframe / egui_dock)\n └── L5: statcraft_syntax (Командная шина CommandBus, парсер синтаксиса .sps)\n      ├── L4: statcraft_reporting (Модель Pivot Tables, экспорт PDF / DOCX / LaTeX)\n      ├── L3: statcraft_charts    (Векторные графики egui_plot, Brushing & Linking)\n      └── L2: statcraft_algo      (Математика, тесты, алгоритмы, statrs, faer)\n           └── L1: statcraft_core (Apache Arrow/Polars, DataSet, VariableDictionary)\n                └── L0: statcraft_io (Кодеки .stc Parquet, SPSS .sav, CSV, Excel)\n\nВспомогательные сквозные модули:\n* statcraft_i18n   (Движок локализации без хардкода строк)\n* statcraft_bridge (MCP-сервер и локальный IPC-сокет для AI-агентов)\n* xtask            (Утилиты сборщика: layers, parity, test-corpus)",
         "language": "text"
       },
-      "id": "blk_native_code_1793994630636754400",
+      "id": "blk_native_code_1794063706681149800",
       "managed_by": "project_parser",
       "type": "code"
     },
@@ -228,7 +228,7 @@ Content-Disposition: inline; filename="canvas_state.json"
       "data": {
         "text": "* **Проверка архитектуры:** Команда `cargo xtask layers` обязана проходить без ошибок. Новые крейты обязательно регистрируются в `xtask/src/layers.rs`. Нижние уровни (L0–L2) не знают о существовании UI."
       },
-      "id": "blk_native_paragraph_1793994630636756100",
+      "id": "blk_native_paragraph_1794063706681151500",
       "managed_by": "project_parser",
       "type": "paragraph"
     },
@@ -236,7 +236,7 @@ Content-Disposition: inline; filename="canvas_state.json"
       "data": {
         "text": "---"
       },
-      "id": "blk_native_paragraph_1793994630636756800",
+      "id": "blk_native_paragraph_1794063706681152100",
       "managed_by": "project_parser",
       "type": "paragraph"
     },
@@ -245,7 +245,7 @@ Content-Disposition: inline; filename="canvas_state.json"
         "level": 2,
         "text": "5. Ограничение системных ресурсов (Resource Guard)"
       },
-      "id": "blk_native_heading_1793994630636757700",
+      "id": "blk_native_heading_1794063706681152800",
       "managed_by": "project_parser",
       "type": "heading"
     },
@@ -253,7 +253,7 @@ Content-Disposition: inline; filename="canvas_state.json"
       "data": {
         "text": "* **СТРОГО ЗАПРЕЩЕНО** запускать компиляцию, тесты или проверки без явного флага ограничения потоков:"
       },
-      "id": "blk_native_paragraph_1793994630636758500",
+      "id": "blk_native_paragraph_1794063706681154000",
       "managed_by": "project_parser",
       "type": "paragraph"
     },
@@ -262,7 +262,7 @@ Content-Disposition: inline; filename="canvas_state.json"
         "code": "  cargo test --workspace -j 1\n  cargo check --workspace -j 1\n  cargo clippy --workspace -j 1\n  cargo build --package statcraft_app --release -j 1",
         "language": "powershell"
       },
-      "id": "blk_native_code_1793994630636759400",
+      "id": "blk_native_code_1794063706681155000",
       "managed_by": "project_parser",
       "type": "code"
     },
@@ -270,7 +270,7 @@ Content-Disposition: inline; filename="canvas_state.json"
       "data": {
         "text": "* Максимально допустимое значение: `-j 2` — **только при прямом письменном согласовании с пользователем**.\n* В файлах конфигурации `.cargo/config.toml` и `Cargo.toml` всегда зафиксированы `jobs = 1` и `codegen-units = 1`."
       },
-      "id": "blk_native_paragraph_1793994630636760900",
+      "id": "blk_native_paragraph_1794063706681156700",
       "managed_by": "project_parser",
       "type": "paragraph"
     },
@@ -278,7 +278,7 @@ Content-Disposition: inline; filename="canvas_state.json"
       "data": {
         "text": "---"
       },
-      "id": "blk_native_paragraph_1793994630636761700",
+      "id": "blk_native_paragraph_1794063706681157900",
       "managed_by": "project_parser",
       "type": "paragraph"
     },
@@ -287,7 +287,7 @@ Content-Disposition: inline; filename="canvas_state.json"
         "level": 2,
         "text": "6. Тестирование и «Золотой оракул» (Testing & Corpora)"
       },
-      "id": "blk_native_heading_1793994630636762400",
+      "id": "blk_native_heading_1794063706681158700",
       "managed_by": "project_parser",
       "type": "heading"
     },
@@ -295,7 +295,7 @@ Content-Disposition: inline; filename="canvas_state.json"
       "data": {
         "text": "* **Обязательные тесты на каждый коммит:**\n  - Кодеки форматов данных (`statcraft_io`) обязаны содержать тесты на round-trip (запись $\\to$ чтение $\\to$ равенство) и обработку поврежденных файлов (malformed input tests) без паник.\n  - **Математический Золотой Оракул (Golden Oracle):** Для всех статистических процедур (`statcraft_algo`) обязательна сверка результатов (значения критериев, $p$-value, степени свободы, доверительные интервалы) с референтными эталонами (Python `scipy.stats` / GNU PSPP) с точностью не хуже $10^{-6}$.\n  - **Корпусные тесты (Real-file Corpora):** Запуск `cargo xtask test-corpus` на реальных массивах `.sav` и `.csv`. Сами тяжелые файлы корпусов никогда не коммитятся в git-репозиторий.\n* **Качество кода:** Обязательное прохождение `cargo fmt --check`, `cargo clippy --workspace -j 1 -- -D warnings`, `cargo run -p xtask -j 1 -- file-guard` и `cargo test -p statcraft_app --test output_viewer_invariants -j 1`."
       },
-      "id": "blk_native_paragraph_1793994630636764600",
+      "id": "blk_native_paragraph_1794063706681161600",
       "managed_by": "project_parser",
       "type": "paragraph"
     },
@@ -303,7 +303,7 @@ Content-Disposition: inline; filename="canvas_state.json"
       "data": {
         "text": "---"
       },
-      "id": "blk_native_paragraph_1793994630636765300",
+      "id": "blk_native_paragraph_1794063706681162400",
       "managed_by": "project_parser",
       "type": "paragraph"
     },
@@ -312,7 +312,7 @@ Content-Disposition: inline; filename="canvas_state.json"
         "level": 2,
         "text": "7. Нулевой хардкод строк и доступность локализации (Zero-Hardcode i18n)"
       },
-      "id": "blk_native_heading_1793994630636766000",
+      "id": "blk_native_heading_1794063706681163100",
       "managed_by": "project_parser",
       "type": "heading"
     },
@@ -320,7 +320,7 @@ Content-Disposition: inline; filename="canvas_state.json"
       "data": {
         "text": "* **ЖЕЛЕЗНЫЙ ЗАПРЕТ:** В исходном коде графического интерфейса (`crates/statcraft_app`, диалогах, меню, таблицах) **категорически запрещены строковые литералы на естественных языках** (как на русском, так и на английском).\n* Любой текст интерфейса запрашивается по семантическому ключу:"
       },
-      "id": "blk_native_paragraph_1793994630636767400",
+      "id": "blk_native_paragraph_1794063706681165000",
       "managed_by": "project_parser",
       "type": "paragraph"
     },
@@ -329,7 +329,7 @@ Content-Disposition: inline; filename="canvas_state.json"
         "code": "  // ПРАВИЛЬНО:\n  ui.label(t!(\"dialog.file.open_csv\"));\n  ui.button(t!(\"action.calculate\"));\n  \n  // КАТЕГОРИЧЕСКИ ЗАПРЕЩЕНО:\n  ui.label(\"Открыть CSV...\");\n  ui.button(\"Calculate\");",
         "language": "rust"
       },
-      "id": "blk_native_code_1793994630636768500",
+      "id": "blk_native_code_1794063706681166300",
       "managed_by": "project_parser",
       "type": "code"
     },
@@ -337,7 +337,7 @@ Content-Disposition: inline; filename="canvas_state.json"
       "data": {
         "text": "* Каталоги локализации хранятся в открытом декларативном формате Fluent (`locales/ru.ftl`, `locales/en.ftl`).\n* Любой контрибьютор может добавить перевод на новый язык (`locales/es.ftl`, `locales/de.ftl`), просто добавив файл в папку, **без изменения кода Rust и без перекомпиляции программы**.\n* Смена языка интерфейса происходит «на лету» без перезапуска."
       },
-      "id": "blk_native_paragraph_1793994630636770100",
+      "id": "blk_native_paragraph_1794063706681168300",
       "managed_by": "project_parser",
       "type": "paragraph"
     },
@@ -345,7 +345,7 @@ Content-Disposition: inline; filename="canvas_state.json"
       "data": {
         "text": "---"
       },
-      "id": "blk_native_paragraph_1793994630636771000",
+      "id": "blk_native_paragraph_1794063706681169100",
       "managed_by": "project_parser",
       "type": "paragraph"
     },
@@ -354,7 +354,7 @@ Content-Disposition: inline; filename="canvas_state.json"
         "level": 2,
         "text": "8. Запрет невоспроизводимых глифов (Vector-First UI)"
       },
-      "id": "blk_native_heading_1793994630636771700",
+      "id": "blk_native_heading_1794063706681169900",
       "managed_by": "project_parser",
       "type": "heading"
     },
@@ -362,7 +362,7 @@ Content-Disposition: inline; filename="canvas_state.json"
       "data": {
         "text": "Базовый шрифт `egui` не содержит эмодзи и редких символов Unicode. Попытка их вывода приводит к появлению уродливых квадратов «тофу» (`□`).\n* **КАТЕГОРИЧЕСКИ ЗАПРЕЩЕНЫ любые Emoji в UI:**\n  ❌ `📊`, `📈`, `⏳`, `⚠️`, `💡`, `📁`, `💾`, `⚙`, `🔍`, `✨`.\n* **КАТЕГОРИЧЕСКИ ЗАПРЕЩЕНЫ нестандартные Unicode-символы:**\n  ❌ `●` (U+25CF), `•` (U+2022), `✓`, `✔`, `✕`, `✖`.\n* **ПРАВИЛА ОТРИСОВКИ:**\n  1. Все стили, цвета и отступы берутся из дизайн-системы `theme::Tokens` и компонентов `widgets::*`.\n  2. Все служебные иконки, индикаторы шкал (Nominal / Ordinal / Scale), стрелки и маркеры отрисовываются **векторными примитивами** через `ui.painter()` (`circle_filled`, `line_segment`, `rect_stroke`) либо через кэшированные векторные SVG.\n  3. Индикаторы прогресса и вычислений отображаются анимированным векторным спиннером или текстовым `\"...\"` с мягкой подсветкой.\n  4. Визуальная верификация перед сдачей задач."
       },
-      "id": "blk_native_paragraph_1793994630636773600",
+      "id": "blk_native_paragraph_1794063706681172000",
       "managed_by": "project_parser",
       "type": "paragraph"
     },
@@ -370,7 +370,7 @@ Content-Disposition: inline; filename="canvas_state.json"
       "data": {
         "text": "---"
       },
-      "id": "blk_native_paragraph_1793994630636774400",
+      "id": "blk_native_paragraph_1794063706681173000",
       "managed_by": "project_parser",
       "type": "paragraph"
     },
@@ -379,7 +379,7 @@ Content-Disposition: inline; filename="canvas_state.json"
         "level": 2,
         "text": "9. Протоколы ИИ и «Agent-First» архитектура"
       },
-      "id": "blk_native_heading_1793994630636775100",
+      "id": "blk_native_heading_1794063706681173600",
       "managed_by": "project_parser",
       "type": "heading"
     },
@@ -387,7 +387,7 @@ Content-Disposition: inline; filename="canvas_state.json"
       "data": {
         "text": "* Встроенный **Model Context Protocol (MCP)** сервер и локальный IPC-сокет: внешние AI-агенты (Antigravity, Claude, локальные LLM) могут через стандартные инструменты исследовать структуру переменных, запускать тесты и автоматически вставлять результаты и их интерпретацию в Output Viewer."
       },
-      "id": "blk_native_paragraph_1793994630636776500",
+      "id": "blk_native_paragraph_1794063706681175000",
       "managed_by": "project_parser",
       "type": "paragraph"
     },
@@ -395,7 +395,7 @@ Content-Disposition: inline; filename="canvas_state.json"
       "data": {
         "text": "---"
       },
-      "id": "blk_native_paragraph_1793994630636777000",
+      "id": "blk_native_paragraph_1794063706681175900",
       "managed_by": "project_parser",
       "type": "paragraph"
     },
@@ -404,7 +404,7 @@ Content-Disposition: inline; filename="canvas_state.json"
         "level": 2,
         "text": "10. Принцип технической честности (Zero-Yesman)"
       },
-      "id": "blk_native_heading_1793994630636777600",
+      "id": "blk_native_heading_1794063706681176800",
       "managed_by": "project_parser",
       "type": "heading"
     },
@@ -412,7 +412,7 @@ Content-Disposition: inline; filename="canvas_state.json"
       "data": {
         "text": "* Агенты обязаны **критически анализировать идеи и технические предложения**, а не слепо поддакивать.\n* Если предложение грозит потерей точности вычислений, ухудшением отзывчивости интерфейса при миллионах строк, утечкой памяти, паникой или нарушением clean-room:\n  1. Агент обязан провести краткое исследование;\n  2. Прямо и аргументированно предупредить разработчика о рисках;\n  3. Предложить промышленную, надежную альтернативу."
       },
-      "id": "blk_native_paragraph_1793994630636778900",
+      "id": "blk_native_paragraph_1794063706681178300",
       "managed_by": "project_parser",
       "type": "paragraph"
     },
@@ -420,7 +420,7 @@ Content-Disposition: inline; filename="canvas_state.json"
       "data": {
         "text": "---"
       },
-      "id": "blk_native_paragraph_1793994630636779700",
+      "id": "blk_native_paragraph_1794063706681179100",
       "managed_by": "project_parser",
       "type": "paragraph"
     },
@@ -429,7 +429,7 @@ Content-Disposition: inline; filename="canvas_state.json"
         "level": 2,
         "text": "11. Проактивная оркестрация субагентов"
       },
-      "id": "blk_native_heading_1793994630636780400",
+      "id": "blk_native_heading_1794063706681179700",
       "managed_by": "project_parser",
       "type": "heading"
     },
@@ -437,7 +437,7 @@ Content-Disposition: inline; filename="canvas_state.json"
       "data": {
         "text": "Для сохранения чистоты контекста Главного агента-оркестратора разработка делится между специализированными ролями:\n* **`stat-math-specialist`**: реализация математических алгоритмов на Rust (`faer`, `statrs`) и валидация через Golden Oracle против SciPy;\n* **`data-engine-specialist`**: структуры данных в памяти (Arrow/Polars, буфер правок, `VariableDictionary`);\n* **`ui-specialist`**: интерфейс на `egui`, докинг `egui_dock`, виртуализированный грид таблицы, сводные Pivot Tables;\n* **`i18n-specialist`**: каталоги переводов (Fluent), модуль `statcraft_i18n`, линтер отсутствия хардкода строк;\n* **`quality-auditor`**: прогон тестов строго с `-j 1`, линтеры, слои (`xtask layers`), соответствие Definition of Done;\n* **`chronicle-writer`**: синхронное ведение двуязычной хроники проекта в `docs/CHRONICLE.md` и `docs/CHRONICLE.en.md`."
       },
-      "id": "blk_native_paragraph_1793994630636782300",
+      "id": "blk_native_paragraph_1794063706681181200",
       "managed_by": "project_parser",
       "type": "paragraph"
     },
@@ -445,7 +445,7 @@ Content-Disposition: inline; filename="canvas_state.json"
       "data": {
         "text": "*Независимые задачи запускаются параллельно в одном вызове `invoke_subagent`.*"
       },
-      "id": "blk_native_paragraph_1793994630636783200",
+      "id": "blk_native_paragraph_1794063706681182200",
       "managed_by": "project_parser",
       "type": "paragraph"
     },
@@ -453,7 +453,7 @@ Content-Disposition: inline; filename="canvas_state.json"
       "data": {
         "text": "---"
       },
-      "id": "blk_native_paragraph_1793994630636783800",
+      "id": "blk_native_paragraph_1794063706681182700",
       "managed_by": "project_parser",
       "type": "paragraph"
     },
@@ -462,7 +462,7 @@ Content-Disposition: inline; filename="canvas_state.json"
         "level": 2,
         "text": "12. Защита от раздутия файлов и инварианты сохранения функционала (File Size Guard & Feature Retention)"
       },
-      "id": "blk_native_heading_1793994630636784600",
+      "id": "blk_native_heading_1794063706681183300",
       "managed_by": "project_parser",
       "type": "heading"
     },
@@ -471,7 +471,7 @@ Content-Disposition: inline; filename="canvas_state.json"
         "level": 3,
         "text": "12.1. Дифференцированные лимиты строк (File Size Limits)"
       },
-      "id": "blk_native_heading_1793994630636785600",
+      "id": "blk_native_heading_1794063706681184300",
       "managed_by": "project_parser",
       "type": "heading"
     },
@@ -479,7 +479,7 @@ Content-Disposition: inline; filename="canvas_state.json"
       "data": {
         "text": "Для предотвращения деградации контекста LLM и монолитизации кодовой базы установлены предельные размеры файлов:\n* **Листовые функциональные модули** (`crates/statcraft_algo/**`, `crates/statcraft_syntax/**`, `dialogs/**`, `views/output_view/**`): жесткий лимит **500 строк** на файл.\n* **Комплексные интерактивные редакторы** (`views/data_view.rs`, `views/variable_view.rs`, `views/syntax_editor.rs`): лимит **1000 строк** на файл.\n* **Корневой координатор приложения** (`src/app.rs`): потолок **1500 строк**.\n* **Все остальные модули**: максимум **1000 строк** на файл.\n* Обязательное прохождение проверки:"
       },
-      "id": "blk_native_paragraph_1793994630636786900",
+      "id": "blk_native_paragraph_1794063706681186100",
       "managed_by": "project_parser",
       "type": "paragraph"
     },
@@ -488,7 +488,7 @@ Content-Disposition: inline; filename="canvas_state.json"
         "code": "  cargo run -p xtask -j 1 -- file-guard",
         "language": "powershell"
       },
-      "id": "blk_native_code_1793994630636787800",
+      "id": "blk_native_code_1794063706681187300",
       "managed_by": "project_parser",
       "type": "code"
     },
@@ -497,7 +497,7 @@ Content-Disposition: inline; filename="canvas_state.json"
         "level": 3,
         "text": "12.2. Принцип «Разделяй, а не урезай» (Anti-Goodhart Counterweight)"
       },
-      "id": "blk_native_heading_1793994630636788700",
+      "id": "blk_native_heading_1794063706681188000",
       "managed_by": "project_parser",
       "type": "heading"
     },
@@ -505,7 +505,7 @@ Content-Disposition: inline; filename="canvas_state.json"
       "data": {
         "text": "* **КАТЕГОРИЧЕСКИ ЗАПРЕЩЕНО** «укладываться в лимит» ценой урезания функционала: удаления колонок, вырезания таблиц, сжатия кода в однострочники или превращения реализаций в заглушки (`todo!()`, `unimplemented!()`).\n* Единственным легитимным решением при превышении лимита является **архитектурная декомпозиция**: выделение изолированных подмодулей (подпапка с `mod.rs` и дочерними модулями, вынос поддиалогов, разделение процедурных таблиц)."
       },
-      "id": "blk_native_paragraph_1793994630636790200",
+      "id": "blk_native_paragraph_1794063706681189600",
       "managed_by": "project_parser",
       "type": "paragraph"
     },
@@ -514,7 +514,7 @@ Content-Disposition: inline; filename="canvas_state.json"
         "level": 3,
         "text": "12.3. Инвариант сохранности функционала (Feature Retention Invariant)"
       },
-      "id": "blk_native_heading_1793994630636790900",
+      "id": "blk_native_heading_1794063706681190200",
       "managed_by": "project_parser",
       "type": "heading"
     },
@@ -522,7 +522,7 @@ Content-Disposition: inline; filename="canvas_state.json"
       "data": {
         "text": "* Запрещено изменять или удалять поведение ранее реализованных статистических процедур, истории и отображения сводных таблиц.\n* Обязательное прохождение пакета тестов интерфейсных инвариантов:"
       },
-      "id": "blk_native_paragraph_1793994630636791800",
+      "id": "blk_native_paragraph_1794063706681191500",
       "managed_by": "project_parser",
       "type": "paragraph"
     },
@@ -531,7 +531,7 @@ Content-Disposition: inline; filename="canvas_state.json"
         "code": "  cargo test -p statcraft_app --test output_viewer_invariants -j 1",
         "language": "powershell"
       },
-      "id": "blk_native_code_1793994630636792900",
+      "id": "blk_native_code_1794063706681192300",
       "managed_by": "project_parser",
       "type": "code"
     },
@@ -539,7 +539,7 @@ Content-Disposition: inline; filename="canvas_state.json"
       "data": {
         "text": "---"
       },
-      "id": "blk_native_paragraph_1793994630636793700",
+      "id": "blk_native_paragraph_1794063706681193300",
       "managed_by": "project_parser",
       "type": "paragraph"
     },
@@ -548,7 +548,7 @@ Content-Disposition: inline; filename="canvas_state.json"
         "level": 2,
         "text": "13. Канон дизайн-системы диалоговых окон и защита от халтуры (DialogKit & Design Guard)"
       },
-      "id": "blk_native_heading_1793994630636794300",
+      "id": "blk_native_heading_1794063706681193900",
       "managed_by": "project_parser",
       "type": "heading"
     },
@@ -557,7 +557,7 @@ Content-Disposition: inline; filename="canvas_state.json"
         "level": 3,
         "text": "13.1. Железный стандарт верстки окон (SPSS Canonical Design)"
       },
-      "id": "blk_native_heading_1793994630636795100",
+      "id": "blk_native_heading_1794063706681194800",
       "managed_by": "project_parser",
       "type": "heading"
     },
@@ -565,7 +565,7 @@ Content-Disposition: inline; filename="canvas_state.json"
       "data": {
         "text": "* Все диалоговые окна обязаны следовать каноническому руководству `docs/DESIGN_GUIDE.md` и строиться **исключительно на базе переиспользуемых компонентов `DialogKit`** (`crates/statcraft_app/src/dialogs/common/`):\n  - `DialogShell`: управление модальным окном, размерами (`DialogSize::Standard` 560 × 430, `Subdialog` 360 × 300, `Properties` 460 × 380, `Compute` 620 × 480), центрированием и модальностью;\n  - `VariablePicker`: унифицированный список переменных с отображением иконки шкалы измерения и формата `Метка [Имя]`;\n  - `TransferButton`: векторная адаптивная кнопка переноса (`->` / `<-`), автоматически ориентированная на активный список;\n  - `DialogActionBar`: нижний ряд кнопок действий Type 1 (`[ OK ] [ Paste ] [ Reset ] [ Cancel ] [ Help ]`) с автоматическим выравниванием по правилу `i18n Shield` (одинаковая ширина $\\ge 80 \\times 26$ px, скругление 3 px);\n  - `SubdialogActionBar`: нижняя панель поддиалогов Type 2 (`[ Continue ] [ Cancel ] [ Help ]`);\n  - `SubdialogSidebar`: правая колонка модальных настроек (`[ Statistics... ]`, `[ Options... ]`, 90 × 24 px);\n  - `GroupBox`: визуальная группировка переключателей и полей ввода."
       },
-      "id": "blk_native_paragraph_1793994630636797400",
+      "id": "blk_native_paragraph_1794063706681197000",
       "managed_by": "project_parser",
       "type": "paragraph"
     },
@@ -574,7 +574,7 @@ Content-Disposition: inline; filename="canvas_state.json"
         "level": 3,
         "text": "13.2. Статический линтер дизайна (Design Guard)"
       },
-      "id": "blk_native_heading_1793994630636798700",
+      "id": "blk_native_heading_1794063706681197900",
       "managed_by": "project_parser",
       "type": "heading"
     },
@@ -582,7 +582,7 @@ Content-Disposition: inline; filename="canvas_state.json"
       "data": {
         "text": "* **КАТЕГОРИЧЕСКИ ЗАПРЕЩЕНО** создавать кнопки `OK`, `Paste`, `Reset`, `Cancel`, `Continue` сырыми вызовами `ui.button(...)`, а также хардкодить произвольные размеры окон в обход `DialogShell`.\n* Обязательное прохождение линтера дизайна и тестов инвариантов окон в Definition of Done:"
       },
-      "id": "blk_native_paragraph_1793994630636800200",
+      "id": "blk_native_paragraph_1794063706681199200",
       "managed_by": "project_parser",
       "type": "paragraph"
     },
@@ -591,7 +591,7 @@ Content-Disposition: inline; filename="canvas_state.json"
         "code": "  cargo run -p xtask -j 1 -- design-guard\n  cargo test -p statcraft_app --test dialog_invariants -j 1",
         "language": "powershell"
       },
-      "id": "blk_native_code_1793994630636801600",
+      "id": "blk_native_code_1794063706681200300",
       "managed_by": "project_parser",
       "type": "code"
     },
@@ -599,7 +599,7 @@ Content-Disposition: inline; filename="canvas_state.json"
       "data": {
         "text": "<!-- capsulecraft-start -->"
       },
-      "id": "blk_native_paragraph_1793994630636803000",
+      "id": "blk_native_paragraph_1794063706681201300",
       "managed_by": "project_parser",
       "type": "paragraph"
     },
@@ -608,7 +608,7 @@ Content-Disposition: inline; filename="canvas_state.json"
         "level": 2,
         "text": "CapsuleCraft Knowledge Base & MCP Integration"
       },
-      "id": "blk_native_heading_1793994630636803700",
+      "id": "blk_native_heading_1794063706681202100",
       "managed_by": "project_parser",
       "type": "heading"
     },
@@ -616,7 +616,7 @@ Content-Disposition: inline; filename="canvas_state.json"
       "data": {
         "text": "This project `StatCraft` has an active CapsuleCraft knowledge base in `.capsule/`.\n- Project Overview: `.capsule/index.eml`\n- Tasks & Technical Debt: `.capsule/tasks_todo.eml`\n- Subsystems & Architecture: `.capsule/subsystem_*.eml`\n- Agent Skill definition: `.agents/skills/capsulecraft/SKILL.md`"
       },
-      "id": "blk_native_paragraph_1793994630636805400",
+      "id": "blk_native_paragraph_1794063706681203500",
       "managed_by": "project_parser",
       "type": "paragraph"
     },
@@ -624,7 +624,7 @@ Content-Disposition: inline; filename="canvas_state.json"
       "data": {
         "text": "Agents can query project architecture and tasks using CapsuleCraft MCP tools (`project_overview`, `capsule_search`, `capsule_read`, `capsule_tasks`).\n<!-- capsulecraft-end -->"
       },
-      "id": "blk_native_paragraph_1793994630636806800",
+      "id": "blk_native_paragraph_1794063706681204300",
       "managed_by": "project_parser",
       "type": "paragraph"
     }

@@ -183,7 +183,7 @@ fn test_has_unsaved_changes_detection() {
     assert!(!app.has_unsaved_changes());
     assert_eq!(
         app.status_message.color(),
-        statcraft_app::theme::Tokens::MEASURE_NOMINAL
+        statcraft_app::theme::Tokens::measure_nominal()
     );
 
     // Record a cell edit
@@ -235,7 +235,7 @@ fn test_toolbar_save_action_execution() {
     ));
     assert_eq!(
         app.status_message.color(),
-        statcraft_app::theme::Tokens::MEASURE_NOMINAL
+        statcraft_app::theme::Tokens::measure_nominal()
     );
 
     let _ = std::fs::remove_file(save_path);
@@ -533,7 +533,7 @@ fn test_syntax_save_and_load_lifecycle() {
     ));
     assert_eq!(
         app.status_message.color(),
-        statcraft_app::theme::Tokens::MEASURE_NOMINAL
+        statcraft_app::theme::Tokens::measure_nominal()
     );
 
     // Clear syntax state
@@ -557,4 +557,18 @@ fn test_syntax_save_and_load_lifecycle() {
     ));
 
     let _ = std::fs::remove_file(sps_path);
+}
+
+#[test]
+fn test_theme_mode_persistence_serialization() {
+    let mode = statcraft_app::theme::ThemeMode::Light;
+    let json = serde_json::to_string(&mode).unwrap();
+    let deserialized: statcraft_app::theme::ThemeMode = serde_json::from_str(&json).unwrap();
+    assert_eq!(deserialized, statcraft_app::theme::ThemeMode::Light);
+
+    let sys_mode = statcraft_app::theme::ThemeMode::System;
+    let sys_json = serde_json::to_string(&sys_mode).unwrap();
+    let sys_deserialized: statcraft_app::theme::ThemeMode =
+        serde_json::from_str(&sys_json).unwrap();
+    assert_eq!(sys_deserialized, statcraft_app::theme::ThemeMode::System);
 }

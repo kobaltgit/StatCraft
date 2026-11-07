@@ -1,4 +1,4 @@
-use super::common::{
+﻿use super::common::{
     format_var_display, render_variable_list_panel, ActionBarAction, DialogActionBar, DialogShell,
     GroupBox, ListEvent, SubdialogSidebar, TransferButton, VariableListItem,
 };
@@ -291,8 +291,8 @@ fn render_diff_content(
         ui.allocate_ui_with_layout(vec2(200.0, 280.0), Layout::top_down(Align::Min), |ui| {
             ui.label(t!("dialog-recode-vars-output-vars"));
             egui::Frame::canvas(ui.style())
-                .fill(Tokens::BG_PANEL)
-                .stroke(Stroke::new(1.0_f32, Tokens::BORDER))
+                .fill(Tokens::bg_panel())
+                .stroke(Stroke::new(1.0_f32, Tokens::border()))
                 .show(ui, |ui| {
                     let list_sz = vec2(196.0, 110.0);
                     ui.set_min_size(list_sz);
@@ -436,8 +436,8 @@ fn render_same_content(
         ui.allocate_ui_with_layout(vec2(190.0, 280.0), Layout::top_down(Align::Min), |ui| {
             ui.label(t!("dialog-recode-vars-list"));
             egui::Frame::canvas(ui.style())
-                .fill(Tokens::BG_PANEL)
-                .stroke(Stroke::new(1.0_f32, Tokens::BORDER))
+                .fill(Tokens::bg_panel())
+                .stroke(Stroke::new(1.0_f32, Tokens::border()))
                 .show(ui, |ui| {
                     let list_sz = vec2(186.0, 250.0);
                     ui.set_min_size(list_sz);

@@ -319,6 +319,19 @@ fn test_exhaustive_enum_payloads_render_without_panics() {
             custom_title: None,
             kind: OutputItemKind::Means(Box::new(sample_means())),
         },
+        OutputItem {
+            id: state.alloc_id(),
+            title_key: "output-table",
+            custom_title: Some("Report: stat.generic".to_string()),
+            kind: OutputItemKind::GenericReport {
+                command_id: "stat.generic".to_string(),
+                status: "success".to_string(),
+                summary: "Generic execution completed".to_string(),
+                key_values: vec![("Metric".to_string(), "100".to_string())],
+                table_headers: vec!["Col1".to_string(), "Col2".to_string()],
+                table_rows: vec![vec!["A".to_string(), "1.23".to_string()]],
+            },
+        },
     ];
 
     let proc_id = state.alloc_id();
@@ -339,7 +352,7 @@ fn test_exhaustive_enum_payloads_render_without_panics() {
 
     // Asserts: 0 panics, state remains intact
     assert_eq!(state.procedures.len(), 1);
-    assert_eq!(state.procedures[0].items.len(), 15);
+    assert_eq!(state.procedures[0].items.len(), 16);
 }
 
 #[test]

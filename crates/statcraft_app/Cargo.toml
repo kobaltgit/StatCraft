@@ -10,6 +10,7 @@ statcraft_io = { path = "../statcraft_io" }
 statcraft_syntax = { path = "../statcraft_syntax" }
 statcraft_algo = { path = "../statcraft_algo" }
 statcraft_reporting = { path = "../statcraft_reporting" }
+statcraft_bridge = { path = "../statcraft_bridge" }
 statcraft_i18n = { path = "../statcraft_i18n" }
 eframe = "0.29"
 egui = "0.29"

@@ -1,4 +1,4 @@
-use super::model::{
+﻿use super::model::{
     OutputItem, OutputItemKind, OutputNotes, OutputProcedure, OutputViewerState, SelectedTarget,
 };
 use super::tables_common::{adjust_widths, format_sig, render_data_row, render_header_row};
@@ -95,7 +95,7 @@ fn render_summary_table(ui: &mut Ui, res: &AdpResult) {
         egui::RichText::new(t!("output-adp-summary-title"))
             .font(FontId::proportional(13.0))
             .strong()
-            .color(Tokens::TEXT_PRIMARY),
+            .color(Tokens::text_primary()),
     );
     ui.add_space(4.0);
 
@@ -138,9 +138,9 @@ fn render_summary_table(ui: &mut Ui, res: &AdpResult) {
 
     for (idx, (prop, val)) in summary_rows.iter().enumerate() {
         let bg = if idx % 2 == 0 {
-            Tokens::BG_ROW_EVEN
+            Tokens::bg_row_even()
         } else {
-            Tokens::BG_ROW_ODD
+            Tokens::bg_row_odd()
         };
         let row_vals = vec![
             (prop.clone(), Align2::LEFT_CENTER),
@@ -155,7 +155,7 @@ fn render_action_log_table(ui: &mut Ui, res: &AdpResult) {
         egui::RichText::new(t!("output-adp-action-log-title"))
             .font(FontId::proportional(13.0))
             .strong()
-            .color(Tokens::TEXT_PRIMARY),
+            .color(Tokens::text_primary()),
     );
     ui.add_space(4.0);
 
@@ -171,9 +171,9 @@ fn render_action_log_table(ui: &mut Ui, res: &AdpResult) {
 
     for (idx, action) in res.field_actions.iter().enumerate() {
         let bg = if idx % 2 == 0 {
-            Tokens::BG_ROW_EVEN
+            Tokens::bg_row_even()
         } else {
-            Tokens::BG_ROW_ODD
+            Tokens::bg_row_odd()
         };
 
         let status_str = if action.is_screened_out {
@@ -202,7 +202,7 @@ fn render_predictive_power_table(ui: &mut Ui, res: &AdpResult) {
         egui::RichText::new(t!("output-adp-predictive-power-title"))
             .font(FontId::proportional(13.0))
             .strong()
-            .color(Tokens::TEXT_PRIMARY),
+            .color(Tokens::text_primary()),
     );
     ui.add_space(4.0);
 
@@ -218,9 +218,9 @@ fn render_predictive_power_table(ui: &mut Ui, res: &AdpResult) {
 
     for (idx, pwr) in res.predictive_powers.iter().enumerate() {
         let bg = if idx % 2 == 0 {
-            Tokens::BG_ROW_EVEN
+            Tokens::bg_row_even()
         } else {
-            Tokens::BG_ROW_ODD
+            Tokens::bg_row_odd()
         };
 
         let imp_text = format!("{:.3}", pwr.score);
@@ -241,7 +241,7 @@ fn render_partition_table(ui: &mut Ui, part: &statcraft_algo::PartitionCounts) {
         egui::RichText::new(t!("output-adp-partition-title"))
             .font(FontId::proportional(13.0))
             .strong()
-            .color(Tokens::TEXT_PRIMARY),
+            .color(Tokens::text_primary()),
     );
     ui.add_space(4.0);
 
@@ -288,9 +288,9 @@ fn render_partition_table(ui: &mut Ui, part: &statcraft_algo::PartitionCounts) {
 
     for (idx, (name, n, pct)) in rows.iter().enumerate() {
         let bg = if idx % 2 == 0 {
-            Tokens::BG_ROW_EVEN
+            Tokens::bg_row_even()
         } else {
-            Tokens::BG_ROW_ODD
+            Tokens::bg_row_odd()
         };
         let row_vals = vec![
             (name.clone(), Align2::LEFT_CENTER),

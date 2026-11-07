@@ -39,7 +39,7 @@ Whether you are conducting psychological research, analyzing clinical trials, te
 
 * **100% Safe Rust & Never Crash Guarantee:** Zero `unsafe` blocks, zero panics (`panic!`, `unwrap()`, `expect()`). Malformed datasets, empty samples, or division by zero yield explicit, typed `Result<T, E>` errors rather than application crashes.
 * **Commands, Not Handlers:** Every analytical procedure and user interaction is an atomic engine command (`EngineCommand`). All commands support non-destructive Undo/Redo, serialize to standard SPSS syntax (`.sps`), and can be scripted headlessly.
-* **Agent-Ready Architecture:** Engine procedures expose structured JSON parameter schemas via `specs()`, enabling AI agents to programmatically assemble analytical pipelines and execute batch SPSS syntax (`.sps`); the direct network bridge (`statcraft_bridge`) is scheduled on the Roadmap.
+* **Agent-Ready & MCP Bridge (Code Mode):** Built-in local IPC socket (port 18493) and Model Context Protocol (MCP) server (`--mcp` flag). Enables external autonomous AI agents (Antigravity, Claude, ChatGPT, Ollama) to inspect metadata, execute batch syntax, perform mathematical computations, and stream live results into the Output Viewer.
 * **SPSS-Style Canonical Output Viewer:** Hierarchical navigation outline tree paired with authentic multi-level pivot tables. Results can be copied to the clipboard with one click as structured TSV data that pastes cleanly into Microsoft Excel without distorted columns or unwanted date conversions.
 * **Vector-First UI:** Rendered with native `egui` via `ui.painter()` and vector SVG icons. Strict zero-emoji and zero-unsupported Unicode symbol policy eliminates tofu squares (`□`) across all platforms.
 * **Zero-Hardcode i18n:** 100% of user-facing strings are decoupled into Project Fluent catalogs (`locales/en.ftl`, `locales/ru.ftl`) with real-time runtime language switching.
@@ -78,6 +78,43 @@ Whether you are conducting psychological research, analyzing clinical trials, te
 * **TSV Clipboard Export:** One-click `[ Copy Table (TSV) ]` button with instant visual feedback and right-click context menus. Exports tables with clean headers and row separators specifically structured for Excel import.
 * **Execution Protocols:** Monospace log blocks documenting executed SPSS syntax (`GET DATA`, `DESCRIPTIVES`, `T-TEST`, `ONEWAY`).
 
+### 4. StatCraft Bridge & AI Agents (Model Context Protocol / Code Mode)
+
+StatCraft is the world's first statistical software package natively equipped with the **Model Context Protocol (MCP)** and direct two-way control via autonomous AI agents (Antigravity, Claude, ChatGPT, Ollama, and local LLMs).
+
+<details>
+<summary><b>🔍 Why StatCraft Bridge? Zero SPSS Experience Required (Click to expand)</b></summary>
+
+#### You No Longer Need to Learn SPSS: Statistical Analysis in Natural Language
+
+Historically, performing rigorous statistical analysis required mastering legacy statistical GUI suites (SPSS, SAS, Stata) or writing complex code in R and Python. Researchers had to memorize arcane syntax commands (`DESCRIPTIVES VARIABLES=...`), navigate dozens of nested dialog boxes, or write data wrangling scripts from scratch.
+
+**With StatCraft Bridge, that barrier is completely gone:** Connect your favorite AI assistant to StatCraft and describe what you want in plain human language:
+> *"Inspect the loaded survey dataset. Compare the mean salary between males and females using an independent-samples t-test, check Levene's test for equality of variances, and explain in simple terms whether the difference is statistically significant."*
+
+The AI agent will autonomously:
+1. Query dataset metadata and variable dictionaries via the bridge;
+2. Generate and execute commands through StatCraft's core;
+3. Retrieve verified mathematical output tables;
+4. Present a plain-language summary with effect sizes and $p$-value interpretations.
+
+#### Why Use StatCraft Bridge Instead of Plain LLM Chat?
+
+1. **Absolute Mathematical Exactness vs. LLM Hallucinations:**
+   Large Language Models frequently hallucinate when processing thousands of numbers, calculating means, or estimating non-linear test statistics. StatCraft serves as the **deterministic calculation oracle**: the LLM guides the inquiry, while native Rust handles the math with $\le 10^{-6}$ precision verified against SciPy and SPSS algorithms.
+2. **Real-Time Visual Synchronization on Your Screen:**
+   As the agent executes procedures, the StatCraft desktop GUI updates live in front of you. Authentic Pivot Tables appear in the Output Viewer, syntax logs record the audit trail, and all results can be copied into Excel with a single click.
+3. **100% Local & Privacy-Preserving:**
+   The socket bridge runs locally (`127.0.0.1:18493`). Your medical, corporate, or private research data never leaves your workstation.
+4. **Autonomous Code Mode:**
+   Agents can run arbitrary SPSS syntax scripts (`.sps`), sort cases, filter subsets, recode scales, handle missing values, and trigger any of StatCraft's statistical modeling procedures.
+
+#### How to Connect Your AI Agent
+
+* **Desktop GUI:** Open `Extensions -> MCP Bridge / Copilot` in StatCraft. The dialog provides live server status, activity logs, and one-click configuration snippets for Antigravity, Claude Desktop, and Cursor.
+* **Headless CLI (stdio MCP):** Configure `statcraft.exe --mcp` inside your MCP client settings.
+</details>
+
 ---
 
 ## Layered Architecture (L0 – L6)
@@ -93,6 +130,7 @@ L6: statcraft_app        Desktop GUI (egui / eframe / DialogKit / Output Viewer)
                 └── L0: statcraft_io  Data codecs (CSV/TSV streaming, Excel .xlsx/.xls/.ods, SPSS .sav/.zsav)
 
 Cross-cutting utility crates:
+* statcraft_bridge Local IPC socket (18493) and Model Context Protocol (MCP) server
 * statcraft_i18n   Fluent localization engine with zero hardcoded strings
 * xtask            Developer tools: file-guard, layers, design-guard, parity, test-corpus
 ```

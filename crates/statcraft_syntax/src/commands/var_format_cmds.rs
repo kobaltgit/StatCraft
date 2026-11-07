@@ -114,13 +114,36 @@ impl EngineCommand for SetLabelCommand {
             .as_mut()
             .ok_or_else(|| CommandError::Disabled(self.id().to_string()))?;
 
-        let col_index = params
-            .get("col_index")
-            .and_then(|v| v.as_u64())
-            .ok_or_else(|| CommandError::InvalidParams {
+        if let Some(labels_map) = params.get("labels").and_then(|v| v.as_object()) {
+            for (var_name, lbl_val) in labels_map {
+                if let Some(lbl) = lbl_val.as_str() {
+                    if let Some(idx) = ds.dictionary.find_index(var_name) {
+                        ds.dictionary.set_label(idx, lbl)?;
+                    } else if let Ok(idx) = var_name.parse::<usize>() {
+                        if idx < ds.col_count() {
+                            ds.dictionary.set_label(idx, lbl)?;
+                        }
+                    }
+                }
+            }
+            return Ok(json!({ "status": "success", "updated": labels_map.len() }));
+        }
+
+        let col_index = if let Some(v) = params.get("col_index").and_then(|v| v.as_u64()) {
+            v as usize
+        } else if let Some(name) = params.get("var_name").and_then(|v| v.as_str()) {
+            ds.dictionary
+                .find_index(name)
+                .ok_or_else(|| CommandError::InvalidParams {
+                    id: self.id(),
+                    reason: format!("Variable '{}' not found", name),
+                })?
+        } else {
+            return Err(CommandError::InvalidParams {
                 id: self.id(),
-                reason: "Missing 'col_index'".to_string(),
-            })? as usize;
+                reason: "Missing 'col_index' or 'var_name'".to_string(),
+            });
+        };
 
         let label = params
             .get("label")
@@ -179,13 +202,30 @@ impl EngineCommand for SetMeasureCommand {
             .as_mut()
             .ok_or_else(|| CommandError::Disabled(self.id().to_string()))?;
 
-        let col_index = params
-            .get("col_index")
-            .and_then(|v| v.as_u64())
-            .ok_or_else(|| CommandError::InvalidParams {
-                id: self.id(),
-                reason: "Missing 'col_index'".to_string(),
-            })? as usize;
+        if let Some(assignments) = params.get("assignments").and_then(|v| v.as_array()) {
+            for item in assignments {
+                let m_str = item
+                    .get("measure")
+                    .and_then(|v| v.as_str())
+                    .unwrap_or("scale");
+                let m = match m_str.to_lowercase().as_str() {
+                    "scale" => Measure::Scale,
+                    "ordinal" => Measure::Ordinal,
+                    "nominal" => Measure::Nominal,
+                    _ => Measure::Scale,
+                };
+                if let Some(vars) = item.get("variables").and_then(|v| v.as_array()) {
+                    for v in vars {
+                        if let Some(name) = v.as_str() {
+                            if let Some(idx) = ds.dictionary.find_index(name) {
+                                ds.dictionary.set_measure(idx, m)?;
+                            }
+                        }
+                    }
+                }
+            }
+            return Ok(json!({ "status": "success" }));
+        }
 
         let measure_str = params
             .get("measure")
@@ -205,6 +245,37 @@ impl EngineCommand for SetMeasureCommand {
                     reason: format!("Unknown measure: '{}'", measure_str),
                 });
             }
+        };
+
+        if let Some(vars) = params.get("variables").and_then(|v| v.as_array()) {
+            for v in vars {
+                if let Some(name) = v.as_str() {
+                    let idx = ds.dictionary.find_index(name).ok_or_else(|| {
+                        CommandError::InvalidParams {
+                            id: self.id(),
+                            reason: format!("Variable '{}' not found", name),
+                        }
+                    })?;
+                    ds.dictionary.set_measure(idx, measure)?;
+                }
+            }
+            return Ok(json!({ "status": "success", "measure": measure_str }));
+        }
+
+        let col_index = if let Some(v) = params.get("col_index").and_then(|v| v.as_u64()) {
+            v as usize
+        } else if let Some(name) = params.get("var_name").and_then(|v| v.as_str()) {
+            ds.dictionary
+                .find_index(name)
+                .ok_or_else(|| CommandError::InvalidParams {
+                    id: self.id(),
+                    reason: format!("Variable '{}' not found", name),
+                })?
+        } else {
+            return Err(CommandError::InvalidParams {
+                id: self.id(),
+                reason: "Missing 'col_index', 'var_name', or 'variables'".to_string(),
+            });
         };
 
         ds.dictionary.set_measure(col_index, measure)?;

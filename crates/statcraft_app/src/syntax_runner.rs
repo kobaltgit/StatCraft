@@ -8,6 +8,12 @@ use statcraft_algo::{
 use statcraft_core::DataSet;
 use statcraft_syntax::{CommandBus, SyntaxDispatcher, SyntaxError, SyntaxLexer, SyntaxParser};
 
+#[derive(Debug, Clone, Default)]
+pub struct SyntaxBatchOutcome {
+    pub count: usize,
+    pub output_text: String,
+}
+
 /// Executes a batch of SPSS syntax commands, echoing each statement to the
 /// Output Viewer log and attaching statistical result tables to the report tree.
 pub fn run_syntax_batch(
@@ -15,9 +21,10 @@ pub fn run_syntax_batch(
     dataset: &mut Option<DataSet>,
     bus: &mut CommandBus,
     output_view: &mut OutputViewerState,
-) -> Result<usize, SyntaxError> {
+) -> Result<SyntaxBatchOutcome, SyntaxError> {
     let blocks = SyntaxLexer::split_commands(script)?;
     let mut count = 0;
+    let initial_proc_count = output_view.procedures.len();
 
     for block in &blocks {
         if block.is_comment {
@@ -39,6 +46,10 @@ pub fn run_syntax_batch(
 
         // If the command returned a known statistical result model, render it in OutputViewer
         match parsed.name.as_str() {
+            "HELP" => {
+                let text = res_val.get("output").and_then(|v| v.as_str()).unwrap_or("");
+                output_view.add_entry("Help".to_string(), text.to_string());
+            }
             "DESCRIPTIVES" => {
                 if let Ok(results) = serde_json::from_value::<Vec<DescriptivesResult>>(res_val) {
                     output_view.add_descriptives(results);
@@ -105,16 +116,31 @@ pub fn run_syntax_batch(
                 }
             }
             "MEANS" => {
-                if let Ok(result) = serde_json::from_value::<MeansProcedureResult>(res_val) {
+                if let Ok(result) = serde_json::from_value::<MeansProcedureResult>(res_val.clone())
+                {
                     let opts = MeansOptions::default();
                     output_view.add_means(result, Vec::new(), Vec::new(), &opts);
+                } else {
+                    output_view.add_generic_result(&parsed.name, &block.raw_text, &res_val);
                 }
             }
-            _ => {}
+            _ => {
+                if parsed.name != "COMMENT" && parsed.name != "EXECUTE" {
+                    output_view.add_generic_result(&parsed.name, &block.raw_text, &res_val);
+                }
+            }
         }
 
         count += 1;
     }
 
-    Ok(count)
+    let output_text = if output_view.procedures.len() > initial_proc_count {
+        crate::views::output_view::export_procedures_to_txt(
+            &output_view.procedures[initial_proc_count..],
+        )
+    } else {
+        String::new()
+    };
+
+    Ok(SyntaxBatchOutcome { count, output_text })
 }

@@ -1,0 +1,94 @@
+From: CapsuleCraft Code Ingest <system@capsulecraft.local>
+To: Vault <vault@capsuleos.local>
+Subject: 📄 StatCraft / crates/statcraft_app/src/bridge_service.rs
+Date: Sat, 7 Nov 2026 13:04:33 +0000
+Message-ID: <module-crates_statcraft_app_src_bridge_service_rs@capsuleos.local>
+In-Reply-To: <subsystem-statcraft-crates_statcraft_app@capsuleos.local>
+X-Capsule-Page-Parent: <subsystem-statcraft-crates_statcraft_app@capsuleos.local>
+References: <project-index-statcraft@capsuleos.local> <subsystem-statcraft-crates_statcraft_app@capsuleos.local>
+X-Capsule-Tags: project, statcraft, module
+X-Capsule-Status: Active
+MIME-Version: 1.0
+Content-Type: multipart/mixed; boundary="BOUNDARY_ROOT_FJPU0LFJLZ"
+
+--BOUNDARY_ROOT_FJPU0LFJLZ
+Content-Type: multipart/alternative; boundary="BOUNDARY_PAYLOAD_VV1WIJFM7J"
+
+--BOUNDARY_PAYLOAD_VV1WIJFM7J
+Content-Type: application/json; name="canvas_state.json"
+Content-Disposition: inline; filename="canvas_state.json"
+
+{
+  "version": "1.0",
+  "generator": "CapsuleCraft Native egui prototype (Zero-DB Pure-MIME)",
+  "messageId": "<module-crates_statcraft_app_src_bridge_service_rs@capsuleos.local>",
+  "subject": "📄 StatCraft / crates/statcraft_app/src/bridge_service.rs",
+  "tags": [
+    "project",
+    "statcraft",
+    "module"
+  ],
+  "blocks": [
+    {
+      "data": {
+        "level": 1,
+        "text": "📄 bridge_service.rs"
+      },
+      "id": "blk_native_heading_1794056673844279500",
+      "managed_by": "project_parser",
+      "type": "heading"
+    },
+    {
+      "data": {
+        "text": "Path: `crates/statcraft_app/src/bridge_service.rs` · 441 lines of code\nBelongs to project: [[📦 StatCraft (Overview) | 📦 StatCraft (Overview)]]"
+      },
+      "id": "blk_native_paragraph_1794056673844281300",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    },
+    {
+      "data": {
+        "level": 2,
+        "text": "Public Interface"
+      },
+      "id": "blk_native_heading_1794056673844281900",
+      "managed_by": "project_parser",
+      "type": "heading"
+    },
+    {
+      "data": {
+        "code": "pub struct BridgeService\npub fn new(autostart: bool) -> Self\npub fn start(&mut self)\npub fn stop(&mut self)\npub fn is_active(&self) -> bool\npub fn is_port_busy(&self) -> bool\npub fn autostart(&self) -> bool\npub fn set_autostart(&mut self, autostart: bool)\npub fn port(&self) -> u16\npub fn log_ring(&self) -> &BridgeLogRing\npub fn clear_log(&mut self)\npub fn process_requests( &mut self, dataset: &mut Option<DataSet>, bus: &mut CommandBus, output_view: &mut OutputViewerState, dock_state: &mut DockState<Tab>, )",
+        "language": "rust"
+      },
+      "id": "blk_native_code_1794056673844282700",
+      "managed_by": "project_parser",
+      "type": "code"
+    },
+    {
+      "data": {
+        "level": 2,
+        "text": "Internal Dependencies"
+      },
+      "id": "blk_native_heading_1794056673844283500",
+      "managed_by": "project_parser",
+      "type": "heading"
+    },
+    {
+      "data": {
+        "text": "- `crate::app::Tab`\n- `crate::syntax_runner`\n- `crate::views::output_view::{OutputItem, OutputItemKind, OutputProcedure, OutputViewerState}`\n"
+      },
+      "id": "blk_native_paragraph_1794056673844284900",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    }
+  ]
+}
+
+--BOUNDARY_PAYLOAD_VV1WIJFM7J
+Content-Type: text/html; charset="utf-8"
+Content-Disposition: inline
+
+<!doctype html><html><head><meta charset="utf-8"><meta name="generator" content="CapsuleCraft Native"></head><body style="font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;max-width:720px;margin:32px auto;line-height:1.55;color:#23201c;background:#faf8f4;"><h1>📄 StatCraft / crates/statcraft_app/src/bridge_service.rs</h1><h1>📄 bridge_service.rs</h1><p>Path: `crates/statcraft_app/src/bridge_service.rs` · 441 lines of code<br>Belongs to project: [[📦 StatCraft (Overview) | 📦 StatCraft (Overview)]]</p><h2>Public Interface</h2><p><em>[code block — open in CapsuleCraft web for its canvas]</em></p><h2>Internal Dependencies</h2><p>- `crate::app::Tab`<br>- `crate::syntax_runner`<br>- `crate::views::output_view::{OutputItem, OutputItemKind, OutputProcedure, OutputViewerState}`<br></p><hr><p style="color:#8a8175;font-size:12px">Exported from CapsuleCraft Native · &lt;module-crates_statcraft_app_src_bridge_service_rs@capsuleos.local&gt;</p></body></html>
+
+--BOUNDARY_PAYLOAD_VV1WIJFM7J--
+--BOUNDARY_ROOT_FJPU0LFJLZ--

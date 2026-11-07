@@ -1,7 +1,7 @@
 From: CapsuleCraft Code Ingest <system@capsulecraft.local>
 To: Vault <vault@capsuleos.local>
 Subject: 📄 StatCraft / crates/statcraft_app/src/theme.rs
-Date: Fri, 6 Nov 2026 14:13:33 +0000
+Date: Sat, 7 Nov 2026 14:30:49 +0000
 Message-ID: <module-crates_statcraft_app_src_theme_rs@capsuleos.local>
 In-Reply-To: <subsystem-statcraft-crates_statcraft_app@capsuleos.local>
 X-Capsule-Page-Parent: <subsystem-statcraft-crates_statcraft_app@capsuleos.local>
@@ -34,15 +34,15 @@ Content-Disposition: inline; filename="canvas_state.json"
         "level": 1,
         "text": "📄 theme.rs"
       },
-      "id": "blk_native_heading_1793974413834796300",
+      "id": "blk_native_heading_1794061849276111300",
       "managed_by": "project_parser",
       "type": "heading"
     },
     {
       "data": {
-        "text": "Path: `crates/statcraft_app/src/theme.rs` · 39 lines of code\nBelongs to project: [[📦 StatCraft (Overview) | 📦 StatCraft (Overview)]]"
+        "text": "Path: `crates/statcraft_app/src/theme.rs` · 254 lines of code\nBelongs to project: [[📦 StatCraft (Overview) | 📦 StatCraft (Overview)]]"
       },
-      "id": "blk_native_paragraph_1793974413834797900",
+      "id": "blk_native_paragraph_1794061849276113300",
       "managed_by": "project_parser",
       "type": "paragraph"
     },
@@ -51,16 +51,16 @@ Content-Disposition: inline; filename="canvas_state.json"
         "level": 2,
         "text": "Public Interface"
       },
-      "id": "blk_native_heading_1793974413834798500",
+      "id": "blk_native_heading_1794061849276114000",
       "managed_by": "project_parser",
       "type": "heading"
     },
     {
       "data": {
-        "code": "pub struct Tokens\npub const BG_APP: Color32 = Color32::from_rgb(24, 25, 28)\npub const BG_PANEL: Color32 = Color32::from_rgb(32, 33, 37)\npub const BG_HEADER: Color32 = Color32::from_rgb(40, 42, 48)\npub const BG_ROW_EVEN: Color32 = Color32::from_rgb(30, 31, 35)\npub const BG_ROW_ODD: Color32 = Color32::from_rgb(26, 27, 30)\npub const BG_SELECTED: Color32 = Color32::from_rgb(45, 65, 100)\npub const ACCENT: Color32 = Color32::from_rgb(50, 100, 180)\npub const BORDER: Color32 = Color32::from_rgb(55, 58, 66)\npub const TEXT_PRIMARY: Color32 = Color32::from_rgb(230, 232, 238)\npub const TEXT_MUTED: Color32 = Color32::from_rgb(140, 145, 155)\npub const MEASURE_SCALE: Color32 = Color32::from_rgb(70, 150, 230); // Blue (ruler) pub const MEASURE_ORDINAL: Color32 = Color32::from_rgb(230, 160, 40); // Amber (bars) pub const MEASURE_NOMINAL: Color32 = Color32::from_rgb(70, 190, 120); // Green (circles) // Window Caption Tokens (Custom Titlebar) pub const CAPTION_CLOSE_HOVER: Color32 = Color32::from_rgb(232, 17, 35)\npub const CAPTION_CLOSE_PRESSED: Color32 = Color32::from_rgb(241, 112, 122)\npub const CAPTION_HOVER: Color32 = Color32::from_rgb(52, 54, 60)\npub const CAPTION_PRESSED: Color32 = Color32::from_rgb(64, 67, 75)",
+        "code": "pub enum ThemeMode\npub struct ThemePalette\npub fn set_dark_mode(dark: bool)\npub fn is_dark_mode() -> bool\npub fn palette() -> &'static ThemePalette\npub struct Tokens\npub fn bg_app() -> Color32\npub fn bg_panel() -> Color32\npub fn bg_header() -> Color32\npub fn bg_row_even() -> Color32\npub fn bg_row_odd() -> Color32\npub fn bg_selected() -> Color32\npub fn accent() -> Color32\npub fn border() -> Color32\npub fn text_primary() -> Color32\npub fn text_muted() -> Color32\npub fn measure_scale() -> Color32\npub fn measure_ordinal() -> Color32\npub fn measure_nominal() -> Color32\npub fn caption_close_hover() -> Color32\npub fn caption_close_pressed() -> Color32\npub fn caption_hover() -> Color32\npub fn caption_pressed() -> Color32",
         "language": "rust"
       },
-      "id": "blk_native_code_1793974413834799700",
+      "id": "blk_native_code_1794061849276115300",
       "managed_by": "project_parser",
       "type": "code"
     },
@@ -69,7 +69,7 @@ Content-Disposition: inline; filename="canvas_state.json"
         "level": 2,
         "text": "Internal Dependencies"
       },
-      "id": "blk_native_heading_1793974413834805700",
+      "id": "blk_native_heading_1794061849276116200",
       "managed_by": "project_parser",
       "type": "heading"
     },
@@ -77,7 +77,7 @@ Content-Disposition: inline; filename="canvas_state.json"
       "data": {
         "text": "- `super::*`\n"
       },
-      "id": "blk_native_paragraph_1793974413834806600",
+      "id": "blk_native_paragraph_1794061849276117300",
       "managed_by": "project_parser",
       "type": "paragraph"
     }
@@ -88,7 +88,7 @@ Content-Disposition: inline; filename="canvas_state.json"
 Content-Type: text/html; charset="utf-8"
 Content-Disposition: inline
 
-<!doctype html><html><head><meta charset="utf-8"><meta name="generator" content="CapsuleCraft Native"></head><body style="font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;max-width:720px;margin:32px auto;line-height:1.55;color:#23201c;background:#faf8f4;"><h1>📄 StatCraft / crates/statcraft_app/src/theme.rs</h1><h1>📄 theme.rs</h1><p>Path: `crates/statcraft_app/src/theme.rs` · 39 lines of code<br>Belongs to project: [[📦 StatCraft (Overview) | 📦 StatCraft (Overview)]]</p><h2>Public Interface</h2><p><em>[code block — open in CapsuleCraft web for its canvas]</em></p><h2>Internal Dependencies</h2><p>- `super::*`<br></p><hr><p style="color:#8a8175;font-size:12px">Exported from CapsuleCraft Native · &lt;module-crates_statcraft_app_src_theme_rs@capsuleos.local&gt;</p></body></html>
+<!doctype html><html><head><meta charset="utf-8"><meta name="generator" content="CapsuleCraft Native"></head><body style="font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;max-width:720px;margin:32px auto;line-height:1.55;color:#23201c;background:#faf8f4;"><h1>📄 StatCraft / crates/statcraft_app/src/theme.rs</h1><h1>📄 theme.rs</h1><p>Path: `crates/statcraft_app/src/theme.rs` · 254 lines of code<br>Belongs to project: [[📦 StatCraft (Overview) | 📦 StatCraft (Overview)]]</p><h2>Public Interface</h2><p><em>[code block — open in CapsuleCraft web for its canvas]</em></p><h2>Internal Dependencies</h2><p>- `super::*`<br></p><hr><p style="color:#8a8175;font-size:12px">Exported from CapsuleCraft Native · &lt;module-crates_statcraft_app_src_theme_rs@capsuleos.local&gt;</p></body></html>
 
 --BOUNDARY_PAYLOAD_PJPMXVEVDG--
 --BOUNDARY_ROOT_1KK9399ET3--

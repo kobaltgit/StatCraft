@@ -1,0 +1,77 @@
+From: CapsuleCraft Code Ingest <system@capsulecraft.local>
+To: Vault <vault@capsuleos.local>
+Subject: 📁 StatCraft / crates/statcraft_bridge
+Date: Sat, 7 Nov 2026 15:01:46 +0000
+Message-ID: <subsystem-statcraft-crates_statcraft_bridge@capsuleos.local>
+In-Reply-To: <project-index-statcraft@capsuleos.local>
+X-Capsule-Page-Parent: <project-index-statcraft@capsuleos.local>
+References: <project-index-statcraft@capsuleos.local>
+X-Capsule-Tags: project, statcraft, subsystem
+X-Capsule-Status: Active
+MIME-Version: 1.0
+Content-Type: multipart/mixed; boundary="BOUNDARY_ROOT_1EHMX7EYPM"
+
+--BOUNDARY_ROOT_1EHMX7EYPM
+Content-Type: multipart/alternative; boundary="BOUNDARY_PAYLOAD_109WCYDF0U"
+
+--BOUNDARY_PAYLOAD_109WCYDF0U
+Content-Type: application/json; name="canvas_state.json"
+Content-Disposition: inline; filename="canvas_state.json"
+
+{
+  "version": "1.0",
+  "generator": "CapsuleCraft Native egui prototype (Zero-DB Pure-MIME)",
+  "messageId": "<subsystem-statcraft-crates_statcraft_bridge@capsuleos.local>",
+  "subject": "📁 StatCraft / crates/statcraft_bridge",
+  "tags": [
+    "project",
+    "statcraft",
+    "subsystem"
+  ],
+  "blocks": [
+    {
+      "data": {
+        "level": 1,
+        "text": "📁 Subsystem: crates/statcraft_bridge"
+      },
+      "id": "blk_native_heading_1794063706699636900",
+      "managed_by": "project_parser",
+      "type": "heading"
+    },
+    {
+      "data": {
+        "icon": "folder",
+        "text": "Part of [[📦 StatCraft (Overview) | 📦 StatCraft (Overview)]]\nContains 8 source module(s)."
+      },
+      "id": "blk_native_callout_1794063706699638200",
+      "managed_by": "project_parser",
+      "type": "callout"
+    },
+    {
+      "data": {
+        "level": 2,
+        "text": "Modules in this Subsystem"
+      },
+      "id": "blk_native_heading_1794063706699638700",
+      "managed_by": "project_parser",
+      "type": "heading"
+    },
+    {
+      "data": {
+        "text": "- [[📄 StatCraft / crates/statcraft_bridge/src/channel.rs]] (`crates/statcraft_bridge/src/channel.rs`)\n- [[📄 StatCraft / crates/statcraft_bridge/src/client.rs]] (`crates/statcraft_bridge/src/client.rs`)\n- [[📄 StatCraft / crates/statcraft_bridge/src/events.rs]] (`crates/statcraft_bridge/src/events.rs`)\n- [[📄 StatCraft / crates/statcraft_bridge/src/lib.rs]] (`crates/statcraft_bridge/src/lib.rs`)\n- [[📄 StatCraft / crates/statcraft_bridge/src/mcp.rs]] (`crates/statcraft_bridge/src/mcp.rs`)\n- [[📄 StatCraft / crates/statcraft_bridge/src/protocol.rs]] (`crates/statcraft_bridge/src/protocol.rs`)\n- [[📄 StatCraft / crates/statcraft_bridge/src/server.rs]] (`crates/statcraft_bridge/src/server.rs`)\n- [[📄 StatCraft / crates/statcraft_bridge/tests/server_client_test.rs]] (`crates/statcraft_bridge/tests/server_client_test.rs`)\n"
+      },
+      "id": "blk_native_paragraph_1794063706699642900",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    }
+  ]
+}
+
+--BOUNDARY_PAYLOAD_109WCYDF0U
+Content-Type: text/html; charset="utf-8"
+Content-Disposition: inline
+
+<!doctype html><html><head><meta charset="utf-8"><meta name="generator" content="CapsuleCraft Native"></head><body style="font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;max-width:720px;margin:32px auto;line-height:1.55;color:#23201c;background:#faf8f4;"><h1>📁 StatCraft / crates/statcraft_bridge</h1><h1>📁 Subsystem: crates/statcraft_bridge</h1><p><em>[callout block — open in CapsuleCraft web for its canvas]</em></p><h2>Modules in this Subsystem</h2><p>- [[📄 StatCraft / crates/statcraft_bridge/src/channel.rs]] (`crates/statcraft_bridge/src/channel.rs`)<br>- [[📄 StatCraft / crates/statcraft_bridge/src/client.rs]] (`crates/statcraft_bridge/src/client.rs`)<br>- [[📄 StatCraft / crates/statcraft_bridge/src/events.rs]] (`crates/statcraft_bridge/src/events.rs`)<br>- [[📄 StatCraft / crates/statcraft_bridge/src/lib.rs]] (`crates/statcraft_bridge/src/lib.rs`)<br>- [[📄 StatCraft / crates/statcraft_bridge/src/mcp.rs]] (`crates/statcraft_bridge/src/mcp.rs`)<br>- [[📄 StatCraft / crates/statcraft_bridge/src/protocol.rs]] (`crates/statcraft_bridge/src/protocol.rs`)<br>- [[📄 StatCraft / crates/statcraft_bridge/src/server.rs]] (`crates/statcraft_bridge/src/server.rs`)<br>- [[📄 StatCraft / crates/statcraft_bridge/tests/server_client_test.rs]] (`crates/statcraft_bridge/tests/server_client_test.rs`)<br></p><hr><p style="color:#8a8175;font-size:12px">Exported from CapsuleCraft Native · &lt;subsystem-statcraft-crates_statcraft_bridge@capsuleos.local&gt;</p></body></html>
+
+--BOUNDARY_PAYLOAD_109WCYDF0U--
+--BOUNDARY_ROOT_1EHMX7EYPM--

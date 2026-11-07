@@ -324,6 +324,8 @@ dialog-open-excel-title = Выберите электронную таблицу
 dialog-open-spss-title = Выберите файл данных SPSS (*.sav, *.zsav)
 output-title = Журнал вывода результатов
 output-log = Протокол
+output-table = Отчёт
+output-generic-title = Выполнение команды
 output-dataset-imported = Массив данных успешно загружен: { $name } (строк: { $rows }, переменных: { $cols }).
 output-no-analysis = Анализ еще не запускался. Выберите процедуру в меню «Анализ».
 
@@ -1259,3 +1261,32 @@ output-programmability-logs-title = Журнал действий скрипта
 output-programmability-log-num = №
 output-programmability-log-detail = Действие
 output-programmability-executed = Программируемые преобразования завершены: выполнено операторов: { $statements }, строк: { $rows }.
+
+# AI MCP & Socket Bridge
+dialog-mcp-bridge-title = Центр управления AI MCP и сокет
+dialog-mcp-bridge-status-active = Активен (127.0.0.1:{ $port })
+dialog-mcp-bridge-status-stopped = Остановлен
+dialog-mcp-bridge-status-port-busy = Порт { $port } занят первичным экземпляром StatCraft
+dialog-mcp-bridge-btn-start = Запустить мост
+dialog-mcp-bridge-btn-stop = Остановить мост
+dialog-mcp-bridge-btn-retry = Повторить попытку
+dialog-mcp-bridge-autostart = Запускать автоматически при старте программы
+dialog-mcp-bridge-config-title = Подключение ИИ-агентов (MCP Stdio):
+dialog-mcp-bridge-copy-config = Скопировать конфиг MCP
+dialog-mcp-bridge-copy-skill = Скопировать инструкцию (Skill)
+dialog-mcp-bridge-copied = Скопировано в буфер обмена!
+dialog-mcp-bridge-log-title = Журнал активности моста (Live):
+dialog-mcp-bridge-clear-log = Очистить журнал
+dialog-mcp-bridge-log-empty = Событий пока нет. Мост ожидает подключения агента.
+
+bridge-log-client-connected = { $time } [Подключение] Агент подключился ({ $addr })
+bridge-log-client-disconnected = { $time } [Отключение] Сессия агента завершена ({ $addr })
+bridge-log-vars-requested = { $time } [Инспекция] Передан словарь переменных ({ $count } колонок)
+bridge-log-preview-requested = { $time } [Инспекция] Передан предпросмотр данных ({ $limit } строк)
+bridge-log-dataset-loaded = { $time } [Данные] Загружен массив данных ({ $rows } строк, { $cols } колонок)
+bridge-log-syntax-executed = { $time } [Синтаксис] Выполнен синтаксис: { $cmd } (команд: { $count })
+bridge-log-note-added = { $time } [Отчет] Добавлено аналитическое примечание: "{ $title }"
+bridge-log-tab-switched = { $time } [Интерфейс] Переключена вкладка на "{ $tab }"
+bridge-log-server-started = { $time } [Сервер] Мост запущен на { $addr }
+bridge-log-server-stopped = { $time } [Сервер] Мост остановлен
+bridge-log-error = { $time } [Ошибка] { $message }

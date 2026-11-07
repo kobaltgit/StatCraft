@@ -1,4 +1,4 @@
-use crate::theme::Tokens;
+﻿use crate::theme::Tokens;
 use egui::{Color32, Response, Ui};
 use statcraft_i18n::t;
 
@@ -43,22 +43,22 @@ pub fn render_tool_button(
     let (rect, resp) = ui.allocate_exact_size(btn_size, egui::Sense::click());
 
     let (bg, tint) = if !enabled {
-        (Color32::TRANSPARENT, Tokens::TEXT_MUTED)
+        (Color32::TRANSPARENT, Tokens::text_muted())
     } else if active {
-        (Tokens::BG_SELECTED, Color32::WHITE)
+        (Tokens::bg_selected(), Color32::WHITE)
     } else if resp.is_pointer_button_down_on() {
-        (Tokens::CAPTION_PRESSED, Color32::WHITE)
+        (Tokens::caption_pressed(), Color32::WHITE)
     } else if resp.hovered() {
-        (Tokens::CAPTION_HOVER, Color32::WHITE)
+        (Tokens::caption_hover(), Color32::WHITE)
     } else {
-        (Color32::TRANSPARENT, Tokens::TEXT_PRIMARY)
+        (Color32::TRANSPARENT, Tokens::text_primary())
     };
 
     if bg != Color32::TRANSPARENT {
         ui.painter().rect_filled(rect, 3.0, bg);
         if active {
             ui.painter()
-                .rect_stroke(rect, 3.0, egui::Stroke::new(1.0_f32, Tokens::ACCENT));
+                .rect_stroke(rect, 3.0, egui::Stroke::new(1.0_f32, Tokens::accent()));
         }
     }
 
@@ -81,7 +81,7 @@ pub fn render_toolbar_separator(ui: &mut Ui, is_horizontal: bool) {
                 egui::pos2(center_x, rect.top() + 3.0),
                 egui::pos2(center_x, rect.bottom() - 3.0),
             ],
-            egui::Stroke::new(1.0_f32, Tokens::BORDER),
+            egui::Stroke::new(1.0_f32, Tokens::border()),
         );
     } else {
         let (rect, _) = ui.allocate_exact_size(egui::vec2(22.0, 8.0), egui::Sense::hover());
@@ -91,7 +91,7 @@ pub fn render_toolbar_separator(ui: &mut Ui, is_horizontal: bool) {
                 egui::pos2(rect.left() + 3.0, center_y),
                 egui::pos2(rect.right() - 3.0, center_y),
             ],
-            egui::Stroke::new(1.0_f32, Tokens::BORDER),
+            egui::Stroke::new(1.0_f32, Tokens::border()),
         );
     }
 }

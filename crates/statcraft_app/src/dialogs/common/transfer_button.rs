@@ -1,4 +1,4 @@
-use crate::theme::Tokens;
+﻿use crate::theme::Tokens;
 use crate::widgets::paint_vector_arrow;
 use egui::{vec2, Response, Sense, Stroke, Ui};
 
@@ -38,17 +38,17 @@ impl TransferButton {
         );
 
         let bg = if self.enabled && response.hovered() {
-            Tokens::ACCENT
+            Tokens::accent()
         } else {
-            Tokens::BG_HEADER
+            Tokens::bg_header()
         };
 
         let stroke = Stroke::new(
             1.0_f32,
             if self.enabled {
-                Tokens::BORDER
+                Tokens::border()
             } else {
-                Tokens::TEXT_MUTED
+                Tokens::text_muted()
             },
         );
 
@@ -56,9 +56,9 @@ impl TransferButton {
         ui.painter().rect_stroke(rect, 3.0, stroke);
 
         let arrow_color = if self.enabled {
-            Tokens::TEXT_PRIMARY
+            Tokens::text_primary()
         } else {
-            Tokens::TEXT_MUTED
+            Tokens::text_muted()
         };
 
         let right = match self.direction {

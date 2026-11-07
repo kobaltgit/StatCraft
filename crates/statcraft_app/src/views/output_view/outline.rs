@@ -1,4 +1,4 @@
-use super::extract_item_tsv;
+﻿use super::extract_item_tsv;
 use super::model::{OutputItemKind, OutputViewerState, SelectedTarget};
 use crate::theme::Tokens;
 use crate::widgets::output_icons::{
@@ -12,9 +12,9 @@ use statcraft_i18n::t;
 
 pub fn render_outline_pane(ui: &mut Ui, state: &mut OutputViewerState) {
     let rect = ui.max_rect();
-    ui.painter().rect_filled(rect, 0.0_f32, Tokens::BG_PANEL);
+    ui.painter().rect_filled(rect, 0.0_f32, Tokens::bg_panel());
     ui.painter()
-        .rect_stroke(rect, 0.0_f32, Stroke::new(1.0_f32, Tokens::BORDER));
+        .rect_stroke(rect, 0.0_f32, Stroke::new(1.0_f32, Tokens::border()));
 
     ui.vertical(|ui| {
         // Outline Toolbar at top
@@ -27,9 +27,9 @@ pub fn render_outline_pane(ui: &mut Ui, state: &mut OutputViewerState) {
             let (trash_rect, trash_resp) = ui.allocate_exact_size(btn_size, Sense::click());
             if trash_resp.hovered() {
                 ui.painter()
-                    .rect_filled(trash_rect, 2.0_f32, Tokens::BG_ROW_EVEN);
+                    .rect_filled(trash_rect, 2.0_f32, Tokens::bg_row_even());
             }
-            paint_icon_trash(ui.painter(), trash_rect, Tokens::TEXT_PRIMARY);
+            paint_icon_trash(ui.painter(), trash_rect, Tokens::text_primary());
             let trash_resp = trash_resp.on_hover_text(t!("output-btn-clear-all"));
             if trash_resp.clicked() {
                 state.clear();
@@ -39,9 +39,9 @@ pub fn render_outline_pane(ui: &mut Ui, state: &mut OutputViewerState) {
             let (exp_rect, exp_resp) = ui.allocate_exact_size(btn_size, Sense::click());
             if exp_resp.hovered() {
                 ui.painter()
-                    .rect_filled(exp_rect, 2.0_f32, Tokens::BG_ROW_EVEN);
+                    .rect_filled(exp_rect, 2.0_f32, Tokens::bg_row_even());
             }
-            paint_icon_expand_all(ui.painter(), exp_rect, Tokens::TEXT_PRIMARY);
+            paint_icon_expand_all(ui.painter(), exp_rect, Tokens::text_primary());
             let exp_resp = exp_resp.on_hover_text(t!("output-btn-expand-all"));
             if exp_resp.clicked() {
                 state.expand_all();
@@ -51,9 +51,9 @@ pub fn render_outline_pane(ui: &mut Ui, state: &mut OutputViewerState) {
             let (col_rect, col_resp) = ui.allocate_exact_size(btn_size, Sense::click());
             if col_resp.hovered() {
                 ui.painter()
-                    .rect_filled(col_rect, 2.0_f32, Tokens::BG_ROW_EVEN);
+                    .rect_filled(col_rect, 2.0_f32, Tokens::bg_row_even());
             }
-            paint_icon_collapse_all(ui.painter(), col_rect, Tokens::TEXT_PRIMARY);
+            paint_icon_collapse_all(ui.painter(), col_rect, Tokens::text_primary());
             let col_resp = col_resp.on_hover_text(t!("output-btn-collapse-all"));
             if col_resp.clicked() {
                 state.collapse_all();
@@ -73,7 +73,7 @@ pub fn render_outline_pane(ui: &mut Ui, state: &mut OutputViewerState) {
                 ui.horizontal(|ui| {
                     ui.spacing_mut().item_spacing = vec2(4.0, 0.0);
                     let (icon_rect, _) = ui.allocate_exact_size(vec2(16.0, 16.0), Sense::hover());
-                    paint_output_root_icon(ui.painter(), icon_rect, Tokens::ACCENT);
+                    paint_output_root_icon(ui.painter(), icon_rect, Tokens::accent());
                     ui.label(t!("output-outline-root"));
                 });
 
@@ -104,7 +104,7 @@ pub fn render_outline_pane(ui: &mut Ui, state: &mut OutputViewerState) {
                             ui.painter(),
                             arrow_rect,
                             proc.is_expanded,
-                            Tokens::TEXT_MUTED,
+                            Tokens::text_muted(),
                         );
                         if arrow_resp.clicked() {
                             toggle_proc = Some(p_idx);
@@ -114,9 +114,9 @@ pub fn render_outline_pane(ui: &mut Ui, state: &mut OutputViewerState) {
                         let (folder_rect, _) =
                             ui.allocate_exact_size(vec2(14.0, 16.0), Sense::hover());
                         let folder_color = if is_proc_selected {
-                            Tokens::ACCENT
+                            Tokens::accent()
                         } else {
-                            Tokens::TEXT_PRIMARY
+                            Tokens::text_primary()
                         };
                         paint_output_folder_icon(
                             ui.painter(),
@@ -132,21 +132,21 @@ pub fn render_outline_pane(ui: &mut Ui, state: &mut OutputViewerState) {
 
                         if is_proc_selected {
                             ui.painter()
-                                .rect_filled(text_rect, 2.0_f32, Tokens::BG_ROW_ODD);
+                                .rect_filled(text_rect, 2.0_f32, Tokens::bg_row_odd());
                             ui.painter().rect_stroke(
                                 text_rect,
                                 2.0_f32,
-                                Stroke::new(1.0_f32, Tokens::ACCENT),
+                                Stroke::new(1.0_f32, Tokens::accent()),
                             );
                         } else if text_resp.hovered() {
                             ui.painter()
-                                .rect_filled(text_rect, 2.0_f32, Tokens::BG_ROW_EVEN);
+                                .rect_filled(text_rect, 2.0_f32, Tokens::bg_row_even());
                         }
 
                         let text_color = if is_proc_selected {
-                            Tokens::ACCENT
+                            Tokens::accent()
                         } else {
-                            Tokens::TEXT_PRIMARY
+                            Tokens::text_primary()
                         };
 
                         let title = proc.title();
@@ -197,9 +197,9 @@ pub fn render_outline_pane(ui: &mut Ui, state: &mut OutputViewerState) {
                                 let (icon_rect, _) =
                                     ui.allocate_exact_size(vec2(14.0, 16.0), Sense::hover());
                                 let icon_color = if is_item_selected {
-                                    Tokens::ACCENT
+                                    Tokens::accent()
                                 } else {
-                                    Tokens::TEXT_MUTED
+                                    Tokens::text_muted()
                                 };
 
                                 match &item.kind {
@@ -227,25 +227,25 @@ pub fn render_outline_pane(ui: &mut Ui, state: &mut OutputViewerState) {
                                     ui.painter().rect_filled(
                                         text_rect,
                                         2.0_f32,
-                                        Tokens::BG_ROW_ODD,
+                                        Tokens::bg_row_odd(),
                                     );
                                     ui.painter().rect_stroke(
                                         text_rect,
                                         2.0_f32,
-                                        Stroke::new(1.0_f32, Tokens::ACCENT),
+                                        Stroke::new(1.0_f32, Tokens::accent()),
                                     );
                                 } else if text_resp.hovered() {
                                     ui.painter().rect_filled(
                                         text_rect,
                                         2.0_f32,
-                                        Tokens::BG_ROW_EVEN,
+                                        Tokens::bg_row_even(),
                                     );
                                 }
 
                                 let text_color = if is_item_selected {
-                                    Tokens::ACCENT
+                                    Tokens::accent()
                                 } else {
-                                    Tokens::TEXT_PRIMARY
+                                    Tokens::text_primary()
                                 };
 
                                 let title = item.title();

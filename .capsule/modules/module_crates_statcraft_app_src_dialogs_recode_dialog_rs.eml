@@ -1,7 +1,7 @@
 From: CapsuleCraft Code Ingest <system@capsulecraft.local>
 To: Vault <vault@capsuleos.local>
 Subject: 📄 StatCraft / crates/statcraft_app/src/dialogs/recode_dialog.rs
-Date: Fri, 6 Nov 2026 14:13:33 +0000
+Date: Sat, 7 Nov 2026 14:43:34 +0000
 Message-ID: <module-crates_statcraft_app_src_dialogs_recode_dialog_rs@capsuleos.local>
 In-Reply-To: <subsystem-statcraft-crates_statcraft_app@capsuleos.local>
 X-Capsule-Page-Parent: <subsystem-statcraft-crates_statcraft_app@capsuleos.local>
@@ -34,7 +34,7 @@ Content-Disposition: inline; filename="canvas_state.json"
         "level": 1,
         "text": "📄 recode_dialog.rs"
       },
-      "id": "blk_native_heading_1793974413820015900",
+      "id": "blk_native_heading_1794062614468730200",
       "managed_by": "project_parser",
       "type": "heading"
     },
@@ -42,7 +42,7 @@ Content-Disposition: inline; filename="canvas_state.json"
       "data": {
         "text": "Path: `crates/statcraft_app/src/dialogs/recode_dialog.rs` · 474 lines of code\nBelongs to project: [[📦 StatCraft (Overview) | 📦 StatCraft (Overview)]]"
       },
-      "id": "blk_native_paragraph_1793974413820017500",
+      "id": "blk_native_paragraph_1794062614468731900",
       "managed_by": "project_parser",
       "type": "paragraph"
     },
@@ -51,7 +51,7 @@ Content-Disposition: inline; filename="canvas_state.json"
         "level": 2,
         "text": "Public Interface"
       },
-      "id": "blk_native_heading_1793974413820018000",
+      "id": "blk_native_heading_1794062614468732500",
       "managed_by": "project_parser",
       "type": "heading"
     },
@@ -60,7 +60,7 @@ Content-Disposition: inline; filename="canvas_state.json"
         "code": "pub enum RecodeMode\npub struct RecodePair\npub struct RecodeDialogState\npub fn open_diff(&mut self)\npub fn open_same(&mut self)\npub fn reset(&mut self)\npub enum RecodeDialogAction\npub fn render_recode_dialog( ctx: &egui::Context, dataset: Option<&DataSet>, state: &mut RecodeDialogState, ) -> RecodeDialogAction",
         "language": "rust"
       },
-      "id": "blk_native_code_1793974413820018600",
+      "id": "blk_native_code_1794062614468733200",
       "managed_by": "project_parser",
       "type": "code"
     },
@@ -69,15 +69,15 @@ Content-Disposition: inline; filename="canvas_state.json"
         "level": 2,
         "text": "Internal Dependencies"
       },
-      "id": "blk_native_heading_1793974413820019300",
+      "id": "blk_native_heading_1794062614468734000",
       "managed_by": "project_parser",
       "type": "heading"
     },
     {
       "data": {
-        "text": "- `super::common::{`\n- `super::recode_old_new_dialog::{`\n- `crate::theme::Tokens`\n"
+        "text": "- `super::recode_old_new_dialog::{`\n- `crate::theme::Tokens`\n"
       },
-      "id": "blk_native_paragraph_1793974413820020600",
+      "id": "blk_native_paragraph_1794062614468735100",
       "managed_by": "project_parser",
       "type": "paragraph"
     }
@@ -88,7 +88,7 @@ Content-Disposition: inline; filename="canvas_state.json"
 Content-Type: text/html; charset="utf-8"
 Content-Disposition: inline
 
-<!doctype html><html><head><meta charset="utf-8"><meta name="generator" content="CapsuleCraft Native"></head><body style="font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;max-width:720px;margin:32px auto;line-height:1.55;color:#23201c;background:#faf8f4;"><h1>📄 StatCraft / crates/statcraft_app/src/dialogs/recode_dialog.rs</h1><h1>📄 recode_dialog.rs</h1><p>Path: `crates/statcraft_app/src/dialogs/recode_dialog.rs` · 474 lines of code<br>Belongs to project: [[📦 StatCraft (Overview) | 📦 StatCraft (Overview)]]</p><h2>Public Interface</h2><p><em>[code block — open in CapsuleCraft web for its canvas]</em></p><h2>Internal Dependencies</h2><p>- `super::common::{`<br>- `super::recode_old_new_dialog::{`<br>- `crate::theme::Tokens`<br></p><hr><p style="color:#8a8175;font-size:12px">Exported from CapsuleCraft Native · &lt;module-crates_statcraft_app_src_dialogs_recode_dialog_rs@capsuleos.local&gt;</p></body></html>
+<!doctype html><html><head><meta charset="utf-8"><meta name="generator" content="CapsuleCraft Native"></head><body style="font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;max-width:720px;margin:32px auto;line-height:1.55;color:#23201c;background:#faf8f4;"><h1>📄 StatCraft / crates/statcraft_app/src/dialogs/recode_dialog.rs</h1><h1>📄 recode_dialog.rs</h1><p>Path: `crates/statcraft_app/src/dialogs/recode_dialog.rs` · 474 lines of code<br>Belongs to project: [[📦 StatCraft (Overview) | 📦 StatCraft (Overview)]]</p><h2>Public Interface</h2><p><em>[code block — open in CapsuleCraft web for its canvas]</em></p><h2>Internal Dependencies</h2><p>- `super::recode_old_new_dialog::{`<br>- `crate::theme::Tokens`<br></p><hr><p style="color:#8a8175;font-size:12px">Exported from CapsuleCraft Native · &lt;module-crates_statcraft_app_src_dialogs_recode_dialog_rs@capsuleos.local&gt;</p></body></html>
 
 --BOUNDARY_PAYLOAD_1637OQ7G7D--
 --BOUNDARY_ROOT_150H5SPG4I--
