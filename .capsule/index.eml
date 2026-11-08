@@ -1,7 +1,7 @@
 From: CapsuleCraft Code Ingest <system@capsulecraft.local>
 To: Vault <vault@capsuleos.local>
 Subject: 📦 StatCraft (Overview)
-Date: Sat, 7 Nov 2026 15:01:46 +0000
+Date: Sun, 8 Nov 2026 08:27:09 +0000
 Message-ID: <project-index-statcraft@capsuleos.local>
 X-Capsule-Tags: project, statcraft, overview
 X-Capsule-Status: Active
@@ -31,7 +31,7 @@ Content-Disposition: inline; filename="canvas_state.json"
         "level": 1,
         "text": "🦀 Project: StatCraft"
       },
-      "id": "blk_native_heading_1794063706700877000",
+      "id": "blk_native_heading_1794126429734920800",
       "managed_by": "project_parser",
       "type": "heading"
     },
@@ -40,7 +40,7 @@ Content-Disposition: inline; filename="canvas_state.json"
         "icon": "info",
         "text": "Ecosystem: Rust (Cargo)\nRoot path: D:\\Projects\\active\\StatCraft\nSubsystems: 9\nModules indexed: 297\nDocumentation guides: 29\nPending code tasks: 0"
       },
-      "id": "blk_native_callout_1794063706700882300",
+      "id": "blk_native_callout_1794126429735280000",
       "managed_by": "project_parser",
       "type": "callout"
     },
@@ -49,7 +49,7 @@ Content-Disposition: inline; filename="canvas_state.json"
         "level": 2,
         "text": "Subsystems Architecture"
       },
-      "id": "blk_native_heading_1794063706700882900",
+      "id": "blk_native_heading_1794126429735280900",
       "managed_by": "project_parser",
       "type": "heading"
     },
@@ -57,7 +57,7 @@ Content-Disposition: inline; filename="canvas_state.json"
       "data": {
         "text": "Architectural layers & subsystems in this project:\n\n- [[📁 StatCraft / crates/statcraft_algo]] (63 modules)\n- [[📁 StatCraft / crates/statcraft_app]] (123 modules)\n- [[📁 StatCraft / crates/statcraft_bridge]] (8 modules)\n- [[📁 StatCraft / crates/statcraft_core]] (8 modules)\n- [[📁 StatCraft / crates/statcraft_i18n]] (3 modules)\n- [[📁 StatCraft / crates/statcraft_io]] (11 modules)\n- [[📁 StatCraft / crates/statcraft_reporting]] (5 modules)\n- [[📁 StatCraft / crates/statcraft_syntax]] (68 modules)\n- [[📁 StatCraft / xtask/src]] (8 modules)\n"
       },
-      "id": "blk_native_paragraph_1794063706700889200",
+      "id": "blk_native_paragraph_1794126429735463500",
       "managed_by": "project_parser",
       "type": "paragraph"
     },
@@ -66,7 +66,7 @@ Content-Disposition: inline; filename="canvas_state.json"
         "level": 2,
         "text": "Project Documentation"
       },
-      "id": "blk_native_heading_1794063706700889900",
+      "id": "blk_native_heading_1794126429735464400",
       "managed_by": "project_parser",
       "type": "heading"
     },
@@ -74,7 +74,7 @@ Content-Disposition: inline; filename="canvas_state.json"
       "data": {
         "text": "Indexed project documentation & guides:\n\n- [[📚 StatCraft / StatCraft — Генеральный регламент разработки (AGENTS.md)]] (`AGENTS.md`)\n- [[📚 StatCraft / Third-Party Attributions]] (`ATTRIBUTION.md`)\n- [[📚 StatCraft / StatCraft Contributor Guide (CONTRIBUTING.md)]] (`CONTRIBUTING.md`)\n- [[📚 StatCraft / README]] (`README.md`)\n- [[📚 StatCraft / README.ru]] (`README.ru.md`)\n- [[📚 StatCraft / StatCraft v0.3.0]] (`RELEASE_NOTES.md`)\n- [[📚 StatCraft / StatCraft — Журнал дефектов и решений (Bugs & Issues)]] (`docs/BUGS_AND_ISSUES.md`)\n- [[📚 StatCraft / StatCraft — Чек-лист разработки (Phase 1: Scaffolding & Core MVP)]] (`docs/CHECKLIST.md`)\n- [[📚 StatCraft / StatCraft — Development Chronicle]] (`docs/CHRONICLE.en.md`)\n- [[📚 StatCraft / CHRONICLE]] (`docs/CHRONICLE.md`)\n- [[📚 StatCraft / StatCraft — Real-World Corpora & Codecs Audit Report (Phase 4 / Codecs Audit)]] (`docs/CORPUS_AUDIT_REPORT.md`)\n- [[📚 StatCraft / StatCraft — Протокол корпусного аудита форматов данных (Real-World Corpora & Codecs Audit)]] (`docs/CORPUS_AUDIT_REPORT_RU.md`)\n- [[📚 StatCraft / Investigation report]] (`docs/CRAFT_ANYTHING_AUDIT_REPORT.md`)\n- [[📚 StatCraft / StatCraft Canonical Dialog Design Guide (DialogKit Standard)]] (`docs/DESIGN_GUIDE.md`)\n- [[📚 StatCraft / StatCraft Feature Guide (v0.2.2)]] (`docs/FEATURES.md`)\n- [[📚 StatCraft / Руководство по функциональным возможностям StatCraft (v0.2.2)]] (`docs/FEATURES_RU.md`)\n- [[📚 StatCraft / StatCraft — Strategic Roadmap]] (`docs/ROADMAP.en.md`)\n- [[📚 StatCraft / StatCraft — Стратегическая дорожная карта (Roadmap)]] (`docs/ROADMAP.md`)\n- [[📚 StatCraft / StatCraft — Mathematical Audit of IBM SPSS Statistics 24 Algorithms]] (`docs/SPSS_ALGORITHMS_AUDIT.md`)\n- [[📚 StatCraft / StatCraft — Математический аудит алгоритмов IBM SPSS Statistics 24]] (`docs/SPSS_ALGORITHMS_AUDIT_RU.md`)\n- [[📚 StatCraft / SPSS Command Syntax Parser & Dispatcher Clean-Room Audit Report]] (`docs/SPSS_SYNTAX_PARSER_AUDIT.md`)\n- [[📚 StatCraft / Отчет о доказательном Clean-Room аудите пакетного синтаксического парсера SPSS (`.sps`)]] (`docs/SPSS_SYNTAX_PARSER_AUDIT_RU.md`)\n- [[📚 StatCraft / StatCraft — IBM SPSS Statistics Canonical UI & Design Audit (Phase 3)]] (`docs/SPSS_UI_CANON_AUDIT.md`)\n- [[📚 StatCraft / StatCraft — Канонический аудит интерфейса, Output Viewer и дизайн-системы IBM SPSS Statistics (Этап 3)]] (`docs/SPSS_UI_CANON_AUDIT_RU.md`)\n- [[📚 StatCraft / StatCraft — SPSS Feature Parity Checklist]] (`docs/parity-checklist.md`)\n- [[📚 StatCraft / ТЗ для ИИ-агента: Этап 3 — Частотный анализ и словарь метаданных (Phase 3)]] (`docs/plans/PHASE_3_FREQUENCIES_METADATA.md`)\n- [[📚 StatCraft / ТЗ для ИИ-агента: Этап 4 — Сравнение средних и проверка гипотез (Phase 4)]] (`docs/plans/PHASE_4_COMPARE_MEANS_TTEST_ANOVA.md`)\n- [[📚 StatCraft / ТЗ для ИИ-агента: Этап 5 — Анализ связей и непараметрика (Phase 5)]] (`docs/plans/PHASE_5_CROSSTABS_CORRELATIONS.md`)\n- [[📚 StatCraft / План реализации: Сетевой мост StatCraft (Code Mode, Семантический лог & Agent Kit)]] (`docs/statcraft_bridge_plan.md`)\n"
       },
-      "id": "blk_native_paragraph_1794063706700902400",
+      "id": "blk_native_paragraph_1794126429735479500",
       "managed_by": "project_parser",
       "type": "paragraph"
     }

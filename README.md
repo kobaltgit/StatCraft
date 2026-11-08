@@ -15,6 +15,7 @@
     <img src="https://img.shields.io/badge/Architecture-100%25%20Safe%20Rust-brightgreen.svg" alt="100% Safe Rust" />
     <img src="https://img.shields.io/badge/Tests-Passing%20(90%2B)-success.svg" alt="Tests: 90+ Passing" />
     <img src="https://img.shields.io/badge/i18n-EN%20%7C%20RU-informational.svg" alt="i18n: EN | RU" />
+    <a href="#4-statcraft-bridge--ai-agents-model-context-protocol--code-mode"><img src="https://img.shields.io/badge/MCP-Live%20GUI%20Bridge%20%26%20Code%20Mode-6366F1?logo=anthropic&logoColor=white" alt="MCP: Live GUI Bridge & Code Mode" /></a>
     <a href="https://app.lava.top/kobaltgit"><img src="https://img.shields.io/badge/Sponsor-Lava.top-FF5C35?logo=githubsponsors&logoColor=white" alt="Sponsor: Lava.top" /></a>
   </p>
 </div>
