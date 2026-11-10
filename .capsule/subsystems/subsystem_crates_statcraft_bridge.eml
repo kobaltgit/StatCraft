@@ -1,7 +1,7 @@
 From: CapsuleCraft Code Ingest <system@capsulecraft.local>
 To: Vault <vault@capsuleos.local>
 Subject: 📁 StatCraft / crates/statcraft_bridge
-Date: Sun, 8 Nov 2026 08:27:09 +0000
+Date: Sun, 8 Nov 2026 13:47:39 +0000
 Message-ID: <subsystem-statcraft-crates_statcraft_bridge@capsuleos.local>
 In-Reply-To: <project-index-statcraft@capsuleos.local>
 X-Capsule-Page-Parent: <project-index-statcraft@capsuleos.local>
@@ -34,7 +34,7 @@ Content-Disposition: inline; filename="canvas_state.json"
         "level": 1,
         "text": "📁 Subsystem: crates/statcraft_bridge"
       },
-      "id": "blk_native_heading_1794126429733014400",
+      "id": "blk_native_heading_1794145659924308000",
       "managed_by": "project_parser",
       "type": "heading"
     },
@@ -43,7 +43,7 @@ Content-Disposition: inline; filename="canvas_state.json"
         "icon": "folder",
         "text": "Part of [[📦 StatCraft (Overview) | 📦 StatCraft (Overview)]]\nContains 8 source module(s)."
       },
-      "id": "blk_native_callout_1794126429733015900",
+      "id": "blk_native_callout_1794145659924309600",
       "managed_by": "project_parser",
       "type": "callout"
     },
@@ -52,7 +52,7 @@ Content-Disposition: inline; filename="canvas_state.json"
         "level": 2,
         "text": "Modules in this Subsystem"
       },
-      "id": "blk_native_heading_1794126429733016500",
+      "id": "blk_native_heading_1794145659924310200",
       "managed_by": "project_parser",
       "type": "heading"
     },
@@ -60,7 +60,7 @@ Content-Disposition: inline; filename="canvas_state.json"
       "data": {
         "text": "- [[📄 StatCraft / crates/statcraft_bridge/src/channel.rs]] (`crates/statcraft_bridge/src/channel.rs`)\n- [[📄 StatCraft / crates/statcraft_bridge/src/client.rs]] (`crates/statcraft_bridge/src/client.rs`)\n- [[📄 StatCraft / crates/statcraft_bridge/src/events.rs]] (`crates/statcraft_bridge/src/events.rs`)\n- [[📄 StatCraft / crates/statcraft_bridge/src/lib.rs]] (`crates/statcraft_bridge/src/lib.rs`)\n- [[📄 StatCraft / crates/statcraft_bridge/src/mcp.rs]] (`crates/statcraft_bridge/src/mcp.rs`)\n- [[📄 StatCraft / crates/statcraft_bridge/src/protocol.rs]] (`crates/statcraft_bridge/src/protocol.rs`)\n- [[📄 StatCraft / crates/statcraft_bridge/src/server.rs]] (`crates/statcraft_bridge/src/server.rs`)\n- [[📄 StatCraft / crates/statcraft_bridge/tests/server_client_test.rs]] (`crates/statcraft_bridge/tests/server_client_test.rs`)\n"
       },
-      "id": "blk_native_paragraph_1794126429733022800",
+      "id": "blk_native_paragraph_1794145659924324000",
       "managed_by": "project_parser",
       "type": "paragraph"
     }
