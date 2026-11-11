@@ -3146,3 +3146,24 @@ Completed a comprehensive audit and removed all `InDev` placeholders from the `E
    * `cargo run -p xtask -j 1 -- file-guard` (all 313 files within line limits);
    * `cargo run -p xtask -j 1 -- layers` (strict L0–L6 architecture adherence);
    * `cargo clippy --workspace -j 1 -- -D warnings` (clean, 0 warnings).
+
+---
+
+### Phase 70: Automatic Local Quality Gate & Version-Controlled Git Pre-Push Hook
+*Time: November 11, 2026, 19:15 (~15 minutes)*
+
+To reinforce codebase reliability and eliminate broken pushes and unexpected CI failures on GitHub Actions, established a local automated pre-push enforcement pipeline:
+1. **Version-Controlled Git Hook (`.githooks/pre-push`):**
+   * Located directly in the repository under `.githooks/` for cross-platform versioning;
+   * Automatically executes all 9 Quality Gate verification stages (`cargo run -p xtask -j 1 -- ci`);
+   * Immediately blocks `git push` with exit code 1 if any compiler errors, Clippy warnings, `cargo fmt` formatting discrepancies, file length limit overruns, or test suite regressions are encountered.
+2. **Hook Installer Utility (`xtask/src/hooks.rs`, `cargo xtask install-hooks`):**
+   * Added `cargo run -p xtask -j 1 -- install-hooks` command to the `xtask` workspace runner;
+   * Configures `git config core.hooksPath .githooks`;
+   * Sets executable permission bits (`0o755`) on Unix-like operating systems.
+3. **Engineering Standard Updates in `AGENTS.md`:**
+   * Introduced Section 14 "Local Quality Gate & Pre-Push Hook";
+   * Formulated a strict prohibition on bypassing git hooks via `--no-verify`.
+4. **Quality Control (DoD):**
+   * 100% successful pass across all quality stages via `cargo run -p xtask -j 1 -- ci`.
+

@@ -204,6 +204,17 @@ L6: statcraft_app        (Десктопный GUI на egui / eframe / egui_doc
   cargo test -p statcraft_app --test dialog_invariants -j 1
   ```
 
+---
+
+## 14. Автоматический контроль перед пушем (Local Quality Gate & Pre-Push Hook)
+* **СТРОГО ОБЯЗАТЕЛЬНО:** Перед отправкой любых коммитов в удаленный репозиторий (`git push`) локально обязан быть выполнен полный Quality Gate:
+  ```powershell
+  cargo run -p xtask -j 1 -- ci
+  ```
+* В репозитории настроен автоматический Git hook через версионируемую папку `.githooks/pre-push` и `git config core.hooksPath .githooks` (устанавливается командой `cargo run -p xtask -j 1 -- install-hooks`).
+* **КАТЕГОРИЧЕСКИ ЗАПРЕЩЕНО** обходить проверку хука флагами `--no-verify` или `-n` при вызове `git push`. Любые замечания линтеров, формата или сломанные тесты обязаны быть исправлены локально до попадания в удаленную ветку.
+
+
 <!-- capsulecraft-start -->
 ## CapsuleCraft Knowledge Base & MCP Integration
 This project `StatCraft` has an active CapsuleCraft knowledge base in `.capsule/`.

@@ -6,6 +6,7 @@ mod ci;
 mod corpus;
 mod design_guard;
 mod file_guard;
+mod hooks;
 mod icon;
 mod layers;
 mod parity;
@@ -76,6 +77,12 @@ fn main() {
                 std::process::exit(1);
             }
         }
+        "install-hooks" => {
+            if let Err(e) = hooks::install_hooks(&workspace_root) {
+                eprintln!("[ERROR] {}", e);
+                std::process::exit(1);
+            }
+        }
         _ => {
             println!("StatCraft xtask utility");
             println!("Usage:");
@@ -86,6 +93,9 @@ fn main() {
             );
             println!(
                 "  cargo xtask icon       Generate assets/icon.ico and PNGs from assets/icon.svg"
+            );
+            println!(
+                "  cargo xtask install-hooks Install Git pre-push hook for automatic quality gates"
             );
             println!("  cargo xtask layers     Check L0..L6 architectural layering rules");
             println!("  cargo xtask parity     Check and update SPSS feature parity checklist");

@@ -649,3 +649,10 @@
 - [x] L6 `statcraft_app`: снятие статуса `InDev` и подключение всех пунктов меню `Edit` (Cut, Copy, Copy with Variable Names, Paste, Clear, Find, Replace, Go to Case, Go to Variable, Insert Case, Insert Variable) с клавиатурными комбинациями (Ctrl+F, Ctrl+H, Ctrl+G, Ctrl+Shift+C, Ctrl+C, Ctrl+X, Ctrl+V, Delete)
 - [x] Синхронная локализация: добавление ключей диалогов поиска, замены и навигации в `locales/en.ftl` и `locales/ru.ftl`
 - [x] Тестирование и верификация: тестовый модуль `edit_navigation_tests.rs`, 100% прохождение тестов воркспейса, `xtask design-guard` (0 нарушений) и `xtask file-guard` (313 файлов).
+
+## 39. Автоматический локальный Quality Gate и версионируемый Git pre-push хук (Pre-Push Hook)
+- [x] Версионируемый хук `.githooks/pre-push`: автоматический вызов всех 9 ступеней Quality Gate `cargo run -p xtask -j 1 -- ci` при попытке `git push` и немедленная блокировка отправки при любой ошибке
+- [x] Команда развертывания `cargo xtask install-hooks`: реализация в `xtask/src/hooks.rs` с настройкой `git config core.hooksPath .githooks`
+- [x] Регламент `AGENTS.md`: Раздел 14 со строгим запретом обхода хуков через `--no-verify`
+- [x] 100% прохождение всех проверок Definition of Done (`cargo run -p xtask -j 1 -- ci`).
+
