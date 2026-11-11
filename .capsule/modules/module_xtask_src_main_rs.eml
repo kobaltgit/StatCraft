@@ -1,7 +1,7 @@
 From: CapsuleCraft Code Ingest <system@capsulecraft.local>
 To: Vault <vault@capsuleos.local>
 Subject: 📄 StatCraft / xtask/src/main.rs
-Date: Fri, 6 Nov 2026 14:51:38 +0000
+Date: Wed, 11 Nov 2026 15:13:40 +0000
 Message-ID: <module-xtask_src_main_rs@capsuleos.local>
 In-Reply-To: <subsystem-statcraft-xtask_src@capsuleos.local>
 X-Capsule-Page-Parent: <subsystem-statcraft-xtask_src@capsuleos.local>
@@ -34,15 +34,15 @@ Content-Disposition: inline; filename="canvas_state.json"
         "level": 1,
         "text": "📄 main.rs"
       },
-      "id": "blk_native_heading_1793976698471389000",
+      "id": "blk_native_heading_1794410020513350500",
       "managed_by": "project_parser",
       "type": "heading"
     },
     {
       "data": {
-        "text": "Path: `xtask/src/main.rs` · 81 lines of code\nBelongs to project: [[📦 StatCraft (Overview) | 📦 StatCraft (Overview)]]"
+        "text": "Path: `xtask/src/main.rs` · 89 lines of code\nBelongs to project: [[📦 StatCraft (Overview) | 📦 StatCraft (Overview)]]"
       },
-      "id": "blk_native_paragraph_1793976698471390400",
+      "id": "blk_native_paragraph_1794410020513352000",
       "managed_by": "project_parser",
       "type": "paragraph"
     }
@@ -53,7 +53,7 @@ Content-Disposition: inline; filename="canvas_state.json"
 Content-Type: text/html; charset="utf-8"
 Content-Disposition: inline
 
-<!doctype html><html><head><meta charset="utf-8"><meta name="generator" content="CapsuleCraft Native"></head><body style="font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;max-width:720px;margin:32px auto;line-height:1.55;color:#23201c;background:#faf8f4;"><h1>📄 StatCraft / xtask/src/main.rs</h1><h1>📄 main.rs</h1><p>Path: `xtask/src/main.rs` · 81 lines of code<br>Belongs to project: [[📦 StatCraft (Overview) | 📦 StatCraft (Overview)]]</p><hr><p style="color:#8a8175;font-size:12px">Exported from CapsuleCraft Native · &lt;module-xtask_src_main_rs@capsuleos.local&gt;</p></body></html>
+<!doctype html><html><head><meta charset="utf-8"><meta name="generator" content="CapsuleCraft Native"></head><body style="font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;max-width:720px;margin:32px auto;line-height:1.55;color:#23201c;background:#faf8f4;"><h1>📄 StatCraft / xtask/src/main.rs</h1><h1>📄 main.rs</h1><p>Path: `xtask/src/main.rs` · 89 lines of code<br>Belongs to project: [[📦 StatCraft (Overview) | 📦 StatCraft (Overview)]]</p><hr><p style="color:#8a8175;font-size:12px">Exported from CapsuleCraft Native · &lt;module-xtask_src_main_rs@capsuleos.local&gt;</p></body></html>
 
 --BOUNDARY_PAYLOAD_7RNVUFDLIL--
 --BOUNDARY_ROOT_10PE4JLDJU--

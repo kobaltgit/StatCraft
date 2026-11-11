@@ -1,7 +1,7 @@
 From: CapsuleCraft Code Ingest <system@capsulecraft.local>
 To: Vault <vault@capsuleos.local>
 Subject: 📄 StatCraft / crates/statcraft_syntax/src/commands/dataset_cmds.rs
-Date: Fri, 6 Nov 2026 14:13:33 +0000
+Date: Wed, 11 Nov 2026 15:13:40 +0000
 Message-ID: <module-crates_statcraft_syntax_src_commands_dataset_cmds_rs@capsuleos.local>
 In-Reply-To: <subsystem-statcraft-crates_statcraft_syntax@capsuleos.local>
 X-Capsule-Page-Parent: <subsystem-statcraft-crates_statcraft_syntax@capsuleos.local>
@@ -34,15 +34,15 @@ Content-Disposition: inline; filename="canvas_state.json"
         "level": 1,
         "text": "📄 dataset_cmds.rs"
       },
-      "id": "blk_native_heading_1793974413948725100",
+      "id": "blk_native_heading_1794410020480721000",
       "managed_by": "project_parser",
       "type": "heading"
     },
     {
       "data": {
-        "text": "Path: `crates/statcraft_syntax/src/commands/dataset_cmds.rs` · 255 lines of code\nBelongs to project: [[📦 StatCraft (Overview) | 📦 StatCraft (Overview)]]"
+        "text": "Path: `crates/statcraft_syntax/src/commands/dataset_cmds.rs` · 436 lines of code\nBelongs to project: [[📦 StatCraft (Overview) | 📦 StatCraft (Overview)]]"
       },
-      "id": "blk_native_paragraph_1793974413948726700",
+      "id": "blk_native_paragraph_1794410020480722900",
       "managed_by": "project_parser",
       "type": "paragraph"
     },
@@ -51,16 +51,16 @@ Content-Disposition: inline; filename="canvas_state.json"
         "level": 2,
         "text": "Public Interface"
       },
-      "id": "blk_native_heading_1793974413948727300",
+      "id": "blk_native_heading_1794410020480723500",
       "managed_by": "project_parser",
       "type": "heading"
     },
     {
       "data": {
-        "code": "pub struct VarAddCommand\npub struct VarDeleteCommand\npub struct DataAddRowCommand\npub struct DataDeleteRowCommand",
+        "code": "pub struct VarAddCommand\npub fn new() -> Self\npub struct VarDeleteCommand\npub fn new() -> Self\npub struct DataAddRowCommand\npub fn new() -> Self\npub struct DataDeleteRowCommand\npub fn new() -> Self",
         "language": "rust"
       },
-      "id": "blk_native_code_1793974413948728000",
+      "id": "blk_native_code_1794410020480724200",
       "managed_by": "project_parser",
       "type": "code"
     },
@@ -69,7 +69,7 @@ Content-Disposition: inline; filename="canvas_state.json"
         "level": 2,
         "text": "Internal Dependencies"
       },
-      "id": "blk_native_heading_1793974413948728600",
+      "id": "blk_native_heading_1794410020480724900",
       "managed_by": "project_parser",
       "type": "heading"
     },
@@ -77,7 +77,7 @@ Content-Disposition: inline; filename="canvas_state.json"
       "data": {
         "text": "- `crate::command::{CommandError, EngineCommand}`\n- `super::*`\n"
       },
-      "id": "blk_native_paragraph_1793974413948729500",
+      "id": "blk_native_paragraph_1794410020480726200",
       "managed_by": "project_parser",
       "type": "paragraph"
     }
@@ -88,7 +88,7 @@ Content-Disposition: inline; filename="canvas_state.json"
 Content-Type: text/html; charset="utf-8"
 Content-Disposition: inline
 
-<!doctype html><html><head><meta charset="utf-8"><meta name="generator" content="CapsuleCraft Native"></head><body style="font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;max-width:720px;margin:32px auto;line-height:1.55;color:#23201c;background:#faf8f4;"><h1>📄 StatCraft / crates/statcraft_syntax/src/commands/dataset_cmds.rs</h1><h1>📄 dataset_cmds.rs</h1><p>Path: `crates/statcraft_syntax/src/commands/dataset_cmds.rs` · 255 lines of code<br>Belongs to project: [[📦 StatCraft (Overview) | 📦 StatCraft (Overview)]]</p><h2>Public Interface</h2><p><em>[code block — open in CapsuleCraft web for its canvas]</em></p><h2>Internal Dependencies</h2><p>- `crate::command::{CommandError, EngineCommand}`<br>- `super::*`<br></p><hr><p style="color:#8a8175;font-size:12px">Exported from CapsuleCraft Native · &lt;module-crates_statcraft_syntax_src_commands_dataset_cmds_rs@capsuleos.local&gt;</p></body></html>
+<!doctype html><html><head><meta charset="utf-8"><meta name="generator" content="CapsuleCraft Native"></head><body style="font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;max-width:720px;margin:32px auto;line-height:1.55;color:#23201c;background:#faf8f4;"><h1>📄 StatCraft / crates/statcraft_syntax/src/commands/dataset_cmds.rs</h1><h1>📄 dataset_cmds.rs</h1><p>Path: `crates/statcraft_syntax/src/commands/dataset_cmds.rs` · 436 lines of code<br>Belongs to project: [[📦 StatCraft (Overview) | 📦 StatCraft (Overview)]]</p><h2>Public Interface</h2><p><em>[code block — open in CapsuleCraft web for its canvas]</em></p><h2>Internal Dependencies</h2><p>- `crate::command::{CommandError, EngineCommand}`<br>- `super::*`<br></p><hr><p style="color:#8a8175;font-size:12px">Exported from CapsuleCraft Native · &lt;module-crates_statcraft_syntax_src_commands_dataset_cmds_rs@capsuleos.local&gt;</p></body></html>
 
 --BOUNDARY_PAYLOAD_15DZI7BGGW--
 --BOUNDARY_ROOT_1XS5AVLGDX--

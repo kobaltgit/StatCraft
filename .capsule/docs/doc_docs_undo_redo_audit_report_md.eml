@@ -1,0 +1,327 @@
+From: CapsuleCraft Code Ingest <system@capsulecraft.local>
+To: Vault <vault@capsuleos.local>
+Subject: 📚 StatCraft / StatCraft — Undo / Redo Exhaustive Matrix Audit Report
+Date: Wed, 11 Nov 2026 15:13:40 +0000
+Message-ID: <doc-statcraft-docs_undo_redo_audit_report_md@capsuleos.local>
+In-Reply-To: <project-index-statcraft@capsuleos.local>
+X-Capsule-Page-Parent: <project-index-statcraft@capsuleos.local>
+References: <project-index-statcraft@capsuleos.local>
+X-Capsule-Tags: project, statcraft, docs
+X-Capsule-Status: Active
+MIME-Version: 1.0
+Content-Type: multipart/mixed; boundary="BOUNDARY_ROOT_121VIMTFPA"
+
+--BOUNDARY_ROOT_121VIMTFPA
+Content-Type: multipart/alternative; boundary="BOUNDARY_PAYLOAD_MSDTBVFS1A"
+
+--BOUNDARY_PAYLOAD_MSDTBVFS1A
+Content-Type: application/json; name="canvas_state.json"
+Content-Disposition: inline; filename="canvas_state.json"
+
+{
+  "version": "1.0",
+  "generator": "CapsuleCraft Native egui prototype (Zero-DB Pure-MIME)",
+  "messageId": "<doc-statcraft-docs_undo_redo_audit_report_md@capsuleos.local>",
+  "subject": "📚 StatCraft / StatCraft — Undo / Redo Exhaustive Matrix Audit Report",
+  "tags": [
+    "project",
+    "statcraft",
+    "docs"
+  ],
+  "blocks": [
+    {
+      "data": {
+        "icon": "book",
+        "text": "Documentation file: `docs/UNDO_REDO_AUDIT_REPORT.md`\nBelongs to project: [[📦 StatCraft (Overview) | 📦 StatCraft (Overview)]]"
+      },
+      "id": "blk_native_callout_1794410020510675000",
+      "managed_by": "project_parser",
+      "type": "callout"
+    },
+    {
+      "data": {
+        "level": 1,
+        "text": "StatCraft — Undo / Redo Exhaustive Matrix Audit Report"
+      },
+      "id": "blk_native_heading_1794410020510622000",
+      "managed_by": "project_parser",
+      "type": "heading"
+    },
+    {
+      "data": {
+        "text": "**ArtCraft Ecosystem Standard (`storytold`)**  \n*Date: November 11, 2026*  \n*Status: 100% Mathematical Reversibility Verified (Code DoD: APPROVED)*"
+      },
+      "id": "blk_native_paragraph_1794410020510624900",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    },
+    {
+      "data": {
+        "text": "---"
+      },
+      "id": "blk_native_paragraph_1794410020510625800",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    },
+    {
+      "data": {
+        "level": 2,
+        "text": "1. Executive Summary"
+      },
+      "id": "blk_native_heading_1794410020510626400",
+      "managed_by": "project_parser",
+      "type": "heading"
+    },
+    {
+      "data": {
+        "text": "This report establishes the formal audit and mathematical verification of the state-reversibility property across all registered engine commands on the `CommandBus` (`crates/statcraft_syntax/src/bus.rs`)."
+      },
+      "id": "blk_native_paragraph_1794410020510627700",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    },
+    {
+      "data": {
+        "text": "Every stateful data manipulation command in StatCraft is required by ecosystem invariant to satisfy the exact byte-for-byte bijection:\n$$\\text{DataSet}_0 \\xrightarrow{\\text{Execute}(C, P)} \\text{DataSet}_1 \\xrightarrow{\\text{Undo}(C)} \\text{DataSet}_0' \\equiv \\text{DataSet}_0$$\n$$\\text{DataSet}_0' \\xrightarrow{\\text{Redo}(C)} \\text{DataSet}_1' \\equiv \\text{DataSet}_1$$"
+      },
+      "id": "blk_native_paragraph_1794410020510628700",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    },
+    {
+      "data": {
+        "text": "Before this initiative, several core structural editing commands (`var.add`, `var.delete`, `var.rename`, `var.set_type`, `var.set_width`, `var.set_decimals`, `var.set_align`, `var.set_label`, `var.set_measure`, `data.add_row`, `data.delete_row`) had no-op `undo()` handlers, and the engine lacked a unified `redo_stack` on `CommandBus`."
+      },
+      "id": "blk_native_paragraph_1794410020510629500",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    },
+    {
+      "data": {
+        "text": "Through this engineering phase:\n1. **Full State Capture**: All 11 structural and metadata commands were upgraded with complete pre-mutation state capture using interior mutex histories.\n2. **Unified Redo Stack**: `CommandBus` was augmented with a full `redo_stack`, supporting `bus.redo(&mut ds)`, `can_undo()`, and `can_redo()`.\n3. **History Bounding & Eviction**: A 100-step ceiling with automated FIFO eviction prevents unbounded memory growth.\n4. **Cell Edit Coalescence**: Rapid interactive cell edits on the same coordinates coalesce into a single history entry.\n5. **History Branching Invariant**: Executing any mutating command after an undo operation strictly clears the redo stack.\n6. **Continuous Verification**: A dedicated runner `cargo xtask test-undo` was introduced and integrated as gate #9 into `cargo xtask ci`."
+      },
+      "id": "blk_native_paragraph_1794410020510630800",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    },
+    {
+      "data": {
+        "text": "---"
+      },
+      "id": "blk_native_paragraph_1794410020510631500",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    },
+    {
+      "data": {
+        "level": 2,
+        "text": "2. Mathematical Reversibility Matrix"
+      },
+      "id": "blk_native_heading_1794410020510632100",
+      "managed_by": "project_parser",
+      "type": "heading"
+    },
+    {
+      "data": {
+        "text": "The audit validated 41 engine commands across 5 functional categories against a populated 10-row baseline dataset."
+      },
+      "id": "blk_native_paragraph_1794410020510633000",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    },
+    {
+      "data": {
+        "text": "| Command ID | Category | Mutation Type | Reversibility Invariant | Status |\n| :--- | :--- | :--- | :--- | :---: |\n| `data.cell_edit` | Cells & Rows | In-place Cell Value Change | $\\text{DataSet}_0 \\equiv \\text{Undo}(\\text{Execute}(\\text{DataSet}_0))$ | **PASS** |\n| `data.add_row` | Cells & Rows | Table Row Insertion | $\\text{DataSet}_0 \\equiv \\text{Undo}(\\text{Execute}(\\text{DataSet}_0))$ | **PASS** |\n| `data.delete_row` | Cells & Rows | Table Row Deletion | $\\text{DataSet}_0 \\equiv \\text{Undo}(\\text{Execute}(\\text{DataSet}_0))$ | **PASS** |\n| `var.add` | Columns & Metadata | Column & Metadata Insertion | $\\text{DataSet}_0 \\equiv \\text{Undo}(\\text{Execute}(\\text{DataSet}_0))$ | **PASS** |\n| `var.delete` | Columns & Metadata | Column & Metadata Removal | $\\text{DataSet}_0 \\equiv \\text{Undo}(\\text{Execute}(\\text{DataSet}_0))$ | **PASS** |\n| `var.rename` | Columns & Metadata | Column Name & References | $\\text{DataSet}_0 \\equiv \\text{Undo}(\\text{Execute}(\\text{DataSet}_0))$ | **PASS** |\n| `var.set_type` | Columns & Metadata | Column Type & Storage Spec | $\\text{DataSet}_0 \\equiv \\text{Undo}(\\text{Execute}(\\text{DataSet}_0))$ | **PASS** |\n| `var.set_width` | Columns & Metadata | Display Width & String Len | $\\text{DataSet}_0 \\equiv \\text{Undo}(\\text{Execute}(\\text{DataSet}_0))$ | **PASS** |\n| `var.set_decimals` | Columns & Metadata | Decimal Precision Count | $\\text{DataSet}_0 \\equiv \\text{Undo}(\\text{Execute}(\\text{DataSet}_0))$ | **PASS** |\n| `var.set_align` | Columns & Metadata | Text Alignment Alignment | $\\text{DataSet}_0 \\equiv \\text{Undo}(\\text{Execute}(\\text{DataSet}_0))$ | **PASS** |\n| `var.set_value_labels` | Columns & Metadata | Discrete Value Labels Map | $\\text{DataSet}_0 \\equiv \\text{Undo}(\\text{Execute}(\\text{DataSet}_0))$ | **PASS** |\n| `var.set_missing_values`| Columns & Metadata | Discrete & Range Missings | $\\text{DataSet}_0 \\equiv \\text{Undo}(\\text{Execute}(\\text{DataSet}_0))$ | **PASS** |\n| `var.set_label` | Columns & Metadata | Descriptive String Label | $\\text{DataSet}_0 \\equiv \\text{Undo}(\\text{Execute}(\\text{DataSet}_0))$ | **PASS** |\n| `var.set_measure` | Columns & Metadata | Nominal / Ordinal / Scale | $\\text{DataSet}_0 \\equiv \\text{Undo}(\\text{Execute}(\\text{DataSet}_0))$ | **PASS** |\n| `transform.compute` | Transformations | Computed Column Generation | $\\text{DataSet}_0 \\equiv \\text{Undo}(\\text{Execute}(\\text{DataSet}_0))$ | **PASS** |\n| `transform.recode.same` | Transformations | In-place Value Recoding | $\\text{DataSet}_0 \\equiv \\text{Undo}(\\text{Execute}(\\text{DataSet}_0))$ | **PASS** |\n| `transform.recode.diff` | Transformations | New Column Value Recoding | $\\text{DataSet}_0 \\equiv \\text{Undo}(\\text{Execute}(\\text{DataSet}_0))$ | **PASS** |\n| `transform.auto_recode` | Transformations | Automatic Integer Recode | $\\text{DataSet}_0 \\equiv \\text{Undo}(\\text{Execute}(\\text{DataSet}_0))$ | **PASS** |\n| `transform.count_values`| Transformations | Count Occurrence Column | $\\text{DataSet}_0 \\equiv \\text{Undo}(\\text{Execute}(\\text{DataSet}_0))$ | **PASS** |\n| `transform.create_dummies`| Transformations| One-Hot Binary Columns | $\\text{DataSet}_0 \\equiv \\text{Undo}(\\text{Execute}(\\text{DataSet}_0))$ | **PASS** |\n| `transform.shift_values`| Transformations | Lag / Lead Shift Column | $\\text{DataSet}_0 \\equiv \\text{Undo}(\\text{Execute}(\\text{DataSet}_0))$ | **PASS** |\n| `transform.rank_cases` | Transformations | Fractional Rank Columns | $\\text{DataSet}_0 \\equiv \\text{Undo}(\\text{Execute}(\\text{DataSet}_0))$ | **PASS** |\n| `transform.replace_missing`| Transformations| Imputation Value Columns | $\\text{DataSet}_0 \\equiv \\text{Undo}(\\text{Execute}(\\text{DataSet}_0))$ | **PASS** |\n| `transform.visual_binning`| Transformations| Cutpoint Binned Columns | $\\text{DataSet}_0 \\equiv \\text{Undo}(\\text{Execute}(\\text{DataSet}_0))$ | **PASS** |\n| `transform.optimal_binning`| Transformations| Supervised MDLP Bins | $\\text{DataSet}_0 \\equiv \\text{Undo}(\\text{Execute}(\\text{DataSet}_0))$ | **PASS** |\n| `transform.create_time_series`| Transformations| Time-Series Trend Columns | $\\text{DataSet}_0 \\equiv \\text{Undo}(\\text{Execute}(\\text{DataSet}_0))$ | **PASS** |\n| `transform.date_time_wizard`| Transformations| Date Math Extracted Cols | $\\text{DataSet}_0 \\equiv \\text{Undo}(\\text{Execute}(\\text{DataSet}_0))$ | **PASS** |\n| `transform.adp` | Transformations | Automated Data Prep Cols | $\\text{DataSet}_0 \\equiv \\text{Undo}(\\text{Execute}(\\text{DataSet}_0))$ | **PASS** |\n| `transform.programmability`| Transformations| DSL Transform Batch | $\\text{DataSet}_0 \\equiv \\text{Undo}(\\text{Execute}(\\text{DataSet}_0))$ | **PASS** |\n| `data.sort_cases` | Sampling & Management | Permutation Row Reordering | $\\text{DataSet}_0 \\equiv \\text{Undo}(\\text{Execute}(\\text{DataSet}_0))$ | **PASS** |\n| `data.select_cases` | Sampling & Management | Filter Column & Active Flag | $\\text{DataSet}_0 \\equiv \\text{Undo}(\\text{Execute}(\\text{DataSet}_0))$ | **PASS** |\n| `data.split_file` | Sampling & Management | Subgroup Config Assignment | $\\text{DataSet}_0 \\equiv \\text{Undo}(\\text{Execute}(\\text{DataSet}_0))$ | **PASS** |\n| `data.weight_cases` | Sampling & Management | Frequency Weight Variable | $\\text{DataSet}_0 \\equiv \\text{Undo}(\\text{Execute}(\\text{DataSet}_0))$ | **PASS** |\n| `transform.random_seed`| Sampling & Management | PRNG Global Seed Override | $\\text{DataSet}_0 \\equiv \\text{Undo}(\\text{Execute}(\\text{DataSet}_0))$ | **PASS** |\n| `stat.descriptives` | Analytical (Read-Only) | No DataSet State Mutation | $\\text{DataSet}_0 \\equiv \\text{Undo}(\\text{Execute}(\\text{DataSet}_0))$ | **PASS** |\n| `stat.frequencies` | Analytical (Read-Only) | No DataSet State Mutation | $\\text{DataSet}_0 \\equiv \\text{Undo}(\\text{Execute}(\\text{DataSet}_0))$ | **PASS** |\n| `stat.means` | Analytical (Read-Only) | No DataSet State Mutation | $\\text{DataSet}_0 \\equiv \\text{Undo}(\\text{Execute}(\\text{DataSet}_0))$ | **PASS** |\n| `stat.ttest.onesample` | Analytical (Read-Only) | No DataSet State Mutation | $\\text{DataSet}_0 \\equiv \\text{Undo}(\\text{Execute}(\\text{DataSet}_0))$ | **PASS** |\n| `stat.ttest.indep` | Analytical (Read-Only) | No DataSet State Mutation | $\\text{DataSet}_0 \\equiv \\text{Undo}(\\text{Execute}(\\text{DataSet}_0))$ | **PASS** |\n| `stat.anova.oneway` | Analytical (Read-Only) | No DataSet State Mutation | $\\text{DataSet}_0 \\equiv \\text{Undo}(\\text{Execute}(\\text{DataSet}_0))$ | **PASS** |\n| `stat.correlations` | Analytical (Read-Only) | No DataSet State Mutation | $\\text{DataSet}_0 \\equiv \\text{Undo}(\\text{Execute}(\\text{DataSet}_0))$ | **PASS** |"
+      },
+      "id": "blk_native_paragraph_1794410020510655900",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    },
+    {
+      "data": {
+        "text": "---"
+      },
+      "id": "blk_native_paragraph_1794410020510657300",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    },
+    {
+      "data": {
+        "level": 2,
+        "text": "3. Architecture & Invariant Guarantees"
+      },
+      "id": "blk_native_heading_1794410020510657800",
+      "managed_by": "project_parser",
+      "type": "heading"
+    },
+    {
+      "data": {
+        "level": 3,
+        "text": "3.1. Reversible Data Insertion & Removal in Core (`statcraft_core`)"
+      },
+      "id": "blk_native_heading_1794410020510658400",
+      "managed_by": "project_parser",
+      "type": "heading"
+    },
+    {
+      "data": {
+        "text": "To guarantee exact restoration of deleted variables, `statcraft_io::RawTable` and `statcraft_core::VariableDictionary` were extended with index-specific insertion:\n- `RawTable::insert_column(col_idx, column)`: preserves the exact column order when restoring deleted fields.\n- `RawTable::insert_row(row_idx, values)`: restores deleted rows at their original case index.\n- `VariableDictionary::insert(idx, meta)`: restores metadata definitions at their original slot.\n- `DataSet::restore_variable(col_idx, meta, column)`: atomic wrapper for complete column rollback.\n- `DataSet::remove_variable(col_idx)`: automatically purges references to the removed column from `DeltaBuffer` (`undo_stack` and `redo_stack`) to eliminate phantom cell edit mutations."
+      },
+      "id": "blk_native_paragraph_1794410020510659900",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    },
+    {
+      "data": {
+        "level": 3,
+        "text": "3.2. History Depth Bounding & Eviction"
+      },
+      "id": "blk_native_heading_1794410020510660500",
+      "managed_by": "project_parser",
+      "type": "heading"
+    },
+    {
+      "data": {
+        "text": "Unconstrained undo stacks lead to memory exhaustion on massive statistical datasets.\n`CommandBus` enforces a default depth ceiling of **100 entries**:"
+      },
+      "id": "blk_native_paragraph_1794410020510661500",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    },
+    {
+      "data": {
+        "code": "if self.history.len() > self.max_history_depth {\n    self.history.remove(0); // Oldest historical command evicted\n}",
+        "language": "rust"
+      },
+      "id": "blk_native_code_1794410020510662500",
+      "managed_by": "project_parser",
+      "type": "code"
+    },
+    {
+      "data": {
+        "text": "In `test_history_depth_eviction_120_commands`, 120 sequential label edits were executed. The test verified that history length remained strictly capped at 100, the oldest entry was iteration #20, and all 100 remaining entries were successfully unwound via sequential `bus.undo(&mut ds)`."
+      },
+      "id": "blk_native_paragraph_1794410020510663600",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    },
+    {
+      "data": {
+        "level": 3,
+        "text": "3.3. Linear History Branching"
+      },
+      "id": "blk_native_heading_1794410020510664100",
+      "managed_by": "project_parser",
+      "type": "heading"
+    },
+    {
+      "data": {
+        "text": "When a user undoes several steps and then executes a new mutating action, history forms a new linear branch:"
+      },
+      "id": "blk_native_paragraph_1794410020510664700",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    },
+    {
+      "data": {
+        "code": "self.redo_stack.clear();",
+        "language": "rust"
+      },
+      "id": "blk_native_code_1794410020510665300",
+      "managed_by": "project_parser",
+      "type": "code"
+    },
+    {
+      "data": {
+        "text": "`test_history_branching_clears_redo` verified that after performing 3 commands, undoing 2, and executing a distinct 4th command, `bus.can_redo()` returned `false` and `bus.redo_stack().is_empty()` held true."
+      },
+      "id": "blk_native_paragraph_1794410020510666100",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    },
+    {
+      "data": {
+        "level": 3,
+        "text": "3.4. Interactive Cell Edit Coalescence"
+      },
+      "id": "blk_native_heading_1794410020510666600",
+      "managed_by": "project_parser",
+      "type": "heading"
+    },
+    {
+      "data": {
+        "text": "Typing rapidly in a single grid cell should not pollute the undo stack with one entry per keystroke.\n`CommandBus::execute_coalesced` inspects the top history entry:\n- If the top entry is `data.cell_edit` on the same `(row, col)`, the entry's `new_val` is overwritten in place and `new_val` is updated in the dataset.\n- The original `old_val` is preserved, allowing a single `Undo` action to roll back to the pre-typing baseline."
+      },
+      "id": "blk_native_paragraph_1794410020510667600",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    },
+    {
+      "data": {
+        "text": "---"
+      },
+      "id": "blk_native_paragraph_1794410020510668200",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    },
+    {
+      "data": {
+        "level": 2,
+        "text": "4. Test Suite Structure"
+      },
+      "id": "blk_native_heading_1794410020510668700",
+      "managed_by": "project_parser",
+      "type": "heading"
+    },
+    {
+      "data": {
+        "text": "The verification suite is structured in `crates/statcraft_syntax/tests/undo_matrix/`:"
+      },
+      "id": "blk_native_paragraph_1794410020510669300",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    },
+    {
+      "data": {
+        "text": "| Module | File | Lines | Tests | Description |\n| :--- | :--- | :---: | :---: | :--- |\n| `fixtures.rs` | `tests/undo_matrix/fixtures.rs` | 108 | — | Synthetic dataset generation and `assert_reversibility_cycle` |\n| `cells_and_rows.rs` | `tests/undo_matrix/cells_and_rows.rs` | 91 | 3 | Cell edit, add row, and delete row reversibility |\n| `metadata.rs` | `tests/undo_matrix/metadata.rs` | 275 | 11 | Variable structural, type, width, and metadata reversibility |\n| `transforms.rs` | `tests/undo_matrix/transforms.rs` | 283 | 15 | Compute, recode, binning, ADP, and transform reversibility |\n| `management_and_analysis.rs` | `tests/undo_matrix/management_and_analysis.rs` | 134 | 6 | Sort, select, split, weight, seed, and analytical procedures |\n| `history_depth_and_branching.rs`| `tests/undo_matrix/history_depth_and_branching.rs` | 134 | 3 | 120-step eviction, branching redo-clear, and cell coalescence |\n| **Total** | `tests/undo_redo_matrix_tests.rs` | **1025** | **38** | **100% Passing (0 failures, 0 flakiness)** |"
+      },
+      "id": "blk_native_paragraph_1794410020510670600",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    },
+    {
+      "data": {
+        "text": "---"
+      },
+      "id": "blk_native_paragraph_1794410020510671300",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    },
+    {
+      "data": {
+        "level": 2,
+        "text": "5. Definition of Done Compliance"
+      },
+      "id": "blk_native_heading_1794410020510671700",
+      "managed_by": "project_parser",
+      "type": "heading"
+    },
+    {
+      "data": {
+        "text": "- [x] **Resource Guard**: All compilation and test tasks run with strict `-j 1`.\n- [x] **Never Crash**: Safe Rust across all production code; no unhandled panics or unwraps.\n- [x] **File Size Guard**: Every file in `statcraft_syntax` and `statcraft_algo` $\\le 500$ lines. General modules $\\le 1000$ lines. Zero violations across 307 scanned files.\n- [x] **Design Guard**: DialogKit compliance preserved.\n- [x] **SPSS Parity**: 51 canonical procedures documented and functional.\n- [x] **CI Quality Gate**: `cargo xtask test-undo` integrated into `cargo xtask ci` as gate #9."
+      },
+      "id": "blk_native_paragraph_1794410020510673100",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    }
+  ]
+}
+
+--BOUNDARY_PAYLOAD_MSDTBVFS1A
+Content-Type: text/html; charset="utf-8"
+Content-Disposition: inline
+
+<!doctype html><html><head><meta charset="utf-8"><meta name="generator" content="CapsuleCraft Native"></head><body style="font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;max-width:720px;margin:32px auto;line-height:1.55;color:#23201c;background:#faf8f4;"><h1>📚 StatCraft / StatCraft — Undo / Redo Exhaustive Matrix Audit Report</h1><p><em>[callout block — open in CapsuleCraft web for its canvas]</em></p><h1>StatCraft — Undo / Redo Exhaustive Matrix Audit Report</h1><p>**ArtCraft Ecosystem Standard (`storytold`)**  <br>*Date: November 11, 2026*  <br>*Status: 100% Mathematical Reversibility Verified (Code DoD: APPROVED)*</p><p>---</p><h2>1. Executive Summary</h2><p>This report establishes the formal audit and mathematical verification of the state-reversibility property across all registered engine commands on the `CommandBus` (`crates/statcraft_syntax/src/bus.rs`).</p><p>Every stateful data manipulation command in StatCraft is required by ecosystem invariant to satisfy the exact byte-for-byte bijection:<br>$$\text{DataSet}_0 \xrightarrow{\text{Execute}(C, P)} \text{DataSet}_1 \xrightarrow{\text{Undo}(C)} \text{DataSet}_0&#39; \equiv \text{DataSet}_0$$<br>$$\text{DataSet}_0&#39; \xrightarrow{\text{Redo}(C)} \text{DataSet}_1&#39; \equiv \text{DataSet}_1$$</p><p>Before this initiative, several core structural editing commands (`var.add`, `var.delete`, `var.rename`, `var.set_type`, `var.set_width`, `var.set_decimals`, `var.set_align`, `var.set_label`, `var.set_measure`, `data.add_row`, `data.delete_row`) had no-op `undo()` handlers, and the engine lacked a unified `redo_stack` on `CommandBus`.</p><p>Through this engineering phase:<br>1. **Full State Capture**: All 11 structural and metadata commands were upgraded with complete pre-mutation state capture using interior mutex histories.<br>2. **Unified Redo Stack**: `CommandBus` was augmented with a full `redo_stack`, supporting `bus.redo(&amp;mut ds)`, `can_undo()`, and `can_redo()`.<br>3. **History Bounding &amp; Eviction**: A 100-step ceiling with automated FIFO eviction prevents unbounded memory growth.<br>4. **Cell Edit Coalescence**: Rapid interactive cell edits on the same coordinates coalesce into a single history entry.<br>5. **History Branching Invariant**: Executing any mutating command after an undo operation strictly clears the redo stack.<br>6. **Continuous Verification**: A dedicated runner `cargo xtask test-undo` was introduced and integrated as gate #9 into `cargo xtask ci`.</p><p>---</p><h2>2. Mathematical Reversibility Matrix</h2><p>The audit validated 41 engine commands across 5 functional categories against a populated 10-row baseline dataset.</p><p>| Command ID | Category | Mutation Type | Reversibility Invariant | Status |<br>| :--- | :--- | :--- | :--- | :---: |<br>| `data.cell_edit` | Cells &amp; Rows | In-place Cell Value Change | $\text{DataSet}_0 \equiv \text{Undo}(\text{Execute}(\text{DataSet}_0))$ | **PASS** |<br>| `data.add_row` | Cells &amp; Rows | Table Row Insertion | $\text{DataSet}_0 \equiv \text{Undo}(\text{Execute}(\text{DataSet}_0))$ | **PASS** |<br>| `data.delete_row` | Cells &amp; Rows | Table Row Deletion | $\text{DataSet}_0 \equiv \text{Undo}(\text{Execute}(\text{DataSet}_0))$ | **PASS** |<br>| `var.add` | Columns &amp; Metadata | Column &amp; Metadata Insertion | $\text{DataSet}_0 \equiv \text{Undo}(\text{Execute}(\text{DataSet}_0))$ | **PASS** |<br>| `var.delete` | Columns &amp; Metadata | Column &amp; Metadata Removal | $\text{DataSet}_0 \equiv \text{Undo}(\text{Execute}(\text{DataSet}_0))$ | **PASS** |<br>| `var.rename` | Columns &amp; Metadata | Column Name &amp; References | $\text{DataSet}_0 \equiv \text{Undo}(\text{Execute}(\text{DataSet}_0))$ | **PASS** |<br>| `var.set_type` | Columns &amp; Metadata | Column Type &amp; Storage Spec | $\text{DataSet}_0 \equiv \text{Undo}(\text{Execute}(\text{DataSet}_0))$ | **PASS** |<br>| `var.set_width` | Columns &amp; Metadata | Display Width &amp; String Len | $\text{DataSet}_0 \equiv \text{Undo}(\text{Execute}(\text{DataSet}_0))$ | **PASS** |<br>| `var.set_decimals` | Columns &amp; Metadata | Decimal Precision Count | $\text{DataSet}_0 \equiv \text{Undo}(\text{Execute}(\text{DataSet}_0))$ | **PASS** |<br>| `var.set_align` | Columns &amp; Metadata | Text Alignment Alignment | $\text{DataSet}_0 \equiv \text{Undo}(\text{Execute}(\text{DataSet}_0))$ | **PASS** |<br>| `var.set_value_labels` | Columns &amp; Metadata | Discrete Value Labels Map | $\text{DataSet}_0 \equiv \text{Undo}(\text{Execute}(\text{DataSet}_0))$ | **PASS** |<br>| `var.set_missing_values`| Columns &amp; Metadata | Discrete &amp; Range Missings | $\text{DataSet}_0 \equiv \text{Undo}(\text{Execute}(\text{DataSet}_0))$ | **PASS** |<br>| `var.set_label` | Columns &amp; Metadata | Descriptive String Label | $\text{DataSet}_0 \equiv \text{Undo}(\text{Execute}(\text{DataSet}_0))$ | **PASS** |<br>| `var.set_measure` | Columns &amp; Metadata | Nominal / Ordinal / Scale | $\text{DataSet}_0 \equiv \text{Undo}(\text{Execute}(\text{DataSet}_0))$ | **PASS** |<br>| `transform.compute` | Transformations | Computed Column Generation | $\text{DataSet}_0 \equiv \text{Undo}(\text{Execute}(\text{DataSet}_0))$ | **PASS** |<br>| `transform.recode.same` | Transformations | In-place Value Recoding | $\text{DataSet}_0 \equiv \text{Undo}(\text{Execute}(\text{DataSet}_0))$ | **PASS** |<br>| `transform.recode.diff` | Transformations | New Column Value Recoding | $\text{DataSet}_0 \equiv \text{Undo}(\text{Execute}(\text{DataSet}_0))$ | **PASS** |<br>| `transform.auto_recode` | Transformations | Automatic Integer Recode | $\text{DataSet}_0 \equiv \text{Undo}(\text{Execute}(\text{DataSet}_0))$ | **PASS** |<br>| `transform.count_values`| Transformations | Count Occurrence Column | $\text{DataSet}_0 \equiv \text{Undo}(\text{Execute}(\text{DataSet}_0))$ | **PASS** |<br>| `transform.create_dummies`| Transformations| One-Hot Binary Columns | $\text{DataSet}_0 \equiv \text{Undo}(\text{Execute}(\text{DataSet}_0))$ | **PASS** |<br>| `transform.shift_values`| Transformations | Lag / Lead Shift Column | $\text{DataSet}_0 \equiv \text{Undo}(\text{Execute}(\text{DataSet}_0))$ | **PASS** |<br>| `transform.rank_cases` | Transformations | Fractional Rank Columns | $\text{DataSet}_0 \equiv \text{Undo}(\text{Execute}(\text{DataSet}_0))$ | **PASS** |<br>| `transform.replace_missing`| Transformations| Imputation Value Columns | $\text{DataSet}_0 \equiv \text{Undo}(\text{Execute}(\text{DataSet}_0))$ | **PASS** |<br>| `transform.visual_binning`| Transformations| Cutpoint Binned Columns | $\text{DataSet}_0 \equiv \text{Undo}(\text{Execute}(\text{DataSet}_0))$ | **PASS** |<br>| `transform.optimal_binning`| Transformations| Supervised MDLP Bins | $\text{DataSet}_0 \equiv \text{Undo}(\text{Execute}(\text{DataSet}_0))$ | **PASS** |<br>| `transform.create_time_series`| Transformations| Time-Series Trend Columns | $\text{DataSet}_0 \equiv \text{Undo}(\text{Execute}(\text{DataSet}_0))$ | **PASS** |<br>| `transform.date_time_wizard`| Transformations| Date Math Extracted Cols | $\text{DataSet}_0 \equiv \text{Undo}(\text{Execute}(\text{DataSet}_0))$ | **PASS** |<br>| `transform.adp` | Transformations | Automated Data Prep Cols | $\text{DataSet}_0 \equiv \text{Undo}(\text{Execute}(\text{DataSet}_0))$ | **PASS** |<br>| `transform.programmability`| Transformations| DSL Transform Batch | $\text{DataSet}_0 \equiv \text{Undo}(\text{Execute}(\text{DataSet}_0))$ | **PASS** |<br>| `data.sort_cases` | Sampling &amp; Management | Permutation Row Reordering | $\text{DataSet}_0 \equiv \text{Undo}(\text{Execute}(\text{DataSet}_0))$ | **PASS** |<br>| `data.select_cases` | Sampling &amp; Management | Filter Column &amp; Active Flag | $\text{DataSet}_0 \equiv \text{Undo}(\text{Execute}(\text{DataSet}_0))$ | **PASS** |<br>| `data.split_file` | Sampling &amp; Management | Subgroup Config Assignment | $\text{DataSet}_0 \equiv \text{Undo}(\text{Execute}(\text{DataSet}_0))$ | **PASS** |<br>| `data.weight_cases` | Sampling &amp; Management | Frequency Weight Variable | $\text{DataSet}_0 \equiv \text{Undo}(\text{Execute}(\text{DataSet}_0))$ | **PASS** |<br>| `transform.random_seed`| Sampling &amp; Management | PRNG Global Seed Override | $\text{DataSet}_0 \equiv \text{Undo}(\text{Execute}(\text{DataSet}_0))$ | **PASS** |<br>| `stat.descriptives` | Analytical (Read-Only) | No DataSet State Mutation | $\text{DataSet}_0 \equiv \text{Undo}(\text{Execute}(\text{DataSet}_0))$ | **PASS** |<br>| `stat.frequencies` | Analytical (Read-Only) | No DataSet State Mutation | $\text{DataSet}_0 \equiv \text{Undo}(\text{Execute}(\text{DataSet}_0))$ | **PASS** |<br>| `stat.means` | Analytical (Read-Only) | No DataSet State Mutation | $\text{DataSet}_0 \equiv \text{Undo}(\text{Execute}(\text{DataSet}_0))$ | **PASS** |<br>| `stat.ttest.onesample` | Analytical (Read-Only) | No DataSet State Mutation | $\text{DataSet}_0 \equiv \text{Undo}(\text{Execute}(\text{DataSet}_0))$ | **PASS** |<br>| `stat.ttest.indep` | Analytical (Read-Only) | No DataSet State Mutation | $\text{DataSet}_0 \equiv \text{Undo}(\text{Execute}(\text{DataSet}_0))$ | **PASS** |<br>| `stat.anova.oneway` | Analytical (Read-Only) | No DataSet State Mutation | $\text{DataSet}_0 \equiv \text{Undo}(\text{Execute}(\text{DataSet}_0))$ | **PASS** |<br>| `stat.correlations` | Analytical (Read-Only) | No DataSet State Mutation | $\text{DataSet}_0 \equiv \text{Undo}(\text{Execute}(\text{DataSet}_0))$ | **PASS** |</p><p>---</p><h2>3. Architecture &amp; Invariant Guarantees</h2><h3>3.1. Reversible Data Insertion &amp; Removal in Core (`statcraft_core`)</h3><p>To guarantee exact restoration of deleted variables, `statcraft_io::RawTable` and `statcraft_core::VariableDictionary` were extended with index-specific insertion:<br>- `RawTable::insert_column(col_idx, column)`: preserves the exact column order when restoring deleted fields.<br>- `RawTable::insert_row(row_idx, values)`: restores deleted rows at their original case index.<br>- `VariableDictionary::insert(idx, meta)`: restores metadata definitions at their original slot.<br>- `DataSet::restore_variable(col_idx, meta, column)`: atomic wrapper for complete column rollback.<br>- `DataSet::remove_variable(col_idx)`: automatically purges references to the removed column from `DeltaBuffer` (`undo_stack` and `redo_stack`) to eliminate phantom cell edit mutations.</p><h3>3.2. History Depth Bounding &amp; Eviction</h3><p>Unconstrained undo stacks lead to memory exhaustion on massive statistical datasets.<br>`CommandBus` enforces a default depth ceiling of **100 entries**:</p><p><em>[code block — open in CapsuleCraft web for its canvas]</em></p><p>In `test_history_depth_eviction_120_commands`, 120 sequential label edits were executed. The test verified that history length remained strictly capped at 100, the oldest entry was iteration #20, and all 100 remaining entries were successfully unwound via sequential `bus.undo(&amp;mut ds)`.</p><h3>3.3. Linear History Branching</h3><p>When a user undoes several steps and then executes a new mutating action, history forms a new linear branch:</p><p><em>[code block — open in CapsuleCraft web for its canvas]</em></p><p>`test_history_branching_clears_redo` verified that after performing 3 commands, undoing 2, and executing a distinct 4th command, `bus.can_redo()` returned `false` and `bus.redo_stack().is_empty()` held true.</p><h3>3.4. Interactive Cell Edit Coalescence</h3><p>Typing rapidly in a single grid cell should not pollute the undo stack with one entry per keystroke.<br>`CommandBus::execute_coalesced` inspects the top history entry:<br>- If the top entry is `data.cell_edit` on the same `(row, col)`, the entry&#39;s `new_val` is overwritten in place and `new_val` is updated in the dataset.<br>- The original `old_val` is preserved, allowing a single `Undo` action to roll back to the pre-typing baseline.</p><p>---</p><h2>4. Test Suite Structure</h2><p>The verification suite is structured in `crates/statcraft_syntax/tests/undo_matrix/`:</p><p>| Module | File | Lines | Tests | Description |<br>| :--- | :--- | :---: | :---: | :--- |<br>| `fixtures.rs` | `tests/undo_matrix/fixtures.rs` | 108 | — | Synthetic dataset generation and `assert_reversibility_cycle` |<br>| `cells_and_rows.rs` | `tests/undo_matrix/cells_and_rows.rs` | 91 | 3 | Cell edit, add row, and delete row reversibility |<br>| `metadata.rs` | `tests/undo_matrix/metadata.rs` | 275 | 11 | Variable structural, type, width, and metadata reversibility |<br>| `transforms.rs` | `tests/undo_matrix/transforms.rs` | 283 | 15 | Compute, recode, binning, ADP, and transform reversibility |<br>| `management_and_analysis.rs` | `tests/undo_matrix/management_and_analysis.rs` | 134 | 6 | Sort, select, split, weight, seed, and analytical procedures |<br>| `history_depth_and_branching.rs`| `tests/undo_matrix/history_depth_and_branching.rs` | 134 | 3 | 120-step eviction, branching redo-clear, and cell coalescence |<br>| **Total** | `tests/undo_redo_matrix_tests.rs` | **1025** | **38** | **100% Passing (0 failures, 0 flakiness)** |</p><p>---</p><h2>5. Definition of Done Compliance</h2><p>- [x] **Resource Guard**: All compilation and test tasks run with strict `-j 1`.<br>- [x] **Never Crash**: Safe Rust across all production code; no unhandled panics or unwraps.<br>- [x] **File Size Guard**: Every file in `statcraft_syntax` and `statcraft_algo` $\le 500$ lines. General modules $\le 1000$ lines. Zero violations across 307 scanned files.<br>- [x] **Design Guard**: DialogKit compliance preserved.<br>- [x] **SPSS Parity**: 51 canonical procedures documented and functional.<br>- [x] **CI Quality Gate**: `cargo xtask test-undo` integrated into `cargo xtask ci` as gate #9.</p><hr><p style="color:#8a8175;font-size:12px">Exported from CapsuleCraft Native · &lt;doc-statcraft-docs_undo_redo_audit_report_md@capsuleos.local&gt;</p></body></html>
+
+--BOUNDARY_PAYLOAD_MSDTBVFS1A--
+--BOUNDARY_ROOT_121VIMTFPA--
