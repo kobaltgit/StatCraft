@@ -637,3 +637,15 @@
 - [x] Xtask & CI: автоматический раннер матрицы обратимости `cargo xtask test-undo`, регистрация в `main.rs` и включение в качестве шлюза #9 в `cargo xtask ci`
 - [x] Документация: формирование исчерпывающего двуязычного отчета об аудите `docs/UNDO_REDO_AUDIT_REPORT.md` (EN) и `docs/UNDO_REDO_AUDIT_REPORT_RU.md` (RU)
 - [x] 100% прохождение всех проверок Definition of Done (`cargo run -p xtask -j 1 -- ci`: fmt, clippy, layers, file-guard [307 файлов], design-guard, full test suite, parity, corpus, test-undo)
+
+
+## 38. Финализация операций меню редактирования и табличной навигации (Edit & Grid Navigation)
+- [x] L1 `statcraft_core`: добавление метода `DataSet::insert_variable` со сдвигом столбцов и синхронизацией `VariableDictionary` и `RawTable`
+- [x] L5 `statcraft_syntax`: поддержка позиционной вставки строк и переменных в `DataAddRowCommand` (`data.add_row`) и `VarAddCommand` (`var.add`) с полным циклом Undo/Redo
+- [x] L5 `statcraft_syntax`: типизированная команда пакетной и одиночной замены `BatchReplaceCommand` (`data.replace_values`) с атомарной транзакцией Undo/Redo и поддержкой поиска/замены подстрок и полных ячеек
+- [x] L6 `statcraft_app`: модальный диалог поиска и замены `FindReplaceDialog` (`dialogs/find_replace_dialog.rs`) по канону DialogKit (`DialogShell::subdialog`, вкладки Find/Replace, направление поиска Down/Up, точное совпадение ячеек, учет регистра, фильтр по столбцу)
+- [x] L6 `statcraft_app`: модальный диалог навигации `GoToDialog` (`dialogs/goto_dialog.rs`) по канону DialogKit (`DialogShell::subdialog`, `SubdialogActionBar`, вкладки Go to Case с валидацией $1 \le k \le N$ и Go to Variable с фильтрацией и векторными иконками шкал)
+- [x] L6 `statcraft_app`: реализация навигационных смещений в `DataViewState` (`scroll_to_row`, `scroll_to_col`) и `VariableViewState` (`scroll_to_var`, `selected_var`) для мгновенного скролла и визуальной подсветки
+- [x] L6 `statcraft_app`: снятие статуса `InDev` и подключение всех пунктов меню `Edit` (Cut, Copy, Copy with Variable Names, Paste, Clear, Find, Replace, Go to Case, Go to Variable, Insert Case, Insert Variable) с клавиатурными комбинациями (Ctrl+F, Ctrl+H, Ctrl+G, Ctrl+Shift+C, Ctrl+C, Ctrl+X, Ctrl+V, Delete)
+- [x] Синхронная локализация: добавление ключей диалогов поиска, замены и навигации в `locales/en.ftl` и `locales/ru.ftl`
+- [x] Тестирование и верификация: тестовый модуль `edit_navigation_tests.rs`, 100% прохождение тестов воркспейса, `xtask design-guard` (0 нарушений) и `xtask file-guard` (313 файлов).

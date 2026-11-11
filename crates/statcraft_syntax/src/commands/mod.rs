@@ -1,6 +1,7 @@
 pub mod adp_cmd;
 pub mod anova_oneway_cmd;
 pub mod auto_recode_cmd;
+pub mod batch_replace_cmd;
 pub mod binning_cmd;
 pub mod cell_edit;
 pub mod compute_cmd;
@@ -47,6 +48,7 @@ pub mod weight_cases_cmd;
 pub use adp_cmd::{AdpUndoEntry, PrepareDataModelingCommand};
 pub use anova_oneway_cmd::OneWayAnovaCommand;
 pub use auto_recode_cmd::AutoRecodeCommand;
+pub use batch_replace_cmd::BatchReplaceCommand;
 pub use binning_cmd::VisualBinningCommand;
 pub use cell_edit::CellEditCommand;
 pub use compute_cmd::ComputeVariableCommand;

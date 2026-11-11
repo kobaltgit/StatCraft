@@ -13,7 +13,9 @@ pub mod date_time_dialog;
 pub mod descriptives_dialog;
 pub mod dummy_dialog;
 pub mod factor_dialog;
+pub mod find_replace_dialog;
 pub mod frequencies_dialog;
+pub mod goto_dialog;
 pub mod kruskal_define_range;
 pub mod kruskal_wallis_dialog;
 pub mod mcp_bridge_dialog;
@@ -80,9 +82,13 @@ pub use descriptives_dialog::{
 };
 pub use dummy_dialog::{render_dummy_dialog, DummyDialogAction, DummyDialogState};
 pub use factor_dialog::{render_factor_dialog, FactorDialogAction, FactorDialogState};
+pub use find_replace_dialog::{
+    render_find_replace_dialog, FindReplaceAction, FindReplaceDialogState, FindReplaceMode,
+};
 pub use frequencies_dialog::{
     render_frequencies_dialog, FrequenciesDialogAction, FrequenciesDialogState,
 };
+pub use goto_dialog::{render_goto_dialog, GoToAction, GoToDialogState, GoToTab};
 pub use kruskal_wallis_dialog::{
     render_kruskal_wallis_dialog, KruskalWallisDialogAction, KruskalWallisDialogState,
 };

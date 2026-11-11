@@ -63,7 +63,20 @@ impl EngineCommand for VarAddCommand {
             }
         })?;
 
-        let col_idx = ds.add_variable(name, DataType::Numeric { decimals: 2 }, Measure::Scale)?;
+        let col_idx = if let Some(req_idx) = params
+            .get("col_index")
+            .and_then(|v| v.as_u64())
+            .map(|v| v as usize)
+        {
+            ds.insert_variable(
+                req_idx,
+                name,
+                DataType::Numeric { decimals: 2 },
+                Measure::Scale,
+            )?
+        } else {
+            ds.add_variable(name, DataType::Numeric { decimals: 2 }, Measure::Scale)?
+        };
 
         let mut hist = match self.history.lock() {
             Ok(g) => g,
@@ -232,18 +245,24 @@ impl EngineCommand for DataAddRowCommand {
         dataset.is_some()
     }
 
-    fn execute(
-        &self,
-        dataset: &mut Option<DataSet>,
-        _params: Value,
-    ) -> Result<Value, CommandError> {
+    fn execute(&self, dataset: &mut Option<DataSet>, params: Value) -> Result<Value, CommandError> {
         let ds = dataset
             .as_mut()
             .ok_or_else(|| CommandError::Disabled(self.id().to_string()))?;
 
-        ds.add_empty_row();
-        let new_row_count = ds.row_count();
-        let row_idx = new_row_count.saturating_sub(1);
+        let row_idx = if let Some(req_idx) = params
+            .get("row_index")
+            .and_then(|v| v.as_u64())
+            .map(|v| v as usize)
+        {
+            let clamped = req_idx.min(ds.row_count());
+            let null_row = vec![RawValue::Null; ds.col_count()];
+            ds.insert_row(clamped, &null_row);
+            clamped
+        } else {
+            ds.add_empty_row();
+            ds.row_count().saturating_sub(1)
+        };
 
         let mut hist = match self.history.lock() {
             Ok(g) => g,
@@ -253,7 +272,8 @@ impl EngineCommand for DataAddRowCommand {
 
         Ok(json!({
             "status": "success",
-            "row_count": new_row_count
+            "row_index": row_idx,
+            "row_count": ds.row_count()
         }))
     }
 

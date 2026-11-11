@@ -4,15 +4,16 @@ use crate::dialogs::ConfirmSaveDialogState;
 use crate::dialogs::{
     AdpDialogState, AutoRecodeDialogState, ComputeDialogState, CorrelationsDialogState,
     CountValuesDialogState, CrosstabsDialogState, DateTimeDialogState, DescriptivesDialogState,
-    DummyDialogState, FactorDialogState, FrequenciesDialogState,
-    IndependentSamplesTTestDialogState, KruskalWallisDialogState, LinearRegressionDialogState,
-    McpBridgeDialogState, MeansDialogState, MissingValuesDialogState, NonparamRelatedDialogState,
-    NonparamTwoSampleDialogState, OneSampleTTestDialogState, OneWayAnovaDialogState,
-    OptimalBinningDialogState, PairedSamplesTTestDialogState, ProgrammabilityDialogState,
-    RandomSeedDialogState, RankCasesDialogState, RecodeDialogState, ReliabilityDialogState,
-    ReplaceMissingDialogState, SelectCasesDialogState, ShiftValuesDialogState,
-    SortCasesDialogState, SplitFileDialogState, TimeSeriesDialogState, ValueLabelsDialogState,
-    VariableTypeDialogState, VisualBinningDialogState, WeightCasesDialogState,
+    DummyDialogState, FactorDialogState, FindReplaceDialogState, FrequenciesDialogState,
+    GoToDialogState, IndependentSamplesTTestDialogState, KruskalWallisDialogState,
+    LinearRegressionDialogState, McpBridgeDialogState, MeansDialogState, MissingValuesDialogState,
+    NonparamRelatedDialogState, NonparamTwoSampleDialogState, OneSampleTTestDialogState,
+    OneWayAnovaDialogState, OptimalBinningDialogState, PairedSamplesTTestDialogState,
+    ProgrammabilityDialogState, RandomSeedDialogState, RankCasesDialogState, RecodeDialogState,
+    ReliabilityDialogState, ReplaceMissingDialogState, SelectCasesDialogState,
+    ShiftValuesDialogState, SortCasesDialogState, SplitFileDialogState, TimeSeriesDialogState,
+    ValueLabelsDialogState, VariableTypeDialogState, VisualBinningDialogState,
+    WeightCasesDialogState,
 };
 use crate::recent_files::RecentFiles;
 use crate::views::{
@@ -88,6 +89,9 @@ pub struct StatCraftApp {
     pub programmability_dialog_state: ProgrammabilityDialogState,
     pub random_seed_dialog_state: RandomSeedDialogState,
     pub mcp_bridge_dialog_state: McpBridgeDialogState,
+    pub find_replace_dialog_state: FindReplaceDialogState,
+    pub goto_dialog_state: GoToDialogState,
+    pub clipboard_cache: Option<String>,
     pub bridge_service: BridgeService,
     pub pending_variable_action: VariableViewAction,
     pub status_message: StatusMessage,
@@ -158,6 +162,9 @@ impl StatCraftApp {
             programmability_dialog_state: ProgrammabilityDialogState::default(),
             random_seed_dialog_state: RandomSeedDialogState::default(),
             mcp_bridge_dialog_state: McpBridgeDialogState::default(),
+            find_replace_dialog_state: FindReplaceDialogState::default(),
+            goto_dialog_state: GoToDialogState::default(),
+            clipboard_cache: None,
             bridge_service: BridgeService::new(false),
             pending_variable_action: VariableViewAction::None,
             status_message: StatusMessage::Ready,
@@ -370,6 +377,62 @@ impl eframe::App for StatCraftApp {
             ))
         }) {
             self.open_project_dialog();
+        }
+        if ctx.input_mut(|i| {
+            i.consume_shortcut(&egui::KeyboardShortcut::new(
+                egui::Modifiers::COMMAND,
+                egui::Key::F,
+            ))
+        }) {
+            self.open_find_dialog();
+        }
+        if ctx.input_mut(|i| {
+            i.consume_shortcut(&egui::KeyboardShortcut::new(
+                egui::Modifiers::COMMAND,
+                egui::Key::H,
+            ))
+        }) {
+            self.open_replace_dialog();
+        }
+        if ctx.input_mut(|i| {
+            i.consume_shortcut(&egui::KeyboardShortcut::new(
+                egui::Modifiers::COMMAND,
+                egui::Key::G,
+            ))
+        }) {
+            self.open_goto_case_dialog();
+        }
+        if ctx.input_mut(|i| {
+            i.consume_shortcut(&egui::KeyboardShortcut::new(
+                egui::Modifiers::COMMAND | egui::Modifiers::SHIFT,
+                egui::Key::C,
+            ))
+        }) {
+            self.copy_with_variable_names(ctx);
+        }
+        if ctx.input_mut(|i| {
+            i.consume_shortcut(&egui::KeyboardShortcut::new(
+                egui::Modifiers::COMMAND,
+                egui::Key::C,
+            ))
+        }) {
+            self.copy_selected_cell(ctx);
+        }
+        if ctx.input_mut(|i| {
+            i.consume_shortcut(&egui::KeyboardShortcut::new(
+                egui::Modifiers::COMMAND,
+                egui::Key::X,
+            ))
+        }) {
+            self.cut_selected_cell(ctx);
+        }
+        if ctx.input_mut(|i| {
+            i.consume_shortcut(&egui::KeyboardShortcut::new(
+                egui::Modifiers::COMMAND,
+                egui::Key::V,
+            ))
+        }) {
+            self.paste_selected_cell(ctx);
         }
 
         // 1. Top Custom Title Bar (CSD)
@@ -716,6 +779,7 @@ impl eframe::App for StatCraftApp {
 
         // 5. Modal Dialogs
         self.handle_dialogs(ctx);
+        self.handle_edit_dialogs(ctx);
         self.handle_confirm_save_dialog(ctx);
     }
 

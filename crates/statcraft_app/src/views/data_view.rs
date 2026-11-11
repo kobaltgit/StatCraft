@@ -1,4 +1,4 @@
-﻿use crate::theme::Tokens;
+use crate::theme::Tokens;
 use crate::widgets::paint_measure_icon;
 use egui::{pos2, vec2, Align2, FontId, Key, Rect, ScrollArea, Sense, Stroke, Ui};
 use statcraft_core::DataSet;
@@ -10,6 +10,8 @@ pub struct DataViewState {
     pub editing_cell: Option<(usize, usize)>,
     pub edit_buffer: String,
     pub focus_edit: bool,
+    pub scroll_to_row: Option<usize>,
+    pub scroll_to_col: Option<usize>,
 }
 
 impl Default for DataViewState {
@@ -20,6 +22,8 @@ impl Default for DataViewState {
             editing_cell: None,
             edit_buffer: String::new(),
             focus_edit: false,
+            scroll_to_row: None,
+            scroll_to_col: None,
         }
     }
 }
@@ -80,258 +84,230 @@ pub fn render_data_view(ui: &mut Ui, dataset: &mut Option<DataSet>, state: &mut 
     let mut next_edit_target = None;
 
     // Outer horizontal scroll area so headers and data rows stay in sync horizontally
-    ScrollArea::horizontal()
-        .auto_shrink([false, false])
-        .show(ui, |ui| {
-            // 1. Pinned Column Headers Row
-            ui.horizontal(|ui| {
-                ui.spacing_mut().item_spacing = vec2(0.0, 0.0);
+    let mut h_scroll = ScrollArea::horizontal().auto_shrink([false, false]);
+    if let Some(target_col) = state.scroll_to_col.take() {
+        h_scroll = h_scroll.horizontal_scroll_offset(target_col as f32 * col_width);
+    }
+    h_scroll.show(ui, |ui| {
+        // 1. Pinned Column Headers Row
+        ui.horizontal(|ui| {
+            ui.spacing_mut().item_spacing = vec2(0.0, 0.0);
 
-                // Top-left corner (Row number column header)
-                let (rect, _) =
-                    ui.allocate_exact_size(vec2(row_header_width, row_height), Sense::hover());
+            // Top-left corner (Row number column header)
+            let (rect, _) =
+                ui.allocate_exact_size(vec2(row_header_width, row_height), Sense::hover());
+            ui.painter().rect_filled(rect, 0.0_f32, Tokens::bg_header());
+            ui.painter()
+                .rect_stroke(rect, 0.0_f32, Stroke::new(1.0_f32, Tokens::border()));
+            ui.painter().text(
+                rect.center(),
+                Align2::CENTER_CENTER,
+                t!("header-row"),
+                FontId::proportional(12.0),
+                Tokens::text_primary(),
+            );
+
+            // Variable column headers
+            for col_idx in 0..total_cols {
+                let var_meta = ds.dictionary.get(col_idx);
+                let col_name = var_meta.map(|v| v.name.as_str()).unwrap_or("VAR");
+                let measure = var_meta
+                    .map(|v| v.measure)
+                    .unwrap_or(statcraft_core::Measure::Nominal);
+
+                let (rect, _) = ui.allocate_exact_size(vec2(col_width, row_height), Sense::hover());
                 ui.painter().rect_filled(rect, 0.0_f32, Tokens::bg_header());
                 ui.painter()
                     .rect_stroke(rect, 0.0_f32, Stroke::new(1.0_f32, Tokens::border()));
-                ui.painter().text(
-                    rect.center(),
-                    Align2::CENTER_CENTER,
-                    t!("header-row"),
+
+                // Vector measure icon
+                let icon_rect = Rect::from_min_size(
+                    pos2(rect.min.x + 4.0_f32, rect.min.y + 3.0_f32),
+                    vec2(16.0_f32, 16.0_f32),
+                );
+                paint_measure_icon(ui.painter(), icon_rect, measure);
+
+                // Column name with clipping
+                let text_clip_rect =
+                    Rect::from_min_max(pos2(rect.min.x + 22.0_f32, rect.min.y), rect.max);
+                ui.painter().with_clip_rect(text_clip_rect).text(
+                    pos2(rect.min.x + 24.0_f32, rect.center().y),
+                    Align2::LEFT_CENTER,
+                    col_name,
                     FontId::proportional(12.0),
                     Tokens::text_primary(),
                 );
+            }
+        });
 
-                // Variable column headers
-                for col_idx in 0..total_cols {
-                    let var_meta = ds.dictionary.get(col_idx);
-                    let col_name = var_meta.map(|v| v.name.as_str()).unwrap_or("VAR");
-                    let measure = var_meta
-                        .map(|v| v.measure)
-                        .unwrap_or(statcraft_core::Measure::Nominal);
+        // 2. Data Rows (+ 1 ghost row at bottom for appending new cases)
+        let display_rows = total_rows + 1;
+        let mut v_scroll = ScrollArea::vertical().auto_shrink([false, false]);
+        if let Some(target_row) = state.scroll_to_row.take() {
+            v_scroll = v_scroll.vertical_scroll_offset(target_row as f32 * row_height);
+        }
+        v_scroll.show_rows(ui, row_height, display_rows, |ui, row_range| {
+            for row_idx in row_range {
+                ui.horizontal(|ui| {
+                    ui.spacing_mut().item_spacing = vec2(0.0, 0.0);
 
-                    let (rect, _) =
-                        ui.allocate_exact_size(vec2(col_width, row_height), Sense::hover());
+                    // Row index header cell with Context Menu
+                    let (rect, res) =
+                        ui.allocate_exact_size(vec2(row_header_width, row_height), Sense::click());
                     ui.painter().rect_filled(rect, 0.0_f32, Tokens::bg_header());
                     ui.painter()
-                        .rect_stroke(rect, 0.0_f32, Stroke::new(1.0_f32, Tokens::border()));
+                        .rect_stroke(rect, 0.0_f32, Stroke::new(0.5_f32, Tokens::border()));
 
-                    // Vector measure icon
-                    let icon_rect = Rect::from_min_size(
-                        pos2(rect.min.x + 4.0_f32, rect.min.y + 3.0_f32),
-                        vec2(16.0_f32, 16.0_f32),
+                    let row_label = if row_idx < total_rows {
+                        format!("{}", row_idx + 1)
+                    } else {
+                        "*".to_string()
+                    };
+
+                    ui.painter().text(
+                        rect.center(),
+                        Align2::CENTER_CENTER,
+                        row_label,
+                        FontId::proportional(11.0),
+                        Tokens::text_muted(),
                     );
-                    paint_measure_icon(ui.painter(), icon_rect, measure);
 
-                    // Column name with clipping
-                    let text_clip_rect =
-                        Rect::from_min_max(pos2(rect.min.x + 22.0_f32, rect.min.y), rect.max);
-                    ui.painter().with_clip_rect(text_clip_rect).text(
-                        pos2(rect.min.x + 24.0_f32, rect.center().y),
-                        Align2::LEFT_CENTER,
-                        col_name,
-                        FontId::proportional(12.0),
-                        Tokens::text_primary(),
-                    );
-                }
-            });
+                    if row_idx < total_rows && !ds.is_row_active(row_idx) {
+                        let stroke = Stroke::new(1.0_f32, Tokens::text_muted());
+                        let slash_start = egui::pos2(rect.center().x - 12.0, rect.center().y + 7.0);
+                        let slash_end = egui::pos2(rect.center().x + 12.0, rect.center().y - 7.0);
+                        ui.painter().line_segment([slash_start, slash_end], stroke);
+                    }
 
-            // 2. Data Rows (+ 1 ghost row at bottom for appending new cases)
-            let display_rows = total_rows + 1;
-            ScrollArea::vertical()
-                .auto_shrink([false, false])
-                .show_rows(ui, row_height, display_rows, |ui, row_range| {
-                    for row_idx in row_range {
-                        ui.horizontal(|ui| {
-                            ui.spacing_mut().item_spacing = vec2(0.0, 0.0);
-
-                            // Row index header cell with Context Menu
-                            let (rect, res) = ui.allocate_exact_size(
-                                vec2(row_header_width, row_height),
-                                Sense::click(),
-                            );
-                            ui.painter().rect_filled(rect, 0.0_f32, Tokens::bg_header());
-                            ui.painter().rect_stroke(
-                                rect,
-                                0.0_f32,
-                                Stroke::new(0.5_f32, Tokens::border()),
-                            );
-
-                            let row_label = if row_idx < total_rows {
-                                format!("{}", row_idx + 1)
-                            } else {
-                                "*".to_string()
-                            };
-
-                            ui.painter().text(
-                                rect.center(),
-                                Align2::CENTER_CENTER,
-                                row_label,
-                                FontId::proportional(11.0),
-                                Tokens::text_muted(),
-                            );
-
-                            if row_idx < total_rows && !ds.is_row_active(row_idx) {
-                                let stroke = Stroke::new(1.0_f32, Tokens::text_muted());
-                                let slash_start =
-                                    egui::pos2(rect.center().x - 12.0, rect.center().y + 7.0);
-                                let slash_end =
-                                    egui::pos2(rect.center().x + 12.0, rect.center().y - 7.0);
-                                ui.painter().line_segment([slash_start, slash_end], stroke);
+                    if row_idx < total_rows {
+                        res.context_menu(|ui| {
+                            if ui.button(t!("menu-insert-case")).clicked() {
+                                action_insert_row = Some(row_idx);
+                                ui.close_menu();
                             }
-
-                            if row_idx < total_rows {
-                                res.context_menu(|ui| {
-                                    if ui.button(t!("menu-insert-case")).clicked() {
-                                        action_insert_row = Some(row_idx);
-                                        ui.close_menu();
-                                    }
-                                    if ui.button(t!("menu-delete-case")).clicked() {
-                                        action_delete_row = Some(row_idx);
-                                        ui.close_menu();
-                                    }
-                                });
-                            }
-
-                            // Data cells for this row
-                            for col_idx in 0..total_cols {
-                                let is_selected = state.selected_cell == Some((row_idx, col_idx));
-                                let is_editing = state.editing_cell == Some((row_idx, col_idx));
-
-                                let bg_color = if is_selected {
-                                    Tokens::bg_selected()
-                                } else if row_idx % 2 == 0 {
-                                    Tokens::bg_row_even()
-                                } else {
-                                    Tokens::bg_row_odd()
-                                };
-
-                                let (rect, response) = ui.allocate_exact_size(
-                                    vec2(col_width, row_height),
-                                    Sense::click(),
-                                );
-
-                                if response.clicked() && !is_editing {
-                                    if let Some((cur_r, cur_c)) = state.editing_cell {
-                                        commit_edit =
-                                            Some((cur_r, cur_c, state.edit_buffer.clone()));
-                                        state.editing_cell = None;
-                                    }
-                                    state.selected_cell = Some((row_idx, col_idx));
-                                }
-
-                                if response.double_clicked() && !is_editing {
-                                    let current_val = if row_idx < total_rows {
-                                        ds.get_cell_display(row_idx, col_idx, false)
-                                    } else {
-                                        String::new()
-                                    };
-                                    let buffer = if current_val == "." {
-                                        String::new()
-                                    } else {
-                                        current_val
-                                    };
-                                    state.edit_buffer = buffer;
-                                    state.editing_cell = Some((row_idx, col_idx));
-                                    state.focus_edit = true;
-                                }
-
-                                ui.painter().rect_filled(rect, 0.0_f32, bg_color);
-                                ui.painter().rect_stroke(
-                                    rect,
-                                    0.0_f32,
-                                    Stroke::new(0.5_f32, Tokens::border()),
-                                );
-
-                                if is_editing {
-                                    let inner_rect = rect.shrink2(vec2(2.0_f32, 1.0_f32));
-                                    ui.allocate_new_ui(
-                                        egui::UiBuilder::new().max_rect(inner_rect),
-                                        |ui| {
-                                            let text_edit =
-                                                egui::TextEdit::singleline(&mut state.edit_buffer)
-                                                    .frame(false)
-                                                    .clip_text(true);
-                                            let text_res =
-                                                ui.add_sized(inner_rect.size(), text_edit);
-
-                                            if state.focus_edit {
-                                                text_res.request_focus();
-                                                state.focus_edit = false;
-                                            }
-
-                                            let enter_pressed =
-                                                ui.input(|i| i.key_pressed(Key::Enter));
-                                            let tab_pressed = ui.input(|i| i.key_pressed(Key::Tab));
-                                            let shift = ui.input(|i| i.modifiers.shift);
-                                            let esc_pressed =
-                                                ui.input(|i| i.key_pressed(Key::Escape));
-
-                                            if enter_pressed {
-                                                commit_edit = Some((
-                                                    row_idx,
-                                                    col_idx,
-                                                    state.edit_buffer.clone(),
-                                                ));
-                                                state.editing_cell = None;
-                                                next_edit_target = Some((row_idx + 1, col_idx));
-                                            } else if tab_pressed {
-                                                commit_edit = Some((
-                                                    row_idx,
-                                                    col_idx,
-                                                    state.edit_buffer.clone(),
-                                                ));
-                                                state.editing_cell = None;
-                                                if shift {
-                                                    if col_idx > 0 {
-                                                        next_edit_target =
-                                                            Some((row_idx, col_idx - 1));
-                                                    }
-                                                } else if col_idx + 1 < total_cols {
-                                                    next_edit_target = Some((row_idx, col_idx + 1));
-                                                } else {
-                                                    next_edit_target = Some((row_idx + 1, 0));
-                                                }
-                                            } else if esc_pressed {
-                                                state.editing_cell = None;
-                                            } else if text_res.lost_focus()
-                                                && !enter_pressed
-                                                && !tab_pressed
-                                                && !esc_pressed
-                                            {
-                                                commit_edit = Some((
-                                                    row_idx,
-                                                    col_idx,
-                                                    state.edit_buffer.clone(),
-                                                ));
-                                                state.editing_cell = None;
-                                            }
-                                        },
-                                    );
-                                } else {
-                                    let display_val = if row_idx < total_rows {
-                                        ds.get_cell_display(
-                                            row_idx,
-                                            col_idx,
-                                            state.show_value_labels,
-                                        )
-                                    } else {
-                                        String::new()
-                                    };
-
-                                    let text_clip_rect = rect.shrink2(vec2(4.0_f32, 1.0_f32));
-                                    ui.painter().with_clip_rect(text_clip_rect).text(
-                                        pos2(rect.min.x + 6.0_f32, rect.center().y),
-                                        Align2::LEFT_CENTER,
-                                        display_val,
-                                        FontId::proportional(12.0),
-                                        Tokens::text_primary(),
-                                    );
-                                }
+                            if ui.button(t!("menu-delete-case")).clicked() {
+                                action_delete_row = Some(row_idx);
+                                ui.close_menu();
                             }
                         });
                     }
+
+                    // Data cells for this row
+                    for col_idx in 0..total_cols {
+                        let is_selected = state.selected_cell == Some((row_idx, col_idx));
+                        let is_editing = state.editing_cell == Some((row_idx, col_idx));
+
+                        let bg_color = if is_selected {
+                            Tokens::bg_selected()
+                        } else if row_idx % 2 == 0 {
+                            Tokens::bg_row_even()
+                        } else {
+                            Tokens::bg_row_odd()
+                        };
+
+                        let (rect, response) =
+                            ui.allocate_exact_size(vec2(col_width, row_height), Sense::click());
+
+                        if response.clicked() && !is_editing {
+                            if let Some((cur_r, cur_c)) = state.editing_cell {
+                                commit_edit = Some((cur_r, cur_c, state.edit_buffer.clone()));
+                                state.editing_cell = None;
+                            }
+                            state.selected_cell = Some((row_idx, col_idx));
+                        }
+
+                        if response.double_clicked() && !is_editing {
+                            let current_val = if row_idx < total_rows {
+                                ds.get_cell_display(row_idx, col_idx, false)
+                            } else {
+                                String::new()
+                            };
+                            let buffer = if current_val == "." {
+                                String::new()
+                            } else {
+                                current_val
+                            };
+                            state.edit_buffer = buffer;
+                            state.editing_cell = Some((row_idx, col_idx));
+                            state.focus_edit = true;
+                        }
+
+                        ui.painter().rect_filled(rect, 0.0_f32, bg_color);
+                        ui.painter().rect_stroke(
+                            rect,
+                            0.0_f32,
+                            Stroke::new(0.5_f32, Tokens::border()),
+                        );
+
+                        if is_editing {
+                            let inner_rect = rect.shrink2(vec2(2.0_f32, 1.0_f32));
+                            ui.allocate_new_ui(egui::UiBuilder::new().max_rect(inner_rect), |ui| {
+                                let text_edit = egui::TextEdit::singleline(&mut state.edit_buffer)
+                                    .frame(false)
+                                    .clip_text(true);
+                                let text_res = ui.add_sized(inner_rect.size(), text_edit);
+
+                                if state.focus_edit {
+                                    text_res.request_focus();
+                                    state.focus_edit = false;
+                                }
+
+                                let enter_pressed = ui.input(|i| i.key_pressed(Key::Enter));
+                                let tab_pressed = ui.input(|i| i.key_pressed(Key::Tab));
+                                let shift = ui.input(|i| i.modifiers.shift);
+                                let esc_pressed = ui.input(|i| i.key_pressed(Key::Escape));
+
+                                if enter_pressed {
+                                    commit_edit =
+                                        Some((row_idx, col_idx, state.edit_buffer.clone()));
+                                    state.editing_cell = None;
+                                    next_edit_target = Some((row_idx + 1, col_idx));
+                                } else if tab_pressed {
+                                    commit_edit =
+                                        Some((row_idx, col_idx, state.edit_buffer.clone()));
+                                    state.editing_cell = None;
+                                    if shift {
+                                        if col_idx > 0 {
+                                            next_edit_target = Some((row_idx, col_idx - 1));
+                                        }
+                                    } else if col_idx + 1 < total_cols {
+                                        next_edit_target = Some((row_idx, col_idx + 1));
+                                    } else {
+                                        next_edit_target = Some((row_idx + 1, 0));
+                                    }
+                                } else if esc_pressed {
+                                    state.editing_cell = None;
+                                } else if text_res.lost_focus()
+                                    && !enter_pressed
+                                    && !tab_pressed
+                                    && !esc_pressed
+                                {
+                                    commit_edit =
+                                        Some((row_idx, col_idx, state.edit_buffer.clone()));
+                                    state.editing_cell = None;
+                                }
+                            });
+                        } else {
+                            let display_val = if row_idx < total_rows {
+                                ds.get_cell_display(row_idx, col_idx, state.show_value_labels)
+                            } else {
+                                String::new()
+                            };
+
+                            let text_clip_rect = rect.shrink2(vec2(4.0_f32, 1.0_f32));
+                            ui.painter().with_clip_rect(text_clip_rect).text(
+                                pos2(rect.min.x + 6.0_f32, rect.center().y),
+                                Align2::LEFT_CENTER,
+                                display_val,
+                                FontId::proportional(12.0),
+                                Tokens::text_primary(),
+                            );
+                        }
+                    }
                 });
+            }
         });
+    });
 
     if let Some((r, c, text)) = commit_edit {
         while r >= ds.row_count() {

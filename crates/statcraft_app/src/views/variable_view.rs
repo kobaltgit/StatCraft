@@ -17,6 +17,8 @@ pub enum VariableViewAction {
 pub struct VariableViewState {
     pub new_var_name: String,
     pub editing_name: Option<(usize, String)>,
+    pub selected_var: Option<usize>,
+    pub scroll_to_var: Option<usize>,
 }
 
 pub fn render_variable_view(
@@ -140,191 +142,264 @@ pub fn render_variable_view(
 
             // 2. Variable Rows + 1 Ghost Row for Adding
             let total_rows = var_count + 1;
-            ScrollArea::vertical()
-                .auto_shrink([false, false])
-                .show_rows(ui, row_height, total_rows, |ui, row_range| {
-                    for i in row_range {
-                        let bg_color = if i % 2 == 0 {
-                            Tokens::bg_row_even()
-                        } else {
-                            Tokens::bg_row_odd()
-                        };
+            let mut v_scroll = ScrollArea::vertical().auto_shrink([false, false]);
+            if let Some(target_var) = state.scroll_to_var.take() {
+                v_scroll = v_scroll.vertical_scroll_offset(target_var as f32 * row_height);
+            }
+            v_scroll.show_rows(ui, row_height, total_rows, |ui, row_range| {
+                for i in row_range {
+                    let bg_color = if state.selected_var == Some(i) {
+                        Tokens::bg_selected()
+                    } else if i % 2 == 0 {
+                        Tokens::bg_row_even()
+                    } else {
+                        Tokens::bg_row_odd()
+                    };
 
-                        if i < var_count {
-                            // Existing Variable Row
-                            ui.horizontal(|ui| {
-                                ui.spacing_mut().item_spacing = vec2(0.0, 0.0);
+                    if i < var_count {
+                        // Existing Variable Row
+                        ui.horizontal(|ui| {
+                            ui.spacing_mut().item_spacing = vec2(0.0, 0.0);
 
-                                let mut new_label = None;
-                                let mut new_measure = None;
-                                let mut new_align = None;
-                                let mut new_role = None;
-                                let mut width_delta = 0_isize;
-                                let mut decimals_delta = 0_isize;
+                            let mut new_label = None;
+                            let mut new_measure = None;
+                            let mut new_align = None;
+                            let mut new_role = None;
+                            let mut width_delta = 0_isize;
+                            let mut decimals_delta = 0_isize;
 
-                                if let Some(var) = ds.dictionary.get(i) {
-                                    // 0. Row Index Cell with Context Menu
-                                    let (rect, res) = ui.allocate_exact_size(
-                                        vec2(headers[0].1, row_height),
-                                        Sense::click(),
-                                    );
-                                    ui.painter().rect_filled(rect, 0.0_f32, Tokens::bg_header());
-                                    ui.painter().rect_stroke(
-                                        rect,
-                                        0.0_f32,
-                                        Stroke::new(0.5_f32, Tokens::border()),
-                                    );
-                                    ui.painter().text(
-                                        rect.center(),
-                                        Align2::CENTER_CENTER,
-                                        format!("{}", i + 1),
-                                        FontId::proportional(11.0),
-                                        Tokens::text_muted(),
-                                    );
+                            if let Some(var) = ds.dictionary.get(i) {
+                                // 0. Row Index Cell with Context Menu
+                                let (rect, res) = ui.allocate_exact_size(
+                                    vec2(headers[0].1, row_height),
+                                    Sense::click(),
+                                );
+                                ui.painter().rect_filled(rect, 0.0_f32, Tokens::bg_header());
+                                ui.painter().rect_stroke(
+                                    rect,
+                                    0.0_f32,
+                                    Stroke::new(0.5_f32, Tokens::border()),
+                                );
+                                ui.painter().text(
+                                    rect.center(),
+                                    Align2::CENTER_CENTER,
+                                    format!("{}", i + 1),
+                                    FontId::proportional(11.0),
+                                    Tokens::text_muted(),
+                                );
 
-                                    res.context_menu(|ui| {
-                                        if ui.button(t!("menu-insert-variable")).clicked() {
-                                            action_insert_var = Some(i);
-                                            ui.close_menu();
-                                        }
-                                        if ui.button(t!("menu-delete-variable")).clicked() {
-                                            action_delete_var = Some(i);
-                                            ui.close_menu();
-                                        }
-                                    });
+                                res.context_menu(|ui| {
+                                    if ui.button(t!("menu-insert-variable")).clicked() {
+                                        action_insert_var = Some(i);
+                                        ui.close_menu();
+                                    }
+                                    if ui.button(t!("menu-delete-variable")).clicked() {
+                                        action_delete_var = Some(i);
+                                        ui.close_menu();
+                                    }
+                                });
 
-                                    // 1. Name Cell (In-place editable singleline TextEdit)
-                                    let (rect, _) = ui.allocate_exact_size(
-                                        vec2(headers[1].1, row_height),
-                                        Sense::hover(),
-                                    );
-                                    ui.painter().rect_filled(rect, 0.0_f32, bg_color);
-                                    ui.painter().rect_stroke(
-                                        rect,
-                                        0.0_f32,
-                                        Stroke::new(0.5_f32, Tokens::border()),
-                                    );
+                                // 1. Name Cell (In-place editable singleline TextEdit)
+                                let (rect, _) = ui.allocate_exact_size(
+                                    vec2(headers[1].1, row_height),
+                                    Sense::hover(),
+                                );
+                                ui.painter().rect_filled(rect, 0.0_f32, bg_color);
+                                ui.painter().rect_stroke(
+                                    rect,
+                                    0.0_f32,
+                                    Stroke::new(0.5_f32, Tokens::border()),
+                                );
 
-                                    let inner_rect = rect.shrink2(vec2(2.0_f32, 1.0_f32));
-                                    ui.allocate_new_ui(
-                                        egui::UiBuilder::new().max_rect(inner_rect),
-                                        |ui| {
-                                            let mut name_text =
-                                                if let Some((edit_idx, ref cur_text)) =
-                                                    state.editing_name
-                                                {
-                                                    if edit_idx == i {
-                                                        cur_text.clone()
-                                                    } else {
-                                                        var.name.clone()
-                                                    }
-                                                } else {
-                                                    var.name.clone()
-                                                };
-
-                                            let text_edit =
-                                                egui::TextEdit::singleline(&mut name_text)
-                                                    .frame(false)
-                                                    .clip_text(true);
-                                            let text_res =
-                                                ui.add_sized(inner_rect.size(), text_edit);
-
-                                            if text_res.changed() {
-                                                state.editing_name = Some((i, name_text.clone()));
+                                let inner_rect = rect.shrink2(vec2(2.0_f32, 1.0_f32));
+                                ui.allocate_new_ui(
+                                    egui::UiBuilder::new().max_rect(inner_rect),
+                                    |ui| {
+                                        let mut name_text = if let Some((edit_idx, ref cur_text)) =
+                                            state.editing_name
+                                        {
+                                            if edit_idx == i {
+                                                cur_text.clone()
+                                            } else {
+                                                var.name.clone()
                                             }
+                                        } else {
+                                            var.name.clone()
+                                        };
 
-                                            if text_res.lost_focus() {
-                                                if let Some((edit_idx, ref committed_name)) =
-                                                    state.editing_name
+                                        let text_edit = egui::TextEdit::singleline(&mut name_text)
+                                            .frame(false)
+                                            .clip_text(true);
+                                        let text_res = ui.add_sized(inner_rect.size(), text_edit);
+
+                                        if text_res.changed() {
+                                            state.editing_name = Some((i, name_text.clone()));
+                                        }
+
+                                        if text_res.lost_focus() {
+                                            if let Some((edit_idx, ref committed_name)) =
+                                                state.editing_name
+                                            {
+                                                if edit_idx == i
+                                                    && !committed_name.trim().is_empty()
+                                                    && committed_name.trim() != var.name
                                                 {
-                                                    if edit_idx == i
-                                                        && !committed_name.trim().is_empty()
-                                                        && committed_name.trim() != var.name
-                                                    {
-                                                        rename_action = Some((
-                                                            i,
-                                                            committed_name.trim().to_string(),
-                                                        ));
-                                                    }
+                                                    rename_action = Some((
+                                                        i,
+                                                        committed_name.trim().to_string(),
+                                                    ));
                                                 }
-                                                state.editing_name = None;
                                             }
-                                        },
-                                    );
+                                            state.editing_name = None;
+                                        }
+                                    },
+                                );
 
-                                    // 2. Type Cell + [...] button to open VariableTypeDialog
-                                    let (rect, res) = ui.allocate_exact_size(
-                                        vec2(headers[2].1, row_height),
-                                        Sense::click(),
-                                    );
-                                    ui.painter().rect_filled(rect, 0.0_f32, bg_color);
-                                    ui.painter().rect_stroke(
-                                        rect,
-                                        0.0_f32,
-                                        Stroke::new(0.5_f32, Tokens::border()),
-                                    );
-                                    let type_str = t!(var.var_type.as_key());
-                                    let clip = Rect::from_min_max(
-                                        rect.min,
-                                        pos2(rect.max.x - 22.0, rect.max.y),
-                                    );
-                                    ui.painter().with_clip_rect(clip).text(
-                                        pos2(rect.min.x + 6.0_f32, rect.center().y),
-                                        Align2::LEFT_CENTER,
-                                        type_str,
-                                        FontId::proportional(12.0),
-                                        Tokens::text_primary(),
-                                    );
+                                // 2. Type Cell + [...] button to open VariableTypeDialog
+                                let (rect, res) = ui.allocate_exact_size(
+                                    vec2(headers[2].1, row_height),
+                                    Sense::click(),
+                                );
+                                ui.painter().rect_filled(rect, 0.0_f32, bg_color);
+                                ui.painter().rect_stroke(
+                                    rect,
+                                    0.0_f32,
+                                    Stroke::new(0.5_f32, Tokens::border()),
+                                );
+                                let type_str = t!(var.var_type.as_key());
+                                let clip = Rect::from_min_max(
+                                    rect.min,
+                                    pos2(rect.max.x - 22.0, rect.max.y),
+                                );
+                                ui.painter().with_clip_rect(clip).text(
+                                    pos2(rect.min.x + 6.0_f32, rect.center().y),
+                                    Align2::LEFT_CENTER,
+                                    type_str,
+                                    FontId::proportional(12.0),
+                                    Tokens::text_primary(),
+                                );
 
-                                    let btn_type_rect = Rect::from_min_max(
-                                        pos2(rect.max.x - 20.0_f32, rect.min.y + 2.0_f32),
-                                        pos2(rect.max.x - 2.0_f32, rect.max.y - 2.0_f32),
-                                    );
-                                    let btn_type_res =
-                                        ui.allocate_rect(btn_type_rect, Sense::click());
-                                    let btn_bg = if btn_type_res.hovered() {
+                                let btn_type_rect = Rect::from_min_max(
+                                    pos2(rect.max.x - 20.0_f32, rect.min.y + 2.0_f32),
+                                    pos2(rect.max.x - 2.0_f32, rect.max.y - 2.0_f32),
+                                );
+                                let btn_type_res = ui.allocate_rect(btn_type_rect, Sense::click());
+                                let btn_bg = if btn_type_res.hovered() {
+                                    Tokens::accent()
+                                } else {
+                                    Tokens::bg_header()
+                                };
+                                ui.painter().rect_filled(btn_type_rect, 2.0_f32, btn_bg);
+                                ui.painter().rect_stroke(
+                                    btn_type_rect,
+                                    2.0_f32,
+                                    Stroke::new(1.0_f32, Tokens::border()),
+                                );
+                                ui.painter().text(
+                                    btn_type_rect.center(),
+                                    Align2::CENTER_CENTER,
+                                    "...",
+                                    FontId::proportional(10.0),
+                                    Tokens::text_primary(),
+                                );
+
+                                if btn_type_res.clicked() || res.double_clicked() {
+                                    view_action = VariableViewAction::OpenVariableType(i);
+                                }
+
+                                // 3. Width Cell with ▲ / ▼ spinner
+                                let (rect, _) = ui.allocate_exact_size(
+                                    vec2(headers[3].1, row_height),
+                                    Sense::hover(),
+                                );
+                                ui.painter().rect_filled(rect, 0.0_f32, bg_color);
+                                ui.painter().rect_stroke(
+                                    rect,
+                                    0.0_f32,
+                                    Stroke::new(0.5_f32, Tokens::border()),
+                                );
+
+                                ui.painter().text(
+                                    pos2(rect.center().x - 6.0, rect.center().y),
+                                    Align2::CENTER_CENTER,
+                                    format!("{}", var.width),
+                                    FontId::proportional(12.0),
+                                    Tokens::text_primary(),
+                                );
+
+                                let up_rect = Rect::from_min_max(
+                                    pos2(rect.max.x - 14.0, rect.min.y + 2.0),
+                                    pos2(rect.max.x - 2.0, rect.center().y),
+                                );
+                                let dn_rect = Rect::from_min_max(
+                                    pos2(rect.max.x - 14.0, rect.center().y),
+                                    pos2(rect.max.x - 2.0, rect.max.y - 2.0),
+                                );
+
+                                let up_res = ui.allocate_rect(up_rect, Sense::click());
+                                let dn_res = ui.allocate_rect(dn_rect, Sense::click());
+                                if up_res.clicked() {
+                                    width_delta = 1;
+                                }
+                                if dn_res.clicked() && var.width > 1 {
+                                    width_delta = -1;
+                                }
+
+                                ui.painter().text(
+                                    up_rect.center(),
+                                    Align2::CENTER_CENTER,
+                                    "^",
+                                    FontId::proportional(9.0),
+                                    if up_res.hovered() {
                                         Tokens::accent()
                                     } else {
-                                        Tokens::bg_header()
-                                    };
-                                    ui.painter().rect_filled(btn_type_rect, 2.0_f32, btn_bg);
-                                    ui.painter().rect_stroke(
-                                        btn_type_rect,
-                                        2.0_f32,
-                                        Stroke::new(1.0_f32, Tokens::border()),
-                                    );
-                                    ui.painter().text(
-                                        btn_type_rect.center(),
-                                        Align2::CENTER_CENTER,
-                                        "...",
-                                        FontId::proportional(10.0),
-                                        Tokens::text_primary(),
-                                    );
+                                        Tokens::text_muted()
+                                    },
+                                );
+                                ui.painter().text(
+                                    dn_rect.center(),
+                                    Align2::CENTER_CENTER,
+                                    "v",
+                                    FontId::proportional(9.0),
+                                    if dn_res.hovered() {
+                                        Tokens::accent()
+                                    } else {
+                                        Tokens::text_muted()
+                                    },
+                                );
 
-                                    if btn_type_res.clicked() || res.double_clicked() {
-                                        view_action = VariableViewAction::OpenVariableType(i);
-                                    }
+                                // 4. Decimals Cell with ▲ / ▼ spinner
+                                let (rect, _) = ui.allocate_exact_size(
+                                    vec2(headers[4].1, row_height),
+                                    Sense::hover(),
+                                );
+                                ui.painter().rect_filled(rect, 0.0_f32, bg_color);
+                                ui.painter().rect_stroke(
+                                    rect,
+                                    0.0_f32,
+                                    Stroke::new(0.5_f32, Tokens::border()),
+                                );
 
-                                    // 3. Width Cell with ▲ / ▼ spinner
-                                    let (rect, _) = ui.allocate_exact_size(
-                                        vec2(headers[3].1, row_height),
-                                        Sense::hover(),
-                                    );
-                                    ui.painter().rect_filled(rect, 0.0_f32, bg_color);
-                                    ui.painter().rect_stroke(
-                                        rect,
-                                        0.0_f32,
-                                        Stroke::new(0.5_f32, Tokens::border()),
-                                    );
+                                let allows_dec = var.var_type.allows_decimals();
+                                let dec_text = if allows_dec {
+                                    format!("{}", var.decimals)
+                                } else {
+                                    "-".to_string()
+                                };
 
-                                    ui.painter().text(
-                                        pos2(rect.center().x - 6.0, rect.center().y),
-                                        Align2::CENTER_CENTER,
-                                        format!("{}", var.width),
-                                        FontId::proportional(12.0),
-                                        Tokens::text_primary(),
-                                    );
+                                ui.painter().text(
+                                    pos2(rect.center().x - 6.0, rect.center().y),
+                                    Align2::CENTER_CENTER,
+                                    dec_text,
+                                    FontId::proportional(12.0),
+                                    if allows_dec {
+                                        Tokens::text_primary()
+                                    } else {
+                                        Tokens::text_muted()
+                                    },
+                                );
 
+                                if allows_dec {
                                     let up_rect = Rect::from_min_max(
                                         pos2(rect.max.x - 14.0, rect.min.y + 2.0),
                                         pos2(rect.max.x - 2.0, rect.center().y),
@@ -336,11 +411,11 @@ pub fn render_variable_view(
 
                                     let up_res = ui.allocate_rect(up_rect, Sense::click());
                                     let dn_res = ui.allocate_rect(dn_rect, Sense::click());
-                                    if up_res.clicked() {
-                                        width_delta = 1;
+                                    if up_res.clicked() && var.decimals < 16 {
+                                        decimals_delta = 1;
                                     }
-                                    if dn_res.clicked() && var.width > 1 {
-                                        width_delta = -1;
+                                    if dn_res.clicked() && var.decimals > 0 {
+                                        decimals_delta = -1;
                                     }
 
                                     ui.painter().text(
@@ -365,392 +440,39 @@ pub fn render_variable_view(
                                             Tokens::text_muted()
                                         },
                                     );
-
-                                    // 4. Decimals Cell with ▲ / ▼ spinner
-                                    let (rect, _) = ui.allocate_exact_size(
-                                        vec2(headers[4].1, row_height),
-                                        Sense::hover(),
-                                    );
-                                    ui.painter().rect_filled(rect, 0.0_f32, bg_color);
-                                    ui.painter().rect_stroke(
-                                        rect,
-                                        0.0_f32,
-                                        Stroke::new(0.5_f32, Tokens::border()),
-                                    );
-
-                                    let allows_dec = var.var_type.allows_decimals();
-                                    let dec_text = if allows_dec {
-                                        format!("{}", var.decimals)
-                                    } else {
-                                        "-".to_string()
-                                    };
-
-                                    ui.painter().text(
-                                        pos2(rect.center().x - 6.0, rect.center().y),
-                                        Align2::CENTER_CENTER,
-                                        dec_text,
-                                        FontId::proportional(12.0),
-                                        if allows_dec {
-                                            Tokens::text_primary()
-                                        } else {
-                                            Tokens::text_muted()
-                                        },
-                                    );
-
-                                    if allows_dec {
-                                        let up_rect = Rect::from_min_max(
-                                            pos2(rect.max.x - 14.0, rect.min.y + 2.0),
-                                            pos2(rect.max.x - 2.0, rect.center().y),
-                                        );
-                                        let dn_rect = Rect::from_min_max(
-                                            pos2(rect.max.x - 14.0, rect.center().y),
-                                            pos2(rect.max.x - 2.0, rect.max.y - 2.0),
-                                        );
-
-                                        let up_res = ui.allocate_rect(up_rect, Sense::click());
-                                        let dn_res = ui.allocate_rect(dn_rect, Sense::click());
-                                        if up_res.clicked() && var.decimals < 16 {
-                                            decimals_delta = 1;
-                                        }
-                                        if dn_res.clicked() && var.decimals > 0 {
-                                            decimals_delta = -1;
-                                        }
-
-                                        ui.painter().text(
-                                            up_rect.center(),
-                                            Align2::CENTER_CENTER,
-                                            "^",
-                                            FontId::proportional(9.0),
-                                            if up_res.hovered() {
-                                                Tokens::accent()
-                                            } else {
-                                                Tokens::text_muted()
-                                            },
-                                        );
-                                        ui.painter().text(
-                                            dn_rect.center(),
-                                            Align2::CENTER_CENTER,
-                                            "v",
-                                            FontId::proportional(9.0),
-                                            if dn_res.hovered() {
-                                                Tokens::accent()
-                                            } else {
-                                                Tokens::text_muted()
-                                            },
-                                        );
-                                    }
-
-                                    // 5. Label Cell (Editable text field with borderless frame)
-                                    let (rect, _) = ui.allocate_exact_size(
-                                        vec2(headers[5].1, row_height),
-                                        Sense::click(),
-                                    );
-                                    ui.painter().rect_filled(rect, 0.0_f32, bg_color);
-                                    ui.painter().rect_stroke(
-                                        rect,
-                                        0.0_f32,
-                                        Stroke::new(0.5_f32, Tokens::border()),
-                                    );
-                                    let inner_rect = rect.shrink2(vec2(2.0_f32, 2.0_f32));
-                                    ui.allocate_new_ui(
-                                        egui::UiBuilder::new().max_rect(inner_rect),
-                                        |ui| {
-                                            let mut text = var.label.clone();
-                                            let res = ui.add_sized(
-                                                vec2(inner_rect.width(), inner_rect.height()),
-                                                egui::TextEdit::singleline(&mut text)
-                                                    .frame(false)
-                                                    .clip_text(true),
-                                            );
-                                            if res.changed() {
-                                                new_label = Some(text);
-                                            }
-                                        },
-                                    );
-
-                                    // 6. Values Count Summary & [...] button
-                                    let (rect, _) = ui.allocate_exact_size(
-                                        vec2(headers[6].1, row_height),
-                                        Sense::hover(),
-                                    );
-                                    ui.painter().rect_filled(rect, 0.0_f32, bg_color);
-                                    ui.painter().rect_stroke(
-                                        rect,
-                                        0.0_f32,
-                                        Stroke::new(0.5_f32, Tokens::border()),
-                                    );
-                                    let values_summary = if var.values.is_empty() {
-                                        t!("values-none")
-                                    } else {
-                                        t!("values-count", count = var.values.mapping.len())
-                                    };
-                                    let clip = Rect::from_min_max(
-                                        rect.min,
-                                        pos2(rect.max.x - 22.0_f32, rect.max.y),
-                                    );
-                                    ui.painter().with_clip_rect(clip).text(
-                                        pos2(rect.min.x + 6.0_f32, rect.center().y),
-                                        Align2::LEFT_CENTER,
-                                        values_summary,
-                                        FontId::proportional(11.0),
-                                        Tokens::text_primary(),
-                                    );
-
-                                    let btn_val_rect = Rect::from_min_max(
-                                        pos2(rect.max.x - 20.0_f32, rect.min.y + 2.0_f32),
-                                        pos2(rect.max.x - 2.0_f32, rect.max.y - 2.0_f32),
-                                    );
-                                    let btn_val_res =
-                                        ui.allocate_rect(btn_val_rect, Sense::click());
-                                    let btn_val_bg = if btn_val_res.hovered() {
-                                        Tokens::accent()
-                                    } else {
-                                        Tokens::bg_header()
-                                    };
-                                    ui.painter().rect_filled(btn_val_rect, 2.0_f32, btn_val_bg);
-                                    ui.painter().rect_stroke(
-                                        btn_val_rect,
-                                        2.0_f32,
-                                        Stroke::new(1.0_f32, Tokens::border()),
-                                    );
-                                    ui.painter().text(
-                                        btn_val_rect.center(),
-                                        Align2::CENTER_CENTER,
-                                        "...",
-                                        FontId::proportional(10.0),
-                                        Tokens::text_primary(),
-                                    );
-                                    if btn_val_res.clicked() {
-                                        view_action = VariableViewAction::OpenValueLabels(i);
-                                    }
-
-                                    // 7. Missing Summary & [...] button
-                                    let (rect, _) = ui.allocate_exact_size(
-                                        vec2(headers[7].1, row_height),
-                                        Sense::hover(),
-                                    );
-                                    ui.painter().rect_filled(rect, 0.0_f32, bg_color);
-                                    ui.painter().rect_stroke(
-                                        rect,
-                                        0.0_f32,
-                                        Stroke::new(0.5_f32, Tokens::border()),
-                                    );
-                                    let missing_summary =
-                                        if let Some((low, high)) = var.missing.range {
-                                            t!("missing-range-summary", low = low, high = high)
-                                        } else if !var.missing.discrete.is_empty() {
-                                            t!(
-                                                "missing-discrete-count",
-                                                count = var.missing.discrete.len()
-                                            )
-                                        } else {
-                                            t!("missing-none")
-                                        };
-                                    let clip = Rect::from_min_max(
-                                        rect.min,
-                                        pos2(rect.max.x - 22.0_f32, rect.max.y),
-                                    );
-                                    ui.painter().with_clip_rect(clip).text(
-                                        pos2(rect.min.x + 6.0_f32, rect.center().y),
-                                        Align2::LEFT_CENTER,
-                                        missing_summary,
-                                        FontId::proportional(11.0),
-                                        Tokens::text_primary(),
-                                    );
-
-                                    let btn_miss_rect = Rect::from_min_max(
-                                        pos2(rect.max.x - 20.0_f32, rect.min.y + 2.0_f32),
-                                        pos2(rect.max.x - 2.0_f32, rect.max.y - 2.0_f32),
-                                    );
-                                    let btn_miss_res =
-                                        ui.allocate_rect(btn_miss_rect, Sense::click());
-                                    let btn_miss_bg = if btn_miss_res.hovered() {
-                                        Tokens::accent()
-                                    } else {
-                                        Tokens::bg_header()
-                                    };
-                                    ui.painter()
-                                        .rect_filled(btn_miss_rect, 2.0_f32, btn_miss_bg);
-                                    ui.painter().rect_stroke(
-                                        btn_miss_rect,
-                                        2.0_f32,
-                                        Stroke::new(1.0_f32, Tokens::border()),
-                                    );
-                                    ui.painter().text(
-                                        btn_miss_rect.center(),
-                                        Align2::CENTER_CENTER,
-                                        "...",
-                                        FontId::proportional(10.0),
-                                        Tokens::text_primary(),
-                                    );
-                                    if btn_miss_res.clicked() {
-                                        view_action = VariableViewAction::OpenMissingValues(i);
-                                    }
-
-                                    // 8. Align Cell (Click to cycle Left -> Right -> Center)
-                                    let (rect, res) = ui.allocate_exact_size(
-                                        vec2(headers[8].1, row_height),
-                                        Sense::click(),
-                                    );
-                                    ui.painter().rect_filled(rect, 0.0_f32, bg_color);
-                                    ui.painter().rect_stroke(
-                                        rect,
-                                        0.0_f32,
-                                        Stroke::new(0.5_f32, Tokens::border()),
-                                    );
-
-                                    let align_label = match var.align {
-                                        Alignment::Left => t!("align-left"),
-                                        Alignment::Right => t!("align-right"),
-                                        Alignment::Center => t!("align-center"),
-                                    };
-                                    ui.painter().text(
-                                        pos2(rect.min.x + 6.0, rect.center().y),
-                                        Align2::LEFT_CENTER,
-                                        align_label,
-                                        FontId::proportional(11.0),
-                                        Tokens::text_primary(),
-                                    );
-
-                                    if res.clicked() {
-                                        let next = match var.align {
-                                            Alignment::Left => Alignment::Right,
-                                            Alignment::Right => Alignment::Center,
-                                            Alignment::Center => Alignment::Left,
-                                        };
-                                        new_align = Some(next);
-                                    }
-
-                                    // 9. Measure Cell (Vector icon + click to cycle Scale -> Ordinal -> Nominal)
-                                    let (rect, res) = ui.allocate_exact_size(
-                                        vec2(headers[9].1, row_height),
-                                        Sense::click(),
-                                    );
-                                    ui.painter().rect_filled(rect, 0.0_f32, bg_color);
-                                    ui.painter().rect_stroke(
-                                        rect,
-                                        0.0_f32,
-                                        Stroke::new(0.5_f32, Tokens::border()),
-                                    );
-
-                                    let icon_rect = Rect::from_min_size(
-                                        pos2(rect.min.x + 6.0_f32, rect.min.y + 4.0_f32),
-                                        vec2(16.0_f32, 16.0_f32),
-                                    );
-                                    paint_measure_icon(ui.painter(), icon_rect, var.measure);
-
-                                    let measure_text = t!(var.measure.as_key());
-                                    ui.painter().text(
-                                        pos2(rect.min.x + 28.0_f32, rect.center().y),
-                                        Align2::LEFT_CENTER,
-                                        measure_text,
-                                        FontId::proportional(11.0),
-                                        Tokens::text_primary(),
-                                    );
-
-                                    if res.clicked() {
-                                        let next = match var.measure {
-                                            Measure::Scale => Measure::Ordinal,
-                                            Measure::Ordinal => Measure::Nominal,
-                                            Measure::Nominal => Measure::Scale,
-                                        };
-                                        new_measure = Some(next);
-                                    }
-
-                                    // 10. Role Cell (Click to cycle Input -> Target -> Both -> None)
-                                    let (rect, res) = ui.allocate_exact_size(
-                                        vec2(headers[10].1, row_height),
-                                        Sense::click(),
-                                    );
-                                    ui.painter().rect_filled(rect, 0.0_f32, bg_color);
-                                    ui.painter().rect_stroke(
-                                        rect,
-                                        0.0_f32,
-                                        Stroke::new(0.5_f32, Tokens::border()),
-                                    );
-
-                                    let role_text = match var.role {
-                                        Role::Input => t!("role-input"),
-                                        Role::Target => t!("role-target"),
-                                        Role::Both => t!("role-both"),
-                                        Role::None => t!("role-none"),
-                                        Role::Partition => t!("role-partition"),
-                                        Role::Split => t!("role-split"),
-                                    };
-                                    ui.painter().text(
-                                        pos2(rect.min.x + 6.0, rect.center().y),
-                                        Align2::LEFT_CENTER,
-                                        role_text,
-                                        FontId::proportional(11.0),
-                                        Tokens::text_primary(),
-                                    );
-
-                                    if res.clicked() {
-                                        let next = match var.role {
-                                            Role::Input => Role::Target,
-                                            Role::Target => Role::Both,
-                                            Role::Both => Role::None,
-                                            _ => Role::Input,
-                                        };
-                                        new_role = Some(next);
-                                    }
                                 }
 
-                                if let Some(label) = new_label {
-                                    let _ = ds.dictionary.set_label(i, &label);
-                                }
-                                if let Some(measure) = new_measure {
-                                    let _ = ds.dictionary.set_measure(i, measure);
-                                }
-                                if let Some(align) = new_align {
-                                    let _ = ds.dictionary.set_align(i, align);
-                                }
-                                if let Some(role) = new_role {
-                                    let _ = ds.dictionary.set_role(i, role);
-                                }
-                                if width_delta != 0 {
-                                    if let Some(var) = ds.dictionary.get(i) {
-                                        let new_w =
-                                            (var.width as isize + width_delta).max(1) as usize;
-                                        let _ = ds.dictionary.set_width(i, new_w);
-                                    }
-                                }
-                                if decimals_delta != 0 {
-                                    if let Some(var) = ds.dictionary.get(i) {
-                                        let new_d = (var.decimals as isize + decimals_delta)
-                                            .clamp(0, 16)
-                                            as u8;
-                                        let _ = ds.dictionary.set_decimals(i, new_d);
-                                    }
-                                }
-                            });
-                        } else {
-                            // Row i == var_count: The Ghost Row for adding new variables!
-                            ui.horizontal(|ui| {
-                                ui.spacing_mut().item_spacing = vec2(0.0, 0.0);
-
-                                // 0. Star '*' header
+                                // 5. Label Cell (Editable text field with borderless frame)
                                 let (rect, _) = ui.allocate_exact_size(
-                                    vec2(headers[0].1, row_height),
-                                    Sense::hover(),
+                                    vec2(headers[5].1, row_height),
+                                    Sense::click(),
                                 );
-                                ui.painter().rect_filled(rect, 0.0_f32, Tokens::bg_header());
+                                ui.painter().rect_filled(rect, 0.0_f32, bg_color);
                                 ui.painter().rect_stroke(
                                     rect,
                                     0.0_f32,
                                     Stroke::new(0.5_f32, Tokens::border()),
                                 );
-                                ui.painter().text(
-                                    rect.center(),
-                                    Align2::CENTER_CENTER,
-                                    "*",
-                                    FontId::proportional(12.0),
-                                    Tokens::text_muted(),
+                                let inner_rect = rect.shrink2(vec2(2.0_f32, 2.0_f32));
+                                ui.allocate_new_ui(
+                                    egui::UiBuilder::new().max_rect(inner_rect),
+                                    |ui| {
+                                        let mut text = var.label.clone();
+                                        let res = ui.add_sized(
+                                            vec2(inner_rect.width(), inner_rect.height()),
+                                            egui::TextEdit::singleline(&mut text)
+                                                .frame(false)
+                                                .clip_text(true),
+                                        );
+                                        if res.changed() {
+                                            new_label = Some(text);
+                                        }
+                                    },
                                 );
 
-                                // 1. Name input placeholder
+                                // 6. Values Count Summary & [...] button
                                 let (rect, _) = ui.allocate_exact_size(
-                                    vec2(headers[1].1, row_height),
+                                    vec2(headers[6].1, row_height),
                                     Sense::hover(),
                                 );
                                 ui.painter().rect_filled(rect, 0.0_f32, bg_color);
@@ -759,48 +481,313 @@ pub fn render_variable_view(
                                     0.0_f32,
                                     Stroke::new(0.5_f32, Tokens::border()),
                                 );
-
-                                let inner_rect = rect.shrink2(vec2(2.0_f32, 1.0_f32));
-                                ui.allocate_new_ui(
-                                    egui::UiBuilder::new().max_rect(inner_rect),
-                                    |ui| {
-                                        let text_edit =
-                                            egui::TextEdit::singleline(&mut state.new_var_name)
-                                                .hint_text(t!("variable-new-placeholder"))
-                                                .frame(false)
-                                                .clip_text(true);
-                                        let res = ui.add_sized(inner_rect.size(), text_edit);
-
-                                        if res.lost_focus() && !state.new_var_name.trim().is_empty()
-                                        {
-                                            let name = state.new_var_name.trim().to_string();
-                                            state.new_var_name.clear();
-                                            let _ = ds.add_variable(
-                                                &name,
-                                                statcraft_core::DataType::Numeric { decimals: 2 },
-                                                Measure::Scale,
-                                            );
-                                        }
-                                    },
+                                let values_summary = if var.values.is_empty() {
+                                    t!("values-none")
+                                } else {
+                                    t!("values-count", count = var.values.mapping.len())
+                                };
+                                let clip = Rect::from_min_max(
+                                    rect.min,
+                                    pos2(rect.max.x - 22.0_f32, rect.max.y),
+                                );
+                                ui.painter().with_clip_rect(clip).text(
+                                    pos2(rect.min.x + 6.0_f32, rect.center().y),
+                                    Align2::LEFT_CENTER,
+                                    values_summary,
+                                    FontId::proportional(11.0),
+                                    Tokens::text_primary(),
                                 );
 
-                                // Empty trailing cells for ghost row
-                                for (_, width) in headers.iter().skip(2) {
-                                    let (rect, _) = ui.allocate_exact_size(
-                                        vec2(*width, row_height),
-                                        Sense::hover(),
-                                    );
-                                    ui.painter().rect_filled(rect, 0.0_f32, bg_color);
-                                    ui.painter().rect_stroke(
-                                        rect,
-                                        0.0_f32,
-                                        Stroke::new(0.5_f32, Tokens::border()),
+                                let btn_val_rect = Rect::from_min_max(
+                                    pos2(rect.max.x - 20.0_f32, rect.min.y + 2.0_f32),
+                                    pos2(rect.max.x - 2.0_f32, rect.max.y - 2.0_f32),
+                                );
+                                let btn_val_res = ui.allocate_rect(btn_val_rect, Sense::click());
+                                let btn_val_bg = if btn_val_res.hovered() {
+                                    Tokens::accent()
+                                } else {
+                                    Tokens::bg_header()
+                                };
+                                ui.painter().rect_filled(btn_val_rect, 2.0_f32, btn_val_bg);
+                                ui.painter().rect_stroke(
+                                    btn_val_rect,
+                                    2.0_f32,
+                                    Stroke::new(1.0_f32, Tokens::border()),
+                                );
+                                ui.painter().text(
+                                    btn_val_rect.center(),
+                                    Align2::CENTER_CENTER,
+                                    "...",
+                                    FontId::proportional(10.0),
+                                    Tokens::text_primary(),
+                                );
+                                if btn_val_res.clicked() {
+                                    view_action = VariableViewAction::OpenValueLabels(i);
+                                }
+
+                                // 7. Missing Summary & [...] button
+                                let (rect, _) = ui.allocate_exact_size(
+                                    vec2(headers[7].1, row_height),
+                                    Sense::hover(),
+                                );
+                                ui.painter().rect_filled(rect, 0.0_f32, bg_color);
+                                ui.painter().rect_stroke(
+                                    rect,
+                                    0.0_f32,
+                                    Stroke::new(0.5_f32, Tokens::border()),
+                                );
+                                let missing_summary = if let Some((low, high)) = var.missing.range {
+                                    t!("missing-range-summary", low = low, high = high)
+                                } else if !var.missing.discrete.is_empty() {
+                                    t!("missing-discrete-count", count = var.missing.discrete.len())
+                                } else {
+                                    t!("missing-none")
+                                };
+                                let clip = Rect::from_min_max(
+                                    rect.min,
+                                    pos2(rect.max.x - 22.0_f32, rect.max.y),
+                                );
+                                ui.painter().with_clip_rect(clip).text(
+                                    pos2(rect.min.x + 6.0_f32, rect.center().y),
+                                    Align2::LEFT_CENTER,
+                                    missing_summary,
+                                    FontId::proportional(11.0),
+                                    Tokens::text_primary(),
+                                );
+
+                                let btn_miss_rect = Rect::from_min_max(
+                                    pos2(rect.max.x - 20.0_f32, rect.min.y + 2.0_f32),
+                                    pos2(rect.max.x - 2.0_f32, rect.max.y - 2.0_f32),
+                                );
+                                let btn_miss_res = ui.allocate_rect(btn_miss_rect, Sense::click());
+                                let btn_miss_bg = if btn_miss_res.hovered() {
+                                    Tokens::accent()
+                                } else {
+                                    Tokens::bg_header()
+                                };
+                                ui.painter()
+                                    .rect_filled(btn_miss_rect, 2.0_f32, btn_miss_bg);
+                                ui.painter().rect_stroke(
+                                    btn_miss_rect,
+                                    2.0_f32,
+                                    Stroke::new(1.0_f32, Tokens::border()),
+                                );
+                                ui.painter().text(
+                                    btn_miss_rect.center(),
+                                    Align2::CENTER_CENTER,
+                                    "...",
+                                    FontId::proportional(10.0),
+                                    Tokens::text_primary(),
+                                );
+                                if btn_miss_res.clicked() {
+                                    view_action = VariableViewAction::OpenMissingValues(i);
+                                }
+
+                                // 8. Align Cell (Click to cycle Left -> Right -> Center)
+                                let (rect, res) = ui.allocate_exact_size(
+                                    vec2(headers[8].1, row_height),
+                                    Sense::click(),
+                                );
+                                ui.painter().rect_filled(rect, 0.0_f32, bg_color);
+                                ui.painter().rect_stroke(
+                                    rect,
+                                    0.0_f32,
+                                    Stroke::new(0.5_f32, Tokens::border()),
+                                );
+
+                                let align_label = match var.align {
+                                    Alignment::Left => t!("align-left"),
+                                    Alignment::Right => t!("align-right"),
+                                    Alignment::Center => t!("align-center"),
+                                };
+                                ui.painter().text(
+                                    pos2(rect.min.x + 6.0, rect.center().y),
+                                    Align2::LEFT_CENTER,
+                                    align_label,
+                                    FontId::proportional(11.0),
+                                    Tokens::text_primary(),
+                                );
+
+                                if res.clicked() {
+                                    let next = match var.align {
+                                        Alignment::Left => Alignment::Right,
+                                        Alignment::Right => Alignment::Center,
+                                        Alignment::Center => Alignment::Left,
+                                    };
+                                    new_align = Some(next);
+                                }
+
+                                // 9. Measure Cell (Vector icon + click to cycle Scale -> Ordinal -> Nominal)
+                                let (rect, res) = ui.allocate_exact_size(
+                                    vec2(headers[9].1, row_height),
+                                    Sense::click(),
+                                );
+                                ui.painter().rect_filled(rect, 0.0_f32, bg_color);
+                                ui.painter().rect_stroke(
+                                    rect,
+                                    0.0_f32,
+                                    Stroke::new(0.5_f32, Tokens::border()),
+                                );
+
+                                let icon_rect = Rect::from_min_size(
+                                    pos2(rect.min.x + 6.0_f32, rect.min.y + 4.0_f32),
+                                    vec2(16.0_f32, 16.0_f32),
+                                );
+                                paint_measure_icon(ui.painter(), icon_rect, var.measure);
+
+                                let measure_text = t!(var.measure.as_key());
+                                ui.painter().text(
+                                    pos2(rect.min.x + 28.0_f32, rect.center().y),
+                                    Align2::LEFT_CENTER,
+                                    measure_text,
+                                    FontId::proportional(11.0),
+                                    Tokens::text_primary(),
+                                );
+
+                                if res.clicked() {
+                                    let next = match var.measure {
+                                        Measure::Scale => Measure::Ordinal,
+                                        Measure::Ordinal => Measure::Nominal,
+                                        Measure::Nominal => Measure::Scale,
+                                    };
+                                    new_measure = Some(next);
+                                }
+
+                                // 10. Role Cell (Click to cycle Input -> Target -> Both -> None)
+                                let (rect, res) = ui.allocate_exact_size(
+                                    vec2(headers[10].1, row_height),
+                                    Sense::click(),
+                                );
+                                ui.painter().rect_filled(rect, 0.0_f32, bg_color);
+                                ui.painter().rect_stroke(
+                                    rect,
+                                    0.0_f32,
+                                    Stroke::new(0.5_f32, Tokens::border()),
+                                );
+
+                                let role_text = match var.role {
+                                    Role::Input => t!("role-input"),
+                                    Role::Target => t!("role-target"),
+                                    Role::Both => t!("role-both"),
+                                    Role::None => t!("role-none"),
+                                    Role::Partition => t!("role-partition"),
+                                    Role::Split => t!("role-split"),
+                                };
+                                ui.painter().text(
+                                    pos2(rect.min.x + 6.0, rect.center().y),
+                                    Align2::LEFT_CENTER,
+                                    role_text,
+                                    FontId::proportional(11.0),
+                                    Tokens::text_primary(),
+                                );
+
+                                if res.clicked() {
+                                    let next = match var.role {
+                                        Role::Input => Role::Target,
+                                        Role::Target => Role::Both,
+                                        Role::Both => Role::None,
+                                        _ => Role::Input,
+                                    };
+                                    new_role = Some(next);
+                                }
+                            }
+
+                            if let Some(label) = new_label {
+                                let _ = ds.dictionary.set_label(i, &label);
+                            }
+                            if let Some(measure) = new_measure {
+                                let _ = ds.dictionary.set_measure(i, measure);
+                            }
+                            if let Some(align) = new_align {
+                                let _ = ds.dictionary.set_align(i, align);
+                            }
+                            if let Some(role) = new_role {
+                                let _ = ds.dictionary.set_role(i, role);
+                            }
+                            if width_delta != 0 {
+                                if let Some(var) = ds.dictionary.get(i) {
+                                    let new_w = (var.width as isize + width_delta).max(1) as usize;
+                                    let _ = ds.dictionary.set_width(i, new_w);
+                                }
+                            }
+                            if decimals_delta != 0 {
+                                if let Some(var) = ds.dictionary.get(i) {
+                                    let new_d =
+                                        (var.decimals as isize + decimals_delta).clamp(0, 16) as u8;
+                                    let _ = ds.dictionary.set_decimals(i, new_d);
+                                }
+                            }
+                        });
+                    } else {
+                        // Row i == var_count: The Ghost Row for adding new variables!
+                        ui.horizontal(|ui| {
+                            ui.spacing_mut().item_spacing = vec2(0.0, 0.0);
+
+                            // 0. Star '*' header
+                            let (rect, _) = ui.allocate_exact_size(
+                                vec2(headers[0].1, row_height),
+                                Sense::hover(),
+                            );
+                            ui.painter().rect_filled(rect, 0.0_f32, Tokens::bg_header());
+                            ui.painter().rect_stroke(
+                                rect,
+                                0.0_f32,
+                                Stroke::new(0.5_f32, Tokens::border()),
+                            );
+                            ui.painter().text(
+                                rect.center(),
+                                Align2::CENTER_CENTER,
+                                "*",
+                                FontId::proportional(12.0),
+                                Tokens::text_muted(),
+                            );
+
+                            // 1. Name input placeholder
+                            let (rect, _) = ui.allocate_exact_size(
+                                vec2(headers[1].1, row_height),
+                                Sense::hover(),
+                            );
+                            ui.painter().rect_filled(rect, 0.0_f32, bg_color);
+                            ui.painter().rect_stroke(
+                                rect,
+                                0.0_f32,
+                                Stroke::new(0.5_f32, Tokens::border()),
+                            );
+
+                            let inner_rect = rect.shrink2(vec2(2.0_f32, 1.0_f32));
+                            ui.allocate_new_ui(egui::UiBuilder::new().max_rect(inner_rect), |ui| {
+                                let text_edit = egui::TextEdit::singleline(&mut state.new_var_name)
+                                    .hint_text(t!("variable-new-placeholder"))
+                                    .frame(false)
+                                    .clip_text(true);
+                                let res = ui.add_sized(inner_rect.size(), text_edit);
+
+                                if res.lost_focus() && !state.new_var_name.trim().is_empty() {
+                                    let name = state.new_var_name.trim().to_string();
+                                    state.new_var_name.clear();
+                                    let _ = ds.add_variable(
+                                        &name,
+                                        statcraft_core::DataType::Numeric { decimals: 2 },
+                                        Measure::Scale,
                                     );
                                 }
                             });
-                        }
+
+                            // Empty trailing cells for ghost row
+                            for (_, width) in headers.iter().skip(2) {
+                                let (rect, _) = ui
+                                    .allocate_exact_size(vec2(*width, row_height), Sense::hover());
+                                ui.painter().rect_filled(rect, 0.0_f32, bg_color);
+                                ui.painter().rect_stroke(
+                                    rect,
+                                    0.0_f32,
+                                    Stroke::new(0.5_f32, Tokens::border()),
+                                );
+                            }
+                        });
                     }
-                });
+                }
+            });
         });
 
     if let Some((idx, new_name)) = rename_action {

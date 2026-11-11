@@ -264,19 +264,194 @@ impl StatCraftApp {
                         let _ = self.command_bus.redo(&mut self.dataset);
                     }
                     ui.separator();
-                    render_menu_item(ui, t!("menu-edit-cut"), MenuItemStatus::InDev);
-                    render_menu_item(ui, t!("menu-edit-copy"), MenuItemStatus::InDev);
-                    render_menu_item(ui, t!("menu-edit-copy-names"), MenuItemStatus::InDev);
-                    render_menu_item(ui, t!("menu-edit-paste"), MenuItemStatus::InDev);
-                    render_menu_item(ui, t!("menu-edit-clear"), MenuItemStatus::InDev);
+                    let has_data = self.dataset.is_some();
+                    let cell_selected = self.data_view_state.selected_cell.is_some();
+
+                    if render_menu_item(
+                        ui,
+                        t!("menu-edit-cut"),
+                        if has_data && cell_selected {
+                            MenuItemStatus::Ready {
+                                shortcut: Some("Ctrl+X"),
+                            }
+                        } else {
+                            requires_dataset_status
+                        },
+                    )
+                    .clicked()
+                    {
+                        ui.close_menu();
+                        self.cut_selected_cell(ui.ctx());
+                    }
+
+                    if render_menu_item(
+                        ui,
+                        t!("menu-edit-copy"),
+                        if has_data && cell_selected {
+                            MenuItemStatus::Ready {
+                                shortcut: Some("Ctrl+C"),
+                            }
+                        } else {
+                            requires_dataset_status
+                        },
+                    )
+                    .clicked()
+                    {
+                        ui.close_menu();
+                        self.copy_selected_cell(ui.ctx());
+                    }
+
+                    if render_menu_item(
+                        ui,
+                        t!("menu-edit-copy-names"),
+                        if has_data && cell_selected {
+                            MenuItemStatus::Ready {
+                                shortcut: Some("Ctrl+Shift+C"),
+                            }
+                        } else {
+                            requires_dataset_status
+                        },
+                    )
+                    .clicked()
+                    {
+                        ui.close_menu();
+                        self.copy_with_variable_names(ui.ctx());
+                    }
+
+                    if render_menu_item(
+                        ui,
+                        t!("menu-edit-paste"),
+                        if has_data && self.clipboard_cache.is_some() {
+                            MenuItemStatus::Ready {
+                                shortcut: Some("Ctrl+V"),
+                            }
+                        } else {
+                            requires_dataset_status
+                        },
+                    )
+                    .clicked()
+                    {
+                        ui.close_menu();
+                        self.paste_selected_cell(ui.ctx());
+                    }
+
+                    if render_menu_item(
+                        ui,
+                        t!("menu-edit-clear"),
+                        if has_data && cell_selected {
+                            MenuItemStatus::Ready {
+                                shortcut: Some("Delete"),
+                            }
+                        } else {
+                            requires_dataset_status
+                        },
+                    )
+                    .clicked()
+                    {
+                        ui.close_menu();
+                        self.clear_selected_cell();
+                    }
+
                     ui.separator();
-                    render_menu_item(ui, t!("menu-edit-find"), MenuItemStatus::InDev);
-                    render_menu_item(ui, t!("menu-edit-replace"), MenuItemStatus::InDev);
-                    render_menu_item(ui, t!("menu-edit-goto-case"), MenuItemStatus::InDev);
-                    render_menu_item(ui, t!("menu-edit-goto-var"), MenuItemStatus::InDev);
+
+                    if render_menu_item(
+                        ui,
+                        t!("menu-edit-find"),
+                        if has_data {
+                            MenuItemStatus::Ready {
+                                shortcut: Some("Ctrl+F"),
+                            }
+                        } else {
+                            requires_dataset_status
+                        },
+                    )
+                    .clicked()
+                    {
+                        ui.close_menu();
+                        self.open_find_dialog();
+                    }
+
+                    if render_menu_item(
+                        ui,
+                        t!("menu-edit-replace"),
+                        if has_data {
+                            MenuItemStatus::Ready {
+                                shortcut: Some("Ctrl+H"),
+                            }
+                        } else {
+                            requires_dataset_status
+                        },
+                    )
+                    .clicked()
+                    {
+                        ui.close_menu();
+                        self.open_replace_dialog();
+                    }
+
+                    if render_menu_item(
+                        ui,
+                        t!("menu-edit-goto-case"),
+                        if has_data {
+                            MenuItemStatus::Ready {
+                                shortcut: Some("Ctrl+G"),
+                            }
+                        } else {
+                            requires_dataset_status
+                        },
+                    )
+                    .clicked()
+                    {
+                        ui.close_menu();
+                        self.open_goto_case_dialog();
+                    }
+
+                    if render_menu_item(
+                        ui,
+                        t!("menu-edit-goto-var"),
+                        if has_data {
+                            MenuItemStatus::Ready { shortcut: None }
+                        } else {
+                            requires_dataset_status
+                        },
+                    )
+                    .clicked()
+                    {
+                        ui.close_menu();
+                        self.open_goto_var_dialog();
+                    }
+
                     ui.separator();
-                    render_menu_item(ui, t!("menu-edit-insert-case"), MenuItemStatus::InDev);
-                    render_menu_item(ui, t!("menu-edit-insert-var"), MenuItemStatus::InDev);
+
+                    if render_menu_item(
+                        ui,
+                        t!("menu-edit-insert-case"),
+                        if has_data {
+                            MenuItemStatus::Ready { shortcut: None }
+                        } else {
+                            requires_dataset_status
+                        },
+                    )
+                    .clicked()
+                    {
+                        ui.close_menu();
+                        self.insert_case_action();
+                    }
+
+                    if render_menu_item(
+                        ui,
+                        t!("menu-edit-insert-var"),
+                        if has_data {
+                            MenuItemStatus::Ready { shortcut: None }
+                        } else {
+                            requires_dataset_status
+                        },
+                    )
+                    .clicked()
+                    {
+                        ui.close_menu();
+                        self.insert_variable_action();
+                    }
+
                     ui.separator();
                     render_menu_item(ui, t!("menu-edit-preferences"), MenuItemStatus::InDev);
                 });

@@ -3102,3 +3102,47 @@ Implemented a comprehensive stress-testing and benchmarking utility `cargo xtask
    * Authored benchmark reports `docs/PERFORMANCE_BENCHMARK_REPORT.md` (EN) and `docs/PERFORMANCE_BENCHMARK_REPORT_RU.md` (RU);
    * Registered `cargo xtask bench-stress` in `xtask/src/main.rs`;
    * Verified `cargo run -p xtask -j 1 -- file-guard` (308 files scanned, all within limits), `layers`, `cargo fmt --check`, `cargo clippy --workspace -j 1 -- -D warnings`.
+
+
+---
+
+### Phase 69: Edit Menu Finalization & Grid Navigation (Find/Replace, Go To, Clipboard & Insert Actions)
+*Time: November 11, 2026, 18:35 (~35 minutes)*
+
+Completed a comprehensive audit and removed all `InDev` placeholders from the `Edit` menu, implementing missing modal dialogs for Find/Replace and Grid Navigation along with the transactional `BatchReplaceCommand`:
+1. **L1 Core & L5 Command Bus (`crates/statcraft_syntax/src/commands/batch_replace_cmd.rs`):**
+   * Implemented `DataSet::insert_variable` in `statcraft_core`, enabling variable insertion at an arbitrary column index with column shifting and full `VariableDictionary` / `RawTable` synchronization;
+   * Extended `DataAddRowCommand` (`data.add_row`) and `VarAddCommand` (`var.add`) to support positional insertion before the active row/column with full undo snapshot preservation;
+   * Designed `BatchReplaceCommand` (`data.replace_values`): snapshots all replaced cells `(row, col, old_value, new_value)`, providing strict transaction atomicity for single cell replaces and "Replace All" operations with instant `Undo` and `Redo`.
+2. **Find & Replace Modal Dialog `FindReplaceDialog` (`crates/statcraft_app/src/dialogs/find_replace_dialog.rs`):**
+   * Built on DialogKit canonical standards (`DialogShell::subdialog`, $360 \times 300$ px);
+   * Tabbed interface for `Find` and `Replace`;
+   * Options: Match case, Match entire cell, Search direction (Down / Up), and Column targeting (specific variable or entire dataset);
+   * Action buttons: `[ Find Next ]`, `[ Replace ]`, `[ Replace All ]`, `[ Close ]`;
+   * Automatic wrap-around cell focus cycling and table scrolling in Data View.
+3. **Grid Navigation Modal Dialog `GoToDialog` (`crates/statcraft_app/src/dialogs/goto_dialog.rs`):**
+   * Built on DialogKit standards (`DialogShell::subdialog`, `SubdialogActionBar`);
+   * Tab 1: **Go to Case:** strict input boundary validation ($1 \le k \le N$), rapid `Enter` key submission;
+   * Tab 2: **Go to Variable:** searchable variable list with vector measurement scale icons, single/double click selection;
+   * Integrated with `DataViewState` (`scroll_to_row`, `scroll_to_col`) and `VariableViewState` (`scroll_to_var`, `selected_var`) for automatic viewport scroll and visual row/column highlighting.
+4. **Edit Menu Activation & Global Hotkeys:**
+   * Removed all `InDev` stubs in `crates/statcraft_app/src/app_menus/file_edit_view.rs`:
+     - `Edit -> Cut` (`Ctrl+X`)
+     - `Edit -> Copy` (`Ctrl+C`)
+     - `Edit -> Copy with Variable Names` (`Ctrl+Shift+C`)
+     - `Edit -> Paste` (`Ctrl+V`)
+     - `Edit -> Clear` (`Delete`)
+     - `Edit -> Find...` (`Ctrl+F`)
+     - `Edit -> Replace...` (`Ctrl+H`)
+     - `Edit -> Go to Case...` (`Ctrl+G`)
+     - `Edit -> Go to Variable...`
+     - `Edit -> Insert Case`
+     - `Edit -> Insert Variable`
+5. **Localization & Quality Control (DoD):**
+   * Synchronous translation keys added to `locales/en.ftl` and `locales/ru.ftl` (Zero-hardcode i18n);
+   * Added test suite `crates/statcraft_app/tests/edit_navigation_tests.rs` (4/4 PASS);
+   * 100% test pass on full workspace suite (`cargo test --workspace -j 1`);
+   * `cargo run -p xtask -j 1 -- design-guard` (0 DialogKit violations);
+   * `cargo run -p xtask -j 1 -- file-guard` (all 313 files within line limits);
+   * `cargo run -p xtask -j 1 -- layers` (strict L0–L6 architecture adherence);
+   * `cargo clippy --workspace -j 1 -- -D warnings` (clean, 0 warnings).

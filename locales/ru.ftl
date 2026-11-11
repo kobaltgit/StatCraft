@@ -1290,3 +1290,41 @@ bridge-log-tab-switched = { $time } [Интерфейс] Переключена 
 bridge-log-server-started = { $time } [Сервер] Мост запущен на { $addr }
 bridge-log-server-stopped = { $time } [Сервер] Мост остановлен
 bridge-log-error = { $time } [Ошибка] { $message }
+
+
+# Find and Replace Dialog
+dialog-find-replace-title = Найти и заменить
+dialog-find-tab-find = Найти
+dialog-find-tab-replace = Заменить
+dialog-find-what = Найти:
+dialog-find-replace-with = Заменить на:
+dialog-find-match-case = С учетом регистра
+dialog-find-match-entire = Точное совпадение ячейки
+dialog-find-direction = Направление поиска
+dialog-find-dir-down = Вперед
+dialog-find-dir-up = Назад
+dialog-find-column = Искать в:
+dialog-find-col-all = (Все переменные)
+dialog-find-btn-find-next = Найти далее
+dialog-find-btn-replace = Заменить
+dialog-find-btn-replace-all = Заменить все
+dialog-find-btn-close = Закрыть
+dialog-find-status-not-found = Искомая строка не найдена.
+dialog-find-status-found = Найдено в строке { $row }, переменная { $var }.
+dialog-find-status-replaced = Заменено совпадений: { $count }.
+
+# Go To Dialog
+dialog-goto-title = Переход
+dialog-goto-tab-case = Наблюдение
+dialog-goto-tab-variable = Переменная
+dialog-goto-case-number = Номер наблюдения:
+dialog-goto-case-range = (от 1 до { $total })
+dialog-goto-var-filter = Фильтр:
+
+# Edit Operations Status
+status-case-inserted = Вставлено наблюдение в строке { $row }.
+status-var-inserted = Вставлена переменная '{ $name }'.
+status-cell-copied = Скопировано в буфер обмена.
+status-cell-cut = Вырезано в буфер обмена.
+status-cell-pasted = Вставлено из буфера обмена.
+status-cell-cleared = Ячейка очищена.

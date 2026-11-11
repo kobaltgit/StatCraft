@@ -1,10 +1,10 @@
 use crate::command::{CommandError, EngineCommand};
 use crate::commands::{
-    AutoRecodeCommand, CellEditCommand, ComputeVariableCommand, CorrelationsCommand,
-    CountValuesCommand, CreateDummiesCommand, CreateTimeSeriesCommand, CrosstabsCommand,
-    DataAddRowCommand, DataDeleteRowCommand, DateTimeWizardCommand, DescriptivesCommand,
-    FactorCommand, FrequenciesCommand, HelpCommand, ImportCsvCommand, ImportExcelCommand,
-    ImportSpssCommand, IndependentSamplesTTestCommand, KruskalWallisCommand,
+    AutoRecodeCommand, BatchReplaceCommand, CellEditCommand, ComputeVariableCommand,
+    CorrelationsCommand, CountValuesCommand, CreateDummiesCommand, CreateTimeSeriesCommand,
+    CrosstabsCommand, DataAddRowCommand, DataDeleteRowCommand, DateTimeWizardCommand,
+    DescriptivesCommand, FactorCommand, FrequenciesCommand, HelpCommand, ImportCsvCommand,
+    ImportExcelCommand, ImportSpssCommand, IndependentSamplesTTestCommand, KruskalWallisCommand,
     LinearRegressionCommand, MannWhitneyCommand, MeansCommand, OneSampleTTestCommand,
     OneWayAnovaCommand, OpenFileCommand, OptimalBinningCommand, PairedSamplesTTestCommand,
     PrepareDataModelingCommand, ProgrammabilityCommand, RandomSeedCommand, RankCasesCommand,
@@ -58,6 +58,7 @@ impl CommandBus {
         bus.register(Box::new(SetLabelCommand::default()));
         bus.register(Box::new(SetMeasureCommand::default()));
         bus.register(Box::new(CellEditCommand));
+        bus.register(Box::new(BatchReplaceCommand::default()));
         bus.register(Box::new(DescriptivesCommand));
         bus.register(Box::new(FrequenciesCommand));
         bus.register(Box::new(OneSampleTTestCommand));

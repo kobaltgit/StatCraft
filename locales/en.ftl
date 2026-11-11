@@ -1290,3 +1290,41 @@ bridge-log-tab-switched = { $time } [UI] Switched active tab to "{ $tab }"
 bridge-log-server-started = { $time } [Server] Bridge server started on { $addr }
 bridge-log-server-stopped = { $time } [Server] Bridge server stopped
 bridge-log-error = { $time } [Error] { $message }
+
+
+# Find and Replace Dialog
+dialog-find-replace-title = Find and Replace
+dialog-find-tab-find = Find
+dialog-find-tab-replace = Replace
+dialog-find-what = Find:
+dialog-find-replace-with = Replace with:
+dialog-find-match-case = Match case
+dialog-find-match-entire = Match entire cell
+dialog-find-direction = Search Direction
+dialog-find-dir-down = Down
+dialog-find-dir-up = Up
+dialog-find-column = Look in:
+dialog-find-col-all = (All variables)
+dialog-find-btn-find-next = Find Next
+dialog-find-btn-replace = Replace
+dialog-find-btn-replace-all = Replace All
+dialog-find-btn-close = Close
+dialog-find-status-not-found = Search string not found.
+dialog-find-status-found = Match found at row { $row }, variable { $var }.
+dialog-find-status-replaced = Replaced { $count } occurrence(s).
+
+# Go To Dialog
+dialog-goto-title = Go To
+dialog-goto-tab-case = Case
+dialog-goto-tab-variable = Variable
+dialog-goto-case-number = Case number:
+dialog-goto-case-range = (1 to { $total })
+dialog-goto-var-filter = Filter:
+
+# Edit Operations Status
+status-case-inserted = Inserted case at row { $row }.
+status-var-inserted = Inserted variable '{ $name }'.
+status-cell-copied = Copied to clipboard.
+status-cell-cut = Cut to clipboard.
+status-cell-pasted = Pasted from clipboard.
+status-cell-cleared = Cleared cell.

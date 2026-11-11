@@ -147,6 +147,7 @@ pub enum StatusMessage {
     SyntaxSaved {
         name: String,
     },
+    Custom(String),
     Error(String),
 }
 
@@ -339,6 +340,7 @@ impl StatusMessage {
             StatusMessage::SyntaxSaved { name } => {
                 t!("status-syntax-saved", name = name.as_str())
             }
+            StatusMessage::Custom(msg) => msg.clone(),
             StatusMessage::Error(e) => format!("{}: {}", t!("status-error"), e),
         }
     }

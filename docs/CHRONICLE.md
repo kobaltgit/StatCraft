@@ -2815,3 +2815,47 @@
    * Сформированы отчеты `docs/PERFORMANCE_BENCHMARK_REPORT.md` (EN) и `docs/PERFORMANCE_BENCHMARK_REPORT_RU.md` (RU);
    * Регистрация команды `cargo xtask bench-stress` в `xtask/src/main.rs`;
    * `cargo run -p xtask -j 1 -- file-guard` (308 файлов в лимитах), `layers`, `cargo fmt --check`, `cargo clippy --workspace -j 1 -- -D warnings`.
+
+
+---
+
+### Этап 69: Финализация операций меню редактирования и табличной навигации (Edit & Grid Navigation)
+*Время: 11 ноября 2026, 18:35 (~35 минут)*
+
+Проведен полный аудит и сняты последние статусы `InDev` в меню `Правка` (`Edit`), реализованы недостающие модальные диалоги поиска/замены и навигации по сетке данных, а также типизированная команда транзакционной замены `BatchReplaceCommand`:
+1. **Ядро L1 и шина команд L5 (`crates/statcraft_syntax/src/commands/batch_replace_cmd.rs`):**
+   * Создан метод `DataSet::insert_variable` в `statcraft_core`, выполняющий вставку переменной по произвольному индексу со сдвигом столбцов и синхронизацией `VariableDictionary` и `RawTable`;
+   * Расширен `DataAddRowCommand` (`data.add_row`) и `VarAddCommand` (`var.add`) поддержкой позиционной вставки строк и столбцов перед активным элементом с сохранением истории отката;
+   * Разработана типизированная команда `BatchReplaceCommand` (`data.replace_values`): сохраняет снимок всех замененных ячеек `(row, col, old_value, new_value)`, обеспечивая полную атомарность транзакции при одиночной замене и пакетной замене («Заменить все») с мгновенным `Undo` и `Redo`.
+2. **Диалог поиска и замены `FindReplaceDialog` (`crates/statcraft_app/src/dialogs/find_replace_dialog.rs`):**
+   * Построен на базе DialogKit (`DialogShell::subdialog`, $360 \times 300$ px);
+   * Вкладки `Find` и `Replace`;
+   * Опции: «С учетом регистра», «Точное совпадение ячейки», направление поиска («Вперед» / «Назад»), фильтрация по конкретному столбцу или по всем переменным;
+   * Кнопки: `[ Найти далее ]`, `[ Заменить ]`, `[ Заменить все ]`, `[ Закрыть ]`;
+   * Автоматическое циклическое перемещение фокуса и центрирование экрана на найденной ячейке в Data View.
+3. **Диалог табличной навигации `GoToDialog` (`crates/statcraft_app/src/dialogs/goto_dialog.rs`):**
+   * Построен на базе DialogKit (`DialogShell::subdialog`, `SubdialogActionBar`);
+   * Вкладка 1: **Перейти к наблюдению (Go to Case):** строгая проверка диапазона $1 \le k \le N$, быстрый переход по `Enter`;
+   * Вкладка 2: **Перейти к переменной (Go to Variable):** фильтруемый список с векторными иконками шкал измерения, выбор по клику и двойному клику;
+   * Интеграция с `DataViewState` (`scroll_to_row`, `scroll_to_col`) и `VariableViewState` (`scroll_to_var`, `selected_var`) для автоматической прокрутки и визуальной подсветки выбранной строки или колонки.
+4. **Активация меню `Edit` и глобальные горячие клавиши:**
+   * Сняты все заглушки `InDev` в `crates/statcraft_app/src/app_menus/file_edit_view.rs`:
+     - `Edit -> Cut` (`Ctrl+X`)
+     - `Edit -> Copy` (`Ctrl+C`)
+     - `Edit -> Copy with Variable Names` (`Ctrl+Shift+C`)
+     - `Edit -> Paste` (`Ctrl+V`)
+     - `Edit -> Clear` (`Delete`)
+     - `Edit -> Find...` (`Ctrl+F`)
+     - `Edit -> Replace...` (`Ctrl+H`)
+     - `Edit -> Go to Case...` (`Ctrl+G`)
+     - `Edit -> Go to Variable...`
+     - `Edit -> Insert Case`
+     - `Edit -> Insert Variable`
+5. **Локализация и контроль качества (DoD):**
+   * Синхронное добавление всех строковых ресурсов в `locales/en.ftl` и `locales/ru.ftl` (Zero-hardcode i18n);
+   * Тестовый набор `crates/statcraft_app/tests/edit_navigation_tests.rs` (4/4 PASS);
+   * 100% успешный прогон всех тестов воркспейса (`cargo test --workspace -j 1`);
+   * `cargo run -p xtask -j 1 -- design-guard` (0 нарушений стандарта DialogKit);
+   * `cargo run -p xtask -j 1 -- file-guard` (313 файлов укладываются в лимиты строк);
+   * `cargo run -p xtask -j 1 -- layers` (строгое соблюдение зависимостей слоев L0–L6);
+   * `cargo clippy --workspace -j 1 -- -D warnings` (чисто, 0 предупреждений).

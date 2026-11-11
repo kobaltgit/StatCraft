@@ -454,6 +454,30 @@ impl DataSet {
         self.dictionary.add(meta)
     }
 
+    pub fn insert_variable(
+        &mut self,
+        col_idx: usize,
+        name: &str,
+        var_type: DataType,
+        measure: Measure,
+    ) -> Result<usize, CoreError> {
+        let meta = VariableMetadata::new(name, var_type.clone(), measure)?;
+        let col_type = if var_type.is_numeric() {
+            RawDataType::Numeric
+        } else {
+            RawDataType::Text
+        };
+        let col = statcraft_io::RawColumn {
+            name: name.to_string(),
+            data_type: col_type,
+            values: vec![RawValue::Null; self.row_count()],
+        };
+        let insert_idx = col_idx.min(self.dictionary.count());
+        self.dictionary.insert(insert_idx, meta)?;
+        self.table.insert_column(insert_idx, col);
+        Ok(insert_idx)
+    }
+
     pub fn remove_variable(&mut self, col_idx: usize) -> Result<(), CoreError> {
         let total = self.dictionary.count();
         if col_idx >= total {
