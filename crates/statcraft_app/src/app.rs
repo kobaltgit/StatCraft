@@ -487,12 +487,8 @@ impl eframe::App for StatCraftApp {
             .as_ref()
             .map(|d| d.col_count() > 0)
             .unwrap_or(false);
-        let can_undo = !self.command_bus.history().is_empty();
-        let can_redo = self
-            .dataset
-            .as_ref()
-            .map(|d| !d.delta.redo_stack.is_empty())
-            .unwrap_or(false);
+        let can_undo = self.command_bus.can_undo();
+        let can_redo = self.command_bus.can_redo();
         let mut toolbar_action = ToolbarAction::None;
 
         // 2. Main Toolbar (Top)
@@ -581,9 +577,7 @@ impl eframe::App for StatCraftApp {
                 let _ = self.command_bus.undo(&mut self.dataset);
             }
             ToolbarAction::Redo => {
-                if let Some(ds) = &mut self.dataset {
-                    let _ = ds.redo();
-                }
+                let _ = self.command_bus.redo(&mut self.dataset);
             }
             ToolbarAction::InsertCase => {
                 let _ = self.command_bus.execute(

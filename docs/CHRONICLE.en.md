@@ -3048,4 +3048,28 @@ Prepared and published the major release **StatCraft v0.3.0**, marking the appli
    * `cargo test --workspace -j 1` — 100% tests passing across all crates;
    * `cargo run -p xtask -j 1 -- layers`, `file-guard`, `design-guard`, `cargo fmt --check`, `cargo clippy --workspace -j 1 -- -D warnings` — 0 violations.
 
+---
+
+### Phase 67: Undo / Redo Exhaustive Matrix Audit (Command Bus Reversibility)
+*Time: November 11, 2026, 17:10 (~45 minutes)*
+
+Completed an exhaustive matrix audit and mathematical verification of the state-reversibility invariant ($\text{DataSet}_0 \xrightarrow{\text{Execute}} \text{DataSet}_1 \xrightarrow{\text{Undo}} \text{DataSet}_0' \equiv \text{DataSet}_0$) across all registered engine commands on `CommandBus`:
+1. **Total Reversibility of Structural and Metadata Operations:**
+   * Extended `statcraft_io::RawTable` and `statcraft_core::VariableDictionary` with indexed insertion primitives (`insert_column`, `insert_row`, `insert`);
+   * Added `DataSet::restore_variable` and automatic cleanup of removed column references in `DeltaBuffer`;
+   * Replaced no-op stubs with stateful undo handlers capturing pre-mutation snapshots in `var.add`, `var.delete`, `var.rename`, `var.set_type`, `var.set_width`, `var.set_decimals`, `var.set_align`, `var.set_label`, `var.set_measure`, `data.add_row`, and `data.delete_row`.
+2. **Full-Featured Redo Stack & History Management (`CommandBus`):**
+   * Introduced `redo_stack`, `bus.redo(&mut ds)`, `can_undo()`, `can_redo()`, wired to the application toolbar (`ToolbarAction::Redo`) and `Edit -> Redo` menu;
+   * **History Depth Ceiling:** Fixed a 100-step depth cap with automatic FIFO eviction (verified via a 120-operation stress test);
+   * **Linear History Branching:** Executing a new mutating command after an undo operation strictly clears the redo stack;
+   * **Interactive Cell Coalescence:** `execute_coalesced` merges rapid keystrokes within the same cell into a single history entry.
+3. **Architectural Decomposition for File Size Guard:**
+   * Extracted unit tests from `dataset.rs` into `dataset/tests.rs` (295 lines), bringing `dataset.rs` down to 713 lines ($\le 1000$ lines for GeneralModule).
+4. **Testing, Audit Runner & CI Quality Gate:**
+   * Authored 38 modular matrix tests in `crates/statcraft_syntax/tests/undo_matrix/` (100% PASS);
+   * Built `cargo xtask test-undo` runner and added it as quality gate #9 to `cargo xtask ci`;
+   * Published comprehensive bilingual audit documentation in `docs/UNDO_REDO_AUDIT_REPORT.md` (EN) and `docs/UNDO_REDO_AUDIT_REPORT_RU.md` (RU).
+5. **Quality Control & Definition of Done:**
+   * Complete CI gate `cargo run -p xtask -j 1 -- ci` passed cleanly (fmt, clippy, layers, file-guard [307 files], design-guard, full test suite, parity, corpus, test-undo).
+
 

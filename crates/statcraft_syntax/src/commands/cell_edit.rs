@@ -83,6 +83,7 @@ impl EngineCommand for CellEditCommand {
     fn undo(&self, dataset: &mut Option<DataSet>) -> Result<(), CommandError> {
         if let Some(ds) = dataset.as_mut() {
             ds.undo();
+            ds.delta.redo_stack.clear();
         }
         Ok(())
     }

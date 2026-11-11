@@ -1,8 +1,32 @@
 use crate::command::{CommandError, EngineCommand};
 use serde_json::{json, Value};
 use statcraft_core::{variable::Alignment, DataSet, Measure};
+use std::sync::{Mutex, MutexGuard};
 
-pub struct VarSetAlignCommand;
+fn lock_hist<T>(m: &Mutex<Vec<T>>) -> MutexGuard<'_, Vec<T>> {
+    match m.lock() {
+        Ok(g) => g,
+        Err(p) => p.into_inner(),
+    }
+}
+
+pub struct VarSetAlignCommand {
+    history: Mutex<Vec<(usize, Alignment)>>,
+}
+
+impl Default for VarSetAlignCommand {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
+impl VarSetAlignCommand {
+    pub fn new() -> Self {
+        Self {
+            history: Mutex::new(Vec::new()),
+        }
+    }
+}
 
 impl EngineCommand for VarSetAlignCommand {
     fn id(&self) -> &'static str {
@@ -61,25 +85,52 @@ impl EngineCommand for VarSetAlignCommand {
                 return Err(CommandError::InvalidParams {
                     id: self.id(),
                     reason: format!("Unknown align: '{}'", align_str),
-                });
+                })
             }
         };
 
-        ds.set_variable_align(col_index, align)?;
+        let old_align = ds
+            .dictionary
+            .get(col_index)
+            .map(|m| m.align)
+            .ok_or_else(|| CommandError::InvalidParams {
+                id: self.id(),
+                reason: format!("Column index {} out of bounds", col_index),
+            })?;
 
-        Ok(json!({
-            "status": "success",
-            "col_index": col_index,
-            "align": align_str
-        }))
+        ds.set_variable_align(col_index, align)?;
+        lock_hist(&self.history).push((col_index, old_align));
+
+        Ok(json!({ "status": "success", "col_index": col_index, "align": align_str }))
     }
 
-    fn undo(&self, _dataset: &mut Option<DataSet>) -> Result<(), CommandError> {
+    fn undo(&self, dataset: &mut Option<DataSet>) -> Result<(), CommandError> {
+        if let Some((col_index, old_align)) = lock_hist(&self.history).pop() {
+            if let Some(ds) = dataset.as_mut() {
+                ds.set_variable_align(col_index, old_align)?;
+            }
+        }
         Ok(())
     }
 }
 
-pub struct SetLabelCommand;
+pub struct SetLabelCommand {
+    history: Mutex<Vec<Vec<(usize, String)>>>,
+}
+
+impl Default for SetLabelCommand {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
+impl SetLabelCommand {
+    pub fn new() -> Self {
+        Self {
+            history: Mutex::new(Vec::new()),
+        }
+    }
+}
 
 impl EngineCommand for SetLabelCommand {
     fn id(&self) -> &'static str {
@@ -114,18 +165,32 @@ impl EngineCommand for SetLabelCommand {
             .as_mut()
             .ok_or_else(|| CommandError::Disabled(self.id().to_string()))?;
 
+        let mut batch = Vec::new();
+
         if let Some(labels_map) = params.get("labels").and_then(|v| v.as_object()) {
             for (var_name, lbl_val) in labels_map {
                 if let Some(lbl) = lbl_val.as_str() {
-                    if let Some(idx) = ds.dictionary.find_index(var_name) {
-                        ds.dictionary.set_label(idx, lbl)?;
+                    let target_idx = if let Some(idx) = ds.dictionary.find_index(var_name) {
+                        Some(idx)
                     } else if let Ok(idx) = var_name.parse::<usize>() {
                         if idx < ds.col_count() {
-                            ds.dictionary.set_label(idx, lbl)?;
+                            Some(idx)
+                        } else {
+                            None
                         }
+                    } else {
+                        None
+                    };
+
+                    if let Some(idx) = target_idx {
+                        if let Some(meta) = ds.dictionary.get(idx) {
+                            batch.push((idx, meta.label.clone()));
+                        }
+                        ds.dictionary.set_label(idx, lbl)?;
                     }
                 }
             }
+            lock_hist(&self.history).push(batch);
             return Ok(json!({ "status": "success", "updated": labels_map.len() }));
         }
 
@@ -153,21 +218,51 @@ impl EngineCommand for SetLabelCommand {
                 reason: "Missing 'label'".to_string(),
             })?;
 
-        ds.dictionary.set_label(col_index, label)?;
+        let old_label = ds
+            .dictionary
+            .get(col_index)
+            .map(|m| m.label.clone())
+            .ok_or_else(|| CommandError::InvalidParams {
+                id: self.id(),
+                reason: format!("Column index {} out of bounds", col_index),
+            })?;
 
-        Ok(json!({
-            "status": "success",
-            "col_index": col_index,
-            "label": label
-        }))
+        batch.push((col_index, old_label));
+        ds.dictionary.set_label(col_index, label)?;
+        lock_hist(&self.history).push(batch);
+
+        Ok(json!({ "status": "success", "col_index": col_index, "label": label }))
     }
 
-    fn undo(&self, _dataset: &mut Option<DataSet>) -> Result<(), CommandError> {
+    fn undo(&self, dataset: &mut Option<DataSet>) -> Result<(), CommandError> {
+        if let Some(batch) = lock_hist(&self.history).pop() {
+            if let Some(ds) = dataset.as_mut() {
+                for (col_index, old_label) in batch {
+                    ds.dictionary.set_label(col_index, &old_label)?;
+                }
+            }
+        }
         Ok(())
     }
 }
 
-pub struct SetMeasureCommand;
+pub struct SetMeasureCommand {
+    history: Mutex<Vec<Vec<(usize, Measure)>>>,
+}
+
+impl Default for SetMeasureCommand {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
+impl SetMeasureCommand {
+    pub fn new() -> Self {
+        Self {
+            history: Mutex::new(Vec::new()),
+        }
+    }
+}
 
 impl EngineCommand for SetMeasureCommand {
     fn id(&self) -> &'static str {
@@ -202,6 +297,8 @@ impl EngineCommand for SetMeasureCommand {
             .as_mut()
             .ok_or_else(|| CommandError::Disabled(self.id().to_string()))?;
 
+        let mut batch = Vec::new();
+
         if let Some(assignments) = params.get("assignments").and_then(|v| v.as_array()) {
             for item in assignments {
                 let m_str = item
@@ -218,12 +315,16 @@ impl EngineCommand for SetMeasureCommand {
                     for v in vars {
                         if let Some(name) = v.as_str() {
                             if let Some(idx) = ds.dictionary.find_index(name) {
+                                if let Some(meta) = ds.dictionary.get(idx) {
+                                    batch.push((idx, meta.measure));
+                                }
                                 ds.dictionary.set_measure(idx, m)?;
                             }
                         }
                     }
                 }
             }
+            lock_hist(&self.history).push(batch);
             return Ok(json!({ "status": "success" }));
         }
 
@@ -243,7 +344,7 @@ impl EngineCommand for SetMeasureCommand {
                 return Err(CommandError::InvalidParams {
                     id: self.id(),
                     reason: format!("Unknown measure: '{}'", measure_str),
-                });
+                })
             }
         };
 
@@ -256,9 +357,13 @@ impl EngineCommand for SetMeasureCommand {
                             reason: format!("Variable '{}' not found", name),
                         }
                     })?;
+                    if let Some(meta) = ds.dictionary.get(idx) {
+                        batch.push((idx, meta.measure));
+                    }
                     ds.dictionary.set_measure(idx, measure)?;
                 }
             }
+            lock_hist(&self.history).push(batch);
             return Ok(json!({ "status": "success", "measure": measure_str }));
         }
 
@@ -278,16 +383,30 @@ impl EngineCommand for SetMeasureCommand {
             });
         };
 
-        ds.dictionary.set_measure(col_index, measure)?;
+        let old_measure = ds
+            .dictionary
+            .get(col_index)
+            .map(|m| m.measure)
+            .ok_or_else(|| CommandError::InvalidParams {
+                id: self.id(),
+                reason: format!("Column index {} out of bounds", col_index),
+            })?;
 
-        Ok(json!({
-            "status": "success",
-            "col_index": col_index,
-            "measure": measure_str
-        }))
+        batch.push((col_index, old_measure));
+        ds.dictionary.set_measure(col_index, measure)?;
+        lock_hist(&self.history).push(batch);
+
+        Ok(json!({ "status": "success", "col_index": col_index, "measure": measure_str }))
     }
 
-    fn undo(&self, _dataset: &mut Option<DataSet>) -> Result<(), CommandError> {
+    fn undo(&self, dataset: &mut Option<DataSet>) -> Result<(), CommandError> {
+        if let Some(batch) = lock_hist(&self.history).pop() {
+            if let Some(ds) = dataset.as_mut() {
+                for (col_index, old_measure) in batch {
+                    ds.dictionary.set_measure(col_index, old_measure)?;
+                }
+            }
+        }
         Ok(())
     }
 }
@@ -308,7 +427,8 @@ mod tests {
     #[test]
     fn test_set_label_command() {
         let mut ds = make_test_ds();
-        let cmd = SetLabelCommand;
+        let initial_ds = ds.clone().unwrap();
+        let cmd = SetLabelCommand::default();
 
         let params = json!({
             "col_index": 0,
@@ -320,12 +440,16 @@ mod tests {
             ds.as_ref().unwrap().dictionary.get(0).unwrap().label,
             "Age in years"
         );
+
+        cmd.undo(&mut ds).unwrap();
+        assert_eq!(ds.as_ref().unwrap(), &initial_ds);
     }
 
     #[test]
     fn test_set_measure_command() {
         let mut ds = make_test_ds();
-        let cmd = SetMeasureCommand;
+        let initial_ds = ds.clone().unwrap();
+        let cmd = SetMeasureCommand::default();
 
         let params = json!({
             "col_index": 0,
@@ -337,5 +461,8 @@ mod tests {
             ds.as_ref().unwrap().dictionary.get(0).unwrap().measure,
             Measure::Ordinal
         );
+
+        cmd.undo(&mut ds).unwrap();
+        assert_eq!(ds.as_ref().unwrap(), &initial_ds);
     }
 }

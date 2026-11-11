@@ -77,6 +77,11 @@ pub fn run_ci(root: &Path) -> Result<(), String> {
     crate::corpus::run_test_corpus(root, None)?;
     println!(">>> [OK] Test corpus & Never Crash fuzzing audit");
 
+    // 9. Exhaustive Undo/Redo reversibility matrix
+    println!("\n=== [CI Gate] Undo/Redo Matrix Reversibility (xtask test-undo) ===");
+    crate::undo_matrix::run_undo_matrix(root)?;
+    println!(">>> [OK] Undo/Redo reversibility matrix");
+
     println!("\n=======================================================");
     println!("  ALL CI QUALITY GATES PASSED! (ArtCraft DoD: 100% OK) ");
     println!("=======================================================\n");

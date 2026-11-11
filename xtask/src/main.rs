@@ -8,6 +8,7 @@ mod file_guard;
 mod icon;
 mod layers;
 mod parity;
+mod undo_matrix;
 
 fn main() {
     let args: Vec<String> = env::args().collect();
@@ -62,6 +63,12 @@ fn main() {
                 std::process::exit(1);
             }
         }
+        "test-undo" => {
+            if let Err(e) = undo_matrix::run_undo_matrix(&workspace_root) {
+                eprintln!("\n[TEST-UNDO FAILED] {}", e);
+                std::process::exit(1);
+            }
+        }
         _ => {
             println!("StatCraft xtask utility");
             println!("Usage:");
@@ -76,6 +83,7 @@ fn main() {
             println!("  cargo xtask layers     Check L0..L6 architectural layering rules");
             println!("  cargo xtask parity     Check and update SPSS feature parity checklist");
             println!("  cargo xtask test-corpus  Run real-world corpora and codec fuzzing audit");
+            println!("  cargo xtask test-undo    Run exhaustive Undo/Redo reversibility matrix across all 45 commands");
         }
     }
 }

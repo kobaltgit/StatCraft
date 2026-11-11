@@ -1,7 +1,7 @@
 From: CapsuleCraft Code Ingest <system@capsulecraft.local>
 To: Vault <vault@capsuleos.local>
 Subject: 📁 StatCraft / crates/statcraft_algo
-Date: Sun, 8 Nov 2026 13:47:39 +0000
+Date: Wed, 11 Nov 2026 13:48:23 +0000
 Message-ID: <subsystem-statcraft-crates_statcraft_algo@capsuleos.local>
 In-Reply-To: <project-index-statcraft@capsuleos.local>
 X-Capsule-Page-Parent: <project-index-statcraft@capsuleos.local>
@@ -34,7 +34,7 @@ Content-Disposition: inline; filename="canvas_state.json"
         "level": 1,
         "text": "📁 Subsystem: crates/statcraft_algo"
       },
-      "id": "blk_native_heading_1794145659923170300",
+      "id": "blk_native_heading_1794404903807237000",
       "managed_by": "project_parser",
       "type": "heading"
     },
@@ -43,7 +43,7 @@ Content-Disposition: inline; filename="canvas_state.json"
         "icon": "folder",
         "text": "Part of [[📦 StatCraft (Overview) | 📦 StatCraft (Overview)]]\nContains 63 source module(s)."
       },
-      "id": "blk_native_callout_1794145659923176300",
+      "id": "blk_native_callout_1794404903807240400",
       "managed_by": "project_parser",
       "type": "callout"
     },
@@ -52,7 +52,7 @@ Content-Disposition: inline; filename="canvas_state.json"
         "level": 2,
         "text": "Modules in this Subsystem"
       },
-      "id": "blk_native_heading_1794145659923177500",
+      "id": "blk_native_heading_1794404903807241200",
       "managed_by": "project_parser",
       "type": "heading"
     },
@@ -60,7 +60,7 @@ Content-Disposition: inline; filename="canvas_state.json"
       "data": {
         "text": "- [[📄 StatCraft / crates/statcraft_algo/src/adp/mod.rs]] (`crates/statcraft_algo/src/adp/mod.rs`)\n- [[📄 StatCraft / crates/statcraft_algo/src/adp/outliers.rs]] (`crates/statcraft_algo/src/adp/outliers.rs`)\n- [[📄 StatCraft / crates/statcraft_algo/src/adp/partition.rs]] (`crates/statcraft_algo/src/adp/partition.rs`)\n- [[📄 StatCraft / crates/statcraft_algo/src/adp/predictive_power.rs]] (`crates/statcraft_algo/src/adp/predictive_power.rs`)\n- [[📄 StatCraft / crates/statcraft_algo/src/adp/screening.rs]] (`crates/statcraft_algo/src/adp/screening.rs`)\n- [[📄 StatCraft / crates/statcraft_algo/src/adp/tests.rs]] (`crates/statcraft_algo/src/adp/tests.rs`)\n- [[📄 StatCraft / crates/statcraft_algo/src/adp/transform.rs]] (`crates/statcraft_algo/src/adp/transform.rs`)\n- [[📄 StatCraft / crates/statcraft_algo/src/adp/types.rs]] (`crates/statcraft_algo/src/adp/types.rs`)\n- [[📄 StatCraft / crates/statcraft_algo/src/anova_oneway.rs]] (`crates/statcraft_algo/src/anova_oneway.rs`)\n- [[📄 StatCraft / crates/statcraft_algo/src/auto_recode.rs]] (`crates/statcraft_algo/src/auto_recode.rs`)\n- [[📄 StatCraft / crates/statcraft_algo/src/binning.rs]] (`crates/statcraft_algo/src/binning.rs`)\n- [[📄 StatCraft / crates/statcraft_algo/src/correlations.rs]] (`crates/statcraft_algo/src/correlations.rs`)\n- [[📄 StatCraft / crates/statcraft_algo/src/correlations_tests.rs]] (`crates/statcraft_algo/src/correlations_tests.rs`)\n- [[📄 StatCraft / crates/statcraft_algo/src/correlations_types.rs]] (`crates/statcraft_algo/src/correlations_types.rs`)\n- [[📄 StatCraft / crates/statcraft_algo/src/count_values.rs]] (`crates/statcraft_algo/src/count_values.rs`)\n- [[📄 StatCraft / crates/statcraft_algo/src/crosstabs.rs]] (`crates/statcraft_algo/src/crosstabs.rs`)\n- [[📄 StatCraft / crates/statcraft_algo/src/crosstabs_tests.rs]] (`crates/statcraft_algo/src/crosstabs_tests.rs`)\n- [[📄 StatCraft / crates/statcraft_algo/src/crosstabs_types.rs]] (`crates/statcraft_algo/src/crosstabs_types.rs`)\n- [[📄 StatCraft / crates/statcraft_algo/src/date_time.rs]] (`crates/statcraft_algo/src/date_time.rs`)\n- [[📄 StatCraft / crates/statcraft_algo/src/descriptives.rs]] (`crates/statcraft_algo/src/descriptives.rs`)\n- [[📄 StatCraft / crates/statcraft_algo/src/dummies.rs]] (`crates/statcraft_algo/src/dummies.rs`)\n- [[📄 StatCraft / crates/statcraft_algo/src/expr_eval/eval.rs]] (`crates/statcraft_algo/src/expr_eval/eval.rs`)\n- [[📄 StatCraft / crates/statcraft_algo/src/expr_eval/lexer.rs]] (`crates/statcraft_algo/src/expr_eval/lexer.rs`)\n- [[📄 StatCraft / crates/statcraft_algo/src/expr_eval/mod.rs]] (`crates/statcraft_algo/src/expr_eval/mod.rs`)\n- [[📄 StatCraft / crates/statcraft_algo/src/expr_eval/parser.rs]] (`crates/statcraft_algo/src/expr_eval/parser.rs`)\n- [[📄 StatCraft / crates/statcraft_algo/src/expr_eval/tests.rs]] (`crates/statcraft_algo/src/expr_eval/tests.rs`)\n- [[📄 StatCraft / crates/statcraft_algo/src/expr_eval/types.rs]] (`crates/statcraft_algo/src/expr_eval/types.rs`)\n- [[📄 StatCraft / crates/statcraft_algo/src/factor.rs]] (`crates/statcraft_algo/src/factor.rs`)\n- [[📄 StatCraft / crates/statcraft_algo/src/factor_tests.rs]] (`crates/statcraft_algo/src/factor_tests.rs`)\n- [[📄 StatCraft / crates/statcraft_algo/src/factor_types.rs]] (`crates/statcraft_algo/src/factor_types.rs`)\n- [[📄 StatCraft / crates/statcraft_algo/src/frequencies.rs]] (`crates/statcraft_algo/src/frequencies.rs`)\n- [[📄 StatCraft / crates/statcraft_algo/src/kruskal_wallis.rs]] (`crates/statcraft_algo/src/kruskal_wallis.rs`)\n- [[📄 StatCraft / crates/statcraft_algo/src/kruskal_wallis_tests.rs]] (`crates/statcraft_algo/src/kruskal_wallis_tests.rs`)\n- [[📄 StatCraft / crates/statcraft_algo/src/lib.rs]] (`crates/statcraft_algo/src/lib.rs`)\n- [[📄 StatCraft / crates/statcraft_algo/src/means.rs]] (`crates/statcraft_algo/src/means.rs`)\n- [[📄 StatCraft / crates/statcraft_algo/src/means_tests.rs]] (`crates/statcraft_algo/src/means_tests.rs`)\n- [[📄 StatCraft / crates/statcraft_algo/src/means_types.rs]] (`crates/statcraft_algo/src/means_types.rs`)\n- [[📄 StatCraft / crates/statcraft_algo/src/nonparam_related.rs]] (`crates/statcraft_algo/src/nonparam_related.rs`)\n- [[📄 StatCraft / crates/statcraft_algo/src/nonparam_related_tests.rs]] (`crates/statcraft_algo/src/nonparam_related_tests.rs`)\n- [[📄 StatCraft / crates/statcraft_algo/src/nonparam_related_types.rs]] (`crates/statcraft_algo/src/nonparam_related_types.rs`)\n- [[📄 StatCraft / crates/statcraft_algo/src/nonparam_twosample.rs]] (`crates/statcraft_algo/src/nonparam_twosample.rs`)\n- [[📄 StatCraft / crates/statcraft_algo/src/nonparam_twosample_tests.rs]] (`crates/statcraft_algo/src/nonparam_twosample_tests.rs`)\n- [[📄 StatCraft / crates/statcraft_algo/src/nonparam_twosample_types.rs]] (`crates/statcraft_algo/src/nonparam_twosample_types.rs`)\n- [[📄 StatCraft / crates/statcraft_algo/src/optimal_binning.rs]] (`crates/statcraft_algo/src/optimal_binning.rs`)\n- [[📄 StatCraft / crates/statcraft_algo/src/programmability.rs]] (`crates/statcraft_algo/src/programmability.rs`)\n- [[📄 StatCraft / crates/statcraft_algo/src/rank_cases.rs]] (`crates/statcraft_algo/src/rank_cases.rs`)\n- [[📄 StatCraft / crates/statcraft_algo/src/rank_cases_tests.rs]] (`crates/statcraft_algo/src/rank_cases_tests.rs`)\n- [[📄 StatCraft / crates/statcraft_algo/src/recode.rs]] (`crates/statcraft_algo/src/recode.rs`)\n- [[📄 StatCraft / crates/statcraft_algo/src/regression.rs]] (`crates/statcraft_algo/src/regression.rs`)\n- [[📄 StatCraft / crates/statcraft_algo/src/regression_tests.rs]] (`crates/statcraft_algo/src/regression_tests.rs`)\n- [[📄 StatCraft / crates/statcraft_algo/src/regression_types.rs]] (`crates/statcraft_algo/src/regression_types.rs`)\n- [[📄 StatCraft / crates/statcraft_algo/src/reliability.rs]] (`crates/statcraft_algo/src/reliability.rs`)\n- [[📄 StatCraft / crates/statcraft_algo/src/reliability_tests.rs]] (`crates/statcraft_algo/src/reliability_tests.rs`)\n- [[📄 StatCraft / crates/statcraft_algo/src/reliability_types.rs]] (`crates/statcraft_algo/src/reliability_types.rs`)\n- [[📄 StatCraft / crates/statcraft_algo/src/replace_missing.rs]] (`crates/statcraft_algo/src/replace_missing.rs`)\n- [[📄 StatCraft / crates/statcraft_algo/src/shift.rs]] (`crates/statcraft_algo/src/shift.rs`)\n- [[📄 StatCraft / crates/statcraft_algo/src/sort_cases.rs]] (`crates/statcraft_algo/src/sort_cases.rs`)\n- [[📄 StatCraft / crates/statcraft_algo/src/split_groups.rs]] (`crates/statcraft_algo/src/split_groups.rs`)\n- [[📄 StatCraft / crates/statcraft_algo/src/time_series.rs]] (`crates/statcraft_algo/src/time_series.rs`)\n- [[📄 StatCraft / crates/statcraft_algo/src/ttest_indep.rs]] (`crates/statcraft_algo/src/ttest_indep.rs`)\n- [[📄 StatCraft / crates/statcraft_algo/src/ttest_onesample.rs]] (`crates/statcraft_algo/src/ttest_onesample.rs`)\n- [[📄 StatCraft / crates/statcraft_algo/src/ttest_onesample_tests.rs]] (`crates/statcraft_algo/src/ttest_onesample_tests.rs`)\n- [[📄 StatCraft / crates/statcraft_algo/src/ttest_paired.rs]] (`crates/statcraft_algo/src/ttest_paired.rs`)\n"
       },
-      "id": "blk_native_paragraph_1794145659923244300",
+      "id": "blk_native_paragraph_1794404903807267500",
       "managed_by": "project_parser",
       "type": "paragraph"
     }

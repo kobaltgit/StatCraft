@@ -251,13 +251,18 @@ impl StatCraftApp {
                         ui.close_menu();
                         let _ = self.command_bus.undo(&mut self.dataset);
                     }
-                    render_menu_item(
+                    if render_menu_item(
                         ui,
                         t!("menu-edit-redo"),
                         MenuItemStatus::Ready {
                             shortcut: Some("Ctrl+Y"),
                         },
-                    );
+                    )
+                    .clicked()
+                    {
+                        ui.close_menu();
+                        let _ = self.command_bus.redo(&mut self.dataset);
+                    }
                     ui.separator();
                     render_menu_item(ui, t!("menu-edit-cut"), MenuItemStatus::InDev);
                     render_menu_item(ui, t!("menu-edit-copy"), MenuItemStatus::InDev);

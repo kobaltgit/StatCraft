@@ -627,3 +627,13 @@
 - [x] Интеграция подробного описания сетевого моста MCP и работы с ИИ-агентами под спойлером в `README.ru.md` и `README.md`
 - [x] Сборка оптимизированных релизных бинарников `target/release/statcraft_app.exe` и `target/release/statcraft.exe`
 - [x] Хроника разработки: синхронное добавление записи о релизе v0.3.0 в `docs/CHRONICLE.md` и `docs/CHRONICLE.en.md`
+
+## 67. Матричный аудит обратимости командной шины (Undo / Redo Exhaustive Matrix)
+- [x] L0 `statcraft_io` & L1 `statcraft_core`: методы вставки по произвольному индексу (`RawTable::insert_column`, `RawTable::insert_row`, `VariableDictionary::insert`, `DataSet::restore_variable`, `DataSet::insert_row`, `set_variable_label`, `set_variable_measure`), очистка ссылок на удаляемые колонки из `DeltaBuffer`
+- [x] L5 `statcraft_syntax::commands`: реализация полноценных `undo()` для структурных команд и метаданных (`var.add`, `var.delete`, `var.rename`, `var.set_type`, `var.set_width`, `var.set_decimals`, `var.set_align`, `var.set_label`, `var.set_measure`, `data.add_row`, `data.delete_row`)
+- [x] L5 `statcraft_syntax::bus`: реализация `redo_stack`, методов `bus.redo(&mut ds)`, `can_undo()`, `can_redo()`, очистка redo при выполнении новых команд (ветвление истории), лимит глубины 100 шагов с вытеснением по FIFO и коалесценция правок ячеек `execute_coalesced`
+- [x] L6 `statcraft_app`: сквозное связывание `can_redo` и вызова `command_bus.redo` в главном тулбаре (`ToolbarAction::Redo`) и меню `Правка -> Повторить` (`menu-edit-redo`)
+- [x] Тестовый пакет L5: 38 модульных матричных тестов в `crates/statcraft_syntax/tests/undo_matrix/` с проверкой математической эквивалентности `DataSet0 == Undo(Execute(DataSet0))` и `DataSet1 == Redo(...)` (100% PASS)
+- [x] Xtask & CI: автоматический раннер матрицы обратимости `cargo xtask test-undo`, регистрация в `main.rs` и включение в качестве шлюза #9 в `cargo xtask ci`
+- [x] Документация: формирование исчерпывающего двуязычного отчета об аудите `docs/UNDO_REDO_AUDIT_REPORT.md` (EN) и `docs/UNDO_REDO_AUDIT_REPORT_RU.md` (RU)
+- [x] 100% прохождение всех проверок Definition of Done (`cargo run -p xtask -j 1 -- ci`: fmt, clippy, layers, file-guard [307 файлов], design-guard, full test suite, parity, corpus, test-undo)

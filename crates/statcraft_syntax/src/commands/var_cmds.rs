@@ -1,10 +1,27 @@
 use crate::command::{CommandError, EngineCommand};
 use serde_json::{json, Value};
 use statcraft_core::{DataSet, DataType};
+use std::sync::Mutex;
 
 pub use super::var_format_cmds::{SetLabelCommand, SetMeasureCommand, VarSetAlignCommand};
 
-pub struct VarRenameCommand;
+pub struct VarRenameCommand {
+    history: Mutex<Vec<(usize, String)>>,
+}
+
+impl Default for VarRenameCommand {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
+impl VarRenameCommand {
+    pub fn new() -> Self {
+        Self {
+            history: Mutex::new(Vec::new()),
+        }
+    }
+}
 
 impl EngineCommand for VarRenameCommand {
     fn id(&self) -> &'static str {
@@ -55,7 +72,22 @@ impl EngineCommand for VarRenameCommand {
                 reason: "Missing 'new_name'".to_string(),
             })?;
 
+        let old_name = ds
+            .dictionary
+            .get(col_index)
+            .map(|m| m.name.clone())
+            .ok_or_else(|| CommandError::InvalidParams {
+                id: self.id(),
+                reason: format!("Column index {} out of bounds", col_index),
+            })?;
+
         ds.rename_variable(col_index, new_name)?;
+
+        let mut hist = match self.history.lock() {
+            Ok(g) => g,
+            Err(p) => p.into_inner(),
+        };
+        hist.push((col_index, old_name));
 
         Ok(json!({
             "status": "success",
@@ -64,12 +96,37 @@ impl EngineCommand for VarRenameCommand {
         }))
     }
 
-    fn undo(&self, _dataset: &mut Option<DataSet>) -> Result<(), CommandError> {
+    fn undo(&self, dataset: &mut Option<DataSet>) -> Result<(), CommandError> {
+        let mut hist = match self.history.lock() {
+            Ok(g) => g,
+            Err(p) => p.into_inner(),
+        };
+        if let Some((col_index, old_name)) = hist.pop() {
+            if let Some(ds) = dataset.as_mut() {
+                ds.rename_variable(col_index, &old_name)?;
+            }
+        }
         Ok(())
     }
 }
 
-pub struct VarSetTypeCommand;
+pub struct VarSetTypeCommand {
+    history: Mutex<Vec<(usize, DataType, usize, u8)>>,
+}
+
+impl Default for VarSetTypeCommand {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
+impl VarSetTypeCommand {
+    pub fn new() -> Self {
+        Self {
+            history: Mutex::new(Vec::new()),
+        }
+    }
+}
 
 impl EngineCommand for VarSetTypeCommand {
     fn id(&self) -> &'static str {
@@ -124,6 +181,15 @@ impl EngineCommand for VarSetTypeCommand {
         let width = params.get("width").and_then(|v| v.as_u64()).unwrap_or(8) as usize;
         let decimals = params.get("decimals").and_then(|v| v.as_u64()).unwrap_or(2) as u8;
 
+        let old_meta =
+            ds.dictionary
+                .get(col_index)
+                .cloned()
+                .ok_or_else(|| CommandError::InvalidParams {
+                    id: self.id(),
+                    reason: format!("Column index {} out of bounds", col_index),
+                })?;
+
         let var_type = match type_str.to_lowercase().as_str() {
             "numeric" => DataType::Numeric { decimals },
             "comma" => DataType::Comma { decimals },
@@ -149,6 +215,17 @@ impl EngineCommand for VarSetTypeCommand {
 
         ds.set_variable_type(col_index, var_type, width, decimals)?;
 
+        let mut hist = match self.history.lock() {
+            Ok(g) => g,
+            Err(p) => p.into_inner(),
+        };
+        hist.push((
+            col_index,
+            old_meta.var_type,
+            old_meta.width,
+            old_meta.decimals,
+        ));
+
         Ok(json!({
             "status": "success",
             "col_index": col_index,
@@ -158,12 +235,37 @@ impl EngineCommand for VarSetTypeCommand {
         }))
     }
 
-    fn undo(&self, _dataset: &mut Option<DataSet>) -> Result<(), CommandError> {
+    fn undo(&self, dataset: &mut Option<DataSet>) -> Result<(), CommandError> {
+        let mut hist = match self.history.lock() {
+            Ok(g) => g,
+            Err(p) => p.into_inner(),
+        };
+        if let Some((col_index, old_type, old_width, old_decimals)) = hist.pop() {
+            if let Some(ds) = dataset.as_mut() {
+                ds.set_variable_type(col_index, old_type, old_width, old_decimals)?;
+            }
+        }
         Ok(())
     }
 }
 
-pub struct VarSetDecimalsCommand;
+pub struct VarSetDecimalsCommand {
+    history: Mutex<Vec<(usize, u8)>>,
+}
+
+impl Default for VarSetDecimalsCommand {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
+impl VarSetDecimalsCommand {
+    pub fn new() -> Self {
+        Self {
+            history: Mutex::new(Vec::new()),
+        }
+    }
+}
 
 impl EngineCommand for VarSetDecimalsCommand {
     fn id(&self) -> &'static str {
@@ -214,7 +316,22 @@ impl EngineCommand for VarSetDecimalsCommand {
                 reason: "Missing 'decimals'".to_string(),
             })? as u8;
 
+        let old_dec = ds
+            .dictionary
+            .get(col_index)
+            .map(|m| m.decimals)
+            .ok_or_else(|| CommandError::InvalidParams {
+                id: self.id(),
+                reason: format!("Column index {} out of bounds", col_index),
+            })?;
+
         ds.set_variable_decimals(col_index, decimals)?;
+
+        let mut hist = match self.history.lock() {
+            Ok(g) => g,
+            Err(p) => p.into_inner(),
+        };
+        hist.push((col_index, old_dec));
 
         Ok(json!({
             "status": "success",
@@ -223,12 +340,37 @@ impl EngineCommand for VarSetDecimalsCommand {
         }))
     }
 
-    fn undo(&self, _dataset: &mut Option<DataSet>) -> Result<(), CommandError> {
+    fn undo(&self, dataset: &mut Option<DataSet>) -> Result<(), CommandError> {
+        let mut hist = match self.history.lock() {
+            Ok(g) => g,
+            Err(p) => p.into_inner(),
+        };
+        if let Some((col_index, old_dec)) = hist.pop() {
+            if let Some(ds) = dataset.as_mut() {
+                ds.set_variable_decimals(col_index, old_dec)?;
+            }
+        }
         Ok(())
     }
 }
 
-pub struct VarSetWidthCommand;
+pub struct VarSetWidthCommand {
+    history: Mutex<Vec<(usize, usize)>>,
+}
+
+impl Default for VarSetWidthCommand {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
+impl VarSetWidthCommand {
+    pub fn new() -> Self {
+        Self {
+            history: Mutex::new(Vec::new()),
+        }
+    }
+}
 
 impl EngineCommand for VarSetWidthCommand {
     fn id(&self) -> &'static str {
@@ -279,7 +421,22 @@ impl EngineCommand for VarSetWidthCommand {
                 reason: "Missing 'width'".to_string(),
             })? as usize;
 
+        let old_w = ds
+            .dictionary
+            .get(col_index)
+            .map(|m| m.width)
+            .ok_or_else(|| CommandError::InvalidParams {
+                id: self.id(),
+                reason: format!("Column index {} out of bounds", col_index),
+            })?;
+
         ds.set_variable_width(col_index, width)?;
+
+        let mut hist = match self.history.lock() {
+            Ok(g) => g,
+            Err(p) => p.into_inner(),
+        };
+        hist.push((col_index, old_w));
 
         Ok(json!({
             "status": "success",
@@ -288,7 +445,16 @@ impl EngineCommand for VarSetWidthCommand {
         }))
     }
 
-    fn undo(&self, _dataset: &mut Option<DataSet>) -> Result<(), CommandError> {
+    fn undo(&self, dataset: &mut Option<DataSet>) -> Result<(), CommandError> {
+        let mut hist = match self.history.lock() {
+            Ok(g) => g,
+            Err(p) => p.into_inner(),
+        };
+        if let Some((col_index, old_w)) = hist.pop() {
+            if let Some(ds) = dataset.as_mut() {
+                ds.set_variable_width(col_index, old_w)?;
+            }
+        }
         Ok(())
     }
 }

@@ -1,7 +1,7 @@
 From: CapsuleCraft Code Ingest <system@capsulecraft.local>
 To: Vault <vault@capsuleos.local>
 Subject: 📁 StatCraft / crates/statcraft_i18n
-Date: Sun, 8 Nov 2026 13:47:39 +0000
+Date: Wed, 11 Nov 2026 13:48:23 +0000
 Message-ID: <subsystem-statcraft-crates_statcraft_i18n@capsuleos.local>
 In-Reply-To: <project-index-statcraft@capsuleos.local>
 X-Capsule-Page-Parent: <project-index-statcraft@capsuleos.local>
@@ -34,7 +34,7 @@ Content-Disposition: inline; filename="canvas_state.json"
         "level": 1,
         "text": "📁 Subsystem: crates/statcraft_i18n"
       },
-      "id": "blk_native_heading_1794145659924802700",
+      "id": "blk_native_heading_1794404903808809300",
       "managed_by": "project_parser",
       "type": "heading"
     },
@@ -43,7 +43,7 @@ Content-Disposition: inline; filename="canvas_state.json"
         "icon": "folder",
         "text": "Part of [[📦 StatCraft (Overview) | 📦 StatCraft (Overview)]]\nContains 3 source module(s)."
       },
-      "id": "blk_native_callout_1794145659924804100",
+      "id": "blk_native_callout_1794404903808810900",
       "managed_by": "project_parser",
       "type": "callout"
     },
@@ -52,7 +52,7 @@ Content-Disposition: inline; filename="canvas_state.json"
         "level": 2,
         "text": "Modules in this Subsystem"
       },
-      "id": "blk_native_heading_1794145659924804700",
+      "id": "blk_native_heading_1794404903808811500",
       "managed_by": "project_parser",
       "type": "heading"
     },
@@ -60,7 +60,7 @@ Content-Disposition: inline; filename="canvas_state.json"
       "data": {
         "text": "- [[📄 StatCraft / crates/statcraft_i18n/src/detect.rs]] (`crates/statcraft_i18n/src/detect.rs`)\n- [[📄 StatCraft / crates/statcraft_i18n/src/lib.rs]] (`crates/statcraft_i18n/src/lib.rs`)\n- [[📄 StatCraft / crates/statcraft_i18n/tests/i18n_lint_test.rs]] (`crates/statcraft_i18n/tests/i18n_lint_test.rs`)\n"
       },
-      "id": "blk_native_paragraph_1794145659924806800",
+      "id": "blk_native_paragraph_1794404903808814200",
       "managed_by": "project_parser",
       "type": "paragraph"
     }

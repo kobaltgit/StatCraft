@@ -2753,6 +2753,30 @@
    * `cargo test --workspace -j 1` — 100% тестов воркспейса (140+ тестов) успешно пройдены;
    * `cargo run -p xtask -j 1 -- layers`, `file-guard`, `design-guard`, `cargo fmt --check`, `cargo clippy --workspace -j 1 -- -D warnings` — 0 замечаний.
 
+---
+
+### Этап 67: Матричный аудит обратимости командной шины (Undo / Redo Exhaustive Matrix)
+*Время: 11 ноября 2026, 17:10 (~45 минут)*
+
+Проведен полный матричный аудит и математическая верификация фундаментального инварианта обратимости состояния ($\text{DataSet}_0 \xrightarrow{\text{Execute}} \text{DataSet}_1 \xrightarrow{\text{Undo}} \text{DataSet}_0' \equiv \text{DataSet}_0$) для всех команд командной шины `CommandBus`:
+1. **Тотальная обратимость структурных команд и метаданных:**
+   * В `statcraft_io::RawTable` и `statcraft_core::VariableDictionary` добавлены методы точной вставки по индексу (`insert_column`, `insert_row`, `insert`);
+   * В `statcraft_core::DataSet` реализован метод `restore_variable` и очистка `DeltaBuffer` от ссылок на удаленные столбцы;
+   * Ликвидированы пустые заглушки: реализован полноценный откат с фиксацией пред-состояния в командах `var.add`, `var.delete`, `var.rename`, `var.set_type`, `var.set_width`, `var.set_decimals`, `var.set_align`, `var.set_label`, `var.set_measure`, `data.add_row` и `data.delete_row`.
+2. **Полнофункциональный стек Redo и управление историей (`CommandBus`):**
+   * Внедрен стек `redo_stack`, методы `bus.redo(&mut ds)`, `can_undo()`, `can_redo()` и сквозное связывание в тулбаре и меню `Правка -> Повторить`;
+   * **Лимит глубины истории:** Зафиксирован потолок в 100 шагов с автоматическим вытеснением устаревших операций по алгоритму FIFO (стресс-тест на 120 шагов подтвердил стабильность памяти);
+   * **Линейное ветвление истории:** Выполнение новой команды после Undo гарантированно очищает стек Redo;
+   * **Коалесценция правок ячеек:** Метод `execute_coalesced` объединяет серии непрерывного ввода в одну ячейку в единый шаг истории.
+3. **Архитектурный рефакторинг под File Size Guard:**
+   * Тесты модуля `dataset.rs` вынесены в `dataset/tests.rs` (295 строк), сократив размер основного модуля до 713 строк ($\le 1000$ строк для GeneralModule).
+4. **Тестирование, аудит и шлюз CI:**
+   * Разработан модульный пакет из 38 тестов в `crates/statcraft_syntax/tests/undo_matrix/` (100% PASS);
+   * Создана утилита аудита `cargo xtask test-undo`, включенная 9-м этапом в сквозной шлюз качества `cargo xtask ci`;
+   * Оформлен исчерпывающий двуязычный отчет об аудите `docs/UNDO_REDO_AUDIT_REPORT.md` (EN) и `docs/UNDO_REDO_AUDIT_REPORT_RU.md` (RU).
+5. **Контроль качества (Definition of Done):**
+   * Полный шлюз качества `cargo run -p xtask -j 1 -- ci` успешно пройден (fmt, clippy, layers, file-guard [307 файлов], design-guard, full test suite, parity, corpus, test-undo).
+
 
 
 

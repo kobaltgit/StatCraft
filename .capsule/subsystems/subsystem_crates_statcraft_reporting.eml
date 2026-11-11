@@ -1,7 +1,7 @@
 From: CapsuleCraft Code Ingest <system@capsulecraft.local>
 To: Vault <vault@capsuleos.local>
 Subject: 📁 StatCraft / crates/statcraft_reporting
-Date: Sun, 8 Nov 2026 13:47:39 +0000
+Date: Wed, 11 Nov 2026 13:48:23 +0000
 Message-ID: <subsystem-statcraft-crates_statcraft_reporting@capsuleos.local>
 In-Reply-To: <project-index-statcraft@capsuleos.local>
 X-Capsule-Page-Parent: <project-index-statcraft@capsuleos.local>
@@ -34,7 +34,7 @@ Content-Disposition: inline; filename="canvas_state.json"
         "level": 1,
         "text": "📁 Subsystem: crates/statcraft_reporting"
       },
-      "id": "blk_native_heading_1794145659925318400",
+      "id": "blk_native_heading_1794404903809259500",
       "managed_by": "project_parser",
       "type": "heading"
     },
@@ -43,7 +43,7 @@ Content-Disposition: inline; filename="canvas_state.json"
         "icon": "folder",
         "text": "Part of [[📦 StatCraft (Overview) | 📦 StatCraft (Overview)]]\nContains 5 source module(s)."
       },
-      "id": "blk_native_callout_1794145659925319700",
+      "id": "blk_native_callout_1794404903809261000",
       "managed_by": "project_parser",
       "type": "callout"
     },
@@ -52,7 +52,7 @@ Content-Disposition: inline; filename="canvas_state.json"
         "level": 2,
         "text": "Modules in this Subsystem"
       },
-      "id": "blk_native_heading_1794145659925320200",
+      "id": "blk_native_heading_1794404903809261600",
       "managed_by": "project_parser",
       "type": "heading"
     },
@@ -60,7 +60,7 @@ Content-Disposition: inline; filename="canvas_state.json"
       "data": {
         "text": "- [[📄 StatCraft / crates/statcraft_reporting/src/html_export.rs]] (`crates/statcraft_reporting/src/html_export.rs`)\n- [[📄 StatCraft / crates/statcraft_reporting/src/lib.rs]] (`crates/statcraft_reporting/src/lib.rs`) — *Reporting module for StatCraft (Pivot tables, export).*\n- [[📄 StatCraft / crates/statcraft_reporting/src/model.rs]] (`crates/statcraft_reporting/src/model.rs`)\n- [[📄 StatCraft / crates/statcraft_reporting/src/tsv_export.rs]] (`crates/statcraft_reporting/src/tsv_export.rs`)\n- [[📄 StatCraft / crates/statcraft_reporting/src/txt_export.rs]] (`crates/statcraft_reporting/src/txt_export.rs`)\n"
       },
-      "id": "blk_native_paragraph_1794145659925323900",
+      "id": "blk_native_paragraph_1794404903809265700",
       "managed_by": "project_parser",
       "type": "paragraph"
     }

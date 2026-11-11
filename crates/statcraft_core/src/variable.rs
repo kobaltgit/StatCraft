@@ -298,6 +298,19 @@ impl VariableDictionary {
         Ok(self.variables.remove(index))
     }
 
+    pub fn insert(&mut self, index: usize, var: VariableMetadata) -> Result<(), CoreError> {
+        let trimmed = var.name.trim();
+        if trimmed.is_empty() {
+            return Err(CoreError::InvalidVariableName(var.name.clone()));
+        }
+        if self.find_index(trimmed).is_some() {
+            return Err(CoreError::DuplicateVariableName(trimmed.to_string()));
+        }
+        let idx = index.min(self.variables.len());
+        self.variables.insert(idx, var);
+        Ok(())
+    }
+
     pub fn set_type(
         &mut self,
         index: usize,

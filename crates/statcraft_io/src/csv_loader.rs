@@ -135,6 +135,11 @@ impl RawTable {
         idx
     }
 
+    pub fn insert_column(&mut self, col_idx: usize, col: RawColumn) {
+        let idx = col_idx.min(self.columns.len());
+        self.columns.insert(idx, col);
+    }
+
     pub fn remove_column(&mut self, col_idx: usize) -> Option<RawColumn> {
         if col_idx < self.columns.len() {
             Some(self.columns.remove(col_idx))
@@ -155,6 +160,15 @@ impl RawTable {
     pub fn add_row(&mut self) {
         for col in &mut self.columns {
             col.values.push(RawValue::Null);
+        }
+        self.row_count += 1;
+    }
+
+    pub fn insert_row(&mut self, row_idx: usize, values: &[RawValue]) {
+        let row = row_idx.min(self.row_count);
+        for (i, col) in self.columns.iter_mut().enumerate() {
+            let val = values.get(i).cloned().unwrap_or(RawValue::Null);
+            col.values.insert(row, val);
         }
         self.row_count += 1;
     }

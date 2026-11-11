@@ -30,6 +30,8 @@ pub struct CommandHistoryEntry {
 pub struct CommandBus {
     commands: HashMap<&'static str, Box<dyn EngineCommand>>,
     history: Vec<CommandHistoryEntry>,
+    redo_stack: Vec<CommandHistoryEntry>,
+    max_history_depth: usize,
 }
 
 impl Default for CommandBus {
@@ -43,6 +45,8 @@ impl CommandBus {
         Self {
             commands: HashMap::new(),
             history: vec![],
+            redo_stack: vec![],
+            max_history_depth: 100,
         }
     }
 
@@ -51,8 +55,8 @@ impl CommandBus {
         bus.register(Box::new(ImportCsvCommand));
         bus.register(Box::new(ImportExcelCommand));
         bus.register(Box::new(ImportSpssCommand));
-        bus.register(Box::new(SetLabelCommand));
-        bus.register(Box::new(SetMeasureCommand));
+        bus.register(Box::new(SetLabelCommand::default()));
+        bus.register(Box::new(SetMeasureCommand::default()));
         bus.register(Box::new(CellEditCommand));
         bus.register(Box::new(DescriptivesCommand));
         bus.register(Box::new(FrequenciesCommand));
@@ -71,15 +75,15 @@ impl CommandBus {
         bus.register(Box::new(RelatedSamplesTestCommand));
         bus.register(Box::new(VarSetValueLabelsCommand::new()));
         bus.register(Box::new(VarSetMissingValuesCommand::new()));
-        bus.register(Box::new(VarRenameCommand));
-        bus.register(Box::new(VarSetTypeCommand));
-        bus.register(Box::new(VarSetDecimalsCommand));
-        bus.register(Box::new(VarSetWidthCommand));
-        bus.register(Box::new(VarSetAlignCommand));
-        bus.register(Box::new(VarAddCommand));
-        bus.register(Box::new(VarDeleteCommand));
-        bus.register(Box::new(DataAddRowCommand));
-        bus.register(Box::new(DataDeleteRowCommand));
+        bus.register(Box::new(VarRenameCommand::default()));
+        bus.register(Box::new(VarSetTypeCommand::default()));
+        bus.register(Box::new(VarSetDecimalsCommand::default()));
+        bus.register(Box::new(VarSetWidthCommand::default()));
+        bus.register(Box::new(VarSetAlignCommand::default()));
+        bus.register(Box::new(VarAddCommand::default()));
+        bus.register(Box::new(VarDeleteCommand::default()));
+        bus.register(Box::new(DataAddRowCommand::default()));
+        bus.register(Box::new(DataDeleteRowCommand::default()));
         bus.register(Box::new(ComputeVariableCommand::new()));
         bus.register(Box::new(CountValuesCommand::new()));
         bus.register(Box::new(CreateDummiesCommand::new()));
@@ -121,6 +125,30 @@ impl CommandBus {
             .unwrap_or(false)
     }
 
+    pub fn can_undo(&self) -> bool {
+        !self.history.is_empty()
+    }
+
+    pub fn can_redo(&self) -> bool {
+        !self.redo_stack.is_empty()
+    }
+
+    pub fn redo_stack(&self) -> &[CommandHistoryEntry] {
+        &self.redo_stack
+    }
+
+    pub fn max_history_depth(&self) -> usize {
+        self.max_history_depth
+    }
+
+    pub fn set_max_history_depth(&mut self, depth: usize) {
+        self.max_history_depth = depth;
+        if self.history.len() > depth {
+            let overflow = self.history.len() - depth;
+            self.history.drain(0..overflow);
+        }
+    }
+
     pub fn execute(
         &mut self,
         id: &str,
@@ -143,14 +171,75 @@ impl CommandBus {
             params,
             result: result.clone(),
         });
+        self.redo_stack.clear();
+
+        if self.history.len() > self.max_history_depth {
+            let overflow = self.history.len() - self.max_history_depth;
+            self.history.drain(0..overflow);
+        }
 
         Ok(result)
+    }
+
+    pub fn execute_coalesced(
+        &mut self,
+        id: &str,
+        dataset: &mut Option<DataSet>,
+        params: Value,
+    ) -> Result<Value, CommandError> {
+        if id == "data.cell_edit" {
+            let row = params.get("row").and_then(|v| v.as_u64());
+            let col = params.get("col").and_then(|v| v.as_u64());
+            if let Some(last) = self.history.last_mut() {
+                if last.command_id == "data.cell_edit"
+                    && last.params.get("row").and_then(|v| v.as_u64()) == row
+                    && last.params.get("col").and_then(|v| v.as_u64()) == col
+                {
+                    let cmd = self.commands.get(id).ok_or_else(|| {
+                        CommandError::ExecutionFailed(format!("Unknown command: '{}'", id))
+                    })?;
+                    let result = cmd.execute(dataset, params.clone())?;
+                    if let Some(ds) = dataset.as_mut() {
+                        if ds.delta.undo_stack.len() >= 2 {
+                            let top = ds.delta.undo_stack.pop();
+                            if let (Some(t), Some(prev)) = (top, ds.delta.undo_stack.last_mut()) {
+                                if prev.coord == t.coord {
+                                    prev.new_val = t.new_val;
+                                } else {
+                                    ds.delta.undo_stack.push(t);
+                                }
+                            }
+                        }
+                    }
+                    last.params = params;
+                    last.result = result.clone();
+                    self.redo_stack.clear();
+                    return Ok(result);
+                }
+            }
+        }
+        self.execute(id, dataset, params)
     }
 
     pub fn undo(&mut self, dataset: &mut Option<DataSet>) -> Result<(), CommandError> {
         if let Some(entry) = self.history.pop() {
             if let Some(cmd) = self.commands.get(entry.command_id.as_str()) {
                 cmd.undo(dataset)?;
+                self.redo_stack.push(entry);
+            }
+        }
+        Ok(())
+    }
+
+    pub fn redo(&mut self, dataset: &mut Option<DataSet>) -> Result<(), CommandError> {
+        if let Some(entry) = self.redo_stack.pop() {
+            if let Some(cmd) = self.commands.get(entry.command_id.as_str()) {
+                let result = cmd.execute(dataset, entry.params.clone())?;
+                self.history.push(CommandHistoryEntry {
+                    command_id: entry.command_id,
+                    params: entry.params,
+                    result,
+                });
             }
         }
         Ok(())
