@@ -8,4 +8,9 @@ publish = false
 [dependencies]
 resvg = "0.45"
 ico = "0.5"
+serde_json = "1.0"
+egui = "0.29"
 statcraft_io = { path = "../crates/statcraft_io" }
+statcraft_core = { path = "../crates/statcraft_core" }
+statcraft_algo = { path = "../crates/statcraft_algo" }
+statcraft_syntax = { path = "../crates/statcraft_syntax" }

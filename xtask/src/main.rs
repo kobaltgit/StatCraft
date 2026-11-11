@@ -1,6 +1,7 @@
 use std::env;
 use std::path::PathBuf;
 
+mod bench_stress;
 mod ci;
 mod corpus;
 mod design_guard;
@@ -69,6 +70,12 @@ fn main() {
                 std::process::exit(1);
             }
         }
+        "bench-stress" => {
+            if let Err(e) = bench_stress::run_bench_stress(&workspace_root) {
+                eprintln!("\n[BENCH-STRESS FAILED] {}", e);
+                std::process::exit(1);
+            }
+        }
         _ => {
             println!("StatCraft xtask utility");
             println!("Usage:");
@@ -84,6 +91,7 @@ fn main() {
             println!("  cargo xtask parity     Check and update SPSS feature parity checklist");
             println!("  cargo xtask test-corpus  Run real-world corpora and codec fuzzing audit");
             println!("  cargo xtask test-undo    Run exhaustive Undo/Redo reversibility matrix across all 45 commands");
+            println!("  cargo xtask bench-stress Run extreme stress test (100k/1M rows, 21 procs, UI FPS, memory probe)");
         }
     }
 }
