@@ -59,6 +59,7 @@ impl CreateTimeSeriesCommand {
             "diff" => Ok(TimeSeriesFunction::Diff(ord)),
             "sdiff" => Ok(TimeSeriesFunction::SeasonalDiff(ord)),
             "sma" => Ok(TimeSeriesFunction::SimpleMovingAverage(ord)),
+            "pma" => Ok(TimeSeriesFunction::PriorMovingAverage(ord)),
             "csum" => Ok(TimeSeriesFunction::CumulativeSum),
             other => Err(format!("Unknown time series function: '{}'", other)),
         }
@@ -75,6 +76,7 @@ impl CreateTimeSeriesCommand {
                 "diff" => format!("DIFF({}, {})", spec.source_var, spec.order.max(1)),
                 "sdiff" => format!("SDIFF({}, {})", spec.source_var, spec.order.max(1)),
                 "sma" => format!("SMA({}, {})", spec.source_var, spec.order.max(1)),
+                "pma" => format!("PMA({}, {})", spec.source_var, spec.order.max(1)),
                 "csum" => format!("CSUM({})", spec.source_var),
                 _ => format!(
                     "{}({})",
@@ -141,7 +143,7 @@ impl EngineCommand for CreateTimeSeriesCommand {
                             "target_var": { "type": "string" },
                             "function": {
                                 "type": "string",
-                                "enum": ["diff", "sdiff", "sma", "csum"]
+                                "enum": ["diff", "sdiff", "sma", "pma", "csum"]
                             },
                             "order": { "type": "integer", "minimum": 1, "default": 1 },
                             "target_label": { "type": "string" }

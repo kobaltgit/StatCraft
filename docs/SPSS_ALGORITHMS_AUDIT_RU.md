@@ -82,8 +82,8 @@
 | **Блок 4** | Непараметрические критерии (`MANN-WHITNEY`, `KRUSKAL-WALLIS`, `WILCOXON`, `SIGN`) | `nonparam_twosample.rs`, `kruskal_wallis.rs`, `nonparam_related.rs` | **100% Верифицировано** | $\le 10^{-6}$ |
 | **Блок 5** | Трансформации данных (`RANK`, `OPTIMAL BINNING`, `REPLACE MISSING`) | `rank_cases.rs`, `optimal_binning.rs`, `replace_missing.rs` | **100% Верифицировано** | $\le 10^{-6}$ |
 | **Блок 6** | Автоматическая подготовка данных (`ADP`, `PREDICTIVE POWER`, `OUTLIERS`, `MDLP`) | `adp/` (`outliers.rs`, `screening.rs`, `partition.rs`, `transform.rs`, `predictive_power.rs`) | **100% Верифицировано** | $\le 10^{-6}$ |
-| **Блок 7** | Вычислительные выражения и оценщик (`COMPUTE`) | `expr_eval/` (`lexer.rs`, `parser.rs`, `eval.rs`, `mod.rs`) | **Аудирован (зафиксированы 3 расхождения)** | Несоответствия приоритетов и 3VL |
-| **Блок 8** | Временные ряды и сдвиги наблюдений (`DIFF`, `SDIFF`, `SMA`, `CSUM`, `LAG`, `LEAD`) | `time_series.rs`, `shift.rs` | **Аудирован (зафиксировано 1 расхождение)** | Одностороннее SMA (PMA) вместо центрированного |
+| **Блок 7** | Вычислительные выражения и оценщик (`COMPUTE`) | `expr_eval/` (`lexer.rs`, `parser.rs`, `eval.rs`, `mod.rs`) | **100% Верифицировано** | Канон приоритетов и 3VL Клини |
+| **Блок 8** | Временные ряды и сдвиги наблюдений (`DIFF`, `SDIFF`, `SMA`, `PMA`, `CSUM`, `LAG`, `LEAD`) | `time_series.rs`, `shift.rs` | **100% Верифицировано** | Канон центрированного SMA и PMA |
 | **Блок 9** | Мастер дат и времени (`DATEDIFF`, `DATEADD`, `XDATE`, извлечение компонентов) | `date_time.rs` | **100% Верифицировано** | Точное календарное соответствие (вещественные мин/час) |
 | **Блок 10** | Перекодирование, фиктивные переменные и подсчет (`RECODE`, `AUTORECODE`, `DUMMIES`, `COUNT`) | `recode.rs`, `auto_recode.rs`, `dummies.rs`, `count_values.rs` | **100% Верифицировано** | Точное совпадение |
 | **Блок 11** | Программируемые преобразования и генератор случайных чисел (`PROGRAMMABILITY`, `SET SEED`, RNG) | `programmability.rs`, `rng.rs`, `random_seed_cmd.rs` | **100% Верифицировано** | Детерминизм / SplitMix64 |
@@ -383,43 +383,49 @@
 
 #### 7.1. Синтаксис выражений, AST Shunting-Yard и приоритет операторов
 * **Реализация:** [`crates/statcraft_algo/src/expr_eval/`](../crates/statcraft_algo/src/expr_eval/) (`lexer.rs`, `parser.rs`, `eval.rs`, `mod.rs`), [`crates/statcraft_syntax/src/commands/compute_cmd.rs`](../crates/statcraft_syntax/src/commands/compute_cmd.rs)
-* **Тесты «Золотого оракула»:** `expr_eval::tests::test_arithmetic_precedence`, `expr_eval::tests::test_relational_and_logical_operators`, `commands::compute_cmd::tests::test_compute_sps_syntax`, `commands::compute_cmd::tests::test_compute_new_variable_and_undo`
+* **Тесты «Золотого оракула»:** `expr_eval::tests::test_arithmetic_precedence`, `expr_eval::tests::test_spss_precedence_canon`, `expr_eval::tests::test_relational_and_logical_operators`, `commands::compute_cmd::tests::test_compute_sps_syntax`, `commands::compute_cmd::tests::test_compute_new_variable_and_undo`
 * **Математические и алгоритмические инварианты:**
   * **Архитектура парсера:** алгоритм Дейкстры «Сортировочная станция» (Shunting-yard) с трансляцией инфиксной записи в обратную польскую нотацию (RPN).
-  * **Текущая иерархия приоритета операторов в `parser.rs`:**
-    1. Унарные `+`, `-` и логическое отрицание `NOT` / `~` (приоритет 7);
-    2. Возведение в степень `**`, `^` (приоритет 6, правоассоциативное);
-    3. Умножение и деление `*`, `/` (приоритет 5);
-    4. Сложение и вычитание `+`, `-` (приоритет 4);
-    5. Операторы отношения: `=`, `<>` / `~=` / `!=`, `<`, `<=`, `>`, `>=` (приоритет 3);
-    6. Логическая конъюнкция `AND` / `&` (приоритет 2);
-    7. Логическая дизъюнкция `OR` / `|` (приоритет 1).
-* **Результаты аудита [РАСХОЖДЕНИЯ С КАНОНОМ]:**
-  1. В каноне IBM SPSS (*Order of Operations*) операция возведения в степень `**` имеет более высокий приоритет, чем унарный минус/плюс. В SPSS `-2**2` вычисляется как `-(2**2) = -4`. В текущем `parser.rs` унарный минус имеет приоритет 7 против 6 у `Pow`, что дает `(-2)**2 = +4`.
-  2. В каноне IBM SPSS оператор `NOT` вычисляется *после* реляционных операторов: выражение `NOT a = b` в SPSS вычисляется как `NOT (a = b)`. В текущем `parser.rs` оператор `NOT` имеет приоритет 7 (выше отношений 3), из-за чего парсится как `(NOT a) = b`, если выражение не заключено в скобки вручную.
+  * **Каноническая иерархия приоритета операторов в `parser.rs` (SPSS Universals):**
+    1. Скобки `()` (наивысший приоритет);
+    2. Возведение в степень `**`, `^` (приоритет 8, правоассоциативное);
+    3. Унарные `+`, `-` (приоритет 7);
+    4. Умножение и деление `*`, `/` (приоритет 6);
+    5. Сложение и вычитание `+`, `-` (приоритет 5);
+    6. Операторы отношения: `=`, `<>` / `~=` / `!=`, `<`, `<=`, `>`, `>=` (приоритет 4);
+    7. Логическое отрицание `NOT` / `~` / `!` (приоритет 3);
+    8. Логическая конъюнкция `AND` / `&` (приоритет 2);
+    9. Логическая дизъюнкция `OR` / `|` (приоритет 1).
+  * **Верификация канонического порядка вычислений:**
+    - Степень предшествует унарному минусу: `-2**2` строго дает `-(2**2) = -4.0` (BUG-006 решен).
+    - Операторы отношения предшествуют `NOT`: `NOT a = b` строго вычисляется как `NOT (a = b)` (BUG-006 решен).
+* **Вердикт:** **100% математическая эквивалентность канону.**
 
 #### 7.2. Канонические математические и статистические функции агрегации
 * **Реализация:** [`crates/statcraft_algo/src/expr_eval/eval.rs`](../crates/statcraft_algo/src/expr_eval/eval.rs)
-* **Тесты «Золотого оракула»:** `expr_eval::tests::test_math_functions`
+* **Тесты «Золотого оракула»:** `expr_eval::tests::test_math_functions`, `expr_eval::tests::test_spss_math_functions_canon`
 * **Верификация математических формул:**
   * **Элементарные преобразования:**
     $$\text{SQRT}(x) = \begin{cases} \sqrt{x}, & x \ge 0 \\ \text{SYSMIS}, & x < 0 \end{cases}, \quad \text{EXP}(x) = e^x, \quad \text{LN}(x) = \begin{cases} \ln(x), & x > 0 \\ \text{SYSMIS}, & x \le 0 \end{cases}$$
-    $$\text{LOG10}(x) = \begin{cases} \log_{10}(x), & x > 0 \\ \text{SYSMIS}, & x \le 0 \end{cases}, \quad \text{ABS}(x) = |x|, \quad \text{RND}(x) = \lfloor x + 0.5 \rfloor, \quad \text{TRUNC}(x) = \text{sign}(x) \lfloor |x| \rfloor$$
+    $$\text{LOG10}(x) = \text{LG10}(x) = \begin{cases} \log_{10}(x), & x > 0 \\ \text{SYSMIS}, & x \le 0 \end{cases}, \quad \text{ABS}(x) = |x|, \quad \text{RND}(x) = \lfloor x + 0.5 \rfloor, \quad \text{TRUNC}(x) = \text{sign}(x) \lfloor |x| \rfloor$$
+    $$\text{SIN}(x) = \sin(x), \quad \text{COS}(x) = \cos(x), \quad \text{TAN}(x) = \tan(x) \quad (\text{SYSMIS в точках разрыва}), \quad \text{MOD}(x, y) = x \pmod y \quad (\text{SYSMIS при } y = 0)$$
   * **Статистические агрегаты по строке:**
-    $$\text{SUM}(x_1, \dots, x_k) = \sum_{x_i \in \text{valid}} x_i, \quad \text{MEAN}(x_1, \dots, x_k) = \frac{1}{|\text{valid}|} \sum_{x_i \in \text{valid}} x_i$$
+    $$\text{SUM}(x_1, \dots, x_k) = \sum_{x_i \in \text{valid}} x_i, \quad \text{MEAN}(x_1, \dots, x_k) = \begin{cases} \frac{1}{k} \sum_{i=1}^k x_i, & \forall x_i \notin \text{SYSMIS} \\ \text{SYSMIS}, & \exists x_i \in \text{SYSMIS} \end{cases}$$
     $$\text{MIN}(x_1, \dots, x_k) = \min_{x_i \in \text{valid}} x_i, \quad \text{MAX}(x_1, \dots, x_k) = \max_{x_i \in \text{valid}} x_i$$
-* **Результаты аудита [РАСХОЖДЕНИЯ С КАНОНОМ]:**
-  1. Отсутствуют стандартные математические функции SPSS: `SIN`, `COS`, `TAN`, `MOD`, а также канонический синоним `LG10` (распознается только `LOG10`).
-  2. В каноне SPSS процедура `MEAN(x1, x2)` требует валидности всех аргументов, если не указан суффикс `.n` (`MEAN.1`). В текущей реализации `MEAN` вычисляется при наличии хотя бы одного валидного аргумента.
+  * Канонические функции `SIN`, `COS`, `TAN`, `MOD`, алиас `LG10` и строгий режим `MEAN` (требующий отсутствия пропусков без суффикса `.n`) на 100% подтверждены (BUG-008 решен).
+* **Вердикт:** **100% математическая эквивалентность канону.**
 
 #### 7.3. Трехзначная логика и изоляция пропусков (Never Crash)
 * **Реализация:** [`crates/statcraft_algo/src/expr_eval/mod.rs`](../crates/statcraft_algo/src/expr_eval/mod.rs)
-* **Тесты «Золотого оракула»:** `expr_eval::tests::test_nan_safety`, `expr_eval::tests::test_variables_and_row_eval`
+* **Тесты «Золотого оракула»:** `expr_eval::tests::test_nan_safety`, `expr_eval::tests::test_variables_and_row_eval`, `expr_eval::tests::test_kleene_3vl_logic`
 * **Математические инварианты:**
-  * **Строгое каскадное распространение пропусков:** любая арифметика с `NaN` ($x + \text{NaN}$, $x \cdot \text{NaN}$) возвращает `NaN` (`SYSMIS`).
+  * **Строгое каскадное распространение пропусков:** любая арифметика и отношения с `NaN` ($x + \text{NaN}$, $x < \text{NaN}$) возвращают `NaN` (`SYSMIS`).
   * **Деление на ноль:** безопасно вычисляется в `NaN` (`SYSMIS`) без аппаратных исключений и паник.
-* **Результаты аудита [РАСХОЖДЕНИЯ С КАНОНОМ]:**
-  * В трехзначной логике Клини (Kleene 3VL) IBM SPSS: `TRUE OR MISSING = TRUE` (1.0), а `FALSE AND MISSING = FALSE` (0.0). В текущем коде `mod.rs` (строки 74–77) безусловная проверка `if a.is_nan() || b.is_nan() { stack.push(f64::NAN); continue; }` принудительно возвращает `NaN` для всех бинарных операторов, нарушая короткое замыкание логики Клини.
+  * **Трехзначная логика Клини (Kleene 3VL) IBM SPSS:**
+    - `TRUE OR SYSMIS` $\to$ `TRUE` (`1.0`), `SYSMIS OR TRUE` $\to$ `TRUE` (`1.0`);
+    - `FALSE AND SYSMIS` $\to$ `FALSE` (`0.0`), `SYSMIS AND FALSE` $\to$ `FALSE` (`0.0`);
+    - `FALSE OR SYSMIS` $\to$ `SYSMIS`, `TRUE AND SYSMIS` $\to$ `SYSMIS`, `NOT SYSMIS` $\to$ `SYSMIS` (BUG-007 решен).
+* **Вердикт:** **100% математическая эквивалентность канону.**
 
 ---
 
@@ -437,20 +443,24 @@
     При $t \le s$ значение $\Delta_s X_t = \text{SYSMIS}$.
 * **Вердикт:** **100% математическая эквивалентность канону.**
 
-#### 8.2. Скользящие средние и кумулятивные суммы (`SMA`, `CSUM`)
-* **Реализация:** [`crates/statcraft_algo/src/time_series.rs`](../crates/statcraft_algo/src/time_series.rs)
-* **Тесты «Золотого оракула»:** `time_series::tests::test_sma`, `time_series::tests::test_sma_with_missing`, `time_series::tests::test_csum`, `time_series::tests::test_csum_with_missing`
+#### 8.2. Скользящие средние и кумулятивные суммы (`SMA`, `PMA`, `CSUM`)
+* **Реализация:** [`crates/statcraft_algo/src/time_series.rs`](../crates/statcraft_algo/src/time_series.rs), [`crates/statcraft_syntax/src/commands/time_series_cmd.rs`](../crates/statcraft_syntax/src/commands/time_series_cmd.rs)
+* **Тесты «Золотого оракула»:** `time_series::tests::test_sma`, `time_series::tests::test_pma`, `time_series::tests::test_sma_with_missing`, `time_series::tests::test_csum`, `time_series::tests::test_csum_with_missing`
 * **Верификация математических формул:**
-  * **Одностороннее скользящее среднее (`SMA(k)`):**
-    $$SMA_k(X_t) = \frac{1}{k} \sum_{i=0}^{k-1} X_{t-i} \quad (k \ge 1)$$
-    Для $t < k$ значение $SMA_k(X_t) = \text{SYSMIS}$. При наличии хотя бы одного пропуска в скользящем окне $[t-k+1, t]$ возвращается `SYSMIS`.
+  * **Центрированное скользящее среднее (`SMA(k)`, IBM Algorithms стр. 220–225):**
+    - Нечетное окно $k = 2m + 1$:
+      $$SMA_k(X_t) = \frac{1}{k} \sum_{i=-m}^m X_{t+i}$$
+    - Четное окно $k = 2m$ (половинные веса на границах):
+      $$SMA_k(X_t) = \frac{1}{k} \left( 0.5 X_{t-m} + \sum_{i=-(m-1)}^{m-1} X_{t+i} + 0.5 X_{t+m} \right)$$
+    Граничные точки $t < m$ и $t \ge N - m$ строго равны `SYSMIS` (`RawValue::Null`).
+  * **Предшествующее скользящее среднее (`PMA(k)`, IBM Algorithms стр. 220–225):**
+    $$PMA_k(X_t) = \frac{1}{k} \sum_{i=0}^{k-1} X_{t-i}$$
+    Для $t < k - 1$ значение $PMA_k(X_t) = \text{SYSMIS}$.
   * **Кумулятивная сумма (`CSUM`):**
     $$CSUM(X_t) = \sum_{i=1}^t X_i$$
     Строгий каскад пропусков: если $X_m = \text{SYSMIS}$, то $CSUM(X_t) = \text{SYSMIS}$ для всех $t \ge m$.
-* **Результаты аудита [РАСХОЖДЕНИЕ С КАНОНОМ]:**
-  * В каноне IBM SPSS (команда `CREATE`, стр. 220–225) процедура `SMA(span)` вычисляет **центрированное** скользящее среднее: при нечетном `span` окно центрируется на текущем наблюдении $(t - \lfloor k/2 \rfloor \dots t + \lfloor k/2 \rfloor)$; при четном — между наблюдениями.
-  * В `time_series.rs` (строки 88–122) `SimpleMovingAverage(span)` вычисляет **предшествующее (одностороннее)** окно $[t - span + 1 \dots t]$. В номенклатуре IBM SPSS эта процедура называется **`PMA(span)` (Prior Moving Average)**, а не `SMA`.
-  * Процедура `CSUM` на 100% соответствует каноническому алгоритму SPSS с каскадом `SYSMIS`.
+  * Разделение центрированного `SMA` и предшествующего `PMA` с поддержкой в синтаксисе `CREATE /target = SMA(var, span)` и `CREATE /target = PMA(var, span)` (BUG-009 решен).
+* **Вердикт:** **100% математическая эквивалентность канону.**
 
 #### 8.3. Операторы сдвига наблюдений (`LAG`, `LEAD`)
 * **Реализация:** [`crates/statcraft_algo/src/shift.rs`](../crates/statcraft_algo/src/shift.rs), [`crates/statcraft_syntax/src/commands/shift_values_cmd.rs`](../crates/statcraft_syntax/src/commands/shift_values_cmd.rs)
@@ -705,8 +715,8 @@
 4. **Непараметрические критерии (Блок 4):** 100% Верифицировано ($\le 10^{-6}$).
 5. **Трансформации данных и восполнение пропусков (Блок 5):** 100% Верифицировано ($\le 10^{-6}$).
 6. **Автоматическая подготовка данных и скрининг (Блок 6):** 100% Верифицировано ($\le 10^{-6}$).
-7. **Вычислительные выражения и оценщик (Блок 7 / M-01):** Аудирован — зафиксированы 3 расхождения (приоритет степени против унарного минуса; приоритет `NOT` против отношений; отсутствие короткого замыкания Клини 3VL при `NaN`; отсутствие функций `SIN`/`COS`/`TAN`/`MOD`/`LG10`).
-8. **Временные ряды и сдвиги наблюдений (Блок 8 / M-02, M-03):** Аудирован — зафиксировано 1 расхождение (`SimpleMovingAverage` реализует предшествующее `PMA`, а не центрированное `SMA`). `DIFF`, `SDIFF`, `CSUM`, `LAG` и `LEAD` верифицированы на 100%.
+7. **Вычислительные выражения и оценщик (Блок 7 / M-01):** 100% Верифицировано (канонические приоритеты SPSS: `**` > унарный минус > отношения > `NOT`, логика Клини 3VL, функции `SIN`/`COS`/`TAN`/`MOD`/`LG10`, строгий `MEAN`; BUG-006, BUG-007, BUG-008 решены).
+8. **Временные ряды и сдвиги наблюдений (Блок 8 / M-02, M-03):** 100% Верифицировано (канонический центрированный `SMA` с весами 0.5 для четных окон и предшествующий `PMA`; `DIFF`, `SDIFF`, `CSUM`, `LAG` и `LEAD` верифицированы на 100%; BUG-009 решен).
 9. **Мастер дат и времени (Блок 9 / M-04):** 100% Верифицировано (точное совпадение календарных интервалов, воскресенье=1 в `XDATE.WKDAY`, усечение конца месяца; отмечена непрерывная вещественная доля для минут и часов).
 10. **Перекодирование, фиктивные переменные и подсчет (Блок 10 / M-05..M-08):** 100% Верифицировано (точное соответствие канону SPSS для `RECODE`, синтеза словаря меток `AUTORECODE`, дамми-переменных с `omit_first` и подсчета `COUNT VALUES`).
 11. **Программируемые преобразования и генератор случайных чисел (Блок 11 / M-09, M-10):** 100% Верифицировано (DSL-исполнение `BEGIN PROGRAM`, атомарность мутаций, потокобезопасный `SET SEED`, современный генератор SplitMix64).

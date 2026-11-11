@@ -87,3 +87,80 @@ fn test_relational_and_logical_operators() {
     row5.insert("age".to_string(), 25.0);
     assert_eq!(expr2.eval_row(&row5).unwrap(), 0.0);
 }
+
+#[test]
+fn test_spss_precedence_canon() {
+    // Exponentiation precedes unary minus in IBM SPSS: -2**2 == -4.0
+    let expr = CompiledExpr::parse("-2**2").unwrap();
+    assert_eq!(expr.eval(&|_| None).unwrap(), -4.0);
+
+    let expr = CompiledExpr::parse("(-2)**2").unwrap();
+    assert_eq!(expr.eval(&|_| None).unwrap(), 4.0);
+
+    let expr = CompiledExpr::parse("-(-2)**2").unwrap();
+    assert_eq!(expr.eval(&|_| None).unwrap(), -4.0);
+
+    // Relational operators precede NOT: NOT 5 = 5 -> NOT (5 = 5) -> 0.0
+    let expr = CompiledExpr::parse("NOT 5 = 5").unwrap();
+    assert_eq!(expr.eval(&|_| None).unwrap(), 0.0);
+
+    let expr = CompiledExpr::parse("NOT 5 <> 5").unwrap();
+    assert_eq!(expr.eval(&|_| None).unwrap(), 1.0);
+
+    let expr = CompiledExpr::parse("NOT 0 AND 1").unwrap();
+    assert_eq!(expr.eval(&|_| None).unwrap(), 1.0);
+}
+
+#[test]
+fn test_kleene_3vl_logic() {
+    // Kleene OR: TRUE OR NaN -> 1.0, NaN OR TRUE -> 1.0
+    let expr1 = CompiledExpr::parse("1 OR SQRT(-1)").unwrap();
+    assert_eq!(expr1.eval(&|_| None).unwrap(), 1.0);
+
+    let expr2 = CompiledExpr::parse("SQRT(-1) OR 1").unwrap();
+    assert_eq!(expr2.eval(&|_| None).unwrap(), 1.0);
+
+    // FALSE OR NaN -> NaN
+    let expr3 = CompiledExpr::parse("0 OR SQRT(-1)").unwrap();
+    assert!(expr3.eval(&|_| None).unwrap().is_nan());
+
+    // Kleene AND: FALSE AND NaN -> 0.0, NaN AND FALSE -> 0.0
+    let expr4 = CompiledExpr::parse("0 AND SQRT(-1)").unwrap();
+    assert_eq!(expr4.eval(&|_| None).unwrap(), 0.0);
+
+    let expr5 = CompiledExpr::parse("SQRT(-1) AND 0").unwrap();
+    assert_eq!(expr5.eval(&|_| None).unwrap(), 0.0);
+
+    // TRUE AND NaN -> NaN
+    let expr6 = CompiledExpr::parse("1 AND SQRT(-1)").unwrap();
+    assert!(expr6.eval(&|_| None).unwrap().is_nan());
+
+    // NOT NaN -> NaN
+    let expr7 = CompiledExpr::parse("NOT SQRT(-1)").unwrap();
+    assert!(expr7.eval(&|_| None).unwrap().is_nan());
+}
+
+#[test]
+fn test_spss_math_functions_canon() {
+    let expr = CompiledExpr::parse("SIN(0) + COS(0)").unwrap();
+    assert_eq!(expr.eval(&|_| None).unwrap(), 1.0);
+
+    let expr = CompiledExpr::parse("TAN(0)").unwrap();
+    assert_eq!(expr.eval(&|_| None).unwrap(), 0.0);
+
+    let expr = CompiledExpr::parse("MOD(10, 3)").unwrap();
+    assert_eq!(expr.eval(&|_| None).unwrap(), 1.0);
+
+    let expr = CompiledExpr::parse("MOD(10, 0)").unwrap();
+    assert!(expr.eval(&|_| None).unwrap().is_nan());
+
+    let expr = CompiledExpr::parse("LG10(100)").unwrap();
+    assert_eq!(expr.eval(&|_| None).unwrap(), 2.0);
+
+    // Strict MEAN without .n returns NaN when any argument is NaN
+    let expr = CompiledExpr::parse("MEAN(10, 20, 30)").unwrap();
+    assert_eq!(expr.eval(&|_| None).unwrap(), 20.0);
+
+    let expr = CompiledExpr::parse("MEAN(10, SQRT(-1), 30)").unwrap();
+    assert!(expr.eval(&|_| None).unwrap().is_nan());
+}

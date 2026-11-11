@@ -1,0 +1,77 @@
+From: CapsuleCraft Code Ingest <system@capsulecraft.local>
+To: Vault <vault@capsuleos.local>
+Subject: 📄 StatCraft / xtask/src/bench_stress.rs
+Date: Wed, 11 Nov 2026 17:25:28 +0000
+Message-ID: <module-xtask_src_bench_stress_rs@capsuleos.local>
+In-Reply-To: <subsystem-statcraft-xtask_src@capsuleos.local>
+X-Capsule-Page-Parent: <subsystem-statcraft-xtask_src@capsuleos.local>
+References: <project-index-statcraft@capsuleos.local> <subsystem-statcraft-xtask_src@capsuleos.local>
+X-Capsule-Tags: project, statcraft, module
+X-Capsule-Status: Active
+MIME-Version: 1.0
+Content-Type: multipart/mixed; boundary="BOUNDARY_ROOT_SIFGM7E6B7"
+
+--BOUNDARY_ROOT_SIFGM7E6B7
+Content-Type: multipart/alternative; boundary="BOUNDARY_PAYLOAD_QPWEKPE89Y"
+
+--BOUNDARY_PAYLOAD_QPWEKPE89Y
+Content-Type: application/json; name="canvas_state.json"
+Content-Disposition: inline; filename="canvas_state.json"
+
+{
+  "version": "1.0",
+  "generator": "CapsuleCraft Native egui prototype (Zero-DB Pure-MIME)",
+  "messageId": "<module-xtask_src_bench_stress_rs@capsuleos.local>",
+  "subject": "📄 StatCraft / xtask/src/bench_stress.rs",
+  "tags": [
+    "project",
+    "statcraft",
+    "module"
+  ],
+  "blocks": [
+    {
+      "data": {
+        "level": 1,
+        "text": "📄 bench_stress.rs"
+      },
+      "id": "blk_native_heading_1794417928952425400",
+      "managed_by": "project_parser",
+      "type": "heading"
+    },
+    {
+      "data": {
+        "text": "Path: `xtask/src/bench_stress.rs` · 658 lines of code\nBelongs to project: [[📦 StatCraft (Overview) | 📦 StatCraft (Overview)]]"
+      },
+      "id": "blk_native_paragraph_1794417928952427700",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    },
+    {
+      "data": {
+        "level": 2,
+        "text": "Public Interface"
+      },
+      "id": "blk_native_heading_1794417928952428600",
+      "managed_by": "project_parser",
+      "type": "heading"
+    },
+    {
+      "data": {
+        "code": "pub struct ProcedureMetric\npub struct MemoryProbeResult\npub fn generate_stress_dataset(rows: usize, cols: usize) -> Result<DataSet, String>\npub fn run_ui_bench(dataset: &DataSet) -> (f64, f64, f64)\npub fn run_all_procedure_benchmarks(dataset: &DataSet) -> Result<Vec<ProcedureMetric>, String>\npub fn run_memory_leak_probe( dataset: &mut DataSet, iterations: usize, ) -> Result<MemoryProbeResult, String>\npub fn run_bench_stress(_workspace_root: &Path) -> Result<(), String>",
+        "language": "rust"
+      },
+      "id": "blk_native_code_1794417928952430600",
+      "managed_by": "project_parser",
+      "type": "code"
+    }
+  ]
+}
+
+--BOUNDARY_PAYLOAD_QPWEKPE89Y
+Content-Type: text/html; charset="utf-8"
+Content-Disposition: inline
+
+<!doctype html><html><head><meta charset="utf-8"><meta name="generator" content="CapsuleCraft Native"></head><body style="font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;max-width:720px;margin:32px auto;line-height:1.55;color:#23201c;background:#faf8f4;"><h1>📄 StatCraft / xtask/src/bench_stress.rs</h1><h1>📄 bench_stress.rs</h1><p>Path: `xtask/src/bench_stress.rs` · 658 lines of code<br>Belongs to project: [[📦 StatCraft (Overview) | 📦 StatCraft (Overview)]]</p><h2>Public Interface</h2><p><em>[code block — open in CapsuleCraft web for its canvas]</em></p><hr><p style="color:#8a8175;font-size:12px">Exported from CapsuleCraft Native · &lt;module-xtask_src_bench_stress_rs@capsuleos.local&gt;</p></body></html>
+
+--BOUNDARY_PAYLOAD_QPWEKPE89Y--
+--BOUNDARY_ROOT_SIFGM7E6B7--

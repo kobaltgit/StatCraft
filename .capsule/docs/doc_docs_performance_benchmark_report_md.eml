@@ -1,0 +1,295 @@
+From: CapsuleCraft Code Ingest <system@capsulecraft.local>
+To: Vault <vault@capsuleos.local>
+Subject: 📚 StatCraft / StatCraft Performance & Memory Stress Benchmark Report
+Date: Wed, 11 Nov 2026 17:25:28 +0000
+Message-ID: <doc-statcraft-docs_performance_benchmark_report_md@capsuleos.local>
+In-Reply-To: <project-index-statcraft@capsuleos.local>
+X-Capsule-Page-Parent: <project-index-statcraft@capsuleos.local>
+References: <project-index-statcraft@capsuleos.local>
+X-Capsule-Tags: project, statcraft, docs
+X-Capsule-Status: Active
+MIME-Version: 1.0
+Content-Type: multipart/mixed; boundary="BOUNDARY_ROOT_1HQH8T5FP9"
+
+--BOUNDARY_ROOT_1HQH8T5FP9
+Content-Type: multipart/alternative; boundary="BOUNDARY_PAYLOAD_7KD5WVFS4O"
+
+--BOUNDARY_PAYLOAD_7KD5WVFS4O
+Content-Type: application/json; name="canvas_state.json"
+Content-Disposition: inline; filename="canvas_state.json"
+
+{
+  "version": "1.0",
+  "generator": "CapsuleCraft Native egui prototype (Zero-DB Pure-MIME)",
+  "messageId": "<doc-statcraft-docs_performance_benchmark_report_md@capsuleos.local>",
+  "subject": "📚 StatCraft / StatCraft Performance & Memory Stress Benchmark Report",
+  "tags": [
+    "project",
+    "statcraft",
+    "docs"
+  ],
+  "blocks": [
+    {
+      "data": {
+        "icon": "book",
+        "text": "Documentation file: `docs/PERFORMANCE_BENCHMARK_REPORT.md`\nBelongs to project: [[📦 StatCraft (Overview) | 📦 StatCraft (Overview)]]"
+      },
+      "id": "blk_native_callout_1794417928949630400",
+      "managed_by": "project_parser",
+      "type": "callout"
+    },
+    {
+      "data": {
+        "level": 1,
+        "text": "StatCraft Performance & Memory Stress Benchmark Report"
+      },
+      "id": "blk_native_heading_1794417928949593700",
+      "managed_by": "project_parser",
+      "type": "heading"
+    },
+    {
+      "data": {
+        "level": 2,
+        "text": "1. Executive Summary"
+      },
+      "id": "blk_native_heading_1794417928949596800",
+      "managed_by": "project_parser",
+      "type": "heading"
+    },
+    {
+      "data": {
+        "text": "This report documents the empirical benchmark results of **StatCraft** under extreme workload conditions:\n* **Standard Stress Dataset:** $100\\,000$ rows $\\times 20$ columns ($2\\,000\\,000$ cells instantiated);\n* **Extreme Scale Dataset:** $1\\,000\\,000$ rows $\\times 20$ columns ($20\\,000\\,000$ cells instantiated);\n* **Algorithmic Scope:** All 21 core statistical analysis and data transformation procedures without exception;\n* **UI Virtualization:** Headless and virtualized rendering through `ScrollArea::show_rows`;\n* **Memory Integrity:** 1,000 iterative cycles of `CommandBus::execute` $\\to$ `undo` tracking OS Working Set (RSS)."
+      },
+      "id": "blk_native_paragraph_1794417928949599000",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    },
+    {
+      "data": {
+        "text": "All benchmarks were compiled and executed in the release profile (`cargo run -p xtask --release -j 1 -- bench-stress`) in accordance with the ArtCraft Resource Guard protocol."
+      },
+      "id": "blk_native_paragraph_1794417928949600200",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    },
+    {
+      "data": {
+        "text": "---"
+      },
+      "id": "blk_native_paragraph_1794417928949601100",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    },
+    {
+      "data": {
+        "level": 2,
+        "text": "2. Benchmark Environment"
+      },
+      "id": "blk_native_heading_1794417928949601900",
+      "managed_by": "project_parser",
+      "type": "heading"
+    },
+    {
+      "data": {
+        "text": "| Parameter | Specification |\n| :--- | :--- |\n| **Operating System** | Microsoft Windows 11 Pro (x86_64) |\n| **Rust Version** | rustc 1.85+ (Edition 2021) |\n| **Profile** | Release (`opt-level = 3`, `codegen-units = 1`, `lto = \"thin\"`) |\n| **Data Engine** | Native In-Memory Vectorized Columnar Table (`RawTable` / `DataSet`) |\n| **Execution Framework** | `xtask bench-stress` |\n| **Total Test Duration** | **3.02 seconds** |"
+      },
+      "id": "blk_native_paragraph_1794417928949603400",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    },
+    {
+      "data": {
+        "text": "---"
+      },
+      "id": "blk_native_paragraph_1794417928949604200",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    },
+    {
+      "data": {
+        "level": 2,
+        "text": "3. Data Ingestion & Instantiation Limits"
+      },
+      "id": "blk_native_heading_1794417928949604700",
+      "managed_by": "project_parser",
+      "type": "heading"
+    },
+    {
+      "data": {
+        "text": "| Scale Target | Total Cells | RAM Footprint (Est.) | Instantiation Time | Throughput |\n| :--- | :---: | :---: | :---: | :---: |\n| **100,000 Rows $\\times$ 20 Cols** | $2\\,000\\,000$ | ~35 MB | **16.13 ms** | **123.9M cells / sec** |\n| **1,000,000 Rows $\\times$ 20 Cols** | $20\\,000\\,000$ | ~320 MB | **170.10 ms** | **117.6M cells / sec** |"
+      },
+      "id": "blk_native_paragraph_1794417928949606200",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    },
+    {
+      "data": {
+        "text": "*Both generation passes demonstrate near-perfect $O(N)$ linear scaling.*"
+      },
+      "id": "blk_native_paragraph_1794417928949607000",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    },
+    {
+      "data": {
+        "text": "---"
+      },
+      "id": "blk_native_paragraph_1794417928949607700",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    },
+    {
+      "data": {
+        "level": 2,
+        "text": "4. UI Virtualization & Rendering Stability (FPS)"
+      },
+      "id": "blk_native_heading_1794417928949608300",
+      "managed_by": "project_parser",
+      "type": "heading"
+    },
+    {
+      "data": {
+        "text": "StatCraft employs strict row virtualization (`ScrollArea::vertical().show_rows(...)`) ensuring that regardless of whether the user browses 10 rows or 1,000,000 rows, only visible viewport elements (~35 rows $\\times$ 20 columns) are evaluated and drawn per frame."
+      },
+      "id": "blk_native_paragraph_1794417928949609400",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    },
+    {
+      "data": {
+        "text": "| Test Scenario | Total Cases | Average Frame Time ($\\mu s$) | 99th Percentile ($\\mu s$) | Effective FPS | Status |\n| :--- | :---: | :---: | :---: | :---: | :---: |\n| **Viewport Scroll (100k Rows)** | 100,000 | $6\\,416.1\\ \\mu s$ (6.42 ms) | $9\\,980.0\\ \\mu s$ (9.98 ms) | **156 FPS** | **PASS** ($\\ge 60$) |\n| **Viewport Scroll (1M Rows)** | 1,000,000 | $6\\,398.8\\ \\mu s$ (6.40 ms) | $10\\,165.0\\ \\mu s$ (10.16 ms) | **156 FPS** | **PASS** ($\\ge 60$) |"
+      },
+      "id": "blk_native_paragraph_1794417928949610600",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    },
+    {
+      "data": {
+        "icon": "info",
+        "text": "[!NOTE]"
+      },
+      "id": "blk_native_callout_1794417928949611300",
+      "managed_by": "project_parser",
+      "type": "callout"
+    },
+    {
+      "data": {
+        "icon": "info",
+        "text": "Moving from 100,000 to 1,000,000 observations causes **zero rendering degradation** ($6.42\\text{ ms} \\to 6.40\\text{ ms}$), confirming $O(1)$ constant-time viewport rendering."
+      },
+      "id": "blk_native_callout_1794417928949612100",
+      "managed_by": "project_parser",
+      "type": "callout"
+    },
+    {
+      "data": {
+        "text": "---"
+      },
+      "id": "blk_native_paragraph_1794417928949613300",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    },
+    {
+      "data": {
+        "level": 2,
+        "text": "5. Statistical & Algorithmic Procedures (100,000 Rows)"
+      },
+      "id": "blk_native_heading_1794417928949614300",
+      "managed_by": "project_parser",
+      "type": "heading"
+    },
+    {
+      "data": {
+        "text": "All 21 procedures were executed against the full $100\\,000$-row dataset."
+      },
+      "id": "blk_native_paragraph_1794417928949615300",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    },
+    {
+      "data": {
+        "text": "| # | Procedure Name | Command Identifier | Elapsed Time (ms) | Theoretical Complexity | Status |\n| :-: | :--- | :--- | :-: | :---: | :---: |\n| 1 | **DESCRIPTIVES** | `stat.descriptives` | 55.34 ms | $O(N)$ | **PASS** |\n| 2 | **FREQUENCIES** | `stat.frequencies` | 75.97 ms | $O(N)$ | **PASS** |\n| 3 | **CROSSTABS** | `stat.crosstabs` | 75.83 ms | $O(N)$ | **PASS** |\n| 4 | **MEANS** | `stat.means` | 47.16 ms | $O(N)$ | **PASS** |\n| 5 | **ONE-SAMPLE T-TEST** | `stat.ttest.onesample` | 21.16 ms | $O(N)$ | **PASS** |\n| 6 | **INDEPENDENT SAMPLES T-TEST** | `stat.ttest.indep` | 37.74 ms | $O(N)$ | **PASS** |\n| 7 | **PAIRED SAMPLES T-TEST** | `stat.ttest.paired` | 35.21 ms | $O(N)$ | **PASS** |\n| 8 | **ONE-WAY ANOVA** | `stat.anova.oneway` | 47.57 ms | $O(N)$ | **PASS** |\n| 9 | **BIVARIATE CORRELATIONS** | `stat.correlations` | 91.74 ms | $O(N \\log N)$ | **PASS** |\n| 10 | **LINEAR REGRESSION** | `stat.regression.linear` | 69.63 ms | $O(N \\cdot P^2)$ | **PASS** |\n| 11 | **FACTOR ANALYSIS (PCA)** | `stat.factor` | 65.53 ms | $O(N \\cdot P^2)$ | **PASS** |\n| 12 | **RELIABILITY (CRONBACH'S ALPHA)** | `stat.scale.reliability` | 75.58 ms | $O(N \\cdot P^2)$ | **PASS** |\n| 13 | **MANN-WHITNEY U** | `stat.npar.mann_whitney` | 43.81 ms | $O(N \\log N)$ | **PASS** |\n| 14 | **KRUSKAL-WALLIS H** | `stat.npar.kruskal_wallis` | 55.76 ms | $O(N \\log N)$ | **PASS** |\n| 15 | **WILCOXON SIGNED-RANK** | `stat.npar.related2` | 36.87 ms | $O(N \\log N)$ | **PASS** |\n| 16 | **SIGN TEST** | `stat.npar.related2` | 35.92 ms | $O(N)$ | **PASS** |\n| 17 | **SORT CASES** | `data.sort_cases` | 39.98 ms | $O(N \\log N)$ | **PASS** |\n| 18 | **RANK CASES** | `transform.rank_cases` | 5.26 ms | $O(N \\log N)$ | **PASS** |\n| 19 | **OPTIMAL BINNING (MDLP)** | `transform.optimal_binning` | 29.90 ms | $O(N \\log N)$ | **PASS** |\n| 20 | **COMPUTE VARIABLE** | `transform.compute` | 4.93 ms | $O(N)$ | **PASS** |\n| 21 | **ADP PIPELINE** | `transform.adp` | 141.37 ms | $O(N)$ | **PASS** |"
+      },
+      "id": "blk_native_paragraph_1794417928949619000",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    },
+    {
+      "data": {
+        "level": 3,
+        "text": "Key Observations:"
+      },
+      "id": "blk_native_heading_1794417928949622200",
+      "managed_by": "project_parser",
+      "type": "heading"
+    },
+    {
+      "data": {
+        "text": "1. **Interactive Sub-Second Latency:** Every single analytical and transformation procedure finishes in **under 150 milliseconds** on $100\\,000$ observations.\n2. **Fastest Procedures:** Vectorized column compute (`COMPUTE VARIABLE`) completes in **4.93 ms**; rank assignment (`RANK CASES`) takes **5.26 ms**.\n3. **Heavy End-to-End Pipelines:** The full automated machine learning preparation pipeline (`ADP PIPELINE`), including outlier handling, categorical binning, and normalization, completes in **141.37 ms**."
+      },
+      "id": "blk_native_paragraph_1794417928949623800",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    },
+    {
+      "data": {
+        "text": "---"
+      },
+      "id": "blk_native_paragraph_1794417928949624600",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    },
+    {
+      "data": {
+        "level": 2,
+        "text": "6. Memory Integrity & Zero Leak Audit"
+      },
+      "id": "blk_native_heading_1794417928949625100",
+      "managed_by": "project_parser",
+      "type": "heading"
+    },
+    {
+      "data": {
+        "text": "To prove absence of memory leaks, the test runner executed 1,000 consecutive mutations through `CommandBus::execute` followed immediately by `CommandBus::undo`."
+      },
+      "id": "blk_native_paragraph_1794417928949625800",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    },
+    {
+      "data": {
+        "text": "| Metric | Measurement | DoD Threshold | Result |\n| :--- | :---: | :---: | :---: |\n| **Initial Process Working Set (RSS)** | 584.87 MB | - | Baseline |\n| **Completed Cycles (Execute $\\to$ Undo)** | 1,000 cycles | 1,000 cycles | Complete |\n| **Final Process Working Set (RSS)** | 584.87 MB | - | Post-test |\n| **Working Set Delta ($\\Delta\\text{RSS}$)** | **0.00 MB (0.00%)** | $\\le 5.0\\%$ | **PASS** |"
+      },
+      "id": "blk_native_paragraph_1794417928949627000",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    },
+    {
+      "data": {
+        "icon": "info",
+        "text": "[!IMPORTANT]"
+      },
+      "id": "blk_native_callout_1794417928949627800",
+      "managed_by": "project_parser",
+      "type": "callout"
+    },
+    {
+      "data": {
+        "icon": "info",
+        "text": "A delta of **0.00%** across 1,000 cycles confirms zero allocator fragmentation and absolute reversibility of state in StatCraft."
+      },
+      "id": "blk_native_callout_1794417928949628400",
+      "managed_by": "project_parser",
+      "type": "callout"
+    }
+  ]
+}
+
+--BOUNDARY_PAYLOAD_7KD5WVFS4O
+Content-Type: text/html; charset="utf-8"
+Content-Disposition: inline
+
+<!doctype html><html><head><meta charset="utf-8"><meta name="generator" content="CapsuleCraft Native"></head><body style="font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;max-width:720px;margin:32px auto;line-height:1.55;color:#23201c;background:#faf8f4;"><h1>📚 StatCraft / StatCraft Performance &amp; Memory Stress Benchmark Report</h1><p><em>[callout block — open in CapsuleCraft web for its canvas]</em></p><h1>StatCraft Performance &amp; Memory Stress Benchmark Report</h1><h2>1. Executive Summary</h2><p>This report documents the empirical benchmark results of **StatCraft** under extreme workload conditions:<br>* **Standard Stress Dataset:** $100\,000$ rows $\times 20$ columns ($2\,000\,000$ cells instantiated);<br>* **Extreme Scale Dataset:** $1\,000\,000$ rows $\times 20$ columns ($20\,000\,000$ cells instantiated);<br>* **Algorithmic Scope:** All 21 core statistical analysis and data transformation procedures without exception;<br>* **UI Virtualization:** Headless and virtualized rendering through `ScrollArea::show_rows`;<br>* **Memory Integrity:** 1,000 iterative cycles of `CommandBus::execute` $\to$ `undo` tracking OS Working Set (RSS).</p><p>All benchmarks were compiled and executed in the release profile (`cargo run -p xtask --release -j 1 -- bench-stress`) in accordance with the ArtCraft Resource Guard protocol.</p><p>---</p><h2>2. Benchmark Environment</h2><p>| Parameter | Specification |<br>| :--- | :--- |<br>| **Operating System** | Microsoft Windows 11 Pro (x86_64) |<br>| **Rust Version** | rustc 1.85+ (Edition 2021) |<br>| **Profile** | Release (`opt-level = 3`, `codegen-units = 1`, `lto = &quot;thin&quot;`) |<br>| **Data Engine** | Native In-Memory Vectorized Columnar Table (`RawTable` / `DataSet`) |<br>| **Execution Framework** | `xtask bench-stress` |<br>| **Total Test Duration** | **3.02 seconds** |</p><p>---</p><h2>3. Data Ingestion &amp; Instantiation Limits</h2><p>| Scale Target | Total Cells | RAM Footprint (Est.) | Instantiation Time | Throughput |<br>| :--- | :---: | :---: | :---: | :---: |<br>| **100,000 Rows $\times$ 20 Cols** | $2\,000\,000$ | ~35 MB | **16.13 ms** | **123.9M cells / sec** |<br>| **1,000,000 Rows $\times$ 20 Cols** | $20\,000\,000$ | ~320 MB | **170.10 ms** | **117.6M cells / sec** |</p><p>*Both generation passes demonstrate near-perfect $O(N)$ linear scaling.*</p><p>---</p><h2>4. UI Virtualization &amp; Rendering Stability (FPS)</h2><p>StatCraft employs strict row virtualization (`ScrollArea::vertical().show_rows(...)`) ensuring that regardless of whether the user browses 10 rows or 1,000,000 rows, only visible viewport elements (~35 rows $\times$ 20 columns) are evaluated and drawn per frame.</p><p>| Test Scenario | Total Cases | Average Frame Time ($\mu s$) | 99th Percentile ($\mu s$) | Effective FPS | Status |<br>| :--- | :---: | :---: | :---: | :---: | :---: |<br>| **Viewport Scroll (100k Rows)** | 100,000 | $6\,416.1\ \mu s$ (6.42 ms) | $9\,980.0\ \mu s$ (9.98 ms) | **156 FPS** | **PASS** ($\ge 60$) |<br>| **Viewport Scroll (1M Rows)** | 1,000,000 | $6\,398.8\ \mu s$ (6.40 ms) | $10\,165.0\ \mu s$ (10.16 ms) | **156 FPS** | **PASS** ($\ge 60$) |</p><p><em>[callout block — open in CapsuleCraft web for its canvas]</em></p><p><em>[callout block — open in CapsuleCraft web for its canvas]</em></p><p>---</p><h2>5. Statistical &amp; Algorithmic Procedures (100,000 Rows)</h2><p>All 21 procedures were executed against the full $100\,000$-row dataset.</p><p>| # | Procedure Name | Command Identifier | Elapsed Time (ms) | Theoretical Complexity | Status |<br>| :-: | :--- | :--- | :-: | :---: | :---: |<br>| 1 | **DESCRIPTIVES** | `stat.descriptives` | 55.34 ms | $O(N)$ | **PASS** |<br>| 2 | **FREQUENCIES** | `stat.frequencies` | 75.97 ms | $O(N)$ | **PASS** |<br>| 3 | **CROSSTABS** | `stat.crosstabs` | 75.83 ms | $O(N)$ | **PASS** |<br>| 4 | **MEANS** | `stat.means` | 47.16 ms | $O(N)$ | **PASS** |<br>| 5 | **ONE-SAMPLE T-TEST** | `stat.ttest.onesample` | 21.16 ms | $O(N)$ | **PASS** |<br>| 6 | **INDEPENDENT SAMPLES T-TEST** | `stat.ttest.indep` | 37.74 ms | $O(N)$ | **PASS** |<br>| 7 | **PAIRED SAMPLES T-TEST** | `stat.ttest.paired` | 35.21 ms | $O(N)$ | **PASS** |<br>| 8 | **ONE-WAY ANOVA** | `stat.anova.oneway` | 47.57 ms | $O(N)$ | **PASS** |<br>| 9 | **BIVARIATE CORRELATIONS** | `stat.correlations` | 91.74 ms | $O(N \log N)$ | **PASS** |<br>| 10 | **LINEAR REGRESSION** | `stat.regression.linear` | 69.63 ms | $O(N \cdot P^2)$ | **PASS** |<br>| 11 | **FACTOR ANALYSIS (PCA)** | `stat.factor` | 65.53 ms | $O(N \cdot P^2)$ | **PASS** |<br>| 12 | **RELIABILITY (CRONBACH&#39;S ALPHA)** | `stat.scale.reliability` | 75.58 ms | $O(N \cdot P^2)$ | **PASS** |<br>| 13 | **MANN-WHITNEY U** | `stat.npar.mann_whitney` | 43.81 ms | $O(N \log N)$ | **PASS** |<br>| 14 | **KRUSKAL-WALLIS H** | `stat.npar.kruskal_wallis` | 55.76 ms | $O(N \log N)$ | **PASS** |<br>| 15 | **WILCOXON SIGNED-RANK** | `stat.npar.related2` | 36.87 ms | $O(N \log N)$ | **PASS** |<br>| 16 | **SIGN TEST** | `stat.npar.related2` | 35.92 ms | $O(N)$ | **PASS** |<br>| 17 | **SORT CASES** | `data.sort_cases` | 39.98 ms | $O(N \log N)$ | **PASS** |<br>| 18 | **RANK CASES** | `transform.rank_cases` | 5.26 ms | $O(N \log N)$ | **PASS** |<br>| 19 | **OPTIMAL BINNING (MDLP)** | `transform.optimal_binning` | 29.90 ms | $O(N \log N)$ | **PASS** |<br>| 20 | **COMPUTE VARIABLE** | `transform.compute` | 4.93 ms | $O(N)$ | **PASS** |<br>| 21 | **ADP PIPELINE** | `transform.adp` | 141.37 ms | $O(N)$ | **PASS** |</p><h3>Key Observations:</h3><p>1. **Interactive Sub-Second Latency:** Every single analytical and transformation procedure finishes in **under 150 milliseconds** on $100\,000$ observations.<br>2. **Fastest Procedures:** Vectorized column compute (`COMPUTE VARIABLE`) completes in **4.93 ms**; rank assignment (`RANK CASES`) takes **5.26 ms**.<br>3. **Heavy End-to-End Pipelines:** The full automated machine learning preparation pipeline (`ADP PIPELINE`), including outlier handling, categorical binning, and normalization, completes in **141.37 ms**.</p><p>---</p><h2>6. Memory Integrity &amp; Zero Leak Audit</h2><p>To prove absence of memory leaks, the test runner executed 1,000 consecutive mutations through `CommandBus::execute` followed immediately by `CommandBus::undo`.</p><p>| Metric | Measurement | DoD Threshold | Result |<br>| :--- | :---: | :---: | :---: |<br>| **Initial Process Working Set (RSS)** | 584.87 MB | - | Baseline |<br>| **Completed Cycles (Execute $\to$ Undo)** | 1,000 cycles | 1,000 cycles | Complete |<br>| **Final Process Working Set (RSS)** | 584.87 MB | - | Post-test |<br>| **Working Set Delta ($\Delta\text{RSS}$)** | **0.00 MB (0.00%)** | $\le 5.0\%$ | **PASS** |</p><p><em>[callout block — open in CapsuleCraft web for its canvas]</em></p><p><em>[callout block — open in CapsuleCraft web for its canvas]</em></p><hr><p style="color:#8a8175;font-size:12px">Exported from CapsuleCraft Native · &lt;doc-statcraft-docs_performance_benchmark_report_md@capsuleos.local&gt;</p></body></html>
+
+--BOUNDARY_PAYLOAD_7KD5WVFS4O--
+--BOUNDARY_ROOT_1HQH8T5FP9--

@@ -656,3 +656,14 @@
 - [x] Регламент `AGENTS.md`: Раздел 14 со строгим запретом обхода хуков через `--no-verify`
 - [x] 100% прохождение всех проверок Definition of Done (`cargo run -p xtask -j 1 -- ci`).
 
+## 40. Устранение расхождений аудита и 100% каноничность IBM SPSS (Divergences Fix с Craft Anything MCP)
+- [x] L2 `statcraft_algo::expr_eval::parser`: каноническая иерархия приоритетов операторов SPSS Universals (степень `**` опережает унарный минус/плюс: `-2**2 == -4.0`, отношения опережают `NOT`: `NOT a = b` -> `NOT (a = b)`)
+- [x] L2 `statcraft_algo::expr_eval::mod`: строгая трехзначная логика Клини (Kleene 3VL) при наличии `NaN` (`TRUE OR SYSMIS == 1.0`, `FALSE AND SYSMIS == 0.0`, `NOT SYSMIS == SYSMIS`)
+- [x] L2 `statcraft_algo::expr_eval::eval`: реализация функций `SIN`, `COS`, `TAN` (с возвратом `NaN` в точках сингулярности), остатка `MOD(x, y)` с защитой от деления на ноль, канонического алиаса `LG10` и строгого режима `MEAN` (требует отсутствия пропусков без суффикса `.n`)
+- [x] L2 `statcraft_algo::time_series`: разделение на центрированное скользящее среднее `SimpleMovingAverage` (`SMA`, с весами 0.5 на границах для четных $k = 2m$) и предшествующее окно `PriorMovingAverage` (`PMA`)
+- [x] L5 `statcraft_syntax::commands::time_series_cmd`: поддержка функций `SMA` и `PMA` в синтаксисе команды `CREATE` и схеме параметров `specs()`
+- [x] Журнал дефектов `docs/BUGS_AND_ISSUES.md`: регистрация и перевод в статус `RESOLVED` дефектов `BUG-006`, `BUG-007`, `BUG-008`, `BUG-009`
+- [x] Документы аудита `docs/SPSS_ALGORITHMS_AUDIT.md` и `docs/SPSS_ALGORITHMS_AUDIT_RU.md`: перевод всех 14 аналитических блоков в статус **100% Verified (0 Divergences)**
+- [x] Двуязычная хроника проекта: добавление записи в `docs/CHRONICLE.md` и `docs/CHRONICLE.en.md` (Этап / Phase 71)
+- [x] 100% успешный прогон всех ступеней Quality Gate `cargo run -p xtask -j 1 -- ci` (fmt, clippy, layers, file-guard [314 файлов], design-guard, workspace tests, parity, corpus, test-undo).
+

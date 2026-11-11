@@ -1,7 +1,7 @@
 From: CapsuleCraft Code Ingest <system@capsulecraft.local>
 To: Vault <vault@capsuleos.local>
 Subject: 📄 StatCraft / crates/statcraft_algo/src/expr_eval/mod.rs
-Date: Fri, 6 Nov 2026 14:13:33 +0000
+Date: Wed, 11 Nov 2026 17:52:26 +0000
 Message-ID: <module-crates_statcraft_algo_src_expr_eval_mod_rs@capsuleos.local>
 In-Reply-To: <subsystem-statcraft-crates_statcraft_algo@capsuleos.local>
 X-Capsule-Page-Parent: <subsystem-statcraft-crates_statcraft_algo@capsuleos.local>
@@ -34,7 +34,7 @@ Content-Disposition: inline; filename="canvas_state.json"
         "level": 1,
         "text": "📄 mod.rs"
       },
-      "id": "blk_native_heading_1793974413761653900",
+      "id": "blk_native_heading_1794419546795635600",
       "managed_by": "project_parser",
       "type": "heading"
     },
@@ -42,7 +42,7 @@ Content-Disposition: inline; filename="canvas_state.json"
       "data": {
         "text": "Path: `crates/statcraft_algo/src/expr_eval/mod.rs` · 193 lines of code\nBelongs to project: [[📦 StatCraft (Overview) | 📦 StatCraft (Overview)]]"
       },
-      "id": "blk_native_paragraph_1793974413761655600",
+      "id": "blk_native_paragraph_1794419546795637400",
       "managed_by": "project_parser",
       "type": "paragraph"
     },
@@ -51,7 +51,7 @@ Content-Disposition: inline; filename="canvas_state.json"
         "level": 2,
         "text": "Public Interface"
       },
-      "id": "blk_native_heading_1793974413761656200",
+      "id": "blk_native_heading_1794419546795638100",
       "managed_by": "project_parser",
       "type": "heading"
     },
@@ -60,7 +60,7 @@ Content-Disposition: inline; filename="canvas_state.json"
         "code": "pub struct CompiledExpr\npub fn parse(input: &str) -> Result<Self, EvalError>\npub fn eval<F>(&self, var_lookup: &F) -> Result<f64, EvalError> where F: Fn(&str) -> Option<f64>,\npub fn eval_row(&self, row_values: &HashMap<String, f64>) -> Result<f64, EvalError>",
         "language": "rust"
       },
-      "id": "blk_native_code_1793974413761656900",
+      "id": "blk_native_code_1794419546795638900",
       "managed_by": "project_parser",
       "type": "code"
     }

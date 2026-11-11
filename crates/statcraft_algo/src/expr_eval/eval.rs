@@ -5,8 +5,41 @@ pub fn eval_function(name: &str, args: &[f64]) -> Result<f64, EvalError> {
         "ABS" => check_1_arg(name, args, |x| x.abs()),
         "SQRT" => check_1_arg(name, args, |x| if x < 0.0 { f64::NAN } else { x.sqrt() }),
         "LN" => check_1_arg(name, args, |x| if x <= 0.0 { f64::NAN } else { x.ln() }),
-        "LOG10" => check_1_arg(name, args, |x| if x <= 0.0 { f64::NAN } else { x.log10() }),
+        "LOG10" | "LG10" => {
+            check_1_arg(name, args, |x| if x <= 0.0 { f64::NAN } else { x.log10() })
+        }
         "EXP" => check_1_arg(name, args, |x| x.exp()),
+        "SIN" => check_1_arg(name, args, |x| x.sin()),
+        "COS" => check_1_arg(name, args, |x| x.cos()),
+        "TAN" => check_1_arg(name, args, |x| {
+            let t = x.tan();
+            if t.is_nan() || t.is_infinite() {
+                f64::NAN
+            } else {
+                t
+            }
+        }),
+        "MOD" => {
+            if args.len() != 2 {
+                return Err(EvalError::InvalidArgCount {
+                    name: name.to_string(),
+                    expected: 2,
+                    got: args.len(),
+                });
+            }
+            let x = args[0];
+            let y = args[1];
+            if x.is_nan() || y.is_nan() || y == 0.0 {
+                Ok(f64::NAN)
+            } else {
+                let rem = x % y;
+                if rem.is_nan() || rem.is_infinite() {
+                    Ok(f64::NAN)
+                } else {
+                    Ok(rem)
+                }
+            }
+        }
         "RND" | "ROUND" => check_1_arg(name, args, |x| x.round()),
         "TRUNC" => check_1_arg(name, args, |x| x.trunc()),
         "SUM" => {
@@ -32,12 +65,11 @@ pub fn eval_function(name: &str, args: &[f64]) -> Result<f64, EvalError> {
                     got: 0,
                 });
             }
-            let valid: Vec<f64> = args.iter().copied().filter(|x| !x.is_nan()).collect();
-            if valid.is_empty() {
+            if args.iter().any(|x| x.is_nan()) {
                 Ok(f64::NAN)
             } else {
-                let sum: f64 = valid.iter().sum();
-                Ok(sum / (valid.len() as f64))
+                let sum: f64 = args.iter().sum();
+                Ok(sum / (args.len() as f64))
             }
         }
         "MIN" => {

@@ -71,12 +71,26 @@ impl CompiledExpr {
                         .pop()
                         .ok_or_else(|| EvalError::SyntaxError("Missing first operand".into()))?;
 
-                    if a.is_nan() || b.is_nan() {
-                        stack.push(f64::NAN);
-                        continue;
-                    }
-
                     let res = match op {
+                        Op::Or => {
+                            if (!a.is_nan() && a != 0.0) || (!b.is_nan() && b != 0.0) {
+                                1.0
+                            } else if a.is_nan() || b.is_nan() {
+                                f64::NAN
+                            } else {
+                                0.0
+                            }
+                        }
+                        Op::And => {
+                            if (!a.is_nan() && a == 0.0) || (!b.is_nan() && b == 0.0) {
+                                0.0
+                            } else if a.is_nan() || b.is_nan() {
+                                f64::NAN
+                            } else {
+                                1.0
+                            }
+                        }
+                        _ if a.is_nan() || b.is_nan() => f64::NAN,
                         Op::Add => a + b,
                         Op::Sub => a - b,
                         Op::Mul => a * b,
@@ -132,20 +146,6 @@ impl CompiledExpr {
                         }
                         Op::Ge => {
                             if a >= b {
-                                1.0
-                            } else {
-                                0.0
-                            }
-                        }
-                        Op::And => {
-                            if a != 0.0 && b != 0.0 {
-                                1.0
-                            } else {
-                                0.0
-                            }
-                        }
-                        Op::Or => {
-                            if a != 0.0 || b != 0.0 {
                                 1.0
                             } else {
                                 0.0

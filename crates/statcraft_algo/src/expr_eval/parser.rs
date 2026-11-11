@@ -12,10 +12,10 @@ pub enum OpStackEntry {
 
 pub fn op_precedence(op: Op) -> (u8, bool) {
     match op {
-        Op::Pow => (6, true), // right-associative
-        Op::Mul | Op::Div => (5, false),
-        Op::Add | Op::Sub => (4, false),
-        Op::Eq | Op::Ne | Op::Lt | Op::Le | Op::Gt | Op::Ge => (3, false),
+        Op::Pow => (8, true), // right-associative
+        Op::Mul | Op::Div => (6, false),
+        Op::Add | Op::Sub => (5, false),
+        Op::Eq | Op::Ne | Op::Lt | Op::Le | Op::Gt | Op::Ge => (4, false),
         Op::And => (2, false),
         Op::Or => (1, false),
     }
@@ -49,7 +49,8 @@ pub fn to_rpn(tokens: &[Token]) -> Result<Vec<EvalNode>, EvalError> {
                 while let Some(top) = op_stack.last() {
                     let top_prec = match top {
                         OpStackEntry::Op(top_op) => op_precedence(*top_op).0,
-                        OpStackEntry::UnaryMinus | OpStackEntry::UnaryPlus | OpStackEntry::Not => 7,
+                        OpStackEntry::UnaryMinus | OpStackEntry::UnaryPlus => 7,
+                        OpStackEntry::Not => 3,
                         _ => 0,
                     };
                     if top_prec > prec || (top_prec == prec && !right_assoc) {

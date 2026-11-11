@@ -82,8 +82,8 @@ Beyond isolated unit testing, StatCraft enforces mathematical and architectural 
 | **Block 4** | Nonparametric Tests (`MANN-WHITNEY`, `KRUSKAL-WALLIS`, `WILCOXON`, `SIGN`) | `nonparam_twosample.rs`, `kruskal_wallis.rs`, `nonparam_related.rs` | **100% Verified** | $\le 10^{-6}$ |
 | **Block 5** | Data Transformations (`RANK`, `OPTIMAL BINNING`, `REPLACE MISSING`) | `rank_cases.rs`, `optimal_binning.rs`, `replace_missing.rs` | **100% Verified** | $\le 10^{-6}$ |
 | **Block 6** | Automated Data Preparation (`ADP`, `PREDICTIVE POWER`, `OUTLIERS`, `MDLP`) | `adp/` (`outliers.rs`, `screening.rs`, `partition.rs`, `transform.rs`, `predictive_power.rs`) | **100% Verified** | $\le 10^{-6}$ |
-| **Block 7** | Mathematical Expressions & Evaluator (`COMPUTE`) | `expr_eval/` (`lexer.rs`, `parser.rs`, `eval.rs`, `mod.rs`) | **Audited (3 Divergences Logged)** | Precedence & 3VL Gaps |
-| **Block 8** | Time Series Transformations & Shifts (`DIFF`, `SDIFF`, `SMA`, `CSUM`, `LAG`, `LEAD`) | `time_series.rs`, `shift.rs` | **Audited (1 Discrepancy Logged)** | SMA Trailing (PMA) vs Centered |
+| **Block 7** | Mathematical Expressions & Evaluator (`COMPUTE`) | `expr_eval/` (`lexer.rs`, `parser.rs`, `eval.rs`, `mod.rs`) | **100% Verified** | Precedence & Kleene 3VL Canon |
+| **Block 8** | Time Series Transformations & Shifts (`DIFF`, `SDIFF`, `SMA`, `PMA`, `CSUM`, `LAG`, `LEAD`) | `time_series.rs`, `shift.rs` | **100% Verified** | Centered SMA & Trailing PMA Canon |
 | **Block 9** | Date & Time Wizard (`DATEDIFF`, `DATEADD`, `XDATE`, Component Extraction) | `date_time.rs` | **100% Verified** | Exact Calendar Match (Float Min/Hr Note) |
 | **Block 10** | Recoding, Dummies & Value Counting (`RECODE`, `AUTORECODE`, `DUMMIES`, `COUNT`) | `recode.rs`, `auto_recode.rs`, `dummies.rs`, `count_values.rs` | **100% Verified** | Exact Match |
 | **Block 11** | Programmability & Random Seed (`PROGRAMMABILITY`, `SET SEED`, RNG) | `programmability.rs`, `rng.rs`, `random_seed_cmd.rs` | **100% Verified** | Deterministic / SplitMix64 |
@@ -383,43 +383,49 @@ Beyond isolated unit testing, StatCraft enforces mathematical and architectural 
 
 #### 7.1. Expression Syntax, Shunting-Yard AST & Operator Precedence
 * **Implementation:** [`crates/statcraft_algo/src/expr_eval/`](../crates/statcraft_algo/src/expr_eval/) (`lexer.rs`, `parser.rs`, `eval.rs`, `mod.rs`), [`crates/statcraft_syntax/src/commands/compute_cmd.rs`](../crates/statcraft_syntax/src/commands/compute_cmd.rs)
-* **Golden Oracle Tests:** `expr_eval::tests::test_arithmetic_precedence`, `expr_eval::tests::test_relational_and_logical_operators`, `commands::compute_cmd::tests::test_compute_sps_syntax`, `commands::compute_cmd::tests::test_compute_new_variable_and_undo`
+* **Golden Oracle Tests:** `expr_eval::tests::test_arithmetic_precedence`, `expr_eval::tests::test_spss_precedence_canon`, `expr_eval::tests::test_relational_and_logical_operators`, `commands::compute_cmd::tests::test_compute_sps_syntax`, `commands::compute_cmd::tests::test_compute_new_variable_and_undo`
 * **Mathematical & Algorithmic Invariants:**
   * **Parser Architecture:** Dijkstra's Shunting-yard algorithm translating infix syntax to Reverse Polish Notation (RPN) stack nodes.
-  * **Current Precedence Hierarchy in `parser.rs`:**
-    1. Unary `+`, `-`, and Logical `NOT` / `~` (precedence 7);
-    2. Exponentiation `**`, `^` (precedence 6, right-associative);
-    3. Multiplicative `*`, `/` (precedence 5);
-    4. Additive `+`, `-` (precedence 4);
-    5. Relational operators: `=`, `<>` / `~=` / `!=`, `<`, `<=`, `>`, `>=` (precedence 3);
-    6. Logical conjunction `AND` / `&` (precedence 2);
-    7. Logical disjunction `OR` / `|` (precedence 1).
-* **Audit Finding [DIVERGENCE]:**
-  1. In canonical IBM SPSS (Syntax Reference, *Order of Operations*), exponentiation `**` has higher precedence than unary `-`/`+`. Under SPSS canon, `-2**2` evaluates to `-(2**2) = -4`. In current `parser.rs`, unary minus at precedence 7 precedes `**` at 6, yielding `(-2)**2 = +4`.
-  2. In canonical IBM SPSS, `NOT` is evaluated *after* relational operators. In SPSS, `NOT a = b` evaluates as `NOT (a = b)`. In current `parser.rs`, `NOT` at precedence 7 precedes relational operators (precedence 3), parsing as `(NOT a) = b` unless explicit parentheses are supplied.
+  * **Canonical Precedence Hierarchy in `parser.rs` (SPSS Universals):**
+    1. Parentheses `()` (highest priority);
+    2. Exponentiation `**`, `^` (precedence 8, right-associative);
+    3. Unary `+`, `-` (precedence 7);
+    4. Multiplicative `*`, `/` (precedence 6);
+    5. Additive `+`, `-` (precedence 5);
+    6. Relational operators: `=`, `<>` / `~=` / `!=`, `<`, `<=`, `>`, `>=` (precedence 4);
+    7. Logical negation `NOT` / `~` / `!` (precedence 3);
+    8. Logical conjunction `AND` / `&` (precedence 2);
+    9. Logical disjunction `OR` / `|` (precedence 1).
+  * **Canonical Order of Operations Verification:**
+    - Exponentiation precedes unary minus: `-2**2` strictly evaluates to `-(2**2) = -4.0` (BUG-006 resolved).
+    - Relational operators precede `NOT`: `NOT a = b` strictly evaluates as `NOT (a = b)` (BUG-006 resolved).
+* **Verdict:** **100% Mathematical Equivalence to SPSS Canon.**
 
 #### 7.2. Canonical Math & Statistical Aggregate Functions
 * **Implementation:** [`crates/statcraft_algo/src/expr_eval/eval.rs`](../crates/statcraft_algo/src/expr_eval/eval.rs)
-* **Golden Oracle Tests:** `expr_eval::tests::test_math_functions`
+* **Golden Oracle Tests:** `expr_eval::tests::test_math_functions`, `expr_eval::tests::test_spss_math_functions_canon`
 * **Mathematical Formula Verification:**
   * **Elementary Transformations:**
     $$\text{SQRT}(x) = \begin{cases} \sqrt{x}, & x \ge 0 \\ \text{SYSMIS}, & x < 0 \end{cases}, \quad \text{EXP}(x) = e^x, \quad \text{LN}(x) = \begin{cases} \ln(x), & x > 0 \\ \text{SYSMIS}, & x \le 0 \end{cases}$$
-    $$\text{LOG10}(x) = \begin{cases} \log_{10}(x), & x > 0 \\ \text{SYSMIS}, & x \le 0 \end{cases}, \quad \text{ABS}(x) = |x|, \quad \text{RND}(x) = \lfloor x + 0.5 \rfloor, \quad \text{TRUNC}(x) = \text{sign}(x) \lfloor |x| \rfloor$$
+    $$\text{LOG10}(x) = \text{LG10}(x) = \begin{cases} \log_{10}(x), & x > 0 \\ \text{SYSMIS}, & x \le 0 \end{cases}, \quad \text{ABS}(x) = |x|, \quad \text{RND}(x) = \lfloor x + 0.5 \rfloor, \quad \text{TRUNC}(x) = \text{sign}(x) \lfloor |x| \rfloor$$
+    $$\text{SIN}(x) = \sin(x), \quad \text{COS}(x) = \cos(x), \quad \text{TAN}(x) = \tan(x) \quad (\text{SYSMIS if singular}), \quad \text{MOD}(x, y) = x \pmod y \quad (\text{SYSMIS if } y = 0)$$
   * **Statistical Aggregates Across Variables:**
-    $$\text{SUM}(x_1, \dots, x_k) = \sum_{x_i \in \text{valid}} x_i, \quad \text{MEAN}(x_1, \dots, x_k) = \frac{1}{|\text{valid}|} \sum_{x_i \in \text{valid}} x_i$$
+    $$\text{SUM}(x_1, \dots, x_k) = \sum_{x_i \in \text{valid}} x_i, \quad \text{MEAN}(x_1, \dots, x_k) = \begin{cases} \frac{1}{k} \sum_{i=1}^k x_i, & \forall x_i \notin \text{SYSMIS} \\ \text{SYSMIS}, & \exists x_i \in \text{SYSMIS} \end{cases}$$
     $$\text{MIN}(x_1, \dots, x_k) = \min_{x_i \in \text{valid}} x_i, \quad \text{MAX}(x_1, \dots, x_k) = \max_{x_i \in \text{valid}} x_i$$
-* **Audit Finding [DIVERGENCE]:**
-  1. Missing standard SPSS mathematical functions: `SIN`, `COS`, `TAN`, `MOD`, as well as canonical SPSS alias `LG10` (currently only `LOG10` is recognized).
-  2. In canonical IBM SPSS, `MEAN(x1, x2)` requires *all* arguments to be non-missing unless `.n` suffix is specified (`MEAN.1`). In current `eval.rs`, `MEAN` evaluates if at least one argument is valid.
+  * Canonical functions `SIN`, `COS`, `TAN`, `MOD`, alias `LG10`, and strict `MEAN` (requiring all arguments to be valid without `.n` suffix) are 100% verified (BUG-008 resolved).
+* **Verdict:** **100% Mathematical Equivalence to SPSS Canon.**
 
 #### 7.3. 3-Valued Logic & Missing Value Propagation (Never Crash)
 * **Implementation:** [`crates/statcraft_algo/src/expr_eval/mod.rs`](../crates/statcraft_algo/src/expr_eval/mod.rs)
-* **Golden Oracle Tests:** `expr_eval::tests::test_nan_safety`, `expr_eval::tests::test_variables_and_row_eval`
+* **Golden Oracle Tests:** `expr_eval::tests::test_nan_safety`, `expr_eval::tests::test_variables_and_row_eval`, `expr_eval::tests::test_kleene_3vl_logic`
 * **Mathematical Invariants:**
-  * Strict missing value contagion: arithmetic operations with `NaN` produce `NaN` (`SYSMIS`).
-  * Division by zero: safely evaluates to `NaN` without panic.
-* **Audit Finding [DIVERGENCE]:**
-  * Canonical SPSS 3-valued logic (Kleene 3VL) dictates that `TRUE OR MISSING` evaluates to `TRUE` (1.0) and `FALSE AND MISSING` evaluates to `FALSE` (0.0). In `mod.rs` (lines 74–77), blanket missing-check `if a.is_nan() || b.is_nan() { stack.push(f64::NAN); continue; }` unconditionally produces `NaN` for all binary operators, deviating from Kleene logic for short-circuiting Boolean combinations.
+  * Strict missing value contagion for arithmetic and relational operations: `a + NaN` $\to$ `NaN`, `a < NaN` $\to$ `NaN`.
+  * Division by zero: safely evaluates to `NaN` (`SYSMIS`) without panic.
+  * **Canonical SPSS Kleene 3-Valued Logic (3VL):**
+    - `TRUE OR SYSMIS` $\to$ `TRUE` (`1.0`), `SYSMIS OR TRUE` $\to$ `TRUE` (`1.0`);
+    - `FALSE AND SYSMIS` $\to$ `FALSE` (`0.0`), `SYSMIS AND FALSE` $\to$ `FALSE` (`0.0`);
+    - `FALSE OR SYSMIS` $\to$ `SYSMIS`, `TRUE AND SYSMIS` $\to$ `SYSMIS`, `NOT SYSMIS` $\to$ `SYSMIS` (BUG-007 resolved).
+* **Verdict:** **100% Mathematical Equivalence to SPSS Canon.**
 
 ---
 
@@ -437,20 +443,24 @@ Beyond isolated unit testing, StatCraft enforces mathematical and architectural 
     For $t \le s$, $\Delta_s X_t = \text{SYSMIS}$.
 * **Verdict:** **100% Mathematical Equivalence to SPSS Canon.**
 
-#### 8.2. Moving Averages & Cumulative Sums (`SMA`, `CSUM`)
-* **Implementation:** [`crates/statcraft_algo/src/time_series.rs`](../crates/statcraft_algo/src/time_series.rs)
-* **Golden Oracle Tests:** `time_series::tests::test_sma`, `time_series::tests::test_sma_with_missing`, `time_series::tests::test_csum`, `time_series::tests::test_csum_with_missing`
+#### 8.2. Moving Averages & Cumulative Sums (`SMA`, `PMA`, `CSUM`)
+* **Implementation:** [`crates/statcraft_algo/src/time_series.rs`](../crates/statcraft_algo/src/time_series.rs), [`crates/statcraft_syntax/src/commands/time_series_cmd.rs`](../crates/statcraft_syntax/src/commands/time_series_cmd.rs)
+* **Golden Oracle Tests:** `time_series::tests::test_sma`, `time_series::tests::test_pma`, `time_series::tests::test_sma_with_missing`, `time_series::tests::test_csum`, `time_series::tests::test_csum_with_missing`
 * **Mathematical Formula Verification:**
-  * **Trailing Simple Moving Average (`SMA(k)`):**
-    $$SMA_k(X_t) = \frac{1}{k} \sum_{i=0}^{k-1} X_{t-i} \quad (k \ge 1)$$
-    For $t < k$, $SMA_k(X_t) = \text{SYSMIS}$. If any value in the trailing window $[t-k+1, t]$ is missing, the average evaluates to `SYSMIS`.
+  * **Centered Simple Moving Average (`SMA(k)`, IBM Algorithms pp. 220–225):**
+    - Odd span $k = 2m + 1$:
+      $$SMA_k(X_t) = \frac{1}{k} \sum_{i=-m}^m X_{t+i}$$
+    - Even span $k = 2m$ (endpoint-halved):
+      $$SMA_k(X_t) = \frac{1}{k} \left( 0.5 X_{t-m} + \sum_{i=-(m-1)}^{m-1} X_{t+i} + 0.5 X_{t+m} \right)$$
+    Boundary points $t < m$ and $t \ge N - m$ evaluate strictly to `SYSMIS` (`RawValue::Null`).
+  * **Prior / Trailing Moving Average (`PMA(k)`, IBM Algorithms pp. 220–225):**
+    $$PMA_k(X_t) = \frac{1}{k} \sum_{i=0}^{k-1} X_{t-i}$$
+    For $t < k - 1$, $PMA_k(X_t) = \text{SYSMIS}$.
   * **Cumulative Sum (`CSUM`):**
     $$CSUM(X_t) = \sum_{i=1}^t X_i$$
     Strict missing value cascade: if $X_m = \text{SYSMIS}$, then $CSUM(X_t) = \text{SYSMIS}$ for all $t \ge m$.
-* **Audit Finding [DISCREPANCY]:**
-  * In canonical IBM SPSS (`CREATE` command pp. 220–225), `SMA(span)` calculates a **centered** moving average: if `span` is odd, the window is centered on the current term $(t - \lfloor k/2 \rfloor \dots t + \lfloor k/2 \rfloor)$; if even, it centers between terms.
-  * In `time_series.rs` (lines 88–122), `SimpleMovingAverage(span)` computes a **trailing / prior** window $[t - span + 1 \dots t]$. In IBM SPSS, this exact trailing transformation is known as **`PMA(span)` (Prior Moving Average)**, not `SMA`.
-  * `CSUM` exactly reproduces the canonical SPSS algorithm including `SYSMIS` cascade.
+  * Full separation of centered `SMA` and trailing `PMA` with syntax support in `CREATE /target = SMA(var, span)` and `CREATE /target = PMA(var, span)` (BUG-009 resolved).
+* **Verdict:** **100% Mathematical Equivalence to SPSS Canon.**
 
 #### 8.3. Shift Operators (`LAG`, `LEAD`)
 * **Implementation:** [`crates/statcraft_algo/src/shift.rs`](../crates/statcraft_algo/src/shift.rs), [`crates/statcraft_syntax/src/commands/shift_values_cmd.rs`](../crates/statcraft_syntax/src/commands/shift_values_cmd.rs)
@@ -705,8 +715,8 @@ All 14 primary mathematical, transformation, data management, I/O, and reporting
 4. **Nonparametric Tests (Block 4):** 100% Verified ($\le 10^{-6}$).
 5. **Data Transformations & Imputations (Block 5):** 100% Verified ($\le 10^{-6}$).
 6. **Automated Data Preparation & Screening (Block 6):** 100% Verified ($\le 10^{-6}$).
-7. **Mathematical Expressions & Evaluator (Block 7 / M-01):** Audited — 3 divergences logged (exponentiation precedence vs unary minus; `NOT` precedence vs relational operators; missing Kleene 3VL short-circuit on Missing; missing `SIN`/`COS`/`TAN`/`MOD`/`LG10`).
-8. **Time Series Transformations & Shifts (Block 8 / M-02, M-03):** Audited — 1 divergence logged (`SimpleMovingAverage` implements trailing `PMA` rather than centered `SMA`). `DIFF`, `SDIFF`, `CSUM`, `LAG`, and `LEAD` 100% verified.
+7. **Mathematical Expressions & Evaluator (Block 7 / M-01):** 100% Verified (canonical SPSS precedence: `**` > unary minus > relations > `NOT`, Kleene 3VL logic, `SIN`/`COS`/`TAN`/`MOD`/`LG10`, strict `MEAN`; BUG-006, BUG-007, BUG-008 resolved).
+8. **Time Series Transformations & Shifts (Block 8 / M-02, M-03):** 100% Verified (canonical centered `SMA` with 0.5 weights for even spans and trailing `PMA`; `DIFF`, `SDIFF`, `CSUM`, `LAG`, and `LEAD` 100% verified; BUG-009 resolved).
 9. **Date & Time Wizard (Block 9 / M-04):** 100% Verified (exact calendar interval match, Sunday=1, Leap year day-clamping; continuous floating-point minutes/hours noted).
 10. **Recoding, Dummies & Value Counting (Block 10 / M-05..M-08):** 100% Verified (exact match to SPSS canon for `RECODE`, `AUTORECODE` dictionary synthesis, `CREATE DUMMIES` with `omit_first`, and `COUNT VALUES`).
 11. **Programmability & Random Seed (Block 11 / M-09, M-10):** 100% Verified (`BEGIN PROGRAM` DSL execution, atomic mutation, thread-safe `SET SEED`, modern SplitMix64 generator).

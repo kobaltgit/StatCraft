@@ -1,0 +1,94 @@
+From: CapsuleCraft Code Ingest <system@capsulecraft.local>
+To: Vault <vault@capsuleos.local>
+Subject: 📄 StatCraft / crates/statcraft_app/src/dialogs/goto_dialog.rs
+Date: Wed, 11 Nov 2026 17:25:28 +0000
+Message-ID: <module-crates_statcraft_app_src_dialogs_goto_dialog_rs@capsuleos.local>
+In-Reply-To: <subsystem-statcraft-crates_statcraft_app@capsuleos.local>
+X-Capsule-Page-Parent: <subsystem-statcraft-crates_statcraft_app@capsuleos.local>
+References: <project-index-statcraft@capsuleos.local> <subsystem-statcraft-crates_statcraft_app@capsuleos.local>
+X-Capsule-Tags: project, statcraft, module
+X-Capsule-Status: Active
+MIME-Version: 1.0
+Content-Type: multipart/mixed; boundary="BOUNDARY_ROOT_1BE0HQ1FYI"
+
+--BOUNDARY_ROOT_1BE0HQ1FYI
+Content-Type: multipart/alternative; boundary="BOUNDARY_PAYLOAD_1F0WGLRG1B"
+
+--BOUNDARY_PAYLOAD_1F0WGLRG1B
+Content-Type: application/json; name="canvas_state.json"
+Content-Disposition: inline; filename="canvas_state.json"
+
+{
+  "version": "1.0",
+  "generator": "CapsuleCraft Native egui prototype (Zero-DB Pure-MIME)",
+  "messageId": "<module-crates_statcraft_app_src_dialogs_goto_dialog_rs@capsuleos.local>",
+  "subject": "📄 StatCraft / crates/statcraft_app/src/dialogs/goto_dialog.rs",
+  "tags": [
+    "project",
+    "statcraft",
+    "module"
+  ],
+  "blocks": [
+    {
+      "data": {
+        "level": 1,
+        "text": "📄 goto_dialog.rs"
+      },
+      "id": "blk_native_heading_1794417928903557600",
+      "managed_by": "project_parser",
+      "type": "heading"
+    },
+    {
+      "data": {
+        "text": "Path: `crates/statcraft_app/src/dialogs/goto_dialog.rs` · 215 lines of code\nBelongs to project: [[📦 StatCraft (Overview) | 📦 StatCraft (Overview)]]"
+      },
+      "id": "blk_native_paragraph_1794417928903559300",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    },
+    {
+      "data": {
+        "level": 2,
+        "text": "Public Interface"
+      },
+      "id": "blk_native_heading_1794417928903559900",
+      "managed_by": "project_parser",
+      "type": "heading"
+    },
+    {
+      "data": {
+        "code": "pub enum GoToTab\npub struct GoToDialogState\npub fn open_case(&mut self, current_case: Option<usize>)\npub fn open_variable(&mut self, current_var: Option<usize>)\npub enum GoToAction\npub fn render_goto_dialog( ctx: &Context, dataset: Option<&DataSet>, state: &mut GoToDialogState, ) -> GoToAction",
+        "language": "rust"
+      },
+      "id": "blk_native_code_1794417928903561000",
+      "managed_by": "project_parser",
+      "type": "code"
+    },
+    {
+      "data": {
+        "level": 2,
+        "text": "Internal Dependencies"
+      },
+      "id": "blk_native_heading_1794417928903561900",
+      "managed_by": "project_parser",
+      "type": "heading"
+    },
+    {
+      "data": {
+        "text": "- `super::common::{DialogShell, SubdialogAction, SubdialogActionBar}`\n- `crate::widgets::paint_measure_icon`\n"
+      },
+      "id": "blk_native_paragraph_1794417928903563100",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    }
+  ]
+}
+
+--BOUNDARY_PAYLOAD_1F0WGLRG1B
+Content-Type: text/html; charset="utf-8"
+Content-Disposition: inline
+
+<!doctype html><html><head><meta charset="utf-8"><meta name="generator" content="CapsuleCraft Native"></head><body style="font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;max-width:720px;margin:32px auto;line-height:1.55;color:#23201c;background:#faf8f4;"><h1>📄 StatCraft / crates/statcraft_app/src/dialogs/goto_dialog.rs</h1><h1>📄 goto_dialog.rs</h1><p>Path: `crates/statcraft_app/src/dialogs/goto_dialog.rs` · 215 lines of code<br>Belongs to project: [[📦 StatCraft (Overview) | 📦 StatCraft (Overview)]]</p><h2>Public Interface</h2><p><em>[code block — open in CapsuleCraft web for its canvas]</em></p><h2>Internal Dependencies</h2><p>- `super::common::{DialogShell, SubdialogAction, SubdialogActionBar}`<br>- `crate::widgets::paint_measure_icon`<br></p><hr><p style="color:#8a8175;font-size:12px">Exported from CapsuleCraft Native · &lt;module-crates_statcraft_app_src_dialogs_goto_dialog_rs@capsuleos.local&gt;</p></body></html>
+
+--BOUNDARY_PAYLOAD_1F0WGLRG1B--
+--BOUNDARY_ROOT_1BE0HQ1FYI--

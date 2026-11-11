@@ -1,0 +1,295 @@
+From: CapsuleCraft Code Ingest <system@capsulecraft.local>
+To: Vault <vault@capsuleos.local>
+Subject: 📚 StatCraft / Отчет о стресс-тестировании производительности и памяти StatCraft
+Date: Wed, 11 Nov 2026 17:25:28 +0000
+Message-ID: <doc-statcraft-docs_performance_benchmark_report_ru_md@capsuleos.local>
+In-Reply-To: <project-index-statcraft@capsuleos.local>
+X-Capsule-Page-Parent: <project-index-statcraft@capsuleos.local>
+References: <project-index-statcraft@capsuleos.local>
+X-Capsule-Tags: project, statcraft, docs
+X-Capsule-Status: Active
+MIME-Version: 1.0
+Content-Type: multipart/mixed; boundary="BOUNDARY_ROOT_87FVAPJI1Y"
+
+--BOUNDARY_ROOT_87FVAPJI1Y
+Content-Type: multipart/alternative; boundary="BOUNDARY_PAYLOAD_18A5A6FJL6"
+
+--BOUNDARY_PAYLOAD_18A5A6FJL6
+Content-Type: application/json; name="canvas_state.json"
+Content-Disposition: inline; filename="canvas_state.json"
+
+{
+  "version": "1.0",
+  "generator": "CapsuleCraft Native egui prototype (Zero-DB Pure-MIME)",
+  "messageId": "<doc-statcraft-docs_performance_benchmark_report_ru_md@capsuleos.local>",
+  "subject": "📚 StatCraft / Отчет о стресс-тестировании производительности и памяти StatCraft",
+  "tags": [
+    "project",
+    "statcraft",
+    "docs"
+  ],
+  "blocks": [
+    {
+      "data": {
+        "icon": "book",
+        "text": "Documentation file: `docs/PERFORMANCE_BENCHMARK_REPORT_RU.md`\nBelongs to project: [[📦 StatCraft (Overview) | 📦 StatCraft (Overview)]]"
+      },
+      "id": "blk_native_callout_1794417928950094800",
+      "managed_by": "project_parser",
+      "type": "callout"
+    },
+    {
+      "data": {
+        "level": 1,
+        "text": "Отчет о стресс-тестировании производительности и памяти StatCraft"
+      },
+      "id": "blk_native_heading_1794417928950061600",
+      "managed_by": "project_parser",
+      "type": "heading"
+    },
+    {
+      "data": {
+        "level": 2,
+        "text": "1. Резюме"
+      },
+      "id": "blk_native_heading_1794417928950063100",
+      "managed_by": "project_parser",
+      "type": "heading"
+    },
+    {
+      "data": {
+        "text": "Настоящий отчет фиксирует результаты эмпирического тестирования производительности **StatCraft** в экстремальных режимах нагрузки:\n* **Стандартный стресс-массив:** $100\\,000$ строк $\\times 20$ колонок ($2\\,000\\,000$ ячеек);\n* **Экстремальный масштаб:** $1\\,000\\,000$ строк $\\times 20$ колонок ($20\\,000\\,000$ ячеек);\n* **Алгоритмический охват:** Все 21 ключевая статистическая процедура и трансформация без исключений;\n* **Виртуализация графического интерфейса:** Рендеринг через `ScrollArea::show_rows` с контролем времени кадра;\n* **Надежность памяти:** 1 000 циклических итераций `CommandBus::execute` $\\to$ `undo` с мониторингом физической памяти (RSS процесса)."
+      },
+      "id": "blk_native_paragraph_1794417928950065400",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    },
+    {
+      "data": {
+        "text": "Все тесты скомпилированы и выполнены в релизном профиле (`cargo run -p xtask --release -j 1 -- bench-stress`) с соблюдением правил Resource Guard экосистемы ArtCraft."
+      },
+      "id": "blk_native_paragraph_1794417928950066900",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    },
+    {
+      "data": {
+        "text": "---"
+      },
+      "id": "blk_native_paragraph_1794417928950067600",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    },
+    {
+      "data": {
+        "level": 2,
+        "text": "2. Параметры тестовой среды"
+      },
+      "id": "blk_native_heading_1794417928950068300",
+      "managed_by": "project_parser",
+      "type": "heading"
+    },
+    {
+      "data": {
+        "text": "| Параметр | Значение |\n| :--- | :--- |\n| **Операционная система** | Microsoft Windows 11 Pro (x86_64) |\n| **Версия компилятора Rust** | rustc 1.85+ (Редакция 2021) |\n| **Профиль сборки** | Release (`opt-level = 3`, `codegen-units = 1`, `lto = \"thin\"`) |\n| **Движок данных** | Векторизованная колоночная таблица в оперативной памяти (`RawTable` / `DataSet`) |\n| **Тестовый инструмент** | `xtask bench-stress` |\n| **Общее время тестирования** | **3.02 секунды** |"
+      },
+      "id": "blk_native_paragraph_1794417928950069800",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    },
+    {
+      "data": {
+        "text": "---"
+      },
+      "id": "blk_native_paragraph_1794417928950070600",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    },
+    {
+      "data": {
+        "level": 2,
+        "text": "3. Скорость генерации и выделения памяти"
+      },
+      "id": "blk_native_heading_1794417928950071300",
+      "managed_by": "project_parser",
+      "type": "heading"
+    },
+    {
+      "data": {
+        "text": "| Размер массива | Всего ячеек | Объем RAM (оценка) | Время создания | Пропускная способность |\n| :--- | :---: | :---: | :---: | :---: |\n| **100 000 строк $\\times$ 20 колонок** | $2\\,000\\,000$ | ~35 МБ | **16.13 мс** | **123.9 млн ячеек / сек** |\n| **1 000 000 строк $\\times$ 20 колонок** | $20\\,000\\,000$ | ~320 МБ | **170.10 мс** | **117.6 млн ячеек / сек** |"
+      },
+      "id": "blk_native_paragraph_1794417928950072800",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    },
+    {
+      "data": {
+        "text": "*Оба прогона демонстрируют практически идеальную линейную масштабируемость $O(N)$.*"
+      },
+      "id": "blk_native_paragraph_1794417928950073600",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    },
+    {
+      "data": {
+        "text": "---"
+      },
+      "id": "blk_native_paragraph_1794417928950074200",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    },
+    {
+      "data": {
+        "level": 2,
+        "text": "4. Виртуализация интерфейса и стабильность частоты кадров (FPS)"
+      },
+      "id": "blk_native_heading_1794417928950074900",
+      "managed_by": "project_parser",
+      "type": "heading"
+    },
+    {
+      "data": {
+        "text": "StatCraft использует строгую виртуализацию строк таблицы (`ScrollArea::vertical().show_rows(...)`). Независимо от того, просматривает ли пользователь 10 строк или миллион строк, за один кадр вычисляются и отрисовываются только элементы активного экрана (~35 строк $\\times$ 20 колонок)."
+      },
+      "id": "blk_native_paragraph_1794417928950075800",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    },
+    {
+      "data": {
+        "text": "| Тестовый сценарий | Объем данных | Среднее время кадра ($\\mu s$) | 99-й перцентиль ($\\mu s$) | Эквивалентный FPS | Статус |\n| :--- | :---: | :---: | :---: | :---: | :---: |\n| **Скроллинг (100k строк)** | 100 000 строк | $6\\,416.1\\ \\mu s$ (6.42 мс) | $9\\,980.0\\ \\mu s$ (9.98 мс) | **156 FPS** | **ВЫПОЛНЕНО** ($\\ge 60$) |\n| **Скроллинг (1M строк)** | 1 000 000 строк | $6\\,398.8\\ \\mu s$ (6.40 мс) | $10\\,165.0\\ \\mu s$ (10.16 мс) | **156 FPS** | **ВЫПОЛНЕНО** ($\\ge 60$) |"
+      },
+      "id": "blk_native_paragraph_1794417928950077100",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    },
+    {
+      "data": {
+        "icon": "info",
+        "text": "[!NOTE]"
+      },
+      "id": "blk_native_callout_1794417928950077800",
+      "managed_by": "project_parser",
+      "type": "callout"
+    },
+    {
+      "data": {
+        "icon": "info",
+        "text": "При увеличении размера данных в 10 раз (со 100 000 до 1 000 000 строк) скорость отрисовки **не изменилась** ($6.42\\text{ мс} \\to 6.40\\text{ мс}$), что подтверждает константную сложность $O(1)$ для пользовательского интерфейса."
+      },
+      "id": "blk_native_callout_1794417928950078700",
+      "managed_by": "project_parser",
+      "type": "callout"
+    },
+    {
+      "data": {
+        "text": "---"
+      },
+      "id": "blk_native_paragraph_1794417928950079800",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    },
+    {
+      "data": {
+        "level": 2,
+        "text": "5. Замеры статистических и расчетных процедур (100 000 строк)"
+      },
+      "id": "blk_native_heading_1794417928950080600",
+      "managed_by": "project_parser",
+      "type": "heading"
+    },
+    {
+      "data": {
+        "text": "Все 21 аналитическая процедура были выполнены на полном массиве в $100\\,000$ наблюдений."
+      },
+      "id": "blk_native_paragraph_1794417928950081600",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    },
+    {
+      "data": {
+        "text": "| # | Процедура | Идентификатор команды | Время (мс) | Теоретическая сложность | Статус |\n| :-: | :--- | :--- | :-: | :---: | :---: |\n| 1 | **DESCRIPTIVES** (Описательные статистики) | `stat.descriptives` | 55.34 мс | $O(N)$ | **ВЫПОЛНЕНО** |\n| 2 | **FREQUENCIES** (Частоты) | `stat.frequencies` | 75.97 мс | $O(N)$ | **ВЫПОЛНЕНО** |\n| 3 | **CROSSTABS** (Таблицы сопряженности) | `stat.crosstabs` | 75.83 мс | $O(N)$ | **ВЫПОЛНЕНО** |\n| 4 | **MEANS** (Сравнение средних) | `stat.means` | 47.16 мс | $O(N)$ | **ВЫПОЛНЕНО** |\n| 5 | **ONE-SAMPLE T-TEST** (Одновыборочный t-критерий) | `stat.ttest.onesample` | 21.16 мс | $O(N)$ | **ВЫПОЛНЕНО** |\n| 6 | **INDEPENDENT SAMPLES T-TEST** (Двухвыборочный t-критерий) | `stat.ttest.indep` | 37.74 мс | $O(N)$ | **ВЫПОЛНЕНО** |\n| 7 | **PAIRED SAMPLES T-TEST** (Парный t-критерий) | `stat.ttest.paired` | 35.21 мс | $O(N)$ | **ВЫПОЛНЕНО** |\n| 8 | **ONE-WAY ANOVA** (Однофакторный дисперсионный анализ) | `stat.anova.oneway` | 47.57 мс | $O(N)$ | **ВЫПОЛНЕНО** |\n| 9 | **BIVARIATE CORRELATIONS** (Корреляции Пирсона и Спирмена) | `stat.correlations` | 91.74 мс | $O(N \\log N)$ | **ВЫПОЛНЕНО** |\n| 10 | **LINEAR REGRESSION** (Линейная регрессия OLS) | `stat.regression.linear` | 69.63 мс | $O(N \\cdot P^2)$ | **ВЫПОЛНЕНО** |\n| 11 | **FACTOR ANALYSIS** (Факторный анализ / PCA Якоби) | `stat.factor` | 65.53 мс | $O(N \\cdot P^2)$ | **ВЫПОЛНЕНО** |\n| 12 | **RELIABILITY** (Альфа Кронбаха) | `stat.scale.reliability` | 75.58 мс | $O(N \\cdot P^2)$ | **ВЫПОЛНЕНО** |\n| 13 | **MANN-WHITNEY U** (Критерий Манна-Уитни) | `stat.npar.mann_whitney` | 43.81 мс | $O(N \\log N)$ | **ВЫПОЛНЕНО** |\n| 14 | **KRUSKAL-WALLIS H** (Критерий Краскела-Уоллиса) | `stat.npar.kruskal_wallis` | 55.76 мс | $O(N \\log N)$ | **ВЫПОЛНЕНО** |\n| 15 | **WILCOXON SIGNED-RANK** (Критерий знаковых рангов Уилкоксона) | `stat.npar.related2` | 36.87 мс | $O(N \\log N)$ | **ВЫПОЛНЕНО** |\n| 16 | **SIGN TEST** (Критерий знаков) | `stat.npar.related2` | 35.92 мс | $O(N)$ | **ВЫПОЛНЕНО** |\n| 17 | **SORT CASES** (Сортировка наблюдений) | `data.sort_cases` | 39.98 мс | $O(N \\log N)$ | **ВЫПОЛНЕНО** |\n| 18 | **RANK CASES** (Ранжирование наблюдений) | `transform.rank_cases` | 5.26 мс | $O(N \\log N)$ | **ВЫПОЛНЕНО** |\n| 19 | **OPTIMAL BINNING** (MDLP категоризация) | `transform.optimal_binning` | 29.90 мс | $O(N \\log N)$ | **ВЫПОЛНЕНО** |\n| 20 | **COMPUTE VARIABLE** (Вычисление выражений) | `transform.compute` | 4.93 мс | $O(N)$ | **ВЫПОЛНЕНО** |\n| 21 | **ADP PIPELINE** (Автоматическая подготовка данных) | `transform.adp` | 141.37 мс | $O(N)$ | **ВЫПОЛНЕНО** |"
+      },
+      "id": "blk_native_paragraph_1794417928950085000",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    },
+    {
+      "data": {
+        "level": 3,
+        "text": "Ключевые выводы:"
+      },
+      "id": "blk_native_heading_1794417928950085900",
+      "managed_by": "project_parser",
+      "type": "heading"
+    },
+    {
+      "data": {
+        "text": "1. **Интерактивная отзывчивость:** Каждая из 21 процедур укладывается в диапазон **до 150 миллисекунд** на массиве в 100 000 строк.\n2. **Лидеры скорости:** Векторизованное вычисление формул (`COMPUTE VARIABLE`) выполняется всего за **4.93 мс**; ранжирование (`RANK CASES`) — за **5.26 мс**.\n3. **Комплексный конвейер:** Полный цикл подготовки данных к машинному обучению (`ADP PIPELINE`), включая обнаружение выбросов, слияние редких категорий и z-стандартизацию, выполняется за **141.37 мс**."
+      },
+      "id": "blk_native_paragraph_1794417928950087500",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    },
+    {
+      "data": {
+        "text": "---"
+      },
+      "id": "blk_native_paragraph_1794417928950088300",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    },
+    {
+      "data": {
+        "level": 2,
+        "text": "6. Детектор утечек памяти (Zero Memory Leaks)"
+      },
+      "id": "blk_native_heading_1794417928950089100",
+      "managed_by": "project_parser",
+      "type": "heading"
+    },
+    {
+      "data": {
+        "text": "Для подтверждения отсутствия утечек памяти и стабилизации аллокатора запущена серия из 1 000 циклов модификации `CommandBus::execute` с последующим немедленным `undo`."
+      },
+      "id": "blk_native_paragraph_1794417928950090200",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    },
+    {
+      "data": {
+        "text": "| Метрика | Значение | Критерий DoD | Результат |\n| :--- | :---: | :---: | :---: |\n| **Исходная память процесса (RSS)** | 584.87 МБ | - | Исходный уровень |\n| **Выполненных циклов (Execute $\\to$ Undo)** | 1 000 циклов | 1 000 циклов | Полный прогон |\n| **Итоговая память процесса (RSS)** | 584.87 МБ | - | Контрольный замер |\n| **Изменение объема памяти ($\\Delta\\text{RSS}$)** | **0.00 МБ (0.00%)** | $\\le 5.0\\%$ | **ВЫПОЛНЕНО** |"
+      },
+      "id": "blk_native_paragraph_1794417928950091600",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    },
+    {
+      "data": {
+        "icon": "info",
+        "text": "[!IMPORTANT]"
+      },
+      "id": "blk_native_callout_1794417928950092500",
+      "managed_by": "project_parser",
+      "type": "callout"
+    },
+    {
+      "data": {
+        "icon": "info",
+        "text": "Изменение памяти в **0.00%** после 1 000 операций гарантирует отсутствие фрагментации кучи и стопроцентную обратимость операций в StatCraft."
+      },
+      "id": "blk_native_callout_1794417928950093400",
+      "managed_by": "project_parser",
+      "type": "callout"
+    }
+  ]
+}
+
+--BOUNDARY_PAYLOAD_18A5A6FJL6
+Content-Type: text/html; charset="utf-8"
+Content-Disposition: inline
+
+<!doctype html><html><head><meta charset="utf-8"><meta name="generator" content="CapsuleCraft Native"></head><body style="font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;max-width:720px;margin:32px auto;line-height:1.55;color:#23201c;background:#faf8f4;"><h1>📚 StatCraft / Отчет о стресс-тестировании производительности и памяти StatCraft</h1><p><em>[callout block — open in CapsuleCraft web for its canvas]</em></p><h1>Отчет о стресс-тестировании производительности и памяти StatCraft</h1><h2>1. Резюме</h2><p>Настоящий отчет фиксирует результаты эмпирического тестирования производительности **StatCraft** в экстремальных режимах нагрузки:<br>* **Стандартный стресс-массив:** $100\,000$ строк $\times 20$ колонок ($2\,000\,000$ ячеек);<br>* **Экстремальный масштаб:** $1\,000\,000$ строк $\times 20$ колонок ($20\,000\,000$ ячеек);<br>* **Алгоритмический охват:** Все 21 ключевая статистическая процедура и трансформация без исключений;<br>* **Виртуализация графического интерфейса:** Рендеринг через `ScrollArea::show_rows` с контролем времени кадра;<br>* **Надежность памяти:** 1 000 циклических итераций `CommandBus::execute` $\to$ `undo` с мониторингом физической памяти (RSS процесса).</p><p>Все тесты скомпилированы и выполнены в релизном профиле (`cargo run -p xtask --release -j 1 -- bench-stress`) с соблюдением правил Resource Guard экосистемы ArtCraft.</p><p>---</p><h2>2. Параметры тестовой среды</h2><p>| Параметр | Значение |<br>| :--- | :--- |<br>| **Операционная система** | Microsoft Windows 11 Pro (x86_64) |<br>| **Версия компилятора Rust** | rustc 1.85+ (Редакция 2021) |<br>| **Профиль сборки** | Release (`opt-level = 3`, `codegen-units = 1`, `lto = &quot;thin&quot;`) |<br>| **Движок данных** | Векторизованная колоночная таблица в оперативной памяти (`RawTable` / `DataSet`) |<br>| **Тестовый инструмент** | `xtask bench-stress` |<br>| **Общее время тестирования** | **3.02 секунды** |</p><p>---</p><h2>3. Скорость генерации и выделения памяти</h2><p>| Размер массива | Всего ячеек | Объем RAM (оценка) | Время создания | Пропускная способность |<br>| :--- | :---: | :---: | :---: | :---: |<br>| **100 000 строк $\times$ 20 колонок** | $2\,000\,000$ | ~35 МБ | **16.13 мс** | **123.9 млн ячеек / сек** |<br>| **1 000 000 строк $\times$ 20 колонок** | $20\,000\,000$ | ~320 МБ | **170.10 мс** | **117.6 млн ячеек / сек** |</p><p>*Оба прогона демонстрируют практически идеальную линейную масштабируемость $O(N)$.*</p><p>---</p><h2>4. Виртуализация интерфейса и стабильность частоты кадров (FPS)</h2><p>StatCraft использует строгую виртуализацию строк таблицы (`ScrollArea::vertical().show_rows(...)`). Независимо от того, просматривает ли пользователь 10 строк или миллион строк, за один кадр вычисляются и отрисовываются только элементы активного экрана (~35 строк $\times$ 20 колонок).</p><p>| Тестовый сценарий | Объем данных | Среднее время кадра ($\mu s$) | 99-й перцентиль ($\mu s$) | Эквивалентный FPS | Статус |<br>| :--- | :---: | :---: | :---: | :---: | :---: |<br>| **Скроллинг (100k строк)** | 100 000 строк | $6\,416.1\ \mu s$ (6.42 мс) | $9\,980.0\ \mu s$ (9.98 мс) | **156 FPS** | **ВЫПОЛНЕНО** ($\ge 60$) |<br>| **Скроллинг (1M строк)** | 1 000 000 строк | $6\,398.8\ \mu s$ (6.40 мс) | $10\,165.0\ \mu s$ (10.16 мс) | **156 FPS** | **ВЫПОЛНЕНО** ($\ge 60$) |</p><p><em>[callout block — open in CapsuleCraft web for its canvas]</em></p><p><em>[callout block — open in CapsuleCraft web for its canvas]</em></p><p>---</p><h2>5. Замеры статистических и расчетных процедур (100 000 строк)</h2><p>Все 21 аналитическая процедура были выполнены на полном массиве в $100\,000$ наблюдений.</p><p>| # | Процедура | Идентификатор команды | Время (мс) | Теоретическая сложность | Статус |<br>| :-: | :--- | :--- | :-: | :---: | :---: |<br>| 1 | **DESCRIPTIVES** (Описательные статистики) | `stat.descriptives` | 55.34 мс | $O(N)$ | **ВЫПОЛНЕНО** |<br>| 2 | **FREQUENCIES** (Частоты) | `stat.frequencies` | 75.97 мс | $O(N)$ | **ВЫПОЛНЕНО** |<br>| 3 | **CROSSTABS** (Таблицы сопряженности) | `stat.crosstabs` | 75.83 мс | $O(N)$ | **ВЫПОЛНЕНО** |<br>| 4 | **MEANS** (Сравнение средних) | `stat.means` | 47.16 мс | $O(N)$ | **ВЫПОЛНЕНО** |<br>| 5 | **ONE-SAMPLE T-TEST** (Одновыборочный t-критерий) | `stat.ttest.onesample` | 21.16 мс | $O(N)$ | **ВЫПОЛНЕНО** |<br>| 6 | **INDEPENDENT SAMPLES T-TEST** (Двухвыборочный t-критерий) | `stat.ttest.indep` | 37.74 мс | $O(N)$ | **ВЫПОЛНЕНО** |<br>| 7 | **PAIRED SAMPLES T-TEST** (Парный t-критерий) | `stat.ttest.paired` | 35.21 мс | $O(N)$ | **ВЫПОЛНЕНО** |<br>| 8 | **ONE-WAY ANOVA** (Однофакторный дисперсионный анализ) | `stat.anova.oneway` | 47.57 мс | $O(N)$ | **ВЫПОЛНЕНО** |<br>| 9 | **BIVARIATE CORRELATIONS** (Корреляции Пирсона и Спирмена) | `stat.correlations` | 91.74 мс | $O(N \log N)$ | **ВЫПОЛНЕНО** |<br>| 10 | **LINEAR REGRESSION** (Линейная регрессия OLS) | `stat.regression.linear` | 69.63 мс | $O(N \cdot P^2)$ | **ВЫПОЛНЕНО** |<br>| 11 | **FACTOR ANALYSIS** (Факторный анализ / PCA Якоби) | `stat.factor` | 65.53 мс | $O(N \cdot P^2)$ | **ВЫПОЛНЕНО** |<br>| 12 | **RELIABILITY** (Альфа Кронбаха) | `stat.scale.reliability` | 75.58 мс | $O(N \cdot P^2)$ | **ВЫПОЛНЕНО** |<br>| 13 | **MANN-WHITNEY U** (Критерий Манна-Уитни) | `stat.npar.mann_whitney` | 43.81 мс | $O(N \log N)$ | **ВЫПОЛНЕНО** |<br>| 14 | **KRUSKAL-WALLIS H** (Критерий Краскела-Уоллиса) | `stat.npar.kruskal_wallis` | 55.76 мс | $O(N \log N)$ | **ВЫПОЛНЕНО** |<br>| 15 | **WILCOXON SIGNED-RANK** (Критерий знаковых рангов Уилкоксона) | `stat.npar.related2` | 36.87 мс | $O(N \log N)$ | **ВЫПОЛНЕНО** |<br>| 16 | **SIGN TEST** (Критерий знаков) | `stat.npar.related2` | 35.92 мс | $O(N)$ | **ВЫПОЛНЕНО** |<br>| 17 | **SORT CASES** (Сортировка наблюдений) | `data.sort_cases` | 39.98 мс | $O(N \log N)$ | **ВЫПОЛНЕНО** |<br>| 18 | **RANK CASES** (Ранжирование наблюдений) | `transform.rank_cases` | 5.26 мс | $O(N \log N)$ | **ВЫПОЛНЕНО** |<br>| 19 | **OPTIMAL BINNING** (MDLP категоризация) | `transform.optimal_binning` | 29.90 мс | $O(N \log N)$ | **ВЫПОЛНЕНО** |<br>| 20 | **COMPUTE VARIABLE** (Вычисление выражений) | `transform.compute` | 4.93 мс | $O(N)$ | **ВЫПОЛНЕНО** |<br>| 21 | **ADP PIPELINE** (Автоматическая подготовка данных) | `transform.adp` | 141.37 мс | $O(N)$ | **ВЫПОЛНЕНО** |</p><h3>Ключевые выводы:</h3><p>1. **Интерактивная отзывчивость:** Каждая из 21 процедур укладывается в диапазон **до 150 миллисекунд** на массиве в 100 000 строк.<br>2. **Лидеры скорости:** Векторизованное вычисление формул (`COMPUTE VARIABLE`) выполняется всего за **4.93 мс**; ранжирование (`RANK CASES`) — за **5.26 мс**.<br>3. **Комплексный конвейер:** Полный цикл подготовки данных к машинному обучению (`ADP PIPELINE`), включая обнаружение выбросов, слияние редких категорий и z-стандартизацию, выполняется за **141.37 мс**.</p><p>---</p><h2>6. Детектор утечек памяти (Zero Memory Leaks)</h2><p>Для подтверждения отсутствия утечек памяти и стабилизации аллокатора запущена серия из 1 000 циклов модификации `CommandBus::execute` с последующим немедленным `undo`.</p><p>| Метрика | Значение | Критерий DoD | Результат |<br>| :--- | :---: | :---: | :---: |<br>| **Исходная память процесса (RSS)** | 584.87 МБ | - | Исходный уровень |<br>| **Выполненных циклов (Execute $\to$ Undo)** | 1 000 циклов | 1 000 циклов | Полный прогон |<br>| **Итоговая память процесса (RSS)** | 584.87 МБ | - | Контрольный замер |<br>| **Изменение объема памяти ($\Delta\text{RSS}$)** | **0.00 МБ (0.00%)** | $\le 5.0\%$ | **ВЫПОЛНЕНО** |</p><p><em>[callout block — open in CapsuleCraft web for its canvas]</em></p><p><em>[callout block — open in CapsuleCraft web for its canvas]</em></p><hr><p style="color:#8a8175;font-size:12px">Exported from CapsuleCraft Native · &lt;doc-statcraft-docs_performance_benchmark_report_ru_md@capsuleos.local&gt;</p></body></html>
+
+--BOUNDARY_PAYLOAD_18A5A6FJL6--
+--BOUNDARY_ROOT_87FVAPJI1Y--

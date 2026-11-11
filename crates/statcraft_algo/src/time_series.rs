@@ -6,6 +6,7 @@ pub enum TimeSeriesFunction {
     Diff(usize),
     SeasonalDiff(usize),
     SimpleMovingAverage(usize),
+    PriorMovingAverage(usize),
     CumulativeSum,
 }
 
@@ -85,7 +86,7 @@ pub fn compute_time_series_transform(
             }
             result
         }
-        TimeSeriesFunction::SimpleMovingAverage(span) => {
+        TimeSeriesFunction::PriorMovingAverage(span) => {
             if span == 0 || span > n {
                 return vec![RawValue::Null; n];
             }
@@ -112,6 +113,65 @@ pub fn compute_time_series_transform(
                         }
                     }
                 }
+                if valid && sum.is_finite() {
+                    result.push(RawValue::Number(sum / span_f64));
+                } else {
+                    result.push(RawValue::Null);
+                }
+            }
+            result
+        }
+        TimeSeriesFunction::SimpleMovingAverage(span) => {
+            if span == 0 || span > n {
+                return vec![RawValue::Null; n];
+            }
+
+            let mut result = Vec::with_capacity(n);
+            let span_f64 = span as f64;
+            let m = span / 2;
+            let is_even = span % 2 == 0;
+
+            for t in 0..n {
+                if t < m || t >= n.saturating_sub(m) {
+                    result.push(RawValue::Null);
+                    continue;
+                }
+
+                let mut sum = 0.0;
+                let mut valid = true;
+
+                if is_even {
+                    for i in 0..=2 * m {
+                        let idx = (t + i).saturating_sub(m);
+                        match &values[idx] {
+                            RawValue::Number(num) if !num.is_nan() => {
+                                if i == 0 || i == 2 * m {
+                                    sum += 0.5 * num;
+                                } else {
+                                    sum += num;
+                                }
+                            }
+                            _ => {
+                                valid = false;
+                                break;
+                            }
+                        }
+                    }
+                } else {
+                    for i in 0..=2 * m {
+                        let idx = (t + i).saturating_sub(m);
+                        match &values[idx] {
+                            RawValue::Number(num) if !num.is_nan() => {
+                                sum += num;
+                            }
+                            _ => {
+                                valid = false;
+                                break;
+                            }
+                        }
+                    }
+                }
+
                 if valid && sum.is_finite() {
                     result.push(RawValue::Number(sum / span_f64));
                 } else {
@@ -279,9 +339,45 @@ mod tests {
             RawValue::Number(30.0),
             RawValue::Number(40.0),
         ];
+        // Centered SMA with odd span=3 (m=1): endpoints t=0 and t=3 are Null
         let sma = compute_time_series_transform(&vals, TimeSeriesFunction::SimpleMovingAverage(3));
         assert_eq!(
             sma,
+            vec![
+                RawValue::Null,
+                RawValue::Number(20.0), // (10+20+30)/3
+                RawValue::Number(30.0), // (20+30+40)/3
+                RawValue::Null,
+            ]
+        );
+
+        // Centered SMA with even span=2 (m=1): endpoints t=0 and t=3 are Null
+        // t=1: (0.5*10 + 20 + 0.5*30)/2 = (5 + 20 + 15)/2 = 40/2 = 20.0
+        // t=2: (0.5*20 + 30 + 0.5*40)/2 = (10 + 30 + 20)/2 = 60/2 = 30.0
+        let sma2 = compute_time_series_transform(&vals, TimeSeriesFunction::SimpleMovingAverage(2));
+        assert_eq!(
+            sma2,
+            vec![
+                RawValue::Null,
+                RawValue::Number(20.0),
+                RawValue::Number(30.0),
+                RawValue::Null,
+            ]
+        );
+    }
+
+    #[test]
+    fn test_pma() {
+        let vals = vec![
+            RawValue::Number(10.0),
+            RawValue::Number(20.0),
+            RawValue::Number(30.0),
+            RawValue::Number(40.0),
+        ];
+        // Prior (trailing) moving average with span=3
+        let pma = compute_time_series_transform(&vals, TimeSeriesFunction::PriorMovingAverage(3));
+        assert_eq!(
+            pma,
             vec![
                 RawValue::Null,
                 RawValue::Null,
@@ -302,6 +398,17 @@ mod tests {
         let sma = compute_time_series_transform(&vals, TimeSeriesFunction::SimpleMovingAverage(2));
         assert_eq!(
             sma,
+            vec![
+                RawValue::Null,
+                RawValue::Null,
+                RawValue::Null,
+                RawValue::Null,
+            ]
+        );
+
+        let pma = compute_time_series_transform(&vals, TimeSeriesFunction::PriorMovingAverage(2));
+        assert_eq!(
+            pma,
             vec![
                 RawValue::Null,
                 RawValue::Null,

@@ -3167,3 +3167,29 @@ To reinforce codebase reliability and eliminate broken pushes and unexpected CI 
 4. **Quality Control (DoD):**
    * 100% successful pass across all quality stages via `cargo run -p xtask -j 1 -- ci`.
 
+---
+
+### Phase 71: Audit Divergences Fix & 100% IBM SPSS Canon Parity (Craft Anything MCP)
+*Time: November 11, 2026, 19:55 (~35 minutes)*
+
+Following the comprehensive clean-room audit against the *IBM SPSS Statistics 24 Algorithms Guide*, resolved the 4 point divergences in Blocks 7 and 8 of the `statcraft_algo` and `statcraft_syntax` core:
+1. **`COMPUTE` AST Operator Precedences (`parser.rs`, BUG-006):**
+   * Configured the canonical SPSS Universals precedence hierarchy: exponentiation `**` (precedence 8, right-associative) binds tighter than unary minus/plus (precedence 7), ensuring `-2**2 == -4.0` and `(-2)**2 == 4.0`;
+   * Relational operators `=`, `<>`, `<`, `<=`, `>`, `>=` (precedence 4) now precede logical negation `NOT` (precedence 3), parsing `NOT a = b` strictly as `NOT (a = b)`.
+2. **Kleene 3-Valued Logic (3VL) under `NaN` (`mod.rs`, BUG-007):**
+   * Removed blanket missing drops in Boolean binary operators;
+   * Implemented strict Kleene 3VL short-circuiting: `TRUE OR SYSMIS` evaluates to `1.0` (even when the second operand is `NaN`), and `FALSE AND SYSMIS` evaluates to `0.0`.
+3. **`COMPUTE` Math Functions & Strict `MEAN` (`eval.rs`, BUG-008):**
+   * Added trigonometric functions `SIN`, `COS`, `TAN` (evaluating to `NaN` at points of discontinuity) and remainder `MOD(x, y)` with zero-division safeguard;
+   * Supported canonical SPSS alias `LG10` for `LOG10`;
+   * Implemented strict canonical `MEAN(x1..xk)` mode — requiring all arguments to be valid unless a `.n` suffix is explicitly specified.
+4. **Centered Moving Average `SMA` & Separation with `PMA` (`time_series.rs`, `time_series_cmd.rs`, BUG-009):**
+   * Refactored `SimpleMovingAverage` (`SMA`) to the canonical centered SPSS algorithm: symmetric window $[t - m \dots t + m]$ for odd $k = 2m + 1$, and endpoint-halved weights (0.5 on boundaries) for even $k = 2m$, with boundaries $t < m$ and $t \ge N - m$ assigned to `Null`;
+   * Trailing moving average over $[t - span + 1 \dots t]$ separated into dedicated `PriorMovingAverage` (`PMA`) function;
+   * Updated `CREATE` syntax command to support both `SMA(var, span)` and `PMA(var, span)`.
+5. **Quality Control & Audit Clearance (DoD):**
+   * Registered and resolved issues `BUG-006` through `BUG-009` in `docs/BUGS_AND_ISSUES.md`;
+   * Audit registries `docs/SPSS_ALGORITHMS_AUDIT.md` and `docs/SPSS_ALGORITHMS_AUDIT_RU.md` updated: all 14 blocks upgraded to **100% Verified (0 Divergences)**;
+   * All 314 workspace files adhere to size limits (`cargo run -p xtask -j 1 -- file-guard`);
+   * 100% test pass on full workspace suite (`cargo test --workspace -j 1`).
+
