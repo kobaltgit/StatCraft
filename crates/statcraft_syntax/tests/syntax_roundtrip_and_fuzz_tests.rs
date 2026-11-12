@@ -1,9 +1,12 @@
-use statcraft_algo::{DescriptivesResult, FrequencyResult, SortDirection, SortKeySpec};
+use statcraft_algo::{
+    DescriptivesResult, ExploreResult, FrequencyResult, SortDirection, SortKeySpec,
+};
 use statcraft_core::{DataSet, RawValue, SplitFileMode};
 use statcraft_io::{load_csv_from_reader, CsvOptions};
 use statcraft_syntax::commands::{
-    DescriptivesCommand, FrequenciesCommand, IndependentSamplesTTestCommand, SelectCasesAction,
-    SelectCasesCommand, SelectCasesMode, SortCasesCommand, SplitFileCommand, WeightCasesCommand,
+    DescriptivesCommand, ExploreCommand, FrequenciesCommand, IndependentSamplesTTestCommand,
+    SelectCasesAction, SelectCasesCommand, SelectCasesMode, SortCasesCommand, SplitFileCommand,
+    WeightCasesCommand,
 };
 use statcraft_syntax::{CommandBus, SyntaxDispatcher};
 
@@ -191,4 +194,23 @@ fn test_never_crash_on_fuzzed_and_malformed_syntax() {
             }
         }
     }
+}
+
+#[test]
+fn test_roundtrip_explore() {
+    let mut bus = CommandBus::with_defaults();
+    let mut ds = Some(make_test_dataset());
+
+    let deps = vec!["salary".to_string()];
+    let factors = vec!["gender".to_string()];
+    let sps = ExploreCommand::to_sps(&deps, &factors);
+    let results = SyntaxDispatcher::execute_batch(&sps, &mut ds, &mut bus)
+        .expect("Explore batch should succeed");
+
+    assert_eq!(results.len(), 1);
+    let res: ExploreResult = serde_json::from_value(results[0].1.clone()).unwrap();
+    assert_eq!(res.variables.len(), 1);
+    assert_eq!(res.variables[0].variable, "salary");
+    assert_eq!(res.variables[0].factor_var.as_deref(), Some("gender"));
+    assert_eq!(res.variables[0].groups.len(), 2);
 }

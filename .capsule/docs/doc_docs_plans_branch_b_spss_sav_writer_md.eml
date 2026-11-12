@@ -1,0 +1,285 @@
+From: CapsuleCraft Code Ingest <system@capsulecraft.local>
+To: Vault <vault@capsuleos.local>
+Subject: 📚 StatCraft / ТЗ для ИИ-агента: Ветка B — Нативный кодек записи IBM SPSS .sav (L0 statcraft_io)
+Date: Wed, 11 Nov 2026 23:19:42 +0000
+Message-ID: <doc-statcraft-docs_plans_branch_b_spss_sav_writer_md@capsuleos.local>
+In-Reply-To: <project-index-statcraft@capsuleos.local>
+X-Capsule-Page-Parent: <project-index-statcraft@capsuleos.local>
+References: <project-index-statcraft@capsuleos.local>
+X-Capsule-Tags: project, statcraft, docs
+X-Capsule-Status: Active
+MIME-Version: 1.0
+Content-Type: multipart/mixed; boundary="BOUNDARY_ROOT_X23J73J5CE"
+
+--BOUNDARY_ROOT_X23J73J5CE
+Content-Type: multipart/alternative; boundary="BOUNDARY_PAYLOAD_1GYRQ7TJ8Q"
+
+--BOUNDARY_PAYLOAD_1GYRQ7TJ8Q
+Content-Type: application/json; name="canvas_state.json"
+Content-Disposition: inline; filename="canvas_state.json"
+
+{
+  "version": "1.0",
+  "generator": "CapsuleCraft Native egui prototype (Zero-DB Pure-MIME)",
+  "messageId": "<doc-statcraft-docs_plans_branch_b_spss_sav_writer_md@capsuleos.local>",
+  "subject": "📚 StatCraft / ТЗ для ИИ-агента: Ветка B — Нативный кодек записи IBM SPSS .sav (L0 statcraft_io)",
+  "tags": [
+    "project",
+    "statcraft",
+    "docs"
+  ],
+  "blocks": [
+    {
+      "data": {
+        "icon": "book",
+        "text": "Documentation file: `docs/plans/BRANCH_B_SPSS_SAV_WRITER.md`\nBelongs to project: [[📦 StatCraft (Overview) | 📦 StatCraft (Overview)]]"
+      },
+      "id": "blk_native_callout_1794439182834924400",
+      "managed_by": "project_parser",
+      "type": "callout"
+    },
+    {
+      "data": {
+        "level": 1,
+        "text": "ТЗ для ИИ-агента: Ветка B — Нативный кодек записи IBM SPSS .sav (L0 statcraft_io)"
+      },
+      "id": "blk_native_heading_1794439182834886700",
+      "managed_by": "project_parser",
+      "type": "heading"
+    },
+    {
+      "data": {
+        "icon": "info",
+        "text": "**Стандарт экосистемы:** ArtCraft (`storytold`) | Двойная лицензия MIT OR Apache-2.0"
+      },
+      "id": "blk_native_callout_1794439182834888500",
+      "managed_by": "project_parser",
+      "type": "callout"
+    },
+    {
+      "data": {
+        "icon": "info",
+        "text": "**Генеральный регламент:** [AGENTS.md](file:///d:/Projects/active/StatCraft/AGENTS.md)"
+      },
+      "id": "blk_native_callout_1794439182834889500",
+      "managed_by": "project_parser",
+      "type": "callout"
+    },
+    {
+      "data": {
+        "icon": "info",
+        "text": "**МЕТОДОЛОГИЯ РАЗРАБОТКИ:** Разработка и верификация ведутся **ИСКЛЮЧИТЕЛЬНО с помощью инструментов Craft Anything MCP** (доказательный Clean-Room аудит бинарных структур, фиксация гипотез `core_hypothesis_record`, проверка байтовых смещений `evidence://`, регистрация находок `core_finding_record` и протоколирование в `docs/CRAFT_ANYTHING_AUDIT_REPORT.md`)."
+      },
+      "id": "blk_native_callout_1794439182834890500",
+      "managed_by": "project_parser",
+      "type": "callout"
+    },
+    {
+      "data": {
+        "icon": "info",
+        "text": "**Ограничение ресурсов:** ВСЕ команды сборки и тестов запускаются строго с флагом `-j 1`."
+      },
+      "id": "blk_native_callout_1794439182834891600",
+      "managed_by": "project_parser",
+      "type": "callout"
+    },
+    {
+      "data": {
+        "icon": "info",
+        "text": "**Принцип надежности:** 100% Safe Rust, Never Crash (0 `unwrap()`, 0 `expect()`, 0 `panic!()`, 0 `unsafe`)."
+      },
+      "id": "blk_native_callout_1794439182834892400",
+      "managed_by": "project_parser",
+      "type": "callout"
+    },
+    {
+      "data": {
+        "icon": "info",
+        "text": "**Принцип Clean-Room:** 100% чистая реализация без проприетарных DLL; спецификация GNU PSPP & ReadStat."
+      },
+      "id": "blk_native_callout_1794439182834893000",
+      "managed_by": "project_parser",
+      "type": "callout"
+    },
+    {
+      "data": {
+        "icon": "info",
+        "text": "**Архитектура слоев:** Строгое соблюдение L0–L6 (`cargo run -p xtask -j 1 -- layers`)."
+      },
+      "id": "blk_native_callout_1794439182834893700",
+      "managed_by": "project_parser",
+      "type": "callout"
+    },
+    {
+      "data": {
+        "icon": "info",
+        "text": "**Контроль размеров:** Лимит листовых модулей $\\le 500$ строк (`cargo run -p xtask -j 1 -- file-guard`)."
+      },
+      "id": "blk_native_callout_1794439182834894500",
+      "managed_by": "project_parser",
+      "type": "callout"
+    },
+    {
+      "data": {
+        "icon": "info",
+        "text": "**Локализация:** 0% сырых строковых литералов в коде UI (строго Fluent-каталоги `en.ftl` и `ru.ftl`)."
+      },
+      "id": "blk_native_callout_1794439182834895500",
+      "managed_by": "project_parser",
+      "type": "callout"
+    },
+    {
+      "data": {
+        "text": "---"
+      },
+      "id": "blk_native_paragraph_1794439182834896500",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    },
+    {
+      "data": {
+        "level": 2,
+        "text": "1. Роль и инструментальный цикл Craft Anything MCP"
+      },
+      "id": "blk_native_heading_1794439182834897300",
+      "managed_by": "project_parser",
+      "type": "heading"
+    },
+    {
+      "data": {
+        "text": "Разработка бинарного сериализатора формата `.sav` осуществляется **строго под доказательным управлением Craft Anything MCP**:\n1. **Постановка задачи и бриф (`core_brief_write`):**\n   * Формулирование требований к бинарному формату SPSS `.sav` (сигнатура `$FL2`, кодирование записей Record Type 1, 2, 3/4, 7, нарезка 8-байтовых блоков опкодов).\n   * Изоляция от проприетарного исходного кода, соблюдение режима Clean-Room.\n2. **Управление планом расследования (`core_plan_update`):**\n   * Шаг 1: Верификация структуры заголовка Record Type 1 и таймстемпов.\n   * Шаг 2: Верификация описателей колонок Record Type 2 и кодов пропусков.\n   * Шаг 3: Верификация словарей меток Record Type 3/4.\n   * Шаг 4: Верификация Record Type 7 (Subtype 11 для шкал, Subtype 20 для UTF-8, Subtype 14 для длинных строк).\n   * Шаг 5: Верификация алгоритма байтовой компрессии опкодов 1..255.\n3. **Регистрация и подтверждение гипотез (`core_hypothesis_record` / `core_hypothesis_update`):**\n   * Гипотеза о декодировании и кодировании опкода 254 ($0.0$) и 255 (`SYSMIS`);\n   * Гипотеза о кратности 4 байтам текстовых меток переменных в Record Type 2;\n   * Гипотеза об обязательности Record Type 999 в качестве терминатора секции метаданных;\n   * Каждая гипотеза подтверждается прикреплением `evidence_ids` со статусом `supported`.\n4. **Фиксация находок (`core_finding_record`):**\n   * Документирование точных бинарных смещений и инвариантов упаковки данных в проекте.\n5. **Финализация и передача контекста (`core_handoff_write`):**\n   * Синхронное обновление двуязычных отчетов `docs/CRAFT_ANYTHING_AUDIT_REPORT.md` и `docs/CORPUS_AUDIT_REPORT.md`."
+      },
+      "id": "blk_native_paragraph_1794439182834901100",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    },
+    {
+      "data": {
+        "text": "---"
+      },
+      "id": "blk_native_paragraph_1794439182834902300",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    },
+    {
+      "data": {
+        "level": 2,
+        "text": "2. Архитектура и модули по слоям"
+      },
+      "id": "blk_native_heading_1794439182834903000",
+      "managed_by": "project_parser",
+      "type": "heading"
+    },
+    {
+      "data": {
+        "code": "flowchart LR\n    subgraph CA [\"Craft Anything MCP Suite\"]\n        Brief[\"core_brief_write\"]\n        Hypo[\"Hypothesis verification\"]\n        Find[\"Findings & Evidence IDs\"]\n    end\n\n    subgraph L0 [\"L0: statcraft_io (spss_writer/)\"]\n        Header[\"Record 1: Header ($FL2)\"]\n        Vars[\"Record 2: Variables\"]\n        Labels[\"Record 3/4: Value Labels\"]\n        R7[\"Record 7: Subtypes 11, 14, 20\"]\n        Comp[\"Bytecode Compression (Opcodes 1..255)\"]\n    end\n\n    subgraph L5 [\"L5: statcraft_syntax\"]\n        Cmd[\"data.export_sav (SAVE OUTFILE=...)\"]\n    end\n\n    subgraph L6 [\"L6: statcraft_app\"]\n        Menu[\"File -> Save Data As (*.sav)\"]\n    end\n\n    CA --> L0\n    L0 --> L5\n    L5 --> L6",
+        "language": "mermaid"
+      },
+      "id": "blk_native_code_1794439182834906100",
+      "managed_by": "project_parser",
+      "type": "code"
+    },
+    {
+      "data": {
+        "level": 3,
+        "text": "2.1. Слой L0: Модули `crates/statcraft_io/src/spss_writer/`"
+      },
+      "id": "blk_native_heading_1794439182834907600",
+      "managed_by": "project_parser",
+      "type": "heading"
+    },
+    {
+      "data": {
+        "text": "* **Декомпозиция модулей ($\\le 500$ строк на модуль):**\n  * `mod.rs`: Публичная функция `write_sav<W: Write>(table: &RawTable, dict: &VariableDictionary, writer: &mut W) -> Result<(), IoError>`.\n  * `header.rs`: Формирование структуры `RecordType1` (сигнатура `$FL2`, имя продукта `StatCraft Rust`, версия, таймстемп, флаг сжатия `compression = 1`, `case_weight_var = 0`, смещение `bias = 100.0`, `sysmis = -f64::MAX`).\n  * `variable_records.rs`: Сериализация `RecordType2` для каждого столбца (тип, метка переменной с дополнением пробелами до кратности 4, форматы вывода `PRINT` и `WRITE`, 3 дискретных или диапазонных пропуска).\n  * `value_labels.rs`: Сериализация `RecordType3` (список пар `f64 -> String`) и `RecordType4` (массив индексов переменных).\n  * `subtypes.rs`: Сериализация `RecordType7` (Subtype 11 для `Measure`, `Width`, `Align`; Subtype 20 для UTF-8; Subtype 14 для `VeryLongString`).\n  * `compression.rs`: Стриминговый упаковщик опкодов `SavDataEncoder` (нарезка блоков по 8 байт, упаковка целых чисел, опкод 254 для $0.0$, опкод 255 для `SYSMIS`, буферизация несжатых значений)."
+      },
+      "id": "blk_native_paragraph_1794439182834910200",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    },
+    {
+      "data": {
+        "level": 3,
+        "text": "2.2. Слой L5: Командная шина `statcraft_syntax`"
+      },
+      "id": "blk_native_heading_1794439182834910900",
+      "managed_by": "project_parser",
+      "type": "heading"
+    },
+    {
+      "data": {
+        "text": "* **Команда `crates/statcraft_syntax/src/commands/save_sav_cmd.rs`:**\n  * Реализация `EngineCommand` для `data.export_sav`.\n  * Валидация прав доступа и корректности расширения `.sav`.\n  * Генерация канонического синтаксиса `SAVE OUTFILE='...' /COMPRESSED.`.\n  * Регистрация в `CommandBus::with_defaults()`.\n* **Синтаксический парсер:**\n  * Добавить маппинг директивы `SAVE OUTFILE=...` в `mappers/data.rs`."
+      },
+      "id": "blk_native_paragraph_1794439182834912700",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    },
+    {
+      "data": {
+        "level": 3,
+        "text": "2.3. Слой L6: Пользовательский интерфейс `statcraft_app`"
+      },
+      "id": "blk_native_heading_1794439182834913400",
+      "managed_by": "project_parser",
+      "type": "heading"
+    },
+    {
+      "data": {
+        "text": "* **Файловый сеанс `crates/statcraft_app/src/app_session.rs`:**\n  * Реализовать метод `save_data_as_sav(&mut self)` с диалогом выбора пути через `rfd::FileDialog::new().add_filter(\"SPSS Data\", &[\"sav\"])`.\n* **Меню `crates/statcraft_app/src/app_menus/file_edit_view.rs`:**\n  * Активировать пункт `menu-file-save-data-as` («Сохранить данные как... -> Файл SPSS (*.sav)»).\n* **Статусная строка:**\n  * Добавить отображение имени сохраненного файла и индикатора успешной записи."
+      },
+      "id": "blk_native_paragraph_1794439182834915200",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    },
+    {
+      "data": {
+        "level": 3,
+        "text": "2.4. Локализация (`locales/en.ftl` и `locales/ru.ftl`)"
+      },
+      "id": "blk_native_heading_1794439182834916100",
+      "managed_by": "project_parser",
+      "type": "heading"
+    },
+    {
+      "data": {
+        "text": "* Добавить ключи:\n  * `menu-file-save-data-sav = SPSS Data (*.sav)...` / `Данные SPSS (*.sav)...`\n  * `status-file-saved-sav = Data successfully saved to { $path }` / `Данные успешно сохранены в { $path }`\n  * `dialog-save-sav-title = Save SPSS Data File` / `Сохранить файл данных SPSS`"
+      },
+      "id": "blk_native_paragraph_1794439182834917600",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    },
+    {
+      "data": {
+        "text": "---"
+      },
+      "id": "blk_native_paragraph_1794439182834918500",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    },
+    {
+      "data": {
+        "level": 2,
+        "text": "3. Критерии приёмки и верификация (Definition of Done)"
+      },
+      "id": "blk_native_heading_1794439182834919200",
+      "managed_by": "project_parser",
+      "type": "heading"
+    },
+    {
+      "data": {
+        "text": "1. **Протокол Craft Anything MCP:**\n   * Полный цикл `core_brief_write` $\\to$ `core_plan_update` $\\to$ `core_hypothesis_record` $\\to$ `core_finding_record` $\\to$ `core_handoff_write`.\n   * Доказательная привязка гипотез в `docs/CRAFT_ANYTHING_AUDIT_REPORT.md`.\n2. **Компиляция и ресурсы:**\n   * Строго с флагом `-j 1`.\n3. **Математическая обратимость (Round-Trip Test):**\n   * Пакет тестов `spss_roundtrip_tests.rs`:\n     - Тест на сохранение числовых матриц с $0.0$, отрицательными числами и `SYSMIS`;\n     - Тест на сохранение строковых колонок и длинных строк ($> 255$ байт);\n     - Тест на сохранение меток значений `ValueLabels` (русский UTF-8 и латиница);\n     - Тест на сохранение шкал измерения `Scale`, `Ordinal`, `Nominal`;\n     - Инвариант: $\\text{DataSet}_0 \\xrightarrow{\\text{write\\_sav}} \\text{bytes} \\xrightarrow{\\text{read\\_sav}} \\text{DataSet}_1 \\equiv \\text{DataSet}_0$.\n4. **Стресс-тест в `cargo xtask test-corpus`:**\n   * Сериализация и десериализация массива в $100\\,000$ строк.\n5. **Контроль кодовой базы:**\n   * `cargo run -p xtask -j 1 -- file-guard` (модули $\\le 500$ строк).\n   * `cargo run -p xtask -j 1 -- layers` (L0 не зависит от верхних слоев).\n   * `cargo clippy --workspace -j 1 -- -D warnings` — 0 предупреждений.\n   * `cargo fmt --check` — чисто.\n6. **Документация:**\n   * Обновление `docs/CHECKLIST.md`, `docs/parity-checklist.md`, `docs/CHRONICLE.md` и `docs/CHRONICLE.en.md`."
+      },
+      "id": "blk_native_paragraph_1794439182834922400",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    }
+  ]
+}
+
+--BOUNDARY_PAYLOAD_1GYRQ7TJ8Q
+Content-Type: text/html; charset="utf-8"
+Content-Disposition: inline
+
+<!doctype html><html><head><meta charset="utf-8"><meta name="generator" content="CapsuleCraft Native"></head><body style="font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;max-width:720px;margin:32px auto;line-height:1.55;color:#23201c;background:#faf8f4;"><h1>📚 StatCraft / ТЗ для ИИ-агента: Ветка B — Нативный кодек записи IBM SPSS .sav (L0 statcraft_io)</h1><p><em>[callout block — open in CapsuleCraft web for its canvas]</em></p><h1>ТЗ для ИИ-агента: Ветка B — Нативный кодек записи IBM SPSS .sav (L0 statcraft_io)</h1><p><em>[callout block — open in CapsuleCraft web for its canvas]</em></p><p><em>[callout block — open in CapsuleCraft web for its canvas]</em></p><p><em>[callout block — open in CapsuleCraft web for its canvas]</em></p><p><em>[callout block — open in CapsuleCraft web for its canvas]</em></p><p><em>[callout block — open in CapsuleCraft web for its canvas]</em></p><p><em>[callout block — open in CapsuleCraft web for its canvas]</em></p><p><em>[callout block — open in CapsuleCraft web for its canvas]</em></p><p><em>[callout block — open in CapsuleCraft web for its canvas]</em></p><p><em>[callout block — open in CapsuleCraft web for its canvas]</em></p><p>---</p><h2>1. Роль и инструментальный цикл Craft Anything MCP</h2><p>Разработка бинарного сериализатора формата `.sav` осуществляется **строго под доказательным управлением Craft Anything MCP**:<br>1. **Постановка задачи и бриф (`core_brief_write`):**<br>   * Формулирование требований к бинарному формату SPSS `.sav` (сигнатура `$FL2`, кодирование записей Record Type 1, 2, 3/4, 7, нарезка 8-байтовых блоков опкодов).<br>   * Изоляция от проприетарного исходного кода, соблюдение режима Clean-Room.<br>2. **Управление планом расследования (`core_plan_update`):**<br>   * Шаг 1: Верификация структуры заголовка Record Type 1 и таймстемпов.<br>   * Шаг 2: Верификация описателей колонок Record Type 2 и кодов пропусков.<br>   * Шаг 3: Верификация словарей меток Record Type 3/4.<br>   * Шаг 4: Верификация Record Type 7 (Subtype 11 для шкал, Subtype 20 для UTF-8, Subtype 14 для длинных строк).<br>   * Шаг 5: Верификация алгоритма байтовой компрессии опкодов 1..255.<br>3. **Регистрация и подтверждение гипотез (`core_hypothesis_record` / `core_hypothesis_update`):**<br>   * Гипотеза о декодировании и кодировании опкода 254 ($0.0$) и 255 (`SYSMIS`);<br>   * Гипотеза о кратности 4 байтам текстовых меток переменных в Record Type 2;<br>   * Гипотеза об обязательности Record Type 999 в качестве терминатора секции метаданных;<br>   * Каждая гипотеза подтверждается прикреплением `evidence_ids` со статусом `supported`.<br>4. **Фиксация находок (`core_finding_record`):**<br>   * Документирование точных бинарных смещений и инвариантов упаковки данных в проекте.<br>5. **Финализация и передача контекста (`core_handoff_write`):**<br>   * Синхронное обновление двуязычных отчетов `docs/CRAFT_ANYTHING_AUDIT_REPORT.md` и `docs/CORPUS_AUDIT_REPORT.md`.</p><p>---</p><h2>2. Архитектура и модули по слоям</h2><p><em>[code block — open in CapsuleCraft web for its canvas]</em></p><h3>2.1. Слой L0: Модули `crates/statcraft_io/src/spss_writer/`</h3><p>* **Декомпозиция модулей ($\le 500$ строк на модуль):**<br>  * `mod.rs`: Публичная функция `write_sav&lt;W: Write&gt;(table: &amp;RawTable, dict: &amp;VariableDictionary, writer: &amp;mut W) -&gt; Result&lt;(), IoError&gt;`.<br>  * `header.rs`: Формирование структуры `RecordType1` (сигнатура `$FL2`, имя продукта `StatCraft Rust`, версия, таймстемп, флаг сжатия `compression = 1`, `case_weight_var = 0`, смещение `bias = 100.0`, `sysmis = -f64::MAX`).<br>  * `variable_records.rs`: Сериализация `RecordType2` для каждого столбца (тип, метка переменной с дополнением пробелами до кратности 4, форматы вывода `PRINT` и `WRITE`, 3 дискретных или диапазонных пропуска).<br>  * `value_labels.rs`: Сериализация `RecordType3` (список пар `f64 -&gt; String`) и `RecordType4` (массив индексов переменных).<br>  * `subtypes.rs`: Сериализация `RecordType7` (Subtype 11 для `Measure`, `Width`, `Align`; Subtype 20 для UTF-8; Subtype 14 для `VeryLongString`).<br>  * `compression.rs`: Стриминговый упаковщик опкодов `SavDataEncoder` (нарезка блоков по 8 байт, упаковка целых чисел, опкод 254 для $0.0$, опкод 255 для `SYSMIS`, буферизация несжатых значений).</p><h3>2.2. Слой L5: Командная шина `statcraft_syntax`</h3><p>* **Команда `crates/statcraft_syntax/src/commands/save_sav_cmd.rs`:**<br>  * Реализация `EngineCommand` для `data.export_sav`.<br>  * Валидация прав доступа и корректности расширения `.sav`.<br>  * Генерация канонического синтаксиса `SAVE OUTFILE=&#39;...&#39; /COMPRESSED.`.<br>  * Регистрация в `CommandBus::with_defaults()`.<br>* **Синтаксический парсер:**<br>  * Добавить маппинг директивы `SAVE OUTFILE=...` в `mappers/data.rs`.</p><h3>2.3. Слой L6: Пользовательский интерфейс `statcraft_app`</h3><p>* **Файловый сеанс `crates/statcraft_app/src/app_session.rs`:**<br>  * Реализовать метод `save_data_as_sav(&amp;mut self)` с диалогом выбора пути через `rfd::FileDialog::new().add_filter(&quot;SPSS Data&quot;, &amp;[&quot;sav&quot;])`.<br>* **Меню `crates/statcraft_app/src/app_menus/file_edit_view.rs`:**<br>  * Активировать пункт `menu-file-save-data-as` («Сохранить данные как... -&gt; Файл SPSS (*.sav)»).<br>* **Статусная строка:**<br>  * Добавить отображение имени сохраненного файла и индикатора успешной записи.</p><h3>2.4. Локализация (`locales/en.ftl` и `locales/ru.ftl`)</h3><p>* Добавить ключи:<br>  * `menu-file-save-data-sav = SPSS Data (*.sav)...` / `Данные SPSS (*.sav)...`<br>  * `status-file-saved-sav = Data successfully saved to { $path }` / `Данные успешно сохранены в { $path }`<br>  * `dialog-save-sav-title = Save SPSS Data File` / `Сохранить файл данных SPSS`</p><p>---</p><h2>3. Критерии приёмки и верификация (Definition of Done)</h2><p>1. **Протокол Craft Anything MCP:**<br>   * Полный цикл `core_brief_write` $\to$ `core_plan_update` $\to$ `core_hypothesis_record` $\to$ `core_finding_record` $\to$ `core_handoff_write`.<br>   * Доказательная привязка гипотез в `docs/CRAFT_ANYTHING_AUDIT_REPORT.md`.<br>2. **Компиляция и ресурсы:**<br>   * Строго с флагом `-j 1`.<br>3. **Математическая обратимость (Round-Trip Test):**<br>   * Пакет тестов `spss_roundtrip_tests.rs`:<br>     - Тест на сохранение числовых матриц с $0.0$, отрицательными числами и `SYSMIS`;<br>     - Тест на сохранение строковых колонок и длинных строк ($&gt; 255$ байт);<br>     - Тест на сохранение меток значений `ValueLabels` (русский UTF-8 и латиница);<br>     - Тест на сохранение шкал измерения `Scale`, `Ordinal`, `Nominal`;<br>     - Инвариант: $\text{DataSet}_0 \xrightarrow{\text{write\_sav}} \text{bytes} \xrightarrow{\text{read\_sav}} \text{DataSet}_1 \equiv \text{DataSet}_0$.<br>4. **Стресс-тест в `cargo xtask test-corpus`:**<br>   * Сериализация и десериализация массива в $100\,000$ строк.<br>5. **Контроль кодовой базы:**<br>   * `cargo run -p xtask -j 1 -- file-guard` (модули $\le 500$ строк).<br>   * `cargo run -p xtask -j 1 -- layers` (L0 не зависит от верхних слоев).<br>   * `cargo clippy --workspace -j 1 -- -D warnings` — 0 предупреждений.<br>   * `cargo fmt --check` — чисто.<br>6. **Документация:**<br>   * Обновление `docs/CHECKLIST.md`, `docs/parity-checklist.md`, `docs/CHRONICLE.md` и `docs/CHRONICLE.en.md`.</p><hr><p style="color:#8a8175;font-size:12px">Exported from CapsuleCraft Native · &lt;doc-statcraft-docs_plans_branch_b_spss_sav_writer_md@capsuleos.local&gt;</p></body></html>
+
+--BOUNDARY_PAYLOAD_1GYRQ7TJ8Q--
+--BOUNDARY_ROOT_X23J73J5CE--

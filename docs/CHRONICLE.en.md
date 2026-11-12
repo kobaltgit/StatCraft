@@ -3193,3 +3193,36 @@ Following the comprehensive clean-room audit against the *IBM SPSS Statistics 24
    * All 314 workspace files adhere to size limits (`cargo run -p xtask -j 1 -- file-guard`);
    * 100% test pass on full workspace suite (`cargo test --workspace -j 1`).
 
+
+
+---
+
+### Phase 72: Exploratory Data Analysis (EXAMINE / Explore & Normality Tests — Branch C)
+*Time: November 12, 2026, 00:55 (~50 minutes)*
+
+In strict accordance with the *IBM SPSS Statistics 24 Algorithms Guide* and the evidence-backed Craft Anything MCP protocol, fully implemented the `EXAMINE` / `EXPLORE` exploratory data analysis procedure:
+1. **Mathematical Core L2 (`crates/statcraft_algo/src/explore/`):**
+   * **5% Trimmed Mean:** canonical SPSS algorithm trimming exactly $0.05 \cdot N$ observations from each tail with fractional boundary weighting of $(1 - r)$;
+   * **Shapiro-Wilk $W$ Normality Test (`normality_sw.rs`):** Royston (1992) polynomial approximations for $3 \le N \le 5000$, Blom normal order statistics scores, exact $p$-value for $N=3$ via arcsine, and $z$-transforms for $4 \le N \le 11$ and $12 \le N \le 5000$. Verified against the Golden Oracle (`scipy.stats.shapiro`) with tolerance $\le 10^{-6}$ ($W = 0.970165$, $p = 0.8924$);
+   * **Lilliefors Kolmogorov-Smirnov Test (`normality_ks.rs`):** Dallal-Wilkinson significance approximation with canonical SPSS bounds $[0.001, 0.20]$ and footnote `*. This is a lower bound of the true significance`;
+   * **Extreme Values (`extremes.rs`):** 5 lowest and 5 highest values retaining original 1-based case row numbers and handling ties;
+   * **Procedure Coordinator (`mod.rs`):** descriptive metrics ($IQR$ via HAVERAGE, skewness, kurtosis, 95% mean CI), factor grouping (`BY factor`), listwise/pairwise missing value treatment.
+2. **Syntax Engine L5 (`crates/statcraft_syntax/`):**
+   * Implemented `ExploreCommand` (`stat.explore`) with `specs()` JSON schema, `EXAMINE` and `EXPLORE` syntax identifiers, and `to_sps()` syntax generator;
+   * Parser in `mappers/stats.rs`: mapping subcommands `VARIABLES=... BY ...`, `/PLOT NPPLOT`, `/STATISTICS DESCRIPTIVES EXTREME`, `/MISSING PAIRWISE/LISTWISE`;
+   * Integration roundtrip test `test_roundtrip_explore` via `SyntaxDispatcher::execute_batch`.
+3. **Output Viewer Tables L4/L6 (`crates/statcraft_app/src/views/output_view/tables_explore/`):**
+   * Architecturally decomposed into `mod.rs`, `tables.rs`, and `tsv.rs`, strictly maintaining $\le 500$ lines per file;
+   * Rendered 4 authentic SPSS Pivot Tables: *Case Processing Summary*, *Descriptives*, *Tests of Normality*, *Extreme Values*;
+   * Added TSV export (`explore_to_tsv`) for reporting and clipboard copy.
+4. **DialogKit UI (`crates/statcraft_app/src/dialogs/explore_dialog.rs`):**
+   * Canonical SPSS dialog based on `DialogShell::standard(560, 430)`:
+     - Left panel `VariablePicker` with measurement scale indicators;
+     - `TransferButton` controls for Dependent List and Factor List;
+     - `SubdialogSidebar` panels: Statistics, Plots (normality tests), Options (missing cases);
+     - Bottom `DialogActionBar` (`[ OK ] [ Paste ] [ Reset ] [ Cancel ] [ Help ]`);
+   * Main menu activation: "Analyze -> Descriptive Statistics -> Explore..." (`menu-analyze-explore`).
+5. **Localization & Quality Control (DoD):**
+   * 100% bilingual Fluent catalogs in `locales/en.ftl` and `locales/ru.ftl` with 0 raw strings and 0 emojis;
+   * Interface invariant suite `crates/statcraft_app/tests/explore_invariants.rs`;
+   * 100% successful pass across all 9 Quality Gate stages via `cargo run -p xtask -j 1 -- ci` (fmt, clippy, layers, file-guard [325 files], design-guard, workspace tests, parity, test-corpus, test-undo).

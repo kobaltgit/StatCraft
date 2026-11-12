@@ -1,7 +1,7 @@
 From: CapsuleCraft Code Ingest <system@capsulecraft.local>
 To: Vault <vault@capsuleos.local>
 Subject: 📁 StatCraft / xtask/src
-Date: Wed, 11 Nov 2026 17:52:26 +0000
+Date: Wed, 11 Nov 2026 23:19:42 +0000
 Message-ID: <subsystem-statcraft-xtask_src@capsuleos.local>
 In-Reply-To: <project-index-statcraft@capsuleos.local>
 X-Capsule-Page-Parent: <project-index-statcraft@capsuleos.local>
@@ -34,7 +34,7 @@ Content-Disposition: inline; filename="canvas_state.json"
         "level": 1,
         "text": "📁 Subsystem: xtask/src"
       },
-      "id": "blk_native_heading_1794419546819162900",
+      "id": "blk_native_heading_1794439182846671900",
       "managed_by": "project_parser",
       "type": "heading"
     },
@@ -43,7 +43,7 @@ Content-Disposition: inline; filename="canvas_state.json"
         "icon": "folder",
         "text": "Part of [[📦 StatCraft (Overview) | 📦 StatCraft (Overview)]]\nContains 11 source module(s)."
       },
-      "id": "blk_native_callout_1794419546819164600",
+      "id": "blk_native_callout_1794439182846673900",
       "managed_by": "project_parser",
       "type": "callout"
     },
@@ -52,7 +52,7 @@ Content-Disposition: inline; filename="canvas_state.json"
         "level": 2,
         "text": "Modules in this Subsystem"
       },
-      "id": "blk_native_heading_1794419546819165200",
+      "id": "blk_native_heading_1794439182846674700",
       "managed_by": "project_parser",
       "type": "heading"
     },
@@ -60,7 +60,7 @@ Content-Disposition: inline; filename="canvas_state.json"
       "data": {
         "text": "- [[📄 StatCraft / xtask/src/bench_stress.rs]] (`xtask/src/bench_stress.rs`)\n- [[📄 StatCraft / xtask/src/ci.rs]] (`xtask/src/ci.rs`)\n- [[📄 StatCraft / xtask/src/corpus.rs]] (`xtask/src/corpus.rs`)\n- [[📄 StatCraft / xtask/src/design_guard.rs]] (`xtask/src/design_guard.rs`)\n- [[📄 StatCraft / xtask/src/file_guard.rs]] (`xtask/src/file_guard.rs`)\n- [[📄 StatCraft / xtask/src/hooks.rs]] (`xtask/src/hooks.rs`)\n- [[📄 StatCraft / xtask/src/icon.rs]] (`xtask/src/icon.rs`)\n- [[📄 StatCraft / xtask/src/layers.rs]] (`xtask/src/layers.rs`)\n- [[📄 StatCraft / xtask/src/main.rs]] (`xtask/src/main.rs`)\n- [[📄 StatCraft / xtask/src/parity.rs]] (`xtask/src/parity.rs`)\n- [[📄 StatCraft / xtask/src/undo_matrix.rs]] (`xtask/src/undo_matrix.rs`)\n"
       },
-      "id": "blk_native_paragraph_1794419546819170600",
+      "id": "blk_native_paragraph_1794439182846680400",
       "managed_by": "project_parser",
       "type": "paragraph"
     }

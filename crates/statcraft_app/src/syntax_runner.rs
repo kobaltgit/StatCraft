@@ -1,8 +1,8 @@
 use crate::views::OutputViewerState;
 use statcraft_algo::{
     BivariateCorrelationsResult, CrosstabOptions, CrosstabResult, DescriptivesResult,
-    FactorAnalysisResult, FrequencyResult, IndepTTestResult, LinearRegressionResult, MeansOptions,
-    MeansProcedureResult, OneSampleTTestResult, OneWayAnovaResult, PairedTTestResult,
+    ExploreResult, FactorAnalysisResult, FrequencyResult, IndepTTestResult, LinearRegressionResult,
+    MeansOptions, MeansProcedureResult, OneSampleTTestResult, OneWayAnovaResult, PairedTTestResult,
     ReliabilityResult,
 };
 use statcraft_core::DataSet;
@@ -58,6 +58,11 @@ pub fn run_syntax_batch(
             "FREQUENCIES" => {
                 if let Ok(results) = serde_json::from_value::<Vec<FrequencyResult>>(res_val) {
                     output_view.add_frequencies(results);
+                }
+            }
+            "EXAMINE" | "EXPLORE" => {
+                if let Ok(res) = serde_json::from_value::<ExploreResult>(res_val) {
+                    output_view.add_explore(res);
                 }
             }
             "CROSSTABS" => {

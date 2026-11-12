@@ -1,0 +1,294 @@
+From: CapsuleCraft Code Ingest <system@capsulecraft.local>
+To: Vault <vault@capsuleos.local>
+Subject: 📚 StatCraft / ТЗ для ИИ-агента: Ветка A — Векторный графический движок L3 statcraft_charts и меню Graphs (Фаза 9)
+Date: Wed, 11 Nov 2026 23:19:42 +0000
+Message-ID: <doc-statcraft-docs_plans_branch_a_charts_and_graphs_md@capsuleos.local>
+In-Reply-To: <project-index-statcraft@capsuleos.local>
+X-Capsule-Page-Parent: <project-index-statcraft@capsuleos.local>
+References: <project-index-statcraft@capsuleos.local>
+X-Capsule-Tags: project, statcraft, docs
+X-Capsule-Status: Active
+MIME-Version: 1.0
+Content-Type: multipart/mixed; boundary="BOUNDARY_ROOT_QC43DQL3HN"
+
+--BOUNDARY_ROOT_QC43DQL3HN
+Content-Type: multipart/alternative; boundary="BOUNDARY_PAYLOAD_11D65NGL79"
+
+--BOUNDARY_PAYLOAD_11D65NGL79
+Content-Type: application/json; name="canvas_state.json"
+Content-Disposition: inline; filename="canvas_state.json"
+
+{
+  "version": "1.0",
+  "generator": "CapsuleCraft Native egui prototype (Zero-DB Pure-MIME)",
+  "messageId": "<doc-statcraft-docs_plans_branch_a_charts_and_graphs_md@capsuleos.local>",
+  "subject": "📚 StatCraft / ТЗ для ИИ-агента: Ветка A — Векторный графический движок L3 statcraft_charts и меню Graphs (Фаза 9)",
+  "tags": [
+    "project",
+    "statcraft",
+    "docs"
+  ],
+  "blocks": [
+    {
+      "data": {
+        "icon": "book",
+        "text": "Documentation file: `docs/plans/BRANCH_A_CHARTS_AND_GRAPHS.md`\nBelongs to project: [[📦 StatCraft (Overview) | 📦 StatCraft (Overview)]]"
+      },
+      "id": "blk_native_callout_1794439182834248900",
+      "managed_by": "project_parser",
+      "type": "callout"
+    },
+    {
+      "data": {
+        "level": 1,
+        "text": "ТЗ для ИИ-агента: Ветка A — Векторный графический движок L3 statcraft_charts и меню Graphs (Фаза 9)"
+      },
+      "id": "blk_native_heading_1794439182834208100",
+      "managed_by": "project_parser",
+      "type": "heading"
+    },
+    {
+      "data": {
+        "icon": "info",
+        "text": "**Стандарт экосистемы:** ArtCraft (`storytold`) | Двойная лицензия MIT OR Apache-2.0"
+      },
+      "id": "blk_native_callout_1794439182834210100",
+      "managed_by": "project_parser",
+      "type": "callout"
+    },
+    {
+      "data": {
+        "icon": "info",
+        "text": "**Генеральный регламент:** [AGENTS.md](file:///d:/Projects/active/StatCraft/AGENTS.md)"
+      },
+      "id": "blk_native_callout_1794439182834211200",
+      "managed_by": "project_parser",
+      "type": "callout"
+    },
+    {
+      "data": {
+        "icon": "info",
+        "text": "**МЕТОДОЛОГИЯ РАЗРАБОТКИ:** Разработка и верификация ведутся **ИСКЛЮЧИТЕЛЬНО с помощью инструментов Craft Anything MCP** (доказательный Clean-Room аудит, фиксация гипотез `core_hypothesis_record`, сбор доказательств `evidence://`, регистрация находок `core_finding_record` и протоколирование в `docs/CRAFT_ANYTHING_AUDIT_REPORT.md`)."
+      },
+      "id": "blk_native_callout_1794439182834212000",
+      "managed_by": "project_parser",
+      "type": "callout"
+    },
+    {
+      "data": {
+        "icon": "info",
+        "text": "**Ограничение ресурсов:** ВСЕ команды сборки и тестов запускаются строго с флагом `-j 1`."
+      },
+      "id": "blk_native_callout_1794439182834213200",
+      "managed_by": "project_parser",
+      "type": "callout"
+    },
+    {
+      "data": {
+        "icon": "info",
+        "text": "**Принцип надежности:** 100% Safe Rust, Never Crash (0 `unwrap()`, 0 `expect()`, 0 `panic!()`, 0 `unsafe`)."
+      },
+      "id": "blk_native_callout_1794439182834214100",
+      "managed_by": "project_parser",
+      "type": "callout"
+    },
+    {
+      "data": {
+        "icon": "info",
+        "text": "**Архитектура слоев:** Строгое соблюдение L0–L6 (`cargo run -p xtask -j 1 -- layers`)."
+      },
+      "id": "blk_native_callout_1794439182834214800",
+      "managed_by": "project_parser",
+      "type": "callout"
+    },
+    {
+      "data": {
+        "icon": "info",
+        "text": "**Контроль размеров:** Лимит листовых модулей $\\le 500$ строк (`cargo run -p xtask -j 1 -- file-guard`)."
+      },
+      "id": "blk_native_callout_1794439182834215900",
+      "managed_by": "project_parser",
+      "type": "callout"
+    },
+    {
+      "data": {
+        "icon": "info",
+        "text": "**Стандарт диалогов:** Канонический `DialogKit` (`cargo run -p xtask -j 1 -- design-guard`)."
+      },
+      "id": "blk_native_callout_1794439182834216500",
+      "managed_by": "project_parser",
+      "type": "callout"
+    },
+    {
+      "data": {
+        "icon": "info",
+        "text": "**Локализация:** 0% сырых строковых литералов в коде UI (строго Fluent-каталоги `en.ftl` и `ru.ftl`)."
+      },
+      "id": "blk_native_callout_1794439182834217700",
+      "managed_by": "project_parser",
+      "type": "callout"
+    },
+    {
+      "data": {
+        "icon": "info",
+        "text": "**Интерфейс:** Vector-First UI (0 эмодзи, 0 квадратов «тофу»)."
+      },
+      "id": "blk_native_callout_1794439182834218400",
+      "managed_by": "project_parser",
+      "type": "callout"
+    },
+    {
+      "data": {
+        "text": "---"
+      },
+      "id": "blk_native_paragraph_1794439182834219600",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    },
+    {
+      "data": {
+        "level": 2,
+        "text": "1. Роль и инструментальный цикл Craft Anything MCP"
+      },
+      "id": "blk_native_heading_1794439182834220600",
+      "managed_by": "project_parser",
+      "type": "heading"
+    },
+    {
+      "data": {
+        "text": "Разработка графического слоя L3 и диалогов визуализации строится **исключительно на базе исследовательского цикла Craft Anything MCP**:\n1. **Постановка задачи и бриф (`core_brief_write`):** фиксация целей исследования канонических параметров диаграмм SPSS (правила Скотта/Стерджеса для гистограмм, усы Тьюки $1.5 \\times IQR$ для боксплотов, доверительные интервалы 95% для столбцов).\n2. **План шагов (`core_plan_update`):** пошаговый контроль стадий проектирования и реализации с отметками `todo` $\\to$ `doing` $\\to$ `done`.\n3. **Формирование и проверка гипотез (`core_hypothesis_record` / `core_hypothesis_update`):**\n   * Проверка правил нарезки карманов гистограмм при малых и больших $N$;\n   * Проверка алгоритма выявления экстремальных выбросов ($3 \\times IQR$) и умеренных ($1.5 \\times IQR$);\n   * Проверка наложения кривой Гаусса при нулевой дисперсии ($s = 0$);\n   * Привязка доказательств `evidence://` к каждой гипотезе со статусом `supported`.\n4. **Фиксация находок (`core_finding_record`):** фиксация верифицированных параметров графиков в базе знаний.\n5. **Финализация и передача контекста (`core_handoff_write`):** сохранение состояния сессии и обновление отчета `docs/CRAFT_ANYTHING_AUDIT_REPORT.md`."
+      },
+      "id": "blk_native_paragraph_1794439182834224300",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    },
+    {
+      "data": {
+        "text": "---"
+      },
+      "id": "blk_native_paragraph_1794439182834225400",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    },
+    {
+      "data": {
+        "level": 2,
+        "text": "2. Архитектура и модули по слоям"
+      },
+      "id": "blk_native_heading_1794439182834226300",
+      "managed_by": "project_parser",
+      "type": "heading"
+    },
+    {
+      "data": {
+        "code": "flowchart TD\n    subgraph CA [\"Craft Anything MCP Suite\"]\n        Brief[\"core_brief_write & core_plan_update\"]\n        Hypo[\"core_hypothesis_record / update\"]\n        Find[\"core_finding_record & handoff\"]\n    end\n\n    subgraph L3 [\"L3: statcraft_charts\"]\n        Histo[\"Histogram & Normal Curve\"]\n        Box[\"Boxplot (IQR & Outliers)\"]\n        Scatter[\"Scatter Plot & Regression Trend\"]\n        Bar[\"Bar Chart & Error Bars\"]\n    end\n\n    subgraph L5 [\"L5: statcraft_syntax\"]\n        Cmds[\"Commands: graph.histogram, graph.scatter, ...\"]\n        Sps[\"SPSS Syntax: GRAPH /HISTOGRAM=...\"]\n    end\n\n    subgraph L6 [\"L6: statcraft_app\"]\n        Dialogs[\"DialogKit Standard Dialogs\"]\n        Viewer[\"OutputItemKind::Chart in Output Viewer\"]\n    end\n\n    CA --> L3\n    L3 --> L5\n    L5 --> L6",
+        "language": "mermaid"
+      },
+      "id": "blk_native_code_1794439182834229900",
+      "managed_by": "project_parser",
+      "type": "code"
+    },
+    {
+      "data": {
+        "level": 3,
+        "text": "2.1. Слой L3: Создание крейта `crates/statcraft_charts`"
+      },
+      "id": "blk_native_heading_1794439182834232100",
+      "managed_by": "project_parser",
+      "type": "heading"
+    },
+    {
+      "data": {
+        "text": "* **Файл манифеста `crates/statcraft_charts/Cargo.toml`:**\n  * Зависимости: `statcraft_core`, `statcraft_algo`, `egui = \"0.29\"`, `egui_plot = \"0.29\"`.\n* **Модульная структура ($\\le 500$ строк на модуль):**\n  * `src/lib.rs`: экспорт структур `ChartSpec`, `ChartKind`, `ChartRenderer`.\n  * `src/model.rs`: типы данных для отрисовки (`SeriesData`, `PlotPoint`, `BoxplotStats`, `ErrorBarData`).\n  * `src/histogram.rs`: расчет бинов, вычисление плотности Гаусса, построение `egui_plot::BarChart` и кривой.\n  * `src/boxplot.rs`: расчет перцентилей Тьюки, поиск точек-выбросов, формирование ящиков и усов.\n  * `src/scatter.rs`: двумерные точки, фильтрация парных пропусков, расчет МНК $a$ и $b$, линия тренда.\n  * `src/bar_chart.rs`: агрегирование категорий, расчет 95% CI, построение вертикальных столбцов и усов погрешностей.\n* **Регистрация в архитектуре:**\n  * Добавить `statcraft_charts` в `xtask/src/layers.rs` (Уровень L3)."
+      },
+      "id": "blk_native_paragraph_1794439182834234500",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    },
+    {
+      "data": {
+        "level": 3,
+        "text": "2.2. Слой L5: Командная шина `statcraft_syntax`"
+      },
+      "id": "blk_native_heading_1794439182834235600",
+      "managed_by": "project_parser",
+      "type": "heading"
+    },
+    {
+      "data": {
+        "text": "* **Модули команд в `crates/statcraft_syntax/src/commands/`:**\n  * `histogram_cmd.rs` (`graph.histogram`): валидация числовой шкалы, опция `normal_curve: bool`.\n  * `scatter_cmd.rs` (`graph.scatter`): валидация пары $(X, Y)$, опция `fit_line: bool`.\n  * `boxplot_cmd.rs` (`graph.boxplot`): переменная и опциональный группирующий фактор.\n  * `bar_chart_cmd.rs` (`graph.bar`): категориальная и числовая переменные.\n* **Синтаксический парсер:**\n  * Маппинг синтаксиса `GRAPH /HISTOGRAM(...)`, `GRAPH /SCATTERPLOT(...)` в `SyntaxDispatcher`."
+      },
+      "id": "blk_native_paragraph_1794439182834237400",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    },
+    {
+      "data": {
+        "level": 3,
+        "text": "2.3. Слой L6: Output Viewer и DialogKit в `statcraft_app`"
+      },
+      "id": "blk_native_heading_1794439182834238400",
+      "managed_by": "project_parser",
+      "type": "heading"
+    },
+    {
+      "data": {
+        "text": "* **Модель вывода `crates/statcraft_app/src/views/output_view/model.rs`:**\n  * Вариант `OutputItemKind::Chart(ChartData)`.\n  * Модуль отрисовки `crates/statcraft_app/src/views/output_view/tables_charts.rs`: интерактивный виджет `egui_plot::Plot`.\n* **Диалоги `crates/statcraft_app/src/dialogs/`:**\n  * `histogram_dialog.rs`, `scatter_dialog.rs`, `boxplot_dialog.rs`, `bar_chart_dialog.rs`.\n  * Все диалоги строго через `DialogShell::standard(560, 430)`, `VariablePicker` и `DialogActionBar`.\n* **Меню `crates/statcraft_app/src/app_menus/analyze_etc.rs`:**\n  * Подключить реальные действия и снять `InDev` для пунктов подменю `Graphs`."
+      },
+      "id": "blk_native_paragraph_1794439182834240000",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    },
+    {
+      "data": {
+        "level": 3,
+        "text": "2.4. Локализация (`locales/en.ftl` и `locales/ru.ftl`)"
+      },
+      "id": "blk_native_heading_1794439182834240900",
+      "managed_by": "project_parser",
+      "type": "heading"
+    },
+    {
+      "data": {
+        "text": "* Двуязычные семантические ключи:\n  * `menu-graphs-histogram`, `menu-graphs-scatter`, `menu-graphs-boxplot`, `menu-graphs-bar`;\n  * `dialog-histogram-title`, `dialog-histogram-normal-curve`;\n  * `dialog-scatter-title`, `dialog-scatter-fit-line`;\n  * `dialog-boxplot-title`, `dialog-bar-title`, `output-chart-export-svg`."
+      },
+      "id": "blk_native_paragraph_1794439182834242600",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    },
+    {
+      "data": {
+        "text": "---"
+      },
+      "id": "blk_native_paragraph_1794439182834243700",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    },
+    {
+      "data": {
+        "level": 2,
+        "text": "3. Критерии приёмки и верификация (Definition of Done)"
+      },
+      "id": "blk_native_heading_1794439182834244400",
+      "managed_by": "project_parser",
+      "type": "heading"
+    },
+    {
+      "data": {
+        "text": "1. **Протокол Craft Anything MCP:**\n   * Полная цепочка `core_brief_write` $\\to$ `core_plan_update` $\\to$ `core_hypothesis_record` $\\to$ `core_finding_record` $\\to$ `core_handoff_write`.\n   * Синхронизация отчета `docs/CRAFT_ANYTHING_AUDIT_REPORT.md`.\n2. **Компиляция и слои:**\n   * Сборка строго с `-j 1`.\n   * `cargo run -p xtask -j 1 -- layers` подтверждает валидность слоя L3.\n3. **Тестирование:**\n   * 100% модульных тестов алгоритмов расчета бинов и квантилей ящиков пройдены.\n   * Тесты headless-рендеринга без паник при пустых выборках, константных векторах и сплошных `NaN`.\n4. **Линтеры и стандарты:**\n   * `cargo run -p xtask -j 1 -- file-guard` (все новые файлы $\\le 500$ строк).\n   * `cargo run -p xtask -j 1 -- design-guard` (0 нарушений стандарта DialogKit).\n   * `cargo test -p statcraft_app --test dialog_invariants -j 1` (100% PASS).\n   * `cargo clippy --workspace -j 1 -- -D warnings` и `cargo fmt --check` чисты.\n5. **Синхронизация документации:**\n   * Обновление `docs/CHECKLIST.md`, `docs/parity-checklist.md`, `docs/CHRONICLE.md` и `docs/CHRONICLE.en.md`."
+      },
+      "id": "blk_native_paragraph_1794439182834247200",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    }
+  ]
+}
+
+--BOUNDARY_PAYLOAD_11D65NGL79
+Content-Type: text/html; charset="utf-8"
+Content-Disposition: inline
+
+<!doctype html><html><head><meta charset="utf-8"><meta name="generator" content="CapsuleCraft Native"></head><body style="font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;max-width:720px;margin:32px auto;line-height:1.55;color:#23201c;background:#faf8f4;"><h1>📚 StatCraft / ТЗ для ИИ-агента: Ветка A — Векторный графический движок L3 statcraft_charts и меню Graphs (Фаза 9)</h1><p><em>[callout block — open in CapsuleCraft web for its canvas]</em></p><h1>ТЗ для ИИ-агента: Ветка A — Векторный графический движок L3 statcraft_charts и меню Graphs (Фаза 9)</h1><p><em>[callout block — open in CapsuleCraft web for its canvas]</em></p><p><em>[callout block — open in CapsuleCraft web for its canvas]</em></p><p><em>[callout block — open in CapsuleCraft web for its canvas]</em></p><p><em>[callout block — open in CapsuleCraft web for its canvas]</em></p><p><em>[callout block — open in CapsuleCraft web for its canvas]</em></p><p><em>[callout block — open in CapsuleCraft web for its canvas]</em></p><p><em>[callout block — open in CapsuleCraft web for its canvas]</em></p><p><em>[callout block — open in CapsuleCraft web for its canvas]</em></p><p><em>[callout block — open in CapsuleCraft web for its canvas]</em></p><p><em>[callout block — open in CapsuleCraft web for its canvas]</em></p><p>---</p><h2>1. Роль и инструментальный цикл Craft Anything MCP</h2><p>Разработка графического слоя L3 и диалогов визуализации строится **исключительно на базе исследовательского цикла Craft Anything MCP**:<br>1. **Постановка задачи и бриф (`core_brief_write`):** фиксация целей исследования канонических параметров диаграмм SPSS (правила Скотта/Стерджеса для гистограмм, усы Тьюки $1.5 \times IQR$ для боксплотов, доверительные интервалы 95% для столбцов).<br>2. **План шагов (`core_plan_update`):** пошаговый контроль стадий проектирования и реализации с отметками `todo` $\to$ `doing` $\to$ `done`.<br>3. **Формирование и проверка гипотез (`core_hypothesis_record` / `core_hypothesis_update`):**<br>   * Проверка правил нарезки карманов гистограмм при малых и больших $N$;<br>   * Проверка алгоритма выявления экстремальных выбросов ($3 \times IQR$) и умеренных ($1.5 \times IQR$);<br>   * Проверка наложения кривой Гаусса при нулевой дисперсии ($s = 0$);<br>   * Привязка доказательств `evidence://` к каждой гипотезе со статусом `supported`.<br>4. **Фиксация находок (`core_finding_record`):** фиксация верифицированных параметров графиков в базе знаний.<br>5. **Финализация и передача контекста (`core_handoff_write`):** сохранение состояния сессии и обновление отчета `docs/CRAFT_ANYTHING_AUDIT_REPORT.md`.</p><p>---</p><h2>2. Архитектура и модули по слоям</h2><p><em>[code block — open in CapsuleCraft web for its canvas]</em></p><h3>2.1. Слой L3: Создание крейта `crates/statcraft_charts`</h3><p>* **Файл манифеста `crates/statcraft_charts/Cargo.toml`:**<br>  * Зависимости: `statcraft_core`, `statcraft_algo`, `egui = &quot;0.29&quot;`, `egui_plot = &quot;0.29&quot;`.<br>* **Модульная структура ($\le 500$ строк на модуль):**<br>  * `src/lib.rs`: экспорт структур `ChartSpec`, `ChartKind`, `ChartRenderer`.<br>  * `src/model.rs`: типы данных для отрисовки (`SeriesData`, `PlotPoint`, `BoxplotStats`, `ErrorBarData`).<br>  * `src/histogram.rs`: расчет бинов, вычисление плотности Гаусса, построение `egui_plot::BarChart` и кривой.<br>  * `src/boxplot.rs`: расчет перцентилей Тьюки, поиск точек-выбросов, формирование ящиков и усов.<br>  * `src/scatter.rs`: двумерные точки, фильтрация парных пропусков, расчет МНК $a$ и $b$, линия тренда.<br>  * `src/bar_chart.rs`: агрегирование категорий, расчет 95% CI, построение вертикальных столбцов и усов погрешностей.<br>* **Регистрация в архитектуре:**<br>  * Добавить `statcraft_charts` в `xtask/src/layers.rs` (Уровень L3).</p><h3>2.2. Слой L5: Командная шина `statcraft_syntax`</h3><p>* **Модули команд в `crates/statcraft_syntax/src/commands/`:**<br>  * `histogram_cmd.rs` (`graph.histogram`): валидация числовой шкалы, опция `normal_curve: bool`.<br>  * `scatter_cmd.rs` (`graph.scatter`): валидация пары $(X, Y)$, опция `fit_line: bool`.<br>  * `boxplot_cmd.rs` (`graph.boxplot`): переменная и опциональный группирующий фактор.<br>  * `bar_chart_cmd.rs` (`graph.bar`): категориальная и числовая переменные.<br>* **Синтаксический парсер:**<br>  * Маппинг синтаксиса `GRAPH /HISTOGRAM(...)`, `GRAPH /SCATTERPLOT(...)` в `SyntaxDispatcher`.</p><h3>2.3. Слой L6: Output Viewer и DialogKit в `statcraft_app`</h3><p>* **Модель вывода `crates/statcraft_app/src/views/output_view/model.rs`:**<br>  * Вариант `OutputItemKind::Chart(ChartData)`.<br>  * Модуль отрисовки `crates/statcraft_app/src/views/output_view/tables_charts.rs`: интерактивный виджет `egui_plot::Plot`.<br>* **Диалоги `crates/statcraft_app/src/dialogs/`:**<br>  * `histogram_dialog.rs`, `scatter_dialog.rs`, `boxplot_dialog.rs`, `bar_chart_dialog.rs`.<br>  * Все диалоги строго через `DialogShell::standard(560, 430)`, `VariablePicker` и `DialogActionBar`.<br>* **Меню `crates/statcraft_app/src/app_menus/analyze_etc.rs`:**<br>  * Подключить реальные действия и снять `InDev` для пунктов подменю `Graphs`.</p><h3>2.4. Локализация (`locales/en.ftl` и `locales/ru.ftl`)</h3><p>* Двуязычные семантические ключи:<br>  * `menu-graphs-histogram`, `menu-graphs-scatter`, `menu-graphs-boxplot`, `menu-graphs-bar`;<br>  * `dialog-histogram-title`, `dialog-histogram-normal-curve`;<br>  * `dialog-scatter-title`, `dialog-scatter-fit-line`;<br>  * `dialog-boxplot-title`, `dialog-bar-title`, `output-chart-export-svg`.</p><p>---</p><h2>3. Критерии приёмки и верификация (Definition of Done)</h2><p>1. **Протокол Craft Anything MCP:**<br>   * Полная цепочка `core_brief_write` $\to$ `core_plan_update` $\to$ `core_hypothesis_record` $\to$ `core_finding_record` $\to$ `core_handoff_write`.<br>   * Синхронизация отчета `docs/CRAFT_ANYTHING_AUDIT_REPORT.md`.<br>2. **Компиляция и слои:**<br>   * Сборка строго с `-j 1`.<br>   * `cargo run -p xtask -j 1 -- layers` подтверждает валидность слоя L3.<br>3. **Тестирование:**<br>   * 100% модульных тестов алгоритмов расчета бинов и квантилей ящиков пройдены.<br>   * Тесты headless-рендеринга без паник при пустых выборках, константных векторах и сплошных `NaN`.<br>4. **Линтеры и стандарты:**<br>   * `cargo run -p xtask -j 1 -- file-guard` (все новые файлы $\le 500$ строк).<br>   * `cargo run -p xtask -j 1 -- design-guard` (0 нарушений стандарта DialogKit).<br>   * `cargo test -p statcraft_app --test dialog_invariants -j 1` (100% PASS).<br>   * `cargo clippy --workspace -j 1 -- -D warnings` и `cargo fmt --check` чисты.<br>5. **Синхронизация документации:**<br>   * Обновление `docs/CHECKLIST.md`, `docs/parity-checklist.md`, `docs/CHRONICLE.md` и `docs/CHRONICLE.en.md`.</p><hr><p style="color:#8a8175;font-size:12px">Exported from CapsuleCraft Native · &lt;doc-statcraft-docs_plans_branch_a_charts_and_graphs_md@capsuleos.local&gt;</p></body></html>
+
+--BOUNDARY_PAYLOAD_11D65NGL79--
+--BOUNDARY_ROOT_QC43DQL3HN--

@@ -12,6 +12,7 @@ pub mod dataset_cmds;
 pub mod date_time_cmd;
 pub mod descriptives_cmd;
 pub mod dummy_cmd;
+pub mod explore_cmd;
 pub mod factor_cmd;
 pub mod file_cmds;
 pub mod frequencies_cmd;
@@ -59,6 +60,7 @@ pub use dataset_cmds::{DataAddRowCommand, DataDeleteRowCommand, VarAddCommand, V
 pub use date_time_cmd::DateTimeWizardCommand;
 pub use descriptives_cmd::DescriptivesCommand;
 pub use dummy_cmd::{CreateDummiesCommand, DummyCommand, DummyUndoEntry};
+pub use explore_cmd::ExploreCommand;
 pub use factor_cmd::FactorCommand;
 pub use file_cmds::{OpenFileCommand, SaveFileCommand};
 pub use frequencies_cmd::FrequenciesCommand;

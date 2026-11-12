@@ -3,17 +3,17 @@ use crate::commands::{
     AutoRecodeCommand, BatchReplaceCommand, CellEditCommand, ComputeVariableCommand,
     CorrelationsCommand, CountValuesCommand, CreateDummiesCommand, CreateTimeSeriesCommand,
     CrosstabsCommand, DataAddRowCommand, DataDeleteRowCommand, DateTimeWizardCommand,
-    DescriptivesCommand, FactorCommand, FrequenciesCommand, HelpCommand, ImportCsvCommand,
-    ImportExcelCommand, ImportSpssCommand, IndependentSamplesTTestCommand, KruskalWallisCommand,
-    LinearRegressionCommand, MannWhitneyCommand, MeansCommand, OneSampleTTestCommand,
-    OneWayAnovaCommand, OpenFileCommand, OptimalBinningCommand, PairedSamplesTTestCommand,
-    PrepareDataModelingCommand, ProgrammabilityCommand, RandomSeedCommand, RankCasesCommand,
-    RecodeIntoDifferentCommand, RecodeIntoSameCommand, RelatedSamplesTestCommand,
-    ReliabilityCommand, ReplaceMissingCommand, SaveFileCommand, SelectCasesCommand,
-    SetLabelCommand, SetMeasureCommand, ShiftValuesCommand, SortCasesCommand, SplitFileCommand,
-    VarAddCommand, VarDeleteCommand, VarRenameCommand, VarSetAlignCommand, VarSetDecimalsCommand,
-    VarSetMissingValuesCommand, VarSetTypeCommand, VarSetValueLabelsCommand, VarSetWidthCommand,
-    VisualBinningCommand, WeightCasesCommand,
+    DescriptivesCommand, ExploreCommand, FactorCommand, FrequenciesCommand, HelpCommand,
+    ImportCsvCommand, ImportExcelCommand, ImportSpssCommand, IndependentSamplesTTestCommand,
+    KruskalWallisCommand, LinearRegressionCommand, MannWhitneyCommand, MeansCommand,
+    OneSampleTTestCommand, OneWayAnovaCommand, OpenFileCommand, OptimalBinningCommand,
+    PairedSamplesTTestCommand, PrepareDataModelingCommand, ProgrammabilityCommand,
+    RandomSeedCommand, RankCasesCommand, RecodeIntoDifferentCommand, RecodeIntoSameCommand,
+    RelatedSamplesTestCommand, ReliabilityCommand, ReplaceMissingCommand, SaveFileCommand,
+    SelectCasesCommand, SetLabelCommand, SetMeasureCommand, ShiftValuesCommand, SortCasesCommand,
+    SplitFileCommand, VarAddCommand, VarDeleteCommand, VarRenameCommand, VarSetAlignCommand,
+    VarSetDecimalsCommand, VarSetMissingValuesCommand, VarSetTypeCommand, VarSetValueLabelsCommand,
+    VarSetWidthCommand, VisualBinningCommand, WeightCasesCommand,
 };
 use serde::{Deserialize, Serialize};
 use serde_json::{json, Value};
@@ -60,6 +60,7 @@ impl CommandBus {
         bus.register(Box::new(CellEditCommand));
         bus.register(Box::new(BatchReplaceCommand::default()));
         bus.register(Box::new(DescriptivesCommand));
+        bus.register(Box::new(ExploreCommand));
         bus.register(Box::new(FrequenciesCommand));
         bus.register(Box::new(OneSampleTTestCommand));
         bus.register(Box::new(IndependentSamplesTTestCommand));

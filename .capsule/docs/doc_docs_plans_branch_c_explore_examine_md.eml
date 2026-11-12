@@ -1,0 +1,294 @@
+From: CapsuleCraft Code Ingest <system@capsulecraft.local>
+To: Vault <vault@capsuleos.local>
+Subject: 📚 StatCraft / ТЗ для ИИ-агента: Ветка C — Разведочный анализ данных Explore / EXAMINE и тесты нормальности (Фаза 7.1)
+Date: Wed, 11 Nov 2026 23:19:42 +0000
+Message-ID: <doc-statcraft-docs_plans_branch_c_explore_examine_md@capsuleos.local>
+In-Reply-To: <project-index-statcraft@capsuleos.local>
+X-Capsule-Page-Parent: <project-index-statcraft@capsuleos.local>
+References: <project-index-statcraft@capsuleos.local>
+X-Capsule-Tags: project, statcraft, docs
+X-Capsule-Status: Active
+MIME-Version: 1.0
+Content-Type: multipart/mixed; boundary="BOUNDARY_ROOT_QBT3MNLYSC"
+
+--BOUNDARY_ROOT_QBT3MNLYSC
+Content-Type: multipart/alternative; boundary="BOUNDARY_PAYLOAD_B9TPC9M2LJ"
+
+--BOUNDARY_PAYLOAD_B9TPC9M2LJ
+Content-Type: application/json; name="canvas_state.json"
+Content-Disposition: inline; filename="canvas_state.json"
+
+{
+  "version": "1.0",
+  "generator": "CapsuleCraft Native egui prototype (Zero-DB Pure-MIME)",
+  "messageId": "<doc-statcraft-docs_plans_branch_c_explore_examine_md@capsuleos.local>",
+  "subject": "📚 StatCraft / ТЗ для ИИ-агента: Ветка C — Разведочный анализ данных Explore / EXAMINE и тесты нормальности (Фаза 7.1)",
+  "tags": [
+    "project",
+    "statcraft",
+    "docs"
+  ],
+  "blocks": [
+    {
+      "data": {
+        "icon": "book",
+        "text": "Documentation file: `docs/plans/BRANCH_C_EXPLORE_EXAMINE.md`\nBelongs to project: [[📦 StatCraft (Overview) | 📦 StatCraft (Overview)]]"
+      },
+      "id": "blk_native_callout_1794439182835384200",
+      "managed_by": "project_parser",
+      "type": "callout"
+    },
+    {
+      "data": {
+        "level": 1,
+        "text": "ТЗ для ИИ-агента: Ветка C — Разведочный анализ данных Explore / EXAMINE и тесты нормальности (Фаза 7.1)"
+      },
+      "id": "blk_native_heading_1794439182835343400",
+      "managed_by": "project_parser",
+      "type": "heading"
+    },
+    {
+      "data": {
+        "icon": "info",
+        "text": "**Стандарт экосистемы:** ArtCraft (`storytold`) | Двойная лицензия MIT OR Apache-2.0"
+      },
+      "id": "blk_native_callout_1794439182835345000",
+      "managed_by": "project_parser",
+      "type": "callout"
+    },
+    {
+      "data": {
+        "icon": "info",
+        "text": "**Генеральный регламент:** [AGENTS.md](file:///d:/Projects/active/StatCraft/AGENTS.md)"
+      },
+      "id": "blk_native_callout_1794439182835346000",
+      "managed_by": "project_parser",
+      "type": "callout"
+    },
+    {
+      "data": {
+        "icon": "info",
+        "text": "**МЕТОДОЛОГИЯ РАЗРАБОТКИ:** Разработка и верификация ведутся **ИСКЛЮЧИТЕЛЬНО с помощью инструментов Craft Anything MCP** (доказательный Clean-Room аудит алгоритмов, фиксация гипотез `core_hypothesis_record`, сверка формул `evidence://`, регистрация находок `core_finding_record` и протоколирование в `docs/CRAFT_ANYTHING_AUDIT_REPORT.md`)."
+      },
+      "id": "blk_native_callout_1794439182835346700",
+      "managed_by": "project_parser",
+      "type": "callout"
+    },
+    {
+      "data": {
+        "icon": "info",
+        "text": "**Ограничение ресурсов:** ВСЕ команды сборки и тестов запускаются строго с флагом `-j 1`."
+      },
+      "id": "blk_native_callout_1794439182835347800",
+      "managed_by": "project_parser",
+      "type": "callout"
+    },
+    {
+      "data": {
+        "icon": "info",
+        "text": "**Принцип надежности:** 100% Safe Rust, Never Crash (0 `unwrap()`, 0 `expect()`, 0 `panic!()`, 0 `unsafe`)."
+      },
+      "id": "blk_native_callout_1794439182835348600",
+      "managed_by": "project_parser",
+      "type": "callout"
+    },
+    {
+      "data": {
+        "icon": "info",
+        "text": "**Архитектура слоев:** Строгое соблюдение L0–L6 (`cargo run -p xtask -j 1 -- layers`)."
+      },
+      "id": "blk_native_callout_1794439182835349200",
+      "managed_by": "project_parser",
+      "type": "callout"
+    },
+    {
+      "data": {
+        "icon": "info",
+        "text": "**Контроль размеров:** Лимит листовых модулей $\\le 500$ строк (`cargo run -p xtask -j 1 -- file-guard`)."
+      },
+      "id": "blk_native_callout_1794439182835350100",
+      "managed_by": "project_parser",
+      "type": "callout"
+    },
+    {
+      "data": {
+        "icon": "info",
+        "text": "**Стандарт диалогов:** Канонический `DialogKit` (`cargo run -p xtask -j 1 -- design-guard`)."
+      },
+      "id": "blk_native_callout_1794439182835350700",
+      "managed_by": "project_parser",
+      "type": "callout"
+    },
+    {
+      "data": {
+        "icon": "info",
+        "text": "**Локализация:** 0% сырых строковых литералов в коде UI (строго Fluent-каталоги `en.ftl` и `ru.ftl`)."
+      },
+      "id": "blk_native_callout_1794439182835351700",
+      "managed_by": "project_parser",
+      "type": "callout"
+    },
+    {
+      "data": {
+        "icon": "info",
+        "text": "**Интерфейс:** Vector-First UI (0 эмодзи, 0 квадратов «тофу»)."
+      },
+      "id": "blk_native_callout_1794439182835352800",
+      "managed_by": "project_parser",
+      "type": "callout"
+    },
+    {
+      "data": {
+        "text": "---"
+      },
+      "id": "blk_native_paragraph_1794439182835353900",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    },
+    {
+      "data": {
+        "level": 2,
+        "text": "1. Роль и инструментальный цикл Craft Anything MCP"
+      },
+      "id": "blk_native_heading_1794439182835354600",
+      "managed_by": "project_parser",
+      "type": "heading"
+    },
+    {
+      "data": {
+        "text": "Реализация разведочного анализа данных `EXAMINE` опирается **исключительно на доказательный аппарат Craft Anything MCP**:\n1. **Постановка задачи и бриф (`core_brief_write`):**\n   * Анализ канона IBM SPSS 24 Algorithms Guide для процедуры `EXAMINE`: структура таблиц вывода, формулы 5% усеченного среднего, алгоритм аппроксимации Ройстона для критерия Шапиро-Уилка $W$ ($3 \\le N \\le 5000$) и табличные квантили Даллала-Уилкинсона для критерия Лиллиефорса.\n2. **План этапов расследования (`core_plan_update`):**\n   * Шаг 1: Формирование дескриптивных метрик и интервалов $IQR$.\n   * Шаг 2: Алгоритм критерия нормальности Лиллиефорса с поправкой Колмогорова-Смирнова.\n   * Шаг 3: Алгоритм критерия нормальности Шапиро-Уилка $W$.\n   * Шаг 4: Алгоритм экстремумов (5 Highest / 5 Lowest).\n   * Шаг 5: Моделирование диалога `ExploreDialog` по DialogKit.\n3. **Регистрация и подтверждение гипотез (`core_hypothesis_record` / `core_hypothesis_update`):**\n   * Гипотеза об отсечении ровно $0.05 \\cdot N$ верхних и нижних наблюдений при расчете 5% Trimmed Mean (с дробным взвешиванием граничных элементов);\n   * Гипотеза о совпадении $W$-статистики Шапиро-Уилка со `scipy.stats.shapiro` с точностью $\\le 10^{-5}$;\n   * Гипотеза об обработке связок (ties) при расчете критерия Лиллиефорса;\n   * Фиксация `evidence_ids` в протоколе со статусом `supported`.\n4. **Фиксация находок (`core_finding_record`):**\n   * Регистрация математических формул и доказанной каноничности алгоритмов в базе знаний.\n5. **Финализация и передача контекста (`core_handoff_write`):**\n   * Добавление раздела EXAMINE в `docs/CRAFT_ANYTHING_AUDIT_REPORT.md` и `docs/SPSS_ALGORITHMS_AUDIT.md`."
+      },
+      "id": "blk_native_paragraph_1794439182835360200",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    },
+    {
+      "data": {
+        "text": "---"
+      },
+      "id": "blk_native_paragraph_1794439182835361400",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    },
+    {
+      "data": {
+        "level": 2,
+        "text": "2. Архитектура и модули по слоям"
+      },
+      "id": "blk_native_heading_1794439182835362300",
+      "managed_by": "project_parser",
+      "type": "heading"
+    },
+    {
+      "data": {
+        "code": "flowchart TD\n    subgraph CA [\"Craft Anything MCP Suite\"]\n        Brief[\"core_brief_write & core_plan_update\"]\n        Hypo[\"Hypothesis: Shapiro-Wilk & Lilliefors\"]\n        Find[\"Findings & Evidence IDs\"]\n    end\n\n    subgraph L2 [\"L2: statcraft_algo (explore/)\"]\n        Descr[\"5% Trimmed Mean, IQR, SE\"]\n        NormSW[\"Shapiro-Wilk W-test (Royston approx)\"]\n        NormKS[\"Kolmogorov-Smirnov (Lilliefors)\"]\n        Extremes[\"5 Highest & 5 Lowest Cases\"]\n    end\n\n    subgraph L5 [\"L5: statcraft_syntax\"]\n        Cmd[\"stat.explore (EXAMINE VARIABLES=...)\"]\n    end\n\n    subgraph L6 [\"L6: statcraft_app\"]\n        Dialog[\"DialogKit: ExploreDialog\"]\n        Tables[\"Output Viewer: 4 Canonical Tables\"]\n    end\n\n    CA --> L2\n    L2 --> L5\n    L5 --> L6",
+        "language": "mermaid"
+      },
+      "id": "blk_native_code_1794439182835365300",
+      "managed_by": "project_parser",
+      "type": "code"
+    },
+    {
+      "data": {
+        "level": 3,
+        "text": "2.1. Слой L2: Математический модуль `crates/statcraft_algo/src/explore/`"
+      },
+      "id": "blk_native_heading_1794439182835367700",
+      "managed_by": "project_parser",
+      "type": "heading"
+    },
+    {
+      "data": {
+        "text": "* **Декомпозиция модуля ($\\le 500$ строк на файл):**\n  * `mod.rs`: Публичные структуры `ExploreResult`, `ExploreGroupResult`, `ExploreOptions` и функция `compute_explore`.\n  * `descriptives.rs`: Расчет 5% усеченного среднего, $IQR$, доверительных интервалов и обработка пропусков (listwise/pairwise).\n  * `normality_ks.rs`: Реализация критерия Колмогорова-Смирнова с поправкой Лиллиефорса.\n  * `normality_sw.rs`: Реализация критерия Шапиро-Уилка $W$ с полиномиальной аппроксимацией весов Ройстона.\n  * `extremes.rs`: Алгоритм извлечения 5 минимальных и 5 максимальных значений с сохранением оригинальных индексов строк.\n* **Математический Золотой Оракул (Golden Oracle):**\n  * Сверка расчетов в `#[cfg(test)] mod tests` со `scipy.stats.shapiro`, `scipy.stats.kstest` и эталонными выводами SPSS 24 с погрешностью $\\le 10^{-6}$."
+      },
+      "id": "blk_native_paragraph_1794439182835370000",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    },
+    {
+      "data": {
+        "level": 3,
+        "text": "2.2. Слой L5: Командная шина `statcraft_syntax`"
+      },
+      "id": "blk_native_heading_1794439182835370900",
+      "managed_by": "project_parser",
+      "type": "heading"
+    },
+    {
+      "data": {
+        "text": "* **Команда `crates/statcraft_syntax/src/commands/explore_cmd.rs`:**\n  * Реализация трейта `EngineCommand` для `stat.explore`.\n  * Валидация входных параметров (хотя бы одна зависимая переменная).\n  * Генерация канонического синтаксиса `EXAMINE VARIABLES=...`.\n  * Регистрация в `CommandBus::with_defaults()`.\n* **Маппинг синтаксиса:**\n  * Добавить разбор подкоманды `EXAMINE` в `SyntaxParser` и `SyntaxDispatcher` (`mappers/stats.rs`)."
+      },
+      "id": "blk_native_paragraph_1794439182835372500",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    },
+    {
+      "data": {
+        "level": 3,
+        "text": "2.3. Слой L4/L6: Output Viewer и DialogKit в `statcraft_app`"
+      },
+      "id": "blk_native_heading_1794439182835373600",
+      "managed_by": "project_parser",
+      "type": "heading"
+    },
+    {
+      "data": {
+        "text": "* **Таблицы вывода `crates/statcraft_app/src/views/output_view/tables_explore.rs`:**\n  * Рендеринг 4 аутентичных таблиц SPSS (`render_explore_tables`): Case Processing Summary, Descriptives, Tests of Normality, Extreme Values;\n  * Поддержка экспорта сводки в TSV (`explore_to_tsv`).\n* **Диалог `crates/statcraft_app/src/dialogs/explore_dialog.rs`:**\n  * `DialogShell::standard(560, 430)`;\n  * Левая панель: `VariablePicker` доступных переменных;\n  * Правая верхняя панель: список зависимых переменных (`Dependent List`) с кнопкой переноса `TransferButton`;\n  * Правая нижняя панель: поле фактора (`Factor List`) с кнопкой переноса;\n  * Группа настроек `GroupBox`: чекбокс «Критерии нормальности» (*Normality plots with tests*);\n  * Нижняя панель действий `DialogActionBar`.\n* **Меню `crates/statcraft_app/src/app_menus/analyze_etc.rs`:**\n  * Активация пункта `menu-analyze-explore` («Анализ -> Описательные статистики -> Исследовать...»)."
+      },
+      "id": "blk_native_paragraph_1794439182835375700",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    },
+    {
+      "data": {
+        "level": 3,
+        "text": "2.4. Локализация (`locales/en.ftl` и `locales/ru.ftl`)"
+      },
+      "id": "blk_native_heading_1794439182835376800",
+      "managed_by": "project_parser",
+      "type": "heading"
+    },
+    {
+      "data": {
+        "text": "* Добавить все ключи:\n  * `menu-analyze-explore`, `dialog-explore-title`, `dialog-explore-dependent-list`, `dialog-explore-factor-list`, `dialog-explore-normality-tests`;\n  * `output-explore-case-processing`, `output-explore-descriptives`, `output-explore-normality`, `output-explore-extremes`, `output-explore-trimmed-mean`."
+      },
+      "id": "blk_native_paragraph_1794439182835378100",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    },
+    {
+      "data": {
+        "text": "---"
+      },
+      "id": "blk_native_paragraph_1794439182835379000",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    },
+    {
+      "data": {
+        "level": 2,
+        "text": "3. Критерии приёмки и верификация (Definition of Done)"
+      },
+      "id": "blk_native_heading_1794439182835379700",
+      "managed_by": "project_parser",
+      "type": "heading"
+    },
+    {
+      "data": {
+        "text": "1. **Протокол Craft Anything MCP:**\n   * Полный цикл `core_brief_write` $\\to$ `core_plan_update` $\\to$ `core_hypothesis_record` $\\to$ `core_finding_record` $\\to$ `core_handoff_write`.\n   * Доказательная база гипотез по критериям нормальности зафиксирована в `docs/CRAFT_ANYTHING_AUDIT_REPORT.md`.\n2. **Ресурсы и компиляция:**\n   * Строго с флагом `-j 1`.\n3. **Точность алгоритмов (Golden Oracle):**\n   * Сверка значений $W$ и $p$-value теста Шапиро-Уилка с `scipy.stats.shapiro` с точностью $\\le 10^{-5}$.\n   * Сверка критерия Лиллиефорса с эталонами SPSS 24.\n4. **Надежность (Never Crash):**\n   * Модульные тесты с пустыми группами, выборками из 1–2 наблюдений, константными векторами ($SD = 0$) и сплошными пропусками.\n5. **Контроль качества кода:**\n   * `cargo run -p xtask -j 1 -- file-guard` ($\\le 500$ строк на файл).\n   * `cargo run -p xtask -j 1 -- design-guard` (0 нарушений стандарта DialogKit).\n   * `cargo test -p statcraft_app --test dialog_invariants -j 1` (100% PASS).\n   * `cargo run -p xtask -j 1 -- ci` (все 9 ступеней шлюза качества пройдены).\n6. **Документация:**\n   * Обновление `docs/CHECKLIST.md`, `docs/parity-checklist.md`, `docs/CHRONICLE.md` и `docs/CHRONICLE.en.md`."
+      },
+      "id": "blk_native_paragraph_1794439182835382400",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    }
+  ]
+}
+
+--BOUNDARY_PAYLOAD_B9TPC9M2LJ
+Content-Type: text/html; charset="utf-8"
+Content-Disposition: inline
+
+<!doctype html><html><head><meta charset="utf-8"><meta name="generator" content="CapsuleCraft Native"></head><body style="font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;max-width:720px;margin:32px auto;line-height:1.55;color:#23201c;background:#faf8f4;"><h1>📚 StatCraft / ТЗ для ИИ-агента: Ветка C — Разведочный анализ данных Explore / EXAMINE и тесты нормальности (Фаза 7.1)</h1><p><em>[callout block — open in CapsuleCraft web for its canvas]</em></p><h1>ТЗ для ИИ-агента: Ветка C — Разведочный анализ данных Explore / EXAMINE и тесты нормальности (Фаза 7.1)</h1><p><em>[callout block — open in CapsuleCraft web for its canvas]</em></p><p><em>[callout block — open in CapsuleCraft web for its canvas]</em></p><p><em>[callout block — open in CapsuleCraft web for its canvas]</em></p><p><em>[callout block — open in CapsuleCraft web for its canvas]</em></p><p><em>[callout block — open in CapsuleCraft web for its canvas]</em></p><p><em>[callout block — open in CapsuleCraft web for its canvas]</em></p><p><em>[callout block — open in CapsuleCraft web for its canvas]</em></p><p><em>[callout block — open in CapsuleCraft web for its canvas]</em></p><p><em>[callout block — open in CapsuleCraft web for its canvas]</em></p><p><em>[callout block — open in CapsuleCraft web for its canvas]</em></p><p>---</p><h2>1. Роль и инструментальный цикл Craft Anything MCP</h2><p>Реализация разведочного анализа данных `EXAMINE` опирается **исключительно на доказательный аппарат Craft Anything MCP**:<br>1. **Постановка задачи и бриф (`core_brief_write`):**<br>   * Анализ канона IBM SPSS 24 Algorithms Guide для процедуры `EXAMINE`: структура таблиц вывода, формулы 5% усеченного среднего, алгоритм аппроксимации Ройстона для критерия Шапиро-Уилка $W$ ($3 \le N \le 5000$) и табличные квантили Даллала-Уилкинсона для критерия Лиллиефорса.<br>2. **План этапов расследования (`core_plan_update`):**<br>   * Шаг 1: Формирование дескриптивных метрик и интервалов $IQR$.<br>   * Шаг 2: Алгоритм критерия нормальности Лиллиефорса с поправкой Колмогорова-Смирнова.<br>   * Шаг 3: Алгоритм критерия нормальности Шапиро-Уилка $W$.<br>   * Шаг 4: Алгоритм экстремумов (5 Highest / 5 Lowest).<br>   * Шаг 5: Моделирование диалога `ExploreDialog` по DialogKit.<br>3. **Регистрация и подтверждение гипотез (`core_hypothesis_record` / `core_hypothesis_update`):**<br>   * Гипотеза об отсечении ровно $0.05 \cdot N$ верхних и нижних наблюдений при расчете 5% Trimmed Mean (с дробным взвешиванием граничных элементов);<br>   * Гипотеза о совпадении $W$-статистики Шапиро-Уилка со `scipy.stats.shapiro` с точностью $\le 10^{-5}$;<br>   * Гипотеза об обработке связок (ties) при расчете критерия Лиллиефорса;<br>   * Фиксация `evidence_ids` в протоколе со статусом `supported`.<br>4. **Фиксация находок (`core_finding_record`):**<br>   * Регистрация математических формул и доказанной каноничности алгоритмов в базе знаний.<br>5. **Финализация и передача контекста (`core_handoff_write`):**<br>   * Добавление раздела EXAMINE в `docs/CRAFT_ANYTHING_AUDIT_REPORT.md` и `docs/SPSS_ALGORITHMS_AUDIT.md`.</p><p>---</p><h2>2. Архитектура и модули по слоям</h2><p><em>[code block — open in CapsuleCraft web for its canvas]</em></p><h3>2.1. Слой L2: Математический модуль `crates/statcraft_algo/src/explore/`</h3><p>* **Декомпозиция модуля ($\le 500$ строк на файл):**<br>  * `mod.rs`: Публичные структуры `ExploreResult`, `ExploreGroupResult`, `ExploreOptions` и функция `compute_explore`.<br>  * `descriptives.rs`: Расчет 5% усеченного среднего, $IQR$, доверительных интервалов и обработка пропусков (listwise/pairwise).<br>  * `normality_ks.rs`: Реализация критерия Колмогорова-Смирнова с поправкой Лиллиефорса.<br>  * `normality_sw.rs`: Реализация критерия Шапиро-Уилка $W$ с полиномиальной аппроксимацией весов Ройстона.<br>  * `extremes.rs`: Алгоритм извлечения 5 минимальных и 5 максимальных значений с сохранением оригинальных индексов строк.<br>* **Математический Золотой Оракул (Golden Oracle):**<br>  * Сверка расчетов в `#[cfg(test)] mod tests` со `scipy.stats.shapiro`, `scipy.stats.kstest` и эталонными выводами SPSS 24 с погрешностью $\le 10^{-6}$.</p><h3>2.2. Слой L5: Командная шина `statcraft_syntax`</h3><p>* **Команда `crates/statcraft_syntax/src/commands/explore_cmd.rs`:**<br>  * Реализация трейта `EngineCommand` для `stat.explore`.<br>  * Валидация входных параметров (хотя бы одна зависимая переменная).<br>  * Генерация канонического синтаксиса `EXAMINE VARIABLES=...`.<br>  * Регистрация в `CommandBus::with_defaults()`.<br>* **Маппинг синтаксиса:**<br>  * Добавить разбор подкоманды `EXAMINE` в `SyntaxParser` и `SyntaxDispatcher` (`mappers/stats.rs`).</p><h3>2.3. Слой L4/L6: Output Viewer и DialogKit в `statcraft_app`</h3><p>* **Таблицы вывода `crates/statcraft_app/src/views/output_view/tables_explore.rs`:**<br>  * Рендеринг 4 аутентичных таблиц SPSS (`render_explore_tables`): Case Processing Summary, Descriptives, Tests of Normality, Extreme Values;<br>  * Поддержка экспорта сводки в TSV (`explore_to_tsv`).<br>* **Диалог `crates/statcraft_app/src/dialogs/explore_dialog.rs`:**<br>  * `DialogShell::standard(560, 430)`;<br>  * Левая панель: `VariablePicker` доступных переменных;<br>  * Правая верхняя панель: список зависимых переменных (`Dependent List`) с кнопкой переноса `TransferButton`;<br>  * Правая нижняя панель: поле фактора (`Factor List`) с кнопкой переноса;<br>  * Группа настроек `GroupBox`: чекбокс «Критерии нормальности» (*Normality plots with tests*);<br>  * Нижняя панель действий `DialogActionBar`.<br>* **Меню `crates/statcraft_app/src/app_menus/analyze_etc.rs`:**<br>  * Активация пункта `menu-analyze-explore` («Анализ -&gt; Описательные статистики -&gt; Исследовать...»).</p><h3>2.4. Локализация (`locales/en.ftl` и `locales/ru.ftl`)</h3><p>* Добавить все ключи:<br>  * `menu-analyze-explore`, `dialog-explore-title`, `dialog-explore-dependent-list`, `dialog-explore-factor-list`, `dialog-explore-normality-tests`;<br>  * `output-explore-case-processing`, `output-explore-descriptives`, `output-explore-normality`, `output-explore-extremes`, `output-explore-trimmed-mean`.</p><p>---</p><h2>3. Критерии приёмки и верификация (Definition of Done)</h2><p>1. **Протокол Craft Anything MCP:**<br>   * Полный цикл `core_brief_write` $\to$ `core_plan_update` $\to$ `core_hypothesis_record` $\to$ `core_finding_record` $\to$ `core_handoff_write`.<br>   * Доказательная база гипотез по критериям нормальности зафиксирована в `docs/CRAFT_ANYTHING_AUDIT_REPORT.md`.<br>2. **Ресурсы и компиляция:**<br>   * Строго с флагом `-j 1`.<br>3. **Точность алгоритмов (Golden Oracle):**<br>   * Сверка значений $W$ и $p$-value теста Шапиро-Уилка с `scipy.stats.shapiro` с точностью $\le 10^{-5}$.<br>   * Сверка критерия Лиллиефорса с эталонами SPSS 24.<br>4. **Надежность (Never Crash):**<br>   * Модульные тесты с пустыми группами, выборками из 1–2 наблюдений, константными векторами ($SD = 0$) и сплошными пропусками.<br>5. **Контроль качества кода:**<br>   * `cargo run -p xtask -j 1 -- file-guard` ($\le 500$ строк на файл).<br>   * `cargo run -p xtask -j 1 -- design-guard` (0 нарушений стандарта DialogKit).<br>   * `cargo test -p statcraft_app --test dialog_invariants -j 1` (100% PASS).<br>   * `cargo run -p xtask -j 1 -- ci` (все 9 ступеней шлюза качества пройдены).<br>6. **Документация:**<br>   * Обновление `docs/CHECKLIST.md`, `docs/parity-checklist.md`, `docs/CHRONICLE.md` и `docs/CHRONICLE.en.md`.</p><hr><p style="color:#8a8175;font-size:12px">Exported from CapsuleCraft Native · &lt;doc-statcraft-docs_plans_branch_c_explore_examine_md@capsuleos.local&gt;</p></body></html>
+
+--BOUNDARY_PAYLOAD_B9TPC9M2LJ--
+--BOUNDARY_ROOT_QBT3MNLYSC--

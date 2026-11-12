@@ -42,52 +42,40 @@ impl OutputViewerState {
         self.scroll_to_target = self.selected_target;
     }
 
-    pub fn add_descriptives(&mut self, results: Vec<DescriptivesResult>) {
-        let proc_id = self.alloc_id();
-        let log_id = self.alloc_id();
-        let notes_id = self.alloc_id();
-        let item_id = self.alloc_id();
-
-        let var_names: Vec<&str> = results.iter().map(|r| r.variable.as_str()).collect();
-        let sps_log = format!(
-            "DESCRIPTIVES VARIABLES={}\n  /STATISTICS=MEAN STDDEV MIN MAX.",
-            var_names.join(" ")
-        );
-
-        let notes = OutputNotes {
-            dataset_name: "DataSet1".to_string(),
-            timestamp: "Session".to_string(),
-            active_cases: results.first().map(|r| r.n_valid).unwrap_or(0),
-            active_vars: results.len(),
-        };
-
+    fn push_standard_procedure(
+        &mut self,
+        proc_title_key: &'static str,
+        log: String,
+        notes: OutputNotes,
+        main_item_title_key: &'static str,
+        main_kind: OutputItemKind,
+    ) {
         let proc = OutputProcedure {
-            id: proc_id,
-            title_key: "output-descriptives-title",
+            id: self.alloc_id(),
+            title_key: proc_title_key,
             custom_title: None,
             is_expanded: true,
             items: vec![
                 OutputItem {
-                    id: log_id,
+                    id: self.alloc_id(),
                     title_key: "output-log",
                     custom_title: None,
-                    kind: OutputItemKind::Log(sps_log),
+                    kind: OutputItemKind::Log(log),
                 },
                 OutputItem {
-                    id: notes_id,
+                    id: self.alloc_id(),
                     title_key: "output-notes",
                     custom_title: None,
                     kind: OutputItemKind::Notes(notes),
                 },
                 OutputItem {
-                    id: item_id,
-                    title_key: "output-descriptives-table",
+                    id: self.alloc_id(),
+                    title_key: main_item_title_key,
                     custom_title: None,
-                    kind: OutputItemKind::DescriptivesTable(results),
+                    kind: main_kind,
                 },
             ],
         };
-
         self.procedures.push(proc);
         let new_proc_idx = self.procedures.len() - 1;
         self.selected_target = Some(SelectedTarget::Item {
@@ -95,6 +83,27 @@ impl OutputViewerState {
             item_idx: 2,
         });
         self.scroll_to_target = self.selected_target;
+    }
+
+    pub fn add_descriptives(&mut self, results: Vec<DescriptivesResult>) {
+        let var_names: Vec<&str> = results.iter().map(|r| r.variable.as_str()).collect();
+        let sps_log = format!(
+            "DESCRIPTIVES VARIABLES={}\n  /STATISTICS=MEAN STDDEV MIN MAX.",
+            var_names.join(" ")
+        );
+        let notes = OutputNotes {
+            dataset_name: "DataSet1".to_string(),
+            timestamp: "Session".to_string(),
+            active_cases: results.first().map(|r| r.n_valid).unwrap_or(0),
+            active_vars: results.len(),
+        };
+        self.push_standard_procedure(
+            "output-descriptives-title",
+            sps_log,
+            notes,
+            "output-descriptives-table",
+            OutputItemKind::DescriptivesTable(results),
+        );
     }
 
     pub fn add_frequencies(&mut self, results: Vec<FrequencyResult>) {
@@ -452,5 +461,32 @@ impl OutputViewerState {
             item_idx: 0,
         });
         self.scroll_to_target = self.selected_target;
+    }
+
+    pub fn add_explore(&mut self, res: statcraft_algo::ExploreResult) {
+        let vars: Vec<&str> = res.variables.iter().map(|v| v.variable.as_str()).collect();
+        let log = format!(
+            "EXAMINE VARIABLES={}\n  /PLOT NPPLOT\n  /STATISTICS DESCRIPTIVES EXTREME.",
+            vars.join(" ")
+        );
+        let n = res
+            .variables
+            .first()
+            .and_then(|v| v.groups.first())
+            .map(|g| g.case_processing.n_total)
+            .unwrap_or(0);
+        let notes = OutputNotes {
+            dataset_name: "DataSet1".to_string(),
+            timestamp: "Session".to_string(),
+            active_cases: n,
+            active_vars: res.variables.len(),
+        };
+        self.push_standard_procedure(
+            "output-explore-title",
+            log,
+            notes,
+            "output-explore-title",
+            OutputItemKind::Explore(Box::new(res)),
+        );
     }
 }

@@ -1,6 +1,6 @@
 use serde::{Deserialize, Serialize};
 use statcraft_algo::{
-    AdpResult, BivariateCorrelationsResult, CrosstabResult, DescriptivesResult,
+    AdpResult, BivariateCorrelationsResult, CrosstabResult, DescriptivesResult, ExploreResult,
     FactorAnalysisResult, FrequencyResult, IndepTTestResult, KruskalWallisResult,
     LinearRegressionResult, MannWhitneyResult, MeansProcedureResult, OneSampleTTestResult,
     OneWayAnovaResult, PairedTTestResult, ProgrammabilityResult, RelatedPairTestResult,
@@ -90,6 +90,7 @@ pub enum OutputItemKind {
     Reliability(Box<ReliabilityResult>),
     Factor(Box<FactorAnalysisResult>),
     Means(Box<MeansProcedureResult>),
+    Explore(Box<ExploreResult>),
     Adp(Box<AdpResult>),
     Programmability(Box<ProgrammabilityResult>),
     Warning(String),

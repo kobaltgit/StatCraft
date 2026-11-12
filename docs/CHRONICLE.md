@@ -2906,3 +2906,36 @@
    * Все 314 файлов воркспейса укладываются в лимиты строк (`cargo run -p xtask -j 1 -- file-guard`);
    * 100% успешный прогон тестов воркспейса (`cargo test --workspace -j 1`).
 
+
+
+---
+
+### Этап 72: Разведочный анализ данных (Exploratory Data Analysis / EXAMINE & Normality Tests — Ветка C)
+*Время: 12 ноября 2026, 00:55 (~50 минут)*
+
+В строгом соответствии с каноном *IBM SPSS Statistics 24 Algorithms Guide* и доказательным регламентом Craft Anything MCP полностью реализована процедура разведочного анализа данных `EXAMINE` / `EXPLORE`:
+1. **Математическое ядро L2 (`crates/statcraft_algo/src/explore/`):**
+   * **5% усеченное среднее (5% Trimmed Mean):** расчет по каноническому алгоритму SPSS с отсечением ровно $0.05 \cdot N$ крайних наблюдений с каждой стороны и дробным взвешиванием граничных элементов весом $(1 - r)$;
+   * **Критерий нормальности Шапиро-Уилка $W$ (`normality_sw.rs`):** реализация полиномиальных аппроксимаций Ройстона (1992) для $3 \le N \le 5000$, вычисление оценок нормальных порядковых статистик Блома (Blom scores), точный расчет $p$-value для $N=3$ через арксинус и $z$-преобразования для $4 \le N \le 11$ и $12 \le N \le 5000$. Сверка с Золотым Оракулом (`scipy.stats.shapiro`) подтвердила совпадение с точностью $\le 10^{-6}$ ($W = 0.970165$, $p = 0.8924$);
+   * **Критерий Лиллиефорса (`normality_ks.rs`):** поправка Колмогорова-Смирнова по формуле Даллала-Уилкинсона с каноническим клампингом SPSS в диапазон $[0.001, 0.20]$ и сноской `*. This is a lower bound of the true significance`;
+   * **Экстремальные значения (`extremes.rs`):** вычисление 5 наименьших и 5 наибольших наблюдений с сохранением исходных 1-based номеров строк датасета и корректной обработкой связок;
+   * **Координатор процедуры (`mod.rs`):** расчет дескриптивных метрик ($IQR$ через HAVERAGE, асимметрия, эксцесс, 95% ДИ среднего), группировка по факторам (`BY factor`), режимы обработки пропусков Listwise/Pairwise.
+2. **Синтаксис L5 (`crates/statcraft_syntax/`):**
+   * Реализована команда `ExploreCommand` (`stat.explore`) с JSON-схемой `specs()`, поддержкой синонимов `EXAMINE` и `EXPLORE`, генератором синтаксиса `to_sps()`;
+   * Парсер `mappers/stats.rs`: маппинг подкоманд `VARIABLES=... BY ...`, `/PLOT NPPLOT`, `/STATISTICS DESCRIPTIVES EXTREME`, `/MISSING PAIRWISE/LISTWISE`;
+   * Сквозной интеграционный тест `test_roundtrip_explore` через `SyntaxDispatcher::execute_batch`.
+3. **Таблицы вывода L4/L6 (`crates/statcraft_app/src/views/output_view/tables_explore/`):**
+   * Модуль архитектурно декомпозирован на `mod.rs`, `tables.rs` и `tsv.rs` с соблюдением лимита $\le 500$ строк;
+   * Отрисовка 4 аутентичных сводных таблиц SPSS Pivot Tables: *Case Processing Summary*, *Descriptives*, *Tests of Normality*, *Extreme Values*;
+   * Реализован экспорт в TSV (`explore_to_tsv`) для буфера обмена и отчетов.
+4. **Интерфейс диалога DialogKit (`crates/statcraft_app/src/dialogs/explore_dialog.rs`):**
+   * Полноценный канонический диалог на базе `DialogShell::standard(560, 430)`:
+     - Левая панель `VariablePicker` доступных переменных со шкалами измерения;
+     - Кнопки переноса `TransferButton` для списков зависимых переменных и факторов;
+     - Поддиалоги `SubdialogSidebar`: Statistics, Plots (критерии нормальности), Options (пропуски);
+     - Нижняя панель действий `DialogActionBar` (`[ OK ] [ Paste ] [ Reset ] [ Cancel ] [ Help ]`);
+   * Активация пункта главного меню «Анализ -> Описательные статистики -> Исследовать...» (`menu-analyze-explore`).
+5. **Локализация и контроль качества (DoD):**
+   * 100% покрытие двуязычными каталогами Fluent в `locales/en.ftl` и `locales/ru.ftl` без сырых строковых литералов и без эмодзи;
+   * Тестовый модуль интерфейсных инвариантов `crates/statcraft_app/tests/explore_invariants.rs`;
+   * 100% успешный прогон всех 9 ступеней Quality Gate `cargo run -p xtask -j 1 -- ci` (fmt, clippy, layers, file-guard [325 файлов], design-guard, workspace tests, parity, test-corpus, test-undo).

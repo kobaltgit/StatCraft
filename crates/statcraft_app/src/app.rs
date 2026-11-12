@@ -1,19 +1,19 @@
-﻿use crate::app_session::PendingSessionAction;
+use crate::app_session::PendingSessionAction;
 use crate::bridge_service::BridgeService;
 use crate::dialogs::ConfirmSaveDialogState;
 use crate::dialogs::{
     AdpDialogState, AutoRecodeDialogState, ComputeDialogState, CorrelationsDialogState,
     CountValuesDialogState, CrosstabsDialogState, DateTimeDialogState, DescriptivesDialogState,
-    DummyDialogState, FactorDialogState, FindReplaceDialogState, FrequenciesDialogState,
-    GoToDialogState, IndependentSamplesTTestDialogState, KruskalWallisDialogState,
-    LinearRegressionDialogState, McpBridgeDialogState, MeansDialogState, MissingValuesDialogState,
-    NonparamRelatedDialogState, NonparamTwoSampleDialogState, OneSampleTTestDialogState,
-    OneWayAnovaDialogState, OptimalBinningDialogState, PairedSamplesTTestDialogState,
-    ProgrammabilityDialogState, RandomSeedDialogState, RankCasesDialogState, RecodeDialogState,
-    ReliabilityDialogState, ReplaceMissingDialogState, SelectCasesDialogState,
-    ShiftValuesDialogState, SortCasesDialogState, SplitFileDialogState, TimeSeriesDialogState,
-    ValueLabelsDialogState, VariableTypeDialogState, VisualBinningDialogState,
-    WeightCasesDialogState,
+    DummyDialogState, ExploreDialogState, FactorDialogState, FindReplaceDialogState,
+    FrequenciesDialogState, GoToDialogState, IndependentSamplesTTestDialogState,
+    KruskalWallisDialogState, LinearRegressionDialogState, McpBridgeDialogState, MeansDialogState,
+    MissingValuesDialogState, NonparamRelatedDialogState, NonparamTwoSampleDialogState,
+    OneSampleTTestDialogState, OneWayAnovaDialogState, OptimalBinningDialogState,
+    PairedSamplesTTestDialogState, ProgrammabilityDialogState, RandomSeedDialogState,
+    RankCasesDialogState, RecodeDialogState, ReliabilityDialogState, ReplaceMissingDialogState,
+    SelectCasesDialogState, ShiftValuesDialogState, SortCasesDialogState, SplitFileDialogState,
+    TimeSeriesDialogState, ValueLabelsDialogState, VariableTypeDialogState,
+    VisualBinningDialogState, WeightCasesDialogState,
 };
 use crate::recent_files::RecentFiles;
 use crate::views::{
@@ -53,6 +53,7 @@ pub struct StatCraftApp {
     pub output_view_state: OutputViewerState,
     pub descriptives_dialog_state: DescriptivesDialogState,
     pub frequencies_dialog_state: FrequenciesDialogState,
+    pub explore_dialog_state: ExploreDialogState,
     pub crosstabs_dialog_state: CrosstabsDialogState,
     pub correlations_dialog_state: CorrelationsDialogState,
     pub nonparam_twosample_dialog_state: NonparamTwoSampleDialogState,
@@ -126,6 +127,7 @@ impl StatCraftApp {
             output_view_state: OutputViewerState::new(),
             descriptives_dialog_state: DescriptivesDialogState::default(),
             frequencies_dialog_state: FrequenciesDialogState::default(),
+            explore_dialog_state: ExploreDialogState::default(),
             crosstabs_dialog_state: CrosstabsDialogState::default(),
             correlations_dialog_state: CorrelationsDialogState::default(),
             nonparam_twosample_dialog_state: NonparamTwoSampleDialogState::default(),

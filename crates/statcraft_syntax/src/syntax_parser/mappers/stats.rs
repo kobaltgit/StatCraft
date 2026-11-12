@@ -10,6 +10,7 @@ pub fn map_stat_command(
     match cmd.name.as_str() {
         "DESCRIPTIVES" => map_descriptives(cmd, dataset),
         "FREQUENCIES" => map_frequencies(cmd, dataset),
+        "EXAMINE" | "EXPLORE" => map_explore(cmd, dataset),
         "CROSSTABS" => map_crosstabs(cmd, dataset),
         "T-TEST" => map_ttest(cmd, dataset),
         "ONEWAY" => map_oneway(cmd, dataset),
@@ -42,31 +43,18 @@ fn map_descriptives(
     }
 
     let has_stats = cmd.has_subcommand("STATISTICS");
-    let opts = if !has_stats || cmd.has_token("STATISTICS", "DEFAULT") {
-        json!({
-            "mean": true,
-            "std_dev": true,
-            "min": true,
-            "max": true,
-            "variance": cmd.has_token("STATISTICS", "VARIANCE"),
-            "range": cmd.has_token("STATISTICS", "RANGE"),
-            "se_mean": cmd.has_token("STATISTICS", "SEMEAN"),
-            "skewness": cmd.has_token("STATISTICS", "SKEWNESS"),
-            "kurtosis": cmd.has_token("STATISTICS", "KURTOSIS")
-        })
-    } else {
-        json!({
-            "mean": cmd.has_token("STATISTICS", "MEAN"),
-            "std_dev": cmd.has_token("STATISTICS", "STDDEV"),
-            "variance": cmd.has_token("STATISTICS", "VARIANCE"),
-            "min": cmd.has_token("STATISTICS", "MIN"),
-            "max": cmd.has_token("STATISTICS", "MAX"),
-            "range": cmd.has_token("STATISTICS", "RANGE"),
-            "se_mean": cmd.has_token("STATISTICS", "SEMEAN"),
-            "skewness": cmd.has_token("STATISTICS", "SKEWNESS"),
-            "kurtosis": cmd.has_token("STATISTICS", "KURTOSIS")
-        })
-    };
+    let is_default = !has_stats || cmd.has_token("STATISTICS", "DEFAULT");
+    let opts = json!({
+        "mean": is_default || cmd.has_token("STATISTICS", "MEAN"),
+        "std_dev": is_default || cmd.has_token("STATISTICS", "STDDEV"),
+        "min": is_default || cmd.has_token("STATISTICS", "MIN"),
+        "max": is_default || cmd.has_token("STATISTICS", "MAX"),
+        "variance": cmd.has_token("STATISTICS", "VARIANCE"),
+        "range": cmd.has_token("STATISTICS", "RANGE"),
+        "se_mean": cmd.has_token("STATISTICS", "SEMEAN"),
+        "skewness": cmd.has_token("STATISTICS", "SKEWNESS"),
+        "kurtosis": cmd.has_token("STATISTICS", "KURTOSIS")
+    });
 
     Ok(Some((
         "stat.descriptives",
@@ -155,11 +143,8 @@ fn map_ttest(
         Ok(Some((
             "stat.ttest.indep",
             json!({
-                "vars": vars,
-                "grouping_var": grp_var,
-                "group1": v1,
-                "group2": v2,
-                "ci": ci
+                "vars": vars, "grouping_var": grp_var,
+                "group1": v1, "group2": v2, "ci": ci
             }),
         )))
     } else if let Some(pairs_sub) = cmd.subcommand("PAIRS") {
@@ -167,10 +152,7 @@ fn map_ttest(
         let pairs = parse_pairs_subcommand(pairs_sub, cmd.line_num)?;
         Ok(Some((
             "stat.ttest.paired",
-            json!({
-                "pairs": pairs,
-                "ci": ci
-            }),
+            json!({ "pairs": pairs, "ci": ci }),
         )))
     } else {
         // One sample: /TESTVAL=val /VARIABLES=vars
@@ -184,11 +166,7 @@ fn map_ttest(
 
         Ok(Some((
             "stat.ttest.onesample",
-            json!({
-                "vars": vars,
-                "test_value": testval,
-                "ci": ci
-            }),
+            json!({ "vars": vars, "test_value": testval, "ci": ci }),
         )))
     }
 }
@@ -423,16 +401,90 @@ fn map_means(
     Ok(Some((
         "stat.means",
         json!({
-            "dependent_vars": dep_vars,
-            "factor_vars": factor_vars,
-            "cell_mean": true,
-            "cell_count": true,
-            "cell_stddev": true,
-            "cell_variance": false,
-            "cell_median": false,
-            "cell_min": false,
-            "cell_max": false,
-            "anova": anova
+            "dependent_vars": dep_vars, "factor_vars": factor_vars,
+            "cell_mean": true, "cell_count": true, "cell_stddev": true,
+            "cell_variance": false, "cell_median": false, "cell_min": false,
+            "cell_max": false, "anova": anova
         }),
     )))
+}
+
+fn map_explore(
+    cmd: &ParsedCommand,
+    dataset: Option<&DataSet>,
+) -> Result<Option<(&'static str, Value)>, SyntaxError> {
+    let raw = cmd
+        .subcommand_tokens("VARIABLES")
+        .or_else(|| cmd.subcommand_tokens("POSITIONAL"))
+        .unwrap_or(&[]);
+
+    let (dep_tokens, factor_tokens) = match raw.iter().position(|t| t.eq_ignore_ascii_case("BY")) {
+        Some(pos) => (&raw[..pos], &raw[pos + 1..]),
+        None => (raw, &[][..]),
+    };
+
+    let dep_vars = SyntaxParser::expand_variables(dep_tokens, dataset)?;
+    if dep_vars.is_empty() {
+        return Err(SyntaxError::InvalidSubcommand {
+            line: cmd.line_num,
+            command: cmd.name.clone(),
+            subcommand: "VARIABLES".to_string(),
+            reason: "Dependent variable list cannot be empty".to_string(),
+        });
+    }
+
+    let factor_vars = SyntaxParser::expand_variables(factor_tokens, dataset)?;
+    let normality = cmd.has_token("PLOT", "NPPLOT") || cmd.has_token("PLOT", "ALL");
+
+    let (desc, ext) = if cmd.has_subcommand("STATISTICS") {
+        if cmd.has_token("STATISTICS", "NONE") {
+            (false, false)
+        } else {
+            let all = cmd.has_token("STATISTICS", "ALL");
+            (
+                all || cmd.has_token("STATISTICS", "DESCRIPTIVES")
+                    || !cmd.has_token("STATISTICS", "EXTREME"),
+                all || cmd.has_token("STATISTICS", "EXTREME")
+                    || cmd.has_token("STATISTICS", "EXTREMES"),
+            )
+        }
+    } else {
+        (true, true)
+    };
+
+    let missing = if cmd.has_token("MISSING", "PAIRWISE") {
+        "pairwise"
+    } else {
+        "listwise"
+    };
+
+    let ci = parse_ci_from_criteria(cmd);
+
+    Ok(Some((
+        "stat.explore",
+        json!({
+            "dependent_vars": dep_vars, "factor_vars": factor_vars,
+            "compute_descriptives": desc, "compute_normality": normality,
+            "compute_extremes": ext, "confidence_level": ci, "missing": missing,
+        }),
+    )))
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::syntax_parser::lexer::SyntaxLexer;
+
+    #[test]
+    fn test_map_explore_examine() {
+        let blocks =
+            SyntaxLexer::split_commands("EXAMINE VARIABLES=salary BY gender /PLOT NPPLOT.")
+                .expect("lex ok");
+        let cmd = SyntaxParser::parse_command(&blocks[0]).expect("parse ok");
+        let (id, val) = map_explore(&cmd, None).expect("map ok").expect("some");
+        assert_eq!(id, "stat.explore");
+        assert_eq!(val["dependent_vars"], json!(["salary"]));
+        assert_eq!(val["factor_vars"], json!(["gender"]));
+        assert_eq!(val["compute_normality"], true);
+    }
 }

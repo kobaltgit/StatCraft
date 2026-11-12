@@ -9,6 +9,7 @@ pub mod tables_common;
 pub mod tables_correlations;
 pub mod tables_crosstabs;
 pub mod tables_descriptives;
+pub mod tables_explore;
 pub mod tables_factor;
 pub mod tables_frequencies;
 pub mod tables_generic;
@@ -37,6 +38,7 @@ pub use tables_anova::{anova_to_tsv, render_spss_oneway_anova_tables};
 pub use tables_correlations::{correlations_to_tsv, render_spss_correlations_tables};
 pub use tables_crosstabs::{crosstabs_to_tsv, render_crosstabs_item};
 pub use tables_descriptives::{descriptives_to_tsv, render_spss_descriptives_pivot_table};
+pub use tables_explore::{explore_to_tsv, render_spss_explore_pivot_tables};
 pub use tables_factor::{factor_to_tsv, render_spss_factor};
 pub use tables_frequencies::{frequencies_to_tsv, render_spss_frequencies_tables};
 pub use tables_generic::{generic_report_to_tsv, render_spss_generic_report};
@@ -78,6 +80,7 @@ pub fn extract_item_tsv(kind: &OutputItemKind) -> Option<String> {
         OutputItemKind::Reliability(res) => Some(reliability_to_tsv(res)),
         OutputItemKind::Factor(res) => Some(factor_to_tsv(res)),
         OutputItemKind::Means(res) => Some(means_to_tsv(res)),
+        OutputItemKind::Explore(res) => Some(explore_to_tsv(res)),
         OutputItemKind::Adp(res) => Some(adp_to_tsv(res)),
         OutputItemKind::Programmability(res) => Some(programmability_to_tsv(res)),
         OutputItemKind::GenericReport {
@@ -333,6 +336,9 @@ pub fn render_output_view(ui: &mut Ui, state: &mut OutputViewerState) {
                                     }
                                     OutputItemKind::Means(res) => {
                                         render_spss_means(ui, res);
+                                    }
+                                    OutputItemKind::Explore(res) => {
+                                        render_spss_explore_pivot_tables(ui, res);
                                     }
                                     OutputItemKind::Adp(res) => {
                                         render_spss_adp_tables(ui, res);

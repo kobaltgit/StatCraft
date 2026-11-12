@@ -47,7 +47,12 @@ impl StatCraftApp {
                             self.frequencies_dialog_state.is_open = true;
                             ui.close_menu();
                         }
-                        render_menu_item(ui, t!("menu-analyze-explore"), MenuItemStatus::InDev);
+                        if render_menu_item(ui, t!("menu-analyze-explore"), requires_dataset_status)
+                            .clicked()
+                        {
+                            self.explore_dialog_state.is_open = true;
+                            ui.close_menu();
+                        }
                         if render_menu_item(
                             ui,
                             t!("menu-analyze-crosstabs"),

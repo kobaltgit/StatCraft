@@ -14,6 +14,7 @@ pub mod crosstabs_types;
 pub mod date_time;
 pub mod descriptives;
 pub mod dummies;
+pub mod explore;
 pub mod expr_eval;
 pub mod factor;
 #[cfg(test)]
@@ -89,6 +90,7 @@ pub use descriptives::{
     compute_descriptives, compute_descriptives_weighted, DescriptivesOptions, DescriptivesResult,
 };
 pub use dummies::{generate_dummies_for_column, DummySpec, GeneratedDummyColumn};
+pub use explore::*;
 pub use expr_eval::{CompiledExpr, EvalError, EvalNode, Op};
 pub use factor::{compute_factor_analysis, jacobi_eigen_symmetric};
 pub use factor_types::{

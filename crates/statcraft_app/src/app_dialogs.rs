@@ -1,16 +1,16 @@
 use super::app::{StatCraftApp, StatusMessage};
 use super::dialogs::{
     render_anova_oneway_dialog, render_correlations_dialog, render_crosstabs_dialog,
-    render_descriptives_dialog, render_factor_dialog, render_frequencies_dialog,
-    render_kruskal_wallis_dialog, render_linear_regression_dialog, render_mcp_bridge_dialog,
-    render_means_dialog, render_nonparam_related_dialog, render_nonparam_twosample_dialog,
-    render_reliability_dialog, render_ttest_indep_dialog, render_ttest_onesample_dialog,
-    render_ttest_paired_dialog, CorrelationsDialogAction, CrosstabsDialogAction,
-    DescriptivesDialogAction, FactorDialogAction, FrequenciesDialogAction,
-    IndependentSamplesTTestDialogAction, KruskalWallisDialogAction, LinearRegressionDialogAction,
-    MeansDialogAction, NonparamRelatedDialogAction, NonparamTwoSampleDialogAction,
-    OneSampleTTestDialogAction, OneWayAnovaDialogAction, PairedSamplesTTestDialogAction,
-    ReliabilityDialogAction,
+    render_descriptives_dialog, render_explore_dialog, render_factor_dialog,
+    render_frequencies_dialog, render_kruskal_wallis_dialog, render_linear_regression_dialog,
+    render_mcp_bridge_dialog, render_means_dialog, render_nonparam_related_dialog,
+    render_nonparam_twosample_dialog, render_reliability_dialog, render_ttest_indep_dialog,
+    render_ttest_onesample_dialog, render_ttest_paired_dialog, CorrelationsDialogAction,
+    CrosstabsDialogAction, DescriptivesDialogAction, ExploreDialogAction, FactorDialogAction,
+    FrequenciesDialogAction, IndependentSamplesTTestDialogAction, KruskalWallisDialogAction,
+    LinearRegressionDialogAction, MeansDialogAction, NonparamRelatedDialogAction,
+    NonparamTwoSampleDialogAction, OneSampleTTestDialogAction, OneWayAnovaDialogAction,
+    PairedSamplesTTestDialogAction, ReliabilityDialogAction,
 };
 use serde_json::json;
 use statcraft_i18n::t;
@@ -98,6 +98,58 @@ impl StatCraftApp {
                 self.output_view_state.add_entry(t!("output-log"), sps);
             }
             FrequenciesDialogAction::None => {}
+        }
+
+        // Explore Dialog
+        let explore_action =
+            render_explore_dialog(ctx, self.dataset.as_ref(), &mut self.explore_dialog_state);
+
+        match explore_action {
+            ExploreDialogAction::Run {
+                dependent_vars,
+                factor_vars,
+                compute_descriptives,
+                compute_normality,
+                compute_extremes,
+                confidence_level,
+                missing,
+            } => {
+                let params = json!({
+                    "dependent_vars": dependent_vars,
+                    "factor_vars": factor_vars,
+                    "compute_descriptives": compute_descriptives,
+                    "compute_normality": compute_normality,
+                    "compute_extremes": compute_extremes,
+                    "confidence_level": confidence_level,
+                    "missing": missing,
+                });
+                match self
+                    .command_bus
+                    .execute("stat.explore", &mut self.dataset, params)
+                {
+                    Ok(result_value) => {
+                        if let Ok(res) =
+                            serde_json::from_value::<statcraft_algo::ExploreResult>(result_value)
+                        {
+                            self.output_view_state.add_explore(res);
+                        }
+                    }
+                    Err(e) => {
+                        self.status_message = StatusMessage::Error(e.to_string());
+                    }
+                }
+            }
+            ExploreDialogAction::Paste {
+                dependent_vars,
+                factor_vars,
+            } => {
+                let sps = statcraft_syntax::commands::ExploreCommand::to_sps(
+                    &dependent_vars,
+                    &factor_vars,
+                );
+                self.output_view_state.add_entry(t!("output-log"), sps);
+            }
+            ExploreDialogAction::None => {}
         }
 
         // 3. Crosstabs Dialog

@@ -667,3 +667,32 @@
 - [x] Двуязычная хроника проекта: добавление записи в `docs/CHRONICLE.md` и `docs/CHRONICLE.en.md` (Этап / Phase 71)
 - [x] 100% успешный прогон всех ступеней Quality Gate `cargo run -p xtask -j 1 -- ci` (fmt, clippy, layers, file-guard [314 файлов], design-guard, workspace tests, parity, corpus, test-undo).
 
+## 41. Разведочный анализ данных (Exploratory Data Analysis / EXAMINE & Normality Tests — Ветка C)
+- [x] Доказательный Clean-Room аудит алгоритмов через Craft Anything MCP (`core_brief_write`, `core_plan_update`, `core_hypothesis_record` hyp_1..hyp_3 `supported`, `core_handoff_write`)
+- [x] L2 `statcraft_algo::explore`:
+  - [x] Дескриптивные метрики `descriptives.rs`: каноническое 5% усеченное среднее (5% Trimmed Mean) с дробным взвешиванием граничных элементов, среднее, SE среднего, 95% ДИ среднего через квантили Стьюдента, медиана, дисперсия, SD, минимум, максимум, размах, межквартильный размах ($IQR$ через HAVERAGE), асимметрия с SE, эксцесс с SE
+  - [x] Критерий нормальности Шапиро-Уилка `normality_sw.rs`: аппроксимации полиномами Ройстона (1992) для $3 \le N \le 5000$, Blom normal order statistics scores, точный расчет $p$-value (сверка с Golden Oracle `scipy.stats.shapiro` с точностью $\le 10^{-6}$)
+  - [x] Критерий нормальности Лиллиефорса `normality_ks.rs`: поправка Колмогорова-Смирнова по формуле Даллала-Уилкинсона с каноническим клампингом SPSS $[0.001, 0.20]$
+  - [x] Экстремальные значения `extremes.rs`: 5 наименьших и 5 наибольших наблюдений с сохранением исходных 1-based номеров строк и корректной обработкой связок (ties)
+  - [x] Координатор процедуры `mod.rs`: группировка по факторам (BY factor), режимы обработки пропусков Listwise/Pairwise, фильтрация активных наблюдений
+- [x] L5 `statcraft_syntax`:
+  - [x] Команда движка `ExploreCommand` (`stat.explore`): схема параметров `specs()`, чтение входных переменных и факторов, генерация SPSS-синтаксиса `to_sps()`
+  - [x] Синтаксический парсер `mappers/stats.rs`: маппинг `EXAMINE` и `EXPLORE` с поддержкой `VARIABLES=... BY ...`, `/PLOT NPPLOT`, `/STATISTICS`, `/MISSING`
+  - [x] Регистрация в `bus.rs` и интеграционный roundtrip-тест в `syntax_roundtrip_and_fuzz_tests.rs`
+- [x] L4/L6 `statcraft_app::views::output_view`:
+  - [x] Структурированное представление `OutputItemKind::Explore`
+  - [x] Архитектурная декомпозиция модуля `tables_explore/` (`mod.rs`, `tables.rs`, `tsv.rs` — все файлы $\le 500$ строк)
+  - [x] Отрисовка 4 аутентичных сводных таблиц SPSS Pivot Tables: Case Processing Summary, Descriptives, Tests of Normality, Extreme Values
+  - [x] Поддержка экспорта в TSV (`explore_to_tsv`)
+  - [x] Интеграция в `OutputViewerState::add_explore`, `extract_item_tsv` и `syntax_runner`
+- [x] UI диалог `ExploreDialog` (`crates/statcraft_app/src/dialogs/explore_dialog.rs`):
+  - [x] Строгое соответствие канону `DialogKit`: `DialogShell::standard(560, 430)`, `VariablePicker`, кнопки переноса `TransferButton`, поддиалоги `SubdialogSidebar` (Statistics, Plots, Options), нижняя панель `DialogActionBar`
+  - [x] Интеграция в координатор диалогов `app_dialogs.rs` и главное окно `app.rs`
+- [x] Главное меню:
+  - [x] Активация пункта «Анализ -> Описательные статистики -> Исследовать...» (`menu-analyze-explore`) в `app_menus/analyze_etc.rs`
+- [x] Локализация:
+  - [x] Полные двуязычные каталоги Fluent в `locales/en.ftl` и `locales/ru.ftl` (100% покрытие, 0 сырых строк, 0 эмодзи)
+- [x] Тестирование и Quality Gate:
+  - [x] Модуль интерфейсных инвариантов `explore_invariants.rs`
+  - [x] 100% успешный прогон всех 9 ступеней Quality Gate `cargo run -p xtask -j 1 -- ci`
+
