@@ -751,7 +751,7 @@ Beyond isolated unit testing, StatCraft enforces mathematical and architectural 
 * **Craft Anything Hypotheses:** `hyp_explore_lilliefors_ks` (supported)
 * **Mathematical Formula Verification:**
   * **Empirical vs Standardized Normal CDF Maximum Deviation:**
-    $$D = \max_{1 \le i \le N} \left\{ \left| \frac{i}{N} - \Phi(Z_{(i)}) \right|, \; \left| \frac{i-1}{N} - \Phi(Z_{(i)}) \right| \right\}, \quad Z_{(i)} = \frac{X_{(i)} - \bar{X}}{s}$$
+    $$D = \max_{1 \le i \le N} \left[ \left| \frac{i}{N} - \Phi(Z_{(i)}) \right|, \; \left| \frac{i-1}{N} - \Phi(Z_{(i)}) \right| \right], \quad Z_{(i)} = \frac{X_{(i)} - \bar{X}}{s}$$
   * **Dallal & Wilkinson (1986) Analytic Significance Approximation:**
     $$\ln(p) = -7.01256 \cdot D^2 (N + 2.78019) + 2.99587 \cdot D \sqrt{N + 2.78019} - 0.122119 + \frac{0.974598}{\sqrt{N}} + \frac{1.67997}{N}$$
   * **SPSS Canonical Clamping & Footnotes:**
