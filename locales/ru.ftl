@@ -1530,3 +1530,177 @@ output-glm-col-measure = Мера
 status-glm-univariate-executed = Одномерный дисперсионный анализ рассчитан для { $dep }
 status-glm-multivariate-executed = Многомерный дисперсионный анализ (MANOVA) рассчитан для { $count } зависимых переменных
 status-glm-repeated-executed = Дисперсионный анализ повторных измерений рассчитан для фактора { $factor } ({ $count } замеров)
+
+
+# Общие ключи диалогов и вывода
+dialog-common-variables = Переменные:
+output-common-df = ст.св.
+output-common-f = F
+output-common-sig = Значимость
+output-common-se = Станд. ошибка
+output-common-time = Время
+output-common-status = Статус
+output-common-chi-square = Хи-квадрат
+
+# Кластерный анализ методом k-средних (K-Means)
+dialog-kmeans-title = Кластерный анализ методом k-средних
+dialog-kmeans-selected-variables = Переменные:
+dialog-kmeans-criteria = Критерии
+dialog-kmeans-clusters-count = Число кластеров:
+dialog-kmeans-max-iterations = Максимум итераций:
+dialog-kmeans-convergence = Критерий сходимости:
+dialog-kmeans-save = Сохранить
+dialog-kmeans-save-cluster = Принадлежность к кластеру
+dialog-kmeans-save-distance = Расстояние до центра кластера
+output-kmeans-title = Быстрый кластерный анализ (Quick Cluster)
+output-kmeans-initial-centers = Начальные центры кластеров
+output-kmeans-final-centers = Конечные центры кластеров
+output-kmeans-distances = Расстояния между конечными центрами
+output-kmeans-anova = Дисперсионный анализ (ANOVA)
+output-kmeans-cluster-sizes = Число наблюдений в каждом кластере
+output-kmeans-col-variable = Переменная
+output-kmeans-col-cluster = Кластер { $num }
+output-kmeans-col-cluster-num = Кластер
+output-kmeans-col-num-cases = Число наблюдений
+output-kmeans-col-percent = Процент
+output-kmeans-col-cluster-ms = Средний квадрат кластера
+output-kmeans-col-error-ms = Средний квадрат ошибки
+status-kmeans-executed = Кластеризация k-средних выполнена ({ $clusters } кластеров, { $cases } наблюдений)
+
+# Отчет «Книга кодов» (Codebook)
+dialog-codebook-title = Книга кодов
+dialog-codebook-selected-variables = Переменные:
+dialog-codebook-options = Параметры
+dialog-codebook-include-counts = Включить частоты и проценты
+dialog-codebook-include-stats = Включить описательные статистики
+dialog-codebook-max-categories = Максимум категорий:
+output-codebook-title = Книга кодов (Codebook)
+output-codebook-var-card = Переменная: { $name }
+output-codebook-col-standard-attributes = Стандартные атрибуты
+output-codebook-col-value = Значение
+output-codebook-col-count = Частота
+output-codebook-col-percent = Процент
+output-codebook-col-valid-percent = Валидный процент
+output-codebook-lbl-name = Имя
+output-codebook-lbl-label = Метка
+output-codebook-lbl-type = Тип
+output-codebook-lbl-measurement = Шкала измерения
+output-codebook-lbl-valid = Валидных наблюдений
+output-codebook-lbl-missing = Пропущенных наблюдений
+output-codebook-lbl-mean = Среднее
+output-codebook-lbl-stddev = Станд. отклонение
+output-codebook-lbl-median = Медиана
+output-codebook-lbl-quartiles = Квартили (25, 50, 75)
+status-codebook-executed = Книга кодов сформирована для { $count } переменных
+
+# Отчет «Итоги по наблюдениям» (Summarize)
+dialog-summarize-title = Итоги по наблюдениям
+dialog-summarize-variables = Переменные:
+dialog-summarize-grouping = Группирующие переменные:
+dialog-summarize-options = Параметры
+dialog-summarize-display-cases = Выводить наблюдения
+dialog-summarize-limit-cases = Ограничить первыми наблюдениями:
+output-summarize-title = Итоги по наблюдениям (Case Summaries)
+output-summarize-table-title = Таблица итогов по наблюдениям
+output-summarize-col-case-num = Номер наблюдения
+output-summarize-lbl-total = Всего
+output-summarize-lbl-group-total = Итого ({ $grp })
+status-summarize-executed = Итоги по наблюдениям сформированы для { $count } строк
+
+# Анализ выживаемости Каплана-Мейера
+dialog-km-title = Анализ выживаемости Каплана-Мейера
+dialog-km-time-variable = Переменная времени:
+dialog-km-status-variable = Переменная статуса:
+dialog-km-factor-variable = Факторная переменная (необязательно):
+dialog-km-event-value-group = Определение события
+dialog-km-event-value = Значение события:
+output-km-title = Анализ выживаемости Каплана-Мейера
+output-km-case-summary = Сводка обработки наблюдений
+output-km-means-medians = Средние и медианы времени выживания
+output-km-log-rank-test = Общие сравнения (Лог-ранг / Мантель-Кокс)
+output-km-event-table = Таблица выживаемости - { $group }
+output-km-col-factor = Фактор / Страта
+output-km-col-total-n = Всего N
+output-km-col-events-n = Число событий
+output-km-col-events-pct = % событий
+output-km-col-censored-n = Цензурировано N
+output-km-col-censored-pct = % цензурированных
+output-km-col-estimate = Оценка
+output-km-col-mean-estimate = Оценка среднего
+output-km-col-mean-se = Станд. ошибка среднего
+output-km-col-mean-lower = 95% ДИ нижняя
+output-km-col-mean-upper = 95% ДИ верхняя
+output-km-test-name = Критерий
+output-km-cumulative-survival = Кумулятивная выживаемость
+output-km-cum-events = Накопленные события
+output-km-remaining = Оставшиеся наблюдения
+status-km-executed = Анализ Каплана-Мейера завершен для { $time }
+
+# Таблицы смертности / дожития (Life Tables)
+dialog-lifetables-title = Таблицы дожития
+dialog-lifetables-time-variable = Переменная времени:
+dialog-lifetables-status-variable = Переменная статуса:
+dialog-lifetables-intervals-group = Интервалы времени
+dialog-lifetables-event-value = Значение события:
+dialog-lifetables-end-time = Конечное время:
+dialog-lifetables-width = Ширина интервала:
+output-lifetables-title = Таблицы дожития (Life Tables)
+output-lifetables-table-title = Актуарная таблица дожития
+output-lifetables-interval = Интервал
+output-lifetables-entering = Вошедшие в интервал
+output-lifetables-withdrawn = Выбывшие
+output-lifetables-exposed = Подвергшиеся риску
+output-lifetables-events = Терминальные события
+output-lifetables-q = Доля выбывших (q)
+output-lifetables-cum-p = Кумулятивная выживаемость (P)
+output-lifetables-hazard = Интенсивность риска (Hazard)
+status-lifetables-executed = Анализ таблиц дожития завершен для { $time }
+
+
+# Package 3 Common Data and Table Labels
+output-common-variable = Переменная
+output-common-valid = Валидные
+output-common-n = N
+output-common-total = Итого
+output-common-value = Значение
+output-common-label = Метка
+output-common-count = Частота
+output-common-percent = Процент
+output-common-min = Минимум
+output-common-max = Максимум
+output-common-mean = Среднее
+output-common-stddev = Станд. отклонение
+output-common-median = Медиана
+output-common-group = Группа
+output-common-total-n = Всего N
+output-common-ci-lower = 95% ДИ нижняя
+output-common-ci-upper = 95% ДИ верхняя
+
+# Package 3 K-Means Titles & Columns
+output-kmeans-table-title = Кластерный анализ методом k-средних
+output-kmeans-distances-title = Расстояния между конечными центрами кластеров
+output-kmeans-anova-title = Таблица дисперсионного анализа (ANOVA)
+output-kmeans-cases-title = Число наблюдений в каждом кластере
+output-kmeans-cluster = Кластер
+output-kmeans-cluster-ms = Средний квадрат кластера
+output-kmeans-error-ms = Средний квадрат ошибки
+
+# Package 3 Reports (Codebook & Summarize)
+output-codebook-table-title = Таблица книги кодов
+output-codebook-position = Позиция
+output-codebook-measure = Шкала измерения
+output-codebook-type = Тип
+output-codebook-stats-title = Описательные статистики
+output-codebook-frequencies-title = Таблица частот
+output-summarize-case-num = Номер наблюдения
+
+# Package 3 Survival Analysis Titles & Labels
+dialog-lifetables-thru-end = По конечное:
+dialog-lifetables-by-width = С шагом:
+output-km-table-title = Таблица выживаемости Каплана-Мейера
+output-km-case-processing-summary = Сводка обработки наблюдений
+output-km-means-medians-title = Средние и медианы времени выживания
+output-km-logrank-title = Общие сравнения (Лог-ранг / Мантель-Кокс)
+output-km-events-n = Число событий
+output-km-censored-n = Цензурировано N
+output-km-censored-pct = % цензурированных

@@ -15,16 +15,26 @@ impl StatCraftApp {
             5 => {
                 ui.menu_button(t!("menu-analyze"), |ui| {
                     ui.menu_button(t!("menu-analyze-reports"), |ui| {
-                        render_menu_item(
+                        if render_menu_item(
                             ui,
                             t!("menu-analyze-reports-codebook"),
-                            MenuItemStatus::InDev,
-                        );
-                        render_menu_item(
+                            requires_dataset_status,
+                        )
+                        .clicked()
+                        {
+                            self.codebook_dialog_state.is_open = true;
+                            ui.close_menu();
+                        }
+                        if render_menu_item(
                             ui,
                             t!("menu-analyze-reports-case-summaries"),
-                            MenuItemStatus::InDev,
-                        );
+                            requires_dataset_status,
+                        )
+                        .clicked()
+                        {
+                            self.summarize_dialog_state.is_open = true;
+                            ui.close_menu();
+                        }
                     });
                     ui.menu_button(t!("menu-analyze-descriptive-stats"), |ui| {
                         if render_menu_item(
@@ -242,7 +252,12 @@ impl StatCraftApp {
                             self.factor_dialog_state.is_open = true;
                             ui.close_menu();
                         }
-                        render_menu_item(ui, t!("menu-analyze-cluster"), MenuItemStatus::InDev);
+                        if render_menu_item(ui, t!("menu-analyze-cluster"), requires_dataset_status)
+                            .clicked()
+                        {
+                            self.kmeans_dialog_state.is_open = true;
+                            ui.close_menu();
+                        }
                     });
                     ui.menu_button(t!("menu-analyze-scale"), |ui| {
                         if render_menu_item(
@@ -257,16 +272,26 @@ impl StatCraftApp {
                         }
                     });
                     ui.menu_button(t!("menu-analyze-survival"), |ui| {
-                        render_menu_item(
+                        if render_menu_item(
                             ui,
                             t!("menu-analyze-survival-life-tables"),
-                            MenuItemStatus::InDev,
-                        );
-                        render_menu_item(
+                            requires_dataset_status,
+                        )
+                        .clicked()
+                        {
+                            self.survival_lifetables_dialog_state.is_open = true;
+                            ui.close_menu();
+                        }
+                        if render_menu_item(
                             ui,
                             t!("menu-analyze-survival-kaplan-meier"),
-                            MenuItemStatus::InDev,
-                        );
+                            requires_dataset_status,
+                        )
+                        .clicked()
+                        {
+                            self.survival_km_dialog_state.is_open = true;
+                            ui.close_menu();
+                        }
                         render_menu_item(
                             ui,
                             t!("menu-analyze-survival-cox"),

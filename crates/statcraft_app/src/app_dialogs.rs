@@ -887,6 +887,9 @@ impl StatCraftApp {
         // 16b. General Linear Model (GLM) Dialogs (Univariate, Multivariate, Repeated)
         self.handle_glm_dialogs(ctx);
 
+        // 16c. Package 3: Clustering, Reports, and Survival Dialogs
+        self.handle_pkg3_dialogs(ctx);
+
         // 17. Data and Variable Management Dialogs
         self.handle_data_dialogs(ctx);
 

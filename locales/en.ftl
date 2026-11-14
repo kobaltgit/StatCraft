@@ -1530,3 +1530,177 @@ output-glm-col-measure = Measure
 status-glm-univariate-executed = Univariate GLM computed for { $dep }
 status-glm-multivariate-executed = Multivariate GLM (MANOVA) computed for { $count } dependent variables
 status-glm-repeated-executed = Repeated measures GLM computed for factor { $factor } with { $count } measures
+
+
+# Common Dialog and Output
+dialog-common-variables = Variables:
+output-common-df = df
+output-common-f = F
+output-common-sig = Sig.
+output-common-se = Std. Error
+output-common-time = Time
+output-common-status = Status
+output-common-chi-square = Chi-Square
+
+# K-Means Cluster Analysis
+dialog-kmeans-title = K-Means Cluster Analysis
+dialog-kmeans-selected-variables = Variables:
+dialog-kmeans-criteria = Criteria
+dialog-kmeans-clusters-count = Number of Clusters:
+dialog-kmeans-max-iterations = Maximum Iterations:
+dialog-kmeans-convergence = Convergence Criterion:
+dialog-kmeans-save = Save
+dialog-kmeans-save-cluster = Cluster membership
+dialog-kmeans-save-distance = Distance from cluster center
+output-kmeans-title = Quick Cluster
+output-kmeans-initial-centers = Initial Cluster Centers
+output-kmeans-final-centers = Final Cluster Centers
+output-kmeans-distances = Distances between Final Cluster Centers
+output-kmeans-anova = ANOVA
+output-kmeans-cluster-sizes = Number of Cases in each Cluster
+output-kmeans-col-variable = Variable
+output-kmeans-col-cluster = Cluster { $num }
+output-kmeans-col-cluster-num = Cluster
+output-kmeans-col-num-cases = Number of Cases
+output-kmeans-col-percent = Percent
+output-kmeans-col-cluster-ms = Cluster MS
+output-kmeans-col-error-ms = Error MS
+status-kmeans-executed = K-Means clustering completed ({ $clusters } clusters, { $cases } cases)
+
+# Codebook Report
+dialog-codebook-title = Codebook
+dialog-codebook-selected-variables = Variables:
+dialog-codebook-options = Options
+dialog-codebook-include-counts = Include counts and percents
+dialog-codebook-include-stats = Include summary statistics
+dialog-codebook-max-categories = Maximum number of categories:
+output-codebook-title = Codebook
+output-codebook-var-card = Variable: { $name }
+output-codebook-col-standard-attributes = Standard Attributes
+output-codebook-col-value = Value
+output-codebook-col-count = Count
+output-codebook-col-percent = Percent
+output-codebook-col-valid-percent = Valid Percent
+output-codebook-lbl-name = Name
+output-codebook-lbl-label = Label
+output-codebook-lbl-type = Type
+output-codebook-lbl-measurement = Measurement Level
+output-codebook-lbl-valid = Valid Cases
+output-codebook-lbl-missing = Missing Cases
+output-codebook-lbl-mean = Mean
+output-codebook-lbl-stddev = Std. Deviation
+output-codebook-lbl-median = Median
+output-codebook-lbl-quartiles = Percentiles (25, 50, 75)
+status-codebook-executed = Codebook generated for { $count } variables
+
+# Summarize Report
+dialog-summarize-title = Case Summaries
+dialog-summarize-variables = Variables:
+dialog-summarize-grouping = Grouping Variable(s):
+dialog-summarize-options = Options
+dialog-summarize-display-cases = Display cases
+dialog-summarize-limit-cases = Limit cases to first:
+output-summarize-title = Case Summaries
+output-summarize-table-title = Case Summaries Table
+output-summarize-col-case-num = Case Number
+output-summarize-lbl-total = Total
+output-summarize-lbl-group-total = Total ({ $grp })
+status-summarize-executed = Case summaries generated for { $count } cases
+
+# Kaplan-Meier Survival Analysis
+dialog-km-title = Kaplan-Meier
+dialog-km-time-variable = Time Variable:
+dialog-km-status-variable = Status Variable:
+dialog-km-factor-variable = Factor Variable (Optional):
+dialog-km-event-value-group = Event Definition
+dialog-km-event-value = Single Value:
+output-km-title = Kaplan-Meier Survival Analysis
+output-km-case-summary = Case Processing Summary
+output-km-means-medians = Means and Medians for Survival Time
+output-km-log-rank-test = Overall Comparisons (Log-Rank / Mantel-Cox)
+output-km-event-table = Survival Table - { $group }
+output-km-col-factor = Factor / Stratum
+output-km-col-total-n = Total N
+output-km-col-events-n = N of Events
+output-km-col-events-pct = Events %
+output-km-col-censored-n = Censored N
+output-km-col-censored-pct = Censored %
+output-km-col-estimate = Estimate
+output-km-col-mean-estimate = Mean Estimate
+output-km-col-mean-se = Mean Std. Error
+output-km-col-mean-lower = 95% CI Lower
+output-km-col-mean-upper = 95% CI Upper
+output-km-test-name = Test
+output-km-cumulative-survival = Cumulative Survival
+output-km-cum-events = Cum. Events
+output-km-remaining = Remaining Cases
+status-km-executed = Kaplan-Meier analysis completed for { $time }
+
+# Life Tables Survival Analysis
+dialog-lifetables-title = Life Tables
+dialog-lifetables-time-variable = Time Variable:
+dialog-lifetables-status-variable = Status Variable:
+dialog-lifetables-intervals-group = Time Intervals
+dialog-lifetables-event-value = Event Value:
+dialog-lifetables-end-time = End Time:
+dialog-lifetables-width = Interval Width:
+output-lifetables-title = Life Tables
+output-lifetables-table-title = Actuarial Life Table
+output-lifetables-interval = Interval
+output-lifetables-entering = Number Entering
+output-lifetables-withdrawn = Number Withdrawn
+output-lifetables-exposed = Number Exposed
+output-lifetables-events = Terminal Events
+output-lifetables-q = Proportion Terminating (q)
+output-lifetables-cum-p = Cumulative Survival (P)
+output-lifetables-hazard = Hazard Rate
+status-lifetables-executed = Life tables analysis completed for { $time }
+
+
+# Package 3 Common Data and Table Labels
+output-common-variable = Variable
+output-common-valid = Valid
+output-common-n = N
+output-common-total = Total
+output-common-value = Value
+output-common-label = Label
+output-common-count = Count
+output-common-percent = Percent
+output-common-min = Minimum
+output-common-max = Maximum
+output-common-mean = Mean
+output-common-stddev = Std. Deviation
+output-common-median = Median
+output-common-group = Group
+output-common-total-n = Total N
+output-common-ci-lower = 95% CI Lower
+output-common-ci-upper = 95% CI Upper
+
+# Package 3 K-Means Titles & Columns
+output-kmeans-table-title = K-Means Cluster Analysis
+output-kmeans-distances-title = Distances between Final Cluster Centers
+output-kmeans-anova-title = ANOVA Table
+output-kmeans-cases-title = Number of Cases in each Cluster
+output-kmeans-cluster = Cluster
+output-kmeans-cluster-ms = Cluster MS
+output-kmeans-error-ms = Error MS
+
+# Package 3 Reports (Codebook & Summarize)
+output-codebook-table-title = Codebook Table
+output-codebook-position = Position
+output-codebook-measure = Measurement
+output-codebook-type = Type
+output-codebook-stats-title = Scale Statistics
+output-codebook-frequencies-title = Frequencies
+output-summarize-case-num = Case Number
+
+# Package 3 Survival Analysis Titles & Labels
+dialog-lifetables-thru-end = Thru:
+dialog-lifetables-by-width = By:
+output-km-table-title = Kaplan-Meier Survival Table
+output-km-case-processing-summary = Case Processing Summary
+output-km-means-medians-title = Means and Medians for Survival Time
+output-km-logrank-title = Overall Comparisons (Log-Rank / Mantel-Cox)
+output-km-events-n = N of Events
+output-km-censored-n = Censored N
+output-km-censored-pct = Censored %

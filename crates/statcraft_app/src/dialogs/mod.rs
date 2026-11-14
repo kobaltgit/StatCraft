@@ -3,6 +3,7 @@ pub mod anova_oneway_dialog;
 pub mod auto_recode_dialog;
 pub mod binning_cutpoints_dialog;
 pub mod binning_dialog;
+pub mod codebook_dialog;
 pub mod common;
 pub mod compute_dialog;
 pub mod correlations_dialog;
@@ -21,6 +22,7 @@ pub mod glm_multivariate_dialog;
 pub mod glm_repeated_dialog;
 pub mod glm_univariate_dialog;
 pub mod goto_dialog;
+pub mod kmeans_dialog;
 pub mod kruskal_define_range;
 pub mod kruskal_wallis_dialog;
 pub mod logistic_regression_dialog;
@@ -44,6 +46,9 @@ pub mod select_cases_dialog;
 pub mod shift_values_dialog;
 pub mod sort_cases_dialog;
 pub mod split_file_dialog;
+pub mod summarize_dialog;
+pub mod survival_km_dialog;
+pub mod survival_lifetables_dialog;
 pub mod time_series_dialog;
 pub mod ttest_indep_define_groups;
 pub mod ttest_indep_dialog;
@@ -65,6 +70,7 @@ pub use binning_dialog::{
     render_visual_binning_dialog, CutpointMethod, VisualBinningDialogAction,
     VisualBinningDialogState,
 };
+pub use codebook_dialog::{render_codebook_dialog, CodebookDialogAction, CodebookDialogState};
 pub use common::*;
 pub use compute_dialog::{
     render_compute_dialog, ComputeDialogAction, ComputeDialogState, FuncGroup,
@@ -107,6 +113,7 @@ pub use glm_univariate_dialog::{
     render_univariate_glm_dialog, UnivariateGlmDialogAction, UnivariateGlmDialogState,
 };
 pub use goto_dialog::{render_goto_dialog, GoToAction, GoToDialogState, GoToTab};
+pub use kmeans_dialog::{render_kmeans_dialog, KMeansDialogAction, KMeansDialogState};
 pub use kruskal_wallis_dialog::{
     render_kruskal_wallis_dialog, KruskalWallisDialogAction, KruskalWallisDialogState,
 };
@@ -167,6 +174,13 @@ pub use sort_cases_dialog::{
 };
 pub use split_file_dialog::{
     render_split_file_dialog, SplitFileDialogAction, SplitFileDialogState,
+};
+pub use summarize_dialog::{render_summarize_dialog, SummarizeDialogAction, SummarizeDialogState};
+pub use survival_km_dialog::{
+    render_survival_km_dialog, KaplanMeierDialogAction, KaplanMeierDialogState,
+};
+pub use survival_lifetables_dialog::{
+    render_survival_lifetables_dialog, LifeTablesDialogAction, LifeTablesDialogState,
 };
 pub use time_series_dialog::{
     render_time_series_dialog, TimeSeriesDialogAction, TimeSeriesDialogState, TimeSeriesFnType,

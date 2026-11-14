@@ -3009,3 +3009,38 @@
    * Тесты интерфейсных инвариантов `glm_dialog_invariants.rs`;
    * 100% успешный прогон всех 9 ступеней Quality Gate `cargo run -p xtask -j 1 -- ci` (fmt, clippy [0 warnings], layers, file-guard [378 файлов], design-guard, workspace tests, parity, test-corpus, test-undo).
 
+---
+
+### Этап 75: Кластерный анализ, отчёты и анализ выживаемости (K-Means, Codebook, Summarize, Kaplan-Meier, Life Tables — Ветка feat/003-clustering-reports-survival)
+*Время: 15 ноября 2026, 01:10 (~70 минут)*
+
+По согласованному архитектурному плану `plan_3_clustering_reports_survival.md` и в строгом соответствии с каноном экосистемы ArtCraft, Clean-Room методологией и регламентом IBM SPSS Algorithms Guide реализован пакет **Feature 003**, закрывающий пять ключевых аналитических процедур в категориях классификации, генерации отчетов и биостатистического анализа выживаемости:
+1. **Кластерный анализ методом K-средних (`QUICK CLUSTER` / `stat.cluster.kmeans`):**
+   * **Математическое ядро L2 (`crates/statcraft_algo/src/cluster_kmeans.rs`):** детерминированная инициализация центров методом максимального разброса (Maximin / furthest point heuristic), цикл пересчета центров и переназначения по евклидову расстоянию, матрица расстояний между финальными центрами, расчет однофакторной ANOVA для каждого признака с суммами квадратов ($SS_{between}, SS_{within}$), $F$-критериями и точными $p$-значениями Фишера.
+   * **Динамическая генерация переменных и 100% обратимость Undo/Redo L5 (`crates/statcraft_syntax/src/commands/kmeans_cmd.rs`):** при флаге сохранения кластеров в датасет динамически создаются и регистрируются колонки `QCL_1` (принадлежность к кластеру, `Measure::Nominal`) и `QCL_2` (расстояние до центра, `Measure::Scale`). При отмене операции `undo()` колонки бесследно удаляются из таблицы и словаря, возвращая датасет в исходное состояние.
+   * **Золотой Оракул:** Сверка центров кластеров и разбиений с Python `scipy.cluster.vq.kmeans2` подтвердила совпадение с точностью до $10^{-6}$.
+2. **Кодовая книга словаря датасета (`CODEBOOK` / `stat.reports.codebook`):**
+   * **Ядро L2 (`crates/statcraft_algo/src/codebook_core.rs`):** извлечение паспортных свойств каждой переменной (имя, метка, тип измерения, формат), построение частотных распределений со стандартными и валидными процентами для категориальных признаков и расчет дескрипторов (Mean, StdDev, Median, Quartiles с интерполяцией HAVERAGE) для количественных признаков.
+3. **Итоги по наблюдениям (`SUMMARIZE` / `stat.reports.summarize`):**
+   * **Ядро L2 (`crates/statcraft_algo/src/summarize_core.rs`):** построчный листинг наблюдений с опциональным отсечением лимита первых $N$ строк, иерархическая группировка по дискретным факторам с расчетом подитогов (Subtotals) и общего итога (Total: $N$, Mean, Sum, StdDev).
+4. **Анализ выживаемости Каплана-Мейера (`KM` / `stat.survival.km`):**
+   * **Математическое ядро L2 (`crates/statcraft_algo/src/survival_km.rs`):** расчет множительной оценки функции дожития $\hat{S}(t) = \prod (1 - d_i/n_i)$, стандартной ошибки по формуле Гринвуда $\widehat{\text{Var}}(\hat{S}(t)) = \hat{S}(t)^2 \sum \frac{d_i}{n_i(n_i - d_i)}$, среднего и медианного времени выживания с 95% доверительными интервалами, лог-ранговый тест Мантеля-Кокса ($\chi^2, df = G - 1, p$) для оценки статистических различий между стратами.
+   * **Золотой Оракул:** Сверка таблиц выживаемости и лог-рангового теста с библиотекой Python `lifelines.KaplanMeierFitter` подтвердила точное совпадение $\le 10^{-6}$.
+5. **Таблицы смертности / дожития (`SURVIVAL` / `stat.survival.lifetables`):**
+   * **Математическое ядро L2 (`crates/statcraft_algo/src/survival_lifetables.rs`):** актуарный анализ по заданным временным интервалам $[t_k, t_{k+1})$, эффективное число под риском с поправкой на полушаговое выбывание $n'_k = n_k - w_k/2$, условная вероятность смерти $q_k = d_k / n'_k$, условная вероятность дожития $p_k = 1 - q_k$, кумулятивная вероятность дожития $P_k$, плотность вероятности отказа $f_k$ и коэффициент риска $h_k$.
+6. **Командная шина и синтаксис L5 (`crates/statcraft_syntax/`):**
+   * Реализация команд движка: `KMeansClusterCommand`, `CodebookCommand`, `SummarizeCommand`, `KaplanMeierCommand`, `LifeTablesCommand` со спецификациями `specs()` и генерацией канонического синтаксиса `to_sps()`;
+   * Поддержка составных ключевых слов `QUICK CLUSTER`, `LIFE TABLES`, `KAPLAN MEIER` в парсере `parser.rs` и мапперы в `syntax_parser/mappers/pkg3.rs`;
+   * Интеграционные синтаксические тесты в `feature_003_syntax_tests.rs`.
+7. **Таблицы вывода Pivot Tables и архитектура L4/L6 (`crates/statcraft_app/src/views/output_view/`):**
+   * Выделенные модули вывода: `tables_cluster.rs`, `tables_reports.rs`, `tables_survival.rs` с генерацией канонических таблиц SPSS и экспортом в TSV для копирования в буфер обмена;
+   * Архитектурное разделение модуля `views/output_view/mod.rs` с выносом `view.rs` для строгого соблюдения правила лимита размера файлов $\le 500$ строк (Rule 12.1 и 12.2 «Разделяй, а не урезай»).
+8. **Диалоговые окна DialogKit и главное меню L6 (`crates/statcraft_app/`):**
+   * Канонические модальные окна `KMeansDialog`, `CodebookDialog`, `SummarizeDialog`, `KaplanMeierDialog`, `LifeTablesDialog` на базе `DialogShell::standard(560, 430)`, `VariablePicker`, `TransferButton` и `DialogActionBar`;
+   * Модуль-координатор `app_dialogs_pkg3.rs` и связка в `app.rs`;
+   * Снятие бейджей `[dev]` и активация всех соответствующих пунктов меню подраздела «Анализ -> Отчёты», «Анализ -> Классификация» и «Анализ -> Выживаемость».
+9. **Локализация и Quality Gate (DoD):**
+   * 100% двуязычное покрытие Fluent в `locales/en.ftl` и `locales/ru.ftl` (пройден `i18n_lint_test`, 0 сырых строк, 0 эмодзи, Vector-First UI);
+   * Тесты интерфейсных инвариантов `crates/statcraft_app/tests/feature_003_pkg3_invariants.rs`;
+   * Полный прогон всех 9 ступеней Quality Gate `cargo run -p xtask -j 1 -- ci` завершился со 100% успехом (fmt, clippy [0 warnings], layers, file-guard [402 файла], design-guard, workspace tests, parity, corpus, test-undo).
+

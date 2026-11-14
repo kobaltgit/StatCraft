@@ -3296,3 +3296,38 @@ Following the approved architectural plan `plan_2_general_linear_model.md` and i
    * UI invariant suite `glm_dialog_invariants.rs`;
    * 100% successful pass across all 9 Quality Gate stages via `cargo run -p xtask -j 1 -- ci` (fmt, clippy [0 warnings], layers, file-guard [378 files], design-guard, workspace tests, parity, test-corpus, test-undo).
 
+---
+
+### Phase 75: Clustering, Reports & Survival Analysis (K-Means, Codebook, Summarize, Kaplan-Meier, Life Tables — Branch feat/003-clustering-reports-survival)
+*Time: November 15, 2026, 01:10 (~70 minutes)*
+
+Following the approved architectural plan `plan_3_clustering_reports_survival.md` and in strict adherence to the ArtCraft ecosystem canon, Clean-Room principles, and the IBM SPSS Statistics Algorithms Guide, fully implemented the **Feature 003** analytical suite, providing five foundational statistical procedures across clustering, reporting, and biostatistical survival analysis:
+1. **K-Means Cluster Analysis (`QUICK CLUSTER` / `stat.cluster.kmeans`):**
+   * **Mathematical Core L2 (`crates/statcraft_algo/src/cluster_kmeans.rs`):** Deterministic center initialization using the Maximin (furthest point heuristic) algorithm, iterative reassignment cycle based on Euclidean distance, distance matrix between final cluster centers, and one-way ANOVA decomposition for each clustering variable ($SS_{between}, SS_{within}, F$-statistics, and exact Fisher $p$-values).
+   * **Dynamic Column Generation & 100% Reversible Undo/Redo L5 (`crates/statcraft_syntax/src/commands/kmeans_cmd.rs`):** When cluster saving is requested, dynamically creates and registers `QCL_1` (Cluster Membership, `Measure::Nominal`) and `QCL_2` (Distance from Cluster Center, `Measure::Scale`) in `DataSet` and `VariableDictionary`. The `undo()` execution cleanly removes these columns, restoring the exact previous state.
+   * **Golden Oracle:** Validated cluster centroids and assignments against Python `scipy.cluster.vq.kmeans2` confirming precision $\le 10^{-6}$.
+2. **Variable Codebook (`CODEBOOK` / `stat.reports.codebook`):**
+   * **Mathematical Core L2 (`crates/statcraft_algo/src/codebook_core.rs`):** Extracts metadata properties (name, label, measurement level, format), constructs discrete frequency tables with counts, percentages, and valid percentages for categorical variables, and calculates descriptive statistics (Mean, StdDev, Median, Quartiles via SPSS HAVERAGE interpolation) for scale variables.
+3. **Case Summaries (`SUMMARIZE` / `stat.reports.summarize`):**
+   * **Mathematical Core L2 (`crates/statcraft_algo/src/summarize_core.rs`):** Row-by-row case listing with optional case limit truncation, factor-based hierarchical grouping with intermediate subtotals and grand totals ($N$, Mean, Sum, StdDev).
+4. **Kaplan-Meier Survival Analysis (`KM` / `stat.survival.km`):**
+   * **Mathematical Core L2 (`crates/statcraft_algo/src/survival_km.rs`):** Product-limit survival function $\hat{S}(t) = \prod (1 - d_i/n_i)$, Greenwood's standard error formula $\widehat{\text{Var}}(\hat{S}(t)) = \hat{S}(t)^2 \sum \frac{d_i}{n_i(n_i - d_i)}$, mean and median survival time estimation with 95% confidence intervals, and Mantel-Cox Log-Rank $\chi^2$ test ($df = G - 1, p$) for comparing survival distributions across strata.
+   * **Golden Oracle:** Survival tables and log-rank statistics verified against Python `lifelines.KaplanMeierFitter` with precision $\le 10^{-6}$.
+5. **Actuarial Life Tables (`SURVIVAL` / `stat.survival.lifetables`):**
+   * **Mathematical Core L2 (`crates/statcraft_algo/src/survival_lifetables.rs`):** Actuarial analysis across specified time intervals $[t_k, t_{k+1})$, effective sample size under risk $n'_k = n_k - w_k/2$, conditional mortality probability $q_k = d_k / n'_k$, survival probability $p_k = 1 - q_k$, cumulative survival $P_k$, probability density of event $f_k$, and hazard rate $h_k$.
+6. **Command Bus and Syntax Parser L5 (`crates/statcraft_syntax/`):**
+   * Implemented engine commands: `KMeansClusterCommand`, `CodebookCommand`, `SummarizeCommand`, `KaplanMeierCommand`, `LifeTablesCommand` with complete `specs()` schemas and canonical `to_sps()` syntax generators;
+   * Syntax parser support for compound keywords `QUICK CLUSTER`, `LIFE TABLES`, `KAPLAN MEIER` in `parser.rs` and mappers in `syntax_parser/mappers/pkg3.rs`;
+   * Integration test suite in `feature_003_syntax_tests.rs`.
+7. **Output Viewer Pivot Tables and Architecture L4/L6 (`crates/statcraft_app/src/views/output_view/`):**
+   * Dedicated output rendering modules: `tables_cluster.rs`, `tables_reports.rs`, `tables_survival.rs` with SPSS canonical Pivot Table formatting and TSV clipboard export;
+   * Architecture modularization of `views/output_view/mod.rs` by extracting `view.rs` to maintain strict compliance with the $\le 500$ lines limit (Rule 12.1 and 12.2 Anti-Goodhart Counterweight).
+8. **DialogKit UI and Menu Integration L6 (`crates/statcraft_app/`):**
+   * Canonical modal dialogs `KMeansDialog`, `CodebookDialog`, `SummarizeDialog`, `KaplanMeierDialog`, `LifeTablesDialog` utilizing `DialogShell::standard(560, 430)`, `VariablePicker`, `TransferButton`, and `DialogActionBar`;
+   * Central coordinator in `app_dialogs_pkg3.rs` wired into `app.rs`;
+   * Removed `[dev]` badges and enabled corresponding menu items under `Analyze -> Reports`, `Analyze -> Classify`, and `Analyze -> Survival`.
+9. **Localization and Quality Gate (DoD):**
+   * 100% bilingual Fluent coverage in `locales/en.ftl` and `locales/ru.ftl` (passed `i18n_lint_test`, 0 raw strings, 0 emojis, Vector-First UI);
+   * UI invariant suite `crates/statcraft_app/tests/feature_003_pkg3_invariants.rs`;
+   * 100% successful pass across all 9 Quality Gate stages via `cargo run -p xtask -j 1 -- ci` (fmt, clippy [0 warnings], layers, file-guard [402 files], design-guard, workspace tests, parity, corpus, test-undo).
+

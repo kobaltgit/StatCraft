@@ -2,6 +2,8 @@ pub mod adp;
 pub mod anova_oneway;
 pub mod auto_recode;
 pub mod binning;
+pub mod cluster_kmeans;
+pub mod codebook_core;
 pub mod correlations;
 #[cfg(test)]
 mod correlations_tests;
@@ -58,6 +60,9 @@ pub mod replace_missing;
 pub mod shift;
 pub mod sort_cases;
 pub mod split_groups;
+pub mod summarize_core;
+pub mod survival_km;
+pub mod survival_lifetables;
 pub mod time_series;
 pub mod ttest_indep;
 pub mod ttest_onesample;
@@ -75,6 +80,8 @@ pub use binning::{
     generate_equal_percentile_cutpoints, generate_equal_width_cutpoints, generate_stddev_cutpoints,
     BinningResult, Cutpoint,
 };
+pub use cluster_kmeans::*;
+pub use codebook_core::*;
 pub use correlations::{
     compute_bivariate_correlations, BivariateCorrelationsOptions, BivariateCorrelationsResult,
     CorrelationCell, CorrelationMatrixResult, CorrelationType, MissingHandling, SignificanceFlag,
@@ -157,6 +164,9 @@ pub use sort_cases::{
     compare_raw_values, compute_sort_permutation, invert_permutation, SortDirection, SortKeySpec,
 };
 pub use split_groups::extract_split_groups;
+pub use summarize_core::*;
+pub use survival_km::*;
+pub use survival_lifetables::*;
 pub use time_series::{compute_time_series_transform, TimeSeriesFunction};
 pub use ttest_indep::{
     compute_indep_ttest, compute_indep_ttest_from_slices, GroupStats, IndepTTestOptions,

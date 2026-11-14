@@ -3,7 +3,7 @@ use crate::syntax_parser::error::SyntaxError;
 use crate::syntax_parser::lexer::SyntaxLexer;
 use crate::syntax_parser::mappers::{
     map_advanced_regression_command, map_data_command, map_glm_command, map_help_command,
-    map_stat_command, map_variable_command,
+    map_pkg3_command, map_stat_command, map_variable_command,
 };
 use crate::syntax_parser::parser::{ParsedCommand, SyntaxParser};
 use serde_json::{json, Value};
@@ -29,6 +29,8 @@ impl SyntaxDispatcher {
             } else if let Some(pair) = map_advanced_regression_command(cmd, dataset.as_ref())? {
                 Some(pair)
             } else if let Some(pair) = map_glm_command(cmd, dataset.as_ref())? {
+                Some(pair)
+            } else if let Some(pair) = map_pkg3_command(cmd, dataset.as_ref())? {
                 Some(pair)
             } else if let Some(pair) = map_data_command(cmd, dataset.as_ref())? {
                 Some(pair)

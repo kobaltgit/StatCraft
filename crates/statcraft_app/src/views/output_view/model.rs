@@ -1,10 +1,11 @@
 use serde::{Deserialize, Serialize};
 use statcraft_algo::{
-    AdpResult, BivariateCorrelationsResult, CrosstabResult, CurveFitResult, DescriptivesResult,
-    ExploreResult, FactorAnalysisResult, FrequencyResult, IndepTTestResult, KruskalWallisResult,
-    LinearRegressionResult, LogisticRegressionResult, MannWhitneyResult, MeansProcedureResult,
-    OneSampleTTestResult, OneWayAnovaResult, PairedTTestResult, PartialCorrResult,
-    ProgrammabilityResult, RelatedPairTestResult, ReliabilityResult,
+    AdpResult, BivariateCorrelationsResult, CodebookResult, CrosstabResult, CurveFitResult,
+    DescriptivesResult, ExploreResult, FactorAnalysisResult, FrequencyResult, IndepTTestResult,
+    KMResult, KMeansResult, KruskalWallisResult, LifeTableResult, LinearRegressionResult,
+    LogisticRegressionResult, MannWhitneyResult, MeansProcedureResult, OneSampleTTestResult,
+    OneWayAnovaResult, PairedTTestResult, PartialCorrResult, ProgrammabilityResult,
+    RelatedPairTestResult, ReliabilityResult, SummarizeResult,
 };
 use statcraft_i18n::t;
 
@@ -93,6 +94,11 @@ pub enum OutputItemKind {
     UnivariateGlm(Box<statcraft_algo::glm::UnivariateGlmResult>),
     MultivariateGlm(Box<statcraft_algo::glm::MultivariateGlmResult>),
     RepeatedGlm(Box<statcraft_algo::glm::RepeatedGlmResult>),
+    KMeans(Box<KMeansResult>),
+    Codebook(Box<CodebookResult>),
+    Summarize(Box<SummarizeResult>),
+    KaplanMeier(Box<KMResult>),
+    LifeTables(Box<LifeTableResult>),
     Reliability(Box<ReliabilityResult>),
     Factor(Box<FactorAnalysisResult>),
     Means(Box<MeansProcedureResult>),

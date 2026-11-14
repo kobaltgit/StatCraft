@@ -100,6 +100,13 @@ impl SyntaxParser {
                 Some("LOGISTIC REGRESSION")
             }
             ("GLM", Some(s)) if s.eq_ignore_ascii_case("REPEATED") => Some("GLM REPEATED"),
+            ("QUICK", Some(s)) if s.eq_ignore_ascii_case("CLUSTER") => Some("QUICK CLUSTER"),
+            ("LIFE", Some(s))
+                if s.eq_ignore_ascii_case("TABLES") || s.eq_ignore_ascii_case("TABLE") =>
+            {
+                Some("SURVIVAL")
+            }
+            ("KAPLAN", Some(s)) if s.eq_ignore_ascii_case("MEIER") => Some("KM"),
             _ => None,
         };
 

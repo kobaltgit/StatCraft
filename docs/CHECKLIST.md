@@ -754,5 +754,38 @@
 - [x] Тестирование и Quality Gate:
   - [x] 100% успешный прогон всех 9 ступеней Quality Gate `cargo run -p xtask -j 1 -- ci` (fmt, clippy, layers, file-guard [378 файлов], design-guard, workspace tests, parity, corpus, test-undo).
 
+## 44. Кластерный анализ, отчёты и анализ выживаемости (Feature 003: QUICK CLUSTER, CODEBOOK, SUMMARIZE, KM, SURVIVAL)
+- [x] Доказательный Clean-Room аудит алгоритмов по открытому руководству IBM SPSS Algorithms Guide и верификация формул (K-Means Maximin, Greenwood SE, Actuarial Life Tables)
+- [x] L2 `statcraft_algo`:
+  - [x] K-Means кластеризация `cluster_kmeans.rs`: инициализация центров методом максимального разброса (Maximin), итеративный цикл пересчета, расстояния между центрами, ANOVA-таблица $F$-критериев со значимостью Фишера
+  - [x] Кодовая книга словаря датасета `codebook_core.rs`: извлечение метаданных переменных, частоты и проценты для категориальных шкал, описательные статистики (Mean, StdDev, Median, Quartiles via HAVERAGE) для количественных
+  - [x] Итоги по наблюдениям `summarize_core.rs`: построчный листинг наблюдений, ограничение числа строк (`case_limit`), группировка по дискретным факторам, расчет промежуточных итогов (Subtotals) и общего итога (Total)
+  - [x] Функция выживаемости Каплана-Мейера `survival_km.rs`: расчет функции дожития $S(t)$, стандартная ошибка Гринвуда, медианное и среднее время дожития с 95% ДИ, лог-ранговый тест Мантеля-Кокса ($\chi^2, df, p$) для сравнения страт
+  - [x] Актуарные таблицы смертности / дожития `survival_lifetables.rs`: разбиение на временные интервалы $[t_k, t_{k+1})$, эффективный объем под риском $n'_k$, условные вероятности смерти $q_k$ и дожития $p_k$, кумулятивная вероятность $P_k$, плотность вероятности $f_k$, коэффициент риска $h_k$
+  - [x] Тесты Золотого Оракула `feature_003_golden_oracle.rs` со сверкой против SciPy и Lifelines с точностью $\le 10^{-6}$
+- [x] L5 `statcraft_syntax`:
+  - [x] Команды движка: `KMeansClusterCommand` (`stat.cluster.kmeans`), `CodebookCommand` (`stat.reports.codebook`), `SummarizeCommand` (`stat.reports.summarize`), `KaplanMeierCommand` (`stat.survival.km`), `LifeTablesCommand` (`stat.survival.lifetables`)
+  - [x] Динамическое создание колонок `QCL_1` (Cluster Membership) и `QCL_2` (Distance from Cluster Center) в `DataSet` и `VariableDictionary` при выполнении K-Means со 100% транзакционной обратимостью (Undo/Redo)
+  - [x] Парсеры синтаксиса и мапперы: распознавание составных команд `QUICK CLUSTER`, `LIFE TABLES`, `KAPLAN MEIER` в `parser.rs` и маппинг в `mappers/pkg3.rs`
+  - [x] Интеграционные тесты `feature_003_syntax_tests.rs`
+- [x] L4/L6 `statcraft_app::views::output_view`:
+  - [x] Представления `OutputItemKind::KMeans`, `OutputItemKind::Codebook`, `OutputItemKind::Summarize`, `OutputItemKind::KaplanMeier`, `OutputItemKind::LifeTables`
+  - [x] Модули сводных таблиц Pivot Tables: `tables_cluster.rs`, `tables_reports.rs`, `tables_survival.rs` с поддержкой экспорта в TSV
+  - [x] Архитектурная декомпозиция `views/output_view/mod.rs` и выделение `view.rs` со строгим соблюдением лимита $\le 500$ строк на файл (Rule 12.1)
+- [x] UI диалоги на базе DialogKit:
+  - [x] `KMeansDialog` (`dialogs/kmeans_dialog.rs`): выбор переменных анализа, число кластеров $K$, максимальное число итераций, флаги сохранения новых переменных и вывода ANOVA
+  - [x] `CodebookDialog` (`dialogs/codebook_dialog.rs`): выбор переменных датасета, флаги вывода информации о словаре, статистик и частот
+  - [x] `SummarizeDialog` (`dialogs/summarize_dialog.rs`): переменные отчета, группирующие факторы, лимит первых $N$ наблюдений, флаги вывода дескрипторов
+  - [x] `KaplanMeierDialog` (`dialogs/survival_km_dialog.rs`): переменная времени, переменная статуса с кодом события, фактор стратификации
+  - [x] `LifeTablesDialog` (`dialogs/survival_lifetables_dialog.rs`): переменная времени, начальное значение, конечное значение, ширина интервала, переменная статуса с кодом события
+  - [x] Координатор диалогов `app_dialogs_pkg3.rs` и интеграция в главное окно `app.rs`
+  - [x] Тесты интерфейсных инвариантов `feature_003_pkg3_invariants.rs`
+- [x] Главное меню:
+  - [x] Активация пунктов «Анализ -> Отчёты -> Кодовая книга...» (`menu-analyze-reports-codebook`), «Анализ -> Отчёты -> Итоги по наблюдениям...» (`menu-analyze-reports-summarize`), «Анализ -> Классификация -> Кластерный анализ методом K-средних...» (`menu-analyze-classify-kmeans`), «Анализ -> Выживаемость -> Таблицы дожития...» (`menu-analyze-survival-lifetables`), «Анализ -> Выживаемость -> Каплана-Мейера...» (`menu-analyze-survival-km`)
+- [x] Локализация:
+  - [x] 100% двуязычное покрытие в `locales/en.ftl` и `locales/ru.ftl` (пройден `i18n_lint_test`, 0 сырых строк, 0 эмодзи, Vector-First UI)
+- [x] Тестирование и Quality Gate:
+  - [x] 100% успешный прогон всех 9 ступеней Quality Gate `cargo run -p xtask -j 1 -- ci` (fmt, clippy [0 warnings], layers, file-guard [402 файла], design-guard, workspace tests, parity, corpus, test-undo).
+
 
 

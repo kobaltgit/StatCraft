@@ -2,6 +2,7 @@ pub mod advanced_regression;
 pub mod data;
 pub mod glm;
 pub mod help;
+pub mod pkg3;
 pub mod stats;
 pub mod variables;
 
@@ -9,5 +10,6 @@ pub use advanced_regression::map_advanced_regression_command;
 pub use data::map_data_command;
 pub use glm::map_glm_command;
 pub use help::{generate_full_syntax_reference, generate_help, map_help_command};
+pub use pkg3::map_pkg3_command;
 pub use stats::map_stat_command;
 pub use variables::map_variable_command;

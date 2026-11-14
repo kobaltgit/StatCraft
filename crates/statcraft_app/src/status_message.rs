@@ -136,6 +136,22 @@ pub enum StatusMessage {
         tables: usize,
         cases: usize,
     },
+    KMeansExecuted {
+        clusters: usize,
+        cases: usize,
+    },
+    CodebookExecuted {
+        count: usize,
+    },
+    SummarizeExecuted {
+        count: usize,
+    },
+    KaplanMeierExecuted {
+        time_var: String,
+    },
+    LifeTablesExecuted {
+        time_var: String,
+    },
     ProgrammabilityExecuted {
         statements: usize,
         rows: usize,
@@ -385,6 +401,25 @@ impl StatusMessage {
             }
             StatusMessage::MeansExecuted { tables, cases } => {
                 t!("output-means-executed", tables = *tables, cases = *cases)
+            }
+            StatusMessage::KMeansExecuted { clusters, cases } => {
+                t!(
+                    "status-kmeans-executed",
+                    clusters = *clusters,
+                    cases = *cases
+                )
+            }
+            StatusMessage::CodebookExecuted { count } => {
+                t!("status-codebook-executed", count = *count)
+            }
+            StatusMessage::SummarizeExecuted { count } => {
+                t!("status-summarize-executed", count = *count)
+            }
+            StatusMessage::KaplanMeierExecuted { time_var } => {
+                t!("status-km-executed", time = time_var.as_str())
+            }
+            StatusMessage::LifeTablesExecuted { time_var } => {
+                t!("status-lifetables-executed", time = time_var.as_str())
             }
             StatusMessage::ProgrammabilityExecuted { statements, rows } => {
                 t!(
