@@ -2,18 +2,19 @@ use crate::command::{CommandError, EngineCommand};
 use crate::commands::{
     AutoRecodeCommand, BatchReplaceCommand, CellEditCommand, ComputeVariableCommand,
     CorrelationsCommand, CountValuesCommand, CreateDummiesCommand, CreateTimeSeriesCommand,
-    CrosstabsCommand, DataAddRowCommand, DataDeleteRowCommand, DateTimeWizardCommand,
-    DescriptivesCommand, ExploreCommand, FactorCommand, FrequenciesCommand, HelpCommand,
-    ImportCsvCommand, ImportExcelCommand, ImportSpssCommand, IndependentSamplesTTestCommand,
-    KruskalWallisCommand, LinearRegressionCommand, MannWhitneyCommand, MeansCommand,
-    OneSampleTTestCommand, OneWayAnovaCommand, OpenFileCommand, OptimalBinningCommand,
-    PairedSamplesTTestCommand, PrepareDataModelingCommand, ProgrammabilityCommand,
-    RandomSeedCommand, RankCasesCommand, RecodeIntoDifferentCommand, RecodeIntoSameCommand,
-    RelatedSamplesTestCommand, ReliabilityCommand, ReplaceMissingCommand, SaveFileCommand,
-    SelectCasesCommand, SetLabelCommand, SetMeasureCommand, ShiftValuesCommand, SortCasesCommand,
-    SplitFileCommand, VarAddCommand, VarDeleteCommand, VarRenameCommand, VarSetAlignCommand,
-    VarSetDecimalsCommand, VarSetMissingValuesCommand, VarSetTypeCommand, VarSetValueLabelsCommand,
-    VarSetWidthCommand, VisualBinningCommand, WeightCasesCommand,
+    CrosstabsCommand, CurveFitCommand, DataAddRowCommand, DataDeleteRowCommand,
+    DateTimeWizardCommand, DescriptivesCommand, ExploreCommand, FactorCommand, FrequenciesCommand,
+    HelpCommand, ImportCsvCommand, ImportExcelCommand, ImportSpssCommand,
+    IndependentSamplesTTestCommand, KruskalWallisCommand, LinearRegressionCommand,
+    LogisticRegressionCommand, MannWhitneyCommand, MeansCommand, OneSampleTTestCommand,
+    OneWayAnovaCommand, OpenFileCommand, OptimalBinningCommand, PairedSamplesTTestCommand,
+    PartialCorrCommand, PrepareDataModelingCommand, ProgrammabilityCommand, RandomSeedCommand,
+    RankCasesCommand, RecodeIntoDifferentCommand, RecodeIntoSameCommand, RelatedSamplesTestCommand,
+    ReliabilityCommand, ReplaceMissingCommand, SaveFileCommand, SelectCasesCommand,
+    SetLabelCommand, SetMeasureCommand, ShiftValuesCommand, SortCasesCommand, SplitFileCommand,
+    VarAddCommand, VarDeleteCommand, VarRenameCommand, VarSetAlignCommand, VarSetDecimalsCommand,
+    VarSetMissingValuesCommand, VarSetTypeCommand, VarSetValueLabelsCommand, VarSetWidthCommand,
+    VisualBinningCommand, WeightCasesCommand,
 };
 use serde::{Deserialize, Serialize};
 use serde_json::{json, Value};
@@ -69,7 +70,10 @@ impl CommandBus {
         bus.register(Box::new(MeansCommand));
         bus.register(Box::new(CrosstabsCommand));
         bus.register(Box::new(CorrelationsCommand));
+        bus.register(Box::new(PartialCorrCommand));
         bus.register(Box::new(LinearRegressionCommand));
+        bus.register(Box::new(LogisticRegressionCommand));
+        bus.register(Box::new(CurveFitCommand));
         bus.register(Box::new(ReliabilityCommand));
         bus.register(Box::new(FactorCommand));
         bus.register(Box::new(MannWhitneyCommand));

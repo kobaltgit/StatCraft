@@ -91,6 +91,14 @@ impl SyntaxParser {
             {
                 Some("MISSING VALUES")
             }
+            ("PARTIAL", Some(s))
+                if s.eq_ignore_ascii_case("CORR") || s.eq_ignore_ascii_case("CORRELATIONS") =>
+            {
+                Some("PARTIAL CORR")
+            }
+            ("LOGISTIC", Some(s)) if s.eq_ignore_ascii_case("REGRESSION") => {
+                Some("LOGISTIC REGRESSION")
+            }
             _ => None,
         };
 

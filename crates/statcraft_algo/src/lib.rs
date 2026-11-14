@@ -11,6 +11,7 @@ pub mod crosstabs;
 #[cfg(test)]
 mod crosstabs_tests;
 pub mod crosstabs_types;
+pub mod curvefit;
 pub mod date_time;
 pub mod descriptives;
 pub mod dummies;
@@ -24,6 +25,7 @@ pub mod frequencies;
 pub mod kruskal_wallis;
 #[cfg(test)]
 mod kruskal_wallis_tests;
+pub mod logistic;
 pub mod means;
 #[cfg(test)]
 mod means_tests;
@@ -37,6 +39,7 @@ pub mod nonparam_twosample;
 mod nonparam_twosample_tests;
 pub mod nonparam_twosample_types;
 pub mod optimal_binning;
+pub mod partial_corr;
 pub mod programmability;
 pub mod rank_cases;
 #[cfg(test)]
@@ -82,6 +85,9 @@ pub use crosstabs_types::{
     AssociationMeasure, ChiSquareTestRow, CrosstabCategory, CrosstabCell, CrosstabOptions,
     CrosstabResult, CrosstabRow, RawCrosstabItem,
 };
+pub use curvefit::{
+    compute_curve_fit, CurveFitOptions, CurveFitResult, CurveModelSummaryRow, CurveModelType,
+};
 pub use date_time::{
     compute_date_operation, format_date_output, parse_date_value, DatePart, DateTimeOperation,
     DateUnit,
@@ -105,6 +111,11 @@ pub use kruskal_wallis::{
     compute_kruskal_wallis, compute_kruskal_wallis_from_groups, KruskalWallisGroupStats,
     KruskalWallisResult,
 };
+pub use logistic::{
+    compute_logistic_regression, ClassificationTable, ClassificationTableRow, HosmerLemeshowGroup,
+    HosmerLemeshowResult, LogisticCoefficientRow, LogisticModelSummary, LogisticRegressionOptions,
+    LogisticRegressionResult, OmnibusTestsRow,
+};
 pub use means::compute_means_breakdown;
 pub use means_types::{
     MeansAnovaRow, MeansAnovaTable, MeansAssociationMeasures, MeansCaseProcessingSummary,
@@ -123,6 +134,9 @@ pub use nonparam_twosample::{
 };
 pub use nonparam_twosample_types::{MannWhitneyResult, RankGroupStats};
 pub use optimal_binning::{compute_optimal_binning, OptimalBinningResult};
+pub use partial_corr::{
+    compute_partial_correlations, PartialCorrCell, PartialCorrOptions, PartialCorrResult,
+};
 pub use programmability::*;
 pub use rank_cases::{compute_ranks, inv_normal_cdf, RankDirection, RankType, TiesHandling};
 pub use recode::{apply_recode, NewValueSpec, OldValueRule, RecodeMapping, RecodePlan};

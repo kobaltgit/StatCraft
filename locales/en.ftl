@@ -1386,3 +1386,100 @@ output-explore-lowest = Lowest
 output-explore-case-number = Case Number
 output-explore-order = Order
 output-explore-value = Value
+
+# Partial Correlations Dialog
+dialog-partial-corr-title = Partial Correlations
+dialog-partial-corr-variables = Variables:
+dialog-partial-corr-controlling = Controlling for:
+dialog-partial-corr-test-sig = Test of Significance
+dialog-partial-corr-two-tailed = Two-tailed
+dialog-partial-corr-one-tailed = One-tailed
+dialog-partial-corr-zero-order = Show zero-order correlations
+
+# Logistic Regression Dialog
+dialog-logistic-regression-title = Binary Logistic Regression
+dialog-logistic-dependent = Dependent:
+dialog-logistic-covariates = Covariates:
+dialog-logistic-placeholder-dep = Select binary dependent variable
+dialog-logistic-options = Options
+dialog-logistic-hosmer-lemeshow = Hosmer-Lemeshow goodness-of-fit
+dialog-logistic-ci = CI for Exp(B):
+dialog-logistic-cutoff = Classification cutoff:
+
+# Curve Estimation Dialog
+dialog-curvefit-title = Curve Estimation
+dialog-curvefit-dependent = Dependent:
+dialog-curvefit-independent = Independent:
+dialog-curvefit-placeholder-dep = Select dependent variable
+dialog-curvefit-placeholder-indep = Select independent variable
+dialog-curvefit-models = Models
+dialog-curvefit-linear = Linear
+dialog-curvefit-logarithmic = Logarithmic
+dialog-curvefit-inverse = Inverse
+dialog-curvefit-quadratic = Quadratic
+dialog-curvefit-power = Power
+dialog-curvefit-exponential = Exponential
+dialog-curvefit-include-constant = Include constant in equation
+
+# Partial Correlations Output
+output-partial-corr-title = Partial Corr
+output-partial-corr-table-title = Correlations
+output-partial-corr-none = --none--
+output-partial-corr-control-vars = Control Variables
+output-partial-corr-correlation = Correlation
+output-partial-corr-sig-2tailed = Sig. (2-tailed)
+output-partial-corr-sig-1tailed = Sig. (1-tailed)
+output-partial-corr-df = df
+
+# Logistic Regression Output
+output-logistic-title = Logistic Regression
+output-logistic-table-title = Binary Logistic Regression
+output-logistic-omnibus-title = Omnibus Tests of Model Coefficients
+output-logistic-model-summary-title = Model Summary
+output-logistic-hosmer-title = Hosmer and Lemeshow Test
+output-logistic-classification-title = Classification Table
+output-logistic-variables-title = Variables in the Equation
+output-logistic-step = Step 1
+output-logistic-step-row = Step
+output-logistic-block-row = Block
+output-logistic-model-row = Model
+output-logistic-col-chi-square = Chi-square
+output-logistic-col-df = df
+output-logistic-col-sig = Sig.
+output-logistic-col-2ll = -2 Log likelihood
+output-logistic-col-cox-snell = Cox & Snell R Square
+output-logistic-col-nagelkerke = Nagelkerke R Square
+output-logistic-observed = Observed
+output-logistic-predicted = Predicted
+output-logistic-pct-correct = Percentage Correct
+output-logistic-overall-pct = Overall Percentage
+output-logistic-col-b = B
+output-logistic-col-se = S.E.
+output-logistic-col-wald = Wald
+output-logistic-col-exp-b = Exp(B)
+output-logistic-col-ci-lower = Lower
+output-logistic-col-ci-upper = Upper
+output-logistic-col-ci-title = 95% C.I. for EXP(B)
+output-logistic-constant = Constant
+output-logistic-cutoff-note = a. The cut value is { $cut }
+
+# Curve Estimation Output
+output-curvefit-title = Curve Estimation
+output-curvefit-table-title = Model Description and Parameter Estimates
+output-curvefit-model-summary-title = Model Summary and Parameter Estimates
+output-curvefit-col-equation = Equation
+output-curvefit-col-rsq = R Square
+output-curvefit-col-f = F
+output-curvefit-col-df1 = df1
+output-curvefit-col-df2 = df2
+output-curvefit-col-sig = Sig.
+output-curvefit-col-constant = Constant
+output-curvefit-col-b1 = b1
+output-curvefit-col-b2 = b2
+output-curvefit-dep-note = Dependent Variable: { $dep }
+
+# Status messages
+status-partial-corr-executed = Partial correlations computed for { $vars } controlling for { $controls }
+status-logistic-executed = Binary logistic regression computed for { $dep } with { $count } covariate(s)
+status-curvefit-executed = Curve estimation computed for { $dep } by { $indep }
+

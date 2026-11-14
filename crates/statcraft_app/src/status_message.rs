@@ -102,6 +102,18 @@ pub enum StatusMessage {
         dep_var: String,
         indep_count: usize,
     },
+    PartialCorrExecuted {
+        vars: String,
+        controls: String,
+    },
+    LogisticRegressionExecuted {
+        dep_var: String,
+        covariates_count: usize,
+    },
+    CurveFitExecuted {
+        dep_var: String,
+        indep_var: String,
+    },
     ReliabilityExecuted {
         scale: String,
         count: usize,
@@ -309,6 +321,30 @@ impl StatusMessage {
                     "output-regression-executed",
                     dep = dep_var.as_str(),
                     count = *indep_count
+                )
+            }
+            StatusMessage::PartialCorrExecuted { vars, controls } => {
+                t!(
+                    "status-partial-corr-executed",
+                    vars = vars.as_str(),
+                    controls = controls.as_str()
+                )
+            }
+            StatusMessage::LogisticRegressionExecuted {
+                dep_var,
+                covariates_count,
+            } => {
+                t!(
+                    "status-logistic-executed",
+                    dep = dep_var.as_str(),
+                    count = *covariates_count
+                )
+            }
+            StatusMessage::CurveFitExecuted { dep_var, indep_var } => {
+                t!(
+                    "status-curvefit-executed",
+                    dep = dep_var.as_str(),
+                    indep = indep_var.as_str()
                 )
             }
             StatusMessage::ReliabilityExecuted { scale, count } => {

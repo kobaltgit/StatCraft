@@ -696,3 +696,31 @@
   - [x] Модуль интерфейсных инвариантов `explore_invariants.rs`
   - [x] 100% успешный прогон всех 9 ступеней Quality Gate `cargo run -p xtask -j 1 -- ci`
 
+## 42. Продвинутая регрессия и частные корреляции (Partial Correlations, Logistic Regression & Curve Estimation)
+- [x] Доказательный Clean-Room аудит алгоритмов через Craft Anything MCP (`core_brief_write`, `core_plan_update`, `core_hypothesis_record` hyp_1..hyp_4 `supported`, `core_handoff_write`)
+- [x] L2 `statcraft_algo`:
+  - [x] Модуль частных корреляций `partial_corr/` (матрица ковариаций Шура, расчет $r, p, df = N - k - 2$, режимы Listwise и Pairwise, Golden Oracle vs SciPy с расхождением $< 10^{-12}$)
+  - [x] Модуль бинарной логистической регрессии `logistic/` (IRLS / Newton-Raphson, адаптивное диагональное демпфирование Фишера, критерий Вальда, $\text{Exp}(B)$ 95% ДИ, псевдо-$R^2$ Кокса-Снелла и Нагелькерке, критерий согласия Хосмера-Лемешова, матрица классификации $2 \times 2$, Golden Oracle vs Statsmodels)
+  - [x] Модуль оценки кривых `curvefit/` (6 канонических моделей: Linear, Logarithmic, Inverse, Quadratic, Power, Exponential с расчетом $R^2, F, df_1, df_2, p, b_0, b_1, b_2$, Golden Oracle vs SciPy/NumPy)
+- [x] L5 `statcraft_syntax`:
+  - [x] Команды движка `PartialCorrCommand` (`stat.correlations.partial`), `LogisticRegressionCommand` (`stat.regression.logistic`), `CurveFitCommand` (`stat.regression.curve`)
+  - [x] Парсеры синтаксиса и мапперы: регистрация составных имен `PARTIAL CORR`, `LOGISTIC REGRESSION`, `CURVEFIT` в `parser.rs` и маппинг в `mappers/advanced_regression.rs`
+  - [x] Интеграционные тесты `advanced_regression_tests.rs`
+- [x] L4/L6 `statcraft_app::views::output_view`:
+  - [x] Представления `OutputItemKind::PartialCorrelations`, `OutputItemKind::LogisticRegression`, `OutputItemKind::CurveFit`
+  - [x] Сводные таблицы Pivot Tables: `tables_partial_corr.rs`, `tables_logistic.rs`, `tables_curvefit.rs` с поддержкой экспорта в TSV, TXT, HTML и документа отчета
+  - [x] Тесты интерфейсных инвариантов `advanced_regression_output_invariants.rs`
+- [x] UI диалоги на базе DialogKit:
+  - [x] `PartialCorrDialog` (`dialogs/partial_corr_dialog.rs`): выбор переменных и контролируемых факторов, переключатель одно/двустороннего теста, нулевой порядок
+  - [x] `LogisticRegressionDialog` (`dialogs/logistic_regression_dialog.rs`): зависимая бинарная переменная, список ковариат, порог классификации, ДИ, критерий Хосмера-Лемешова
+  - [x] `CurveFitDialog` (`dialogs/curvefit_dialog.rs`): зависимая и независимая переменные, выбор комбинации из 6 моделей, константа в уравнении
+  - [x] Интеграция в `app_dialogs_advanced.rs` и главное окно `app.rs`
+  - [x] Тесты интерфейсных инвариантов `advanced_regression_dialog_invariants.rs`
+- [x] Главное меню:
+  - [x] Активация пунктов «Анализ -> Корреляции -> Частные...» (`menu-analyze-correlate-partial`), «Анализ -> Регрессия -> Бинарная логистическая...» (`menu-analyze-regression-binary`), «Анализ -> Регрессия -> Оценка кривых...» (`menu-analyze-regression-curve`)
+- [x] Локализация:
+  - [x] 100% двуязычное покрытие в `locales/en.ftl` и `locales/ru.ftl` (0 сырых строк, 0 эмодзи, Vector-First UI)
+- [x] Тестирование и Quality Gate:
+  - [x] 100% успешный прогон всех 9 ступеней Quality Gate `cargo run -p xtask -j 1 -- ci` (fmt, clippy, layers, file-guard [355 файлов], design-guard, workspace tests, parity, corpus, test-undo).
+
+

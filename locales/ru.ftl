@@ -1386,3 +1386,100 @@ output-explore-lowest = Наименьшие
 output-explore-case-number = Номер наблюдения
 output-explore-order = Порядок
 output-explore-value = Значение
+
+# Partial Correlations Dialog
+dialog-partial-corr-title = Частные корреляции
+dialog-partial-corr-variables = Переменные:
+dialog-partial-corr-controlling = Контрольные переменные:
+dialog-partial-corr-test-sig = Критерий значимости
+dialog-partial-corr-two-tailed = Двусторонний
+dialog-partial-corr-one-tailed = Односторонний
+dialog-partial-corr-zero-order = Показывать корреляции нулевого порядка
+
+# Logistic Regression Dialog
+dialog-logistic-regression-title = Бинарная логистическая регрессия
+dialog-logistic-dependent = Зависимая:
+dialog-logistic-covariates = Ковариаты:
+dialog-logistic-placeholder-dep = Выберите бинарную зависимую переменную
+dialog-logistic-options = Параметры
+dialog-logistic-hosmer-lemeshow = Критерий согласия Хосмера-Лемешова
+dialog-logistic-ci = ДИ для Exp(B):
+dialog-logistic-cutoff = Порог классификации:
+
+# Curve Estimation Dialog
+dialog-curvefit-title = Оценка кривых
+dialog-curvefit-dependent = Зависимая:
+dialog-curvefit-independent = Независимая:
+dialog-curvefit-placeholder-dep = Выберите зависимую переменную
+dialog-curvefit-placeholder-indep = Выберите независимую переменную
+dialog-curvefit-models = Модели
+dialog-curvefit-linear = Линейная
+dialog-curvefit-logarithmic = Логарифмическая
+dialog-curvefit-inverse = Обратная
+dialog-curvefit-quadratic = Квадратичная
+dialog-curvefit-power = Степенная
+dialog-curvefit-exponential = Экспоненциальная
+dialog-curvefit-include-constant = Включить константу в уравнение
+
+# Partial Correlations Output
+output-partial-corr-title = Частные корреляции
+output-partial-corr-table-title = Корреляции
+output-partial-corr-none = --нет--
+output-partial-corr-control-vars = Контрольные переменные
+output-partial-corr-correlation = Корреляция
+output-partial-corr-sig-2tailed = Знач. (2-сторон)
+output-partial-corr-sig-1tailed = Знач. (1-сторон)
+output-partial-corr-df = ст.св.
+
+# Logistic Regression Output
+output-logistic-title = Логистическая регрессия
+output-logistic-table-title = Бинарная логистическая регрессия
+output-logistic-omnibus-title = Омнибус-тесты коэффициентов модели
+output-logistic-model-summary-title = Сводка для модели
+output-logistic-hosmer-title = Критерий Хосмера и Лемешова
+output-logistic-classification-title = Таблица классификации
+output-logistic-variables-title = Переменные в уравнении
+output-logistic-step = Шаг 1
+output-logistic-step-row = Шаг
+output-logistic-block-row = Блок
+output-logistic-model-row = Модель
+output-logistic-col-chi-square = Хи-квадрат
+output-logistic-col-df = ст.св.
+output-logistic-col-sig = Знач.
+output-logistic-col-2ll = -2 Log-правдоподобие
+output-logistic-col-cox-snell = R-квадрат Кокса и Снелла
+output-logistic-col-nagelkerke = R-квадрат Нагелькерке
+output-logistic-observed = Наблюденные
+output-logistic-predicted = Предсказанные
+output-logistic-pct-correct = Процент правильных
+output-logistic-overall-pct = Общий процент
+output-logistic-col-b = B
+output-logistic-col-se = Станд. ошибка
+output-logistic-col-wald = Вальд
+output-logistic-col-exp-b = Exp(B)
+output-logistic-col-ci-lower = Нижняя
+output-logistic-col-ci-upper = Верхняя
+output-logistic-col-ci-title = 95% Д.И. для EXP(B)
+output-logistic-constant = Константа
+output-logistic-cutoff-note = a. Пороговое значение: { $cut }
+
+# Curve Estimation Output
+output-curvefit-title = Оценка кривых
+output-curvefit-table-title = Описание модели и оценки параметров
+output-curvefit-model-summary-title = Сводка модели и оценки параметров
+output-curvefit-col-equation = Уравнение
+output-curvefit-col-rsq = R-квадрат
+output-curvefit-col-f = F
+output-curvefit-col-df1 = df1
+output-curvefit-col-df2 = df2
+output-curvefit-col-sig = Знач.
+output-curvefit-col-constant = Константа
+output-curvefit-col-b1 = b1
+output-curvefit-col-b2 = b2
+output-curvefit-dep-note = Зависимая переменная: { $dep }
+
+# Status messages
+status-partial-corr-executed = Вычислены частные корреляции для { $vars } с контролем { $controls }
+status-logistic-executed = Вычислена бинарная логистическая регрессия для { $dep } с { $count } ковариатой(ами)
+status-curvefit-executed = Вычислена оценка кривых для { $dep } по { $indep }
+

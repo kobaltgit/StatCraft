@@ -2939,3 +2939,32 @@
    * 100% покрытие двуязычными каталогами Fluent в `locales/en.ftl` и `locales/ru.ftl` без сырых строковых литералов и без эмодзи;
    * Тестовый модуль интерфейсных инвариантов `crates/statcraft_app/tests/explore_invariants.rs`;
    * 100% успешный прогон всех 9 ступеней Quality Gate `cargo run -p xtask -j 1 -- ci` (fmt, clippy, layers, file-guard [325 файлов], design-guard, workspace tests, parity, test-corpus, test-undo).
+
+---
+
+### Этап 73: Продвинутая регрессия и частные корреляции (Partial Correlations, Logistic Regression & Curve Estimation — Ветка feat/001-advanced-regression)
+*Время: 14 ноября 2026, 21:30 (~60 минут)*
+
+По утвержденному архитектурному плану `plan_1_regression_and_correlations.md` и в строгом соответствии со стандартами *IBM SPSS Statistics 24 Algorithms Guide*, каноном экосистемы ArtCraft и доказательным регламентом Craft Anything MCP полностью реализованы три ключевые аналитические процедуры:
+1. **Частные корреляции (`PARTIAL CORR` / `stat.correlations.partial`):**
+   * **Математика L2 (`crates/statcraft_algo/src/partial_corr/`):** декомпозиция на `math.rs`, `listwise.rs`, `pairwise.rs`, `types.rs`, `tests.rs`. Симметризованное дополнение Шура для субковариационной матрицы $S = R_{XX} - R_{XZ} R_{ZZ}^{-1} R_{ZX}$, расчет степеней свободы $df = N - k - 2$, точные двусторонние и односторонние $p$-значения через распределение Стьюдента.
+   * **Золотой Оракул:** Сверка против Python `scipy.stats` подтвердила абсолютную математическую идентичность с точностью до $10^{-12}$ ($r = -0.1719967316$).
+2. **Бинарная логистическая регрессия (`LOGISTIC REGRESSION` / `stat.regression.logistic`):**
+   * **Математика L2 (`crates/statcraft_algo/src/logistic/`):** декомпозиция на `engine.rs`, `diagnostics.rs`, `types.rs`, `math.rs`, `tests.rs`. Оптимизатор IRLS (Newton-Raphson) с адаптивным диагональным демпфированием матрицы Фишера $\lambda = 10^{-11} \dots 10^{-5}$ для исключения сингулярности. Расчет асимптотической ковариационной матрицы, статистики Вальда, 95% ДИ для коэффициентов $\text{Exp}(B)$, псевдо-$R^2$ Кокса-Снелла и Нагелькерке.
+   * **Диагностика согласия:** Реализация критерия Хосмера-Лемешова по децилям риска с $\chi^2$ и $df = g - 2$, матрица классификации $2 \times 2$ (Cutoff 0.5) с расчетом процента точности.
+   * **Золотой Оракул:** Сверка против Python `statsmodels.Logit` подтвердила совпадение коэффициентов, стандартных ошибок, критериев и log-likelihood.
+3. **Оценка канонических кривых (`CURVEFIT` / `stat.regression.curve`):**
+   * **Математика L2 (`crates/statcraft_algo/src/curvefit/`):** одновременная оценка 6 канонических моделей SPSS (Linear, Logarithmic, Inverse, Quadratic, Power, Exponential) через аналитическую линеаризацию, расчет $R^2, F, df_1, df_2, p, b_0, b_1, b_2$ и валидация через Золотой Оракул против SciPy/NumPy.
+4. **Командная шина и синтаксический анализатор L5 (`crates/statcraft_syntax/`):**
+   * Команды движка `PartialCorrCommand`, `LogisticRegressionCommand`, `CurveFitCommand` со схемами `specs()`, генераторами синтаксиса `to_sps()` и мапперами синтаксиса `mappers/advanced_regression.rs`;
+   * Поддержка составных ключевых слов `PARTIAL CORR` и `LOGISTIC REGRESSION` в парсере синтаксиса `parser.rs`.
+5. **Таблицы вывода Pivot Tables и экспорт (`crates/statcraft_app/src/views/output_view/`):**
+   * Выделенные модули вывода `tables_partial_corr.rs`, `tables_logistic.rs`, `tables_curvefit.rs` с таблицами классического вида SPSS (Omnibus Tests, Model Summary, Hosmer-Lemeshow, Classification Table, Variables in the Equation, Curve Estimation Parameter Estimates);
+   * Поддержка экспорта в TSV, HTML, TXT и дерево отчетов.
+6. **Диалоговые окна DialogKit и меню L6 (`crates/statcraft_app/`):**
+   * Модальные окна `PartialCorrDialog`, `LogisticRegressionDialog`, `CurveFitDialog` на базе `DialogShell::standard(560, 430)` и `DialogActionBar`;
+   * Обработчики в `app_dialogs_advanced.rs`;
+   * Снятие бейджей `[dev]` и активация в меню «Анализ -> Корреляции -> Частные...», «Анализ -> Регрессия -> Бинарная логистическая...» и «Анализ -> Регрессия -> Оценка кривых...».
+7. **Контроль качества и Definition of Done (DoD):**
+   * Новые тесты инвариантов `advanced_regression_dialog_invariants.rs` и `advanced_regression_output_invariants.rs`;
+   * 100% успешный прогон всех 9 ступеней Quality Gate `cargo run -p xtask -j 1 -- ci` (fmt, clippy [0 warnings], layers, file-guard [355 файлов], design-guard, workspace tests, parity, test-corpus, test-undo).

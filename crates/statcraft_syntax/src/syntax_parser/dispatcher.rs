@@ -2,7 +2,8 @@ use crate::bus::CommandBus;
 use crate::syntax_parser::error::SyntaxError;
 use crate::syntax_parser::lexer::SyntaxLexer;
 use crate::syntax_parser::mappers::{
-    map_data_command, map_help_command, map_stat_command, map_variable_command,
+    map_advanced_regression_command, map_data_command, map_help_command, map_stat_command,
+    map_variable_command,
 };
 use crate::syntax_parser::parser::{ParsedCommand, SyntaxParser};
 use serde_json::{json, Value};
@@ -24,6 +25,8 @@ impl SyntaxDispatcher {
             parse_run_command_directive(cmd)?
         } else {
             let mapped = if let Some(pair) = map_stat_command(cmd, dataset.as_ref())? {
+                Some(pair)
+            } else if let Some(pair) = map_advanced_regression_command(cmd, dataset.as_ref())? {
                 Some(pair)
             } else if let Some(pair) = map_data_command(cmd, dataset.as_ref())? {
                 Some(pair)

@@ -3226,3 +3226,32 @@ In strict accordance with the *IBM SPSS Statistics 24 Algorithms Guide* and the 
    * 100% bilingual Fluent catalogs in `locales/en.ftl` and `locales/ru.ftl` with 0 raw strings and 0 emojis;
    * Interface invariant suite `crates/statcraft_app/tests/explore_invariants.rs`;
    * 100% successful pass across all 9 Quality Gate stages via `cargo run -p xtask -j 1 -- ci` (fmt, clippy, layers, file-guard [325 files], design-guard, workspace tests, parity, test-corpus, test-undo).
+
+---
+
+### Phase 73: Advanced Regression & Partial Correlations (PARTIAL CORR, LOGISTIC REGRESSION, CURVEFIT — Branch feat/001-advanced-regression)
+*Time: November 14, 2026, 21:30 (~60 minutes)*
+
+Following the approved architectural plan `plan_1_regression_and_correlations.md` and in strict accordance with the *IBM SPSS Statistics 24 Algorithms Guide*, ArtCraft ecosystem canon, and the evidence-backed Craft Anything MCP protocol, fully implemented three major analytical procedures:
+1. **Partial Correlations (`PARTIAL CORR` / `stat.correlations.partial`):**
+   * **Mathematical Core L2 (`crates/statcraft_algo/src/partial_corr/`):** Decomposed into `math.rs`, `listwise.rs`, `pairwise.rs`, `types.rs`, `tests.rs`. Implemented symmetrized Schur complement for the residual covariance matrix $S = R_{XX} - R_{XZ} R_{ZZ}^{-1} R_{ZX}$, degrees of freedom $df = N - k - 2$, and exact two-tailed/one-tailed Student's $t$ significance values.
+   * **Golden Oracle:** Verified against Python `scipy.stats` with diff $< 10^{-12}$ ($r = -0.1719967316$).
+2. **Binary Logistic Regression (`LOGISTIC REGRESSION` / `stat.regression.logistic`):**
+   * **Mathematical Core L2 (`crates/statcraft_algo/src/logistic/`):** Decomposed into `engine.rs`, `diagnostics.rs`, `types.rs`, `math.rs`, `tests.rs`. Built an IRLS (Newton-Raphson) optimizer with adaptive diagonal Fisher matrix damping $\lambda = 10^{-11} \dots 10^{-5}$ to prevent singular matrix panics. Computed asymptotic covariance matrix, Wald statistic, 95% C.I. for $\text{Exp}(B)$, Cox & Snell and Nagelkerke pseudo-$R^2$.
+   * **Goodness-of-Fit Diagnostics:** Implemented Hosmer-Lemeshow deciles of risk with $\chi^2$ and $df = g - 2$, and a $2 \times 2$ Classification Table (cutoff 0.5) with percentage correct.
+   * **Golden Oracle:** Verified against Python `statsmodels.Logit` confirming identical coefficients, standard errors, Wald statistics, and log-likelihood.
+3. **Curve Estimation Models (`CURVEFIT` / `stat.regression.curve`):**
+   * **Mathematical Core L2 (`crates/statcraft_algo/src/curvefit/`):** Simultaneous estimation of 6 canonical SPSS regression curves (Linear, Logarithmic, Inverse, Quadratic, Power, Exponential) via analytical linearizations, computing $R^2, F, df_1, df_2, p, b_0, b_1, b_2$ and validated against SciPy/NumPy Golden Oracle.
+4. **Engine Commands and Syntax Parsers L5 (`crates/statcraft_syntax/`):**
+   * Implemented `PartialCorrCommand`, `LogisticRegressionCommand`, `CurveFitCommand` with parameter schemas `specs()`, syntax generators `to_sps()`, and syntax mappers in `mappers/advanced_regression.rs`;
+   * Enabled compound keyword parsing for `PARTIAL CORR` and `LOGISTIC REGRESSION` in `parser.rs`.
+5. **Output Viewer Pivot Tables & Reporting (`crates/statcraft_app/src/views/output_view/`):**
+   * Dedicated modules `tables_partial_corr.rs`, `tables_logistic.rs`, `tables_curvefit.rs` rendering authentic SPSS Pivot Tables (Omnibus Tests, Model Summary, Hosmer-Lemeshow, Classification Table, Variables in the Equation, Curve Estimation Parameter Estimates);
+   * Full clipboard and document export support to TSV, HTML, TXT, and ReportDocument.
+6. **DialogKit UI & Application Menus L6 (`crates/statcraft_app/`):**
+   * Modal dialogs `PartialCorrDialog`, `LogisticRegressionDialog`, `CurveFitDialog` built on canonical `DialogShell::standard(560, 430)` and `DialogActionBar`;
+   * Central coordinator in `app_dialogs_advanced.rs`;
+   * Enabled menu items: `Analyze -> Correlate -> Partial...`, `Analyze -> Regression -> Binary Logistic...`, and `Analyze -> Regression -> Curve Estimation...`.
+7. **Quality Control & Definition of Done (DoD):**
+   * Interface invariant suites `advanced_regression_dialog_invariants.rs` and `advanced_regression_output_invariants.rs`;
+   * 100% successful pass across all 9 Quality Gate stages via `cargo run -p xtask -j 1 -- ci` (fmt, clippy [0 warnings], layers, file-guard [355 files], design-guard, workspace tests, parity, test-corpus, test-undo).

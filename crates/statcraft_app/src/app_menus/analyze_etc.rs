@@ -140,11 +140,16 @@ impl StatCraftApp {
                             self.correlations_dialog_state.is_open = true;
                             ui.close_menu();
                         }
-                        render_menu_item(
+                        if render_menu_item(
                             ui,
                             t!("menu-analyze-correlate-partial"),
-                            MenuItemStatus::InDev,
-                        );
+                            requires_dataset_status,
+                        )
+                        .clicked()
+                        {
+                            self.partial_corr_dialog_state.is_open = true;
+                            ui.close_menu();
+                        }
                     });
                     ui.menu_button(t!("menu-analyze-regression"), |ui| {
                         if render_menu_item(
@@ -157,21 +162,31 @@ impl StatCraftApp {
                             self.linear_regression_dialog_state.is_open = true;
                             ui.close_menu();
                         }
-                        render_menu_item(
+                        if render_menu_item(
                             ui,
                             t!("menu-analyze-regression-binary"),
-                            MenuItemStatus::InDev,
-                        );
+                            requires_dataset_status,
+                        )
+                        .clicked()
+                        {
+                            self.logistic_regression_dialog_state.is_open = true;
+                            ui.close_menu();
+                        }
                         render_menu_item(
                             ui,
                             t!("menu-analyze-regression-multinomial"),
                             MenuItemStatus::InDev,
                         );
-                        render_menu_item(
+                        if render_menu_item(
                             ui,
                             t!("menu-analyze-regression-curve"),
-                            MenuItemStatus::InDev,
-                        );
+                            requires_dataset_status,
+                        )
+                        .clicked()
+                        {
+                            self.curvefit_dialog_state.is_open = true;
+                            ui.close_menu();
+                        }
                     });
                     ui.menu_button(t!("menu-analyze-nonparametric"), |ui| {
                         if render_menu_item(

@@ -1,5 +1,6 @@
 pub mod app;
 pub mod app_dialogs;
+pub mod app_dialogs_advanced;
 pub mod app_dialogs_data;
 pub mod app_dialogs_edit;
 pub mod app_dialogs_transform;

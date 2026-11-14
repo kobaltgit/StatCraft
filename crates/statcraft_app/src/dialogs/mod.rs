@@ -9,6 +9,7 @@ pub mod correlations_dialog;
 pub mod count_values_define_dialog;
 pub mod count_values_dialog;
 pub mod crosstabs_dialog;
+pub mod curvefit_dialog;
 pub mod date_time_dialog;
 pub mod descriptives_dialog;
 pub mod dummy_dialog;
@@ -19,6 +20,7 @@ pub mod frequencies_dialog;
 pub mod goto_dialog;
 pub mod kruskal_define_range;
 pub mod kruskal_wallis_dialog;
+pub mod logistic_regression_dialog;
 pub mod mcp_bridge_dialog;
 pub mod means_dialog;
 pub mod missing_values_dialog;
@@ -26,6 +28,7 @@ pub mod nonparam_define_groups;
 pub mod nonparam_related_dialog;
 pub mod nonparam_twosample_dialog;
 pub mod optimal_binning_dialog;
+pub mod partial_corr_dialog;
 pub mod programmability_dialog;
 pub mod random_seed_dialog;
 pub mod rank_cases_dialog;
@@ -75,6 +78,7 @@ pub use count_values_dialog::{
 pub use crosstabs_dialog::{
     render_crosstabs_dialog, CrosstabsDialogAction, CrosstabsDialogState, CrosstabsTargetList,
 };
+pub use curvefit_dialog::{render_curvefit_dialog, CurveFitDialogAction, CurveFitDialogState};
 pub use date_time_dialog::{
     render_date_time_dialog, DateTimeDialogAction, DateTimeDialogState, DateTimeDialogTask,
 };
@@ -94,6 +98,10 @@ pub use goto_dialog::{render_goto_dialog, GoToAction, GoToDialogState, GoToTab};
 pub use kruskal_wallis_dialog::{
     render_kruskal_wallis_dialog, KruskalWallisDialogAction, KruskalWallisDialogState,
 };
+pub use logistic_regression_dialog::{
+    render_logistic_regression_dialog, LogisticRegressionDialogAction,
+    LogisticRegressionDialogState,
+};
 pub use means_dialog::{render_means_dialog, MeansDialogAction, MeansDialogState};
 pub use missing_values_dialog::{
     render_missing_values_dialog, MissingValuesDialogAction, MissingValuesDialogState,
@@ -106,6 +114,9 @@ pub use nonparam_twosample_dialog::{
 };
 pub use optimal_binning_dialog::{
     render_optimal_binning_dialog, OptimalBinningDialogAction, OptimalBinningDialogState,
+};
+pub use partial_corr_dialog::{
+    render_partial_corr_dialog, PartialCorrDialogAction, PartialCorrDialogState,
 };
 pub use programmability_dialog::{
     render_programmability_dialog, ProgrammabilityDialogAction, ProgrammabilityDialogState,

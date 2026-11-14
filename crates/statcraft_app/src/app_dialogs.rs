@@ -881,13 +881,16 @@ impl StatCraftApp {
             MeansDialogAction::None => {}
         }
 
-        // 16. Data and Variable Management Dialogs
+        // 16. Advanced Regression and Correlations Dialogs (Partial, Logistic, Curve)
+        self.handle_advanced_regression_dialogs(ctx);
+
+        // 17. Data and Variable Management Dialogs
         self.handle_data_dialogs(ctx);
 
-        // 17. Transform Dialogs
+        // 18. Transform Dialogs
         self.handle_transform_dialogs(ctx);
 
-        // 18. AI MCP & Socket Bridge Dialog
+        // 19. AI MCP & Socket Bridge Dialog
         render_mcp_bridge_dialog(
             ctx,
             &mut self.mcp_bridge_dialog_state,

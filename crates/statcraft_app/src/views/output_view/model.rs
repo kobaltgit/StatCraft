@@ -1,10 +1,10 @@
 use serde::{Deserialize, Serialize};
 use statcraft_algo::{
-    AdpResult, BivariateCorrelationsResult, CrosstabResult, DescriptivesResult, ExploreResult,
-    FactorAnalysisResult, FrequencyResult, IndepTTestResult, KruskalWallisResult,
-    LinearRegressionResult, MannWhitneyResult, MeansProcedureResult, OneSampleTTestResult,
-    OneWayAnovaResult, PairedTTestResult, ProgrammabilityResult, RelatedPairTestResult,
-    ReliabilityResult,
+    AdpResult, BivariateCorrelationsResult, CrosstabResult, CurveFitResult, DescriptivesResult,
+    ExploreResult, FactorAnalysisResult, FrequencyResult, IndepTTestResult, KruskalWallisResult,
+    LinearRegressionResult, LogisticRegressionResult, MannWhitneyResult, MeansProcedureResult,
+    OneSampleTTestResult, OneWayAnovaResult, PairedTTestResult, PartialCorrResult,
+    ProgrammabilityResult, RelatedPairTestResult, ReliabilityResult,
 };
 use statcraft_i18n::t;
 
@@ -87,6 +87,9 @@ pub enum OutputItemKind {
     },
     TwoRelatedSamples(Vec<RelatedPairTestResult>),
     LinearRegression(Box<LinearRegressionResult>),
+    PartialCorrelations(Box<PartialCorrResult>),
+    LogisticRegression(Box<LogisticRegressionResult>),
+    CurveFit(Box<CurveFitResult>),
     Reliability(Box<ReliabilityResult>),
     Factor(Box<FactorAnalysisResult>),
     Means(Box<MeansProcedureResult>),

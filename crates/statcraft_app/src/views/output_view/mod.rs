@@ -8,15 +8,18 @@ pub mod tables_anova;
 pub mod tables_common;
 pub mod tables_correlations;
 pub mod tables_crosstabs;
+pub mod tables_curvefit;
 pub mod tables_descriptives;
 pub mod tables_explore;
 pub mod tables_factor;
 pub mod tables_frequencies;
 pub mod tables_generic;
 pub mod tables_kruskal;
+pub mod tables_logistic;
 pub mod tables_means;
 pub mod tables_nonparam;
 pub mod tables_nonparam_related;
+pub mod tables_partial_corr;
 pub mod tables_programmability;
 pub mod tables_regression;
 pub mod tables_reliability;
@@ -37,15 +40,18 @@ pub use tables_adp::{adp_to_tsv, render_spss_adp_tables};
 pub use tables_anova::{anova_to_tsv, render_spss_oneway_anova_tables};
 pub use tables_correlations::{correlations_to_tsv, render_spss_correlations_tables};
 pub use tables_crosstabs::{crosstabs_to_tsv, render_crosstabs_item};
+pub use tables_curvefit::{curvefit_to_tsv, render_spss_curvefit_tables};
 pub use tables_descriptives::{descriptives_to_tsv, render_spss_descriptives_pivot_table};
 pub use tables_explore::{explore_to_tsv, render_spss_explore_pivot_tables};
 pub use tables_factor::{factor_to_tsv, render_spss_factor};
 pub use tables_frequencies::{frequencies_to_tsv, render_spss_frequencies_tables};
 pub use tables_generic::{generic_report_to_tsv, render_spss_generic_report};
 pub use tables_kruskal::{kruskal_wallis_to_tsv, render_spss_kruskal_wallis_tables};
+pub use tables_logistic::{logistic_to_tsv, render_spss_logistic_tables};
 pub use tables_means::{means_to_tsv, render_spss_means};
 pub use tables_nonparam::{mann_whitney_to_tsv, render_spss_mann_whitney_tables};
 pub use tables_nonparam_related::{related_samples_to_tsv, render_spss_related_samples_tables};
+pub use tables_partial_corr::{partial_corr_to_tsv, render_spss_partial_corr_tables};
 pub use tables_programmability::{programmability_to_tsv, render_spss_programmability_tables};
 pub use tables_regression::{regression_to_tsv, render_spss_linear_regression};
 pub use tables_reliability::{reliability_to_tsv, render_spss_reliability};
@@ -77,6 +83,9 @@ pub fn extract_item_tsv(kind: &OutputItemKind) -> Option<String> {
         } => Some(kruskal_wallis_to_tsv(results, grouping_var)),
         OutputItemKind::TwoRelatedSamples(results) => Some(related_samples_to_tsv(results)),
         OutputItemKind::LinearRegression(res) => Some(regression_to_tsv(res)),
+        OutputItemKind::PartialCorrelations(res) => Some(partial_corr_to_tsv(res)),
+        OutputItemKind::LogisticRegression(res) => Some(logistic_to_tsv(res)),
+        OutputItemKind::CurveFit(res) => Some(curvefit_to_tsv(res)),
         OutputItemKind::Reliability(res) => Some(reliability_to_tsv(res)),
         OutputItemKind::Factor(res) => Some(factor_to_tsv(res)),
         OutputItemKind::Means(res) => Some(means_to_tsv(res)),
@@ -327,6 +336,15 @@ pub fn render_output_view(ui: &mut Ui, state: &mut OutputViewerState) {
                                     }
                                     OutputItemKind::LinearRegression(res) => {
                                         render_spss_linear_regression(ui, res);
+                                    }
+                                    OutputItemKind::PartialCorrelations(res) => {
+                                        render_spss_partial_corr_tables(ui, res);
+                                    }
+                                    OutputItemKind::LogisticRegression(res) => {
+                                        render_spss_logistic_tables(ui, res);
+                                    }
+                                    OutputItemKind::CurveFit(res) => {
+                                        render_spss_curvefit_tables(ui, res);
                                     }
                                     OutputItemKind::Reliability(res) => {
                                         render_spss_reliability(ui, res);
