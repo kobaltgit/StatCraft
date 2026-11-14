@@ -1,3 +1,5 @@
+#![windows_subsystem = "windows"]
+
 use statcraft_app::app::StatCraftApp;
 use statcraft_app::APP_ICON_PNG;
 use statcraft_i18n::{init_i18n, t};
