@@ -1,4 +1,4 @@
-﻿pub mod blocks;
+pub mod blocks;
 pub mod builder;
 pub mod export;
 pub mod model;
@@ -14,6 +14,7 @@ pub mod tables_explore;
 pub mod tables_factor;
 pub mod tables_frequencies;
 pub mod tables_generic;
+pub mod tables_glm;
 pub mod tables_kruskal;
 pub mod tables_logistic;
 pub mod tables_means;
@@ -46,6 +47,7 @@ pub use tables_explore::{explore_to_tsv, render_spss_explore_pivot_tables};
 pub use tables_factor::{factor_to_tsv, render_spss_factor};
 pub use tables_frequencies::{frequencies_to_tsv, render_spss_frequencies_tables};
 pub use tables_generic::{generic_report_to_tsv, render_spss_generic_report};
+pub use tables_glm::*;
 pub use tables_kruskal::{kruskal_wallis_to_tsv, render_spss_kruskal_wallis_tables};
 pub use tables_logistic::{logistic_to_tsv, render_spss_logistic_tables};
 pub use tables_means::{means_to_tsv, render_spss_means};
@@ -86,6 +88,9 @@ pub fn extract_item_tsv(kind: &OutputItemKind) -> Option<String> {
         OutputItemKind::PartialCorrelations(res) => Some(partial_corr_to_tsv(res)),
         OutputItemKind::LogisticRegression(res) => Some(logistic_to_tsv(res)),
         OutputItemKind::CurveFit(res) => Some(curvefit_to_tsv(res)),
+        OutputItemKind::UnivariateGlm(res) => Some(univariate_glm_to_tsv(res)),
+        OutputItemKind::MultivariateGlm(res) => Some(multivariate_glm_to_tsv(res)),
+        OutputItemKind::RepeatedGlm(res) => Some(repeated_glm_to_tsv(res)),
         OutputItemKind::Reliability(res) => Some(reliability_to_tsv(res)),
         OutputItemKind::Factor(res) => Some(factor_to_tsv(res)),
         OutputItemKind::Means(res) => Some(means_to_tsv(res)),
@@ -345,6 +350,15 @@ pub fn render_output_view(ui: &mut Ui, state: &mut OutputViewerState) {
                                     }
                                     OutputItemKind::CurveFit(res) => {
                                         render_spss_curvefit_tables(ui, res);
+                                    }
+                                    OutputItemKind::UnivariateGlm(res) => {
+                                        render_spss_univariate_glm_tables(ui, res);
+                                    }
+                                    OutputItemKind::MultivariateGlm(res) => {
+                                        render_spss_multivariate_glm_tables(ui, res);
+                                    }
+                                    OutputItemKind::RepeatedGlm(res) => {
+                                        render_spss_repeated_glm_tables(ui, res);
                                     }
                                     OutputItemKind::Reliability(res) => {
                                         render_spss_reliability(ui, res);

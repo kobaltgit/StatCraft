@@ -6,13 +6,14 @@ use crate::commands::{
     DateTimeWizardCommand, DescriptivesCommand, ExploreCommand, FactorCommand, FrequenciesCommand,
     HelpCommand, ImportCsvCommand, ImportExcelCommand, ImportSpssCommand,
     IndependentSamplesTTestCommand, KruskalWallisCommand, LinearRegressionCommand,
-    LogisticRegressionCommand, MannWhitneyCommand, MeansCommand, OneSampleTTestCommand,
-    OneWayAnovaCommand, OpenFileCommand, OptimalBinningCommand, PairedSamplesTTestCommand,
-    PartialCorrCommand, PrepareDataModelingCommand, ProgrammabilityCommand, RandomSeedCommand,
-    RankCasesCommand, RecodeIntoDifferentCommand, RecodeIntoSameCommand, RelatedSamplesTestCommand,
-    ReliabilityCommand, ReplaceMissingCommand, SaveFileCommand, SelectCasesCommand,
-    SetLabelCommand, SetMeasureCommand, ShiftValuesCommand, SortCasesCommand, SplitFileCommand,
-    VarAddCommand, VarDeleteCommand, VarRenameCommand, VarSetAlignCommand, VarSetDecimalsCommand,
+    LogisticRegressionCommand, MannWhitneyCommand, MeansCommand, MultivariateGlmCommand,
+    OneSampleTTestCommand, OneWayAnovaCommand, OpenFileCommand, OptimalBinningCommand,
+    PairedSamplesTTestCommand, PartialCorrCommand, PrepareDataModelingCommand,
+    ProgrammabilityCommand, RandomSeedCommand, RankCasesCommand, RecodeIntoDifferentCommand,
+    RecodeIntoSameCommand, RelatedSamplesTestCommand, ReliabilityCommand, RepeatedGlmCommand,
+    ReplaceMissingCommand, SaveFileCommand, SelectCasesCommand, SetLabelCommand, SetMeasureCommand,
+    ShiftValuesCommand, SortCasesCommand, SplitFileCommand, UnivariateGlmCommand, VarAddCommand,
+    VarDeleteCommand, VarRenameCommand, VarSetAlignCommand, VarSetDecimalsCommand,
     VarSetMissingValuesCommand, VarSetTypeCommand, VarSetValueLabelsCommand, VarSetWidthCommand,
     VisualBinningCommand, WeightCasesCommand,
 };
@@ -74,6 +75,9 @@ impl CommandBus {
         bus.register(Box::new(LinearRegressionCommand));
         bus.register(Box::new(LogisticRegressionCommand));
         bus.register(Box::new(CurveFitCommand));
+        bus.register(Box::new(UnivariateGlmCommand));
+        bus.register(Box::new(MultivariateGlmCommand));
+        bus.register(Box::new(RepeatedGlmCommand));
         bus.register(Box::new(ReliabilityCommand));
         bus.register(Box::new(FactorCommand));
         bus.register(Box::new(MannWhitneyCommand));

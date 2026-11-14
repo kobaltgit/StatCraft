@@ -22,6 +22,7 @@ pub mod factor;
 mod factor_tests;
 pub mod factor_types;
 pub mod frequencies;
+pub mod glm;
 pub mod kruskal_wallis;
 #[cfg(test)]
 mod kruskal_wallis_tests;

@@ -884,6 +884,9 @@ impl StatCraftApp {
         // 16. Advanced Regression and Correlations Dialogs (Partial, Logistic, Curve)
         self.handle_advanced_regression_dialogs(ctx);
 
+        // 16b. General Linear Model (GLM) Dialogs (Univariate, Multivariate, Repeated)
+        self.handle_glm_dialogs(ctx);
+
         // 17. Data and Variable Management Dialogs
         self.handle_data_dialogs(ctx);
 

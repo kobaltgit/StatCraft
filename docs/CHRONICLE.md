@@ -2968,3 +2968,44 @@
 7. **Контроль качества и Definition of Done (DoD):**
    * Новые тесты инвариантов `advanced_regression_dialog_invariants.rs` и `advanced_regression_output_invariants.rs`;
    * 100% успешный прогон всех 9 ступеней Quality Gate `cargo run -p xtask -j 1 -- ci` (fmt, clippy [0 warnings], layers, file-guard [355 файлов], design-guard, workspace tests, parity, test-corpus, test-undo).
+
+---
+
+### Этап 74: Общая линейная модель (General Linear Model: UNIANOVA, MANOVA & Repeated Measures — Ветка feat/002-general-linear-model)
+*Время: 14 ноября 2026, 22:35 (~65 минут)*
+
+По утвержденному архитектурному плану `plan_2_general_linear_model.md` и в строгом соответствии с каноном экосистемы ArtCraft, Clean-Room принципами и регламентом Craft Anything MCP полностью реализован пакет **General Linear Model (GLM)**, состоящий из трех монументальных аналитических процедур:
+1. **Одномерный дисперсионный/ковариационный анализ (`UNIANOVA` / `stat.glm.univariate`):**
+   * **Математика L2 (`crates/statcraft_algo/src/glm/`):** декомпозиция на `design_matrix.rs`, `type3_ss.rs`, `univariate.rs`, `types.rs`. Построение ортогонализованной матрицы плана с кодированием факторов контрастами отклонений (deviation contrasts, sum-to-zero), непрерывными ковариатами и парными взаимодействиями $A \times B$.
+   * **Суммы квадратов типа III (Type III SS):** маргинальная редукция полной модели против модели без проверяемого фактора, решение OLS через псевдообращение SVD (Jacobi SVD) для исключения коллинеарности. Расчет $MS, F, p$, частной эта-квадрат ($\text{Partial } \eta^2$), а также дескрипторов модели ($R^2$ и Adjusted $R^2$).
+   * **Золотой Оракул:** Сверка против `statsmodels.api.stats.anova_lm(typ=3)` подтвердила совпадение до $10^{-7}$.
+2. **Многомерный дисперсионный анализ (`GLM Multivariate` / `stat.glm.multivariate` — MANOVA):**
+   * **Математика L2 (`crates/statcraft_algo/src/glm/multivariate.rs` и `eigen.rs`):** многомерное обобщение для $p \ge 2$ зависимых переменных. Формирование матриц сумм квадратов и векторных произведений ошибки ($E$) и гипотезы ($H$).
+   * **Обобщенное спектральное разложение:** факторизация $E^{-1/2} H E^{-1/2}$ через метод Якоби для извлечения собственных значений $\lambda_i$.
+   * **4 канонических критерия SPSS:**
+     1. *Wilks' Lambda* ($\Lambda = \prod \frac{1}{1 + \lambda_i}$) с точной $F$-аппроксимацией Рао;
+     2. *Pillai's Trace* ($V = \sum \frac{\lambda_i}{1 + \lambda_i}$);
+     3. *Hotelling-Lawley Trace* ($T = \sum \lambda_i$);
+     4. *Roy's Largest Root* ($\theta = \frac{\lambda_{\max}}{1 + \lambda_{\max}}$) с верхней границей $F$.
+   * **Золотой Оракул:** Сверка против `statsmodels.multivariate.manova.MANOVA`.
+3. **Дисперсионный анализ повторных измерений (`GLM Repeated Measures` / `stat.glm.repeated`):**
+   * **Математика L2 (`crates/statcraft_algo/src/glm/repeated.rs`):** внутригрупповой фактор ($k \ge 2$ замеров) с ортонормированной матрицей контрастов Хельмерта размера $k \times (k-1)$.
+   * **Критерий сферичности Мокли (Mauchly's Test of Sphericity):** расчет $W = \frac{\det(C^T S C)}{(\text{tr}(C^T S C) / d)^d}$, приближенного $\chi^2$, степеней свободы $df = \frac{k(k-1)}{2} - 1$ и $p$-значения.
+   * **Эпсилон-поправки к степеням свободы:** вычисление поправок Гринхауса-Гейссера ($\hat{\varepsilon}$), Хюйнха-Фельдта ($\tilde{\varepsilon}$) и нижней границы ($1/(k-1)$) с пересчетом степеней свободы и скорректированных $p$-значений.
+4. **Командная шина и синтаксис L5 (`crates/statcraft_syntax/`):**
+   * Команды `UnivariateGlmCommand`, `MultivariateGlmCommand`, `RepeatedGlmCommand` со спецификациями `specs()`, генерацией канонического синтаксиса `to_sps()` (`UNIANOVA`, `GLM ... /WSFACTOR = ... Polynomial`);
+   * Парсер и мапперы синтаксиса `mappers/glm.rs` с распознаванием составных ключевых слов `UNIANOVA`, `GLM` и `GLM REPEATED`;
+   * 100% обратимость команд подтверждена матрицей `undo_redo_matrix_tests`.
+5. **Таблицы вывода Pivot Tables и архитектура L4/L6 (`crates/statcraft_app/src/views/output_view/tables_glm/`):**
+   * Модуль архитектурно декомпозирован на `mod.rs`, `univariate.rs`, `multivariate.rs`, `repeated.rs` с жестким соблюдением лимита $\le 500$ строк на файл (Rule 12.2);
+   * Вывод 4 аутентичных сводных таблиц SPSS: *Tests of Between-Subjects Effects*, *Multivariate Tests*, *Mauchly's Test of Sphericity*, *Tests of Within-Subjects Effects*;
+   * Экспорт в TSV (`univariate_glm_to_tsv`, `multivariate_glm_to_tsv`, `repeated_glm_to_tsv`) для буфера обмена и интеграция в Outline tree.
+6. **Диалоговые окна DialogKit и меню L6 (`crates/statcraft_app/`):**
+   * Модальные диалоги `UnivariateGlmDialog`, `MultivariateGlmDialog`, `RepeatedGlmDialog` на базе канонических компонентов `DialogShell::standard(560, 430)`, `VariablePicker`, `TransferButton` и `DialogActionBar`;
+   * Координатор диалогов `app_dialogs_glm.rs`;
+   * Активация пунктов в меню «Анализ -> Общая линейная модель -> Одномерная... / Многомерная... / Повторные измерения...» со снятием бейджей `[dev]`.
+7. **Локализация и Quality Gate (DoD):**
+   * 100% двуязычное покрытие Fluent в `locales/en.ftl` и `locales/ru.ftl` (пройден `i18n_lint_test`, 0 сырых строк, 0 эмодзи, Vector-First UI);
+   * Тесты интерфейсных инвариантов `glm_dialog_invariants.rs`;
+   * 100% успешный прогон всех 9 ступеней Quality Gate `cargo run -p xtask -j 1 -- ci` (fmt, clippy [0 warnings], layers, file-guard [378 файлов], design-guard, workspace tests, parity, test-corpus, test-undo).
+

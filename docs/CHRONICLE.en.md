@@ -3255,3 +3255,44 @@ Following the approved architectural plan `plan_1_regression_and_correlations.md
 7. **Quality Control & Definition of Done (DoD):**
    * Interface invariant suites `advanced_regression_dialog_invariants.rs` and `advanced_regression_output_invariants.rs`;
    * 100% successful pass across all 9 Quality Gate stages via `cargo run -p xtask -j 1 -- ci` (fmt, clippy [0 warnings], layers, file-guard [355 files], design-guard, workspace tests, parity, test-corpus, test-undo).
+
+---
+
+### Phase 74: General Linear Model (UNIANOVA, MANOVA & Repeated Measures — Branch feat/002-general-linear-model)
+*Time: November 14, 2026, 22:35 (~65 minutes)*
+
+Following the approved architectural plan `plan_2_general_linear_model.md` and in strict adherence to the ArtCraft ecosystem canon, Clean-Room guidelines, and the evidence-backed Craft Anything MCP protocol, fully implemented the **General Linear Model (GLM)** analytical suite:
+1. **Univariate Analysis of Variance and Covariance (`UNIANOVA` / `stat.glm.univariate`):**
+   * **Mathematical Core L2 (`crates/statcraft_algo/src/glm/`):** Decomposed into `design_matrix.rs`, `type3_ss.rs`, `univariate.rs`, `types.rs`. Constructs an orthogonal design matrix supporting factor deviation contrasts (sum-to-zero coding), continuous covariates, and two-way interaction terms $A \times B$.
+   * **Type III Sum of Squares (Type III SS):** Marginal reduction of full model vs. term-excluded models via SVD-based pseudo-inversion (Jacobi SVD) to prevent collinearity issues. Computes $MS, F, p$, Partial $\eta^2$, alongside model fit indicators ($R^2$ and Adjusted $R^2$).
+   * **Golden Oracle:** Validated against `statsmodels.api.stats.anova_lm(typ=3)` confirming exact match within $10^{-7}$.
+2. **Multivariate Analysis of Variance (`GLM Multivariate` / `stat.glm.multivariate` — MANOVA):**
+   * **Mathematical Core L2 (`crates/statcraft_algo/src/glm/multivariate.rs` and `eigen.rs`):** Multivariate extension supporting $p \ge 2$ dependent variables. Computes Error ($E$) and Hypothesis ($H$) Sum of Squares and Cross-Products matrices.
+   * **Generalized Eigenvalue Decomposition:** Symmetrized $E^{-1/2} H E^{-1/2}$ decomposition via Jacobi method to extract eigenvalues $\lambda_i$.
+   * **4 Canonical SPSS Test Criteria:**
+     1. *Wilks' Lambda* ($\Lambda = \prod \frac{1}{1 + \lambda_i}$) with Rao's exact $F$-approximation;
+     2. *Pillai's Trace* ($V = \sum \frac{\lambda_i}{1 + \lambda_i}$);
+     3. *Hotelling-Lawley Trace* ($T = \sum \lambda_i$);
+     4. *Roy's Largest Root* ($\theta = \frac{\lambda_{\max}}{1 + \lambda_{\max}}$) with upper-bound $F$.
+   * **Golden Oracle:** Validated against `statsmodels.multivariate.manova.MANOVA`.
+3. **Repeated Measures Analysis of Variance (`GLM Repeated Measures` / `stat.glm.repeated`):**
+   * **Mathematical Core L2 (`crates/statcraft_algo/src/glm/repeated.rs`):** Within-subjects factor ($k \ge 2$ repeated measures) with normalized Helmert contrast matrix of size $k \times (k-1)$.
+   * **Mauchly's Test of Sphericity:** Computes $W = \frac{\det(C^T S C)}{(\text{tr}(C^T S C) / d)^d}$, approximate $\chi^2$, degrees of freedom $df = \frac{k(k-1)}{2} - 1$, and $p$-value.
+   * **Epsilon Corrections to Degrees of Freedom:** Greenhouse-Geisser ($\hat{\varepsilon}$), Huynh-Feldt ($\tilde{\varepsilon}$), and Lower-bound ($1/(k-1)$) corrections with adjusted $df$ and $p$-values.
+4. **Command Bus and Syntax Parser L5 (`crates/statcraft_syntax/`):**
+   * Implemented `UnivariateGlmCommand`, `MultivariateGlmCommand`, `RepeatedGlmCommand` with parameter schemas `specs()`, canonical syntax generator `to_sps()` (`UNIANOVA`, `GLM ... /WSFACTOR = ... Polynomial`);
+   * Syntax parser and mappers `mappers/glm.rs` recognizing `UNIANOVA`, `GLM`, and `GLM REPEATED`;
+   * 100% reversible command history verified by `undo_redo_matrix_tests`.
+5. **Output Viewer Pivot Tables and Architecture L4/L6 (`crates/statcraft_app/src/views/output_view/tables_glm/`):**
+   * Modularized into `mod.rs`, `univariate.rs`, `multivariate.rs`, `repeated.rs` strictly respecting the $\le 500$ lines limit (Rule 12.2);
+   * Renders 4 authentic SPSS Pivot Tables: *Tests of Between-Subjects Effects*, *Multivariate Tests*, *Mauchly's Test of Sphericity*, *Tests of Within-Subjects Effects*;
+   * TSV export (`univariate_glm_to_tsv`, `multivariate_glm_to_tsv`, `repeated_glm_to_tsv`) for clipboard and Outline tree integration.
+6. **DialogKit UI and Menu Integration L6 (`crates/statcraft_app/`):**
+   * Canonical modal dialogs `UnivariateGlmDialog`, `MultivariateGlmDialog`, `RepeatedGlmDialog` based on `DialogShell::standard(560, 430)`, `VariablePicker`, `TransferButton`, and `DialogActionBar`;
+   * Central coordinator in `app_dialogs_glm.rs`;
+   * Activated menu items under `Analyze -> General Linear Model -> Univariate... / Multivariate... / Repeated Measures...` with `[dev]` badges removed.
+7. **Localization and Quality Gate (DoD):**
+   * 100% bilingual Fluent coverage in `locales/en.ftl` and `locales/ru.ftl` (passed `i18n_lint_test`, 0 raw strings, 0 emojis, Vector-First UI);
+   * UI invariant suite `glm_dialog_invariants.rs`;
+   * 100% successful pass across all 9 Quality Gate stages via `cargo run -p xtask -j 1 -- ci` (fmt, clippy [0 warnings], layers, file-guard [378 files], design-guard, workspace tests, parity, test-corpus, test-undo).
+

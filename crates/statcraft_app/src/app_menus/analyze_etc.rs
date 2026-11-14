@@ -113,21 +113,36 @@ impl StatCraftApp {
                         }
                     });
                     ui.menu_button(t!("menu-analyze-glm"), |ui| {
-                        render_menu_item(
+                        if render_menu_item(
                             ui,
                             t!("menu-analyze-glm-univariate"),
-                            MenuItemStatus::InDev,
-                        );
-                        render_menu_item(
+                            requires_dataset_status,
+                        )
+                        .clicked()
+                        {
+                            self.univariate_glm_dialog_state.is_open = true;
+                            ui.close_menu();
+                        }
+                        if render_menu_item(
                             ui,
                             t!("menu-analyze-glm-multivariate"),
-                            MenuItemStatus::InDev,
-                        );
-                        render_menu_item(
+                            requires_dataset_status,
+                        )
+                        .clicked()
+                        {
+                            self.multivariate_glm_dialog_state.is_open = true;
+                            ui.close_menu();
+                        }
+                        if render_menu_item(
                             ui,
                             t!("menu-analyze-glm-repeated"),
-                            MenuItemStatus::InDev,
-                        );
+                            requires_dataset_status,
+                        )
+                        .clicked()
+                        {
+                            self.repeated_glm_dialog_state.is_open = true;
+                            ui.close_menu();
+                        }
                     });
                     ui.menu_button(t!("menu-analyze-correlate"), |ui| {
                         if render_menu_item(

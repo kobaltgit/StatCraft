@@ -1483,3 +1483,50 @@ status-partial-corr-executed = Partial correlations computed for { $vars } contr
 status-logistic-executed = Binary logistic regression computed for { $dep } with { $count } covariate(s)
 status-curvefit-executed = Curve estimation computed for { $dep } by { $indep }
 
+
+# General Linear Model (GLM) Dialogs
+dialog-univariate-glm-title = Univariate Analysis of Variance
+dialog-multivariate-glm-title = Multivariate Analysis of Variance
+dialog-repeated-glm-title = Repeated Measures Analysis of Variance
+dialog-glm-dependent-var = Dependent Variable:
+dialog-glm-dependent-vars = Dependent Variables:
+dialog-glm-fixed-factors = Fixed Factor(s):
+dialog-glm-covariates = Covariate(s):
+dialog-options-group = Options
+dialog-glm-intercept = Include intercept in model
+dialog-glm-descriptives = Descriptive statistics
+dialog-glm-homogeneity = Homogeneity tests (Levene)
+dialog-glm-within-factor-name = Within-Subject Factor Name:
+dialog-glm-repeated-measures-list = Repeated Measures Variables:
+
+# General Linear Model (GLM) Output
+output-glm-univariate-title = Univariate Analysis of Variance
+output-glm-multivariate-title = Multivariate Analysis of Variance
+output-glm-repeated-title = Repeated Measures Analysis of Variance
+output-glm-between-subjects-title = Tests of Between-Subjects Effects
+output-glm-multivariate-tests-title = Multivariate Tests
+output-glm-within-subjects-title = Tests of Within-Subjects Effects
+output-glm-mauchly-title = Mauchly's Test of Sphericity
+output-glm-col-source = Source
+output-glm-col-type3-ss = Type III Sum of Squares
+output-glm-col-df = df
+output-glm-col-ms = Mean Square
+output-glm-col-f = F
+output-glm-col-sig = Sig.
+output-glm-col-partial-eta = Partial Eta Squared
+output-glm-col-effect = Effect
+output-glm-col-test-stat = Statistic
+output-glm-col-value = Value
+output-glm-col-hypo-df = Hypothesis df
+output-glm-col-error-df = Error df
+output-glm-col-mauchly-w = Mauchly's W
+output-glm-col-chi-square = Approx. Chi-Square
+output-glm-col-greenhouse = Greenhouse-Geisser
+output-glm-col-huynh = Huynh-Feldt
+output-glm-col-lower-bound = Lower-bound
+output-glm-col-measure = Measure
+
+# GLM Status messages
+status-glm-univariate-executed = Univariate GLM computed for { $dep }
+status-glm-multivariate-executed = Multivariate GLM (MANOVA) computed for { $count } dependent variables
+status-glm-repeated-executed = Repeated measures GLM computed for factor { $factor } with { $count } measures

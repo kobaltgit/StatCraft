@@ -114,6 +114,16 @@ pub enum StatusMessage {
         dep_var: String,
         indep_var: String,
     },
+    UnivariateGlmExecuted {
+        dep_var: String,
+    },
+    MultivariateGlmExecuted {
+        count: usize,
+    },
+    RepeatedGlmExecuted {
+        factor: String,
+        measures_count: usize,
+    },
     ReliabilityExecuted {
         scale: String,
         count: usize,
@@ -345,6 +355,22 @@ impl StatusMessage {
                     "status-curvefit-executed",
                     dep = dep_var.as_str(),
                     indep = indep_var.as_str()
+                )
+            }
+            StatusMessage::UnivariateGlmExecuted { dep_var } => {
+                t!("status-glm-univariate-executed", dep = dep_var.as_str())
+            }
+            StatusMessage::MultivariateGlmExecuted { count } => {
+                t!("status-glm-multivariate-executed", count = *count)
+            }
+            StatusMessage::RepeatedGlmExecuted {
+                factor,
+                measures_count,
+            } => {
+                t!(
+                    "status-glm-repeated-executed",
+                    factor = factor.as_str(),
+                    count = *measures_count
                 )
             }
             StatusMessage::ReliabilityExecuted { scale, count } => {

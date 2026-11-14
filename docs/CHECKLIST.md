@@ -723,4 +723,36 @@
 - [x] Тестирование и Quality Gate:
   - [x] 100% успешный прогон всех 9 ступеней Quality Gate `cargo run -p xtask -j 1 -- ci` (fmt, clippy, layers, file-guard [355 файлов], design-guard, workspace tests, parity, corpus, test-undo).
 
+## 43. Общая линейная модель (General Linear Model: UNIANOVA, MANOVA & Repeated Measures)
+- [x] Доказательный Clean-Room аудит алгоритмов через Craft Anything MCP (`core_brief_write`, `core_plan_update`, `core_hypothesis_record`, `core_handoff_write`)
+- [x] L2 `statcraft_algo::glm`:
+  - [x] Архитектура типов и контрастов: `types.rs`, генератор матриц плана `design_matrix.rs` с контрастами отклонений (deviation sum-to-zero) и псевдообращением OLS через Jacobi SVD
+  - [x] Вычисление сумм квадратов типа III: `type3_ss.rs` через маргинальную редукцию моделей, $F$-критерии и частную эта-квадрат ($\text{Partial } \eta^2$)
+  - [x] Одномерный анализ `univariate.rs`: `UNIANOVA` (ANCOVA с факторами, ковариатами и взаимодействиями $A \times B$, таблица Between-Subjects Effects, $R^2$ и Adjusted $R^2$, Golden Oracle vs Statsmodels)
+  - [x] Многомерный спектральный анализ `eigen.rs`: обобщенное спектральное разложение $H v = \lambda E v$ симметризованной пары $E^{-1/2} H E^{-1/2}$ и 4 критерия (Wilks' $\Lambda$, Pillai's Trace, Hotelling-Lawley Trace, Roy's Largest Root с аппроксимацией Рао)
+  - [x] Многомерный анализ `multivariate.rs`: `GLM Multivariate` (MANOVA) для $p \ge 2$ зависимых переменных с вычислением матриц SSCP гипотез и ошибки
+  - [x] Анализ повторных измерений `repeated.rs`: `GLM Repeated Measures` с матрицей контрастов Хельмерта, критерием сферичности Мокли ($W, \chi^2, df, p$) и поправками Гринхауса-Гейссера ($\hat{\varepsilon}$), Хюйнха-Фельдта ($\tilde{\varepsilon}$) и нижней границы
+- [x] L5 `statcraft_syntax`:
+  - [x] Команды движка: `UnivariateGlmCommand` (`stat.glm.univariate`), `MultivariateGlmCommand` (`stat.glm.multivariate`), `RepeatedGlmCommand` (`stat.glm.repeated`)
+  - [x] Парсеры синтаксиса и мапперы: регистрация составных имен `UNIANOVA`, `GLM`, `GLM REPEATED` в `parser.rs` и маппинг в `mappers/glm.rs`
+  - [x] Интеграционные тесты `glm_syntax_tests.rs` и 100% обратимость в `undo_redo_matrix_tests`
+- [x] L4/L6 `statcraft_app::views::output_view`:
+  - [x] Представления `OutputItemKind::UnivariateGlm`, `OutputItemKind::MultivariateGlm`, `OutputItemKind::RepeatedGlm`
+  - [x] Модуль сводных таблиц `tables_glm/`: декомпозиция на `mod.rs`, `univariate.rs`, `multivariate.rs`, `repeated.rs` (все файлы $\le 500$ строк)
+  - [x] Отрисовка Pivot Tables: Between-Subjects Effects, Multivariate Tests (4 критерия), Mauchly's Test of Sphericity, Tests of Within-Subjects Effects
+  - [x] Поддержка экспорта в TSV (`univariate_glm_to_tsv`, `multivariate_glm_to_tsv`, `repeated_glm_to_tsv`)
+- [x] UI диалоги на базе DialogKit:
+  - [x] `UnivariateGlmDialog`: зависимая переменная, фиксированные факторы, ковариаты, параметры модели (константа, дескрипторы, тест Ливиня)
+  - [x] `MultivariateGlmDialog`: множественные зависимые переменные, фиксированные факторы, ковариаты
+  - [x] `RepeatedGlmDialog`: имя внутригруппового фактора, список замеров повторных измерений
+  - [x] Интеграция в координатор `app_dialogs_glm.rs` и главное окно `app.rs`
+  - [x] Тесты интерфейсных инвариантов `glm_dialog_invariants.rs`
+- [x] Главное меню:
+  - [x] Активация пунктов «Анализ -> Общая линейная модель -> Одномерная...» (`menu-analyze-glm-univariate`), «Многомерная...» (`menu-analyze-glm-multivariate`), «Повторные измерения...» (`menu-analyze-glm-repeated`)
+- [x] Локализация:
+  - [x] 100% двуязычное покрытие в `locales/en.ftl` и `locales/ru.ftl` (0 сырых строк, 0 эмодзи, Vector-First UI, прохождение `i18n_lint_test`)
+- [x] Тестирование и Quality Gate:
+  - [x] 100% успешный прогон всех 9 ступеней Quality Gate `cargo run -p xtask -j 1 -- ci` (fmt, clippy, layers, file-guard [378 файлов], design-guard, workspace tests, parity, corpus, test-undo).
+
+
 

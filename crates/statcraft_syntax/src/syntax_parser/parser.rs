@@ -99,6 +99,7 @@ impl SyntaxParser {
             ("LOGISTIC", Some(s)) if s.eq_ignore_ascii_case("REGRESSION") => {
                 Some("LOGISTIC REGRESSION")
             }
+            ("GLM", Some(s)) if s.eq_ignore_ascii_case("REPEATED") => Some("GLM REPEATED"),
             _ => None,
         };
 

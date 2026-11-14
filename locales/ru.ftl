@@ -1483,3 +1483,50 @@ status-partial-corr-executed = Вычислены частные корреля�
 status-logistic-executed = Вычислена бинарная логистическая регрессия для { $dep } с { $count } ковариатой(ами)
 status-curvefit-executed = Вычислена оценка кривых для { $dep } по { $indep }
 
+
+# Диалоги общей линейной модели (GLM)
+dialog-univariate-glm-title = Одномерный дисперсионный анализ (GLM)
+dialog-multivariate-glm-title = Многомерный дисперсионный анализ (MANOVA)
+dialog-repeated-glm-title = Дисперсионный анализ повторных измерений (GLM)
+dialog-glm-dependent-var = Зависимая переменная:
+dialog-glm-dependent-vars = Зависимые переменные:
+dialog-glm-fixed-factors = Фиксированные факторы:
+dialog-glm-covariates = Ковариаты:
+dialog-options-group = Параметры
+dialog-glm-intercept = Включить константу в модель
+dialog-glm-descriptives = Описательные статистики
+dialog-glm-homogeneity = Критерий однородности дисперсий (Ливинь)
+dialog-glm-within-factor-name = Имя внутригруппового фактора:
+dialog-glm-repeated-measures-list = Переменные повторных измерений:
+
+# Вывод общей линейной модели (GLM)
+output-glm-univariate-title = Одномерный дисперсионный анализ (GLM)
+output-glm-multivariate-title = Многомерный дисперсионный анализ (MANOVA)
+output-glm-repeated-title = Анализ повторных измерений (GLM)
+output-glm-between-subjects-title = Критерии межгрупповых эффектов
+output-glm-multivariate-tests-title = Многомерные критерии
+output-glm-within-subjects-title = Критерии внутригрупповых эффектов
+output-glm-mauchly-title = Критерий сферичности Мокли
+output-glm-col-source = Источник
+output-glm-col-type3-ss = Сумма квадратов типа III
+output-glm-col-df = ст.св.
+output-glm-col-ms = Средний квадрат
+output-glm-col-f = F
+output-glm-col-sig = Значимость
+output-glm-col-partial-eta = Частное эта-квадрат
+output-glm-col-effect = Эффект
+output-glm-col-test-stat = Статистика
+output-glm-col-value = Значение
+output-glm-col-hypo-df = ст.св. гипотезы
+output-glm-col-error-df = ст.св. ошибки
+output-glm-col-mauchly-w = W Мокли
+output-glm-col-chi-square = Приближ. Хи-квадрат
+output-glm-col-greenhouse = Гринхаус-Гейссер
+output-glm-col-huynh = Хюйнх-Фельдт
+output-glm-col-lower-bound = Нижняя граница
+output-glm-col-measure = Мера
+
+# Статусные сообщения GLM
+status-glm-univariate-executed = Одномерный дисперсионный анализ рассчитан для { $dep }
+status-glm-multivariate-executed = Многомерный дисперсионный анализ (MANOVA) рассчитан для { $count } зависимых переменных
+status-glm-repeated-executed = Дисперсионный анализ повторных измерений рассчитан для фактора { $factor } ({ $count } замеров)

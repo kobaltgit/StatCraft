@@ -17,6 +17,9 @@ pub mod explore_dialog;
 pub mod factor_dialog;
 pub mod find_replace_dialog;
 pub mod frequencies_dialog;
+pub mod glm_multivariate_dialog;
+pub mod glm_repeated_dialog;
+pub mod glm_univariate_dialog;
 pub mod goto_dialog;
 pub mod kruskal_define_range;
 pub mod kruskal_wallis_dialog;
@@ -93,6 +96,15 @@ pub use find_replace_dialog::{
 };
 pub use frequencies_dialog::{
     render_frequencies_dialog, FrequenciesDialogAction, FrequenciesDialogState,
+};
+pub use glm_multivariate_dialog::{
+    render_multivariate_glm_dialog, MultivariateGlmDialogAction, MultivariateGlmDialogState,
+};
+pub use glm_repeated_dialog::{
+    render_repeated_glm_dialog, RepeatedGlmDialogAction, RepeatedGlmDialogState,
+};
+pub use glm_univariate_dialog::{
+    render_univariate_glm_dialog, UnivariateGlmDialogAction, UnivariateGlmDialogState,
 };
 pub use goto_dialog::{render_goto_dialog, GoToAction, GoToDialogState, GoToTab};
 pub use kruskal_wallis_dialog::{
