@@ -130,13 +130,44 @@ impl CommandBus {
         self.commands.insert(cmd.id(), cmd);
     }
 
+    fn find_command_key(&self, id: &str) -> Option<&'static str> {
+        if self.commands.contains_key(id) {
+            return self.commands.get_key_value(id).map(|(k, _)| *k);
+        }
+        let prefixed = format!("stat.{}", id);
+        if let Some((k, _)) = self.commands.get_key_value(prefixed.as_str()) {
+            return Some(*k);
+        }
+        if let Some(rest) = id.strip_prefix("report.") {
+            let rep = format!("stat.reports.{}", rest);
+            if let Some((k, _)) = self.commands.get_key_value(rep.as_str()) {
+                return Some(*k);
+            }
+        }
+        if let Some(rest) = id.strip_prefix("reports.") {
+            let rep = format!("stat.reports.{}", rest);
+            if let Some((k, _)) = self.commands.get_key_value(rep.as_str()) {
+                return Some(*k);
+            }
+        }
+        if let Some(rest) = id.strip_prefix("survival.") {
+            let surv = format!("stat.survival.{}", rest);
+            if let Some((k, _)) = self.commands.get_key_value(surv.as_str()) {
+                return Some(*k);
+            }
+        }
+        None
+    }
+
     pub fn get(&self, id: &str) -> Option<&dyn EngineCommand> {
-        self.commands.get(id).map(|b| b.as_ref())
+        let key = self.find_command_key(id).unwrap_or(id);
+        self.commands.get(key).map(|b| b.as_ref())
     }
 
     pub fn is_enabled(&self, id: &str, dataset: Option<&DataSet>) -> bool {
+        let key = self.find_command_key(id).unwrap_or(id);
         self.commands
-            .get(id)
+            .get(key)
             .map(|cmd| cmd.enabled(dataset))
             .unwrap_or(false)
     }
@@ -171,19 +202,21 @@ impl CommandBus {
         dataset: &mut Option<DataSet>,
         params: Value,
     ) -> Result<Value, CommandError> {
+        let resolved_id = self.find_command_key(id).unwrap_or(id);
         let cmd = self
             .commands
-            .get(id)
+            .get(resolved_id)
             .ok_or_else(|| CommandError::ExecutionFailed(format!("Unknown command: '{}'", id)))?;
 
         if !cmd.enabled(dataset.as_ref()) {
             return Err(CommandError::Disabled(id.to_string()));
         }
 
+        let canonical_id = cmd.id();
         let result = cmd.execute(dataset, params.clone())?;
 
         self.history.push(CommandHistoryEntry {
-            command_id: id.to_string(),
+            command_id: canonical_id.to_string(),
             params,
             result: result.clone(),
         });

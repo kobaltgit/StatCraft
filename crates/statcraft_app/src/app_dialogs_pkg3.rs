@@ -90,7 +90,7 @@ impl StatCraftApp {
                 });
                 match self
                     .command_bus
-                    .execute("report.codebook", &mut self.dataset, params)
+                    .execute("stat.reports.codebook", &mut self.dataset, params)
                 {
                     Ok(result_value) => {
                         if let Ok(result) =
@@ -137,7 +137,7 @@ impl StatCraftApp {
                 });
                 match self
                     .command_bus
-                    .execute("report.summarize", &mut self.dataset, params)
+                    .execute("stat.reports.summarize", &mut self.dataset, params)
                 {
                     Ok(result_value) => {
                         if let Ok(result) =
@@ -192,7 +192,7 @@ impl StatCraftApp {
                 });
                 match self
                     .command_bus
-                    .execute("survival.km", &mut self.dataset, params)
+                    .execute("stat.survival.km", &mut self.dataset, params)
                 {
                     Ok(result_value) => {
                         if let Ok(result) =
@@ -249,10 +249,11 @@ impl StatCraftApp {
                     "interval_end": interval_end,
                     "interval_width": interval_width,
                 });
-                match self
-                    .command_bus
-                    .execute("survival.lifetables", &mut self.dataset, params)
-                {
+                match self.command_bus.execute(
+                    "stat.survival.lifetables",
+                    &mut self.dataset,
+                    params,
+                ) {
                     Ok(result_value) => {
                         if let Ok(result) =
                             serde_json::from_value::<statcraft_algo::LifeTableResult>(result_value)
