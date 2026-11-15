@@ -1,3 +1,5 @@
+#![allow(clippy::needless_range_loop)]
+
 pub mod app;
 pub mod app_dialogs;
 pub mod app_dialogs_advanced;

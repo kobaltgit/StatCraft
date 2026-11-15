@@ -1,3 +1,5 @@
+#![allow(clippy::needless_range_loop)]
+
 pub mod adp;
 pub mod anova_oneway;
 pub mod auto_recode;

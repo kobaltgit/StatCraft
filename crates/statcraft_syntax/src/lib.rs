@@ -1,3 +1,5 @@
+#![allow(clippy::needless_range_loop)]
+
 pub mod bus;
 pub mod command;
 pub mod commands;

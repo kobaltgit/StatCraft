@@ -177,8 +177,7 @@ fn render_single_matrix(
                         (row_var.clone(), Align2::LEFT_CENTER),
                         (coeff_name, Align2::LEFT_CENTER),
                     ];
-                    for j in 0..mat.variables.len() {
-                        let cell = &mat.cells[i][j];
+                    for cell in &mat.cells[i] {
                         let val_str = format_cell_r(cell);
                         r_vals.push((val_str, Align2::RIGHT_CENTER));
                     }
@@ -193,8 +192,7 @@ fn render_single_matrix(
                         ("".to_string(), Align2::LEFT_CENTER),
                         (sig_label, Align2::LEFT_CENTER),
                     ];
-                    for j in 0..mat.variables.len() {
-                        let cell = &mat.cells[i][j];
+                    for (j, cell) in mat.cells[i].iter().enumerate() {
                         let val_str = if i == j {
                             "".to_string()
                         } else {
@@ -210,8 +208,7 @@ fn render_single_matrix(
                             ("".to_string(), Align2::LEFT_CENTER),
                             (t!("output-correlations-ss-cross"), Align2::LEFT_CENTER),
                         ];
-                        for j in 0..mat.variables.len() {
-                            let cell = &mat.cells[i][j];
+                        for cell in &mat.cells[i] {
                             let val_str = cell
                                 .ss_cross_prod
                                 .map(|v| format!("{:.3}", v))
@@ -224,8 +221,7 @@ fn render_single_matrix(
                             ("".to_string(), Align2::LEFT_CENTER),
                             (t!("output-correlations-covariance"), Align2::LEFT_CENTER),
                         ];
-                        for j in 0..mat.variables.len() {
-                            let cell = &mat.cells[i][j];
+                        for cell in &mat.cells[i] {
                             let val_str = cell
                                 .covariance
                                 .map(|v| format!("{:.3}", v))
@@ -240,8 +236,7 @@ fn render_single_matrix(
                         ("".to_string(), Align2::LEFT_CENTER),
                         (t!("output-correlations-n"), Align2::LEFT_CENTER),
                     ];
-                    for j in 0..mat.variables.len() {
-                        let cell = &mat.cells[i][j];
+                    for cell in &mat.cells[i] {
                         n_vals.push((format!("{}", cell.n), Align2::RIGHT_CENTER));
                     }
                     render_data_row(ui, &cols, &n_vals, row_height, bg);
@@ -318,20 +313,20 @@ pub fn correlations_to_tsv(res: &BivariateCorrelationsResult) -> String {
         for (i, v_row) in mat.variables.iter().enumerate() {
             // Correlation
             out.push_str(&format!("{}\tCorrelation", v_row));
-            for j in 0..mat.variables.len() {
+            for cell in &mat.cells[i] {
                 out.push('\t');
-                out.push_str(&format_cell_r(&mat.cells[i][j]));
+                out.push_str(&format_cell_r(cell));
             }
             out.push('\n');
 
             // Sig
             out.push_str("\tSig.");
-            for j in 0..mat.variables.len() {
+            for (j, cell) in mat.cells[i].iter().enumerate() {
                 out.push('\t');
                 let sig_str = if i == j {
                     "".to_string()
                 } else {
-                    format_sig(mat.cells[i][j].sig)
+                    format_sig(cell.sig)
                 };
                 out.push_str(&sig_str);
             }
@@ -339,9 +334,9 @@ pub fn correlations_to_tsv(res: &BivariateCorrelationsResult) -> String {
 
             // N
             out.push_str("\tN");
-            for j in 0..mat.variables.len() {
+            for cell in &mat.cells[i] {
                 out.push('\t');
-                out.push_str(&format!("{}", mat.cells[i][j].n));
+                out.push_str(&format!("{}", cell.n));
             }
             out.push('\n');
         }
