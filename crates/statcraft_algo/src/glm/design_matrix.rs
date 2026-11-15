@@ -288,10 +288,10 @@ pub fn extract_submatrix(full: &DesignMatrix, exclude_col_indices: &[usize]) -> 
     }
 
     let mut sub = Vec::with_capacity(full.n_rows);
-    for r in 0..full.n_rows {
+    for full_row in full.matrix.iter().take(full.n_rows) {
         let mut row = Vec::with_capacity(keep_cols.len());
         for &c in &keep_cols {
-            row.push(full.matrix[r][c]);
+            row.push(full_row[c]);
         }
         sub.push(row);
     }
