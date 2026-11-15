@@ -377,6 +377,7 @@ output-table-valid-n = N валидных (по списку)
 # Frequencies Procedure & Dialog
 dialog-frequencies-title = Частоты
 dialog-frequencies-display-tables = Выводить таблицы частот
+output-frequencies = Частоты
 output-frequencies-title = Таблица частот: { $name }
 output-frequencies-table = Таблица частот
 output-frequencies-executed = Процедура «Частоты» выполнена для { $count } переменной(ых).

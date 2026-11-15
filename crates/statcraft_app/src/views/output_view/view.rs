@@ -28,7 +28,9 @@ pub fn render_output_view(ui: &mut Ui, state: &mut OutputViewerState) {
     }
 
     let full_rect = ui.available_rect_before_wrap();
-    let outline_width = 230.0_f32;
+    ui.painter()
+        .rect_filled(full_rect, 0.0_f32, Tokens::bg_app());
+    let outline_width = 230.0_f32.min((full_rect.width() - 40.0).max(40.0) * 0.45);
 
     // 1. Left outline tree panel
     let left_rect = Rect::from_min_size(full_rect.min, vec2(outline_width, full_rect.height()));
@@ -55,6 +57,7 @@ pub fn render_output_view(ui: &mut Ui, state: &mut OutputViewerState) {
                 ui.add_space(8.0_f32);
 
                 let mut clicked_item: Option<SelectedTarget> = None;
+                let mut scroll_target_rect: Option<Rect> = None;
                 let mut item_copied: Option<usize> = None;
                 let mut item_to_delete: Option<(usize, usize)> = None;
                 let mut proc_to_delete: Option<usize> = None;
@@ -63,6 +66,7 @@ pub fn render_output_view(ui: &mut Ui, state: &mut OutputViewerState) {
                     // Procedure Heading Banner
                     let proc_target = SelectedTarget::Procedure(p_idx);
                     let _is_proc_selected = state.selected_target == Some(proc_target);
+                    let proc_header_start_y = ui.cursor().top();
 
                     ui.horizontal(|ui| {
                         let resp = ui.heading(proc.title()).interact(Sense::click());
@@ -71,6 +75,14 @@ pub fn render_output_view(ui: &mut Ui, state: &mut OutputViewerState) {
                         }
                     });
                     ui.add_space(4.0_f32);
+                    let proc_header_end_y = ui.cursor().top();
+                    let proc_header_rect = Rect::from_x_y_ranges(
+                        right_rect.x_range(),
+                        proc_header_start_y..=proc_header_end_y,
+                    );
+                    if state.scroll_to_target == Some(proc_target) {
+                        scroll_target_rect = Some(proc_header_rect);
+                    }
 
                     // Child Items (tables, notes, log)
                     for (i_idx, item) in proc.items.iter().enumerate() {
@@ -331,9 +343,9 @@ pub fn render_output_view(ui: &mut Ui, state: &mut OutputViewerState) {
                                     );
                                 });
 
-                                // Scroll to this item if it was targeted from outline
+                                // Target this item for scroll after all layout completes
                                 if is_item_scroll_targeted {
-                                    ui.scroll_to_rect(total_item_rect, Some(Align::Center));
+                                    scroll_target_rect = Some(total_item_rect);
                                 }
 
                                 // Outline focus border if selected
@@ -375,6 +387,13 @@ pub fn render_output_view(ui: &mut Ui, state: &mut OutputViewerState) {
                         state.procedures.remove(p);
                     }
                     state.selected_target = None;
+                }
+
+                // Execute scroll-to after all children have finished layout
+                // (avoids nested horizontal scroll areas clearing vertical scroll_target)
+                if let Some(target_rect) = scroll_target_rect {
+                    ui.scroll_to_rect(target_rect, Some(Align::TOP));
+                    ui.ctx().request_repaint();
                 }
 
                 // Reset scroll-to once rendered

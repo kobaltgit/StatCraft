@@ -51,9 +51,7 @@ impl StatCraftApp {
                         {
                             ui.close_menu();
                             self.syntax_editor_state.reset_with_header();
-                            if let Some(pos) = self.dock_state.find_tab(&Tab::SyntaxEditor) {
-                                self.dock_state.set_active_tab(pos);
-                            }
+                            self.ensure_tab_open(Tab::SyntaxEditor);
                             self.status_message = StatusMessage::NewSyntaxCreated;
                         }
                     });

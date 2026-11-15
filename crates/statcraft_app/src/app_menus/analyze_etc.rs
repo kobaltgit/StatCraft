@@ -400,57 +400,49 @@ impl StatCraftApp {
                         ui,
                         t!("menu-window-data-editor"),
                         MenuItemStatus::Ready {
-                            shortcut: Some("Ctrl+1"),
+                            shortcut: Some("Alt+1"),
                         },
                     )
                     .clicked()
                     {
                         ui.close_menu();
-                        if let Some(pos) = self.dock_state.find_tab(&Tab::DataView) {
-                            self.dock_state.set_active_tab(pos);
-                        }
+                        self.ensure_tab_open(Tab::DataView);
                     }
                     if render_menu_item(
                         ui,
                         t!("menu-window-variable-view"),
                         MenuItemStatus::Ready {
-                            shortcut: Some("Ctrl+2"),
+                            shortcut: Some("Alt+2"),
                         },
                     )
                     .clicked()
                     {
                         ui.close_menu();
-                        if let Some(pos) = self.dock_state.find_tab(&Tab::VariableView) {
-                            self.dock_state.set_active_tab(pos);
-                        }
+                        self.ensure_tab_open(Tab::VariableView);
                     }
                     if render_menu_item(
                         ui,
                         t!("menu-window-output-viewer"),
                         MenuItemStatus::Ready {
-                            shortcut: Some("Ctrl+3"),
+                            shortcut: Some("Alt+3"),
                         },
                     )
                     .clicked()
                     {
                         ui.close_menu();
-                        if let Some(pos) = self.dock_state.find_tab(&Tab::OutputViewer) {
-                            self.dock_state.set_active_tab(pos);
-                        }
+                        self.ensure_tab_open(Tab::OutputViewer);
                     }
                     if render_menu_item(
                         ui,
                         t!("menu-window-syntax-editor"),
                         MenuItemStatus::Ready {
-                            shortcut: Some("Ctrl+4"),
+                            shortcut: Some("Alt+4"),
                         },
                     )
                     .clicked()
                     {
                         ui.close_menu();
-                        if let Some(pos) = self.dock_state.find_tab(&Tab::SyntaxEditor) {
-                            self.dock_state.set_active_tab(pos);
-                        }
+                        self.ensure_tab_open(Tab::SyntaxEditor);
                     }
                     render_menu_item(ui, t!("menu-window-ai-copilot"), MenuItemStatus::InDev);
                     ui.separator();

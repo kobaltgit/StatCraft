@@ -98,9 +98,7 @@ impl StatCraftApp {
         self.split_file_dialog_state = SplitFileDialogState::default();
         self.weight_cases_dialog_state = WeightCasesDialogState::default();
 
-        if let Some(pos) = self.dock_state.find_tab(&Tab::DataView) {
-            self.dock_state.set_active_tab(pos);
-        }
+        self.ensure_tab_open(Tab::DataView);
         self.status_message = StatusMessage::NewDatasetCreated;
         self.output_view_state.add_log("NEW DATASET.");
         self.update_saved_checkpoint();
@@ -118,9 +116,7 @@ impl StatCraftApp {
         self.split_file_dialog_state = SplitFileDialogState::default();
         self.weight_cases_dialog_state = WeightCasesDialogState::default();
 
-        if let Some(pos) = self.dock_state.find_tab(&Tab::DataView) {
-            self.dock_state.set_active_tab(pos);
-        }
+        self.ensure_tab_open(Tab::DataView);
         self.status_message = StatusMessage::NewProjectCreated;
         self.update_saved_checkpoint();
     }
@@ -137,9 +133,7 @@ impl StatCraftApp {
         self.split_file_dialog_state = SplitFileDialogState::default();
         self.weight_cases_dialog_state = WeightCasesDialogState::default();
 
-        if let Some(pos) = self.dock_state.find_tab(&Tab::DataView) {
-            self.dock_state.set_active_tab(pos);
-        }
+        self.ensure_tab_open(Tab::DataView);
         self.status_message = StatusMessage::Ready;
         self.update_saved_checkpoint();
     }
@@ -216,9 +210,7 @@ impl StatCraftApp {
                     self.syntax_editor_state.cursor_char_idx = 0;
                     self.recent_files.add(path.clone());
                     self.recent_files.save_default();
-                    if let Some(pos) = self.dock_state.find_tab(&Tab::SyntaxEditor) {
-                        self.dock_state.set_active_tab(pos);
-                    }
+                    self.ensure_tab_open(Tab::SyntaxEditor);
                     self.status_message = StatusMessage::SyntaxOpened { name: file_name };
                     self.output_view_state
                         .add_log(format!("* Syntax opened: {}.", path.display()));
@@ -448,9 +440,7 @@ impl StatCraftApp {
                     };
                     self.output_view_state
                         .add_log(format!("GET FILE='{}'.", path.display()));
-                    if let Some(pos) = self.dock_state.find_tab(&Tab::DataView) {
-                        self.dock_state.set_active_tab(pos);
-                    }
+                    self.ensure_tab_open(Tab::DataView);
                     self.update_saved_checkpoint();
                 }
                 Err(e) => {
@@ -470,9 +460,7 @@ impl StatCraftApp {
                     self.recent_files.add(path.clone());
                     self.recent_files.save_default();
 
-                    if let Some(pos) = self.dock_state.find_tab(&Tab::SyntaxEditor) {
-                        self.dock_state.set_active_tab(pos);
-                    }
+                    self.ensure_tab_open(Tab::SyntaxEditor);
                     self.status_message = StatusMessage::SyntaxOpened { name: file_name };
                     self.output_view_state
                         .add_log(format!("* Syntax opened: {}.", path.display()));
@@ -540,9 +528,7 @@ impl StatCraftApp {
                 }
                 self.output_view_state
                     .add_dataset_imported(file_name, rows, cols);
-                if let Some(pos) = self.dock_state.find_tab(&Tab::DataView) {
-                    self.dock_state.set_active_tab(pos);
-                }
+                self.ensure_tab_open(Tab::DataView);
                 self.update_saved_checkpoint();
             }
             Err(e) => {

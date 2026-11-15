@@ -276,9 +276,7 @@ impl BridgeService {
                 };
 
                 if let Some(tab) = target_tab {
-                    if let Some(pos) = dock_state.find_tab(&tab) {
-                        dock_state.set_active_tab(pos);
-                    }
+                    crate::app::ensure_dock_tab_open(dock_state, tab);
                     self.log_ring.push(BridgeLogEvent::TabSwitched {
                         tab: params.tab.clone(),
                     });

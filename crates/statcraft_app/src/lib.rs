@@ -22,7 +22,7 @@ pub mod theme;
 pub mod views;
 pub mod widgets;
 
-pub use app::{StatCraftApp, Tab};
+pub use app::{ensure_dock_tab_open, is_tab_closeable, StatCraftApp, Tab};
 pub use recent_files::RecentFiles;
 pub use status_message::StatusMessage;
 

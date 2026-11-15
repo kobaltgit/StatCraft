@@ -377,6 +377,7 @@ output-table-valid-n = Valid N (listwise)
 # Frequencies Procedure & Dialog
 dialog-frequencies-title = Frequencies
 dialog-frequencies-display-tables = Display frequency tables
+output-frequencies = Frequencies
 output-frequencies-title = Frequency Table: { $name }
 output-frequencies-table = Frequencies Table
 output-frequencies-executed = Frequencies executed for { $count } variable(s).

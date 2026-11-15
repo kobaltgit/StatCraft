@@ -127,7 +127,7 @@ impl OutputViewerState {
 
         let proc = OutputProcedure {
             id: proc_id,
-            title_key: "output-frequencies-title",
+            title_key: "output-frequencies",
             custom_title: None,
             is_expanded: true,
             items: vec![

@@ -3331,3 +3331,28 @@ Following the approved architectural plan `plan_3_clustering_reports_survival.md
    * UI invariant suite `crates/statcraft_app/tests/feature_003_pkg3_invariants.rs`;
    * 100% successful pass across all 9 Quality Gate stages via `cargo run -p xtask -j 1 -- ci` (fmt, clippy [0 warnings], layers, file-guard [402 files], design-guard, workspace tests, parity, corpus, test-undo).
 
+---
+
+### Phase 76: Tab Lifecycle Management & Core Screen Protection (Feature 005)
+*Time: November 15, 2026, 22:45 (~35 minutes)*
+
+Following the approved architectural plan `tab_lifecycle_plan.md`, fully implemented core screen protection and deterministic tab lifecycle management within `egui_dock`:
+1. **Core Screen Protection Against Accidental Closure (`closeable`):**
+   * Overrode the `closeable` method in the `TabViewer` trait implementation for `StatCraftTabViewer`: returns `false` for `Tab::DataView` and `Tab::VariableView`, physically removing the `[x]` close button from Data View and Variable View tab headers. The user is protected from accidentally closing their primary data workspaces.
+   * Maintained closeable capability (`true`) for auxiliary tabs (`Tab::OutputViewer` and `Tab::SyntaxEditor`).
+   * Exposed pure helper function `is_tab_closeable` for headless invariant validation.
+2. **Guaranteed Restoration & Activation (`ensure_dock_tab_open` & `StatCraftApp::ensure_tab_open`):**
+   * Implemented a universal reopening mechanism: if the target tab already exists anywhere in the dock tree, it is immediately focused and activated (`set_active_tab`).
+   * If an auxiliary tab was closed by the user, calling the method cleanly restores it: `OutputViewer` splits right with a 0.35 ratio from the root workspace, while `SyntaxEditor` is added to the first leaf stack (`push_to_first_leaf`).
+   * Repeated invocations never duplicate tabs.
+3. **Global Tab Navigation Shortcuts:**
+   * Bound industrial-standard shortcuts in the main `update` loop (free from Windows / Sysinternals ZoomIt global hook conflicts): `Alt+1` $\to$ Data View, `Alt+2` $\to$ Variable View, `Alt+3` $\to$ Output Viewer, `Alt+4` $\to$ Syntax Editor.
+4. **End-to-End Subsystem Integration:**
+   * "Window" menu (`analyze_etc.rs`): tab switching options now invoke `ensure_tab_open`, reopening closed tabs with a single click.
+   * New and Open Syntax workflows (`file_edit_view.rs`, `app_session.rs`): guaranteed visibility of the syntax editor tab.
+   * Syntax execution (`RunAll`, `RunSelection`): automatically ensures `OutputViewer` is open before executing batches, guaranteeing immediate visibility of generated output.
+   * MCP Bridge (`bridge_service.rs`): `ui.set_active_tab` restores closed tabs via `ensure_dock_tab_open`.
+5. **Testing & Quality Gate (DoD):**
+   * Implemented integration test suite `crates/statcraft_app/tests/tab_lifecycle_invariants.rs` (5 tests covering non-closeable core tabs, closeable auxiliary tabs, round-trip close and restore, and deduplication);
+   * 100% successful pass across all Quality Gate checks via `cargo run -p xtask -j 1 -- ci` (fmt, clippy, file-guard [404 files], design-guard, workspace tests, undo matrix).
+

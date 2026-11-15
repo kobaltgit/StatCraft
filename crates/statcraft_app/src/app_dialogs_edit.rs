@@ -94,9 +94,7 @@ impl StatCraftApp {
             GoToAction::GoToCase(row) => {
                 self.data_view_state.selected_cell = Some((row, 0));
                 self.data_view_state.scroll_to_row = Some(row);
-                if let Some(pos) = self.dock_state.find_tab(&Tab::DataView) {
-                    self.dock_state.set_active_tab(pos);
-                }
+                self.ensure_tab_open(Tab::DataView);
                 self.status_message = StatusMessage::Ready;
             }
             GoToAction::GoToVariable(col) => {
@@ -104,9 +102,7 @@ impl StatCraftApp {
                 self.data_view_state.scroll_to_col = Some(col);
                 self.variable_view_state.selected_var = Some(col);
                 self.variable_view_state.scroll_to_var = Some(col);
-                if let Some(pos) = self.dock_state.find_tab(&Tab::DataView) {
-                    self.dock_state.set_active_tab(pos);
-                }
+                self.ensure_tab_open(Tab::DataView);
                 self.status_message = StatusMessage::Ready;
             }
             GoToAction::Close | GoToAction::None => {}

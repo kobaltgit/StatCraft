@@ -47,6 +47,41 @@ pub use crate::status_message::StatusMessage;
 
 pub const STORAGE_KEY_THEME: &str = "statcraft_theme";
 
+pub fn is_tab_closeable(tab: Tab) -> bool {
+    match tab {
+        Tab::DataView | Tab::VariableView => false,
+        Tab::OutputViewer | Tab::SyntaxEditor => true,
+    }
+}
+
+pub fn ensure_dock_tab_open(dock_state: &mut DockState<Tab>, tab: Tab) {
+    if let Some(pos) = dock_state.find_tab(&tab) {
+        dock_state.set_active_tab(pos);
+        return;
+    }
+
+    match tab {
+        Tab::OutputViewer => {
+            if dock_state.main_surface().is_empty() {
+                dock_state.push_to_first_leaf(Tab::OutputViewer);
+            } else {
+                dock_state.main_surface_mut().split_right(
+                    egui_dock::NodeIndex::root(),
+                    0.35,
+                    vec![Tab::OutputViewer],
+                );
+            }
+        }
+        Tab::DataView | Tab::VariableView | Tab::SyntaxEditor => {
+            dock_state.push_to_first_leaf(tab);
+        }
+    }
+
+    if let Some(pos) = dock_state.find_tab(&tab) {
+        dock_state.set_active_tab(pos);
+    }
+}
+
 pub struct StatCraftApp {
     pub dataset: Option<DataSet>,
     pub command_bus: CommandBus,
@@ -270,6 +305,10 @@ impl StatCraftApp {
             self.request_session_action(PendingSessionAction::OpenPath(path));
         }
     }
+
+    pub fn ensure_tab_open(&mut self, tab: Tab) {
+        ensure_dock_tab_open(&mut self.dock_state, tab);
+    }
 }
 
 struct StatCraftTabViewer<'a> {
@@ -315,6 +354,18 @@ impl<'a> TabViewer for StatCraftTabViewer<'a> {
                 }
             }
         }
+    }
+
+    fn scroll_bars(&self, tab: &Self::Tab) -> [bool; 2] {
+        match tab {
+            Tab::DataView | Tab::VariableView | Tab::OutputViewer | Tab::SyntaxEditor => {
+                [false, false]
+            }
+        }
+    }
+
+    fn closeable(&mut self, tab: &mut Self::Tab) -> bool {
+        is_tab_closeable(*tab)
     }
 }
 
@@ -460,6 +511,39 @@ impl eframe::App for StatCraftApp {
             ))
         }) {
             self.paste_selected_cell(ctx);
+        }
+
+        if ctx.input_mut(|i| {
+            i.consume_shortcut(&egui::KeyboardShortcut::new(
+                egui::Modifiers::ALT,
+                egui::Key::Num1,
+            ))
+        }) {
+            self.ensure_tab_open(Tab::DataView);
+        }
+        if ctx.input_mut(|i| {
+            i.consume_shortcut(&egui::KeyboardShortcut::new(
+                egui::Modifiers::ALT,
+                egui::Key::Num2,
+            ))
+        }) {
+            self.ensure_tab_open(Tab::VariableView);
+        }
+        if ctx.input_mut(|i| {
+            i.consume_shortcut(&egui::KeyboardShortcut::new(
+                egui::Modifiers::ALT,
+                egui::Key::Num3,
+            ))
+        }) {
+            self.ensure_tab_open(Tab::OutputViewer);
+        }
+        if ctx.input_mut(|i| {
+            i.consume_shortcut(&egui::KeyboardShortcut::new(
+                egui::Modifiers::ALT,
+                egui::Key::Num4,
+            ))
+        }) {
+            self.ensure_tab_open(Tab::SyntaxEditor);
         }
 
         // 1. Top Custom Title Bar (CSD)
@@ -759,6 +843,7 @@ impl eframe::App for StatCraftApp {
         match std::mem::replace(&mut self.pending_syntax_action, SyntaxEditorAction::None) {
             SyntaxEditorAction::RunAll => {
                 let script = self.syntax_editor_state.text.clone();
+                self.ensure_tab_open(Tab::OutputViewer);
                 match crate::syntax_runner::run_syntax_batch(
                     &script,
                     &mut self.dataset,
@@ -776,6 +861,7 @@ impl eframe::App for StatCraftApp {
                 }
             }
             SyntaxEditorAction::RunSelection(script) => {
+                self.ensure_tab_open(Tab::OutputViewer);
                 match crate::syntax_runner::run_syntax_batch(
                     &script,
                     &mut self.dataset,

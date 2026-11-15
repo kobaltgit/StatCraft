@@ -787,5 +787,29 @@
 - [x] Тестирование и Quality Gate:
   - [x] 100% успешный прогон всех 9 ступеней Quality Gate `cargo run -p xtask -j 1 -- ci` (fmt, clippy [0 warnings], layers, file-guard [402 файла], design-guard, workspace tests, parity, corpus, test-undo).
 
+## 45. Управление жизненным циклом вкладок и защита основных экранов (Feature 005)
+- [x] Защита ключевых экранов данных от случайного закрытия:
+  - [x] Реализация трейта `TabViewer::closeable`: для `DataView` и `VariableView` возвращается `false` (скрыта кнопка `[x]`); для `OutputViewer` и `SyntaxEditor` возвращается `true`.
+  - [x] Изолированная функция `is_tab_closeable` для валидации логики закрытия.
+- [x] Гарантированное восстановление и активация вкладок (`ensure_dock_tab_open` и `StatCraftApp::ensure_tab_open`):
+  - [x] Активация существующей вкладки при её наличии в дереве `DockState`.
+  - [x] Динамическое переоткрытие закрытой вкладки `OutputViewer` (боковой сплит справа `split_right` с коэффициентом 0.35 или `push_to_first_leaf`).
+  - [x] Динамическое переоткрытие закрытой вкладки `SyntaxEditor` (`push_to_first_leaf`).
+  - [x] Исключение дублирования вкладок при повторных вызовах.
+- [x] Глобальные горячие клавиши (бесконфликтный отраслевой стандарт `Alt+1..4` без коллизий с Windows / ZoomIt):
+  - [x] `Alt+1` $\to$ Data View (`Tab::DataView`)
+  - [x] `Alt+2` $\to$ Variable View (`Tab::VariableView`)
+  - [x] `Alt+3` $\to$ Output Viewer (`Tab::OutputViewer`)
+  - [x] `Alt+4` $\to$ Syntax Editor (`Tab::SyntaxEditor`)
+- [x] Сквозная интеграция:
+  - [x] Меню «Окно» (`analyze_etc.rs`): вызовы `ensure_tab_open` для всех 4 вкладок с отображением подсказок `Alt+1..4`.
+  - [x] Создание и открытие синтаксиса (`file_edit_view.rs`, `app_session.rs`): гарантированное отображение редактора.
+  - [x] Запуск пакетного синтаксиса и фрагментов (`RunAll`, `RunSelection`): автоматическое переоткрытие `OutputViewer`.
+  - [x] MCP Bridge (`bridge_service.rs`): метод `ui.set_active_tab` восстанавливает закрытые вкладки через `ensure_dock_tab_open`.
+- [x] Интеграционные тесты и Quality Gate:
+  - [x] Интеграционный тест `crates/statcraft_app/tests/tab_lifecycle_invariants.rs` (5 тестов: неснимаемость базовых экранов, закрываемость вспомогательных, roundtrip закрытия/восстановления, отсутствие дубликатов).
+  - [x] 100% успешный прогон всех ступеней `cargo run -p xtask -j 1 -- ci` (fmt, clippy, file-guard [404 файла], design-guard, тесты воркспейса, undo matrix).
+
+
 
 
