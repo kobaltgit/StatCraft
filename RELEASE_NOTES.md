@@ -1,4 +1,4 @@
-# StatCraft v0.3.1
+# StatCraft v0.4.0
 
 [English](#english) | [Русский](#русский)
 
@@ -7,73 +7,69 @@
 <a name="english"></a>
 ## English
 
-StatCraft v0.3.1 is a major statistical release that significantly expands the analytical capabilities of the platform to match professional econometrics and biostatistics suites. This release delivers **Package 1 (Advanced Regression & Partial Correlations)**, **Package 2 (General Linear Model: UNIANOVA, MANOVA, and Repeated Measures)**, and **Package 3 (Cluster Analysis, Reports, and Survival Analysis)**, alongside desktop polishing with silent Windows subsystem launch.
+StatCraft v0.4.0 is a major milestone release representing the culmination of the **Table Modernization Initiative** alongside enhanced workspace reliability. This release transforms the Data View into a high-performance, virtualized, Excel/SPSS-grade spreadsheet grid capable of handling massive datasets with fluid 60 FPS interactions, deep keyboard ergonomics, multi-column filtering, canonical sorting via the engine command bus, rectangular clipboard exchange, and automated data integrity inspection.
 
-### 🔬 Advanced Regression & Partial Correlations (Feature 001)
-* **Partial Correlations (`PARTIAL CORR` / `stat.correlations.partial`):**
-  * Symmetrized Schur complement of the covariance matrix ($S = R_{XX} - R_{XZ} R_{ZZ}^{-1} R_{ZX}$);
-  * Exact two-tailed and one-tailed $p$-values via Student's $t$-distribution ($df = N - k - 2$);
-  * Zero-order correlation matrices with Listwise and Pairwise missing value exclusion;
-  * Validated against Python `scipy.stats` ($10^{-12}$ precision).
-* **Binary Logistic Regression (`LOGISTIC REGRESSION` / `stat.regression.logistic`):**
-  * Iteratively Reweighted Least Squares (IRLS / Newton-Raphson) with adaptive Fisher information damping ($\lambda = 10^{-11} \dots 10^{-5}$);
-  * Asymptotic standard errors, Wald $\chi^2$ statistics, and 95% confidence intervals for odds ratios $\text{Exp}(B)$;
-  * Goodness-of-fit: Cox & Snell and Nagelkerke pseudo-$R^2$, Hosmer-Lemeshow decile test, and $2 \times 2$ classification table;
-  * Validated against Python `statsmodels.Logit`.
-* **Curve Estimation (`CURVEFIT` / `stat.regression.curve`):**
-  * Simultaneous estimation of 6 canonical SPSS models: Linear, Logarithmic, Inverse, Quadratic, Power, and Exponential via analytical linearization;
-  * Model summary ($R^2, F, df_1, df_2, p$) and parameter estimates table ($b_0, b_1, b_2$).
+### 📊 Virtualized 4-Quadrant 2D Grid (Feature 006)
+* **Spatial 4-Quadrant Architecture:**
+  * Pinned top-left corner header (`quad_top_left`);
+  * Horizontal-scrolling pinned column variable headers (`quad_top_right`);
+  * Vertical-scrolling pinned row/case number headers (`quad_bottom_left`);
+  * 2D-scrolling central data cell canvas (`quad_center`).
+  * Row number headers remain firmly anchored to the left edge during horizontal scrolling.
+* **Prefix-Sum Spatial Indexing (`LineIndex`):**
+  * $O(\log N)$ binary search from screen pixels to logical rows and columns with zero heap allocations in `Uniform` mode for hundreds of thousands of cases.
+* **Interactive Column Resizing & Auto-Fit:**
+  * Visual drag-resizing with dynamic cursor switching (`ResizeHorizontal`) and accent guidelines;
+  * Double-click on header separator triggers instant column Auto-fit based on header and cell content;
+  * Two-way column width synchronization with SPSS dictionary metadata (`VariableMetadata.columns`).
 
-### 📐 General Linear Model (Feature 002)
-* **Univariate ANOVA/ANCOVA (`UNIANOVA` / `stat.glm.univariate`):**
-  * Orthogonal design matrix with deviation contrasts (sum-to-zero) and continuous covariates;
-  * Type III Sum of Squares (Type III SS) via marginal model reduction and Jacobi SVD pseudo-inversion;
-  * Tests of Between-Subjects Effects with $MS, F, p$, and Partial $\eta^2$;
-  * Validated against Python `statsmodels.api.stats.anova_lm(typ=3)`.
-* **Multivariate ANOVA (`GLM Multivariate` / `stat.glm.multivariate` — MANOVA):**
-  * Multivariate extension for $p \ge 2$ dependent variables with Hypothesis ($H$) and Error ($E$) cross-product matrices;
-  * Generalized eigenvalue decomposition of $E^{-1/2} H E^{-1/2}$;
-  * 4 canonical test criteria: Wilks' $\Lambda$ (with Rao's $F$-approximation), Pillai's Trace, Hotelling-Lawley Trace, and Roy's Largest Root.
-* **Repeated Measures ANOVA (`GLM Repeated Measures` / `stat.glm.repeated`):**
-  * Within-subjects factor analysis using orthonormal Helmert contrast matrices ($k \times (k-1)$);
-  * Mauchly's Test of Sphericity ($W, \text{approx. } \chi^2, df, p$);
-  * Epsilon corrections: Greenhouse-Geisser ($\hat{\varepsilon}$), Huynh-Feldt ($\tilde{\varepsilon}$), and lower-bound ($1/(k-1)$) with adjusted degrees of freedom and $p$-values.
+### 🖱️ Range Selection, Keyboard Navigation & Direct Typing (Feature 007)
+* **Multi-Cell Range Selection:**
+  * Fluid marquee box selection via mouse dragging or Shift+click / Shift+drag;
+  * Vector selection rendering with 1.5 px accent perimeter border, non-blocking transparent cell background highlighting, and active cursor cell differentiation.
+* **Full Keyboard Ergonomics:**
+  * Navigation via Arrow keys, `Tab` / `Shift+Tab`, `Enter` / `Shift+Enter`, `Home` / `End`, `Ctrl+Home` / `Ctrl+End`;
+  * Dynamic range expansion via `Shift` + Arrow keys;
+  * **Direct Typing:** Immediately typing alphanumeric characters activates the inline cell editor without requiring pre-clicking or pressing Enter;
+  * Cell contents clearance via `Delete` or `Backspace`.
+* **Focused Inline Cell Editor:**
+  * In-place single-line `TextEdit` with visual focus ring and automatic commit on Enter/Tab or cancellation on Escape.
 
-### 🧩 Cluster Analysis, Reports & Survival (Feature 003)
-* **K-Means Cluster Analysis (`QUICK CLUSTER` / `stat.cluster.kmeans`):**
-  * Deterministic initial center selection via Maximin (furthest-point heuristic);
-  * Iterative reassignment cycle minimizing Euclidean distances;
-  * Final cluster centers, cluster distances, and one-way ANOVA decomposition with $F$-tests and Fisher $p$-values;
-  * **Dynamic Variable Generation with 100% Reversible Undo/Redo:** Dynamically appends `QCL_1` (Cluster Membership) and `QCL_2` (Distance from Center) to the active dataset with full transaction rollback.
-* **Variable Codebook (`CODEBOOK` / `stat.reports.codebook`):**
-  * Full dataset dictionary extraction: variable names, labels, formats, measurement levels;
-  * Discrete frequency distributions with Counts, Percents, and Valid Percents;
-  * Scale statistics: Mean, StdDev, Median, and Quartiles via SPSS HAVERAGE interpolation.
-* **Case Summaries (`SUMMARIZE` / `stat.reports.summarize`):**
-  * Row-by-row data listing with optional case limit truncation;
-  * Hierarchical factor grouping with intermediate subtotals and grand totals ($N$, Mean, Sum, StdDev).
-* **Kaplan-Meier Survival Analysis (`KM` / `stat.survival.km`):**
-  * Product-limit survival function $\hat{S}(t) = \prod (1 - d_i/n_i)$;
-  * Greenwood's standard error formula $\widehat{\text{Var}}(\hat{S}(t)) = \hat{S}(t)^2 \sum \frac{d_i}{n_i(n_i - d_i)}$;
-  * Mean and median survival time with 95% confidence intervals;
-  * Mantel-Cox Log-Rank $\chi^2$ test ($df = G - 1, p$) for strata comparison;
-  * Validated against Python `lifelines.KaplanMeierFitter` ($\le 10^{-6}$ precision).
-* **Actuarial Life Tables (`SURVIVAL` / `stat.survival.lifetables`):**
-  * Actuarial interval boundaries $[t_k, t_{k+1})$;
-  * Effective sample size under risk ($n'_k = n_k - w_k/2$), conditional mortality ($q_k$) and survival ($p_k$), cumulative survival ($P_k$), event probability density ($f_k$), and hazard rate ($h_k$).
+### 📋 Rectangular TSV/CSV Clipboard & Auto-Fill Series (Feature 007)
+* **Native Rectangular Clipboard Transfer:**
+  * Bidirectional TSV/CSV clipboard serialization (`Ctrl+C`) and streaming parser (`Ctrl+V`);
+  * Multi-cell pasting with automatic row expansion when pasting external matrices.
+* **Series Auto-Fill (Fill Handle):**
+  * $6 \times 6$ px square Fill Handle marker pinned to the bottom-right corner of selection;
+  * Dragging the handle computes linear regression slopes for numeric sequences (`[1, 2, 3] -> [4, 5, 6]`) and cyclic repetition for categorical text.
 
-### 🖥️ Windows Desktop Polish: Silent GUI Subsystem Launch
-* Added `#![windows_subsystem = "windows"]` to the desktop binary entry point;
-* The Windows executable compiles with PE Subsystem 2 (`IMAGE_SUBSYSTEM_WINDOWS_GUI`), completely eliminating the black console/terminal window when launching StatCraft from desktop shortcuts or File Explorer.
+### 🔍 Column AutoFilter, Dropdowns & Rapid Sorting (Feature 008)
+* **Interactive Header AutoFilter:**
+  * Vector filter button in each column header (discrete downward chevron in idle state, filled accent funnel icon when filtered);
+  * Floating filter popup with live search, "Select All" / "Clear All" bulk toggles, checkbox checklist of unique values, and explicit "(Blanks)" handling;
+  * Dynamic evaluation of case eligibility via `DataSet::is_row_matched_by_filter`.
+* **Quick Sorting via CommandBus:**
+  * Instant Sort Ascending (A–Z) and Sort Descending (Z–A) from column filter and cell context menus;
+  * Executes as canonical engine command `data.sort_cases` with 100% reversible Undo/Redo (`Ctrl+Z` / `Ctrl+Y`) and full SPSS syntax logging (`SORT CASES BY <var> (A/D).`).
 
-### 🤖 Model Context Protocol (MCP) & Syntax Integration
-* All new statistical procedures are fully integrated into the StatCraft MCP Bridge:
-  * Syntax execution (`statcraft_run_syntax`) parses `QUICK CLUSTER`, `CODEBOOK`, `SUMMARIZE`, `KM`, `SURVIVAL`, `UNIANOVA`, `GLM`, `PARTIAL CORR`, `LOGISTIC REGRESSION`, `CURVEFIT`;
-  * Direct command invocation (`statcraft_execute_command`) supports all registered engine command IDs;
-  * Live introspection (`statcraft_list_commands` and `statcraft://commands`) dynamically exposes schemas and parameter specs to AI assistants.
+### 🎯 Cell Context Menu, SPSS FILTER BY Visuals & Data Integrity (Feature 008)
+* **Cell Right-Click Context Menu:**
+  * "Filter by selected cell value", "Clear column filter", "Sort Ascending / Descending", and quick clipboard operations ("Copy", "Paste").
+* **SPSS FILTER BY Visualization Parity:**
+  * Filtered / inactive cases are not deleted: row numbers display a diagonal vector strikethrough, and cell values render in muted gray (`Tokens::text_muted()`), automatically excluding them from analytical procedures.
+* **Data Integrity Guards ("Numbers Stored as Text"):**
+  * Automated detector `is_number_stored_as_text` identifies numbers stored inside text fields;
+  * Excel-parity green corner triangle indicator in cell's top-left corner;
+  * Single click on badge converts value to `RawValue::Number`, preventing calculation errors.
+
+### 🗂️ Workspace Tab Lifecycle Management (Feature 005)
+* Core workspace tabs (**Data View**, **Variable View**, **Output Viewer**) are marked non-closeable (`is_closeable = false`), protecting users from accidental tab loss;
+* Auxiliary tabs (Syntax Editor) close cleanly with standard tab close buttons;
+* "Window" menu provides quick restoration and single-click switching;
+* Running SPSS syntax automatically ensures Output Viewer visibility before executing batches.
 
 ### 📦 Multi-Platform Release Artifacts
-* **Windows (x64):** Inno Setup Installer (`.exe`) + Portable ZIP archive (both launch cleanly without console window).
+* **Windows (x64):** Inno Setup Installer (`.exe`) + Portable ZIP archive (silent GUI subsystem launch without terminal window).
 * **Linux (x64):** Debian package (`.deb`) + Portable TAR.GZ archive.
 * **macOS (Apple Silicon ARM64 & Intel x64):** Apple DMG Disk Image + Application Bundle (`.app`) TAR.GZ.
 
@@ -82,72 +78,68 @@ StatCraft v0.3.1 is a major statistical release that significantly expands the a
 <a name="русский"></a>
 ## Русский
 
-Релиз StatCraft v0.3.1 — это масштабное расширение математических и аналитических возможностей платформы, выводящее StatCraft на уровень профессиональных пакетов эконометрики и биостатистики. В релиз вошли **Пакет 1 (Продвинутая регрессия и частные корреляции)**, **Пакет 2 (Общая линейная модель: UNIANOVA, MANOVA и повторные измерения)**, **Пакет 3 (Кластерный анализ, отчёты и анализ выживаемости)**, а также устранение терминального окна при запуске приложения в Windows.
+Релиз StatCraft v0.4.0 — это масштабное обновление, знаменующее завершение комплексной инициативы **модернизации таблиц данных (Table Modernization Initiative)** и существенное повышение надежности рабочей среды. Данный релиз превращает Data View в высокопроизводительный, виртуализированный табличный процессор уровня Excel и IBM SPSS, способный отображать и плавно прокручивать (60 FPS) массивы из сотен тысяч наблюдений, с поддержкой сквозной клавиатурной навигации, автофильтрации колонок, канонической сортировки через шину команд, прямоугольного буфера обмена и автоматического контроля типов данных.
 
-### 🔬 Продвинутая регрессия и частные корреляции (Feature 001)
-* **Частные корреляции (`PARTIAL CORR` / `stat.correlations.partial`):**
-  * Симметризованное дополнение Шура для субковариационной матрицы ($S = R_{XX} - R_{XZ} R_{ZZ}^{-1} R_{ZX}$);
-  * Точные двусторонние и односторонние $p$-значения через распределение Стьюдента ($df = N - k - 2$);
-  * Матрицы нулевого порядка с режимами исключения пропусков Listwise и Pairwise;
-  * Верифицировано против Python `scipy.stats` с точностью $10^{-12}$.
-* **Бинарная логистическая регрессия (`LOGISTIC REGRESSION` / `stat.regression.logistic`):**
-  * Оптимизатор IRLS (Newton-Raphson) с адаптивным диагональным демпфированием матрицы Фишера ($\lambda = 10^{-11} \dots 10^{-5}$);
-  * Асимптотические стандартные ошибки, статистика Вальда, 95% доверительные интервалы для отношений шансов $\text{Exp}(B)$;
-  * Меры согласия: псевдо-$R^2$ Кокса-Снелла и Нагелькерке, критерий Хосмера-Лемешова по децилям риска и матрица классификации $2 \times 2$;
-  * Верифицировано против Python `statsmodels.Logit`.
-* **Оценка канонических кривых (`CURVEFIT` / `stat.regression.curve`):**
-  * Одновременная оценка 6 канонических моделей: линейной, логарифмической, обратной, квадратичной, степенной и экспоненциальной;
-  * Сводка модели ($R^2, F, df_1, df_2, p$) и таблица оценок параметров ($b_0, b_1, b_2$).
+### 📊 Виртуализированная 4-квадрантная 2D-сетка (Feature 006)
+* **Пространственная 4-квадрантная архитектура:**
+  * Фиксированный верхний левый заголовок (`quad_top_left`);
+  * Колоночные заголовки переменных, закрепленные сверху и скроллящиеся по горизонтали (`quad_top_right`);
+  * Номера строк/наблюдений, закрепленные слева и скроллящиеся по вертикали (`quad_bottom_left`);
+  * Центральная область ячеек данных со скроллингом в 2D (`quad_center`).
+  * Номера строк больше не уплывают за левый край экрана при горизонтальной прокрутке.
+* **Пространственная индексация префиксными суммами (`LineIndex`):**
+  * $O(\log N)$ бинарный поиск от экранных координат к строкам и столбцам без единой аллокации памяти в режиме `Uniform` для сотен тысяч строк.
+* **Интерактивный ресайз столбцов и автоподбор ширины:**
+  * Изменение ширины перетаскиванием границы с динамической сменяемостью курсора (`ResizeHorizontal`) и направляющей линией;
+  * Двойной клик по разделителю заголовков автоматически подбирает оптимальную ширину (Auto-fit) по содержимому;
+  * Двусторонняя синхронизация ширины столбцов со словарем метаданных SPSS (`VariableMetadata.columns`).
 
-### 📐 Общая линейная модель (Feature 002)
-* **Одномерный дисперсионный/ковариационный анализ (`UNIANOVA` / `stat.glm.univariate`):**
-  * Ортогонализованная матрица плана с кодированием факторов контрастами отклонений (deviation contrasts, sum-to-zero) и ковариатами;
-  * Суммы квадратов типа III (Type III SS) через маргинальную редукцию моделей и псевдообращение Jacobi SVD;
-  * Таблица Between-Subjects Effects с $MS, F, p$ и частной эта-квадрат ($\text{Partial } \eta^2$);
-  * Верифицировано против Python `statsmodels.api.stats.anova_lm(typ=3)`.
-* **Многомерный дисперсионный анализ (`GLM Multivariate` / `stat.glm.multivariate` — MANOVA):**
-  * Многомерное обобщение для $p \ge 2$ зависимых переменных с матрицами сумм квадратов и векторных произведений гипотез ($H$) и ошибки ($E$);
-  * Обобщенное спектральное разложение $E^{-1/2} H E^{-1/2}$;
-  * 4 канонических критерия: Wilks' $\Lambda$ (с $F$-аппроксимацией Рао), Pillai's Trace, Hotelling-Lawley Trace и Roy's Largest Root.
-* **Анализ повторных измерений (`GLM Repeated Measures` / `stat.glm.repeated`):**
-  * Внутригрупповой фактор с ортонормированной матрицей контрастов Хельмерта ($k \times (k-1)$);
-  * Критерий сферичности Мокли ($W, \text{прибл. } \chi^2, df, p$);
-  * Эпсилон-поправки Гринхауса-Гейссера ($\hat{\varepsilon}$), Хюйнха-Фельдта ($\tilde{\varepsilon}$) и нижней границы ($1/(k-1)$) с пересчетом степеней свободы и $p$-значений.
+### 🖱️ Прямоугольное выделение, клавиатурная навигация и Direct Typing (Feature 007)
+* **Прямоугольное выделение диапазона ячеек:**
+  * Плавное выделение рамкой мышью, а также с зажатой клавишей `Shift` (Shift-click, Shift-drag);
+  * Векторная отрисовка: акцентная рамка 1.5 px по периметру, фоновая подсветка ячеек без перекрытия текста и визуальное выделение активной ячейки-курсора.
+* **Сквозная клавиатурная эргономика:**
+  * Навигация стрелками, клавишами `Tab` / `Shift+Tab`, `Enter` / `Shift+Enter`, `Home` / `End`, `Ctrl+Home` / `Ctrl+End`;
+  * Расширение выделения с удержанием `Shift`;
+  * **Direct Typing:** Мгновенный ввод данных в активную ячейку по нажатию буквенно-цифровых клавиш без предварительного двойного клика мышью или нажатия Enter;
+  * Быстрая очистка ячеек по `Delete` или `Backspace`.
+* **Фокусируемый инлайн-редактор ячеек:**
+  * Текстовое поле ввода `TextEdit` с акцентной рамкой фокуса, автосохранением по Enter/Tab и отменой по Escape.
 
-### 🧩 Кластерный анализ, отчёты и анализ выживаемости (Feature 003)
-* **Кластерный анализ методом K-средних (`QUICK CLUSTER` / `stat.cluster.kmeans`):**
-  * Детерминированная инициализация центров методом максимального разброса (Maximin / furthest point heuristic);
-  * Итеративный цикл пересчета центров и переназначения по евклидову расстоянию;
-  * Финальные центры, расстояния между кластерами и однофакторная ANOVA для каждого признака с $F$-критериями и $p$-значениями Фишера;
-  * **Динамическая генерация переменных и 100% обратимость Undo/Redo:** Динамически создает колонки `QCL_1` (номер кластера) и `QCL_2` (расстояние до центра) в активном датасете с полным откатом транзакции при отмене.
-* **Кодовая книга словаря датасета (`CODEBOOK` / `stat.reports.codebook`):**
-  * Полное извлечение паспорта словаря: имена, метки, форматы, шкалы измерений;
-  * Частотные таблицы со стандартными и валидными процентами для категориальных шкал;
-  * Дескрипторы для количественных шкал: Mean, StdDev, Median и квартили по стандарту SPSS HAVERAGE.
-* **Итоги по наблюдениям (`SUMMARIZE` / `stat.reports.summarize`):**
-  * Построчный листинг данных с опциональным отсечением лимита первых $N$ строк;
-  * Иерархическая группировка по факторам с расчетом подитогов и общего итога ($N$, Mean, Sum, StdDev).
-* **Анализ выживаемости Каплана-Мейера (`KM` / `stat.survival.km`):**
-  * Множительная оценка функции дожития $\hat{S}(t) = \prod (1 - d_i/n_i)$;
-  * Стандартная ошибка по формуле Гринвуда $\widehat{\text{Var}}(\hat{S}(t)) = \hat{S}(t)^2 \sum \frac{d_i}{n_i(n_i - d_i)}$;
-  * Среднее и медианное время дожития с 95% доверительными интервалами;
-  * Лог-ранговый тест Мантеля-Кокса ($\chi^2, df = G - 1, p$) для сравнения страт;
-  * Верифицировано против Python `lifelines.KaplanMeierFitter` ($\le 10^{-6}$).
-* **Актуарные таблицы смертности / дожития (`SURVIVAL` / `stat.survival.lifetables`):**
-  * Актуарный расчет по заданным временным интервалам $[t_k, t_{k+1})$;
-  * Эффективный объем под риском ($n'_k = n_k - w_k/2$), условная смертность ($q_k$) и выживаемость ($p_k$), кумулятивная вероятность дожития ($P_k$), плотность вероятности события ($f_k$) и коэффициент риска ($h_k$).
+### 📋 Прямоугольный буфер обмена TSV/CSV и автозаполнение (Feature 007)
+* **Прямоугольный буфер обмена с поддержкой внешних программ:**
+  * Двусторонняя сериализация диапазонов в TSV/CSV (`Ctrl+C`) и потоковый парсер вставки (`Ctrl+V`);
+  * Вставка многострочных матриц с авторасширением строк датасета.
+* **Серийное автозаполнение (Fill Handle):**
+  * Векторный маркер протяжки $6 \times 6$ px в правом нижнем углу выделения;
+  * Протяжка вычисляет шаг линейной арифметической прогрессии для чисел (`[1, 2, 3] -> [4, 5, 6]`) и циклическое повторение для текстовых данных.
 
-### 🖥️ Windows: Чистый запуск графического окна без консоли
-* Входная точка приложения снабжена атрибутом `#![windows_subsystem = "windows"]`;
-* Исполняемый файл для Windows компилируется с флагом PE Subsystem 2 (`IMAGE_SUBSYSTEM_WINDOWS_GUI`), исключая появление чёрного консольного окна при запуске StatCraft из проводника или с ярлыка.
+### 🔍 Колоночный автофильтр, выпадающее меню и быстрая сортировка (Feature 008)
+* **Колоночный автофильтр в заголовках:**
+  * Векторная кнопка в шапке столбца (шеврон в покое, залитая иконка воронки при активном фильтре);
+  * Плавающее окно автофильтра с живым поиском, переключателями «Выбрать все» / «Очистить», списком уникальных значений с чекбоксами и категорией «(Пустые)»;
+  * Оценка соответствия строк через `DataSet::is_row_matched_by_filter`.
+* **Быстрая сортировка через CommandBus:**
+  * Сортировка по возрастанию (A–Z) и убыванию (Z–A) из меню автофильтра и из контекстного меню;
+  * Выполняется как каноническая команда движка `data.sort_cases` со 100% обратимым Undo/Redo (`Ctrl+Z` / `Ctrl+Y`) и фиксацией в синтаксисе SPSS (`SORT CASES BY ...`).
 
-### 🤖 Интеграция с Model Context Protocol (MCP) и синтаксисом
-* Все новые аналитические процедуры бесшовно доступны ИИ-агентам:
-  * Выполнение синтаксиса (`statcraft_run_syntax`) поддерживает синтаксические команды `QUICK CLUSTER`, `CODEBOOK`, `SUMMARIZE`, `KM`, `SURVIVAL`, `UNIANOVA`, `GLM`, `PARTIAL CORR`, `LOGISTIC REGRESSION`, `CURVEFIT`;
-  * Прямой вызов (`statcraft_execute_command`) принимает структурированный JSON параметров для любого зарегистрированного ID;
-  * Интроспекция (`statcraft_list_commands` и `statcraft://commands`) динамически транслирует схемы и параметры в контекст ИИ-ассистентов.
+### 🎯 Контекстное меню ячеек, визуализация фильтрации и аудит целостности (Feature 008)
+* **Контекстное меню ячеек (правый клик):**
+  * «Фильтровать по значению ячейки», «Очистить фильтр столбца», «Сортировка по возрастанию / убыванию», «Копировать» / «Вставить».
+* **Визуализация фильтрации (Паритет SPSS FILTER BY):**
+  * Отфильтрованные строки не удаляются: номера строк перечеркиваются диагональной линией, текст в ячейках отображается приглушенным серым цветом, и строки автоматически исключаются из расчетов аналитических процедур.
+* **Аудит целостности данных («Числа, сохраненные как текст»):**
+  * Автоматический детектор `is_number_stored_as_text` выявляет числовые данные внутри строковых полей;
+  * Зеленый треугольный маркер в верхнем левом углу ячейки в стиле Excel;
+  * Одиночный клик по маркеру мгновенно конвертирует значение в `RawValue::Number`.
 
-### 📦 Мультиплатформенные установочные пакеты
-* **Windows (x64):** Установщик Inno Setup (`.exe`) + Портативный ZIP-архив (оба запускаются без открытия консоли).
-* **Linux (x64):** Пакет Debian (`.deb`) + Портативный TAR.GZ-архив.
+### 🗂️ Управление жизненным циклом вкладок (Feature 005)
+* Базовые представления (**Представление данных**, **Представление переменных**, **Просмотр вывода**) защищены от случайного закрытия (`is_closeable = false`);
+* Вспомогательные вкладки (Редактор синтаксиса) закрываются штатной кнопкой с крестиком;
+* Меню «Окно» обеспечивает мгновенное открытие и переключение между всеми вкладками;
+* Выполнение синтаксиса SPSS гарантирует автоматическое открытие вкладки Просмотра вывода.
+
+### 📦 Релизные сборки под все платформы
+* **Windows (x64):** Inno Setup Установщик (`.exe`) + Портативный ZIP-архив (тихий запуск без окна терминала).
+* **Linux (x64):** Пакет Debian (`.deb`) + Портативный архив TAR.GZ.
 * **macOS (Apple Silicon ARM64 & Intel x64):** Образ диска Apple DMG + Бандл приложения (`.app`) TAR.GZ.
