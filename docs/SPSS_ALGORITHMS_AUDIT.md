@@ -94,6 +94,7 @@ Beyond isolated unit testing, StatCraft enforces mathematical and architectural 
 | **Block 16** | Advanced Regression & Partial Correlations (`PARTIAL CORR`, `LOGISTIC REGRESSION`, `CURVEFIT`) | `partial_corr/`, `logistic/`, `curvefit/` | **100% Verified** | $\le 10^{-6}$ |
 | **Block 17** | General Linear Model (`UNIANOVA`, `GLM MULTIVARIATE`, `GLM REPEATED`) | `glm/` (`design_matrix.rs`, `type3_ss.rs`, `univariate.rs`, `multivariate.rs`, `repeated.rs`, `eigen.rs`) | **100% Verified** | $\le 10^{-6}$ |
 | **Block 18** | Clustering, Reports & Survival Analysis (`QUICK CLUSTER`, `CODEBOOK`, `SUMMARIZE`, `KM`, `SURVIVAL`) | `cluster_kmeans.rs`, `codebook_core.rs`, `summarize_core.rs`, `survival_km.rs`, `survival_lifetables.rs` | **100% Verified** | $\le 10^{-6}$ |
+| **Block 19** | Multinomial Logistic Regression (`NOMREG`) | `multinomial_logistic/` (`engine.rs`, `diagnostics.rs`, `mod.rs`, `types.rs`) | **100% Verified** | $\le 10^{-6}$ |
 
 ---
 
@@ -851,9 +852,37 @@ Beyond isolated unit testing, StatCraft enforces mathematical and architectural 
 
 ---
 
+### Block 19: Multinomial Logistic Regression (Feature 009 — NOMREG)
+
+#### 19.1. `NOMREG` (Multinomial Logistic Regression) (IBM Algorithms pp. 695–702)
+* **Implementation:** [`crates/statcraft_algo/src/multinomial_logistic/`](../crates/statcraft_algo/src/multinomial_logistic/)
+* **Command Bus L5:** [`crates/statcraft_syntax/src/commands/multinomial_logistic_cmd.rs`](../crates/statcraft_syntax/src/commands/multinomial_logistic_cmd.rs) (`stat.regression.multinomial`)
+* **Golden Oracle Tests:** `crates/statcraft_algo/src/multinomial_logistic/tests.rs` (verified against Python `statsmodels.discrete.discrete_model.MNLogit` $\le 10^{-6}$)
+* **Mathematical Formula Verification:**
+  * **Generalized Logit Formulation:**
+    For $J$ response categories, designating category $J$ as the reference baseline ($\beta_J = 0$):
+    $$\eta_{ij} = \beta_j^T x_i, \quad j = 1, \dots, J-1$$
+    $$\pi_{ij} = \frac{\exp(\eta_{ij})}{1 + \sum_{k=1}^{J-1} \exp(\eta_{ik})}, \quad \pi_{iJ} = \frac{1}{1 + \sum_{k=1}^{J-1} \exp(\eta_{ik})}$$
+  * **Maximum Likelihood & Newton-Raphson (Fisher Scoring):**
+    Log-likelihood: $\ln L(\beta) = \sum_{i=1}^N \sum_{j=1}^J y_{ij} \ln \pi_{ij}$.
+    Score vector: $g_j = X^T (y_j - \pi_j)$.
+    Hessian: $H_{jk} = -X^T W_{jk} X$ where $W_{jj} = \text{diag}(\pi_{ij}(1 - \pi_{ij}))$ and $W_{jk} = \text{diag}(-\pi_{ij}\pi_{ik})$.
+    Parameter covariance matrix $\text{Var}(\hat{\beta}) = -H^{-1}$ with adaptive Ridge regularization ($\lambda = 10^{-6}$) ensuring zero panics on ill-conditioned data (Never Crash).
+  * **Model Diagnostics & Inference:**
+    - Model Fitting Information: $\chi^2 = 2(\ln L - \ln L_0)$ with $df = (J-1) p$ and AIC/BIC criteria;
+    - Goodness-of-Fit: Pearson $\chi^2_P = \sum \frac{(y_{ij} - \pi_{ij})^2}{\pi_{ij}}$ and Deviance $D = 2 \sum y_{ij} \ln(y_{ij} / \pi_{ij})$ computed across unique covariate subpopulation patterns;
+    - Pseudo $R^2$: Cox & Snell, Nagelkerke, McFadden;
+    - Likelihood Ratio Tests (LRT): $-2(\ln L_{-k} - \ln L)$ with $df = J - 1$ per predictor;
+    - Parameter Estimates: $B$, $SE = \sqrt{\text{Var}(\hat{\beta})}$, Wald $\chi^2 = (B / SE)^2$, Odds Ratio $\text{Exp}(B) = \exp(B)$ with 95% Wald CI;
+    - Classification Matrix: $\hat{y}_i = \arg\max_j \pi_{ij}$ with category percentage and overall hit rate;
+    - Categorical Factors: discrete predictor support with automated dummy indicator contrast coding and reference category selection (defaulting to the last category).
+* **Verdict:** **100% Mathematical Equivalence to SPSS Canon & Statsmodels ($\le 10^{-6}$).**
+
+---
+
 ## 4. Final Audit Conclusion
 
-All 18 primary mathematical, transformation, data management, I/O, and reporting blocks of the StatCraft workspace (Blocks 1 through 18, Microplans **M-01 through M-20**, and **Plans 1 through 3**) have undergone rigorous, line-by-line Clean-Room auditing against the *IBM SPSS Statistics 24 Algorithms Guide* (1,271 pp.):
+All 19 primary mathematical, transformation, data management, I/O, and reporting blocks of the StatCraft workspace (Blocks 1 through 19, Microplans **M-01 through M-20**, and **Plans 1 through 3**, Feature 009) have undergone rigorous, line-by-line Clean-Room auditing against the *IBM SPSS Statistics 24 Algorithms Guide* (1,271 pp.):
 1. **Descriptives, Frequencies, Crosstabs, Means (Block 1):** 100% Verified ($\le 10^{-6}$).
 2. **T-Tests & One-Way ANOVA (Block 2):** 100% Verified ($\le 10^{-6}$).
 3. **Correlations, Regression, Factor Analysis, Reliability (Block 3):** 100% Verified ($\le 10^{-6}$).
@@ -872,6 +901,7 @@ All 18 primary mathematical, transformation, data management, I/O, and reporting
 16. **Advanced Regression & Partial Correlations (Block 16 / Plan 1):** 100% Verified (Schur complement for partial correlations, IRLS Newton-Raphson binary logistic regression with Hosmer-Lemeshow and classification matrix, 6 CURVEFIT estimation models; Golden Oracle vs SciPy and Statsmodels).
 17. **General Linear Model: GLM / UNIANOVA, MANOVA & Repeated Measures (Block 17 / Plan 2):** 100% Verified (orthogonal design matrix with deviation contrasts and OLS Jacobi SVD, Type III Sum of Squares, $F$-statistics, Partial $\eta^2$; $E^{-1/2} H E^{-1/2}$ spectral analysis for MANOVA with 4 criteria: Wilks' $\Lambda$, Pillai, Hotelling-Lawley, Roy with Rao $F$-approximation; Repeated Measures with Helmert contrast matrix, Mauchly's sphericity test, Greenhouse-Geisser, Huynh-Feldt and lower-bound corrections; Golden Oracle vs Statsmodels).
 18. **Clustering, Reports & Survival Analysis (Block 18 / Plan 3):** 100% Verified (`QUICK CLUSTER` K-Means with Maximin initialization, ANOVA between-cluster $F$-tests, dynamic `QCL_1`/`QCL_2` variable insertion with 100% reversible undo; `CODEBOOK` metadata extraction and HAVERAGE quartiles; `SUMMARIZE` case listing and group subtotals; `KM` Kaplan-Meier survival curve with Greenwood variance and Mantel-Cox log-rank test; `SURVIVAL` actuarial life tables with $n'_k, q_k, p_k, P_k, f_k, h_k$; Golden Oracle vs SciPy and Lifelines $\le 10^{-6}$).
+19. **Multinomial Logistic Regression (Block 19 / Feature 009):** 100% Verified (Generalized Logits with baseline category $J$, Newton-Raphson/Fisher Scoring on `faer` with Ridge Hessian damping $\lambda = 10^{-6}$ Never Crash guarantee, LRT tests per effect, Pearson & Deviance goodness-of-fit across subpopulation patterns, Cox & Snell, Nagelkerke, McFadden pseudo $R^2$, parameter estimates with $\text{Exp}(B)$ and 95% Wald CI, classification table, categorical factors with dummy coding; Golden Oracle vs Statsmodels $\le 10^{-6}$).
 
 Every verified formula, degrees of freedom calculation, tie-adjustment variance formula, asymptotic/exact $p$-value generator, AST expression evaluator, calendar interval engine, time-series difference operator, recoding dictionary synthesizer, data management subset filter, I/O codec, and cross-algorithm metadata/filtering invariant has been thoroughly audited with exact code line references, test evidence, and open issues recorded in the audit registry.
 
