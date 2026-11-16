@@ -1,4 +1,4 @@
-# StatCraft Feature Guide (v0.2.2)
+# StatCraft Feature Guide (v0.4.0)
 
 This document serves as an exhaustive reference of all implemented capabilities, analytical procedures, mathematical algorithms, and user interface features available in the **StatCraft** statistical package.
 
@@ -13,13 +13,22 @@ StatCraft provides a canonical SPSS-style workspace with instantaneous switching
 * **Microsoft Excel Import (`.xlsx`, `.xls`, `.ods`):** Direct workbook reader powered by the open-source Calamine engine, providing automated header sanitization to SPSS naming rules and column type inference.
 * **Blank Dataset Mode (`Blank Dataset`):** Instant instantiation of an empty observation matrix (40 cases by default) for manual tabular data entry without opening external files.
 
-### 1.2. Data View
-* **Virtualized Tabular Grid:** Fluid scrolling across tens of thousands of rows and hundreds of columns powered by `ScrollArea::show_rows`.
-* **In-Place Cell Editing:** Direct cell input with `Enter` (navigate down) and `Tab` (navigate right) keys, with automatic delimiter and currency normalization.
+### 1.2. Data View (Virtualized 4-Quadrant 2D Grid)
+* **Spatial 4-Quadrant Layout:** Pinned corner (`quad_top_left`), pinned column headers (`quad_top_right`), pinned row numbers (`quad_bottom_left`), and 2D central cell grid (`quad_center`). Row numbers remain anchored during horizontal scrolling.
+* **Prefix-Sum Indexing (`LineIndex`):** $O(\log N)$ binary search from screen pixels to logical cells with zero heap allocations in `Uniform` mode.
+* **Interactive Column Resizing & Auto-Fit:** Visual drag resizing with guidelines; double-click on header separator calculates optimal Auto-fit width from column data and name; synchronized with SPSS dictionary metadata (`VariableMetadata.columns`).
+* **Multi-Cell Range Selection:** Fluid marquee box selection via mouse dragging or Shift-click / Shift-drag with active cursor differentiation.
+* **Full Keyboard Ergonomics:** Arrow navigation, Tab/Enter workflows, boundary jumps (`Home`/`End`, `Ctrl+Home`/`Ctrl+End`), Shift-expansion, and **Direct Typing** (typing alphanumeric keys immediately activates the inline editor).
+* **Focused Inline Cell Editor:** In-place `TextEdit` with visual focus ring, auto-commit on Enter/Tab, and cancellation on Escape.
+* **Rectangular TSV/CSV Clipboard:** Native clipboard copy/paste (`Ctrl+C` / `Ctrl+V`) interoperable with Excel, Sheets, and Calc with automatic row expansion.
+* **Series Auto-Fill (Fill Handle):** Bottom-right corner marker computes linear arithmetic progressions for numeric series and repetition for categorical data.
+* **Column AutoFilter & Dropdowns:** Header filter button with vector chevron/funnel opening a dropdown with live search, checkboxes, and "(Blanks)" handling.
+* **Quick Sort via CommandBus:** Instant Ascending (A–Z) and Descending (Z–A) sorting via canonical `data.sort_cases` with 100% reversible Undo/Redo and SPSS syntax logging (`SORT CASES BY ...`).
+* **Cell Context Menu:** Right-click menu for filtering by cell value, clearing filters, sorting, and clipboard operations.
+* **SPSS FILTER BY Visualization Parity:** Inactive / filtered cases display diagonal strikethrough over row headers and muted text in cells.
+* **Data Integrity Guards:** Automated detection of numbers stored as text (`is_number_stored_as_text`) with Excel-parity green corner triangle and 1-click conversion to numeric.
+* **Value Labels Toggle (`1/A`):** Toolbar button for instant toggling between raw numeric codes and descriptive text labels across the entire grid.
 * **Auto-Expanding Rows:** Automatic generation of new blank observations upon entering values into the bottom-most row.
-* **Insert & Delete Cases:** Row context menus and keyboard shortcuts for inserting (`Insert Case`) and deleting (`Delete Case`) observations.
-* **Value Labels Toggle (`1/A`):** Toolbar button for instant toggling between raw numeric codes and human-readable descriptive text labels across the entire grid.
-* **Filter Exclusion Masking:** Diagonal vector strike-through over row number headers for cases excluded by an active sample filter.
 
 ### 1.3. Variable View
 Comprehensive variable metadata dictionary compliant with canonical IBM SPSS Statistics standards:
@@ -154,7 +163,7 @@ All statistical algorithms in StatCraft are implemented in **100% pure Safe Rust
   * Levene's Test of Homogeneity of Variances.
   * Group descriptive statistics with 95% confidence intervals.
 
-### 4.3. Bivariate Correlations (Correlate)
+### 4.3. Correlations (Correlate)
 * **Bivariate Correlations (`Bivariate Correlations`):**
   * Pearson linear correlation coefficient ($r$).
   * Spearman rank-order correlation coefficient ($\rho$).
@@ -162,6 +171,10 @@ All statistical algorithms in StatCraft are implemented in **100% pure Safe Rust
   * One-tailed and two-tailed significance levels.
   * Automatic significance flagging (`*` for $p < 0.05$, `**` for $p < 0.01$).
   * Cross-product deviations and covariances, pairwise and listwise missing exclusion modes.
+* **Partial Correlations (`Partial Correlations` / `PARTIAL CORR`):**
+  * Linear relationship evaluation between variables while controlling for one or more continuous covariates.
+  * First-order and higher-order partial correlation matrix computed via matrix inversion of the sub-covariance matrix.
+  * Zero-order correlation reference matrix, degrees of freedom ($df = N - k - 2$), and two-tailed significance levels.
 
 ### 4.4. Nonparametric Tests (Nonparametric Tests)
 * **Two Independent Samples (`Two Independent Samples`):**
@@ -175,13 +188,23 @@ All statistical algorithms in StatCraft are implemented in **100% pure Safe Rust
   * Wilcoxon Signed-Rank Test with tie-adjusted variance and continuity correction.
   * Sign Test with exact two-tailed binomial significance via the beta distribution.
 
-### 4.5. Linear Regression (Regression)
+### 4.5. Regression Analysis (Regression)
 * **Multiple Linear Regression (`Linear Regression`):**
   * Ordinary Least Squares (OLS) and Weighted Least Squares (WLS) solvers.
   * *Model Summary* table: Multiple correlation $R$, $R^2$, Adjusted $R^2$, Std. Error of the Estimate.
   * *ANOVA* table: Regression and residual sums of squares, mean squares, Fisher's $F$, significance.
   * *Coefficients* table: Unstandardized coefficients $B$ and standard errors, standardized coefficients $\beta$, $t$-statistics, significance levels, and 95% confidence intervals.
   * Collinearity diagnostics: Tolerance and Variance Inflation Factor (VIF).
+* **Binary Logistic Regression (`Binary Logistic Regression` / `LOGISTIC REGRESSION`):**
+  * Maximum Likelihood Estimation (MLE) via Iteratively Reweighted Least Squares (IRLS).
+  * *Omnibus Tests of Model Coefficients* table ($\chi^2$, $df$, $p$-value).
+  * *Model Summary* table: $-2 \text{ Log Likelihood}$, Cox & Snell $R^2$, and Nagelkerke $R^2$.
+  * *Hosmer and Lemeshow Test* goodness-of-fit contingency table across risk deciles.
+  * *Classification Table* with configurable cut value (default 0.5), computing observed vs. predicted counts, sensitivity, specificity, and overall percentage correct.
+  * *Variables in the Equation* table: Parameter estimates $B$, Std. Error, Wald statistic, degrees of freedom, significance, Odds Ratio $\text{Exp}(B)$, and 95% confidence intervals for $\text{Exp}(B)$.
+* **Curve Estimation (`Curve Estimation` / `CURVEFIT`):**
+  * Simultaneous fitting and comparison of 11 regression models: Linear, Logarithmic, Inverse, Quadratic, Cubic, Power, Compound, S-curve, Logistic, Growth, and Exponential.
+  * Comprehensive *Model Summary & Parameter Estimates* table comparing $R^2$, $F$, degrees of freedom, significance, constant $b_0$, and regression parameters $b_1, b_2, b_3$.
 
 ### 4.6. Scale Reliability Analysis (Scale)
 * **Reliability Analysis (`Reliability Analysis`):**
@@ -198,6 +221,56 @@ All statistical algorithms in StatCraft are implemented in **100% pure Safe Rust
   * *Communalities* table: Initial and Extraction values.
   * *Total Variance Explained* table: Eigenvalues, % of variance, and cumulative variance.
   * Component Matrix showing unrotated factor loadings.
+
+### 4.8. General Linear Model (GLM)
+* **Univariate ANOVA/ANCOVA (`Univariate ANOVA` / `UNIANOVA`):**
+  * General Linear Model accommodating fixed factors, random factors, and continuous covariates.
+  * *Tests of Between-Subjects Effects* table: Corrected Model, Intercept, Main Effects, Factor-Covariate Interactions, Error, Total, Corrected Total.
+  * Type I and Type III Sums of Squares ($SS$), degrees of freedom ($df$), Mean Squares ($MS$), $F$-statistics, significance levels, and Partial Eta Squared ($\eta_p^2$).
+  * Levene's Test of Equality of Error Variances.
+* **Multivariate MANOVA (`Multivariate MANOVA` / `GLM Multivariate`):**
+  * Simultaneous evaluation of multiple dependent variables across categorical factors and covariates.
+  * Canonical multivariate criteria: Wilks' Lambda ($\Lambda$), Pillai's Trace, Hotelling's Trace, and Roy's Largest Root.
+  * Multivariate $F$-approximations, hypothesis $df$, error $df$, significance, and Partial Eta Squared.
+  * Follow-up Univariate Tests of Between-Subjects Effects for each dependent variable.
+* **Repeated Measures ANOVA (`Repeated Measures ANOVA` / `GLM Repeated Measures`):**
+  * Analysis of within-subjects repeated measurement factors and treatment conditions.
+  * Mauchly's Test of Sphericity ($W$, Approx. $\chi^2$, $df$, Sig).
+  * Automatic sphericity epsilon corrections: Greenhouse-Geisser ($\hat{\epsilon}$), Huynh-Feldt ($\tilde{\epsilon}$), and Lower-bound.
+  * *Tests of Within-Subjects Effects* table evaluated under Sphericity Assumed, Greenhouse-Geisser, Huynh-Feldt, and Lower-bound assumptions.
+
+### 4.9. Cluster Analysis (Classify)
+* **K-Means Cluster Analysis (`K-Means Cluster Analysis` / `QUICK CLUSTER`):**
+  * Fast partitioning of observations into $K$ disjoint clusters via Lloyd's Euclidean distance algorithm.
+  * Configurable cluster count $K$, maximum iteration threshold, and convergence criterion.
+  * *Initial Cluster Centers* and *Iteration History* tables.
+  * *Final Cluster Centers* table and cluster distances.
+  * *ANOVA* table comparing between-cluster and within-cluster mean squares ($F$, Sig) to evaluate variable separation power.
+  * *Number of Cases in Each Cluster* distribution table.
+
+### 4.10. Summaries & Reports (Reports)
+* **Codebook (`Codebook` / `CODEBOOK`):**
+  * Comprehensive automated data dictionary document for dataset auditing and documentation.
+  * Variable metadata block: Variable Name, Label, Storage Type, Format, Measurement Scale, and Missing Values.
+  * Categorical and discrete variables: Value labels, raw codes, valid counts, and percentages.
+  * Scale and continuous variables: Valid $N$, Mean, Standard Deviation, and Quartiles ($Q_1, Q_2, Q_3$).
+* **Case Summaries (`Case Summaries` / `SUMMARIZE`):**
+  * Subgroup case listings and descriptive summary tables grouped by categorical factors.
+  * Optional case-level display with maximum case count limiting ($N$ first cases).
+  * Summary statistics per group: Total $N$, Mean, Median, Standard Deviation, Variance, Sum, Minimum, Maximum, and % of Total Cases.
+
+### 4.11. Survival Analysis (Survival)
+* **Kaplan-Meier Survival Analysis (`Kaplan-Meier` / `KM`):**
+  * Nonparametric estimation of survival functions and cumulative survival distributions over time.
+  * Time-to-event variable paired with a categorical status variable (user-defined single event code or range).
+  * Detailed *Survival Table*: Time, Status (Terminal Event vs. Censored), Cumulative Survival Probability, Standard Error, Cumulative Events, and Number of Remaining Cases.
+  * *Mean and Median Survival Time* estimates with standard errors and 95% confidence intervals.
+  * Subgroup factor comparisons: Log-Rank (Mantel-Cox) test ($\chi^2, df, p$), Breslow (Generalized Wilcoxon) test, and Tarone-Ware test.
+* **Actuarial Life Tables (`Life Tables` / `SURVIVAL`):**
+  * Interval-based actuarial survival and hazard estimation for large cohorts and epidemiological studies.
+  * Configurable interval start, end, and step size.
+  * Canonical actuarial table columns: Number Entering Interval, Number Withdrawn during Interval, Number Exposed to Risk, Number of Terminal Events, Proportion Terminating, Proportion Surviving, Cumulative Proportion Surviving at End of Interval, Probability Density, Hazard Rate, and Median Survival Time.
+  * Subgroup comparison via Wilcoxon (Gehan) statistic.
 
 ---
 
@@ -231,19 +304,33 @@ All statistical algorithms in StatCraft are implemented in **100% pure Safe Rust
 
 ---
 
-## 7. AI Readiness (Agent-Ready) & MCP Bridge Status
+## 7. AI Readiness (Agent-Ready) & Model Context Protocol (MCP) Bridge
 
-* **Parameter Schemas for Agents (`specs()`):**
-  * Every statistical and data engine procedure (`statcraft_syntax`) provides strongly-typed JSON parameter schemas via `specs()`, allowing external AI agents to validate arguments and construct pipelines headlessly.
-* **Batch Syntax Scripting:**
-  * AI assistants can assemble canonical SPSS command syntax (`.sps`) and run it through the engine command bus, yielding complete execution logs and authentic Output Viewer tables.
-* **Live Network Bridge Status (MCP & IPC Socket):**
-  * *In Development (`InDev` / Roadmap):* Direct runtime communication over a local IPC socket / embedded MCP server to control the running desktop GUI is currently in active development (the menu entry `Extensions -> MCP Bridge / Copilot` is flagged as `[dev]`). Live socket connectivity will arrive in subsequent roadmap phases.
+StatCraft features a production-ready, native **Model Context Protocol (MCP)** server and IPC bridge, allowing AI assistants (Antigravity, Claude, ChatGPT, and local LLMs) to programmatically control the desktop environment and run automated statistical pipelines.
+
+* **Two Native Operation Modes:**
+  * **Headless CLI Server (`statcraft --mcp`):** Standard input/output (stdio) JSON-RPC transport fully compliant with the open Model Context Protocol specification, enabling external coding agents to read variables, calculate models, and inspect datasets without launching a graphical window.
+  * **Live Desktop GUI Bridge (Port 18493):** Built-in background server enabling bidirectional communication with the running GUI application (`Extensions -> MCP Bridge / Copilot`), updating the live Data View and injecting output items in real time.
+* **Core Agent Tools:**
+  * `get_dataset_info`: Returns a complete JSON structural dictionary of the active dataset: row count $N$, column count $P$, variable names, measurement scales, missing value rules, and value label dictionaries.
+  * `execute_syntax`: Parses and executes canonical SPSS command scripts (`.sps`) through the engine `CommandBus`, returning execution status, error logs, and formatted Pivot Table representations.
+  * `insert_report`: Dynamically generates and injects rich narrative markdown reports, clinical interpretations, or executive summaries directly into the Output Viewer tree and scroll canvas.
+* **Agent Parameter Schemas (`specs()`):**
+  * Every engine command (`statcraft_syntax`) exports strongly-typed parameter schemas via `specs()`, allowing LLMs to auto-generate valid argument payloads with zero syntactic hallucinations.
 
 ---
 
-## 8. Design System, Reliability, and Localization
+## 8. Design System, Reliability, Localization, and Theming
 
+* **Universal Theming Engine (Tokens):**
+  * Three authentic visual themes designed for statistical workflows:
+    * **Dark Pro (Default):** High-contrast ergonomic dark theme engineered for extended data entry and low-glare nighttime analysis.
+    * **SPSS Classic Light:** Authentic ivory/slate palette matching classic desktop IBM SPSS Statistics typography and layouts.
+    * **System Auto:** Seamless automatic synchronization with host operating system appearance settings.
+* **Dockable Multi-Doc Workspace Lifecycle:**
+  * **Protected Core Tabs:** Fundamental dataset spaces (*Data View* and *Variable View*) are non-closable (`closeable = false`), eliminating accidental workspace loss.
+  * **Closable Auxiliary Tabs:** Dynamic Syntax Editor tabs and secondary Output Viewers can be freely created, docked, split, and closed with `[x]`.
+  * **Window Menu Orchestration:** Full tab discovery and focus activation via the top menu bar (`Window -> Focus...`).
 * **Never-Crash Invariant (100% Safe Rust):**
   * Complete absence of `unsafe`, `panic!`, `unwrap()`, and `expect()` in non-test code. Malformed data, singular matrices, or division by zero yield typed errors without terminating the application.
 * **Vector-First User Interface:**
@@ -256,27 +343,19 @@ All statistical algorithms in StatCraft are implemented in **100% pure Safe Rust
 
 ---
 
-## 9. Roadmap & Features in Development (InDev / Planned)
+## 9. Roadmap & Future Features (InDev / Planned)
 
-To guarantee complete technical honesty and transparency, the following modules and menu actions are currently under development in v0.2.2 (`MenuItemStatus::InDev`):
+To guarantee complete technical honesty and transparency, the following modules and menu actions represent genuine future roadmap items currently scheduled for upcoming releases:
 
-* **Vector Charting (`statcraft_charts`):**
-  * Interactive Chart Builder, histograms, scatter plots, line charts, boxplots, pie charts, and tabular brushing & linking.
-* **Runtime AI Network Bridge (`statcraft_bridge`):**
-  * Local IPC socket and native Model Context Protocol (MCP) server for live bidirectional communication with external LLMs and IDE assistants.
-* **Report Exporters:**
-  * Output Viewer export to PDF and LaTeX (v0.2.2 supports one-click TSV for Excel, HTML, and Plain Text).
-* **Advanced Statistical Procedures (Analyze):**
-  * General Linear Models (`GLM`: Univariate, Multivariate, Repeated Measures).
-  * Logistic Regression (Binary, Multinomial) and Curve Estimation.
-  * Cluster Analysis (*K-Means, Hierarchical Clustering*).
-  * Survival Analysis (*Life Tables, Kaplan-Meier, Cox Regression*).
-  * Exploratory Data Analysis (*Explore*) and Case Summaries / Codebook reports.
-* **Dataset Operations (Data):**
-  * File Merging (*Merge Files: Add Cases / Add Variables*).
-  * Data Restructuring (*Restructure*) and Aggregation (*Aggregate*).
-* **Clipboard & Search Tools (Edit):**
-  * Global cell Find & Replace, Go to Case / Variable navigation, application Preferences.
-* **Visual Theming (View):**
-  * Light / Dark / System theme toggles and display Zoom controls.
+* **Vector Charting Engine (`statcraft_charts`):**
+  * Interactive Chart Builder powered by `egui_plot`: Histograms with normal curve overlays, Scatter Plots with regression fit lines, Boxplots with outlier detection, Bar Charts with 95% error bars, and interactive Brushing & Linking with Data View.
+* **Advanced Document Exporters:**
+  * Native rendering and direct export of Output Viewer documents to formatted PDF, Microsoft Word (`.docx`), and academic LaTeX formats (TSV for Excel, HTML, and Plain Text are fully implemented).
+* **Dataset Restructuring & File Operations (Data Menu):**
+  * File Merging (*Add Cases* vertical concatenation and *Add Variables* key-based horizontal JOIN).
+  * Data Restructuring (*Restructure Wide to Long / Long to Wide*) and Data Aggregation (*Aggregate*).
+* **Time Series & Advanced Forecasting:**
+  * ARIMA / SARIMA modeling, Exponential Smoothing (Holt-Winters), and autocorrelation diagnostics (ACF / PACF).
+* **Multilevel & Complex Modeling:**
+  * Linear Mixed Models (LMM / HLM) with random intercepts/slopes, Complex Samples multistage survey weighting, and Classification Decision Trees (CHAID, CRT).
 

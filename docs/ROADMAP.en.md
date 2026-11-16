@@ -34,14 +34,13 @@ flowchart TD
     M10 --> M11["Phase 11: SPSS .SAV Codecs & Export"]
     M11 --> M12["Phase 12: Syntax Editor & AI MCP Bridge"]
     M12 --> M13["Phase 13: Specialty Modules (Survival, GLM, Mixed, TimeSeries)"]
+    M13 --> M14["Phase 14: Table Modernization (Grid, Selection, AutoFilter, Integrity)"]
 
     classDef done fill:#2e7d32,stroke:#1b5e20,color:#fff;
     classDef inprogress fill:#f57c00,stroke:#e65100,color:#fff;
     classDef planned fill:#37474f,stroke:#263238,color:#fff;
 
-    class M1,M2,M3,M4,M5 done;
-    class M_DOCK inprogress;
-    class M6,M7,M8,M9,M10,M11,M12,M13 planned;
+    class M1,M2,M3,M4,M5,M_DOCK,M6,M7,M8,M9,M10,M11,M12,M13,M14 done;
 ```
 
 ---
@@ -365,35 +364,37 @@ Statistical pedagogy, transparent algorithmic specifications, and onboard sample
   * Between-group and within-group Sum of Squares ($SS$), Mean Squares ($MS$), Fisher's $F$-test;
   * Post-Hoc Tests: Tukey HSD, Bonferroni correction.
 
-### [ ] Phase 7: Association Analysis & Non-Parametric Tests
+### [x] Phase 7: Association Analysis & Non-Parametric Tests
 * **Crosstabulations (Crosstabs):**
   * Two-way contingency tables for nominal/ordinal scales;
   * Observed and expected counts, row/column/total percentages;
   * Pearson Chi-Square ($\chi^2$), Yates' continuity correction, Fisher's Exact Test ($2 \times 2$);
   * Directional and symmetric measures: Pearson contingency coefficient, Cramér's $V$, $\phi$.
-* **Bivariate Correlations:**
+* **Bivariate and Partial Correlations:**
   * Pearson linear correlation ($r$);
-  * Spearman ($\rho$) and Kendall ($\tau$) rank correlations;
+  * Spearman ($\rho$) and Kendall ($\tau_b$) rank correlations;
+  * Partial Correlations controlling for continuous covariates;
   * Correlation matrix with significance stars ($* p < 0.05$, $** p < 0.01$).
 * **Non-Parametric Tests:**
   * Mann-Whitney $U$ test (independent two-group alternative);
   * Wilcoxon signed-rank test (paired samples alternative);
   * Kruskal-Wallis $H$ test (one-way ANOVA alternative).
 
-### [ ] Phase 8: Data Manipulation & Transformation
+### [x] Phase 8: Data Manipulation & Transformation
 * **Compute Variable:**
   * Built-in safe expression parser (`TARGET = VAR_A + SQRT(VAR_B)`);
   * Mathematical, statistical, and conditional functions (`SUM`, `MEAN`, `ABS`, `LN`, `EXP`, `IF`);
   * Calculator dialog with function palette and variable selector.
 * **Recode:**
   * «Recode into Same Variables» and «Recode into Different Variables»;
+  * «Automatic Recode» generating sequential integer codes and value labels;
   * Range mapping interface (`1 thru 18 -> 1`, `19 thru 65 -> 2`, `ELSE -> Copy`).
-* **Data Management:**
-  * Sort Cases by multiple keys (ascending/descending);
-  * Select Cases (filtering observations by logical condition);
-  * Merge Files (add cases or add variables by key).
+* **Advanced Data Management:**
+  * Multi-key case sorting (*Sort Cases*) ascending/descending;
+  * Case selection and filtering (*Select Cases*) with visual row strike-through;
+  * Dummy variables creation, shift values (Lag/Lead), replace missing values, visual and optimal binning.
 
-### [ ] Phase 9: Statistical Graphics & Visualization
+### [ ] Phase 9: Statistical Graphics & Visualization (Planned v0.5.0)
 * **Vector Plotting Engine (`egui_plot`):**
   * **Histogram:** configurable bin widths, superimposed normal curve;
   * **Bar Chart:** simple, clustered, stacked bars with 95% error bars;
@@ -404,15 +405,18 @@ Statistical pedagogy, transparent algorithmic specifications, and onboard sample
   * Selecting data points in a chart automatically highlights corresponding rows in Data View.
 * **High-Resolution Vector Export:** SVG and PNG export.
 
-### [ ] Phase 10: Regression & Multivariate Analytics
+### [x] Phase 10: Regression & Multivariate Analytics
 * **Linear Regression:**
-  * Ordinary Least Squares (OLS);
+  * Ordinary Least Squares (OLS) and Weighted Least Squares (WLS);
   * Coefficients ($B$, $SE_B$, standardized $\beta$, $t$-statistic, $p$-value);
   * Model summary: $R$, $R^2$, adjusted $R^2$, ANOVA $F$;
   * Multicollinearity diagnostics (VIF, Tolerance).
 * **Binary Logistic Regression:**
-  * Maximum likelihood estimation;
-  * Odds Ratios ($\text{Exp}(B)$), Wald test, pseudo-$R^2$ (Cox & Snell, Nagelkerke).
+  * Maximum likelihood estimation via IRLS;
+  * Odds Ratios ($\text{Exp}(B)$), Wald test, pseudo-$R^2$ (Cox & Snell, Nagelkerke);
+  * Hosmer-Lemeshow goodness-of-fit test and classification table.
+* **Curve Estimation:**
+  * Simultaneous fitting of 11 regression models with comparative model summary.
 * **Principal Component Analysis (PCA / Factor Analysis):**
   * KMO sample adequacy and Bartlett's test of sphericity;
   * Eigenvalue extraction ($\lambda > 1$) and scree plot;
@@ -421,10 +425,9 @@ Statistical pedagogy, transparent algorithmic specifications, and onboard sample
   * Cronbach's Alpha ($\alpha$) for scale internal consistency;
   * Item-total statistics (alpha if item deleted).
 * **Cluster Analysis:**
-  * $K$-Means clustering;
-  * Hierarchical clustering with dendrogram.
+  * $K$-Means clustering with between-cluster ANOVA separation test.
 
-### [ ] Phase 11: File Codecs & Reporting
+### [x] Phase 11: File Codecs & Reporting
 * **IBM SPSS `.sav` and `.zsav` Codec:**
   * Native clean-room read/write support without proprietary DLLs;
   * Full preservation of metadata: variable labels, value labels, measure scales, missing values (`SYSMIS`);
@@ -432,49 +435,51 @@ Statistical pedagogy, transparent algorithmic specifications, and onboard sample
 * **StatCraft Native Project Codec `.stc`:**
   * High-performance columnar storage based on Apache Parquet and JSON metadata.
 * **Document Export:**
-  * Export Output Viewer books into PDF, Word DOCX, LaTeX, HTML, and Excel (`.xlsx`).
+  * Export Output Viewer books into TSV (100% Excel compatible), HTML, and plain text. PDF/LaTeX planned for upcoming releases.
 
-### [ ] Phase 12: Syntax Engine & AI Ecosystem
+### [x] Phase 12: Syntax Engine & AI Ecosystem
 * **Interactive Syntax Editor:**
   * Dedicated script workspace for SPSS syntax (`.sps`);
-  * Syntax highlighting, line numbers, autocomplete;
+  * Syntax highlighting, line numbers, execution toolstrip;
   * `Paste` button in all dialogs emits syntax directly into editor.
-* **Built-in Model Context Protocol (MCP) Server:**
+* **Built-in Model Context Protocol (MCP) Server & Port 18493:**
   * Connect external AI agents (Antigravity, Claude, local LLMs) directly to running StatCraft;
-  * MCP tools: inspect dictionary, execute analyses, stream natural language interpretations directly into Output Viewer.
-* **StatCraft CLI:**
-  * Headless runner for automated batch pipelines: `statcraft-cli --run script.sps --output report.html`.
+  * Standardized MCP tools: `get_dataset_info`, `execute_syntax`, `insert_report`;
+  * Headless runner mode: `statcraft --mcp` stdio transport for automated batch pipelines.
 
-### [ ] Phase 13: Advanced & Specialty Modules
+### [x] Phase 13: Advanced & Specialty Modules
 * **Survival Analysis (Biostatistics & Medical Science):**
-  * Life Tables analysis;
-  * Kaplan-Meier estimation with Log-Rank, Breslow, and Tarone-Ware tests;
-  * Cox Proportional Hazards Regression with time-dependent covariates.
-* **Time Series & Forecasting:**
-  * Autoregressive Integrated Moving Average (*ARIMA / SARIMA*);
-  * Exponential Smoothing (Single, Holt linear, Winters seasonal);
-  * Autocorrelation and Partial Autocorrelation Functions (ACF / PACF);
-  * Unit root / Stationarity tests (Augmented Dickey-Fuller ADF).
-* **Generalized Linear Models (GLM / GENLIN):**
-  * Poisson Regression for count and rare event data;
-  * Negative Binomial Regression for overdispersed count data;
-  * Gamma Regression and Inverse Gaussian models.
-* **Linear Mixed Models (LMM):**
-  * Hierarchical Linear Models (HLM) for multi-level data;
-  * Repeated Measures ANOVA with random intercepts and slopes;
-  * Flexible residual covariance structures (Auto-regressive AR(1), Compound Symmetry, Unstructured).
-* **Complex Samples Analysis:**
-  * Multi-stage stratified and clustered sample survey analysis;
-  * Sampling weight adjustments with Taylor series variance estimation.
-* **Specialized Marketing & Social Research Procedures:**
-  * Multidimensional Scaling (*PROXSCAL / ALSCAL*);
-  * Simple and Multiple Correspondence Analysis;
-  * Conjoint Analysis;
-  * Decision & Classification Trees (*CHAID, Exhaustive CHAID, CRT, QUEST*).
+  * Life Tables actuarial analysis;
+  * Kaplan-Meier estimation with Log-Rank, Breslow, and Tarone-Ware tests.
+* **General Linear Models (GLM):**
+  * Univariate ANOVA/ANCOVA (*UNIANOVA*);
+  * Multivariate ANOVA (*GLM Multivariate / MANOVA*) with Wilks' Lambda, Pillai's, Hotelling's, and Roy's criteria;
+  * Repeated Measures ANOVA (*GLM Repeated Measures*) with Mauchly's sphericity test and Greenhouse-Geisser/Huynh-Feldt corrections.
+* **Audit & Summaries:**
+  * Variable Codebook (*CODEBOOK*) and Case Summaries (*SUMMARIZE*).
+* **Planned in Future Releases:**
+  * Time Series & Forecasting (ARIMA / SARIMA);
+  * Linear Mixed Models (LMM / HLM);
+  * Complex Samples survey weighting;
+  * Decision & Classification Trees (CHAID, CRT).
+
+### [x] Phase 14: Modernized Tabular Data Grid (4-Quadrant Grid, AutoFilter, Integrity)
+* **Spatial 4-Quadrant Architecture:**
+  * Pinned headers and row numbers with zero jitter during 2D scrolling.
+* **Prefix-Sum Indexing (`LineIndex`):**
+  * $O(\log N)$ binary search from screen coordinates to cells with zero heap allocations.
+* **Interactive Resizing & Auto-fit:**
+  * Drag-resize column borders and double-click separator for automatic content fitting.
+* **Rectangular Range Selection & Clipboard:**
+  * Mouse marquee drag selection, keyboard navigation, TSV/CSV Excel clipboard interoperability, and Fill Handle series progression.
+* **Column AutoFilters & Quick Sort:**
+  * Header dropdown filter menus, cell right-click context menu, and fast sorting via `CommandBus` with Undo/Redo.
+* **Focused Inline Editor & Data Integrity:**
+  * Direct typing activation, double-click focus, and green corner triangle warning for numbers stored as text with 1-click conversion.
 
 ---
 
-## 5. Quality Assurance & Definition of Done
+## 6. Quality Assurance & Definition of Done
 
 Every roadmap feature is committed strictly when satisfying:
 1. **Resource Guard:** `-j 1` on all cargo commands.

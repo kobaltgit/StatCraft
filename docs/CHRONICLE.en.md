@@ -3450,5 +3450,29 @@ Under Phase 3 of the table modernization roadmap (specification `specs/008-grid-
      - `xtask test-undo` — 41 commands verified for 100% reversible Undo/Redo;
    * Optimized release binary `target/release/statcraft_app.exe` compiled and verified.
 
+---
+
+### Phase 80: Tabular Grid Stabilization, Auto-Release v0.4.0 & Comprehensive Documentation Parity
+*Time: November 16, 2026, 11:15 (~45 minutes)*
+
+Finalized stabilization of the modernized Data View tabular grid, prepared and published official release **StatCraft v0.4.0**, and completed a global audit bringing all documentation into parity:
+1. **Grid Defect Elimination (BUGS_AND_ISSUES):**
+   * **BUG-010 (Text occlusion by selection fill):** Selection background fill moved into `paint_data_cells` beneath cell text, restoring 100% text clarity and contrast across arbitrary selection areas;
+   * **BUG-011 (Double-click inline editor autofocus):** Double-clicking any data cell now reliably spawns the floating `TextEdit` with immediate focus and text cursor;
+   * **BUG-012 (Header hit-testing localization):** Column border resize grab zone strictly constrained to the top-right header quadrant (`quad_top_right`), preventing accidental resize cursor triggers while navigating data rows.
+2. **Official Auto-Release v0.4.0:**
+   * Synchronized application version across all 5 packaging definitions: `Cargo.toml`, `packaging/windows/installer.iss`, `packaging/linux/control`, `packaging/macos/Info.plist`, `.github/workflows/release.yml`;
+   * Created bilingual `RELEASE_NOTES.md` and structured `CHANGELOG.md`;
+   * Tag `v0.4.0` pushed to GitHub with automated multi-platform release runners (Windows, Linux, macOS).
+3. **Comprehensive Documentation Parity (`FEATURES.md`, `FEATURES_RU.md`, `ROADMAP.md`, `ROADMAP.en.md`):**
+   * Added all analytical procedures to the feature guides: Partial Correlations (`PARTIAL CORR`), General Linear Models (`UNIANOVA`, `GLM Multivariate`, `GLM Repeated Measures`), Binary Logistic Regression (`LOGISTIC REGRESSION`), Curve Estimation (`CURVEFIT`), $K$-Means Cluster Analysis (`QUICK CLUSTER`), Variable Codebook (`CODEBOOK`), Case Summaries (`SUMMARIZE`), Kaplan-Meier Survival Analysis (`KM`), and Actuarial Life Tables (`SURVIVAL`);
+   * Updated MCP bridge documentation (headless stdio CLI and port 18493) and universal theming (Dark Pro, SPSS Classic Light, System Auto);
+   * Updated roadmap status marking M1–M14 as delivered;
+   * Synchronized `README.md` and `README.ru.md` with 4-quadrant grid capabilities and updated test suite count to 300+ tests.
+4. **Quality Gate (DoD):**
+   * 100% test pass on full workspace suite (`cargo test --workspace -j 1`);
+   * 0 violations on layers, design-guard, and file-guard (`xtask ci`).
+
+
 
 

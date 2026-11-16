@@ -13,7 +13,7 @@
     <a href="LICENSE-MIT"><img src="https://img.shields.io/badge/License-MIT%20OR%20Apache--2.0-blue.svg" alt="License: MIT OR Apache-2.0" /></a>
     <img src="https://img.shields.io/badge/Platform-Windows%20%7C%20Linux%20%7C%20macOS-lightgrey.svg" alt="Platform: Windows | Linux | macOS" />
     <img src="https://img.shields.io/badge/Architecture-100%25%20Safe%20Rust-brightgreen.svg" alt="100% Safe Rust" />
-    <img src="https://img.shields.io/badge/Tests-Passing%20(90%2B)-success.svg" alt="Tests: 90+ Passing" />
+    <img src="https://img.shields.io/badge/Tests-Passing%20(300%2B)-success.svg" alt="Tests: 300+ Passing" />
     <img src="https://img.shields.io/badge/i18n-EN%20%7C%20RU-informational.svg" alt="i18n: EN | RU" />
     <a href="#4-statcraft-bridge--ai-agents-model-context-protocol--code-mode"><img src="https://img.shields.io/badge/MCP-Live%20GUI%20Bridge%20%26%20Code%20Mode-6366F1?logo=anthropic&logoColor=white" alt="MCP: Live GUI Bridge & Code Mode" /></a>
     <a href="https://remade.wiki/projects/statcraft/"><img src="https://remade.wiki/badges/listed-on-remade-classic.svg" alt="Listed on Remade" /></a>
@@ -55,7 +55,18 @@ Whether you are conducting psychological research, analyzing clinical trials, te
 > 📖 **Comprehensive Feature Guide:** An exhaustive reference of all available analytical procedures, data manipulations, transformation algorithms, and keyboard shortcuts is available in **[FEATURES.md](docs/FEATURES.md)** (English) and **[FEATURES_RU.md](docs/FEATURES_RU.md)** (Русский).
 
 ### 1. Dual-View Data Management
-* **Data View:** High-performance, virtualized tabular grid displaying cases and variables. Supports instant toggling between raw numeric values and human-readable value labels (`1/A`).
+* **Data View (Virtualized 4-Quadrant 2D Grid):**
+  - **Spatial 4-Quadrant Architecture:** Fixed top-left corner, pinned column headers (scrolls horizontally), pinned row headers (scrolls vertically), and central cell grid (2D scrolling). Row numbers remain visible at all times.
+  - **High-Performance Prefix Indexing (`LineIndex`):** $O(\log N)$ coordinate searches with zero heap allocation in uniform mode for hundreds of thousands of cases.
+  - **Interactive Column Resizing & Auto-Fit:** Drag-to-resize column boundaries with visual guidelines; double-click on separator triggers instant Auto-fit to content width; synchronized with SPSS dictionary metadata (`VariableMetadata.columns`).
+  - **Range Selection & Keyboard Ergonomics:** Fluid marquee mouse selection, Shift-click/Shift-drag expansion, arrow navigation, Tab/Enter workflows, and **Direct Typing** (instantly starts inline editing on alphanumeric keystrokes).
+  - **Rectangular TSV/CSV Clipboard:** Native clipboard copy/paste (`Ctrl+C` / `Ctrl+V`) interoperable with Excel, Google Sheets, and LibreOffice with automatic row expansion.
+  - **Series Auto-Fill (Fill Handle):** Bottom-right corner marker computes linear arithmetic progressions for numeric series and repetition for categorical data.
+  - **Column AutoFilter & Dropdowns:** Header filter button with vector chevron/funnel opening a dropdown with live search, checkboxes, and "(Blanks)" handling.
+  - **Quick Sort via CommandBus:** Instant Ascending (A–Z) and Descending (Z–A) sorting via canonical `data.sort_cases` with 100% reversible Undo/Redo and SPSS syntax logging.
+  - **Cell Context Menu:** Right-click menu for filtering by cell value, clearing filters, sorting, and clipboard operations.
+  - **Data Integrity Guards:** Automated detection of numbers stored as text (`is_number_stored_as_text`) with Excel-parity green corner triangle and 1-click conversion to numeric.
+  - **Value Labels Toggle (`1/A`):** Toolbar button for instant toggling between raw numeric codes and human-readable descriptive text labels.
 * **Variable View:** Comprehensive metadata dictionary managing:
   - **Name:** Normalized variable identifiers.
   - **Type:** 9 canonical SPSS types (Numeric, Comma, Dot, Scientific, Date, Dollar, Custom Currency, String, Restricted Numeric).
