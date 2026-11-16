@@ -1711,6 +1711,27 @@ output-lifetables-cum-p = Cumulative Survival (P)
 output-lifetables-hazard = Hazard Rate
 status-lifetables-executed = Life tables analysis completed for { $time }
 
+# Cox Proportional Hazards Regression (COXREG)
+dialog-cox-title = Cox Regression
+dialog-cox-covariates = Covariates:
+dialog-cox-strata-variable = Strata (Optional):
+dialog-cox-ties-group = Tie Handling Method
+dialog-cox-ties-breslow = Breslow
+dialog-cox-ties-efron = Efron
+output-cox-title = Cox Regression
+output-cox-table-title = Cox Proportional Hazards Model
+output-cox-case-summary-title = Case Processing Summary
+output-cox-omnibus-title = Omnibus Tests of Model Coefficients
+output-cox-variables-title = Variables in the Equation
+output-cox-baseline-title = Survival Table at Mean of Covariates
+output-cox-survival-plot-title = Survival Function at Mean of Covariates
+output-cox-baseline-cum-hazard = Baseline Cum Hazard
+output-cox-baseline-survival = Baseline Survival
+output-cox-survival-at-mean = Survival at Mean
+output-common-stratum = Stratum
+output-common-overall = Overall
+status-cox-executed = Cox regression executed for time variable { $time }
+
 
 # Package 3 Common Data and Table Labels
 output-common-variable = Variable

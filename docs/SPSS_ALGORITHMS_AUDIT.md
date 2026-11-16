@@ -95,6 +95,7 @@ Beyond isolated unit testing, StatCraft enforces mathematical and architectural 
 | **Block 17** | General Linear Model (`UNIANOVA`, `GLM MULTIVARIATE`, `GLM REPEATED`) | `glm/` (`design_matrix.rs`, `type3_ss.rs`, `univariate.rs`, `multivariate.rs`, `repeated.rs`, `eigen.rs`) | **100% Verified** | $\le 10^{-6}$ |
 | **Block 18** | Clustering, Reports & Survival Analysis (`QUICK CLUSTER`, `CODEBOOK`, `SUMMARIZE`, `KM`, `SURVIVAL`) | `cluster_kmeans.rs`, `codebook_core.rs`, `summarize_core.rs`, `survival_km.rs`, `survival_lifetables.rs` | **100% Verified** | $\le 10^{-6}$ |
 | **Block 19** | Multinomial Logistic Regression (`NOMREG`) | `multinomial_logistic/` (`engine.rs`, `diagnostics.rs`, `mod.rs`, `types.rs`) | **100% Verified** | $\le 10^{-6}$ |
+| **Block 20** | Cox Proportional Hazards Regression (`COXREG`) | `cox/` (`baseline.rs`, `engine.rs`, `mod.rs`, `types.rs`) | **100% Verified** | $\le 10^{-6}$ |
 
 ---
 
@@ -880,9 +881,37 @@ Beyond isolated unit testing, StatCraft enforces mathematical and architectural 
 
 ---
 
+### Block 20: Cox Proportional Hazards Regression (Feature 010 — COXREG)
+
+#### 20.1. `COXREG` (Cox Proportional Hazards Regression) (IBM Algorithms pp. 265–275)
+* **Implementation:** [`crates/statcraft_algo/src/cox/`](../crates/statcraft_algo/src/cox/)
+* **Command Bus L5:** [`crates/statcraft_syntax/src/commands/cox_regression_cmd.rs`](../crates/statcraft_syntax/src/commands/cox_regression_cmd.rs) (`stat.survival.cox`)
+* **Golden Oracle Tests:** `crates/statcraft_algo/src/cox/tests.rs` (verified against Python `lifelines.CoxPHFitter` $\le 10^{-6}$)
+* **Mathematical Formula Verification:**
+  * **Proportional Hazards Model:**
+    Hazard rate for subject $i$ with covariate vector $x_i$:
+    $$h(t \mid x_i) = h_0(t) \exp(\beta^T x_i)$$
+  * **Partial Likelihood & Newton-Raphson Optimization:**
+    - Log partial likelihood: $\ln L_p(\beta) = \sum_{s=1}^S \sum_{k=1}^{K_s} [\beta^T s_{sk} - d_{sk} \ln S^{(0)}_{sk}(\beta)]$;
+    - Score vector: $g(\beta) = \sum_{s=1}^S \sum_{k=1}^{K_s} [s_{sk} - d_{sk} \bar{x}_{sk}(\beta)]$;
+    - Fisher Information matrix: $I(\beta) = \sum_{s=1}^S \sum_{k=1}^{K_s} d_{sk} V_{sk}(\beta)$;
+    - Ties approximation:
+      * **Breslow (canonical default):** standard tied event risk sets;
+      * **Efron:** adjusted risk denominator $S^{(0)}_l = S^{(0)} - \frac{l}{d_k} W_k^D$ for improved resolution;
+    - Stratification support: shared coefficient vector $\beta$ across multiple strata with stratified baseline hazard functions $h_{0s}(t)$.
+  * **Model Inference & Baseline Hazard:**
+    - Omnibus Tests: $\chi^2 = 2[\ln L_p(\hat{\beta}) - \ln L_p(0)]$ with $df = p$;
+    - Parameter Estimates: $B$, $SE = \sqrt{[\text{Var}(\hat{\beta})]_{jj}}$, Wald $\chi^2 = (B / SE)^2$, Hazard Ratio $\text{Exp}(B) = \exp(B)$ with 95% Wald CI;
+    - Breslow cumulative baseline hazard: $\hat{H}_{0s}(t) = \sum_{t_{(k)} \le t} \frac{d_k}{\sum_{j \in R_s(t_{(k)})} \exp(\hat{\beta}^T x_j)}$;
+    - Baseline survival $\hat{S}_{0s}(t) = \exp(-\hat{H}_{0s}(t))$ and survival at covariate means $\hat{S}(t \mid \bar{x}) = [\hat{S}_{0s}(t)]^{\exp(\hat{\beta}^T \bar{x})}$;
+    - Vector Step Function Plot in Output Viewer.
+* **Verdict:** **100% Mathematical Equivalence to SPSS Canon & Lifelines ($\le 10^{-6}$).**
+
+---
+
 ## 4. Final Audit Conclusion
 
-All 19 primary mathematical, transformation, data management, I/O, and reporting blocks of the StatCraft workspace (Blocks 1 through 19, Microplans **M-01 through M-20**, and **Plans 1 through 3**, Feature 009) have undergone rigorous, line-by-line Clean-Room auditing against the *IBM SPSS Statistics 24 Algorithms Guide* (1,271 pp.):
+All 20 primary mathematical, transformation, data management, I/O, and reporting blocks of the StatCraft workspace (Blocks 1 through 20, Microplans **M-01 through M-20**, and **Plans 1 through 3**, Features 009 and 010) have undergone rigorous, line-by-line Clean-Room auditing against the *IBM SPSS Statistics 24 Algorithms Guide* (1,271 pp.):
 1. **Descriptives, Frequencies, Crosstabs, Means (Block 1):** 100% Verified ($\le 10^{-6}$).
 2. **T-Tests & One-Way ANOVA (Block 2):** 100% Verified ($\le 10^{-6}$).
 3. **Correlations, Regression, Factor Analysis, Reliability (Block 3):** 100% Verified ($\le 10^{-6}$).
@@ -902,6 +931,7 @@ All 19 primary mathematical, transformation, data management, I/O, and reporting
 17. **General Linear Model: GLM / UNIANOVA, MANOVA & Repeated Measures (Block 17 / Plan 2):** 100% Verified (orthogonal design matrix with deviation contrasts and OLS Jacobi SVD, Type III Sum of Squares, $F$-statistics, Partial $\eta^2$; $E^{-1/2} H E^{-1/2}$ spectral analysis for MANOVA with 4 criteria: Wilks' $\Lambda$, Pillai, Hotelling-Lawley, Roy with Rao $F$-approximation; Repeated Measures with Helmert contrast matrix, Mauchly's sphericity test, Greenhouse-Geisser, Huynh-Feldt and lower-bound corrections; Golden Oracle vs Statsmodels).
 18. **Clustering, Reports & Survival Analysis (Block 18 / Plan 3):** 100% Verified (`QUICK CLUSTER` K-Means with Maximin initialization, ANOVA between-cluster $F$-tests, dynamic `QCL_1`/`QCL_2` variable insertion with 100% reversible undo; `CODEBOOK` metadata extraction and HAVERAGE quartiles; `SUMMARIZE` case listing and group subtotals; `KM` Kaplan-Meier survival curve with Greenwood variance and Mantel-Cox log-rank test; `SURVIVAL` actuarial life tables with $n'_k, q_k, p_k, P_k, f_k, h_k$; Golden Oracle vs SciPy and Lifelines $\le 10^{-6}$).
 19. **Multinomial Logistic Regression (Block 19 / Feature 009):** 100% Verified (Generalized Logits with baseline category $J$, Newton-Raphson/Fisher Scoring on `faer` with Ridge Hessian damping $\lambda = 10^{-6}$ Never Crash guarantee, LRT tests per effect, Pearson & Deviance goodness-of-fit across subpopulation patterns, Cox & Snell, Nagelkerke, McFadden pseudo $R^2$, parameter estimates with $\text{Exp}(B)$ and 95% Wald CI, classification table, categorical factors with dummy coding; Golden Oracle vs Statsmodels $\le 10^{-6}$).
+20. **Cox Proportional Hazards Regression (Block 20 / Feature 010):** 100% Verified (Partial Likelihood Newton-Raphson optimization, Breslow & Efron tie handling, stratification across clinical strata, -2LL omnibus tests, parameter estimates with Wald tests and 95% CI for $\text{Exp}(B)$, Breslow cumulative baseline hazard and survival at mean of covariates, vector step plot; Golden Oracle vs Lifelines $\le 10^{-6}$).
 
 Every verified formula, degrees of freedom calculation, tie-adjustment variance formula, asymptotic/exact $p$-value generator, AST expression evaluator, calendar interval engine, time-series difference operator, recoding dictionary synthesizer, data management subset filter, I/O codec, and cross-algorithm metadata/filtering invariant has been thoroughly audited with exact code line references, test evidence, and open issues recorded in the audit registry.
 

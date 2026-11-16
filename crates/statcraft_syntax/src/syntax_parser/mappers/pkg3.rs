@@ -3,7 +3,7 @@ use crate::syntax_parser::parser::{ParsedCommand, SyntaxParser};
 use serde_json::{json, Value};
 use statcraft_core::DataSet;
 
-/// Maps Package 3 commands (QUICK CLUSTER, CODEBOOK, SUMMARIZE, KM, SURVIVAL) to CommandBus.
+/// Maps Package 3 commands (QUICK CLUSTER, CODEBOOK, SUMMARIZE, KM, SURVIVAL, COXREG) to CommandBus.
 pub fn map_pkg3_command(
     cmd: &ParsedCommand,
     dataset: Option<&DataSet>,
@@ -14,6 +14,7 @@ pub fn map_pkg3_command(
         "SUMMARIZE" => map_summarize(cmd, dataset),
         "KM" | "KAPLAN-MEIER" => map_km(cmd, dataset),
         "SURVIVAL" => map_survival(cmd, dataset),
+        "COXREG" | "COX REGRESSION" => map_coxreg(cmd, dataset),
         _ => Ok(None),
     }
 }
@@ -309,6 +310,109 @@ fn map_survival(
             "interval_start": 0.0,
             "interval_end": end,
             "interval_width": width,
+        }),
+    )))
+}
+
+fn map_coxreg(
+    cmd: &ParsedCommand,
+    dataset: Option<&DataSet>,
+) -> Result<Option<(&'static str, Value)>, SyntaxError> {
+    let raw_tokens = cmd
+        .subcommand_tokens("POSITIONAL")
+        .or_else(|| cmd.subcommand_tokens("VARIABLES"))
+        .unwrap_or(&[]);
+
+    if raw_tokens.is_empty() {
+        return Err(SyntaxError::InvalidSubcommand {
+            line: cmd.line_num,
+            command: cmd.name.clone(),
+            subcommand: "POSITIONAL".to_string(),
+            reason: "COXREG requires a time variable".to_string(),
+        });
+    }
+
+    let time_var = raw_tokens.first().cloned().unwrap_or_default();
+
+    let mut status_var = "status".to_string();
+    let mut event_values = vec![1.0];
+
+    if let Some(status_tokens) = cmd.subcommand_tokens("STATUS") {
+        if let Some(first) = status_tokens.first() {
+            let upper = first.to_uppercase();
+            if let Some(open_p) = upper.find('(') {
+                if let Some(close_p) = upper.find(')') {
+                    status_var = first[..open_p].to_string();
+                    let inner = &first[open_p + 1..close_p];
+                    if let Ok(val) = inner.parse::<f64>() {
+                        event_values = vec![val];
+                    }
+                }
+            } else {
+                status_var = first.clone();
+            }
+        }
+    }
+
+    // Covariates from METHOD = ENTER var1 var2 or PATTERN = BY var1 var2 or VARIABLES
+    let mut cov_tokens: Vec<String> = Vec::new();
+    if let Some(method_tokens) = cmd.subcommand_tokens("METHOD") {
+        let enter_pos = method_tokens
+            .iter()
+            .position(|t| t.eq_ignore_ascii_case("ENTER"));
+        let slice = match enter_pos {
+            Some(p) => &method_tokens[(p + 1)..],
+            None => method_tokens,
+        };
+        cov_tokens.extend_from_slice(slice);
+    } else if let Some(pattern_tokens) = cmd.subcommand_tokens("PATTERN") {
+        let by_pos = pattern_tokens
+            .iter()
+            .position(|t| t.eq_ignore_ascii_case("BY"));
+        let slice = match by_pos {
+            Some(p) => &pattern_tokens[(p + 1)..],
+            None => pattern_tokens,
+        };
+        cov_tokens.extend_from_slice(slice);
+    } else if raw_tokens.len() > 1 {
+        cov_tokens.extend_from_slice(&raw_tokens[1..]);
+    }
+
+    let covariates = SyntaxParser::expand_variables(&cov_tokens, dataset)?;
+    if covariates.is_empty() {
+        return Err(SyntaxError::InvalidSubcommand {
+            line: cmd.line_num,
+            command: cmd.name.clone(),
+            subcommand: "METHOD".to_string(),
+            reason: "COXREG requires at least one covariate".to_string(),
+        });
+    }
+
+    let strata_var = cmd
+        .subcommand_tokens("STRATA")
+        .and_then(|t| t.first().cloned());
+
+    let mut tie_method = "Breslow".to_string();
+    if let Some(crit_tokens) = cmd.subcommand_tokens("CRITERIA") {
+        for token in crit_tokens {
+            let upper = token.to_uppercase();
+            if upper.contains("TIES(EFRON)") {
+                tie_method = "Efron".to_string();
+            } else if upper.contains("TIES(BRESLOW)") {
+                tie_method = "Breslow".to_string();
+            }
+        }
+    }
+
+    Ok(Some((
+        "stat.survival.cox",
+        json!({
+            "time_var": time_var,
+            "status_var": status_var,
+            "covariates": covariates,
+            "strata_var": strata_var,
+            "event_values": event_values,
+            "tie_method": tie_method,
         }),
     )))
 }

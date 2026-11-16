@@ -1,8 +1,9 @@
 use super::app::{StatCraftApp, StatusMessage};
 use super::dialogs::{
-    render_codebook_dialog, render_kmeans_dialog, render_summarize_dialog,
-    render_survival_km_dialog, render_survival_lifetables_dialog, CodebookDialogAction,
-    KMeansDialogAction, KaplanMeierDialogAction, LifeTablesDialogAction, SummarizeDialogAction,
+    render_codebook_dialog, render_cox_regression_dialog, render_kmeans_dialog,
+    render_summarize_dialog, render_survival_km_dialog, render_survival_lifetables_dialog,
+    CodebookDialogAction, CoxRegressionDialogAction, KMeansDialogAction, KaplanMeierDialogAction,
+    LifeTablesDialogAction, SummarizeDialogAction,
 };
 use serde_json::json;
 use statcraft_i18n::t;
@@ -286,6 +287,75 @@ impl StatCraftApp {
                 self.output_view_state.add_entry(t!("output-log"), sps);
             }
             LifeTablesDialogAction::None => {}
+        }
+
+        // 6. Cox Proportional Hazards Regression (COXREG)
+        let cox_action = render_cox_regression_dialog(
+            ctx,
+            self.dataset.as_ref(),
+            &mut self.cox_regression_dialog_state,
+        );
+
+        match cox_action {
+            CoxRegressionDialogAction::Run {
+                time_var,
+                status_var,
+                event_value,
+                covariates,
+                strata_var,
+                tie_method,
+            } => {
+                let time_name = time_var.clone();
+                let params = json!({
+                    "time_var": time_var,
+                    "status_var": status_var,
+                    "event_values": [event_value],
+                    "covariates": covariates,
+                    "strata_var": strata_var,
+                    "tie_method": match tie_method {
+                        statcraft_algo::TieMethod::Breslow => "Breslow",
+                        statcraft_algo::TieMethod::Efron => "Efron",
+                    },
+                });
+                match self
+                    .command_bus
+                    .execute("stat.survival.cox", &mut self.dataset, params)
+                {
+                    Ok(result_value) => {
+                        if let Ok(result) = serde_json::from_value::<
+                            statcraft_algo::CoxRegressionResult,
+                        >(result_value)
+                        {
+                            self.output_view_state.add_cox_regression(result);
+                            self.status_message = StatusMessage::CoxRegressionExecuted {
+                                time_var: time_name,
+                            };
+                        }
+                    }
+                    Err(e) => {
+                        self.status_message = StatusMessage::Error(e.to_string());
+                    }
+                }
+            }
+            CoxRegressionDialogAction::Paste {
+                time_var,
+                status_var,
+                event_value,
+                covariates,
+                strata_var,
+                tie_method,
+            } => {
+                let sps = statcraft_syntax::commands::CoxRegressionCommand::to_sps(
+                    &time_var,
+                    &status_var,
+                    event_value,
+                    &covariates,
+                    strata_var.as_deref(),
+                    tie_method,
+                );
+                self.output_view_state.add_entry(t!("output-log"), sps);
+            }
+            CoxRegressionDialogAction::None => {}
         }
     }
 }

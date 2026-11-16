@@ -9,6 +9,7 @@ pub mod compute_dialog;
 pub mod correlations_dialog;
 pub mod count_values_define_dialog;
 pub mod count_values_dialog;
+pub mod cox_regression_dialog;
 pub mod crosstabs_dialog;
 pub mod curvefit_dialog;
 pub mod date_time_dialog;
@@ -84,6 +85,9 @@ pub use count_values_define_dialog::{
 };
 pub use count_values_dialog::{
     render_count_values_dialog, CountValuesDialogAction, CountValuesDialogState,
+};
+pub use cox_regression_dialog::{
+    render_cox_regression_dialog, CoxRegressionDialogAction, CoxRegressionDialogState,
 };
 pub use crosstabs_dialog::{
     render_crosstabs_dialog, CrosstabsDialogAction, CrosstabsDialogState, CrosstabsTargetList,

@@ -1,22 +1,23 @@
 use crate::command::{CommandError, EngineCommand};
 use crate::commands::{
     AutoRecodeCommand, BatchReplaceCommand, CellEditCommand, CodebookCommand,
-    ComputeVariableCommand, CorrelationsCommand, CountValuesCommand, CreateDummiesCommand,
-    CreateTimeSeriesCommand, CrosstabsCommand, CurveFitCommand, DataAddRowCommand,
-    DataDeleteRowCommand, DateTimeWizardCommand, DescriptivesCommand, ExploreCommand,
-    FactorCommand, FrequenciesCommand, HelpCommand, ImportCsvCommand, ImportExcelCommand,
-    ImportSpssCommand, IndependentSamplesTTestCommand, KMeansClusterCommand, KaplanMeierCommand,
-    KruskalWallisCommand, LifeTablesCommand, LinearRegressionCommand, LogisticRegressionCommand,
-    MannWhitneyCommand, MeansCommand, MultinomialLogisticCommand, MultivariateGlmCommand,
-    OneSampleTTestCommand, OneWayAnovaCommand, OpenFileCommand, OptimalBinningCommand,
-    PairedSamplesTTestCommand, PartialCorrCommand, PrepareDataModelingCommand,
-    ProgrammabilityCommand, RandomSeedCommand, RankCasesCommand, RecodeIntoDifferentCommand,
-    RecodeIntoSameCommand, RelatedSamplesTestCommand, ReliabilityCommand, RepeatedGlmCommand,
-    ReplaceMissingCommand, SaveFileCommand, SelectCasesCommand, SetLabelCommand, SetMeasureCommand,
-    ShiftValuesCommand, SortCasesCommand, SplitFileCommand, SummarizeCommand, UnivariateGlmCommand,
-    VarAddCommand, VarDeleteCommand, VarRenameCommand, VarSetAlignCommand, VarSetDecimalsCommand,
-    VarSetMissingValuesCommand, VarSetTypeCommand, VarSetValueLabelsCommand, VarSetWidthCommand,
-    VisualBinningCommand, WeightCasesCommand,
+    ComputeVariableCommand, CorrelationsCommand, CountValuesCommand, CoxRegressionCommand,
+    CreateDummiesCommand, CreateTimeSeriesCommand, CrosstabsCommand, CurveFitCommand,
+    DataAddRowCommand, DataDeleteRowCommand, DateTimeWizardCommand, DescriptivesCommand,
+    ExploreCommand, FactorCommand, FrequenciesCommand, HelpCommand, ImportCsvCommand,
+    ImportExcelCommand, ImportSpssCommand, IndependentSamplesTTestCommand, KMeansClusterCommand,
+    KaplanMeierCommand, KruskalWallisCommand, LifeTablesCommand, LinearRegressionCommand,
+    LogisticRegressionCommand, MannWhitneyCommand, MeansCommand, MultinomialLogisticCommand,
+    MultivariateGlmCommand, OneSampleTTestCommand, OneWayAnovaCommand, OpenFileCommand,
+    OptimalBinningCommand, PairedSamplesTTestCommand, PartialCorrCommand,
+    PrepareDataModelingCommand, ProgrammabilityCommand, RandomSeedCommand, RankCasesCommand,
+    RecodeIntoDifferentCommand, RecodeIntoSameCommand, RelatedSamplesTestCommand,
+    ReliabilityCommand, RepeatedGlmCommand, ReplaceMissingCommand, SaveFileCommand,
+    SelectCasesCommand, SetLabelCommand, SetMeasureCommand, ShiftValuesCommand, SortCasesCommand,
+    SplitFileCommand, SummarizeCommand, UnivariateGlmCommand, VarAddCommand, VarDeleteCommand,
+    VarRenameCommand, VarSetAlignCommand, VarSetDecimalsCommand, VarSetMissingValuesCommand,
+    VarSetTypeCommand, VarSetValueLabelsCommand, VarSetWidthCommand, VisualBinningCommand,
+    WeightCasesCommand,
 };
 use serde::{Deserialize, Serialize};
 use serde_json::{json, Value};
@@ -85,6 +86,7 @@ impl CommandBus {
         bus.register(Box::new(SummarizeCommand));
         bus.register(Box::new(KaplanMeierCommand));
         bus.register(Box::new(LifeTablesCommand));
+        bus.register(Box::new(CoxRegressionCommand));
         bus.register(Box::new(ReliabilityCommand));
         bus.register(Box::new(FactorCommand));
         bus.register(Box::new(MannWhitneyCommand));

@@ -11,6 +11,7 @@ pub mod correlations;
 mod correlations_tests;
 pub mod correlations_types;
 pub mod count_values;
+pub mod cox;
 pub mod crosstabs;
 #[cfg(test)]
 mod crosstabs_tests;
@@ -91,6 +92,12 @@ pub use correlations::{
     SignificanceTest, VarDescriptives, VariableInput,
 };
 pub use count_values::{compute_count_across_columns, ValueCriterion};
+pub use cox::{
+    compute_baseline_survival, compute_cox_regression, eval_partial_likelihood, fit_cox_engine,
+    normal_quantile, BaselineSurvivalPoint, CoxCaseSummary, CoxDataPoint, CoxEngineOutput,
+    CoxRegressionOptions, CoxRegressionResult, CoxVariableInEquation, OmnibusTestsResult,
+    TieMethod,
+};
 pub use crosstabs::{chi_square_sf, compute_crosstabs, fisher_exact_2x2};
 pub use crosstabs_types::{
     AssociationMeasure, ChiSquareTestRow, CrosstabCategory, CrosstabCell, CrosstabOptions,

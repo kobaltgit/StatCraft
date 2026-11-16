@@ -197,11 +197,25 @@ All statistical algorithms in StatCraft are implemented in **100% pure Safe Rust
   * Collinearity diagnostics: Tolerance and Variance Inflation Factor (VIF).
 * **Binary Logistic Regression (`Binary Logistic Regression` / `LOGISTIC REGRESSION`):**
   * Maximum Likelihood Estimation (MLE) via Iteratively Reweighted Least Squares (IRLS).
+  * Real-time binary cardinality guard: interactive detection of target distinct values with auto-lock on non-binary variables (protecting against execution crashes).
   * *Omnibus Tests of Model Coefficients* table ($\chi^2$, $df$, $p$-value).
   * *Model Summary* table: $-2 \text{ Log Likelihood}$, Cox & Snell $R^2$, and Nagelkerke $R^2$.
   * *Hosmer and Lemeshow Test* goodness-of-fit contingency table across risk deciles.
   * *Classification Table* with configurable cut value (default 0.5), computing observed vs. predicted counts, sensitivity, specificity, and overall percentage correct.
   * *Variables in the Equation* table: Parameter estimates $B$, Std. Error, Wald statistic, degrees of freedom, significance, Odds Ratio $\text{Exp}(B)$, and 95% confidence intervals for $\text{Exp}(B)$.
+* **Multinomial Logistic Regression (`Multinomial Logistic Regression` / `NOMREG`):**
+  * High-performance Newton-Raphson optimizer (Fisher Scoring) with backtracking line search, numerically stable `log-sum-exp` implementation, and Ridge regularization ($\lambda = 10^{-6}$) to prevent divergence under multicollinearity or quasi-complete separation (enforcing the `Never Crash` rule).
+  * Multi-category polytomous target support with flexible reference category selection (last, first, or custom numeric category).
+  * Categorical factors support with automated indicator contrast coding (dummy variables) and continuous covariates.
+  * Real-time target variable cardinality validation in UI dialog: automatic verification of $\ge 2$ categories with responsive warning banners and action button lock.
+  * Complete suite of 7 authentic IBM SPSS Pivot Tables:
+    * *Case Processing Summary*: counts and percentages across target and factor categories.
+    * *Model Fitting Information*: $-2 \text{ Log Likelihood}$, $\chi^2$, degrees of freedom, and $p$-value comparing Final model against Intercept Only.
+    * *Goodness-of-Fit*: Pearson and Deviance $\chi^2$ goodness-of-fit tests over subpopulations.
+    * *Pseudo R-Square*: Cox & Snell, Nagelkerke, and McFadden pseudo-$R^2$ statistics.
+    * *Likelihood Ratio Tests*: likelihood ratio tests for each effect in the model.
+    * *Parameter Estimates*: unstandardized coefficients $B$, Std. Error, Wald $\chi^2$, degrees of freedom, significance, Odds Ratio $\text{Exp}(B)$, and 95% confidence intervals for $\text{Exp}(B)$ relative to the reference category.
+    * *Classification Table*: observed vs. predicted contingency table with overall classification accuracy percentage.
 * **Curve Estimation (`Curve Estimation` / `CURVEFIT`):**
   * Simultaneous fitting and comparison of 11 regression models: Linear, Logarithmic, Inverse, Quadratic, Cubic, Power, Compound, S-curve, Logistic, Growth, and Exponential.
   * Comprehensive *Model Summary & Parameter Estimates* table comparing $R^2$, $F$, degrees of freedom, significance, constant $b_0$, and regression parameters $b_1, b_2, b_3$.
@@ -271,6 +285,17 @@ All statistical algorithms in StatCraft are implemented in **100% pure Safe Rust
   * Configurable interval start, end, and step size.
   * Canonical actuarial table columns: Number Entering Interval, Number Withdrawn during Interval, Number Exposed to Risk, Number of Terminal Events, Proportion Terminating, Proportion Surviving, Cumulative Proportion Surviving at End of Interval, Probability Density, Hazard Rate, and Median Survival Time.
   * Subgroup comparison via Wilcoxon (Gehan) statistic.
+* **Cox Proportional Hazards Regression (`Cox Regression` / `COXREG`):**
+  * Semiparametric modeling of time-to-event outcomes with multiple continuous and categorical covariates.
+  * Partial Likelihood maximization via Newton-Raphson with backtracking line search and Never Crash guarantees.
+  * Canonical tie-handling methods: Breslow (SPSS default) and Efron approximations.
+  * Stratified analysis support: shared regression coefficients across multiple clinical strata with stratum-specific baseline hazard functions.
+  * Authentic IBM SPSS Pivot Tables:
+    * *Case Processing Summary*: Total N, Events, Censored cases and percentages per stratum and overall.
+    * *Omnibus Tests of Model Coefficients*: $-2 \text{ Log Likelihood}$, $\chi^2$, degrees of freedom, and $p$-value.
+    * *Variables in the Equation*: Parameter estimates $B$, Std. Error, Wald $\chi^2$, degrees of freedom, significance, Hazard Ratio $\text{Exp}(B)$, and 95% confidence intervals for $\text{Exp}(B)$.
+    * *Survival Table at Mean of Covariates*: Cumulative baseline hazard $\hat{H}_0(t)$, baseline survival $\hat{S}_0(t)$, and adjusted survival at covariate means.
+  * Vector step-function Survival Plot rendered using design system tokens.
 
 ---
 

@@ -4,7 +4,7 @@ use super::outline::render_outline_pane;
 use super::{extract_item_tsv, render_crosstabs_item, render_log_block, render_notes_block};
 use super::{
     render_spss_adp_tables, render_spss_codebook_tables, render_spss_correlations_tables,
-    render_spss_curvefit_tables, render_spss_descriptives_pivot_table,
+    render_spss_cox_regression, render_spss_curvefit_tables, render_spss_descriptives_pivot_table,
     render_spss_explore_pivot_tables, render_spss_factor, render_spss_frequencies_tables,
     render_spss_generic_report, render_spss_indep_ttest_tables, render_spss_kmeans_tables,
     render_spss_kruskal_wallis_tables, render_spss_lifetables, render_spss_linear_regression,
@@ -271,6 +271,9 @@ pub fn render_output_view(ui: &mut Ui, state: &mut OutputViewerState) {
                                     }
                                     OutputItemKind::LifeTables(res) => {
                                         render_spss_lifetables(ui, res);
+                                    }
+                                    OutputItemKind::CoxRegression(res) => {
+                                        render_spss_cox_regression(ui, res);
                                     }
                                     OutputItemKind::Reliability(res) => {
                                         render_spss_reliability(ui, res);

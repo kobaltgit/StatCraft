@@ -297,11 +297,16 @@ impl StatCraftApp {
                             self.survival_km_dialog_state.is_open = true;
                             ui.close_menu();
                         }
-                        render_menu_item(
+                        if render_menu_item(
                             ui,
                             t!("menu-analyze-survival-cox"),
-                            MenuItemStatus::InDev,
-                        );
+                            requires_dataset_status,
+                        )
+                        .clicked()
+                        {
+                            self.cox_regression_dialog_state.is_open = true;
+                            ui.close_menu();
+                        }
                     });
                 });
             }

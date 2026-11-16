@@ -1,11 +1,12 @@
 use serde::{Deserialize, Serialize};
 use statcraft_algo::{
-    AdpResult, BivariateCorrelationsResult, CodebookResult, CrosstabResult, CurveFitResult,
-    DescriptivesResult, ExploreResult, FactorAnalysisResult, FrequencyResult, IndepTTestResult,
-    KMResult, KMeansResult, KruskalWallisResult, LifeTableResult, LinearRegressionResult,
-    LogisticRegressionResult, MannWhitneyResult, MeansProcedureResult, MultinomialLogisticResult,
-    OneSampleTTestResult, OneWayAnovaResult, PairedTTestResult, PartialCorrResult,
-    ProgrammabilityResult, RelatedPairTestResult, ReliabilityResult, SummarizeResult,
+    AdpResult, BivariateCorrelationsResult, CodebookResult, CoxRegressionResult, CrosstabResult,
+    CurveFitResult, DescriptivesResult, ExploreResult, FactorAnalysisResult, FrequencyResult,
+    IndepTTestResult, KMResult, KMeansResult, KruskalWallisResult, LifeTableResult,
+    LinearRegressionResult, LogisticRegressionResult, MannWhitneyResult, MeansProcedureResult,
+    MultinomialLogisticResult, OneSampleTTestResult, OneWayAnovaResult, PairedTTestResult,
+    PartialCorrResult, ProgrammabilityResult, RelatedPairTestResult, ReliabilityResult,
+    SummarizeResult,
 };
 use statcraft_i18n::t;
 
@@ -100,6 +101,7 @@ pub enum OutputItemKind {
     Summarize(Box<SummarizeResult>),
     KaplanMeier(Box<KMResult>),
     LifeTables(Box<LifeTableResult>),
+    CoxRegression(Box<CoxRegressionResult>),
     Reliability(Box<ReliabilityResult>),
     Factor(Box<FactorAnalysisResult>),
     Means(Box<MeansProcedureResult>),

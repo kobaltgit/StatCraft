@@ -3515,6 +3515,40 @@ Implemented robust validation guards across logistic regression dialogs to safeg
    * Added integration test `test_logistic_regression_validation_with_cases` in `crates/statcraft_app/tests/advanced_regression_dialog_invariants.rs`;
    * 100% Quality Gate pass: `xtask design-guard`, `xtask file-guard` (all 429 files compliant), and successful release binary build of `statcraft_app.exe`.
 
+---
+
+### Phase 83: Cox Proportional Hazards Regression (Feature 010 — COXREG)
+*Time: November 16, 2026, 17:05 (~60 minutes)*
+
+Fully implemented semiparametric Cox Proportional Hazards Regression (`COXREG`) with 100% mathematical parity to IBM SPSS Statistics 24, Spec-Kit open standard, and Clean-Room rules:
+1. **Mathematical Core L2 (`crates/statcraft_algo/src/cox/`):**
+   * **Log Partial Likelihood & Newton-Raphson Optimization:** Evaluates log partial likelihood, gradient score vector $g(\beta)$, and Fisher Information matrix $I(\beta)$ over dynamic risk sets $R(t_{(k)})$;
+   * **Tied Survival Times Approximation:**
+     - Default **Breslow** method ensuring 100% equivalence to standard IBM SPSS baseline output;
+     - Optional **Efron** method with adjusted risk denominator $S^{(0)}_l = S^{(0)} - \frac{l}{d_k} W_k^D$ for higher accuracy with frequent event ties;
+   * **Stratification Support (Strata):** Joint coefficient vector $\beta$ estimated across multiple clinical strata with stratum-specific baseline hazard functions $h_{0s}(t)$;
+   * **Backtracking Line Search Optimization:** Adaptive step halving ensuring monotonic likelihood improvement and Never Crash guarantee on ill-conditioned data;
+   * **Baseline Hazard & Survival Curves:** Nonparametric cumulative baseline hazard $\hat{H}_{0s}(t)$, baseline survival $\hat{S}_{0s}(t)$, and survival step function at covariate means $\hat{S}(t \mid \bar{x}) = [\hat{S}_{0s}(t)]^{\exp(\hat{\beta}^T \bar{x})}$;
+   * **Hypothesis Testing & Effect Sizes:** Model omnibus tests ($-2\ln L$, $\chi^2$, $df$, Sig.), standard errors $SE(B)$, Wald tests $\text{Wald} \sim \chi^2(1)$, hazard ratios $\text{Exp}(B)$, and 95% asymptotic Wald confidence intervals;
+   * Decomposed into 5 modular files (`types.rs`, `engine.rs`, `baseline.rs`, `mod.rs`, `tests.rs`), strictly obeying the $\le 500$ lines limit (File Size Guard).
+2. **Command Bus L5 (`crates/statcraft_syntax`):**
+   * Typed command `CoxRegressionCommand` (`stat.survival.cox`) with `specs()` schema for MCP AI agents;
+   * Dual-direction syntax serialization: `COXREG ... /STATUS = ...(1) /PATTERN = BY ... /METHOD = ENTER ... /CRITERIA = ITERATE(20) TIES(BRESLOW) /PRINT = CI(95) BASELINE /PLOT = SURVIVAL.`;
+   * SPSS command-line mapper `map_coxreg` integrated into `pkg3.rs`.
+3. **User Interface L6 (`crates/statcraft_app`):**
+   * Canonical modal dialog `CoxRegressionDialog` based on `DialogKit` ($560 \times 430$ px): time variable, status with event value definition, covariate picker, stratification slot, tie method selector (Breslow / Efron), and standard `DialogActionBar`;
+   * 4 authentic SPSS Pivot Tables in Output Viewer (`tables_cox.rs`):
+     1. *Case Processing Summary* (Total $N$, Event $N$, Censored $N$, Censored %);
+     2. *Omnibus Tests of Model Coefficients* ($-2\ln L$, $\chi^2$, $df$, $p$);
+     3. *Variables in the Equation* ($B$, $SE$, Wald, $df$, $p$, $\text{Exp}(B)$, $95\%$ CI);
+     4. *Survival Table at Mean of Covariates* (Time, Baseline Cum Hazard, Baseline Survival, Survival at Mean);
+   * Vector step-function Survival Plot rendered using egui painter primitives and Tokens design system;
+   * Main menu item activated: "Analyze -> Survival -> Cox Regression..." (`menu-analyze-survival-cox`) with TSV export.
+4. **Quality Gate & Testing (DoD):**
+   * Added Golden Oracle unit tests in `statcraft_algo` verified against Python `lifelines.CoxPHFitter` with tolerance $\le 10^{-6}$;
+   * Added headless render and TSV export invariant test `crates/statcraft_app/tests/output_viewer_cox_invariants.rs`;
+   * 100% Quality Gate pass (`cargo run -p xtask -j 1 -- ci`): `fmt`, `clippy -D warnings`, `layers`, `file-guard` (all 438 files compliant), `design-guard`, `i18n-lint` (100% translation coverage in `ru.ftl` and `en.ftl`), 41/41 Undo/Redo matrix.
+
 
 
 

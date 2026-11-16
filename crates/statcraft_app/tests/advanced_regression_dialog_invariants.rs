@@ -156,8 +156,12 @@ fn test_logistic_regression_validation_with_cases() {
     let mut ds = DataSet::empty();
     ds.add_variable("age", DataType::Numeric { decimals: 0 }, Measure::Scale)
         .unwrap();
-    ds.add_variable("gender", DataType::Numeric { decimals: 0 }, Measure::Nominal)
-        .unwrap();
+    ds.add_variable(
+        "gender",
+        DataType::Numeric { decimals: 0 },
+        Measure::Nominal,
+    )
+    .unwrap();
     ds.add_variable("salary", DataType::Numeric { decimals: 2 }, Measure::Scale)
         .unwrap();
 

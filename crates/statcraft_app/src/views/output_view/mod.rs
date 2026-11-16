@@ -8,6 +8,7 @@ pub mod tables_anova;
 pub mod tables_cluster;
 pub mod tables_common;
 pub mod tables_correlations;
+pub mod tables_cox;
 pub mod tables_crosstabs;
 pub mod tables_curvefit;
 pub mod tables_descriptives;
@@ -46,6 +47,7 @@ pub use tables_adp::{adp_to_tsv, render_spss_adp_tables};
 pub use tables_anova::{anova_to_tsv, render_spss_oneway_anova_tables};
 pub use tables_cluster::{kmeans_to_tsv, render_spss_kmeans_tables};
 pub use tables_correlations::{correlations_to_tsv, render_spss_correlations_tables};
+pub use tables_cox::{cox_to_tsv, render_spss_cox_regression};
 pub use tables_crosstabs::{crosstabs_to_tsv, render_crosstabs_item};
 pub use tables_curvefit::{curvefit_to_tsv, render_spss_curvefit_tables};
 pub use tables_descriptives::{descriptives_to_tsv, render_spss_descriptives_pivot_table};
@@ -109,6 +111,7 @@ pub fn extract_item_tsv(kind: &OutputItemKind) -> Option<String> {
         OutputItemKind::Summarize(res) => Some(summarize_to_tsv(res)),
         OutputItemKind::KaplanMeier(res) => Some(survival_to_tsv(res)),
         OutputItemKind::LifeTables(res) => Some(lifetables_to_tsv(res)),
+        OutputItemKind::CoxRegression(res) => Some(cox_to_tsv(res)),
         OutputItemKind::Reliability(res) => Some(reliability_to_tsv(res)),
         OutputItemKind::Factor(res) => Some(factor_to_tsv(res)),
         OutputItemKind::Means(res) => Some(means_to_tsv(res)),

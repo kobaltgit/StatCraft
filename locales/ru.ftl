@@ -1711,6 +1711,27 @@ output-lifetables-cum-p = Кумулятивная выживаемость (P)
 output-lifetables-hazard = Интенсивность риска (Hazard)
 status-lifetables-executed = Анализ таблиц дожития завершен для { $time }
 
+# Регрессия пропорциональных рисков Кокса (COXREG)
+dialog-cox-title = Регрессия Кокса
+dialog-cox-covariates = Ковариаты:
+dialog-cox-strata-variable = Страты (необязательно):
+dialog-cox-ties-group = Метод обработки совпадений
+dialog-cox-ties-breslow = Бреслоу (Breslow)
+dialog-cox-ties-efron = Эфрон (Efron)
+output-cox-title = Регрессия Кокса
+output-cox-table-title = Модель пропорциональных рисков Кокса
+output-cox-case-summary-title = Сводка обработки наблюдений
+output-cox-omnibus-title = Омнибус-тесты коэффициентов модели
+output-cox-variables-title = Переменные в уравнении
+output-cox-baseline-title = Таблица выживаемости при средних значениях ковариат
+output-cox-survival-plot-title = График функции выживаемости при средних ковариатах
+output-cox-baseline-cum-hazard = Базовый накопленный риск
+output-cox-baseline-survival = Базовая выживаемость
+output-cox-survival-at-mean = Выживаемость при средних
+output-common-stratum = Страта
+output-common-overall = Всего
+status-cox-executed = Выполнена регрессия Кокса для переменной времени { $time }
+
 
 # Package 3 Common Data and Table Labels
 output-common-variable = Переменная

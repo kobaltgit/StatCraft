@@ -420,8 +420,8 @@ pub fn render_multinomial_logistic_dialog(
             }
 
             let has_valid_dep = dep_distinct_count.unwrap_or(0) >= 2;
-            let can_run = has_valid_dep
-                && (!state.factors.is_empty() || !state.covariates.is_empty());
+            let can_run =
+                has_valid_dep && (!state.factors.is_empty() || !state.covariates.is_empty());
             let bar = DialogActionBar::new(can_run);
             match bar.show(ui) {
                 ActionBarAction::Ok => {

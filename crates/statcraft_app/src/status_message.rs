@@ -156,6 +156,9 @@ pub enum StatusMessage {
     LifeTablesExecuted {
         time_var: String,
     },
+    CoxRegressionExecuted {
+        time_var: String,
+    },
     ProgrammabilityExecuted {
         statements: usize,
         rows: usize,
@@ -434,6 +437,9 @@ impl StatusMessage {
             }
             StatusMessage::LifeTablesExecuted { time_var } => {
                 t!("status-lifetables-executed", time = time_var.as_str())
+            }
+            StatusMessage::CoxRegressionExecuted { time_var } => {
+                t!("status-cox-executed", time = time_var.as_str())
             }
             StatusMessage::ProgrammabilityExecuted { statements, rows } => {
                 t!(

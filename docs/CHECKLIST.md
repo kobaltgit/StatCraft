@@ -926,6 +926,27 @@
   - [x] Тест `test_logistic_regression_validation_with_cases` в `advanced_regression_dialog_invariants.rs`.
   - [x] 100% прохождение `xtask design-guard`, `xtask file-guard` (429 файлов).
 
+## 58. Регрессия пропорциональных рисков Кокса (Feature 010 — COXREG / Cox Proportional Hazards Regression)
+- [x] L2 `statcraft_algo::cox` (Safe Rust, <= 500 строк на файл):
+  - [x] `types.rs`: структуры `TieMethod` (`Breslow`, `Efron`), `CoxRegressionOptions`, `CoxDataPoint`, `CoxCaseSummary`, `OmnibusTestsResult`, `CoxVariableInEquation`, `BaselineSurvivalPoint`, `CoxRegressionResult`.
+  - [x] `engine.rs`: итератор Ньютона-Рафсона с бэктрекинг-поиском шага, вычисление логарифма частичного правдоподобия, вектора градиента (Score) и информационной матрицы Фишера, обработка связанных исходов (Breslow и Efron), поддержка множественной стратификации (Strata).
+  - [x] `baseline.rs`: базовые функции риска $\hat{H}_{0s}(t)$, базовой выживаемости $\hat{S}_{0s}(t)$ и выживаемости на среднем ковариат $\hat{S}(t \mid \bar{x})$.
+  - [x] `mod.rs`: единая точка входа `compute_cox_regression`, валидация данных, аппроксимация Аклема для квантилей нормального распределения.
+  - [x] `tests.rs`: бенчмарк Golden Oracle против `lifelines.CoxPHFitter`, проверка методов Breslow и Efron, многослойная стратификация, валидация граничных условий.
+- [x] L5 `statcraft_syntax`:
+  - [x] `CoxRegressionCommand` (`stat.survival.cox`): схема `specs()`, предикат доступности `enabled()`, выполнение с интеграцией в шину `CommandBus` и Output Viewer, откат `undo()`, генератор канонического синтаксиса `COXREG ... /STATUS=... /STRATA=... /METHOD=ENTER ... /CRITERIA=...`.
+  - [x] Синтаксический парсер `COXREG` в `pkg3.rs`: маппер подкоманд `STATUS`, `STRATA`, `METHOD`, `CRITERIA`, `PRINT`, `PLOT`.
+  - [x] Регистрация в `commands/mod.rs`, `bus.rs` и `lib.rs`.
+- [x] L6 `statcraft_app`:
+  - [x] `cox_regression_dialog.rs`: канонический диалог на базе `DialogKit` ($560 \times 430$ px), `DialogShell::standard`, `VariablePicker`, адаптивные кнопки переноса `TransferButton`, селектор метода обработки связей (Breslow/Efron), доверительный интервал для `Exp(B)`, поддиалог задания события `EventStatusDialog`, поддиалог настроек `CoxOptionsDialog`, нижняя панель `DialogActionBar`.
+  - [x] `tables_cox.rs`: рендеринг аутентичных сводных таблиц SPSS Pivot Tables (Case Processing Summary, Omnibus Tests of Model Coefficients, Variables in the Equation с коэффициентами, ошибками, статистикой Вальда, p-value, Exp(B) и 95% ДИ, Baseline Survival Table) и векторный график кривой выживаемости на средних ковариат на базе `egui_plot`. Экспорт результатов в TSV.
+  - [x] Меню `Анализ ▶ Выживаемость ▶ Регрессия Кокса...`: активация пункта с привязкой вызова диалога.
+  - [x] `app.rs`, `app_dialogs_pkg3.rs`, `status_message.rs`: интеграция диалога, действий Run и Paste в Syntax Editor, статусных сообщений.
+- [x] i18n & Quality Gate:
+  - [x] Синхронизация семантических ключей в `locales/en.ftl` и `locales/ru.ftl` (100% покрытие, 0% сырой кириллицы).
+  - [x] Инвариантные тесты диалогов и рендеринга вывода (`output_viewer_cox_invariants.rs`).
+  - [x] 100% успешное прохождение всех проверок: `file-guard` (438 файлов), `design-guard`, `layers`, `parity`, `cargo test --workspace -j 1`, `ci`.
+
 ## 20. Планы будущих релизов (Backlog / Planned Features)
 - [ ] Мультимониторный режим рабочего пространства (Multi-Monitor Viewports & Pop-out Tabs):
   - [ ] Механизм открепления вкладок во внешние нативные окна ОС через `ctx.show_viewport_immediate`.

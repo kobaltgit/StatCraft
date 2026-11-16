@@ -3229,6 +3229,40 @@
    * Реализован интеграционный тест `test_logistic_regression_validation_with_cases` в `crates/statcraft_app/tests/advanced_regression_dialog_invariants.rs`;
    * 100% прохождение Quality Gate: `xtask design-guard`, `xtask file-guard` (все 429 файлов в пределах лимитов) и сборка релизного бинарника `statcraft_app.exe`.
 
+---
+
+### Этап 83: Регрессия пропорциональных рисков Кокса (Feature 010 — COXREG)
+*Время: 16 ноября 2026, 17:05 (~60 минут)*
+
+Реализована полупараметрическая регрессия пропорциональных рисков Кокса (Cox Proportional Hazards Regression / `COXREG`) со 100% паритетом к канону IBM SPSS Statistics 24, открытому стандарту Spec-Kit и правилам чистой комнаты Clean-Room:
+1. **Математическое ядро L2 (`crates/statcraft_algo/src/cox/`):**
+   * **Частичное правдоподобие (Log Partial Likelihood):** Вычисление функции логарифмического частичного правдоподобия, градиентного вектора счета (Score vector) $g(\beta)$ и информационной матрицы Фишера $I(\beta)$ по взвешенным моментам множеств риска $R(t_{(k)})$;
+   * **Методы обработки совпадений (Ties):**
+     - По умолчанию метод **Бреслоу (Breslow)** для 100% паритета с базовым выводом IBM SPSS;
+     - Метод **Эфрона (Efron)** с регулировкой знаменателя суммы рисков $S^{(0)}_l = S^{(0)} - \frac{l}{d_k} W_k^D$ для повышенной точности;
+   * **Поддержка стратификации (Strata):** Расчет единого общего вектора коэффициентов $\beta$ при раздельных стратифицированных базовых функциях риска $h_{0s}(t)$;
+   * **Оптимизация Ньютона-Рафсона с контролем шага (Backtracking Line Search):** Итеративный поиск максимума с гарантией отсутствия паник (Never Crash) и обращением информационной матрицы;
+   * **Базовые функции риска и выживаемости:** Непараметрическая кумулятивная базовая функция риска Бреслоу $\hat{H}_{0s}(t)$, базовая функция дожития $\hat{S}_{0s}(t)$ и ступенчатая функция выживаемости при средних значениях ковариат $\hat{S}(t \mid \bar{x}) = [\hat{S}_{0s}(t)]^{\exp(\hat{\beta}^T \bar{x})}$;
+   * **Статистика и проверки гипотез:** Омнибус-тесты согласия модели ($-2\ln L$, $\chi^2$, $df$, Sig.), стандартные ошибки $SE(B)$, критерий Вальда $\text{Wald} \sim \chi^2(1)$, отношения рисков $\text{Exp}(B)$ и 95% асимптотические доверительные интервалы;
+   * Декомпозиция ядра на 5 подмодулей (`types.rs`, `engine.rs`, `baseline.rs`, `mod.rs`, `tests.rs`) со строгим соблюдением правила $\le 500$ строк на файл (File Size Guard).
+2. **Командная шина L5 (`crates/statcraft_syntax`):**
+   * Типизированная команда `CoxRegressionCommand` (`stat.survival.cox`) со схемой параметров `specs()` для MCP AI-агентов;
+   * Генератор и сериализатор канонического синтаксиса `COXREG ... /STATUS = ...(1) /PATTERN = BY ... /METHOD = ENTER ... /CRITERIA = ITERATE(20) TIES(BRESLOW) /PRINT = CI(95) BASELINE /PLOT = SURVIVAL.`;
+   * Синтаксический транслятор `map_coxreg` в `pkg3.rs` для командной строки SPSS.
+3. **Пользовательский интерфейс L6 (`crates/statcraft_app`):**
+   * Модальное диалоговое окно `CoxRegressionDialog` на базе `DialogKit` ($560 \times 430$ px): слоты времени, статуса с полем целевого значения события, список ковариат, слот переменной стратификации, переключатель методов обработки совпадений (Breslow / Efron) и кнопочная панель `DialogActionBar`;
+   * 4 аутентичных сводных таблицы SPSS Pivot Tables (`tables_cox.rs`):
+     1. *Case Processing Summary* (Всего $N$, число событий, число цензурированных с процентами по стратам и всего);
+     2. *Omnibus Tests of Model Coefficients* ($-2\ln L$, $\chi^2$, $df$, $p$);
+     3. *Variables in the Equation* ($B$, $SE$, Wald, $df$, $p$, $\text{Exp}(B)$, $95\%$ CI для $\text{Exp}(B)$);
+     4. *Survival Table at Mean of Covariates* (Время, базовый накопленный риск, базовая выживаемость, выживаемость при средних ковариатах);
+   * Векторный ступенчатый график функции выживаемости (Survival Plot) на примитивах egui painter с цветами дизайн-системы Tokens;
+   * Активация пункта главного меню «Анализ ▶ Выживаемость ▶ Регрессия Кокса...» (`menu-analyze-survival-cox`) и экспорт в TSV.
+4. **Контроль качества (Definition of Done):**
+   * Добавлены Golden Oracle unit-тесты в `statcraft_algo` со сверкой оценок параметров и стандартных ошибок с Python `lifelines.CoxPHFitter` с точностью $\le 10^{-6}$;
+   * Добавлен интеграционный тест `crates/statcraft_app/tests/output_viewer_cox_invariants.rs` с проверкой headless-рендеринга диалога и сводных таблиц;
+   * Полное прохождение Quality Gate (`cargo run -p xtask -j 1 -- ci`): `fmt`, `clippy -D warnings`, `layers`, `file-guard` (все 438 файлов в пределах лимитов), `design-guard`, `i18n-lint` (100% покрытие переводов в `ru.ftl` и `en.ftl`), 41/41 обратимость истории Undo/Redo.
+
 
 
 
