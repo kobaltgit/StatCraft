@@ -186,6 +186,29 @@ impl Geo {
         Some((row, col))
     }
 
+    /// Finds cell coordinates `(row, col)` clamped to grid bounds during active drag.
+    pub fn cell_at_pos_clamped(&self, pos: Pos2) -> Option<(usize, usize)> {
+        if self.rows.count() == 0 || self.cols.count() == 0 {
+            return None;
+        }
+
+        let data_x = (pos.x - self.quad_center.min.x + self.scroll.x)
+            .clamp(0.0, (self.cols.total_size() - 1.0).max(0.0));
+        let data_y = (pos.y - self.quad_center.min.y + self.scroll.y)
+            .clamp(0.0, (self.rows.total_size() - 1.0).max(0.0));
+
+        let col = self
+            .cols
+            .index_at(data_x)
+            .unwrap_or(self.cols.count().saturating_sub(1));
+        let row = self
+            .rows
+            .index_at(data_y)
+            .unwrap_or(self.rows.count().saturating_sub(1));
+
+        Some((row, col))
+    }
+
     /// Finds column index if `pos` lies within `quad_top_right`.
     pub fn col_header_at_pos(&self, pos: Pos2) -> Option<usize> {
         if !self.quad_top_right.contains(pos) {

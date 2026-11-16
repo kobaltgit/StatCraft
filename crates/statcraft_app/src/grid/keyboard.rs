@@ -113,8 +113,10 @@ pub fn handle_grid_keyboard(
         d_col += 1;
     }
 
-    // 5. Tab / Enter keys
-    if ui.input(|i| i.key_pressed(Key::Tab)) {
+    let is_tab = ui.input(|i| i.key_pressed(Key::Tab));
+    let is_enter = ui.input(|i| i.key_pressed(Key::Enter));
+
+    if is_tab {
         if shift {
             if cur_c > 0 {
                 d_col -= 1;
@@ -130,7 +132,7 @@ pub fn handle_grid_keyboard(
         }
     }
 
-    if ui.input(|i| i.key_pressed(Key::Enter)) {
+    if is_enter {
         if shift {
             if cur_r > 0 {
                 d_row -= 1;
@@ -146,10 +148,11 @@ pub fn handle_grid_keyboard(
         let new_c =
             (cur_c as isize + d_col).clamp(0, total_cols.saturating_sub(1) as isize) as usize;
 
+        let extend = if is_tab || is_enter { false } else { shift };
         events.push(KeyboardEvent::Navigate {
             target_row: new_r,
             target_col: new_c,
-            extend_selection: shift,
+            extend_selection: extend,
         });
         return events;
     }

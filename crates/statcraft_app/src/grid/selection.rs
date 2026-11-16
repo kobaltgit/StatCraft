@@ -240,12 +240,7 @@ pub fn paint_selection(painter: &Painter, geo: &Geo, selection: &GridSelection) 
     // Clip rendering strictly to quad_center so it never bleeds into headers
     let p = painter.with_clip_rect(geo.quad_center);
 
-    // Multi-cell background fill
-    if !selection.range.is_single_cell() {
-        p.rect_filled(bounds, 0.0_f32, Tokens::bg_selected());
-    }
-
-    // Outer accent stroke (1.5 px)
+    // Outer accent stroke (1.5 px) around selection perimeter
     p.rect_stroke(bounds, 0.0_f32, Stroke::new(1.5_f32, Tokens::accent()));
 
     // Fill handle marker at bottom-right corner (6x6 px)

@@ -102,7 +102,7 @@ pub fn handle_grid_interactions(
     state: &mut GridInteractState,
 ) -> Vec<GridEvent> {
     let mut events = Vec::new();
-    let pointer_pos = ui.input(|i| i.pointer.hover_pos());
+    let pointer_pos = ui.input(|i| i.pointer.latest_pos().or_else(|| i.pointer.hover_pos()));
 
     // 1. Wheel Scrolling
     handle_wheel_scroll(ui, geo, &mut events);
@@ -143,36 +143,42 @@ pub fn handle_grid_interactions(
     }
 
     // 5. Column boundary hit-test (Resize Cursor & Drag Initiation)
+    // Only active in column headers row
     let boundary_tolerance = 6.0_f32;
-    if let Some((col_idx, screen_x)) = geo.col_boundary_near_pos(pos, boundary_tolerance) {
-        state.hovered_boundary = Some((col_idx, screen_x));
-        ui.ctx().set_cursor_icon(CursorIcon::ResizeHorizontal);
+    if pos.y <= geo.quad_top_right.max.y {
+        if let Some((col_idx, screen_x)) = geo.col_boundary_near_pos(pos, boundary_tolerance) {
+            state.hovered_boundary = Some((col_idx, screen_x));
+            ui.ctx().set_cursor_icon(CursorIcon::ResizeHorizontal);
 
-        let double_clicked = ui.input(|i| i.pointer.button_double_clicked(PointerButton::Primary));
-        let current_time = ui.input(|i| i.time);
-        let is_double = double_clicked
-            || matches!(
-                state.last_boundary_click,
-                Some((last_col, last_t))
-                    if last_col == col_idx && (current_time - last_t) < 0.4
-            );
+            let double_clicked =
+                ui.input(|i| i.pointer.button_double_clicked(PointerButton::Primary));
+            let current_time = ui.input(|i| i.time);
+            let is_double = double_clicked
+                || matches!(
+                    state.last_boundary_click,
+                    Some((last_col, last_t))
+                        if last_col == col_idx && (current_time - last_t) < 0.4
+                );
 
-        if is_double {
-            events.push(GridEvent::AutoFitCol { col: col_idx });
-            state.last_boundary_click = None;
-            state.drag = None;
-            return events;
-        }
+            if is_double {
+                events.push(GridEvent::AutoFitCol { col: col_idx });
+                state.last_boundary_click = None;
+                state.drag = None;
+                return events;
+            }
 
-        let primary_pressed = ui.input(|i| i.pointer.button_pressed(PointerButton::Primary));
-        if primary_pressed {
-            let orig_w = geo.cols.get_size(col_idx).unwrap_or(100.0);
-            state.drag = Some(GridDrag::ResizeCol {
-                col: col_idx,
-                start_mouse_x: pos.x,
-                orig_width: orig_w,
-            });
-            return events;
+            let primary_pressed = ui.input(|i| i.pointer.button_pressed(PointerButton::Primary));
+            if primary_pressed {
+                let orig_w = geo.cols.get_size(col_idx).unwrap_or(100.0);
+                state.drag = Some(GridDrag::ResizeCol {
+                    col: col_idx,
+                    start_mouse_x: pos.x,
+                    orig_width: orig_w,
+                });
+                return events;
+            }
+        } else {
+            state.hovered_boundary = None;
         }
     } else {
         state.hovered_boundary = None;
@@ -224,6 +230,10 @@ pub fn handle_grid_interactions(
             } else if ui.input(|i| i.pointer.button_pressed(PointerButton::Primary)) {
                 let shift = ui.input(|i| i.modifiers.shift);
                 if shift {
+                    state.drag = Some(GridDrag::SelectRange {
+                        anchor: selection.anchor_cell,
+                        active: (row, col),
+                    });
                     events.push(GridEvent::SelectRange {
                         anchor: selection.anchor_cell,
                         active: (row, col),
@@ -286,7 +296,7 @@ fn handle_active_drag(
     events: &mut Vec<GridEvent>,
 ) {
     let pointer_pos = ui
-        .input(|i| i.pointer.hover_pos())
+        .input(|i| i.pointer.latest_pos().or_else(|| i.pointer.hover_pos()))
         .unwrap_or(geo.viewport_rect.center());
     let primary_down = ui.input(|i| i.pointer.primary_down());
 
@@ -332,7 +342,7 @@ fn handle_active_drag(
             }
         }
         GridDrag::SelectRange { anchor, mut active } => {
-            if let Some((r, c)) = geo.cell_at_pos(pointer_pos) {
+            if let Some((r, c)) = geo.cell_at_pos_clamped(pointer_pos) {
                 if (r, c) != active {
                     active = (r, c);
                     state.drag = Some(GridDrag::SelectRange { anchor, active });
@@ -349,9 +359,9 @@ fn handle_active_drag(
             mut target_range,
         } => {
             ui.ctx().set_cursor_icon(CursorIcon::Crosshair);
-            if let Some((r, c)) = geo.cell_at_pos(pointer_pos) {
-                target_range.max_row = r.max(source_range.max_row);
-                target_range.max_col = c.max(source_range.max_col);
+            if let Some((r, c)) = geo.cell_at_pos_clamped(pointer_pos) {
+                target_range.max_row = r.max(source_range.min_row);
+                target_range.max_col = c.max(source_range.min_col);
                 state.drag = Some(GridDrag::FillHandle {
                     source_range,
                     target_range,

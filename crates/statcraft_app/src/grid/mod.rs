@@ -103,7 +103,7 @@ where
     QuadrantPaint::paint_data_cells(
         ui.painter(),
         &geo,
-        Some(params.selection.active_cell),
+        Some(params.selection),
         params.editor_state.editing_cell,
         cell_info,
     );

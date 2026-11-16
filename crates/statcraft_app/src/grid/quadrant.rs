@@ -1,4 +1,5 @@
 use super::geo::Geo;
+use super::selection::GridSelection;
 use crate::theme::Tokens;
 use crate::widgets::paint_measure_icon;
 use egui::{pos2, vec2, Align2, FontId, Painter, Rect, Stroke};
@@ -122,7 +123,7 @@ impl QuadrantPaint {
     pub fn paint_data_cells<F>(
         painter: &Painter,
         geo: &Geo,
-        selected_cell: Option<(usize, usize)>,
+        selection: Option<&GridSelection>,
         editing_cell: Option<(usize, usize)>,
         mut cell_info: F,
     ) where
@@ -142,11 +143,17 @@ impl QuadrantPaint {
                     None => continue,
                 };
 
-                let is_selected = selected_cell == Some((r, c));
+                let is_selected = selection.is_some_and(|s| s.contains(r, c));
+                let is_active_cursor = selection.is_some_and(|s| s.active_cell == (r, c));
+                let is_multi_cell = selection.is_some_and(|s| !s.range.is_single_cell());
                 let is_editing = editing_cell == Some((r, c));
 
                 let bg_color = if is_selected {
-                    Tokens::bg_selected()
+                    if is_active_cursor && is_multi_cell {
+                        Tokens::bg_panel()
+                    } else {
+                        Tokens::bg_selected()
+                    }
                 } else if is_even {
                     Tokens::bg_row_even()
                 } else {
@@ -233,7 +240,8 @@ mod tests {
                     (format!("{}", r + 1), r % 2 == 0)
                 });
 
-                QuadrantPaint::paint_data_cells(painter, &geo, Some((0, 0)), None, |r, c| {
+                let sel = GridSelection::single(0, 0);
+                QuadrantPaint::paint_data_cells(painter, &geo, Some(&sel), None, |r, c| {
                     format!("{}.{}", r, c)
                 });
 
