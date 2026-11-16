@@ -892,7 +892,7 @@
   - [x] `BUGS_AND_ISSUES.md`: регистрация дефектов BUG-010, BUG-011, BUG-012 со статусом RESOLVED.
   - [x] `CHRONICLE.md` и `CHRONICLE.en.md`: синхронные записи этапа 80.
 
-## 50. Мультиномиальная логистическая регрессия (Feature 009 — NOMREG)
+## 56. Мультиномиальная логистическая регрессия (Feature 009 — NOMREG)
 - [x] L2 `statcraft_algo::multinomial_logistic` (Safe Rust, <= 500 строк на файл):
   - [x] `types.rs`: структуры `MultinomialLogisticOptions`, `ReferenceCategory`, `MultinomialCaseProcessingSummary`, `ModelFittingInfo`, `GoodnessOfFit`, `PseudoRSquared`, `LikelihoodRatioTestRow`, `ParameterEstimateRow`, `MultinomialClassificationTable`, `MultinomialLogisticResult`.
   - [x] `engine.rs`: итератор Ньютона-Рафсона (Fisher Scoring), стабильный log-sum-exp, расчет матрицы Фишера, регуляризация Риджа $\lambda = 10^{-6}$ при вырождении Гессиана (Never Crash), бэктрекинг-поиск шага.
@@ -912,6 +912,19 @@
   - [x] Синхронизация семантических ключей в `locales/en.ftl` и `locales/ru.ftl` (100% покрытие, 0% сырой кириллицы).
   - [x] Инвариантные тесты диалогов и рендеринга вывода (`advanced_regression_dialog_invariants.rs`, `multinomial_logistic_tests.rs`).
   - [x] 100% успешное прохождение всех проверок: `file-guard` (428 файлов), `design-guard`, `layers`, `parity`.
+
+## 57. Защита диалогов логистической регрессии и дерева вывода (BUG-013)
+- [x] Динамическая валидация мощности зависимой переменной в бинарной логистической регрессии (`logistic_regression_dialog.rs`):
+  - [x] Подсчет уникальных значений `dep_distinct_count` по активным строкам выборки;
+  * Индикаторы: `(бинарная, 2 значения)` (зеленый) и `({count} значений — требуется ровно 2)` (оранжевый);
+  * Блокировка кнопок `OK` и `Вставить` при $count \ne 2$ с предупреждением и рекомендацией использовать мультиномиальную регрессию.
+- [x] Валидация мощности в мультиномиальной логистической регрессии (`multinomial_logistic_dialog/mod.rs`):
+  - [x] Проверка числа категорий $\ge 2$, блокировка при пустой колонке или константе.
+- [x] Защита от сырых ключей в Outline Tree (`views/output_view/model.rs`):
+  - [x] Безопасный fallback `output-frequencies-title` $\to$ `output-frequencies` («Частоты») при открытии сессий.
+- [x] Тестирование и Quality Gate:
+  - [x] Тест `test_logistic_regression_validation_with_cases` в `advanced_regression_dialog_invariants.rs`.
+  - [x] 100% прохождение `xtask design-guard`, `xtask file-guard` (429 файлов).
 
 ## 20. Планы будущих релизов (Backlog / Planned Features)
 - [ ] Мультимониторный режим рабочего пространства (Multi-Monitor Viewports & Pop-out Tabs):

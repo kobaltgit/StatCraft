@@ -3496,6 +3496,25 @@ Delivered a full-fledged Multinomial Logistic Regression (**`NOMREG`**) procedur
    * Developed unit and integration test suites across all architectural layers: `statcraft_algo` (4 tests), `statcraft_syntax` (`test_nomreg_syntax_and_command`), `advanced_regression_dialog_invariants.rs`, and `multinomial_logistic_tests.rs`;
    * 100% passing Quality Gate: `xtask file-guard` (428 files strictly within size limits), `xtask design-guard`, `xtask layers`, `xtask parity`, and `i18n_lint_test` (zero hardcoded strings).
 
+---
+
+### Phase 82: Real-time Dependent Variable Cardinality Validation & Output Outline Tree Guard (BUG-013)
+*Time: November 16, 2026, 15:45 (~25 minutes)*
+
+Implemented robust validation guards across logistic regression dialogs to safeguard against invalid model specifications by inexperienced users and fixed output tree localization fallbacks:
+1. **Interactive Target Cardinality Validation in Binary Logistic Regression (`crates/statcraft_app/src/dialogs/logistic_regression_dialog.rs`):**
+   * Added real-time unique value counting (`dep_distinct_count`) across active dataset cases upon variable selection;
+   * When a strictly binary target is selected (exactly 2 unique values, e.g. `gender`), renders a green status indicator `(binary, 2 values)` with `OK` and `Paste` buttons enabled;
+   * When a continuous or multi-category variable is selected (e.g. `age` with 20 values), renders an amber indicator `({count} values — 2 required)` under the slot and an explanatory banner recommending *Multinomial Logistic Regression*;
+   * Automatically disables the `OK` and `Paste` action buttons (`is_valid = false`), completely eliminating runtime command aborts in the status bar.
+2. **Cardinality Guard in Multinomial Logistic Regression (`crates/statcraft_app/src/dialogs/multinomial_logistic_dialog/mod.rs`):**
+   * Enforced minimum distinct category check ($\ge 2$), disabling execution on constant or empty variables with an informative warning banner.
+3. **Outline Tree Fallback Guard (`crates/statcraft_app/src/views/output_view/model.rs`):**
+   * Added an alias fallback in `OutputProcedure::title` mapping legacy parameterized `output-frequencies-title` to `output-frequencies` ("Frequencies"), preventing raw bracketed key fallbacks (`[output-frequencies-title]`) in restored output viewers.
+4. **Quality Gate & Testing (DoD):**
+   * Added integration test `test_logistic_regression_validation_with_cases` in `crates/statcraft_app/tests/advanced_regression_dialog_invariants.rs`;
+   * 100% Quality Gate pass: `xtask design-guard`, `xtask file-guard` (all 429 files compliant), and successful release binary build of `statcraft_app.exe`.
+
 
 
 
