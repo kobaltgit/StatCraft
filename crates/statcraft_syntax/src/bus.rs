@@ -7,16 +7,16 @@ use crate::commands::{
     FactorCommand, FrequenciesCommand, HelpCommand, ImportCsvCommand, ImportExcelCommand,
     ImportSpssCommand, IndependentSamplesTTestCommand, KMeansClusterCommand, KaplanMeierCommand,
     KruskalWallisCommand, LifeTablesCommand, LinearRegressionCommand, LogisticRegressionCommand,
-    MannWhitneyCommand, MeansCommand, MultivariateGlmCommand, OneSampleTTestCommand,
-    OneWayAnovaCommand, OpenFileCommand, OptimalBinningCommand, PairedSamplesTTestCommand,
-    PartialCorrCommand, PrepareDataModelingCommand, ProgrammabilityCommand, RandomSeedCommand,
-    RankCasesCommand, RecodeIntoDifferentCommand, RecodeIntoSameCommand, RelatedSamplesTestCommand,
-    ReliabilityCommand, RepeatedGlmCommand, ReplaceMissingCommand, SaveFileCommand,
-    SelectCasesCommand, SetLabelCommand, SetMeasureCommand, ShiftValuesCommand, SortCasesCommand,
-    SplitFileCommand, SummarizeCommand, UnivariateGlmCommand, VarAddCommand, VarDeleteCommand,
-    VarRenameCommand, VarSetAlignCommand, VarSetDecimalsCommand, VarSetMissingValuesCommand,
-    VarSetTypeCommand, VarSetValueLabelsCommand, VarSetWidthCommand, VisualBinningCommand,
-    WeightCasesCommand,
+    MannWhitneyCommand, MeansCommand, MultinomialLogisticCommand, MultivariateGlmCommand,
+    OneSampleTTestCommand, OneWayAnovaCommand, OpenFileCommand, OptimalBinningCommand,
+    PairedSamplesTTestCommand, PartialCorrCommand, PrepareDataModelingCommand,
+    ProgrammabilityCommand, RandomSeedCommand, RankCasesCommand, RecodeIntoDifferentCommand,
+    RecodeIntoSameCommand, RelatedSamplesTestCommand, ReliabilityCommand, RepeatedGlmCommand,
+    ReplaceMissingCommand, SaveFileCommand, SelectCasesCommand, SetLabelCommand, SetMeasureCommand,
+    ShiftValuesCommand, SortCasesCommand, SplitFileCommand, SummarizeCommand, UnivariateGlmCommand,
+    VarAddCommand, VarDeleteCommand, VarRenameCommand, VarSetAlignCommand, VarSetDecimalsCommand,
+    VarSetMissingValuesCommand, VarSetTypeCommand, VarSetValueLabelsCommand, VarSetWidthCommand,
+    VisualBinningCommand, WeightCasesCommand,
 };
 use serde::{Deserialize, Serialize};
 use serde_json::{json, Value};
@@ -75,6 +75,7 @@ impl CommandBus {
         bus.register(Box::new(PartialCorrCommand));
         bus.register(Box::new(LinearRegressionCommand));
         bus.register(Box::new(LogisticRegressionCommand));
+        bus.register(Box::new(MultinomialLogisticCommand));
         bus.register(Box::new(CurveFitCommand));
         bus.register(Box::new(UnivariateGlmCommand));
         bus.register(Box::new(MultivariateGlmCommand));

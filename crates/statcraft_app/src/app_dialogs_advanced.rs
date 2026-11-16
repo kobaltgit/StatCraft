@@ -1,7 +1,8 @@
 use super::app::{StatCraftApp, StatusMessage};
 use super::dialogs::{
-    render_curvefit_dialog, render_logistic_regression_dialog, render_partial_corr_dialog,
-    CurveFitDialogAction, LogisticRegressionDialogAction, PartialCorrDialogAction,
+    render_curvefit_dialog, render_logistic_regression_dialog, render_multinomial_logistic_dialog,
+    render_partial_corr_dialog, CurveFitDialogAction, LogisticRegressionDialogAction,
+    MultinomialLogisticDialogAction, PartialCorrDialogAction,
 };
 use serde_json::json;
 use statcraft_i18n::t;
@@ -132,6 +133,94 @@ impl StatCraftApp {
                 self.output_view_state.add_entry(t!("output-log"), sps);
             }
             LogisticRegressionDialogAction::None => {}
+        }
+
+        // 3. Multinomial Logistic Regression Dialog
+        let multinomial_action = render_multinomial_logistic_dialog(
+            ctx,
+            self.dataset.as_ref(),
+            &mut self.multinomial_logistic_dialog_state,
+        );
+
+        match multinomial_action {
+            MultinomialLogisticDialogAction::Run {
+                dep_var,
+                factors,
+                covariates,
+                reference_category,
+                reference_value,
+                confidence_level,
+                include_constant,
+                print_classification,
+                print_goodness_of_fit,
+                print_lrt,
+            } => {
+                let params = json!({
+                    "dependent_var": dep_var,
+                    "factors": factors,
+                    "covariates": covariates,
+                    "reference_category": reference_category,
+                    "reference_value": reference_value,
+                    "confidence_level": confidence_level,
+                    "include_constant": include_constant,
+                    "print_classification": print_classification,
+                    "print_goodness_of_fit": print_goodness_of_fit,
+                    "print_lrt": print_lrt,
+                });
+                match self.command_bus.execute(
+                    "stat.regression.multinomial",
+                    &mut self.dataset,
+                    params,
+                ) {
+                    Ok(result_value) => {
+                        if let Ok(result) = serde_json::from_value::<
+                            statcraft_algo::MultinomialLogisticResult,
+                        >(result_value)
+                        {
+                            let dep = result.dependent_var.clone();
+                            let count = result.factors.len() + result.covariates.len();
+                            self.output_view_state.add_multinomial_logistic(result);
+                            self.status_message = StatusMessage::MultinomialLogisticExecuted {
+                                dep_var: dep,
+                                predictors_count: count,
+                            };
+                        }
+                    }
+                    Err(e) => {
+                        self.status_message = StatusMessage::Error(e.to_string());
+                    }
+                }
+            }
+            MultinomialLogisticDialogAction::Paste {
+                dep_var,
+                factors,
+                covariates,
+                reference_category,
+                reference_value,
+                confidence_level,
+                ..
+            } => {
+                let ref_str = match reference_category.as_str() {
+                    "first" => "FIRST".to_string(),
+                    "custom" => {
+                        if let Some(v) = reference_value {
+                            format!("{v}")
+                        } else {
+                            "LAST".to_string()
+                        }
+                    }
+                    _ => "LAST".to_string(),
+                };
+                let sps = statcraft_syntax::commands::MultinomialLogisticCommand::to_sps(
+                    &dep_var,
+                    &factors,
+                    &covariates,
+                    &ref_str,
+                    confidence_level,
+                );
+                self.output_view_state.add_entry(t!("output-log"), sps);
+            }
+            MultinomialLogisticDialogAction::None => {}
         }
 
         // 3. Curve Estimation Dialog

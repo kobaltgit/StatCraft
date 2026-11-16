@@ -121,3 +121,39 @@ fn test_curvefit_syntax_and_command() {
     assert!(gen_sps.contains("CURVEFIT"));
     assert!(gen_sps.contains("/MODEL = LINEAR QUADRATIC"));
 }
+
+#[test]
+fn test_nomreg_syntax_and_command() {
+    let mut bus = CommandBus::with_defaults();
+    let csv = "choice,ses,math,write\n\
+               1,1,45,50\n\
+               1,1,52,48\n\
+               2,2,65,60\n\
+               2,2,70,68\n\
+               3,3,75,71\n\
+               3,3,72,70\n\
+               1,1,35,39\n\
+               2,2,55,53\n\
+               3,3,70,69\n\
+               1,2,40,43\n\
+               2,3,60,58\n\
+               3,3,80,78\n";
+    let table = load_csv_from_reader(csv.as_bytes(), CsvOptions::default()).expect("valid csv");
+    let mut ds = Some(DataSet::from_raw_table(table).expect("valid dataset"));
+
+    let sps = "NOMREG choice (BASE=LAST) BY ses WITH math write\n  /CRITERIA = CIN(95)\n  /MODEL = ses math write\n  /PRINT = PARAMETER SUMMARY CLASSTBL FIT LRT.";
+    let res =
+        SyntaxDispatcher::execute_batch(sps, &mut ds, &mut bus).expect("batch should succeed");
+    assert_eq!(res.len(), 1);
+
+    let (cmd, val) = &res[0];
+    assert_eq!(cmd.name, "NOMREG");
+    assert_eq!(val["dependent_var"], "choice");
+    assert_eq!(val["factors"].as_array().unwrap(), &vec![json!("ses")]);
+    let covs = val["covariates"].as_array().unwrap();
+    assert_eq!(covs.len(), 2);
+    assert_eq!(covs[0], "math");
+    assert_eq!(covs[1], "write");
+    assert_eq!(val["reference_category_val"], 3.0);
+    assert!(val["converged"].as_bool().unwrap_or(false));
+}

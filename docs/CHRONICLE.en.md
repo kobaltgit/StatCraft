@@ -3473,6 +3473,29 @@ Finalized stabilization of the modernized Data View tabular grid, prepared and p
    * 100% test pass on full workspace suite (`cargo test --workspace -j 1`);
    * 0 violations on layers, design-guard, and file-guard (`xtask ci`).
 
+---
+
+### Phase 81: Multinomial Logistic Regression (Feature 009 — NOMREG)
+*Time: November 16, 2026, 14:30 (~50 minutes)*
+
+Delivered a full-fledged Multinomial Logistic Regression (**`NOMREG`**) procedure in strict accordance with the Spec-Kit architectural framework, IBM SPSS Statistics 24 canon, and Craft Anything Clean-Room principles:
+1. **L2 Computational Engine (`statcraft_algo::multinomial_logistic`):**
+   * **Newton-Raphson Numerical Optimizer (Fisher Scoring):** high-performance matrix operations via `faer`, numerically stable `log-sum-exp` formulation preventing floating-point overflow, backtracking line search, and Ridge Hessian damping ($\lambda = 10^{-6}$) under ill-conditioning or quasi-complete separation (enforcing the `Never Crash` rule);
+   * **Model Diagnostics & Inference:** Likelihood Ratio Tests (LRT) for individual predictor effects, subpopulation grouping for Pearson and Deviance goodness-of-fit $\chi^2$ tests, pseudo $R^2$ statistics (Cox & Snell, Nagelkerke, McFadden), parameter covariance matrix, Wald statistics, and Odds Ratios $\text{Exp}(B)$ with 95% confidence intervals;
+   * **Classification Matrix:** observed vs. predicted category assignments and percentage of cases correctly classified;
+   * **Categorical Factors:** discrete predictor support with automated dummy indicator contrast coding and reference category selection (defaulting to the last category).
+2. **L5 Command Bus (`statcraft_syntax`):**
+   * Strongly-typed `MultinomialLogisticCommand` (`stat.regression.multinomial`) providing declarative `specs()` schema for MCP AI agents;
+   * Bidirectional serialization for SPSS syntax `NOMREG ... (BASE=LAST) BY ... WITH ... /MODEL ... /CRITERIA ... /PRINT ...`;
+   * Extended syntax parser mapping `NOMREG` subcommands with support for `(BASE=LAST)` and `(BASE=FIRST)`.
+3. **L6 User Interface (`statcraft_app`):**
+   * Canonical `DialogKit` modal (`multinomial_logistic_dialog.rs`, $560 \times 430$ px): dependent variable slot, factors and covariates lists, `ReferenceCategoryDialog` subdialog, `StatisticsDialog` subdialog, and Type 1 `DialogActionBar`;
+   * 7 authentic SPSS Pivot Tables (`tables_multinomial_logistic.rs`): Case Processing Summary, Model Fitting Information, Goodness-of-Fit, Pseudo R-Square, Likelihood Ratio Tests, Parameter Estimates, and Classification Table;
+   * Activated `Analyze > Regression > Multinomial Logistic...` menu item and added TSV report export.
+4. **Quality Gate & Invariants (DoD):**
+   * Developed unit and integration test suites across all architectural layers: `statcraft_algo` (4 tests), `statcraft_syntax` (`test_nomreg_syntax_and_command`), `advanced_regression_dialog_invariants.rs`, and `multinomial_logistic_tests.rs`;
+   * 100% passing Quality Gate: `xtask file-guard` (428 files strictly within size limits), `xtask design-guard`, `xtask layers`, `xtask parity`, and `i18n_lint_test` (zero hardcoded strings).
+
 
 
 

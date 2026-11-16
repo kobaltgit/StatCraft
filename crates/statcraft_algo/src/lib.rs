@@ -35,6 +35,7 @@ pub mod means;
 #[cfg(test)]
 mod means_tests;
 pub mod means_types;
+pub mod multinomial_logistic;
 pub mod nonparam_related;
 #[cfg(test)]
 mod nonparam_related_tests;
@@ -130,6 +131,13 @@ pub use means::compute_means_breakdown;
 pub use means_types::{
     MeansAnovaRow, MeansAnovaTable, MeansAssociationMeasures, MeansCaseProcessingSummary,
     MeansCellStats, MeansOptions, MeansProcedureResult, MeansTableResult,
+};
+pub use multinomial_logistic::{
+    compute_multinomial_logistic, CaseProcessingCategory, GoodnessOfFit, LikelihoodRatioTestRow,
+    ModelFittingInfo as MultinomialModelFittingInfo, MultinomialCaseProcessingSummary,
+    MultinomialClassificationTable, MultinomialClassificationTableRow, MultinomialLogisticOptions,
+    MultinomialLogisticResult, ParameterEstimateRow, PseudoRSquared as MultinomialPseudoRSquared,
+    ReferenceCategory,
 };
 pub use nonparam_related::{
     compute_related_samples, compute_sign_test, compute_sign_test_from_slices,

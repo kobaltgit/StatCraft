@@ -197,11 +197,16 @@ impl StatCraftApp {
                             self.logistic_regression_dialog_state.is_open = true;
                             ui.close_menu();
                         }
-                        render_menu_item(
+                        if render_menu_item(
                             ui,
                             t!("menu-analyze-regression-multinomial"),
-                            MenuItemStatus::InDev,
-                        );
+                            requires_dataset_status,
+                        )
+                        .clicked()
+                        {
+                            self.multinomial_logistic_dialog_state.is_open = true;
+                            ui.close_menu();
+                        }
                         if render_menu_item(
                             ui,
                             t!("menu-analyze-regression-curve"),

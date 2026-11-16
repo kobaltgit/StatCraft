@@ -3,9 +3,9 @@ use statcraft_algo::{
     AdpResult, BivariateCorrelationsResult, CodebookResult, CrosstabResult, CurveFitResult,
     DescriptivesResult, ExploreResult, FactorAnalysisResult, FrequencyResult, IndepTTestResult,
     KMResult, KMeansResult, KruskalWallisResult, LifeTableResult, LinearRegressionResult,
-    LogisticRegressionResult, MannWhitneyResult, MeansProcedureResult, OneSampleTTestResult,
-    OneWayAnovaResult, PairedTTestResult, PartialCorrResult, ProgrammabilityResult,
-    RelatedPairTestResult, ReliabilityResult, SummarizeResult,
+    LogisticRegressionResult, MannWhitneyResult, MeansProcedureResult, MultinomialLogisticResult,
+    OneSampleTTestResult, OneWayAnovaResult, PairedTTestResult, PartialCorrResult,
+    ProgrammabilityResult, RelatedPairTestResult, ReliabilityResult, SummarizeResult,
 };
 use statcraft_i18n::t;
 
@@ -90,6 +90,7 @@ pub enum OutputItemKind {
     LinearRegression(Box<LinearRegressionResult>),
     PartialCorrelations(Box<PartialCorrResult>),
     LogisticRegression(Box<LogisticRegressionResult>),
+    MultinomialLogistic(Box<MultinomialLogisticResult>),
     CurveFit(Box<CurveFitResult>),
     UnivariateGlm(Box<statcraft_algo::glm::UnivariateGlmResult>),
     MultivariateGlm(Box<statcraft_algo::glm::MultivariateGlmResult>),

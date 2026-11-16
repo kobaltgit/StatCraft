@@ -332,6 +332,12 @@ Orchestration of the `egui_dock` multi-document interface, layout safeguards, an
   * `[ ] Syntax Editor` — `Ctrl+4`;
   * `[ ] AI Copilot Console` — `Ctrl+5`;
 * **Minimize All / Restore All Panels.**
+* **Multi-Monitor Mode & Pop-out Tab Viewports (Multi-Monitor Viewports & Pop-out Tabs) [Planned]:**
+  * Detaching document tabs (`Output Viewer`, `Syntax Editor`, secondary datasets) into independent native operating system viewports (`egui::show_viewport_immediate`);
+  * Free movement of detached windows across secondary and tertiary monitors, full-screen maximizing, and native OS snapping (Windows Snap);
+  * 100% preservation of all existing in-window docking drop targets, splitters, tab reordering, and overlay markers within the parent window;
+  * Bi-directional integration: "Move to New Window" (Pop out) action in tab context menus and "Dock Back" (Attach to Main Window) button in the floating viewport header or on window close;
+  * Single-process shared memory model (direct access to `AppState`, `DataSet`, and `CommandBus` without IPC overhead).
 
 ### 4.15. "Help" Menu Architecture — Educational Center & Open Science
 
@@ -415,6 +421,10 @@ Statistical pedagogy, transparent algorithmic specifications, and onboard sample
   * Maximum likelihood estimation via IRLS;
   * Odds Ratios ($\text{Exp}(B)$), Wald test, pseudo-$R^2$ (Cox & Snell, Nagelkerke);
   * Hosmer-Lemeshow goodness-of-fit test and classification table.
+* **Multinomial Logistic Regression (NOMREG):**
+  * Newton-Raphson numerical optimizer (Fisher Scoring) with Ridge Hessian damping;
+  * Likelihood Ratio Tests (LRT) per effect, Pearson & Deviance goodness-of-fit $\chi^2$;
+  * Pseudo-$R^2$ (Cox & Snell, Nagelkerke, McFadden), parameter estimates with $\text{Exp}(B)$ and 95% CI, classification matrix, categorical factors.
 * **Curve Estimation:**
   * Simultaneous fitting of 11 regression models with comparative model summary.
 * **Principal Component Analysis (PCA / Factor Analysis):**
@@ -458,6 +468,7 @@ Statistical pedagogy, transparent algorithmic specifications, and onboard sample
 * **Audit & Summaries:**
   * Variable Codebook (*CODEBOOK*) and Case Summaries (*SUMMARIZE*).
 * **Planned in Future Releases:**
+  * Multi-Monitor Workspace Mode: detaching document tabs into external native OS viewports (`show_viewport_immediate`) for multi-display setups while keeping in-window docking overlays intact;
   * Time Series & Forecasting (ARIMA / SARIMA);
   * Linear Mixed Models (LMM / HLM);
   * Complex Samples survey weighting;

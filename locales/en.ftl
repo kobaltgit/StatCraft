@@ -1407,6 +1407,24 @@ dialog-logistic-hosmer-lemeshow = Hosmer-Lemeshow goodness-of-fit
 dialog-logistic-ci = CI for Exp(B):
 dialog-logistic-cutoff = Classification cutoff:
 
+# Multinomial Logistic Regression Dialog
+dialog-multinomial-logistic-title = Multinomial Logistic Regression
+dialog-multinomial-dependent = Dependent:
+dialog-multinomial-factors = Factor(s):
+dialog-multinomial-covariates = Covariate(s):
+dialog-multinomial-btn-ref-cat = Reference Category...
+dialog-multinomial-btn-statistics = Statistics...
+dialog-multinomial-ref-title = Reference Category
+dialog-multinomial-ref-first = First category
+dialog-multinomial-ref-last = Last category
+dialog-multinomial-ref-custom = Custom value
+dialog-multinomial-stats-title = Statistics
+dialog-multinomial-opt-classification = Classification table
+dialog-multinomial-opt-goodness-of-fit = Goodness-of-fit
+dialog-multinomial-opt-lrt = Likelihood ratio tests
+dialog-multinomial-opt-constant = Include constant in equation
+dialog-multinomial-confidence-level = Confidence interval (%):
+
 # Curve Estimation Dialog
 dialog-curvefit-title = Curve Estimation
 dialog-curvefit-dependent = Dependent:
@@ -1464,6 +1482,35 @@ output-logistic-col-ci-title = 95% C.I. for EXP(B)
 output-logistic-constant = Constant
 output-logistic-cutoff-note = a. The cut value is { $cut }
 
+# Multinomial Logistic Regression Output
+output-multinomial-title = Multinomial Logistic Regression
+output-multinomial-table-title = Multinomial Logistic Regression
+output-multinomial-case-processing = Case Processing Summary
+output-multinomial-marginal-percent = Marginal Percentage
+output-multinomial-missing = Missing
+output-multinomial-model = Model
+output-multinomial-category = Category
+output-multinomial-model-fitting = Model Fitting Information
+output-multinomial-model-intercept = Intercept Only
+output-multinomial-model-final = Final
+output-multinomial-goodness-of-fit = Goodness-of-Fit
+output-multinomial-pseudo-r2 = Pseudo R-Square
+output-multinomial-cox-snell = Cox and Snell
+output-multinomial-nagelkerke = Nagelkerke
+output-multinomial-mcfadden = McFadden
+output-multinomial-lrt = Likelihood Ratio Tests
+output-multinomial-effect = Effect
+output-multinomial-param-estimates = Parameter Estimates
+output-multinomial-std-error = Std. Error
+output-multinomial-wald = Wald
+output-multinomial-exp-b = Exp(B)
+output-multinomial-ci-lower = 95% CI Lower
+output-multinomial-ci-upper = 95% CI Upper
+output-multinomial-classification = Classification
+output-multinomial-observed = Observed
+output-multinomial-percent-correct = Percent Correct
+output-multinomial-overall-percentage = Overall Percentage
+
 # Curve Estimation Output
 output-curvefit-title = Curve Estimation
 output-curvefit-table-title = Model Description and Parameter Estimates
@@ -1482,6 +1529,7 @@ output-curvefit-dep-note = Dependent Variable: { $dep }
 # Status messages
 status-partial-corr-executed = Partial correlations computed for { $vars } controlling for { $controls }
 status-logistic-executed = Binary logistic regression computed for { $dep } with { $count } covariate(s)
+status-multinomial-executed = Multinomial logistic regression computed for { $dep } with { $count } predictor(s)
 status-curvefit-executed = Curve estimation computed for { $dep } by { $indep }
 
 

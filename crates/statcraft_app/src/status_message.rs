@@ -110,6 +110,10 @@ pub enum StatusMessage {
         dep_var: String,
         covariates_count: usize,
     },
+    MultinomialLogisticExecuted {
+        dep_var: String,
+        predictors_count: usize,
+    },
     CurveFitExecuted {
         dep_var: String,
         indep_var: String,
@@ -364,6 +368,16 @@ impl StatusMessage {
                     "status-logistic-executed",
                     dep = dep_var.as_str(),
                     count = *covariates_count
+                )
+            }
+            StatusMessage::MultinomialLogisticExecuted {
+                dep_var,
+                predictors_count,
+            } => {
+                t!(
+                    "status-multinomial-executed",
+                    dep = dep_var.as_str(),
+                    count = *predictors_count
                 )
             }
             StatusMessage::CurveFitExecuted { dep_var, indep_var } => {

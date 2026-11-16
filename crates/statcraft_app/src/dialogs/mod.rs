@@ -29,6 +29,7 @@ pub mod logistic_regression_dialog;
 pub mod mcp_bridge_dialog;
 pub mod means_dialog;
 pub mod missing_values_dialog;
+pub mod multinomial_logistic_dialog;
 pub mod nonparam_define_groups;
 pub mod nonparam_related_dialog;
 pub mod nonparam_twosample_dialog;
@@ -124,6 +125,10 @@ pub use logistic_regression_dialog::{
 pub use means_dialog::{render_means_dialog, MeansDialogAction, MeansDialogState};
 pub use missing_values_dialog::{
     render_missing_values_dialog, MissingValuesDialogAction, MissingValuesDialogState,
+};
+pub use multinomial_logistic_dialog::{
+    render_multinomial_logistic_dialog, MultinomialLogisticDialogAction,
+    MultinomialLogisticDialogState,
 };
 pub use nonparam_related_dialog::{
     render_nonparam_related_dialog, NonparamRelatedDialogAction, NonparamRelatedDialogState,

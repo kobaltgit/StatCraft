@@ -11,6 +11,9 @@ pub fn map_advanced_regression_command(
     match cmd.name.as_str() {
         "PARTIAL CORR" | "PARTIAL CORRELATIONS" => map_partial_corr(cmd, dataset),
         "LOGISTIC REGRESSION" | "LOGISTIC" => map_logistic_regression(cmd, dataset),
+        "NOMREG" | "MULTINOMIAL LOGISTIC" | "MULTINOMIAL LOGISTIC REGRESSION" => {
+            map_nomreg(cmd, dataset)
+        }
         "CURVEFIT" => map_curvefit(cmd, dataset),
         _ => Ok(None),
     }
@@ -250,6 +253,103 @@ fn map_curvefit(
             "independent_var": indep_vars[0],
             "models": models,
             "include_constant": include_constant
+        }),
+    )))
+}
+
+fn map_nomreg(
+    cmd: &ParsedCommand,
+    dataset: Option<&DataSet>,
+) -> Result<Option<(&'static str, Value)>, SyntaxError> {
+    let raw_tokens = cmd
+        .subcommand_tokens("VARIABLES")
+        .or_else(|| cmd.subcommand_tokens("POSITIONAL"))
+        .unwrap_or(&[]);
+
+    if raw_tokens.is_empty() {
+        return Err(SyntaxError::InvalidSubcommand {
+            line: cmd.line_num,
+            command: cmd.name.clone(),
+            subcommand: "POSITIONAL".to_string(),
+            reason: "NOMREG requires a dependent variable".to_string(),
+        });
+    }
+
+    let dep_var = &raw_tokens[0];
+    let mut ref_cat = "last".to_string();
+    let mut ref_val: Option<f64> = None;
+
+    // Search for (BASE=...) or BASE=...
+    for t in raw_tokens {
+        let upper = t.to_uppercase();
+        if upper.contains("BASE=") {
+            let clean = upper.trim_matches(|c| c == '(' || c == ')' || c == ',');
+            if let Some(pos) = clean.find("BASE=") {
+                let val_part = &clean[pos + 5..];
+                if val_part == "FIRST" {
+                    ref_cat = "first".to_string();
+                } else if val_part == "LAST" {
+                    ref_cat = "last".to_string();
+                } else if let Ok(num) = val_part.parse::<f64>() {
+                    ref_cat = "custom".to_string();
+                    ref_val = Some(num);
+                }
+            }
+        }
+    }
+
+    // Split tokens into factors and covariates by BY and WITH
+    let by_pos = raw_tokens.iter().position(|t| t.eq_ignore_ascii_case("BY"));
+    let with_pos = raw_tokens
+        .iter()
+        .position(|t| t.eq_ignore_ascii_case("WITH"));
+
+    let factor_tokens: &[String] = match (by_pos, with_pos) {
+        (Some(b), Some(w)) if b < w => &raw_tokens[b + 1..w],
+        (Some(b), None) => &raw_tokens[b + 1..],
+        _ => &[],
+    };
+
+    let cov_tokens: &[String] = match with_pos {
+        Some(w) => &raw_tokens[w + 1..],
+        None => &[],
+    };
+
+    let factors = SyntaxParser::expand_variables(factor_tokens, dataset)?;
+    let covariates = SyntaxParser::expand_variables(cov_tokens, dataset)?;
+
+    let mut ci = 0.95;
+    if let Some(crit_tokens) = cmd.subcommand_tokens("CRITERIA") {
+        for t in crit_tokens {
+            let upper = t.to_uppercase();
+            if (upper.starts_with("CIN(") || upper.starts_with("CI(")) && upper.ends_with(')') {
+                let start = if upper.starts_with("CIN(") { 4 } else { 3 };
+                let inner = &upper[start..upper.len() - 1];
+                if let Ok(c) = inner.parse::<f64>() {
+                    ci = if c > 1.0 { c / 100.0 } else { c };
+                }
+            }
+        }
+    }
+
+    let include_constant = !cmd.has_subcommand("NOCONSTANT") && !cmd.has_token("MODEL", "NOCONST");
+    let print_classification = !cmd.has_token("PRINT", "NOCLASSTBL");
+    let print_goodness_of_fit = !cmd.has_token("PRINT", "NOFIT");
+    let print_lrt = !cmd.has_token("PRINT", "NOLRT");
+
+    Ok(Some((
+        "stat.regression.multinomial",
+        json!({
+            "dependent_var": dep_var,
+            "factors": factors,
+            "covariates": covariates,
+            "reference_category": ref_cat,
+            "reference_value": ref_val,
+            "confidence_level": ci,
+            "include_constant": include_constant,
+            "print_classification": print_classification,
+            "print_goodness_of_fit": print_goodness_of_fit,
+            "print_lrt": print_lrt
         }),
     )))
 }

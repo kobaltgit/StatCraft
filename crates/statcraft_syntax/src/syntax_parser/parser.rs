@@ -144,24 +144,22 @@ impl SyntaxParser {
             }
 
             let (name, val) = if idx == 0 && !text.trim_start().starts_with('/') {
-                if trimmed.contains('=') {
+                let first_word = trimmed
+                    .split_whitespace()
+                    .next()
+                    .unwrap_or("")
+                    .to_ascii_uppercase();
+                let clean_first = first_word.trim_end_matches('=');
+                if first_word.contains('=')
+                    || clean_first == "BY"
+                    || clean_first == "VARIABLES"
+                    || clean_first == "TABLES"
+                    || clean_first == "GROUPS"
+                    || clean_first == "PAIRS"
+                {
                     Self::split_subcommand_name_value(trimmed)
                 } else {
-                    let first_word = trimmed
-                        .split_whitespace()
-                        .next()
-                        .unwrap_or("")
-                        .to_ascii_uppercase();
-                    if first_word == "BY"
-                        || first_word == "VARIABLES"
-                        || first_word == "TABLES"
-                        || first_word == "GROUPS"
-                        || first_word == "PAIRS"
-                    {
-                        Self::split_subcommand_name_value(trimmed)
-                    } else {
-                        ("POSITIONAL".to_string(), trimmed)
-                    }
+                    ("POSITIONAL".to_string(), trimmed)
                 }
             } else {
                 Self::split_subcommand_name_value(trimmed)
@@ -203,23 +201,28 @@ impl SyntaxParser {
 
     fn split_subcommand_name_value(trimmed: &str) -> (String, &str) {
         if let Some(eq_pos) = trimmed.find('=') {
-            let name = trimmed[..eq_pos].trim().to_ascii_uppercase();
-            let val = trimmed[eq_pos + 1..].trim();
-            (name, val)
-        } else {
-            // Check for space separating name from value (e.g., `CRITERIA CI(0.95)` or `BY var`)
-            let mut words = trimmed.split_whitespace();
-            if let Some(first) = words.next() {
-                let name = first.to_ascii_uppercase();
-                let rest = if first.len() < trimmed.len() {
-                    trimmed[first.len()..].trim()
-                } else {
-                    ""
-                };
-                (name, rest)
-            } else {
-                (trimmed.to_ascii_uppercase(), "")
+            let candidate_name = trimmed[..eq_pos].trim();
+            if !candidate_name.contains(char::is_whitespace)
+                && !candidate_name.contains('(')
+                && !candidate_name.contains(')')
+            {
+                let name = candidate_name.to_ascii_uppercase();
+                let val = trimmed[eq_pos + 1..].trim();
+                return (name, val);
             }
+        }
+        // Check for space separating name from value (e.g., `CRITERIA CI(0.95)` or `BY var`)
+        let mut words = trimmed.split_whitespace();
+        if let Some(first) = words.next() {
+            let name = first.to_ascii_uppercase();
+            let rest = if first.len() < trimmed.len() {
+                trimmed[first.len()..].trim()
+            } else {
+                ""
+            };
+            (name, rest)
+        } else {
+            (trimmed.to_ascii_uppercase(), "")
         }
     }
 
@@ -228,11 +231,18 @@ impl SyntaxParser {
         let normalized_name = if name == "POSITIONAL" {
             // If the positional part was `VARIABLES=x y`, normalize name to VARIABLES
             if let Some((n, v)) = raw_value.split_once('=') {
-                return Subcommand {
-                    name: n.trim().to_ascii_uppercase(),
-                    raw_value: v.trim().to_string(),
-                    tokens: Self::tokenize_values(v.trim()),
-                };
+                let n_trim = n.trim();
+                if !n_trim.is_empty()
+                    && !n_trim.contains(char::is_whitespace)
+                    && !n_trim.contains('(')
+                    && !n_trim.contains(')')
+                {
+                    return Subcommand {
+                        name: n_trim.to_ascii_uppercase(),
+                        raw_value: v.trim().to_string(),
+                        tokens: Self::tokenize_values(v.trim()),
+                    };
+                }
             }
             name.to_string()
         } else {

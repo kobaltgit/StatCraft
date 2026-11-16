@@ -892,6 +892,36 @@
   - [x] `BUGS_AND_ISSUES.md`: регистрация дефектов BUG-010, BUG-011, BUG-012 со статусом RESOLVED.
   - [x] `CHRONICLE.md` и `CHRONICLE.en.md`: синхронные записи этапа 80.
 
+## 50. Мультиномиальная логистическая регрессия (Feature 009 — NOMREG)
+- [x] L2 `statcraft_algo::multinomial_logistic` (Safe Rust, <= 500 строк на файл):
+  - [x] `types.rs`: структуры `MultinomialLogisticOptions`, `ReferenceCategory`, `MultinomialCaseProcessingSummary`, `ModelFittingInfo`, `GoodnessOfFit`, `PseudoRSquared`, `LikelihoodRatioTestRow`, `ParameterEstimateRow`, `MultinomialClassificationTable`, `MultinomialLogisticResult`.
+  - [x] `engine.rs`: итератор Ньютона-Рафсона (Fisher Scoring), стабильный log-sum-exp, расчет матрицы Фишера, регуляризация Риджа $\lambda = 10^{-6}$ при вырождении Гессиана (Never Crash), бэктрекинг-поиск шага.
+  - [x] `diagnostics.rs`: тесты отношения правдоподобия (LRT) для каждого эффекта, субпопуляционные группировки для критериев согласия Пирсона и девианса, статистики Вальда, Exp(B) с 95% ДИ, матрица классификации.
+  - [x] `mod.rs`: единая точка входа `compute_multinomial_logistic` с поддержкой факторов (Indicator dummy coding с базовым последним уровнем) и непрерывных ковариат.
+  - [x] `tests.rs`: модульные тесты 3-категориальных моделей, кодирования факторов, выбора референтной категории (First/Last), обработки крайних случаев.
+- [x] L5 `statcraft_syntax`:
+  - [x] `MultinomialLogisticCommand` (`stat.regression.multinomial`): JSON-схема `specs()`, предикат доступности `enabled()`, выполнение с интеграцией в шину `CommandBus` и Output Viewer, генератор канонического синтаксиса `NOMREG ... (BASE=LAST) BY ... WITH ...`.
+  - [x] Синтаксический парсер `NOMREG`: маппер подкоманд `MODEL`, `CRITERIA`, `PRINT`, поддержка параметров `(BASE=LAST)` и `(BASE=FIRST)`.
+  - [x] Тесты парсера и выполнения команды в `advanced_regression_tests.rs`.
+- [x] L6 `statcraft_app`:
+  - [x] `multinomial_logistic_dialog.rs`: канонический диалог на базе `DialogKit` ($560 \times 430$ px), `DialogShell::standard`, `VariablePicker`, адаптивные кнопки переноса `TransferButton`, поддиалог выбора референтной категории `ReferenceCategoryDialog`, поддиалог статистик `StatisticsDialog`, нижняя панель `DialogActionBar`.
+  - [x] `tables_multinomial_logistic.rs`: рендеринг 7 аутентичных сводных таблиц SPSS Pivot Tables (Case Processing Summary, Model Fitting Information, Goodness-of-Fit, Pseudo R-Square, Likelihood Ratio Tests, Parameter Estimates, Classification Table) и экспорт в TSV.
+  - [x] Меню `Анализ ▶ Регрессия ▶ Мультиномиальная логистическая...`: активация пункта с привязкой вызова диалога.
+  - [x] `app.rs`, `app_dialogs_advanced.rs`, `status_message.rs`: интеграция диалога, действий Run и Paste в Syntax Editor, статусных сообщений.
+- [x] i18n & Quality Gate:
+  - [x] Синхронизация семантических ключей в `locales/en.ftl` и `locales/ru.ftl` (100% покрытие, 0% сырой кириллицы).
+  - [x] Инвариантные тесты диалогов и рендеринга вывода (`advanced_regression_dialog_invariants.rs`, `multinomial_logistic_tests.rs`).
+  - [x] 100% успешное прохождение всех проверок: `file-guard` (428 файлов), `design-guard`, `layers`, `parity`.
+
+## 20. Планы будущих релизов (Backlog / Planned Features)
+- [ ] Мультимониторный режим рабочего пространства (Multi-Monitor Viewports & Pop-out Tabs):
+  - [ ] Механизм открепления вкладок во внешние нативные окна ОС через `ctx.show_viewport_immediate`.
+  - [ ] Меню и контекстное действие выноса во внешнее окно («Move to New Window» / «Pop out»).
+  - [ ] Кнопка обратного возврата в основной док («Dock Back» / «Attach to Main Window») и автоматический возврат при закрытии внешнего окна.
+  - [ ] Полное сохранение существующих интерактивных маркеров сброса, сплиттеров и внутренней организации дока в родительском окне.
+  - [ ] Бесшовная синхронизация общего состояния (`AppState`, `DataSet`, `CommandBus`) в рамках единого процесса без межпроцессных накладных расходов.
+
+
 
 
 

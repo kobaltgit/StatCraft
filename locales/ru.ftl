@@ -1407,6 +1407,24 @@ dialog-logistic-hosmer-lemeshow = Критерий согласия Хосмер
 dialog-logistic-ci = ДИ для Exp(B):
 dialog-logistic-cutoff = Порог классификации:
 
+# Диалог мультиномиальной логистической регрессии
+dialog-multinomial-logistic-title = Мультиномиальная логистическая регрессия
+dialog-multinomial-dependent = Зависимая:
+dialog-multinomial-factors = Фактор(ы):
+dialog-multinomial-covariates = Ковариата(ы):
+dialog-multinomial-btn-ref-cat = Базовая категория...
+dialog-multinomial-btn-statistics = Статистика...
+dialog-multinomial-ref-title = Базовая категория
+dialog-multinomial-ref-first = Первая категория
+dialog-multinomial-ref-last = Последняя категория
+dialog-multinomial-ref-custom = Заданное значение
+dialog-multinomial-stats-title = Статистика
+dialog-multinomial-opt-classification = Таблица классификации
+dialog-multinomial-opt-goodness-of-fit = Критерии согласия
+dialog-multinomial-opt-lrt = Критерии отношения правдоподобия
+dialog-multinomial-opt-constant = Включить константу в уравнение
+dialog-multinomial-confidence-level = Доверительный интервал (%):
+
 # Curve Estimation Dialog
 dialog-curvefit-title = Оценка кривых
 dialog-curvefit-dependent = Зависимая:
@@ -1464,6 +1482,35 @@ output-logistic-col-ci-title = 95% Д.И. для EXP(B)
 output-logistic-constant = Константа
 output-logistic-cutoff-note = a. Пороговое значение: { $cut }
 
+# Вывод мультиномиальной логистической регрессии
+output-multinomial-title = Мультиномиальная логистическая регрессия
+output-multinomial-table-title = Мультиномиальная логистическая регрессия
+output-multinomial-case-processing = Сводка обработки наблюдений
+output-multinomial-marginal-percent = Маргинальный процент
+output-multinomial-missing = Пропущенные
+output-multinomial-model = Модель
+output-multinomial-category = Категория
+output-multinomial-model-fitting = Информация о подгонке модели
+output-multinomial-model-intercept = Только константа
+output-multinomial-model-final = Итоговая модель
+output-multinomial-goodness-of-fit = Критерии согласия
+output-multinomial-pseudo-r2 = Псевдо R-квадрат
+output-multinomial-cox-snell = Кокса и Снелла
+output-multinomial-nagelkerke = Наджелкерка
+output-multinomial-mcfadden = МакФаддена
+output-multinomial-lrt = Критерии отношения правдоподобия
+output-multinomial-effect = Эффект
+output-multinomial-param-estimates = Оценки параметров
+output-multinomial-std-error = Станд. ошибка
+output-multinomial-wald = Вальд
+output-multinomial-exp-b = Exp(B)
+output-multinomial-ci-lower = 95% ДИ нижняя
+output-multinomial-ci-upper = 95% ДИ верхняя
+output-multinomial-classification = Классификация
+output-multinomial-observed = Наблюдаемые
+output-multinomial-percent-correct = Процент правильных
+output-multinomial-overall-percentage = Общий процент
+
 # Curve Estimation Output
 output-curvefit-title = Оценка кривых
 output-curvefit-table-title = Описание модели и оценки параметров
@@ -1482,6 +1529,7 @@ output-curvefit-dep-note = Зависимая переменная: { $dep }
 # Status messages
 status-partial-corr-executed = Вычислены частные корреляции для { $vars } с контролем { $controls }
 status-logistic-executed = Вычислена бинарная логистическая регрессия для { $dep } с { $count } ковариатой(ами)
+status-multinomial-executed = Мультиномиальная логистическая регрессия рассчитана для { $dep } с { $count } предиктором(ами)
 status-curvefit-executed = Вычислена оценка кривых для { $dep } по { $indep }
 
 

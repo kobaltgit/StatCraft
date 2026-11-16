@@ -1,7 +1,8 @@
 use statcraft_app::dialogs::{
-    render_curvefit_dialog, render_logistic_regression_dialog, render_partial_corr_dialog,
-    CurveFitDialogAction, CurveFitDialogState, LogisticRegressionDialogAction,
-    LogisticRegressionDialogState, PartialCorrDialogAction, PartialCorrDialogState,
+    render_curvefit_dialog, render_logistic_regression_dialog, render_multinomial_logistic_dialog,
+    render_partial_corr_dialog, CurveFitDialogAction, CurveFitDialogState,
+    LogisticRegressionDialogAction, LogisticRegressionDialogState, MultinomialLogisticDialogAction,
+    MultinomialLogisticDialogState, PartialCorrDialogAction, PartialCorrDialogState,
 };
 use statcraft_core::{DataSet, DataType, Measure};
 
@@ -119,4 +120,33 @@ fn test_headless_render_curvefit_dialog() {
     assert_eq!(state.indep_var, Some("educ".to_string()));
     let models = state.selected_models();
     assert_eq!(models.len(), 3);
+}
+
+#[test]
+fn test_headless_render_multinomial_logistic_dialog() {
+    let ds = create_test_dataset();
+    let ctx = egui::Context::default();
+    let mut state = MultinomialLogisticDialogState {
+        is_open: true,
+        dep_var: Some("educ".to_string()),
+        factors: vec!["gender".to_string()],
+        covariates: vec!["salary".to_string(), "pre_score".to_string()],
+        print_classification: true,
+        print_goodness_of_fit: true,
+        print_lrt: true,
+        ..Default::default()
+    };
+
+    let _ = ctx.run(Default::default(), |ctx| {
+        let action = render_multinomial_logistic_dialog(ctx, Some(&ds), &mut state);
+        assert!(matches!(action, MultinomialLogisticDialogAction::None));
+    });
+
+    assert!(state.is_open);
+    assert_eq!(state.dep_var, Some("educ".to_string()));
+    assert_eq!(state.factors.len(), 1);
+    assert_eq!(state.covariates.len(), 2);
+    assert!(state.print_classification);
+    assert!(state.print_goodness_of_fit);
+    assert!(state.print_lrt);
 }

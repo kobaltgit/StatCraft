@@ -3187,6 +3187,29 @@
    * 100% тестов воркспейса пройдены успешно с `-j 1`;
    * Нулевые нарушения линтеров дизайна, слоев и размеров файлов (`xtask ci`).
 
+---
+
+### Этап 81: Мультиномиальная логистическая регрессия (Feature 009 — NOMREG)
+*Время: 16 ноября 2026, 14:30 (~50 минут)*
+
+Реализована полнофункциональная процедура мультиномиальной логистической регрессии (**Multinomial Logistic Regression / `NOMREG`**) в строгом соответствии со стандартами Spec-Kit, каноном IBM SPSS Statistics 24 и чистой комнаты (Craft Anything Clean-Room):
+1. **Математическое ядро L2 (`statcraft_algo::multinomial_logistic`):**
+   * **Численный оптимизатор Ньютона-Рафсона (Fisher Scoring):** матричные вычисления на `faer`, стабильная функция `log-sum-exp` для защиты от переполнения чисел с плавающей точкой, бэктрекинг-поиск шага и регуляризация матрицы Гессиана малым гребнем Риджа ($\lambda = 10^{-6}$) при мультиколлинеарности или квази-полном разделении классов (гарантия правила `Never Crash`);
+   * **Диагностики и статистики:** расчет тестов отношения правдоподобия (Likelihood Ratio Tests) для каждого эффекта, критерии согласия Пирсона и девианса по субпопуляциям, псевдо-$R^2$ (Cox & Snell, Nagelkerke, McFadden), ковариационная матрица параметров, критерии Вальда, отношения шансов $\text{Exp}(B)$ с 95% доверительными интервалами;
+   * **Матрица классификации:** расчет предсказанных вероятностей и процента верной классификации наблюдений;
+   * **Категориальные факторы:** поддержка дискретных предикторов с автоматическим созданием индикаторных контрастов (Indicator dummy coding) и выбором базовой категории (по умолчанию последняя).
+2. **Командная шина L5 (`statcraft_syntax`):**
+   * Типизированная команда `MultinomialLogisticCommand` (`stat.regression.multinomial`) со спецификацией `specs()` для MCP AI-агентов;
+   * Двусторонняя сериализация синтаксиса `NOMREG ... (BASE=LAST) BY ... WITH ... /MODEL ... /CRITERIA ... /PRINT ...`;
+   * Парсер подкоманд `NOMREG` с поддержкой явного выбора референтного уровня `(BASE=LAST)` и `(BASE=FIRST)`.
+3. **Пользовательский интерфейс L6 (`statcraft_app`):**
+   * Диалоговое окно на базе `DialogKit` (`multinomial_logistic_dialog.rs`, $560 \times 430$ px): выбор зависимой переменной, списки факторов и ковариат, модальный поддиалог выбора референтной категории `ReferenceCategoryDialog`, поддиалог статистик `StatisticsDialog`, стандартная нижняя панель `DialogActionBar`;
+   * 7 аутентичных сводных таблиц SPSS Pivot Tables (`tables_multinomial_logistic.rs`): Case Processing Summary, Model Fitting Information, Goodness-of-Fit, Pseudo R-Square, Likelihood Ratio Tests, Parameter Estimates, Classification Table;
+   * Активация пункта меню «Анализ ▶ Регрессия ▶ Мультиномиальная логистическая...» и экспорт отчетов в TSV.
+4. **Quality Gate и инварианты (DoD):**
+   * Разработаны модульные и интеграционные тесты для всех уровней архитектуры: `statcraft_algo` (4 теста), `statcraft_syntax` (`test_nomreg_syntax_and_command`), `advanced_regression_dialog_invariants.rs` и `multinomial_logistic_tests.rs`;
+   * 100% прохождение Quality Gate: `xtask file-guard` (все 428 файлов в рамках лимитов), `xtask design-guard`, `xtask layers`, `xtask parity`, `i18n_lint_test` (полное отсутствие сырой кириллицы).
+
 
 
 

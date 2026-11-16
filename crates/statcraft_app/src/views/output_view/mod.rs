@@ -19,6 +19,7 @@ pub mod tables_glm;
 pub mod tables_kruskal;
 pub mod tables_logistic;
 pub mod tables_means;
+pub mod tables_multinomial_logistic;
 pub mod tables_nonparam;
 pub mod tables_nonparam_related;
 pub mod tables_partial_corr;
@@ -56,6 +57,9 @@ pub use tables_glm::*;
 pub use tables_kruskal::{kruskal_wallis_to_tsv, render_spss_kruskal_wallis_tables};
 pub use tables_logistic::{logistic_to_tsv, render_spss_logistic_tables};
 pub use tables_means::{means_to_tsv, render_spss_means};
+pub use tables_multinomial_logistic::{
+    multinomial_logistic_to_tsv, render_spss_multinomial_logistic_tables,
+};
 pub use tables_nonparam::{mann_whitney_to_tsv, render_spss_mann_whitney_tables};
 pub use tables_nonparam_related::{related_samples_to_tsv, render_spss_related_samples_tables};
 pub use tables_partial_corr::{partial_corr_to_tsv, render_spss_partial_corr_tables};
@@ -95,6 +99,7 @@ pub fn extract_item_tsv(kind: &OutputItemKind) -> Option<String> {
         OutputItemKind::LinearRegression(res) => Some(regression_to_tsv(res)),
         OutputItemKind::PartialCorrelations(res) => Some(partial_corr_to_tsv(res)),
         OutputItemKind::LogisticRegression(res) => Some(logistic_to_tsv(res)),
+        OutputItemKind::MultinomialLogistic(res) => Some(multinomial_logistic_to_tsv(res)),
         OutputItemKind::CurveFit(res) => Some(curvefit_to_tsv(res)),
         OutputItemKind::UnivariateGlm(res) => Some(univariate_glm_to_tsv(res)),
         OutputItemKind::MultivariateGlm(res) => Some(multivariate_glm_to_tsv(res)),
