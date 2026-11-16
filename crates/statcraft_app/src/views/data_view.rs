@@ -1,7 +1,9 @@
 use crate::grid::{
-    render_grid, Geo, GridConfig, GridEvent, GridInteractState, GridRenderParams, LineIndex,
+    apply_auto_fill, parse_tsv_matrix, paste_matrix_into_dataset, render_grid,
+    serialize_range_to_tsv, EditorAction, EditorMove, Geo, GridConfig, GridEditorState, GridEvent,
+    GridInteractState, GridRenderParams, GridSelection, KeyboardEvent, LineIndex,
 };
-use egui::{vec2, Color32, FontId, Key, Ui, Vec2};
+use egui::{Color32, FontId, Ui, Vec2};
 use statcraft_core::DataSet;
 use statcraft_i18n::t;
 use std::collections::HashMap;
@@ -10,30 +12,36 @@ use std::collections::HashMap;
 #[derive(Debug, Clone)]
 pub struct DataViewState {
     pub show_value_labels: bool,
-    pub selected_cell: Option<(usize, usize)>,
-    pub editing_cell: Option<(usize, usize)>,
-    pub edit_buffer: String,
-    pub focus_edit: bool,
+    pub selection: GridSelection,
+    pub editor_state: GridEditorState,
     pub scroll_to_row: Option<usize>,
     pub scroll_to_col: Option<usize>,
     pub scroll: Vec2,
     pub col_widths: HashMap<usize, f32>,
     pub interact_state: GridInteractState,
+
+    // Backward-compatibility mirrors
+    pub selected_cell: Option<(usize, usize)>,
+    pub editing_cell: Option<(usize, usize)>,
+    pub edit_buffer: String,
+    pub focus_edit: bool,
 }
 
 impl Default for DataViewState {
     fn default() -> Self {
         Self {
             show_value_labels: true,
-            selected_cell: None,
-            editing_cell: None,
-            edit_buffer: String::new(),
-            focus_edit: false,
+            selection: GridSelection::single(0, 0),
+            editor_state: GridEditorState::default(),
             scroll_to_row: None,
             scroll_to_col: None,
             scroll: Vec2::ZERO,
             col_widths: HashMap::new(),
             interact_state: GridInteractState::default(),
+            selected_cell: Some((0, 0)),
+            editing_cell: None,
+            edit_buffer: String::new(),
+            focus_edit: false,
         }
     }
 }
@@ -51,6 +59,13 @@ pub fn render_data_view(ui: &mut Ui, dataset: &mut Option<DataSet>, state: &mut 
 
     let total_rows = ds.row_count();
     let total_cols = ds.col_count();
+
+    // Sync external selected_cell modifications (e.g. from GoTo dialog)
+    if let Some((r, c)) = state.selected_cell {
+        if (r, c) != state.selection.active_cell {
+            state.selection = GridSelection::single(r, c);
+        }
+    }
 
     // Toolbar for toggling value labels and displaying dataset stats
     ui.horizontal(|ui| {
@@ -128,16 +143,16 @@ pub fn render_data_view(ui: &mut Ui, dataset: &mut Option<DataSet>, state: &mut 
         max_col_width: 800.0,
     };
 
-    let (geo, events) = render_grid(
+    let result = render_grid(
         ui,
         GridRenderParams {
             config: &config,
             rows: rows_index,
             cols: cols_index,
             scroll: &mut state.scroll,
+            selection: &mut state.selection,
+            editor_state: &mut state.editor_state,
             interact_state: &mut state.interact_state,
-            selected_cell: state.selected_cell,
-            editing_cell: state.editing_cell,
         },
         |col| {
             let var_meta = ds.dictionary.get(col);
@@ -171,70 +186,106 @@ pub fn render_data_view(ui: &mut Ui, dataset: &mut Option<DataSet>, state: &mut 
         },
     );
 
-    // Render active inline TextEdit on top of editing cell
-    let mut commit_edit = None;
-    let mut next_edit_target = None;
-
-    if let Some((r, c)) = state.editing_cell {
-        if let Some(cell_rect) = geo.cell_rect(r, c) {
-            let inner_rect = cell_rect.shrink2(vec2(2.0_f32, 1.0_f32));
-            ui.allocate_new_ui(egui::UiBuilder::new().max_rect(inner_rect), |ui| {
-                let text_edit = egui::TextEdit::singleline(&mut state.edit_buffer)
-                    .frame(false)
-                    .clip_text(true);
-                let text_res = ui.add_sized(inner_rect.size(), text_edit);
-
-                if state.focus_edit {
-                    text_res.request_focus();
-                    state.focus_edit = false;
+    // 1. Handle Inline Editor Commit / Cancel
+    if let Some(action) = result.editor_action {
+        match action {
+            EditorAction::Commit {
+                row,
+                col,
+                text,
+                move_direction,
+            } => {
+                while row >= ds.row_count() {
+                    ds.add_empty_row();
                 }
+                let _ = ds.set_cell_parsed(row, col, &text);
 
-                let enter_pressed = ui.input(|i| i.key_pressed(Key::Enter));
-                let tab_pressed = ui.input(|i| i.key_pressed(Key::Tab));
-                let shift = ui.input(|i| i.modifiers.shift);
-                let esc_pressed = ui.input(|i| i.key_pressed(Key::Escape));
-
-                if enter_pressed {
-                    commit_edit = Some((r, c, state.edit_buffer.clone()));
-                    state.editing_cell = None;
-                    next_edit_target = Some((r + 1, c));
-                } else if tab_pressed {
-                    commit_edit = Some((r, c, state.edit_buffer.clone()));
-                    state.editing_cell = None;
-                    if shift {
-                        if c > 0 {
-                            next_edit_target = Some((r, c - 1));
+                if let Some(dir) = move_direction {
+                    let mut next_r = row;
+                    let mut next_c = col;
+                    match dir {
+                        EditorMove::Down => {
+                            next_r = (row + 1).min(display_rows.saturating_sub(1));
                         }
-                    } else if c + 1 < total_cols {
-                        next_edit_target = Some((r, c + 1));
-                    } else {
-                        next_edit_target = Some((r + 1, 0));
+                        EditorMove::Up => {
+                            next_r = row.saturating_sub(1);
+                        }
+                        EditorMove::Right => {
+                            if col + 1 < total_cols {
+                                next_c = col + 1;
+                            } else {
+                                next_r = (row + 1).min(display_rows.saturating_sub(1));
+                                next_c = 0;
+                            }
+                        }
+                        EditorMove::Left => {
+                            if col > 0 {
+                                next_c = col - 1;
+                            } else if row > 0 {
+                                next_r = row - 1;
+                                next_c = total_cols.saturating_sub(1);
+                            }
+                        }
                     }
-                } else if esc_pressed {
-                    state.editing_cell = None;
-                } else if text_res.lost_focus() && !enter_pressed && !tab_pressed && !esc_pressed {
-                    commit_edit = Some((r, c, state.edit_buffer.clone()));
-                    state.editing_cell = None;
+                    state.selection = GridSelection::single(next_r, next_c);
+                    state.scroll = result.geo.scroll_to_cell(next_r, next_c);
                 }
-            });
+            }
+            EditorAction::Cancel => {}
         }
     }
 
-    // Process user interaction events
-    for event in events {
-        match event {
-            GridEvent::SelectCell { row, col } => {
-                if let Some((cur_r, cur_c)) = state.editing_cell {
-                    commit_edit = Some((cur_r, cur_c, state.edit_buffer.clone()));
-                    state.editing_cell = None;
-                }
-                state.selected_cell = Some((row, col));
+    // 2. Handle Keyboard Events (Direct Typing, Copy, Paste, Clear)
+    for ev in result.kb_events {
+        match ev {
+            KeyboardEvent::StartDirectTyping(ch) => {
+                let (r, c) = state.selection.active_cell;
+                state.editor_state.start_editing(r, c, ch.to_string());
             }
-            GridEvent::DoubleClickCell { row, col } => {
-                if let Some((cur_r, cur_c)) = state.editing_cell {
-                    commit_edit = Some((cur_r, cur_c, state.edit_buffer.clone()));
+            KeyboardEvent::ClearSelected => {
+                for r in state.selection.range.min_row..=state.selection.range.max_row {
+                    for c in state.selection.range.min_col..=state.selection.range.max_col {
+                        if r < ds.row_count() && c < ds.col_count() {
+                            let _ = ds.set_cell_parsed(r, c, "");
+                        }
+                    }
                 }
-                state.selected_cell = Some((row, col));
+            }
+            KeyboardEvent::Copy => {
+                let tsv =
+                    serialize_range_to_tsv(ds, &state.selection.range, state.show_value_labels);
+                ui.output_mut(|o| o.copied_text = tsv);
+            }
+            KeyboardEvent::Paste => {
+                let paste_text = ui.input(|i| {
+                    for event in &i.events {
+                        if let egui::Event::Paste(text) = event {
+                            return Some(text.clone());
+                        }
+                    }
+                    None
+                });
+
+                if let Some(text) = paste_text {
+                    let matrix = parse_tsv_matrix(&text);
+                    let (start_r, start_c) = state.selection.active_cell;
+                    let (rows_p, cols_p) = paste_matrix_into_dataset(ds, start_r, start_c, &matrix);
+                    if rows_p > 0 && cols_p > 0 {
+                        state.selection = GridSelection::from_anchor_and_active(
+                            (start_r, start_c),
+                            (start_r + rows_p - 1, start_c + cols_p - 1),
+                        );
+                    }
+                }
+            }
+            _ => {}
+        }
+    }
+
+    // 3. Handle Mouse Interaction Events
+    for event in result.mouse_events {
+        match event {
+            GridEvent::DoubleClickCell { row, col } => {
                 let cur_val = if row < total_rows {
                     ds.get_cell_display(row, col, false)
                 } else {
@@ -245,9 +296,7 @@ pub fn render_data_view(ui: &mut Ui, dataset: &mut Option<DataSet>, state: &mut 
                 } else {
                     cur_val
                 };
-                state.edit_buffer = buffer;
-                state.editing_cell = Some((row, col));
-                state.focus_edit = true;
+                state.editor_state.start_editing(row, col, buffer);
             }
             GridEvent::ResizeCol { col, new_width } => {
                 state.col_widths.insert(col, new_width);
@@ -268,7 +317,6 @@ pub fn render_data_view(ui: &mut Ui, dataset: &mut Option<DataSet>, state: &mut 
                         .size()
                         .x
                     });
-                    // left margin 4 + icon 16 + gap 4 + text + right padding 16
                     max_w = max_w.max(text_w + 40.0);
                 }
                 let check_rows = total_rows.min(100);
@@ -291,52 +339,26 @@ pub fn render_data_view(ui: &mut Ui, dataset: &mut Option<DataSet>, state: &mut 
                 }
                 ui.ctx().request_repaint();
             }
-            GridEvent::SelectRow { row } => {
-                state.selected_cell = Some((row, 0));
+            GridEvent::AutoFillSeries {
+                source_range,
+                target_range,
+            } => {
+                apply_auto_fill(ds, &source_range, &target_range);
+                state.selection = GridSelection::from_anchor_and_active(
+                    (target_range.min_row, target_range.min_col),
+                    (target_range.max_row, target_range.max_col),
+                );
+                ui.ctx().request_repaint();
             }
-            GridEvent::SelectCol { col } => {
-                state.selected_cell = Some((0, col));
-            }
-            GridEvent::SelectAll => {
-                state.selected_cell = Some((0, 0));
-            }
-            GridEvent::ContextMenuRow { row } => {
-                state.selected_cell = Some((row, 0));
-            }
-            GridEvent::ContextMenuCol { col } => {
-                state.selected_cell = Some((0, col));
-            }
-            GridEvent::ContextMenuCell { row, col } => {
-                state.selected_cell = Some((row, col));
-            }
-            GridEvent::ScrollChanged { new_scroll } => {
-                state.scroll = new_scroll;
-            }
+            _ => {}
         }
     }
 
-    if let Some((r, c, text)) = commit_edit {
-        while r >= ds.row_count() {
-            ds.add_empty_row();
-        }
-        let _ = ds.set_cell_parsed(r, c, &text);
-    }
-
-    if let Some((target_r, target_c)) = next_edit_target {
-        state.selected_cell = Some((target_r, target_c));
-        let cur_val = if target_r < ds.row_count() {
-            ds.get_cell_display(target_r, target_c, false)
-        } else {
-            String::new()
-        };
-        state.edit_buffer = if cur_val == "." {
-            String::new()
-        } else {
-            cur_val
-        };
-        state.editing_cell = Some((target_r, target_c));
-        state.focus_edit = true;
-    }
+    // Mirror to backward-compatible fields
+    state.selected_cell = Some(state.selection.active_cell);
+    state.editing_cell = state.editor_state.editing_cell;
+    state.edit_buffer = state.editor_state.edit_buffer.clone();
+    state.focus_edit = state.editor_state.focus_requested;
 }
 
 #[cfg(test)]
@@ -347,7 +369,7 @@ mod tests {
     fn test_data_view_state_defaults() {
         let state = DataViewState::default();
         assert!(state.show_value_labels);
-        assert_eq!(state.selected_cell, None);
+        assert_eq!(state.selection.active_cell, (0, 0));
         assert_eq!(state.scroll, Vec2::ZERO);
         assert!(state.col_widths.is_empty());
     }

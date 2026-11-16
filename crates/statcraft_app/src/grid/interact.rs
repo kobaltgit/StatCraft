@@ -1,7 +1,8 @@
 use super::geo::Geo;
 use super::quadrant::QuadrantPaint;
+use super::selection::{CellRange, GridSelection};
 use crate::theme::Tokens;
-use egui::{pos2, vec2, CursorIcon, PointerButton, Pos2, Rect, Ui, Vec2};
+use egui::{pos2, vec2, CursorIcon, PointerButton, Pos2, Rect, Stroke, Ui, Vec2};
 
 /// Ongoing drag interactions within the grid.
 #[derive(Debug, Clone, Copy, PartialEq)]
@@ -22,6 +23,16 @@ pub enum GridDrag {
         start_mouse_x: f32,
         orig_scroll_x: f32,
     },
+    /// Dragging to marquee-select a cell range.
+    SelectRange {
+        anchor: (usize, usize),
+        active: (usize, usize),
+    },
+    /// Dragging the fill handle to auto-fill a series.
+    FillHandle {
+        source_range: CellRange,
+        target_range: CellRange,
+    },
 }
 
 /// Persistent interaction state across frames.
@@ -38,23 +49,56 @@ pub struct GridInteractState {
 /// Action events emitted by user input on the grid.
 #[derive(Debug, Clone, PartialEq)]
 pub enum GridEvent {
-    SelectCell { row: usize, col: usize },
-    DoubleClickCell { row: usize, col: usize },
-    ContextMenuCell { row: usize, col: usize },
-    ContextMenuRow { row: usize },
-    ContextMenuCol { col: usize },
-    ResizeCol { col: usize, new_width: f32 },
-    AutoFitCol { col: usize },
-    SelectRow { row: usize },
-    SelectCol { col: usize },
+    SelectCell {
+        row: usize,
+        col: usize,
+    },
+    DoubleClickCell {
+        row: usize,
+        col: usize,
+    },
+    ContextMenuCell {
+        row: usize,
+        col: usize,
+    },
+    ContextMenuRow {
+        row: usize,
+    },
+    ContextMenuCol {
+        col: usize,
+    },
+    ResizeCol {
+        col: usize,
+        new_width: f32,
+    },
+    AutoFitCol {
+        col: usize,
+    },
+    SelectRow {
+        row: usize,
+    },
+    SelectCol {
+        col: usize,
+    },
     SelectAll,
-    ScrollChanged { new_scroll: Vec2 },
+    SelectRange {
+        anchor: (usize, usize),
+        active: (usize, usize),
+    },
+    AutoFillSeries {
+        source_range: CellRange,
+        target_range: CellRange,
+    },
+    ScrollChanged {
+        new_scroll: Vec2,
+    },
 }
 
 /// Handles all user input (hover, drag, click, scroll, resize) on the 4-quadrant grid.
 pub fn handle_grid_interactions(
     ui: &mut Ui,
     geo: &Geo,
+    selection: &GridSelection,
     state: &mut GridInteractState,
 ) -> Vec<GridEvent> {
     let mut events = Vec::new();
@@ -86,7 +130,19 @@ pub fn handle_grid_interactions(
         return events;
     }
 
-    // 4. Column boundary hit-test (Resize Cursor & Drag Initiation)
+    // 4. Fill handle hit-test (Auto-fill drag initiation)
+    if selection.hit_test_fill_handle(geo, pos, 4.0) {
+        ui.ctx().set_cursor_icon(CursorIcon::Crosshair);
+        if ui.input(|i| i.pointer.button_pressed(PointerButton::Primary)) {
+            state.drag = Some(GridDrag::FillHandle {
+                source_range: selection.range,
+                target_range: selection.range,
+            });
+            return events;
+        }
+    }
+
+    // 5. Column boundary hit-test (Resize Cursor & Drag Initiation)
     let boundary_tolerance = 6.0_f32;
     if let Some((col_idx, screen_x)) = geo.col_boundary_near_pos(pos, boundary_tolerance) {
         state.hovered_boundary = Some((col_idx, screen_x));
@@ -122,7 +178,7 @@ pub fn handle_grid_interactions(
         state.hovered_boundary = None;
     }
 
-    // 5. Quadrant 1: Top-Left Corner
+    // 6. Quadrant 1: Top-Left Corner
     if geo.quad_top_left.contains(pos) {
         if ui.input(|i| i.pointer.button_clicked(PointerButton::Primary)) {
             events.push(GridEvent::SelectAll);
@@ -130,7 +186,7 @@ pub fn handle_grid_interactions(
         return events;
     }
 
-    // 6. Quadrant 2: Column Headers
+    // 7. Quadrant 2: Column Headers
     if geo.quad_top_right.contains(pos) {
         if let Some(col) = geo.col_header_at_pos(pos) {
             state.hovered_col = Some(col);
@@ -143,7 +199,7 @@ pub fn handle_grid_interactions(
         return events;
     }
 
-    // 7. Quadrant 3: Row Headers
+    // 8. Quadrant 3: Row Headers
     if geo.quad_bottom_left.contains(pos) {
         if let Some(row) = geo.row_header_at_pos(pos) {
             state.hovered_row = Some(row);
@@ -156,7 +212,7 @@ pub fn handle_grid_interactions(
         return events;
     }
 
-    // 8. Quadrant 4: Data Cells
+    // 9. Quadrant 4: Data Cells
     if geo.quad_center.contains(pos) {
         if let Some((row, col)) = geo.cell_at_pos(pos) {
             state.hovered_cell = Some((row, col));
@@ -165,8 +221,20 @@ pub fn handle_grid_interactions(
                 events.push(GridEvent::DoubleClickCell { row, col });
             } else if ui.input(|i| i.pointer.button_clicked(PointerButton::Secondary)) {
                 events.push(GridEvent::ContextMenuCell { row, col });
-            } else if ui.input(|i| i.pointer.button_clicked(PointerButton::Primary)) {
-                events.push(GridEvent::SelectCell { row, col });
+            } else if ui.input(|i| i.pointer.button_pressed(PointerButton::Primary)) {
+                let shift = ui.input(|i| i.modifiers.shift);
+                if shift {
+                    events.push(GridEvent::SelectRange {
+                        anchor: selection.anchor_cell,
+                        active: (row, col),
+                    });
+                } else {
+                    state.drag = Some(GridDrag::SelectRange {
+                        anchor: (row, col),
+                        active: (row, col),
+                    });
+                    events.push(GridEvent::SelectCell { row, col });
+                }
             }
         }
     }
@@ -232,7 +300,6 @@ fn handle_active_drag(
             let dx = pointer_pos.x - start_mouse_x;
             let new_width = (orig_width + dx).clamp(40.0, 800.0);
 
-            // Render live resize guideline only if dragged
             if dx.abs() >= 2.0 {
                 let col_start = geo.cols.get_offset(col).unwrap_or(0.0);
                 let screen_guideline_x =
@@ -259,8 +326,58 @@ fn handle_active_drag(
                     events.push(GridEvent::ResizeCol { col, new_width });
                     state.last_boundary_click = None;
                 } else {
-                    // Click on boundary without dragging: track for double-click
                     state.last_boundary_click = Some((col, current_time));
+                }
+                state.drag = None;
+            }
+        }
+        GridDrag::SelectRange { anchor, mut active } => {
+            if let Some((r, c)) = geo.cell_at_pos(pointer_pos) {
+                if (r, c) != active {
+                    active = (r, c);
+                    state.drag = Some(GridDrag::SelectRange { anchor, active });
+                    events.push(GridEvent::SelectRange { anchor, active });
+                }
+            }
+            if !primary_down {
+                events.push(GridEvent::SelectRange { anchor, active });
+                state.drag = None;
+            }
+        }
+        GridDrag::FillHandle {
+            source_range,
+            mut target_range,
+        } => {
+            ui.ctx().set_cursor_icon(CursorIcon::Crosshair);
+            if let Some((r, c)) = geo.cell_at_pos(pointer_pos) {
+                target_range.max_row = r.max(source_range.max_row);
+                target_range.max_col = c.max(source_range.max_col);
+                state.drag = Some(GridDrag::FillHandle {
+                    source_range,
+                    target_range,
+                });
+
+                let preview_sel = GridSelection {
+                    active_cell: (target_range.max_row, target_range.max_col),
+                    anchor_cell: (target_range.min_row, target_range.min_col),
+                    range: target_range,
+                    is_full_cols: false,
+                    is_full_rows: false,
+                };
+                if let Some(bounds) = preview_sel.bounding_rect(geo) {
+                    ui.painter().with_clip_rect(geo.quad_center).rect_stroke(
+                        bounds,
+                        0.0_f32,
+                        Stroke::new(1.5_f32, Tokens::accent()),
+                    );
+                }
+            }
+            if !primary_down {
+                if target_range != source_range {
+                    events.push(GridEvent::AutoFillSeries {
+                        source_range,
+                        target_range,
+                    });
                 }
                 state.drag = None;
             }
@@ -402,13 +519,14 @@ mod tests {
         let rows = LineIndex::uniform(20, 20.0);
         let cols = LineIndex::uniform(10, 100.0);
         let geo = Geo::new(vp, 50.0, 25.0, rows, cols, vec2(0.0, 0.0));
+        let sel = GridSelection::single(0, 0);
 
         let mut state = GridInteractState::default();
 
         let ctx = egui::Context::default();
         let _ = ctx.run(Default::default(), |ctx| {
             egui::CentralPanel::default().show(ctx, |ui| {
-                let events = handle_grid_interactions(ui, &geo, &mut state);
+                let events = handle_grid_interactions(ui, &geo, &sel, &mut state);
                 assert!(events.is_empty());
             });
         });

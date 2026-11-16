@@ -12,10 +12,10 @@ fn test_line_index_prefix_invariants() {
     assert_eq!(idx.total_size(), 430.0);
 
     // Monotonicity of offsets
-    for i in 0..idx.count() {
+    for (i, &size) in sizes.iter().enumerate().take(idx.count()) {
         let (start, end) = idx.cell_bounds(i).expect("bounds must exist");
         assert!(start < end);
-        assert_eq!(end - start, sizes[i]);
+        assert_eq!(end - start, size);
     }
 
     // Large scale uniform invariant (100k items)

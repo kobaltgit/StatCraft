@@ -1,12 +1,22 @@
+pub mod clipboard;
+pub mod editor;
 pub mod geo;
 pub mod interact;
+pub mod keyboard;
 pub mod line_index;
 pub mod quadrant;
+pub mod selection;
 
+pub use clipboard::{
+    apply_auto_fill, parse_tsv_matrix, paste_matrix_into_dataset, serialize_range_to_tsv,
+};
+pub use editor::{render_cell_editor, EditorAction, EditorMove, GridEditorState};
 pub use geo::Geo;
 pub use interact::{handle_grid_interactions, GridDrag, GridEvent, GridInteractState};
+pub use keyboard::{handle_grid_keyboard, KeyboardEvent};
 pub use line_index::LineIndex;
 pub use quadrant::QuadrantPaint;
+pub use selection::{paint_selection, CellRange, GridSelection};
 
 use egui::{Sense, Ui, Vec2};
 use statcraft_core::Measure;
@@ -39,19 +49,28 @@ pub struct GridRenderParams<'a> {
     pub rows: LineIndex,
     pub cols: LineIndex,
     pub scroll: &'a mut Vec2,
+    pub selection: &'a mut GridSelection,
+    pub editor_state: &'a mut GridEditorState,
     pub interact_state: &'a mut GridInteractState,
-    pub selected_cell: Option<(usize, usize)>,
-    pub editing_cell: Option<(usize, usize)>,
 }
 
-/// Unified entrypoint for rendering a 4-quadrant virtualized grid with frozen headers.
+/// Resulting actions and events emitted from one frame of grid rendering.
+pub struct GridFrameResult {
+    pub geo: Geo,
+    pub mouse_events: Vec<GridEvent>,
+    pub kb_events: Vec<KeyboardEvent>,
+    pub editor_action: Option<EditorAction>,
+}
+
+/// Unified entrypoint for rendering a 4-quadrant virtualized grid with frozen headers,
+/// range selection, inline cell editing, and keyboard navigation.
 pub fn render_grid<ColFn, RowFn, CellFn>(
     ui: &mut Ui,
     params: GridRenderParams<'_>,
     col_info: ColFn,
     row_info: RowFn,
     cell_info: CellFn,
-) -> (Geo, Vec<GridEvent>)
+) -> GridFrameResult
 where
     ColFn: FnMut(usize) -> (String, Measure),
     RowFn: FnMut(usize) -> (String, bool),
@@ -84,23 +103,81 @@ where
     QuadrantPaint::paint_data_cells(
         ui.painter(),
         &geo,
-        params.selected_cell,
-        params.editing_cell,
+        Some(params.selection.active_cell),
+        params.editor_state.editing_cell,
         cell_info,
     );
 
-    // 2. Process interactions (clicks, double clicks, resizing, scrolling)
-    let events = handle_grid_interactions(ui, &geo, params.interact_state);
+    // 2. Render range selection overlay and fill handle marker
+    paint_selection(ui.painter(), &geo, params.selection);
 
-    // Update scroll if changed
-    for ev in &events {
-        if let GridEvent::ScrollChanged { new_scroll } = ev {
-            *params.scroll = *new_scroll;
+    // 3. Render active floating inline cell editor
+    let editor_action = render_cell_editor(ui, &geo, params.editor_state);
+
+    // 4. Process keyboard navigation and shortcuts
+    let kb_events = handle_grid_keyboard(
+        ui,
+        params.selection,
+        params.editor_state.is_editing(),
+        geo.rows.count(),
+        geo.cols.count(),
+    );
+
+    for ev in &kb_events {
+        match ev {
+            KeyboardEvent::Navigate {
+                target_row,
+                target_col,
+                extend_selection,
+            } => {
+                if *extend_selection {
+                    params.selection.extend_to(*target_row, *target_col);
+                } else {
+                    *params.selection = GridSelection::single(*target_row, *target_col);
+                }
+                *params.scroll = geo.scroll_to_cell(*target_row, *target_col);
+            }
+            KeyboardEvent::SelectAll => {
+                *params.selection = GridSelection::select_all(geo.rows.count(), geo.cols.count());
+            }
+            _ => {}
+        }
+    }
+
+    // 5. Process mouse interactions (clicks, double clicks, resizing, scrolling, range drag)
+    let mouse_events = handle_grid_interactions(ui, &geo, params.selection, params.interact_state);
+
+    for ev in &mouse_events {
+        match ev {
+            GridEvent::SelectCell { row, col } => {
+                *params.selection = GridSelection::single(*row, *col);
+            }
+            GridEvent::SelectRange { anchor, active } => {
+                *params.selection = GridSelection::from_anchor_and_active(*anchor, *active);
+            }
+            GridEvent::SelectRow { row } => {
+                *params.selection = GridSelection::select_row(*row, geo.cols.count());
+            }
+            GridEvent::SelectCol { col } => {
+                *params.selection = GridSelection::select_col(*col, geo.rows.count());
+            }
+            GridEvent::SelectAll => {
+                *params.selection = GridSelection::select_all(geo.rows.count(), geo.cols.count());
+            }
+            GridEvent::ScrollChanged { new_scroll } => {
+                *params.scroll = *new_scroll;
+            }
+            _ => {}
         }
     }
 
     // Allocate the viewport rect so parent layouts wrap properly
     ui.allocate_rect(viewport_rect, Sense::hover());
 
-    (geo, events)
+    GridFrameResult {
+        geo,
+        mouse_events,
+        kb_events,
+        editor_action,
+    }
 }

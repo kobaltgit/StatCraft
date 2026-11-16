@@ -3383,3 +3383,32 @@ Under Phase 1 of the StatCraft table modernization roadmap (specification `specs
    * 100% successful pass across the complete workspace test suite `cargo test --workspace -j 1`;
    * Layer architecture and file size guards verified: `xtask layers`, `xtask design-guard`, `xtask file-guard` (410 Rust files within limits).
 
+---
+
+### Phase 78: Range Selection, Keyboard Navigation, TSV Clipboard & Auto-Fill (Feature 007)
+*Time: November 16, 2026, 04:15 (~45 minutes)*
+
+Under Phase 2 of the table modernization initiative (specification `specs/007-range-selection-clipboard`, branch `feat/007-range-selection-clipboard`), delivered an extensive suite of interactive spreadsheet ergonomics — marquee mouse selection, keyboard navigation, TSV/CSV rectangular clipboard transfer, and series auto-fill:
+1. **Range Model & Vector Graphics (`selection.rs`):**
+   * Designed `CellRange` with normalized corner calculations via `from_corners`, cell bounds verification, and `contains_cell` hit testing;
+   * `GridSelection` unifies cursor focus, anchor origin, column/row selections, and table-wide selection (`Ctrl+A`);
+   * High-performance vector rendering in `paint_selection` clipped strictly to `geo.quad_center`: translucent selection backdrop, 1.5 px crisp accent border, and a $6 \times 6$ px square `Fill Handle` marker pinned to the bottom-right corner.
+2. **Keyboard Navigation & Direct Typing (`keyboard.rs`):**
+   * Full arrow key movement (Up, Down, Left, Right) with viewport auto-scrolling via `scroll_to_cell`;
+   * Tabular workflows: `Tab` / `Shift+Tab` (horizontal flow), `Enter` / `Shift+Enter` (vertical progression);
+   * Boundary jumps: `Home` / `End` (row start/end) and `Ctrl+Home` / `Ctrl+End` (dataset origin/terminus);
+   * Range selection expansion with `Shift` + arrow combinations;
+   * **Direct Typing:** alphanumeric keystrokes instantly activate the inline editor without requiring prior mouse double-clicking or Enter;
+   * Quick range cell clearance with `Delete` or `Backspace`.
+3. **Floating Inline Cell Editor (`editor.rs`):**
+   * Rendered single-line `TextEdit` positioned directly over the active cell rect;
+   * Seamless commit & advance on Enter (downwards) or Tab (rightwards), and cancellation on Escape.
+4. **Rectangular TSV/CSV Clipboard & Auto-Fill Series (`clipboard.rs`):**
+   * Native OS clipboard integration: `serialize_range_to_tsv` (supporting value labels and CSV-compliant quoting) and `parse_tsv_matrix`;
+   * Paste operations via `paste_matrix_into_dataset` with automatic row expansion when pasting large external matrices;
+   * **Auto-Fill Series (dragging Fill Handle):** computes linear progression slopes for numeric sequences (`[1, 2, 3] -> [4, 5, 6]`) and cyclic repetition for text or categorical variables.
+5. **Testing & Quality Gate (DoD):**
+   * Authored integration test suite `crates/statcraft_app/tests/grid_selection_clipboard_invariants.rs` (4 tests: `CellRange` normalization, roundtrip TSV copy/paste into `DataSet`, arithmetic auto-fill series, and editor lifecycle);
+   * 100% successful pass across all CI Quality Gates via `cargo run -p xtask -j 1 -- ci` (fmt, clippy, file-guard [415 files], design-guard, workspace test suites, and 41-command Undo/Redo mathematical reversibility matrix).
+
+
