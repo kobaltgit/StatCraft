@@ -61,11 +61,20 @@ pub enum GridEvent {
     ContextMenuCell {
         row: usize,
         col: usize,
+        pos: Pos2,
     },
     ContextMenuRow {
         row: usize,
     },
     ContextMenuCol {
+        col: usize,
+    },
+    OpenColFilter {
+        col: usize,
+        pos: Pos2,
+    },
+    ClickIntegrityBadge {
+        row: usize,
         col: usize,
     },
     ResizeCol {
@@ -197,10 +206,28 @@ pub fn handle_grid_interactions(
     if geo.quad_top_right.contains(pos) {
         if let Some(col) = geo.col_header_at_pos(pos) {
             state.hovered_col = Some(col);
+            let header_rect = geo.col_header_rect(col);
+            let is_on_filter_btn = header_rect.is_some_and(|r| {
+                let btn_rect = Rect::from_min_max(
+                    pos2(r.max.x - 20.0, r.min.y + 3.0),
+                    pos2(r.max.x - 4.0, r.max.y - 3.0),
+                );
+                btn_rect.contains(pos)
+            });
+
             if ui.input(|i| i.pointer.button_clicked(PointerButton::Secondary)) {
                 events.push(GridEvent::ContextMenuCol { col });
             } else if ui.input(|i| i.pointer.button_clicked(PointerButton::Primary)) {
-                events.push(GridEvent::SelectCol { col });
+                if is_on_filter_btn {
+                    let r = header_rect.unwrap_or(Rect::NOTHING);
+                    let popup_pos = pos2(r.max.x - 20.0, r.max.y);
+                    events.push(GridEvent::OpenColFilter {
+                        col,
+                        pos: popup_pos,
+                    });
+                } else {
+                    events.push(GridEvent::SelectCol { col });
+                }
             }
         }
         return events;
@@ -241,8 +268,15 @@ pub fn handle_grid_interactions(
                 state.drag = None;
                 return events;
             } else if ui.input(|i| i.pointer.button_clicked(PointerButton::Secondary)) {
-                events.push(GridEvent::ContextMenuCell { row, col });
+                events.push(GridEvent::ContextMenuCell { row, col, pos });
             } else if ui.input(|i| i.pointer.button_pressed(PointerButton::Primary)) {
+                if let Some(cell_r) = geo.cell_rect(row, col) {
+                    if super::integrity::hit_test_integrity_badge(cell_r, pos) {
+                        events.push(GridEvent::ClickIntegrityBadge { row, col });
+                        return events;
+                    }
+                }
+
                 let shift = ui.input(|i| i.modifiers.shift);
                 if shift {
                     state.drag = Some(GridDrag::SelectRange {

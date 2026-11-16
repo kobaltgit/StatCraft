@@ -855,6 +855,27 @@
   - [x] Интеграционный тест `crates/statcraft_app/tests/grid_selection_clipboard_invariants.rs` (границы и нормализация `CellRange`, TSV copy/paste roundtrip, протяжка числовых серий, жизненный цикл редактора);
   - [x] 100% успешный прогон `cargo run -p xtask -j 1 -- ci` (fmt, clippy, file-guard [415 файлов], design-guard, 100% тестов воркспейса, матрица Undo/Redo 41 команды).
 
+## 48. Колоночный автофильтр, быстрая сортировка и контроль целостности данных (Feature 008)
+- [x] L1 `statcraft_core::dataset`:
+  - [x] Метод `unique_values(&self, col_idx, show_labels)` для извлечения упорядоченного списка уникальных значений столбца и наличия пустых ячеек.
+  - [x] Предикат `is_row_matched_by_filter(...)` для фильтрации наблюдений по разрешенным значениям.
+- [x] L-Cross `statcraft_i18n`:
+  - [x] Двуязычные ключи фильтра и проверки целостности в `locales/en.ftl` и `locales/ru.ftl` (`grid-filter-sort-asc`, `grid-filter-sort-desc`, `grid-filter-search`, `grid-filter-select-all`, `grid-filter-blanks`, `grid-filter-apply`, `grid-filter-clear`, `grid-menu-filter-value`, `grid-menu-clear-filter`, `grid-integrity-num-stored-as-text`, `grid-integrity-convert`).
+- [x] L6 `statcraft_app::grid`:
+  - [x] `integrity.rs`: эвристика `is_number_stored_as_text` для детекции чисел, сохраненных строками, конвертер `convert_text_to_number`, векторный зеленый треугольник предупреждения `paint_integrity_badge` в стиле Excel и хит-тест `hit_test_integrity_badge`.
+  - [x] `filter_menu.rs`: состояние `GridFilterState`, векторная кнопка фильтра/воронки `paint_filter_button`, плавающий выпадающий попап `render_filter_popup` (быстрая сортировка ASC/DESC, живой поиск, выбор всех значений, фильтрация пустых ячеек, очистка и применение).
+  - [x] `context_menu.rs`: состояние `GridContextMenuState`, плавающее контекстное меню ячейки `render_context_menu` («Фильтровать по значению этой ячейки», «Очистить фильтр», сортировка, Copy/Paste).
+  - [x] `quadrant.rs`: интеграция кнопок фильтра в шапку колонок, векторных маркеров предупреждений в ячейки и приглушенной подсветки текста неактивных строк.
+  - [x] `interact.rs`: хит-тестинг кнопок фильтра в заголовках, вызов контекстного меню по правой кнопке мыши и клик по маркеру предупреждения для мгновенной конвертации типа ячейки.
+- [x] Интеграция в `DataView` (`views/data_view.rs`) и координатор приложения (`app.rs`):
+  - [x] Хранение состояний фильтров `filter_state` и контекстного меню `context_menu_state` в `DataViewState`.
+  - [x] Визуальное перечеркивание неактивных номеров строк и приглушение цвета текста отфильтрованных наблюдений (полное соответствие канону SPSS `FILTER BY`).
+  - [x] Связывание быстрой сортировки из меню фильтра и контекстного меню с командой `data.sort_cases` через `CommandBus` с Undo/Redo и протоколом синтаксиса `SORT CASES BY ...`.
+- [x] Тестирование и Quality Gate:
+  - [x] Юнит-тесты в `dataset/tests.rs`, `integrity.rs`, `filter_menu.rs`, `context_menu.rs`;
+  - [x] Интеграционный тест `crates/statcraft_app/tests/grid_autofilter_integrity_invariants.rs` (маска фильтрации, детекция и конвертация строковых чисел, headless-рендеринг выпадающих попапов);
+  - [x] 100% успешный прогон Quality Gate `cargo run -p xtask -j 1 -- ci` (fmt, clippy, file-guard [419 файлов], design-guard, layers, 100% тестов воркспейса, матрица обратимости Undo/Redo 41 команды).
+
 
 
 

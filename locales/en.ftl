@@ -1705,3 +1705,17 @@ output-km-logrank-title = Overall Comparisons (Log-Rank / Mantel-Cox)
 output-km-events-n = N of Events
 output-km-censored-n = Censored N
 output-km-censored-pct = Censored %
+
+# Grid AutoFilter & Quick Sort
+grid-filter-sort-asc = Sort Ascending
+grid-filter-sort-desc = Sort Descending
+grid-filter-search = Search values...
+grid-filter-select-all = (Select All)
+grid-filter-blanks = (Blanks)
+grid-filter-apply = Apply Filter
+grid-filter-clear = Clear Filter
+grid-menu-filter-value = Filter by Selected Cell's Value
+grid-menu-clear-filter = Clear Filter on this Column
+grid-integrity-num-stored-as-text = Number Stored as Text
+grid-integrity-convert = Convert to Number
+

@@ -21,8 +21,8 @@ use crate::dialogs::{
 use crate::recent_files::RecentFiles;
 use crate::views::{
     render_data_view, render_output_view, render_syntax_editor, render_variable_view,
-    DataViewState, OutputViewerState, SyntaxEditorAction, SyntaxEditorState, VariableViewAction,
-    VariableViewState,
+    DataViewAction, DataViewState, OutputViewerState, SyntaxEditorAction, SyntaxEditorState,
+    VariableViewAction, VariableViewState,
 };
 use crate::widgets::{
     render_caption_buttons, render_resize_zones, render_toolbar, title_x, MenuItemStatus,
@@ -143,6 +143,7 @@ pub struct StatCraftApp {
     pub goto_dialog_state: GoToDialogState,
     pub clipboard_cache: Option<String>,
     pub bridge_service: BridgeService,
+    pub pending_data_action: DataViewAction,
     pub pending_variable_action: VariableViewAction,
     pub status_message: StatusMessage,
     pub toolbar_position: ToolbarPosition,
@@ -228,6 +229,7 @@ impl StatCraftApp {
             goto_dialog_state: GoToDialogState::default(),
             clipboard_cache: None,
             bridge_service: BridgeService::new(false),
+            pending_data_action: DataViewAction::None,
             pending_variable_action: VariableViewAction::None,
             status_message: StatusMessage::Ready,
             toolbar_position: ToolbarPosition::Top,
@@ -317,6 +319,7 @@ struct StatCraftTabViewer<'a> {
     variable_view_state: &'a mut VariableViewState,
     output_view_state: &'a mut OutputViewerState,
     syntax_editor_state: &'a mut SyntaxEditorState,
+    pending_data_action: &'a mut DataViewAction,
     pending_variable_action: &'a mut VariableViewAction,
     pending_syntax_action: &'a mut SyntaxEditorAction,
 }
@@ -336,7 +339,10 @@ impl<'a> TabViewer for StatCraftTabViewer<'a> {
     fn ui(&mut self, ui: &mut Ui, tab: &mut Self::Tab) {
         match tab {
             Tab::DataView => {
-                render_data_view(ui, self.dataset, self.data_view_state);
+                let action = render_data_view(ui, self.dataset, self.data_view_state);
+                if action != DataViewAction::None {
+                    *self.pending_data_action = action;
+                }
             }
             Tab::VariableView => {
                 let action = render_variable_view(ui, self.dataset, self.variable_view_state);
@@ -785,6 +791,7 @@ impl eframe::App for StatCraftApp {
                 variable_view_state: &mut self.variable_view_state,
                 output_view_state: &mut self.output_view_state,
                 syntax_editor_state: &mut self.syntax_editor_state,
+                pending_data_action: &mut self.pending_data_action,
                 pending_variable_action: &mut self.pending_variable_action,
                 pending_syntax_action: &mut self.pending_syntax_action,
             };
@@ -837,6 +844,42 @@ impl eframe::App for StatCraftApp {
                 self.pending_variable_action = VariableViewAction::None;
             }
             VariableViewAction::None => {}
+        }
+
+        // 4c. Handle Data View actions (sorting)
+        if let DataViewAction::SortCases {
+            column_name,
+            ascending,
+        } = std::mem::replace(&mut self.pending_data_action, DataViewAction::None)
+        {
+            let dir_str = if ascending { "Ascending" } else { "Descending" };
+            let params = serde_json::json!({
+                "keys": [{
+                    "column_name": column_name,
+                    "direction": dir_str,
+                }]
+            });
+            match self
+                .command_bus
+                .execute("data.sort_cases", &mut self.dataset, params)
+            {
+                Ok(_) => {
+                    let keys = vec![statcraft_algo::SortKeySpec::new(
+                        column_name,
+                        if ascending {
+                            statcraft_algo::SortDirection::Ascending
+                        } else {
+                            statcraft_algo::SortDirection::Descending
+                        },
+                    )];
+                    let sps = statcraft_syntax::commands::SortCasesCommand::to_sps(&keys);
+                    self.output_view_state.add_entry(t!("output-log"), sps);
+                    self.status_message = StatusMessage::SortCasesExecuted { count: 1 };
+                }
+                Err(e) => {
+                    self.status_message = StatusMessage::Error(e.to_string());
+                }
+            }
         }
 
         // 4b. Handle Syntax Editor actions (running batch or selection)

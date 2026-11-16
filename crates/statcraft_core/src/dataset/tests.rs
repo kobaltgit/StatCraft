@@ -291,3 +291,26 @@ fn test_dataset_weighting() {
     assert_eq!(ds.weight_var(), None);
     assert_eq!(ds.row_weight(0), 1.0);
 }
+
+#[test]
+fn test_unique_values_and_filter_matching() {
+    let mut ds = DataSet::blank(5, 2).unwrap();
+    ds.set_cell(0, 0, RawValue::Text("Banana".into())).unwrap();
+    ds.set_cell(1, 0, RawValue::Text("Apple".into())).unwrap();
+    ds.set_cell(2, 0, RawValue::Text("Banana".into())).unwrap();
+    ds.set_cell(3, 0, RawValue::Null).unwrap();
+    ds.set_cell(4, 0, RawValue::Text("Orange".into())).unwrap();
+
+    let (uniq, has_blanks) = ds.unique_values(0, false);
+    assert_eq!(uniq, vec!["Apple", "Banana", "Orange"]);
+    assert!(has_blanks);
+
+    let mut allowed = std::collections::HashSet::new();
+    allowed.insert("Apple".to_string());
+    allowed.insert("Orange".to_string());
+
+    assert!(ds.is_row_matched_by_filter(1, 0, &allowed, false));
+    assert!(!ds.is_row_matched_by_filter(0, 0, &allowed, false));
+    assert!(!ds.is_row_matched_by_filter(3, 0, &allowed, false));
+    assert!(ds.is_row_matched_by_filter(3, 0, &allowed, true));
+}

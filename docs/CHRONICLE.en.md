@@ -3411,4 +3411,44 @@ Under Phase 2 of the table modernization initiative (specification `specs/007-ra
    * Authored integration test suite `crates/statcraft_app/tests/grid_selection_clipboard_invariants.rs` (4 tests: `CellRange` normalization, roundtrip TSV copy/paste into `DataSet`, arithmetic auto-fill series, and editor lifecycle);
    * 100% successful pass across all CI Quality Gates via `cargo run -p xtask -j 1 -- ci` (fmt, clippy, file-guard [415 files], design-guard, workspace test suites, and 41-command Undo/Redo mathematical reversibility matrix).
 
+---
+
+### Phase 79: Column AutoFilter, Quick Sort & Data Integrity Guards (Feature 008)
+*Time: November 16, 2026, 06:20 (~40 minutes)*
+
+Under Phase 3 of the table modernization roadmap (specification `specs/008-grid-autofilter-integrity`, branch `feat/008-grid-autofilter-integrity`), delivered a comprehensive suite of interactive filtering, rapid sorting, and automated data type integrity inspection tools in Data View:
+1. **Column AutoFilter & Dropdown Interface (`filter_menu.rs`, `dataset.rs`):**
+   * Integrated an interactive filter button in variable column headers: displays a discrete vector chevron in the idle state and an accent filled funnel icon when a column filter is active (`paint_filter_button`);
+   * Floating filter popup (`render_filter_popup`):
+     - Quick sorting Ascending and Descending (A-Z, Z-A) dispatching `data.sort_cases` through `CommandBus` with full Undo/Redo reversibility and SPSS syntax parity (`SORT CASES BY ...`);
+     - Real-time search filter across distinct column values;
+     - Bulk toggles: "Select All" and "Clear All";
+     - Interactive multi-select checklist of unique values with an explicit "(Blanks)" category for `MissingValues`;
+     - Dedicated "Apply Filter" and "Clear Filter" action buttons;
+   * `DataSet::is_row_matched_by_filter` evaluates row eligibility against all active column filter constraints.
+2. **Cell Context Menu (`context_menu.rs`):**
+   * Accessible via right-click on any grid cell:
+     - "Filter by selected cell value" — instantly narrows the active view to matching records;
+     - "Clear column filter" — quickly lifts constraints on the active column;
+     - "Sort Ascending / Descending" directly from the cell context;
+     - Quick clipboard shortcuts ("Copy", "Paste").
+3. **Filtering Visualization (SPSS FILTER BY Parity):**
+   * Inactive / filtered cases are not silently hidden from view: row headers in the left quadrant display a diagonal vector strikethrough, and cell values render in muted gray (`Tokens::text_muted()`);
+   * Downstream statistical procedures automatically respect the active case mask in strict alignment with SPSS standards.
+4. **Data Integrity Guards ("Numbers Stored as Text" — `integrity.rs`):**
+   * Developed `is_number_stored_as_text` detector: identifies `RawValue::Text` fields containing parseable numeric sequences (supporting trimmed whitespace, comma/period decimals, and scientific notation);
+   * Excel-parity vector warning indicator: green corner triangle badge (`paint_integrity_badge`) rendered in the cell's top-left corner;
+   * Instant inline conversion: clicking the badge converts the string to `RawValue::Number`, protecting data fidelity before running statistical procedures.
+5. **Testing & Quality Gate (DoD):**
+   * Authored integration test suite `crates/statcraft_app/tests/grid_autofilter_integrity_invariants.rs` (dataset row filtering, text-to-number detection & conversion, and headless popup rendering);
+   * 100% successful pass across all CI Quality Gates via `cargo run -p xtask -j 1 -- ci`:
+     - `cargo fmt --all -- --check` — clean;
+     - `cargo clippy --workspace --all-targets -j 1 -- -D warnings` — 0 warnings;
+     - `cargo test --workspace -j 1` — all 120+ tests pass with zero failures;
+     - `xtask file-guard` — 419 files strictly within limits;
+     - `xtask layers` and `xtask design-guard` — 0 violations;
+     - `xtask test-undo` — 41 commands verified for 100% reversible Undo/Redo;
+   * Optimized release binary `target/release/statcraft_app.exe` compiled and verified.
+
+
 

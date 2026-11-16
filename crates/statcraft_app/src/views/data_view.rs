@@ -1,12 +1,24 @@
 use crate::grid::{
-    apply_auto_fill, parse_tsv_matrix, paste_matrix_into_dataset, render_grid,
-    serialize_range_to_tsv, EditorAction, EditorMove, Geo, GridConfig, GridEditorState, GridEvent,
-    GridInteractState, GridRenderParams, GridSelection, KeyboardEvent, LineIndex,
+    apply_auto_fill, convert_text_to_number, is_number_stored_as_text, parse_tsv_matrix,
+    paste_matrix_into_dataset, render_context_menu, render_filter_popup, render_grid,
+    serialize_range_to_tsv, ColumnFilter, ContextMenuAction, EditorAction, EditorMove,
+    FilterMenuAction, Geo, GridConfig, GridContextMenuState, GridEditorState, GridEvent,
+    GridFilterState, GridInteractState, GridRenderParams, GridSelection, KeyboardEvent, LineIndex,
 };
 use egui::{Color32, FontId, Ui, Vec2};
 use statcraft_core::DataSet;
 use statcraft_i18n::t;
-use std::collections::HashMap;
+use std::collections::{HashMap, HashSet};
+
+/// Actions emitted by the DataView to the main application.
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub enum DataViewAction {
+    None,
+    SortCases {
+        column_name: String,
+        ascending: bool,
+    },
+}
 
 /// Persistent UI state for the DataView spreadsheet grid.
 #[derive(Debug, Clone)]
@@ -19,6 +31,8 @@ pub struct DataViewState {
     pub scroll: Vec2,
     pub col_widths: HashMap<usize, f32>,
     pub interact_state: GridInteractState,
+    pub filter_state: GridFilterState,
+    pub context_menu_state: GridContextMenuState,
 
     // Backward-compatibility mirrors
     pub selected_cell: Option<(usize, usize)>,
@@ -38,6 +52,8 @@ impl Default for DataViewState {
             scroll: Vec2::ZERO,
             col_widths: HashMap::new(),
             interact_state: GridInteractState::default(),
+            filter_state: GridFilterState::default(),
+            context_menu_state: GridContextMenuState::default(),
             selected_cell: Some((0, 0)),
             editing_cell: None,
             edit_buffer: String::new(),
@@ -46,19 +62,24 @@ impl Default for DataViewState {
     }
 }
 
-pub fn render_data_view(ui: &mut Ui, dataset: &mut Option<DataSet>, state: &mut DataViewState) {
+pub fn render_data_view(
+    ui: &mut Ui,
+    dataset: &mut Option<DataSet>,
+    state: &mut DataViewState,
+) -> DataViewAction {
     let ds = match dataset {
         Some(d) => d,
         None => {
             ui.centered_and_justified(|ui| {
                 ui.label(t!("output-no-analysis"));
             });
-            return;
+            return DataViewAction::None;
         }
     };
 
     let total_rows = ds.row_count();
     let total_cols = ds.col_count();
+    let mut action = DataViewAction::None;
 
     // Sync external selected_cell modifications (e.g. from GoTo dialog)
     if let Some((r, c)) = state.selected_cell {
@@ -96,7 +117,7 @@ pub fn render_data_view(ui: &mut Ui, dataset: &mut Option<DataSet>, state: &mut 
                 );
             }
         });
-        return;
+        return DataViewAction::None;
     }
 
     let row_height = 22.0_f32;
@@ -153,6 +174,7 @@ pub fn render_data_view(ui: &mut Ui, dataset: &mut Option<DataSet>, state: &mut 
             selection: &mut state.selection,
             editor_state: &mut state.editor_state,
             interact_state: &mut state.interact_state,
+            filter_state: &state.filter_state,
         },
         |col| {
             let var_meta = ds.dictionary.get(col);
@@ -171,7 +193,7 @@ pub fn render_data_view(ui: &mut Ui, dataset: &mut Option<DataSet>, state: &mut 
                 "*".to_string()
             };
             let is_active = if row < total_rows {
-                ds.is_row_active(row)
+                ds.is_row_active(row) && state.filter_state.is_row_matched(ds, row)
             } else {
                 true
             };
@@ -179,9 +201,13 @@ pub fn render_data_view(ui: &mut Ui, dataset: &mut Option<DataSet>, state: &mut 
         },
         |row, col| {
             if row < total_rows {
-                ds.get_cell_display(row, col, state.show_value_labels)
+                let text = ds.get_cell_display(row, col, state.show_value_labels);
+                let is_active = ds.is_row_active(row) && state.filter_state.is_row_matched(ds, row);
+                let raw_val = ds.get_cell(row, col);
+                let is_warning = raw_val.is_some_and(is_number_stored_as_text);
+                (text, is_active, is_warning)
             } else {
-                String::new()
+                (String::new(), true, false)
             }
         },
     );
@@ -351,7 +377,137 @@ pub fn render_data_view(ui: &mut Ui, dataset: &mut Option<DataSet>, state: &mut 
                 );
                 ui.ctx().request_repaint();
             }
+            GridEvent::OpenColFilter { col, pos } => {
+                state.context_menu_state.close();
+                state.filter_state.open_for_col(col, ds, pos);
+            }
+            GridEvent::ContextMenuCell { row, col, pos } => {
+                state.filter_state.close();
+                state.selection = GridSelection::single(row, col);
+                state.context_menu_state.open(row, col, pos);
+            }
+            GridEvent::ClickIntegrityBadge { row, col } => {
+                if let Some(cell) = ds.get_cell(row, col) {
+                    if let Some(converted) = convert_text_to_number(cell) {
+                        let _ = ds.set_cell(row, col, converted);
+                        ui.ctx().request_repaint();
+                    }
+                }
+            }
             _ => {}
+        }
+    }
+
+    // 4. Render Floating Auto-Filter Dropdown Popup
+    if let Some(fa) = render_filter_popup(ui, &mut state.filter_state, ds) {
+        match fa {
+            FilterMenuAction::SortAsc(c) => {
+                if let Some(var) = ds.dictionary.get(c) {
+                    action = DataViewAction::SortCases {
+                        column_name: var.name.clone(),
+                        ascending: true,
+                    };
+                }
+            }
+            FilterMenuAction::SortDesc(c) => {
+                if let Some(var) = ds.dictionary.get(c) {
+                    action = DataViewAction::SortCases {
+                        column_name: var.name.clone(),
+                        ascending: false,
+                    };
+                }
+            }
+            FilterMenuAction::ApplyFilter {
+                col,
+                allowed_values,
+                include_blanks,
+            } => {
+                state.filter_state.active_filters.insert(
+                    col,
+                    ColumnFilter {
+                        allowed_values,
+                        include_blanks,
+                    },
+                );
+                ui.ctx().request_repaint();
+            }
+            FilterMenuAction::ClearFilter(col) => {
+                state.filter_state.active_filters.remove(&col);
+                ui.ctx().request_repaint();
+            }
+            FilterMenuAction::Close => {}
+        }
+    }
+
+    // 5. Render Floating Right-Click Context Menu
+    if let Some(ca) =
+        render_context_menu(ui, &mut state.context_menu_state, ds, &state.filter_state)
+    {
+        match ca {
+            ContextMenuAction::FilterByCellValue { row, col } => {
+                let val = ds.get_cell_display(row, col, false);
+                let is_blank = val.is_empty() || val == ".";
+                let mut allowed = HashSet::new();
+                if !is_blank {
+                    allowed.insert(val);
+                }
+                state.filter_state.active_filters.insert(
+                    col,
+                    ColumnFilter {
+                        allowed_values: allowed,
+                        include_blanks: is_blank,
+                    },
+                );
+                ui.ctx().request_repaint();
+            }
+            ContextMenuAction::ClearColumnFilter { col } => {
+                state.filter_state.active_filters.remove(&col);
+                ui.ctx().request_repaint();
+            }
+            ContextMenuAction::SortAsc(c) => {
+                if let Some(var) = ds.dictionary.get(c) {
+                    action = DataViewAction::SortCases {
+                        column_name: var.name.clone(),
+                        ascending: true,
+                    };
+                }
+            }
+            ContextMenuAction::SortDesc(c) => {
+                if let Some(var) = ds.dictionary.get(c) {
+                    action = DataViewAction::SortCases {
+                        column_name: var.name.clone(),
+                        ascending: false,
+                    };
+                }
+            }
+            ContextMenuAction::Copy => {
+                let tsv =
+                    serialize_range_to_tsv(ds, &state.selection.range, state.show_value_labels);
+                ui.output_mut(|o| o.copied_text = tsv);
+            }
+            ContextMenuAction::Paste => {
+                let paste_text = ui.input(|i| {
+                    for event in &i.events {
+                        if let egui::Event::Paste(text) = event {
+                            return Some(text.clone());
+                        }
+                    }
+                    None
+                });
+
+                if let Some(text) = paste_text {
+                    let matrix = parse_tsv_matrix(&text);
+                    let (start_r, start_c) = state.selection.active_cell;
+                    let (rows_p, cols_p) = paste_matrix_into_dataset(ds, start_r, start_c, &matrix);
+                    if rows_p > 0 && cols_p > 0 {
+                        state.selection = GridSelection::from_anchor_and_active(
+                            (start_r, start_c),
+                            (start_r + rows_p - 1, start_c + cols_p - 1),
+                        );
+                    }
+                }
+            }
+            ContextMenuAction::Close => {}
         }
     }
 
@@ -360,6 +516,8 @@ pub fn render_data_view(ui: &mut Ui, dataset: &mut Option<DataSet>, state: &mut 
     state.editing_cell = state.editor_state.editing_cell;
     state.edit_buffer = state.editor_state.edit_buffer.clone();
     state.focus_edit = state.editor_state.focus_requested;
+
+    action
 }
 
 #[cfg(test)]

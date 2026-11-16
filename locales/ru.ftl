@@ -1705,3 +1705,17 @@ output-km-logrank-title = Общие сравнения (Лог-ранг / Ма�
 output-km-events-n = Число событий
 output-km-censored-n = Цензурировано N
 output-km-censored-pct = % цензурированных
+
+# Grid AutoFilter & Quick Sort
+grid-filter-sort-asc = Сортировать по возрастанию
+grid-filter-sort-desc = Сортировать по убыванию
+grid-filter-search = Поиск значений...
+grid-filter-select-all = (Выбрать все)
+grid-filter-blanks = (Пустые)
+grid-filter-apply = Применить фильтр
+grid-filter-clear = Очистить фильтр
+grid-menu-filter-value = Фильтровать по значению этой ячейки
+grid-menu-clear-filter = Снять фильтр с этого столбца
+grid-integrity-num-stored-as-text = Число сохранено как текст
+grid-integrity-convert = Преобразовать в число
+

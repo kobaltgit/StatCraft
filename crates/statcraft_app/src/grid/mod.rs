@@ -1,6 +1,9 @@
 pub mod clipboard;
+pub mod context_menu;
 pub mod editor;
+pub mod filter_menu;
 pub mod geo;
+pub mod integrity;
 pub mod interact;
 pub mod keyboard;
 pub mod line_index;
@@ -10,8 +13,16 @@ pub mod selection;
 pub use clipboard::{
     apply_auto_fill, parse_tsv_matrix, paste_matrix_into_dataset, serialize_range_to_tsv,
 };
+pub use context_menu::{render_context_menu, ContextMenuAction, GridContextMenuState};
 pub use editor::{render_cell_editor, EditorAction, EditorMove, GridEditorState};
+pub use filter_menu::{
+    paint_filter_button, render_filter_popup, ColumnFilter, FilterMenuAction, GridFilterState,
+};
 pub use geo::Geo;
+pub use integrity::{
+    convert_text_to_number, hit_test_integrity_badge, is_number_stored_as_text,
+    paint_integrity_badge,
+};
 pub use interact::{handle_grid_interactions, GridDrag, GridEvent, GridInteractState};
 pub use keyboard::{handle_grid_keyboard, KeyboardEvent};
 pub use line_index::LineIndex;
@@ -52,6 +63,7 @@ pub struct GridRenderParams<'a> {
     pub selection: &'a mut GridSelection,
     pub editor_state: &'a mut GridEditorState,
     pub interact_state: &'a mut GridInteractState,
+    pub filter_state: &'a GridFilterState,
 }
 
 /// Resulting actions and events emitted from one frame of grid rendering.
@@ -74,7 +86,7 @@ pub fn render_grid<ColFn, RowFn, CellFn>(
 where
     ColFn: FnMut(usize) -> (String, Measure),
     RowFn: FnMut(usize) -> (String, bool),
-    CellFn: FnMut(usize, usize) -> String,
+    CellFn: FnMut(usize, usize) -> (String, bool, bool),
 {
     let viewport_rect = ui.available_rect_before_wrap();
     let geo = Geo::new(
@@ -93,6 +105,7 @@ where
         &geo,
         params.interact_state.hovered_col,
         col_info,
+        |c| params.filter_state.is_col_filtered(c),
     );
     QuadrantPaint::paint_row_headers(
         ui.painter(),

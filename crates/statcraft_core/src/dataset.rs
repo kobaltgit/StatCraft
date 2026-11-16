@@ -309,6 +309,45 @@ impl DataSet {
             .collect()
     }
 
+    /// Computes sorted unique string values and whether any blank/null cells exist in column `col_idx`.
+    pub fn unique_values(&self, col_idx: usize, show_labels: bool) -> (Vec<String>, bool) {
+        if col_idx >= self.col_count() {
+            return (Vec::new(), false);
+        }
+
+        let mut seen = std::collections::HashSet::new();
+        let mut has_blanks = false;
+        let mut values = Vec::new();
+
+        for r in 0..self.row_count() {
+            let val = self.get_cell_display(r, col_idx, show_labels);
+            if val.is_empty() || val == "." {
+                has_blanks = true;
+            } else if seen.insert(val.clone()) {
+                values.push(val);
+            }
+        }
+
+        values.sort();
+        (values, has_blanks)
+    }
+
+    /// Checks if a row satisfies a column filter condition.
+    pub fn is_row_matched_by_filter(
+        &self,
+        row: usize,
+        col: usize,
+        allowed_values: &std::collections::HashSet<String>,
+        include_blanks: bool,
+    ) -> bool {
+        let val = self.get_cell_display(row, col, false);
+        if val.is_empty() || val == "." {
+            include_blanks
+        } else {
+            allowed_values.contains(&val)
+        }
+    }
+
     pub fn get_cell(&self, row: usize, col: usize) -> Option<&RawValue> {
         self.table.get_value(row, col)
     }

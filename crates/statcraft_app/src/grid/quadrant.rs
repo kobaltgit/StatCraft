@@ -27,13 +27,15 @@ impl QuadrantPaint {
     }
 
     /// Renders the top column headers (Quadrant 2).
-    pub fn paint_col_headers<F>(
+    pub fn paint_col_headers<F, FilterFn>(
         painter: &Painter,
         geo: &Geo,
         hovered_col: Option<usize>,
         mut col_info: F,
+        mut is_col_filtered: FilterFn,
     ) where
         F: FnMut(usize) -> (String, Measure),
+        FilterFn: FnMut(usize) -> bool,
     {
         let p = painter.with_clip_rect(geo.quad_top_right);
         p.rect_filled(geo.quad_top_right, 0.0_f32, Tokens::bg_header());
@@ -63,10 +65,10 @@ impl QuadrantPaint {
             );
             paint_measure_icon(&p, icon_rect, measure);
 
-            // Column title with clip
+            // Column title with clip (leave room for filter button on the right)
             let text_clip = Rect::from_min_max(
                 pos2(rect.min.x + 22.0_f32, rect.min.y),
-                pos2(rect.max.x - 4.0_f32, rect.max.y),
+                pos2(rect.max.x - 22.0_f32, rect.max.y),
             );
             p.with_clip_rect(text_clip).text(
                 pos2(rect.min.x + 24.0_f32, rect.center().y),
@@ -74,6 +76,18 @@ impl QuadrantPaint {
                 name,
                 FontId::proportional(12.0),
                 Tokens::text_primary(),
+            );
+
+            // Filter button on the right
+            let filter_btn_rect = Rect::from_min_max(
+                pos2(rect.max.x - 20.0_f32, rect.min.y + 3.0_f32),
+                pos2(rect.max.x - 4.0_f32, rect.max.y - 3.0_f32),
+            );
+            super::filter_menu::paint_filter_button(
+                &p,
+                filter_btn_rect,
+                is_col_filtered(c),
+                is_hovered,
             );
         }
     }
@@ -127,7 +141,7 @@ impl QuadrantPaint {
         editing_cell: Option<(usize, usize)>,
         mut cell_info: F,
     ) where
-        F: FnMut(usize, usize) -> String,
+        F: FnMut(usize, usize) -> (String, bool, bool),
     {
         let p = painter.with_clip_rect(geo.quad_center);
         p.rect_filled(geo.quad_center, 0.0_f32, Tokens::bg_app());
@@ -163,12 +177,17 @@ impl QuadrantPaint {
                 p.rect_filled(rect, 0.0_f32, bg_color);
                 p.rect_stroke(rect, 0.0_f32, Stroke::new(0.5_f32, Tokens::border()));
 
+                let (text, is_active, is_warning) = cell_info(r, c);
+
+                if is_warning {
+                    super::integrity::paint_integrity_badge(&p, rect);
+                }
+
                 // When actively editing inline, the TextEdit widget renders in-place
                 if is_editing {
                     continue;
                 }
 
-                let text = cell_info(r, c);
                 if text.is_empty() {
                     continue;
                 }
@@ -189,12 +208,18 @@ impl QuadrantPaint {
                     )
                 };
 
+                let text_color = if is_active {
+                    Tokens::text_primary()
+                } else {
+                    Tokens::text_muted()
+                };
+
                 p.with_clip_rect(inner_rect).text(
                     text_pos,
                     align,
                     text,
                     FontId::proportional(12.0),
-                    Tokens::text_primary(),
+                    text_color,
                 );
             }
         }
@@ -232,9 +257,13 @@ mod tests {
 
                 QuadrantPaint::paint_corner(painter, &geo, "Row");
 
-                QuadrantPaint::paint_col_headers(painter, &geo, Some(1), |c| {
-                    (format!("COL_{}", c), Measure::Scale)
-                });
+                QuadrantPaint::paint_col_headers(
+                    painter,
+                    &geo,
+                    Some(1),
+                    |c| (format!("COL_{}", c), Measure::Scale),
+                    |_| false,
+                );
 
                 QuadrantPaint::paint_row_headers(painter, &geo, None, |r| {
                     (format!("{}", r + 1), r % 2 == 0)
@@ -242,7 +271,7 @@ mod tests {
 
                 let sel = GridSelection::single(0, 0);
                 QuadrantPaint::paint_data_cells(painter, &geo, Some(&sel), None, |r, c| {
-                    format!("{}.{}", r, c)
+                    (format!("{}.{}", r, c), true, false)
                 });
 
                 QuadrantPaint::paint_resize_guide(painter, &geo, 130.0);
