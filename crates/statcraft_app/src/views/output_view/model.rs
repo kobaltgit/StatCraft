@@ -154,6 +154,8 @@ impl OutputProcedure {
     pub fn title(&self) -> String {
         if let Some(custom) = &self.custom_title {
             custom.clone()
+        } else if self.title_key == "output-frequencies-title" {
+            t!("output-frequencies")
         } else {
             t!(self.title_key)
         }

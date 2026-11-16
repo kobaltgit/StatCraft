@@ -2,6 +2,7 @@ use super::common::{
     format_var_display, render_variable_list_panel, ActionBarAction, DialogActionBar, DialogShell,
     GroupBox, ListEvent, TransferButton, VariableListItem,
 };
+use crate::theme::Tokens;
 use egui::vec2;
 use statcraft_core::DataSet;
 use statcraft_i18n::t;
@@ -87,6 +88,24 @@ pub fn render_logistic_regression_dialog(
             })
         })
         .collect();
+
+    let dep_distinct_count: Option<usize> = state.dep_var.as_ref().and_then(|dep_name| {
+        ds.dictionary.find_index(dep_name).map(|col_idx| {
+            let active_rows = ds.active_row_indices();
+            let mut unique_levels: Vec<f64> = Vec::new();
+            for &r in &active_rows {
+                let s = ds.get_cell_display(r, col_idx, false);
+                if !s.trim().is_empty() && s != "." && s != "NA" {
+                    if let Ok(v) = s.parse::<f64>() {
+                        if v.is_finite() && !unique_levels.iter().any(|&u| (u - v).abs() < 1e-9) {
+                            unique_levels.push(v);
+                        }
+                    }
+                }
+            }
+            unique_levels.len()
+        })
+    });
 
     let mut main_open = true;
     DialogShell::standard(t!("dialog-logistic-regression-title")).show(ctx, &mut main_open, |ui| {
@@ -211,6 +230,25 @@ pub fn render_logistic_regression_dialog(
                         state.source_selected = None;
                     }
 
+                    if let Some(count) = dep_distinct_count {
+                        if count == 2 {
+                            ui.label(
+                                egui::RichText::new(t!("dialog-logistic-dep-binary-ok"))
+                                    .color(Tokens::measure_nominal())
+                                    .size(11.0),
+                            );
+                        } else {
+                            ui.label(
+                                egui::RichText::new(t!(
+                                    "dialog-logistic-dep-not-binary-hint",
+                                    count = count
+                                ))
+                                .color(Tokens::measure_ordinal())
+                                .size(11.0),
+                            );
+                        }
+                    }
+
                     ui.add_space(8.0);
 
                     // 2. Covariates List
@@ -295,7 +333,28 @@ pub fn render_logistic_regression_dialog(
             .parse::<f64>()
             .map(|p| p / 100.0)
             .unwrap_or(0.95);
-        let is_valid = state.dep_var.is_some()
+
+        let is_binary_dep = dep_distinct_count == Some(2);
+        if let Some(count) = dep_distinct_count {
+            if count != 2 {
+                ui.horizontal(|ui| {
+                    let warn_color = if count > 2 {
+                        Tokens::measure_ordinal()
+                    } else {
+                        Tokens::caption_close_hover()
+                    };
+                    let warn_msg = if count > 2 {
+                        t!("dialog-logistic-warning-not-binary", count = count)
+                    } else {
+                        t!("dialog-logistic-warning-insufficient", count = count)
+                    };
+                    ui.label(egui::RichText::new(warn_msg).color(warn_color).size(11.5));
+                });
+                ui.add_space(4.0);
+            }
+        }
+
+        let is_valid = is_binary_dep
             && !state.covariates.is_empty()
             && cutoff_val > 0.0
             && cutoff_val < 1.0

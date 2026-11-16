@@ -1406,12 +1406,18 @@ dialog-logistic-options = Параметры
 dialog-logistic-hosmer-lemeshow = Критерий согласия Хосмера-Лемешова
 dialog-logistic-ci = ДИ для Exp(B):
 dialog-logistic-cutoff = Порог классификации:
+dialog-logistic-dep-binary-ok = (бинарная, 2 значения)
+dialog-logistic-dep-not-binary-hint = ({ $count } значений — требуется ровно 2)
+dialog-logistic-warning-not-binary = Зависимая переменная имеет { $count } значений (требуется ровно 2). Для 3+ категорий используйте «Мультиномиальную логистическую регрессию».
+dialog-logistic-warning-insufficient = Зависимая переменная не содержит данных или является константой (найдено значений: { $count }).
 
 # Диалог мультиномиальной логистической регрессии
 dialog-multinomial-logistic-title = Мультиномиальная логистическая регрессия
 dialog-multinomial-dependent = Зависимая:
 dialog-multinomial-factors = Фактор(ы):
 dialog-multinomial-covariates = Ковариата(ы):
+dialog-multinomial-dep-categories = ({ $count } категорий)
+dialog-multinomial-warning-insufficient = Зависимая переменная должна иметь не менее 2 категорий (найдено: { $count }).
 dialog-multinomial-btn-ref-cat = Базовая категория...
 dialog-multinomial-btn-statistics = Статистика...
 dialog-multinomial-ref-title = Базовая категория

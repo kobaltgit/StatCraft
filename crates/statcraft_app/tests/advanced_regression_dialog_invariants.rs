@@ -150,3 +150,51 @@ fn test_headless_render_multinomial_logistic_dialog() {
     assert!(state.print_goodness_of_fit);
     assert!(state.print_lrt);
 }
+
+#[test]
+fn test_logistic_regression_validation_with_cases() {
+    let mut ds = DataSet::empty();
+    ds.add_variable("age", DataType::Numeric { decimals: 0 }, Measure::Scale)
+        .unwrap();
+    ds.add_variable("gender", DataType::Numeric { decimals: 0 }, Measure::Nominal)
+        .unwrap();
+    ds.add_variable("salary", DataType::Numeric { decimals: 2 }, Measure::Scale)
+        .unwrap();
+
+    for i in 0..20 {
+        ds.insert_row(
+            i,
+            &[
+                statcraft_core::RawValue::Number(20.0 + i as f64),
+                statcraft_core::RawValue::Number(if i % 2 == 0 { 1.0 } else { 2.0 }),
+                statcraft_core::RawValue::Number(30000.0 + (i * 1000) as f64),
+            ],
+        );
+    }
+
+    let ctx = egui::Context::default();
+
+    // 1. When age (20 unique values) is selected:
+    let mut state_age = LogisticRegressionDialogState {
+        is_open: true,
+        dep_var: Some("age".to_string()),
+        covariates: vec!["salary".to_string()],
+        ..Default::default()
+    };
+    let _ = ctx.run(Default::default(), |ctx| {
+        let action = render_logistic_regression_dialog(ctx, Some(&ds), &mut state_age);
+        assert!(matches!(action, LogisticRegressionDialogAction::None));
+    });
+
+    // 2. When gender (2 unique values) is selected:
+    let mut state_gender = LogisticRegressionDialogState {
+        is_open: true,
+        dep_var: Some("gender".to_string()),
+        covariates: vec!["salary".to_string()],
+        ..Default::default()
+    };
+    let _ = ctx.run(Default::default(), |ctx| {
+        let action = render_logistic_regression_dialog(ctx, Some(&ds), &mut state_gender);
+        assert!(matches!(action, LogisticRegressionDialogAction::None));
+    });
+}

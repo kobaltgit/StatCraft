@@ -4,6 +4,7 @@ use super::common::{
     format_var_display, render_variable_list_panel, ActionBarAction, DialogActionBar, DialogShell,
     ListEvent, SubdialogSidebar, TransferButton, VariableListItem,
 };
+use crate::theme::Tokens;
 use egui::vec2;
 use statcraft_core::DataSet;
 use statcraft_i18n::t;
@@ -123,6 +124,24 @@ pub fn render_multinomial_logistic_dialog(
             })
         })
         .collect();
+
+    let dep_distinct_count: Option<usize> = state.dep_var.as_ref().and_then(|dep_name| {
+        ds.dictionary.find_index(dep_name).map(|col_idx| {
+            let active_rows = ds.active_row_indices();
+            let mut unique_levels: Vec<f64> = Vec::new();
+            for &r in &active_rows {
+                let s = ds.get_cell_display(r, col_idx, false);
+                if !s.trim().is_empty() && s != "." && s != "NA" {
+                    if let Ok(v) = s.parse::<f64>() {
+                        if v.is_finite() && !unique_levels.iter().any(|&u| (u - v).abs() < 1e-9) {
+                            unique_levels.push(v);
+                        }
+                    }
+                }
+            }
+            unique_levels.len()
+        })
+    });
 
     let mut main_open = true;
     DialogShell::standard(t!("dialog-multinomial-logistic-title")).show(
@@ -276,6 +295,22 @@ pub fn render_multinomial_logistic_dialog(
                             state.target_cov_selected = None;
                         }
 
+                        if let Some(count) = dep_distinct_count {
+                            let label_color = if count >= 2 {
+                                Tokens::measure_nominal()
+                            } else {
+                                Tokens::caption_close_hover()
+                            };
+                            ui.label(
+                                egui::RichText::new(t!(
+                                    "dialog-multinomial-dep-categories",
+                                    count = count
+                                ))
+                                .color(label_color)
+                                .size(11.0),
+                            );
+                        }
+
                         ui.add_space(6.0);
 
                         // Factors List
@@ -368,7 +403,24 @@ pub fn render_multinomial_logistic_dialog(
             ui.add_space(10.0);
 
             // Action Bar (OK, Paste, Reset, Cancel, Help)
-            let can_run = state.dep_var.is_some()
+            if let Some(count) = dep_distinct_count {
+                if count < 2 {
+                    ui.horizontal(|ui| {
+                        ui.label(
+                            egui::RichText::new(t!(
+                                "dialog-multinomial-warning-insufficient",
+                                count = count
+                            ))
+                            .color(Tokens::caption_close_hover())
+                            .size(11.5),
+                        );
+                    });
+                    ui.add_space(4.0);
+                }
+            }
+
+            let has_valid_dep = dep_distinct_count.unwrap_or(0) >= 2;
+            let can_run = has_valid_dep
                 && (!state.factors.is_empty() || !state.covariates.is_empty());
             let bar = DialogActionBar::new(can_run);
             match bar.show(ui) {

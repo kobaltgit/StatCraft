@@ -1406,12 +1406,18 @@ dialog-logistic-options = Options
 dialog-logistic-hosmer-lemeshow = Hosmer-Lemeshow goodness-of-fit
 dialog-logistic-ci = CI for Exp(B):
 dialog-logistic-cutoff = Classification cutoff:
+dialog-logistic-dep-binary-ok = (binary, 2 values)
+dialog-logistic-dep-not-binary-hint = ({ $count } values — 2 required)
+dialog-logistic-warning-not-binary = Dependent variable has { $count } distinct values (exactly 2 required). For 3+ categories, use Multinomial Logistic Regression.
+dialog-logistic-warning-insufficient = Dependent variable has insufficient data or is constant (found: { $count }).
 
 # Multinomial Logistic Regression Dialog
 dialog-multinomial-logistic-title = Multinomial Logistic Regression
 dialog-multinomial-dependent = Dependent:
 dialog-multinomial-factors = Factor(s):
 dialog-multinomial-covariates = Covariate(s):
+dialog-multinomial-dep-categories = ({ $count } categories)
+dialog-multinomial-warning-insufficient = Dependent variable must have at least 2 distinct categories (found: { $count }).
 dialog-multinomial-btn-ref-cat = Reference Category...
 dialog-multinomial-btn-statistics = Statistics...
 dialog-multinomial-ref-title = Reference Category
