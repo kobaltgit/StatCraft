@@ -44,6 +44,7 @@ pub struct GridInteractState {
     pub hovered_row: Option<usize>,
     pub hovered_cell: Option<(usize, usize)>,
     pub last_boundary_click: Option<(usize, f64)>,
+    pub last_cell_click: Option<((usize, usize), f64)>,
 }
 
 /// Action events emitted by user input on the grid.
@@ -222,9 +223,23 @@ pub fn handle_grid_interactions(
     if geo.quad_center.contains(pos) {
         if let Some((row, col)) = geo.cell_at_pos(pos) {
             state.hovered_cell = Some((row, col));
+            ui.ctx().set_cursor_icon(CursorIcon::Cell);
 
-            if ui.input(|i| i.pointer.button_double_clicked(PointerButton::Primary)) {
+            let double_clicked =
+                ui.input(|i| i.pointer.button_double_clicked(PointerButton::Primary));
+            let current_time = ui.input(|i| i.time);
+            let is_double = double_clicked
+                || matches!(
+                    state.last_cell_click,
+                    Some(((lr, lc), last_t))
+                        if (lr, lc) == (row, col) && (current_time - last_t) < 0.4
+                );
+
+            if is_double {
                 events.push(GridEvent::DoubleClickCell { row, col });
+                state.last_cell_click = None;
+                state.drag = None;
+                return events;
             } else if ui.input(|i| i.pointer.button_clicked(PointerButton::Secondary)) {
                 events.push(GridEvent::ContextMenuCell { row, col });
             } else if ui.input(|i| i.pointer.button_pressed(PointerButton::Primary)) {
@@ -349,8 +364,32 @@ fn handle_active_drag(
                     events.push(GridEvent::SelectRange { anchor, active });
                 }
             }
+
+            let double_clicked =
+                ui.input(|i| i.pointer.button_double_clicked(PointerButton::Primary));
+            let current_time = ui.input(|i| i.time);
+            let is_double = double_clicked
+                || matches!(
+                    state.last_cell_click,
+                    Some(((lr, lc), last_t))
+                        if (lr, lc) == anchor && (current_time - last_t) < 0.4
+                );
+
             if !primary_down {
-                events.push(GridEvent::SelectRange { anchor, active });
+                if is_double && anchor == active {
+                    events.push(GridEvent::DoubleClickCell {
+                        row: anchor.0,
+                        col: anchor.1,
+                    });
+                    state.last_cell_click = None;
+                } else {
+                    events.push(GridEvent::SelectRange { anchor, active });
+                    if anchor == active {
+                        state.last_cell_click = Some((anchor, current_time));
+                    } else {
+                        state.last_cell_click = None;
+                    }
+                }
                 state.drag = None;
             }
         }

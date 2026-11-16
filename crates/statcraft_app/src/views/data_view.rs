@@ -296,6 +296,7 @@ pub fn render_data_view(ui: &mut Ui, dataset: &mut Option<DataSet>, state: &mut 
                 } else {
                     cur_val
                 };
+                state.selection = GridSelection::single(row, col);
                 state.editor_state.start_editing(row, col, buffer);
             }
             GridEvent::ResizeCol { col, new_width } => {

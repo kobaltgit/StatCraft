@@ -1,5 +1,6 @@
 use super::geo::Geo;
-use egui::{vec2, Key, Ui};
+use crate::theme::Tokens;
+use egui::{vec2, Key, Stroke, Ui};
 
 /// Navigation direction upon committing an inline cell edit.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -66,11 +67,27 @@ pub fn render_cell_editor(
         return None;
     }
 
-    let inner_rect = cell_rect.shrink2(vec2(2.0_f32, 1.0_f32));
+    // Paint an active edit container over the cell:
+    // Solid background and 2.0px accent border
+    ui.painter().with_clip_rect(geo.quad_center).rect_filled(
+        cell_rect,
+        0.0_f32,
+        Tokens::bg_panel(),
+    );
+    ui.painter().with_clip_rect(geo.quad_center).rect_stroke(
+        cell_rect,
+        0.0_f32,
+        Stroke::new(2.0_f32, Tokens::accent()),
+    );
+
+    let inner_rect = cell_rect.shrink2(vec2(4.0_f32, 2.0_f32));
     let mut action = None;
 
     ui.allocate_new_ui(egui::UiBuilder::new().max_rect(inner_rect), |ui| {
         let text_edit = egui::TextEdit::singleline(&mut state.edit_buffer)
+            .id(egui::Id::new("grid_inline_editor"))
+            .font(egui::FontId::proportional(12.0))
+            .text_color(Tokens::text_primary())
             .frame(false)
             .clip_text(true);
         let text_res = ui.add_sized(inner_rect.size(), text_edit);
