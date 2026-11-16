@@ -32,6 +32,7 @@ pub struct GridInteractState {
     pub hovered_col: Option<usize>,
     pub hovered_row: Option<usize>,
     pub hovered_cell: Option<(usize, usize)>,
+    pub last_boundary_click: Option<(usize, f64)>,
 }
 
 /// Action events emitted by user input on the grid.
@@ -86,14 +87,24 @@ pub fn handle_grid_interactions(
     }
 
     // 4. Column boundary hit-test (Resize Cursor & Drag Initiation)
-    let boundary_tolerance = 4.0_f32;
+    let boundary_tolerance = 6.0_f32;
     if let Some((col_idx, screen_x)) = geo.col_boundary_near_pos(pos, boundary_tolerance) {
         state.hovered_boundary = Some((col_idx, screen_x));
         ui.ctx().set_cursor_icon(CursorIcon::ResizeHorizontal);
 
         let double_clicked = ui.input(|i| i.pointer.button_double_clicked(PointerButton::Primary));
-        if double_clicked {
+        let current_time = ui.input(|i| i.time);
+        let is_double = double_clicked
+            || matches!(
+                state.last_boundary_click,
+                Some((last_col, last_t))
+                    if last_col == col_idx && (current_time - last_t) < 0.4
+            );
+
+        if is_double {
             events.push(GridEvent::AutoFitCol { col: col_idx });
+            state.last_boundary_click = None;
+            state.drag = None;
             return events;
         }
 
@@ -221,13 +232,36 @@ fn handle_active_drag(
             let dx = pointer_pos.x - start_mouse_x;
             let new_width = (orig_width + dx).clamp(40.0, 800.0);
 
-            // Render live resize guideline across whole grid
-            let col_start = geo.cols.get_offset(col).unwrap_or(0.0);
-            let screen_guideline_x = geo.quad_center.min.x + (col_start + new_width - geo.scroll.x);
-            QuadrantPaint::paint_resize_guide(ui.painter(), geo, screen_guideline_x);
+            // Render live resize guideline only if dragged
+            if dx.abs() >= 2.0 {
+                let col_start = geo.cols.get_offset(col).unwrap_or(0.0);
+                let screen_guideline_x =
+                    geo.quad_center.min.x + (col_start + new_width - geo.scroll.x);
+                QuadrantPaint::paint_resize_guide(ui.painter(), geo, screen_guideline_x);
+            }
 
-            if !primary_down {
-                events.push(GridEvent::ResizeCol { col, new_width });
+            let double_clicked =
+                ui.input(|i| i.pointer.button_double_clicked(PointerButton::Primary));
+            let current_time = ui.input(|i| i.time);
+            let is_double = double_clicked
+                || matches!(
+                    state.last_boundary_click,
+                    Some((last_col, last_t))
+                        if last_col == col && (current_time - last_t) < 0.4
+                );
+
+            if is_double {
+                events.push(GridEvent::AutoFitCol { col });
+                state.last_boundary_click = None;
+                state.drag = None;
+            } else if !primary_down {
+                if dx.abs() >= 2.0 {
+                    events.push(GridEvent::ResizeCol { col, new_width });
+                    state.last_boundary_click = None;
+                } else {
+                    // Click on boundary without dragging: track for double-click
+                    state.last_boundary_click = Some((col, current_time));
+                }
                 state.drag = None;
             }
         }

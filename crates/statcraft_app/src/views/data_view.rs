@@ -1,7 +1,7 @@
 use crate::grid::{
     render_grid, Geo, GridConfig, GridEvent, GridInteractState, GridRenderParams, LineIndex,
 };
-use egui::{vec2, Key, Ui, Vec2};
+use egui::{vec2, Color32, FontId, Key, Ui, Vec2};
 use statcraft_core::DataSet;
 use statcraft_i18n::t;
 use std::collections::HashMap;
@@ -257,21 +257,39 @@ pub fn render_data_view(ui: &mut Ui, dataset: &mut Option<DataSet>, state: &mut 
                 }
             }
             GridEvent::AutoFitCol { col } => {
-                let mut max_w = 40.0_f32;
+                let mut max_w = 50.0_f32;
                 if let Some(var) = ds.dictionary.get(col) {
-                    max_w = max_w.max(var.name.len() as f32 * 8.5 + 36.0);
+                    let text_w = ui.fonts(|f| {
+                        f.layout_no_wrap(
+                            var.name.clone(),
+                            FontId::proportional(12.0),
+                            Color32::WHITE,
+                        )
+                        .size()
+                        .x
+                    });
+                    // left margin 4 + icon 16 + gap 4 + text + right padding 16
+                    max_w = max_w.max(text_w + 40.0);
                 }
                 let check_rows = total_rows.min(100);
                 for r in 0..check_rows {
                     let val_str = ds.get_cell_display(r, col, state.show_value_labels);
-                    max_w = max_w.max(val_str.len() as f32 * 7.5 + 16.0);
+                    if !val_str.is_empty() {
+                        let text_w = ui.fonts(|f| {
+                            f.layout_no_wrap(val_str, FontId::proportional(12.0), Color32::WHITE)
+                                .size()
+                                .x
+                        });
+                        max_w = max_w.max(text_w + 24.0);
+                    }
                 }
-                let fitted_w = max_w.clamp(60.0, 500.0);
+                let fitted_w = max_w.clamp(60.0, 600.0);
                 state.col_widths.insert(col, fitted_w);
                 let char_cols = ((fitted_w - 30.0) / 10.0).round().max(1.0) as usize;
                 if let Some(var) = ds.dictionary.get_mut(col) {
                     var.columns = char_cols;
                 }
+                ui.ctx().request_repaint();
             }
             GridEvent::SelectRow { row } => {
                 state.selected_cell = Some((row, 0));
