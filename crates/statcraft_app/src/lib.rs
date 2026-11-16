@@ -13,6 +13,7 @@ pub mod app_session;
 pub mod bridge_service;
 pub mod dialogs;
 pub mod export_handlers;
+pub mod grid;
 pub mod icon_data;
 pub mod icons;
 pub mod recent_files;

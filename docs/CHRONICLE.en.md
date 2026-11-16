@@ -3356,3 +3356,30 @@ Following the approved architectural plan `tab_lifecycle_plan.md`, fully impleme
    * Implemented integration test suite `crates/statcraft_app/tests/tab_lifecycle_invariants.rs` (5 tests covering non-closeable core tabs, closeable auxiliary tabs, round-trip close and restore, and deduplication);
    * 100% successful pass across all Quality Gate checks via `cargo run -p xtask -j 1 -- ci` (fmt, clippy, file-guard [404 files], design-guard, workspace tests, undo matrix).
 
+---
+
+### Phase 77: Virtualized 4-Quadrant 2D Grid & Interactive Column Resizing (Feature 006)
+*Time: November 16, 2026, 02:30 (~40 minutes)*
+
+Under Phase 1 of the StatCraft table modernization roadmap (specification `specs/006-virtual-quadrant-grid`, branch `feat/006-virtual-quadrant-grid`), implemented an ergonomic, fully virtualized 2D grid for exploratory data analysis with frozen headers and interactive column width control:
+1. **Modular Subsystem `crates/statcraft_app/src/grid/`:**
+   * Low-level spatial geometry and quadrant rendering logic decoupled from `views/data_view.rs` into an isolated package of compact modules (each strictly $\le 500$ lines, 100% Safe Rust, zero `unwrap()`);
+   * **`LineIndex` (`line_index.rs`):** prefix-sum indexing providing $O(\log N)$ binary search from pixel coordinates to row/column indices. Supports a compact `Uniform` mode with zero heap allocations for hundreds of thousands of rows, a `Variable` mode for arbitrary column widths, and $O(1)/O(\log N)$ boundary hit-testing (`find_boundary_near`);
+   * **`Geo` (`geo.rs`):** spatial viewport geometry calculations for all 4 quadrants:
+     - `quad_top_left`: fixed corner header;
+     - `quad_top_right`: column variable headers (pinned top, scrolls horizontally);
+     - `quad_bottom_left`: row and case numbers (pinned left, scrolls vertically);
+     - `quad_center`: data cell grid (scrolls both horizontally and vertically).
+     Provides clean coordinate transforms between screen and logical `(row, col)` domains and deterministic `scroll_to_cell` bounds calculation.
+   * **`QuadrantPaint` (`quadrant.rs`):** isolated quadrant rendering using `Painter::with_clip_rect()`. Features measurement level vector icons (`paint_measure_icon`), diagonal strikethrough for filtered inactive rows, alternating row backgrounds, and an accent vertical guideline during active resizing;
+   * **`GridInteract` (`interact.rs`):** column border drag resizing (`GridDrag::ResizeCol`) with dynamic cursor switching to `ResizeHorizontal`, double-click column Auto-fit calculation, 2D mouse wheel scrolling (including Shift+wheel), and interactive scrollbars;
+   * **`render_grid` (`mod.rs`):** unified coordinator facade for rendering and `GridEvent` dispatching.
+2. **Modernization of `DataView` (`views/data_view.rs`):**
+   * Replaced nested paired `ScrollArea` containers with the unified 4-quadrant `grid::render_grid`;
+   * Row number headers remain firmly anchored to the left edge when scrolling horizontally;
+   * **Two-Way Column Width Synchronization with SPSS:** the UI operates on exact `f32` pixels in `DataViewState.col_widths`, while the dictionary stores the character width `(width - 30.0) / 10.0` in `VariableMetadata.columns` — custom widths persist cleanly into `.sav` project files and restore identically in IBM SPSS.
+3. **Testing & Quality Gate (DoD):**
+   * Authored integration test suite `crates/statcraft_app/tests/grid_quadrant_invariants.rs` (4-quadrant isolation, 100,000-element prefix-sum stress test, SPSS column width parity, and panic-free dataset rendering);
+   * 100% successful pass across the complete workspace test suite `cargo test --workspace -j 1`;
+   * Layer architecture and file size guards verified: `xtask layers`, `xtask design-guard`, `xtask file-guard` (410 Rust files within limits).
+

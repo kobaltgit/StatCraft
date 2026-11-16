@@ -810,6 +810,22 @@
   - [x] Интеграционный тест `crates/statcraft_app/tests/tab_lifecycle_invariants.rs` (5 тестов: неснимаемость базовых экранов, закрываемость вспомогательных, roundtrip закрытия/восстановления, отсутствие дубликатов).
   - [x] 100% успешный прогон всех ступеней `cargo run -p xtask -j 1 -- ci` (fmt, clippy, file-guard [404 файла], design-guard, тесты воркспейса, undo matrix).
 
+## 46. Виртуализированная 2D-сетка из 4 квадрантов и интерактивный ресайз колонок (Feature 006)
+- [x] Изолированный модульный пакет `crates/statcraft_app/src/grid/` (Safe Rust, <= 500 строк на модуль):
+  - [x] `LineIndex` (`line_index.rs`): префиксные суммы для $O(\log N)$ поиска строк/колонок, компактный `Uniform` (0 аллокаций памяти), visible range и хит-тестинг границ.
+  - [x] `Geo` (`geo.rs`): расчет геометрии 4 квадрантов (`quad_top_left`, `quad_top_right`, `quad_bottom_left`, `quad_center`), трансформации координат ячеек, видимые видовые экраны и `scroll_to_cell`.
+  - [x] `QuadrantPaint` (`quadrant.rs`): изолированная отрисовка 4 квадрантов с раздельным клиппингом, векторные иконки шкал, зачеркивание неактивных строк и вертикальная направляющая линия ресайза.
+  - [x] `GridInteract` (`interact.rs`): хит-тестинг границ колонок, курсор `ResizeHorizontal`, drag-and-drop перетаскивание `GridDrag::ResizeCol`, расчет auto-fit по двойному клику и 2D-скроллинг с ползунками.
+  - [x] `render_grid` (`mod.rs`): единая координирующая функция рендеринга и обработки событий `GridEvent`.
+- [x] Интеграция в `DataView` (`views/data_view.rs`):
+  - [x] Замена вложенных `ScrollArea` на единую 4-квадрантную сетку с замороженными заголовками строк и столбцов.
+  - [x] Двусторонняя синхронизация ширины столбцов: пиксели в `DataViewState.col_widths` и символы в `VariableMetadata.columns` (SPSS паритет для сохранения в `.sav`).
+  - [x] Auto-fit ширины столбца по двойному клику с анализом имени переменной и содержимого ячеек.
+- [x] Тестирование и Quality Gate:
+  - [x] Юнит-тесты модулей `line_index`, `geo`, `quadrant`, `interact`;
+  - [x] Интеграционный тест `crates/statcraft_app/tests/grid_quadrant_invariants.rs` (изоляция квадрантов, масштаб 100k элементов, паритет ширины SPSS, рендеринг датасета);
+  - [x] 100% успешный прогон всех тестов воркспейса `cargo test --workspace -j 1`, `xtask layers` и `xtask file-guard` (410 файлов).
+
 
 
 
