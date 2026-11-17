@@ -217,6 +217,38 @@ impl RawTable {
         }
         Ok(())
     }
+
+    pub fn reorder_columns(&mut self, permutation: &[usize]) -> Result<(), IoError> {
+        if permutation.len() != self.columns.len() {
+            return Err(IoError::MalformedRow {
+                line: 0,
+                expected: self.columns.len(),
+                found: permutation.len(),
+            });
+        }
+        let mut seen = vec![false; self.columns.len()];
+        for &idx in permutation {
+            if idx >= self.columns.len() || seen[idx] {
+                return Err(IoError::MalformedRow {
+                    line: 0,
+                    expected: self.columns.len(),
+                    found: idx,
+                });
+            }
+            seen[idx] = true;
+        }
+
+        let old_cols = std::mem::take(&mut self.columns);
+        let mut indexed: Vec<Option<RawColumn>> = old_cols.into_iter().map(Some).collect();
+        let mut new_cols = Vec::with_capacity(permutation.len());
+        for &idx in permutation {
+            if let Some(col) = indexed[idx].take() {
+                new_cols.push(col);
+            }
+        }
+        self.columns = new_cols;
+        Ok(())
+    }
 }
 
 #[derive(Debug, Clone)]
@@ -545,5 +577,39 @@ mod tests {
         assert_eq!(reloaded.get_value(0, 0), original.get_value(0, 0));
         assert_eq!(reloaded.get_value(0, 1), original.get_value(0, 1));
         assert_eq!(reloaded.get_value(1, 1), Some(&RawValue::Null));
+    }
+
+    #[test]
+    fn test_raw_table_reorder_columns() {
+        let mut table = RawTable {
+            columns: vec![
+                RawColumn {
+                    name: "col0".to_string(),
+                    data_type: RawDataType::Numeric,
+                    values: vec![RawValue::Number(0.0)],
+                },
+                RawColumn {
+                    name: "col1".to_string(),
+                    data_type: RawDataType::Numeric,
+                    values: vec![RawValue::Number(1.0)],
+                },
+                RawColumn {
+                    name: "col2".to_string(),
+                    data_type: RawDataType::Numeric,
+                    values: vec![RawValue::Number(2.0)],
+                },
+            ],
+            row_count: 1,
+        };
+
+        assert!(table.reorder_columns(&[2, 0, 1]).is_ok());
+        assert_eq!(table.columns[0].name, "col2");
+        assert_eq!(table.columns[1].name, "col0");
+        assert_eq!(table.columns[2].name, "col1");
+
+        // Invalid permutation (out of bounds or wrong length)
+        assert!(table.reorder_columns(&[0, 1]).is_err());
+        assert!(table.reorder_columns(&[0, 0, 1]).is_err());
+        assert!(table.reorder_columns(&[0, 1, 3]).is_err());
     }
 }

@@ -689,6 +689,22 @@ impl DataSet {
         Ok(())
     }
 
+    pub fn reorder_variables(&mut self, permutation: &[usize]) -> Result<(), CoreError> {
+        transform::reorder_variables(self, permutation)
+    }
+
+    pub fn restore_structure(&mut self, table: RawTable, dictionary: VariableDictionary) {
+        transform::restore_structure(self, table, dictionary);
+    }
+
+    pub fn transpose(
+        &mut self,
+        vars: Option<&[String]>,
+        name_var: Option<&str>,
+    ) -> Result<(RawTable, VariableDictionary), CoreError> {
+        transform::transpose(self, vars, name_var)
+    }
+
     pub fn undo(&mut self) -> bool {
         if let Some(edit) = self.delta.undo_stack.pop() {
             let row = edit.coord.row;
@@ -776,6 +792,8 @@ pub fn parse_number_loose(text: &str) -> Option<f64> {
     }
     cleaned.parse::<f64>().ok()
 }
+
+mod transform;
 
 #[cfg(test)]
 mod tests;

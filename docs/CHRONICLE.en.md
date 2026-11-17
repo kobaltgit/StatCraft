@@ -3549,6 +3549,36 @@ Fully implemented semiparametric Cox Proportional Hazards Regression (`COXREG`) 
    * Added headless render and TSV export invariant test `crates/statcraft_app/tests/output_viewer_cox_invariants.rs`;
    * 100% Quality Gate pass (`cargo run -p xtask -j 1 -- ci`): `fmt`, `clippy -D warnings`, `layers`, `file-guard` (all 438 files compliant), `design-guard`, `i18n-lint` (100% translation coverage in `ru.ftl` and `en.ftl`), 41/41 Undo/Redo matrix.
 
+---
+
+### Phase 84: "Sort Variables" (SORT VARIABLES) and "Transpose" (FLIP) Procedures
+*Time: November 16, 2026, 20:05 (~30 minutes)*
+
+Turnkey implementation of the "Data" menu procedures in strict accordance with the IBM SPSS Statistics 24 canon, ArtCraft architecture principles, and Spec-Kit standard:
+1. **Data Layer L0/L1 (`statcraft_io`, `statcraft_core`):**
+   * **Column Reordering:** Method `RawTable::reorder_columns` with permutation bounds and bijective validation;
+   * **Variable Dictionary:** Method `VariableDictionary::reorder` for structural metadata synchronization;
+   * **Dataset:** `DataSet::reorder_variables` clearing transactional `DeltaBuffer`, and general `DataSet::restore_structure` for complete operation reversibility;
+   * **Matrix Transposition (`DataSet::transpose`):** Rows-to-columns and columns-to-rows transformation with automatic first column `CASE_LBL` (original variable labels), variable subset support (`/VARIABLES`), and column names variable support (`/NEWNAMES`) with identifier sanitization. Isolated into `dataset/transform.rs` adhering to File Size Guard.
+2. **Algorithm Layer L2 (`statcraft_algo`):**
+   * Module `variable_sort.rs` with `VariableSortAttribute` enum (`Name`, `Type`, `Label`, `Measure`, `Role`, `Alignment`, `Width`, `Decimals`);
+   * Stable permutation computation `compute_variable_sort_permutation` using secondary key by original index for guaranteed stability across equal attribute values.
+3. **Command Bus Layer L5 (`statcraft_syntax`):**
+   * Typed commands `SortVariablesCommand` (`data.sort_variables`) and `TransposeCommand` (`data.transpose`) with `specs()` JSON schemas for MCP AI agents;
+   * 100% Undo/Redo reversibility using inverse permutation stack `invert_permutation` and snapshot restoration `restore_structure`;
+   * Dual-direction SPSS syntax serialization and parsing: `SORT VARIABLES BY ... (A/D).` and `FLIP VARIABLES=... /NEWNAMES=... .`.
+4. **User Interface Layer L6 (`statcraft_app`):**
+   * Modal dialog `SortVariablesDialog` based on `DialogShell::standard` ($560 \times 430$ px): `GroupBox` attribute selector, order radio buttons (Ascending / Descending), Type 1 `DialogActionBar`;
+   * Modal dialog `TransposeDialog` based on `DialogShell::standard`: left `VariablePicker`, dual-target `TransferButton` controls (`Variable(s):` and `Name Variable:`), and standard `DialogActionBar`;
+   * Menu clicks hooked in "Data -> Sort Variables..." and "Data -> Transpose...";
+   * Real-time status bar messages (`SortVariablesExecuted`, `TransposeExecuted`) and syntax logging to Output Viewer.
+5. **Quality Gate & Localization (DoD):**
+   * Zero-hardcode i18n: added keys to Fluent catalogs `locales/en.ftl` and `locales/ru.ftl`;
+   * Tests: 100% pass on core, algorithm, syntax, and headless dialog rendering tests (`sort_and_transpose_dialog_tests.rs`);
+   * Reversibility tests added to Undo/Redo matrix suite `undo_redo_matrix_tests.rs`;
+   * Updated feature parity checklist `docs/parity-checklist.md` (60 documented commands);
+   * 100% pass across all `cargo run -p xtask -j 1 -- ci` stages (`file-guard` across 445 files, `design-guard`, `layers`, `fmt`, `clippy -D warnings`, `test-corpus`, `test-undo`).
+
 
 
 

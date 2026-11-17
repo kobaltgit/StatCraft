@@ -226,6 +226,30 @@ impl VariableMetadata {
     }
 }
 
+pub fn sanitize_variable_name(raw: &str, fallback_idx: usize) -> String {
+    let trimmed = raw.trim();
+    let mut sanitized = String::new();
+    for ch in trimmed.chars() {
+        if ch.is_ascii_alphanumeric() || ch == '_' {
+            sanitized.push(ch);
+        } else if !sanitized.ends_with('_') {
+            sanitized.push('_');
+        }
+    }
+    if sanitized.is_empty() {
+        return format!("VAR{:03}", fallback_idx + 1);
+    }
+    if let Some(first) = sanitized.chars().next() {
+        if first.is_ascii_digit() || first == '_' {
+            sanitized = format!("V_{}", sanitized);
+        }
+    }
+    if sanitized.len() > 64 {
+        sanitized.truncate(64);
+    }
+    sanitized
+}
+
 #[derive(Debug, Clone, Default, PartialEq, Serialize, Deserialize)]
 pub struct VariableDictionary {
     pub variables: Vec<VariableMetadata>,
@@ -428,6 +452,34 @@ impl VariableDictionary {
         var.missing = missing;
         Ok(())
     }
+
+    pub fn reorder(&mut self, permutation: &[usize]) -> Result<(), CoreError> {
+        let total = self.variables.len();
+        if permutation.len() != total {
+            return Err(CoreError::IndexOutOfBounds {
+                index: permutation.len(),
+                total,
+            });
+        }
+        let mut seen = vec![false; total];
+        for &idx in permutation {
+            if idx >= total || seen[idx] {
+                return Err(CoreError::IndexOutOfBounds { index: idx, total });
+            }
+            seen[idx] = true;
+        }
+
+        let old_vars = std::mem::take(&mut self.variables);
+        let mut indexed: Vec<Option<VariableMetadata>> = old_vars.into_iter().map(Some).collect();
+        let mut new_vars = Vec::with_capacity(total);
+        for &idx in permutation {
+            if let Some(var) = indexed[idx].take() {
+                new_vars.push(var);
+            }
+        }
+        self.variables = new_vars;
+        Ok(())
+    }
 }
 
 #[cfg(test)]
@@ -556,5 +608,31 @@ mod tests {
         dict.set_missing_values(0, missing.clone()).unwrap();
         assert_eq!(dict.get(0).unwrap().missing.discrete, vec!["99"]);
         assert_eq!(dict.get(0).unwrap().missing.range, Some((900.0, 999.0)));
+    }
+
+    #[test]
+    fn test_dictionary_reorder() {
+        let mut dict = VariableDictionary::new();
+        dict.add(
+            VariableMetadata::new("v1", DataType::Numeric { decimals: 0 }, Measure::Scale).unwrap(),
+        )
+        .unwrap();
+        dict.add(
+            VariableMetadata::new("v2", DataType::Numeric { decimals: 0 }, Measure::Scale).unwrap(),
+        )
+        .unwrap();
+        dict.add(
+            VariableMetadata::new("v3", DataType::Numeric { decimals: 0 }, Measure::Scale).unwrap(),
+        )
+        .unwrap();
+
+        assert!(dict.reorder(&[2, 0, 1]).is_ok());
+        assert_eq!(dict.get(0).unwrap().name, "v3");
+        assert_eq!(dict.get(1).unwrap().name, "v1");
+        assert_eq!(dict.get(2).unwrap().name, "v2");
+
+        assert!(dict.reorder(&[0, 1]).is_err());
+        assert!(dict.reorder(&[0, 0, 1]).is_err());
+        assert!(dict.reorder(&[0, 1, 3]).is_err());
     }
 }

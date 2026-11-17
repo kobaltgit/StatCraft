@@ -3263,6 +3263,36 @@
    * Добавлен интеграционный тест `crates/statcraft_app/tests/output_viewer_cox_invariants.rs` с проверкой headless-рендеринга диалога и сводных таблиц;
    * Полное прохождение Quality Gate (`cargo run -p xtask -j 1 -- ci`): `fmt`, `clippy -D warnings`, `layers`, `file-guard` (все 438 файлов в пределах лимитов), `design-guard`, `i18n-lint` (100% покрытие переводов в `ru.ftl` и `en.ftl`), 41/41 обратимость истории Undo/Redo.
 
+---
+
+### Этап 84: Процедуры «Сортировка переменных» (SORT VARIABLES) и «Транспонирование» (FLIP)
+*Время: 16 ноября 2026, 20:05 (~30 минут)*
+
+Реализованы «под ключ» процедуры меню «Данные» (Data) в строгом соответствии со стандартом IBM SPSS Statistics 24, каноном архитектуры ArtCraft и спецификацией Spec-Kit:
+1. **Слой данных L0/L1 (`statcraft_io`, `statcraft_core`):**
+   * **Сортировка колонок:** Метод `RawTable::reorder_columns` с проверкой размерностей и взаимно-однозначности перестановки;
+   * **Словарь переменных:** Метод `VariableDictionary::reorder` для структурного обновления метаданных;
+   * **Датасет:** `DataSet::reorder_variables` со сбросом транзакционного буфера `DeltaBuffer`, а также универсальный метод `DataSet::restore_structure` для полной обратимости операций;
+   * **Транспонирование матрицы (`DataSet::transpose`):** Преобразование строк в столбцы и столбцов в строки с автоматическим созданием служебной первой колонки `CASE_LBL` (метки исходных переменных), поддержкой подмножества переменных `/VARIABLES` и переменной новых имен колонок `/NEWNAMES` с защитой от пробелов и спецсимволов. Вынесено в изолированный подмодуль `dataset/transform.rs` для соблюдения лимитов File Size Guard.
+2. **Слой алгоритмов L2 (`statcraft_algo`):**
+   * Модуль `variable_sort.rs` с перечислением атрибутов `VariableSortAttribute` (`Name`, `Type`, `Label`, `Measure`, `Role`, `Alignment`, `Width`, `Decimals`);
+   * Устойчивый алгоритм расчета перестановки `compute_variable_sort_permutation` со вторичным ключом по исходному индексу для гарантированной стабильности сортировки при равных значениях.
+3. **Командная шина L5 (`statcraft_syntax`):**
+   * Типизированные команды `SortVariablesCommand` (`data.sort_variables`) и `TransposeCommand` (`data.transpose`) с JSON-спецификациями `specs()` для MCP AI-агентов;
+   * 100% обратимость Undo/Redo через стек обратных перестановок `invert_permutation` и снимков структуры `restore_structure`;
+   * Двусторонняя сериализация и парсер синтаксиса SPSS: `SORT VARIABLES BY ... (A/D).` и `FLIP VARIABLES=... /NEWNAMES=... .`.
+4. **Пользовательский интерфейс L6 (`statcraft_app`):**
+   * Модальное диалоговое окно `SortVariablesDialog` стандарта `DialogShell::standard` ($560 \times 430$ px): выбор атрибута сортировки (`GroupBox`), выбор направления (По возрастанию / По убыванию), нижняя панель `DialogActionBar` Type 1;
+   * Модальное диалоговое окно `TransposeDialog` стандарта `DialogShell::standard`: левый `VariablePicker`, центральные кнопки переноса `TransferButton` для двух целевых областей (`Variable(s):` и `Name Variable:`), нижняя панель `DialogActionBar`;
+   * Привязка кликов в меню «Данные ▶ Сортировать переменные...» и «Данные ▶ Транспонировать...»;
+   * Вывод динамических статусов в строке состояния (`SortVariablesExecuted`, `TransposeExecuted`) и протоколирование синтаксиса в Output Viewer.
+5. **Quality Gate и локализация (DoD):**
+   * Нулевой хардкод строк: добавлены ключи в каталоги Fluent `locales/en.ftl` и `locales/ru.ftl`;
+   * Тесты: 100% успешный прогон unit-тестов ядра, алгоритмов, синтаксиса и headless-рендеринга диалогов (`sort_and_transpose_dialog_tests.rs`);
+   * Добавлены тесты обратимости в матрицу Undo/Redo `undo_redo_matrix_tests.rs`;
+   * Обновлен чеклист паритета `docs/parity-checklist.md` (60 команд);
+   * 100% прохождение всех проверок `cargo run -p xtask -j 1 -- ci` (`file-guard` на 445 файлов, `design-guard`, `layers`, `fmt`, `clippy -D warnings`, `test-corpus`, `test-undo`).
+
 
 
 

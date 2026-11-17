@@ -19,8 +19,18 @@ impl StatCraftApp {
                         self.sort_cases_dialog_state.is_open = true;
                         ui.close_menu();
                     }
-                    render_menu_item(ui, t!("menu-data-sort-vars"), requires_dataset_status);
-                    render_menu_item(ui, t!("menu-data-transpose"), requires_dataset_status);
+                    if render_menu_item(ui, t!("menu-data-sort-vars"), requires_dataset_status)
+                        .clicked()
+                    {
+                        self.sort_variables_dialog_state.is_open = true;
+                        ui.close_menu();
+                    }
+                    if render_menu_item(ui, t!("menu-data-transpose"), requires_dataset_status)
+                        .clicked()
+                    {
+                        self.transpose_dialog_state.is_open = true;
+                        ui.close_menu();
+                    }
                     ui.separator();
                     ui.menu_button(t!("menu-data-merge-files"), |ui| {
                         render_menu_item(ui, t!("menu-data-merge-cases"), MenuItemStatus::InDev);

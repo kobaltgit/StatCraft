@@ -18,6 +18,29 @@ fn test_matrix_sort_cases_reversibility() {
 }
 
 #[test]
+fn test_matrix_sort_variables_reversibility() {
+    let mut bus = CommandBus::with_defaults();
+    let mut ds = Some(create_test_dataset());
+
+    let params = json!({
+        "attribute": "name",
+        "direction": "descending"
+    });
+
+    assert_reversibility_cycle(&mut bus, "data.sort_variables", params, &mut ds);
+}
+
+#[test]
+fn test_matrix_transpose_reversibility() {
+    let mut bus = CommandBus::with_defaults();
+    let mut ds = Some(create_test_dataset());
+
+    let params = json!({});
+
+    assert_reversibility_cycle(&mut bus, "data.transpose", params, &mut ds);
+}
+
+#[test]
 fn test_matrix_select_cases_reversibility() {
     let mut bus = CommandBus::with_defaults();
     let mut ds = Some(create_test_dataset());

@@ -74,6 +74,11 @@ impl SyntaxParser {
         let two_word = match (first.to_ascii_uppercase().as_str(), second) {
             ("RUN", Some(s)) if s.eq_ignore_ascii_case("COMMAND") => Some("RUN COMMAND"),
             ("SORT", Some(s)) if s.eq_ignore_ascii_case("CASES") => Some("SORT CASES"),
+            ("SORT", Some(s))
+                if s.eq_ignore_ascii_case("VARIABLES") || s.eq_ignore_ascii_case("VARS") =>
+            {
+                Some("SORT VARIABLES")
+            }
             ("SPLIT", Some(s)) if s.eq_ignore_ascii_case("FILE") => Some("SPLIT FILE"),
             ("VARIABLE", Some(s)) if s.eq_ignore_ascii_case("LEVEL") => Some("VARIABLE LEVEL"),
             ("VARIABLE", Some(s))

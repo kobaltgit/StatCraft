@@ -9,6 +9,8 @@ pub fn map_data_command(
 ) -> Result<Option<(&'static str, Value)>, SyntaxError> {
     match cmd.name.as_str() {
         "SORT CASES" => map_sort_cases(cmd, dataset),
+        "SORT VARIABLES" => map_sort_variables(cmd),
+        "FLIP" => map_flip(cmd, dataset),
         "WEIGHT" => map_weight_cases(cmd),
         "FILTER" => map_filter_cases(cmd),
         "SPLIT FILE" => map_split_file(cmd, dataset),
@@ -211,4 +213,71 @@ fn map_save_file(cmd: &ParsedCommand) -> Result<Option<(&'static str, Value)>, S
         .unwrap_or("");
 
     Ok(Some(("data.save_file", json!({ "path": path }))))
+}
+
+fn map_sort_variables(cmd: &ParsedCommand) -> Result<Option<(&'static str, Value)>, SyntaxError> {
+    let raw_tokens = cmd
+        .subcommand_tokens("BY")
+        .or_else(|| cmd.subcommand_tokens("POSITIONAL"))
+        .unwrap_or(&[]);
+
+    let mut attribute = "name";
+    let mut direction = "Ascending";
+
+    for token in raw_tokens {
+        if token.eq_ignore_ascii_case("(D)") || token.eq_ignore_ascii_case("(DESCENDING)") {
+            direction = "Descending";
+        } else if token.eq_ignore_ascii_case("(A)") || token.eq_ignore_ascii_case("(ASCENDING)") {
+            direction = "Ascending";
+        } else {
+            let lower = token.to_lowercase();
+            match lower.as_str() {
+                "name" | "type" | "label" | "measure" | "role" | "align" | "alignment"
+                | "width" | "decimals" => {
+                    attribute = match lower.as_str() {
+                        "align" | "alignment" => "alignment",
+                        _ => token.as_str(),
+                    };
+                }
+                _ => {}
+            }
+        }
+    }
+
+    Ok(Some((
+        "data.sort_variables",
+        json!({
+            "attribute": attribute,
+            "direction": direction
+        }),
+    )))
+}
+
+fn map_flip(
+    cmd: &ParsedCommand,
+    dataset: Option<&DataSet>,
+) -> Result<Option<(&'static str, Value)>, SyntaxError> {
+    let var_tokens = cmd
+        .subcommand_tokens("VARIABLES")
+        .or_else(|| cmd.subcommand_tokens("POSITIONAL"))
+        .unwrap_or(&[]);
+
+    let vars = if var_tokens.is_empty() {
+        Vec::new()
+    } else {
+        SyntaxParser::expand_variables(var_tokens, dataset)?
+    };
+
+    let name_var = cmd
+        .subcommand_value("NEWNAMES")
+        .map(|s| s.trim().to_string())
+        .filter(|s| !s.is_empty());
+
+    Ok(Some((
+        "data.transpose",
+        json!({
+            "variables": if vars.is_empty() { Value::Null } else { json!(vars) },
+            "name_var": name_var
+        }),
+    )))
 }

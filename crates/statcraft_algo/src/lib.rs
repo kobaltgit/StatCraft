@@ -71,6 +71,7 @@ pub mod time_series;
 pub mod ttest_indep;
 pub mod ttest_onesample;
 pub mod ttest_paired;
+pub mod variable_sort;
 
 pub use adp::*;
 pub use anova_oneway::{
@@ -194,3 +195,4 @@ pub use ttest_paired::{
     compute_paired_ttest, compute_paired_ttest_from_slices, PairedCorrelation, PairedDataInput,
     PairedDifferences, PairedSliceInput, PairedTTestResult, PairedVarStats,
 };
+pub use variable_sort::{compute_variable_sort_permutation, VariableSortAttribute};

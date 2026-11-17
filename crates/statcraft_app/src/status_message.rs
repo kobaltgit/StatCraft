@@ -88,6 +88,14 @@ pub enum StatusMessage {
     SortCasesExecuted {
         count: usize,
     },
+    SortVariablesExecuted {
+        attribute: String,
+        direction: String,
+    },
+    TransposeExecuted {
+        rows: usize,
+        cols: usize,
+    },
     SelectCasesExecuted {
         mode: String,
     },
@@ -331,6 +339,17 @@ impl StatusMessage {
             },
             StatusMessage::SortCasesExecuted { count } => {
                 t!("output-sort-cases-executed", count = *count)
+            }
+            StatusMessage::SortVariablesExecuted {
+                attribute,
+                direction,
+            } => t!(
+                "output-sort-variables-executed",
+                attribute = attribute.as_str(),
+                direction = direction.as_str()
+            ),
+            StatusMessage::TransposeExecuted { rows, cols } => {
+                t!("output-transpose-executed", rows = *rows, cols = *cols)
             }
             StatusMessage::SelectCasesExecuted { mode } => {
                 t!("output-select-cases-executed", mode = mode.as_str())

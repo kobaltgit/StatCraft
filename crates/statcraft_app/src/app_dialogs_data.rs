@@ -2,11 +2,12 @@ use super::app::{StatCraftApp, StatusMessage};
 use super::dialogs::{
     render_compute_dialog, render_missing_values_dialog, render_rank_cases_dialog,
     render_recode_dialog, render_select_cases_dialog, render_sort_cases_dialog,
-    render_split_file_dialog, render_time_series_dialog, render_value_labels_dialog,
-    render_variable_type_dialog, render_visual_binning_dialog, render_weight_cases_dialog,
-    ComputeDialogAction, DialogCasesAction, DialogSelectMode, MissingValuesDialogAction,
-    RankCasesDialogAction, RecodeDialogAction, SelectCasesDialogAction, SortCasesDialogAction,
-    SplitFileDialogAction, TimeSeriesDialogAction, ValueLabelsDialogAction,
+    render_sort_variables_dialog, render_split_file_dialog, render_time_series_dialog,
+    render_transpose_dialog, render_value_labels_dialog, render_variable_type_dialog,
+    render_visual_binning_dialog, render_weight_cases_dialog, ComputeDialogAction,
+    DialogCasesAction, DialogSelectMode, MissingValuesDialogAction, RankCasesDialogAction,
+    RecodeDialogAction, SelectCasesDialogAction, SortCasesDialogAction, SortVariablesDialogAction,
+    SplitFileDialogAction, TimeSeriesDialogAction, TransposeDialogAction, ValueLabelsDialogAction,
     VariableTypeDialogAction, VisualBinningDialogAction, WeightCasesDialogAction,
 };
 use serde_json::json;
@@ -303,6 +304,113 @@ impl StatCraftApp {
                 self.output_view_state.add_entry(t!("output-log"), sps);
             }
             SortCasesDialogAction::None => {}
+        }
+
+        // 6b. Sort Variables Dialog
+        let sort_vars_action = render_sort_variables_dialog(
+            ctx,
+            self.dataset.as_ref(),
+            &mut self.sort_variables_dialog_state,
+        );
+
+        match sort_vars_action {
+            SortVariablesDialogAction::Run {
+                attribute,
+                direction,
+            } => {
+                let attr_str = match attribute {
+                    statcraft_algo::VariableSortAttribute::Name => "name",
+                    statcraft_algo::VariableSortAttribute::Type => "type",
+                    statcraft_algo::VariableSortAttribute::Label => "label",
+                    statcraft_algo::VariableSortAttribute::Measure => "measure",
+                    statcraft_algo::VariableSortAttribute::Role => "role",
+                    statcraft_algo::VariableSortAttribute::Alignment => "alignment",
+                    statcraft_algo::VariableSortAttribute::Width => "width",
+                    statcraft_algo::VariableSortAttribute::Decimals => "decimals",
+                };
+                let dir_str = match direction {
+                    statcraft_algo::SortDirection::Ascending => "ascending",
+                    statcraft_algo::SortDirection::Descending => "descending",
+                };
+                let params = json!({
+                    "attribute": attr_str,
+                    "direction": dir_str,
+                });
+
+                match self
+                    .command_bus
+                    .execute("data.sort_variables", &mut self.dataset, params)
+                {
+                    Ok(_) => {
+                        let sps = statcraft_syntax::commands::SortVariablesCommand::to_sps(
+                            attribute, direction,
+                        );
+                        self.output_view_state.add_entry(t!("output-log"), sps);
+                        self.status_message = StatusMessage::SortVariablesExecuted {
+                            attribute: attr_str.to_string(),
+                            direction: dir_str.to_string(),
+                        };
+                    }
+                    Err(e) => {
+                        self.status_message = StatusMessage::Error(e.to_string());
+                    }
+                }
+            }
+            SortVariablesDialogAction::Paste {
+                attribute,
+                direction,
+            } => {
+                let sps =
+                    statcraft_syntax::commands::SortVariablesCommand::to_sps(attribute, direction);
+                self.output_view_state.add_entry(t!("output-log"), sps);
+            }
+            SortVariablesDialogAction::None => {}
+        }
+
+        // 6c. Transpose Dialog
+        let transpose_action =
+            render_transpose_dialog(ctx, self.dataset.as_ref(), &mut self.transpose_dialog_state);
+
+        match transpose_action {
+            TransposeDialogAction::Run {
+                variables,
+                name_var,
+            } => {
+                let params = json!({
+                    "variables": variables,
+                    "name_var": name_var,
+                });
+
+                match self
+                    .command_bus
+                    .execute("data.transpose", &mut self.dataset, params)
+                {
+                    Ok(val) => {
+                        let sps = statcraft_syntax::commands::TransposeCommand::to_sps(
+                            variables.as_deref(),
+                            name_var.as_deref(),
+                        );
+                        self.output_view_state.add_entry(t!("output-log"), sps);
+                        let rows = val.get("rows").and_then(|r| r.as_u64()).unwrap_or(0) as usize;
+                        let cols = val.get("cols").and_then(|c| c.as_u64()).unwrap_or(0) as usize;
+                        self.status_message = StatusMessage::TransposeExecuted { rows, cols };
+                    }
+                    Err(e) => {
+                        self.status_message = StatusMessage::Error(e.to_string());
+                    }
+                }
+            }
+            TransposeDialogAction::Paste {
+                variables,
+                name_var,
+            } => {
+                let sps = statcraft_syntax::commands::TransposeCommand::to_sps(
+                    variables.as_deref(),
+                    name_var.as_deref(),
+                );
+                self.output_view_state.add_entry(t!("output-log"), sps);
+            }
+            TransposeDialogAction::None => {}
         }
 
         // 7. Select Cases Dialog

@@ -214,3 +214,37 @@ fn test_roundtrip_explore() {
     assert_eq!(res.variables[0].factor_var.as_deref(), Some("gender"));
     assert_eq!(res.variables[0].groups.len(), 2);
 }
+
+#[test]
+fn test_roundtrip_sort_variables() {
+    let mut bus = CommandBus::with_defaults();
+    let mut ds = Some(make_test_dataset());
+
+    let sps = "SORT VARIABLES BY name (D).";
+    let results = SyntaxDispatcher::execute_batch(sps, &mut ds, &mut bus)
+        .expect("Sort variables batch should succeed");
+    assert_eq!(results.len(), 1);
+
+    let current = ds.as_ref().unwrap();
+    // Names in desc order: salary, gender, educ, age
+    assert_eq!(current.dictionary.get(0).unwrap().name, "salary");
+    assert_eq!(current.dictionary.get(1).unwrap().name, "gender");
+    assert_eq!(current.dictionary.get(2).unwrap().name, "educ");
+    assert_eq!(current.dictionary.get(3).unwrap().name, "age");
+}
+
+#[test]
+fn test_roundtrip_flip() {
+    let mut bus = CommandBus::with_defaults();
+    let mut ds = Some(make_test_dataset());
+
+    let sps = "FLIP VARIABLES=salary age /NEWNAMES=gender.";
+    let results =
+        SyntaxDispatcher::execute_batch(sps, &mut ds, &mut bus).expect("FLIP batch should succeed");
+    assert_eq!(results.len(), 1);
+
+    let current = ds.as_ref().unwrap();
+    assert_eq!(current.col_count(), 6); // CASE_LBL + 5 cases
+    assert_eq!(current.row_count(), 2); // salary, age
+    assert_eq!(current.dictionary.get(0).unwrap().name, "CASE_LBL");
+}

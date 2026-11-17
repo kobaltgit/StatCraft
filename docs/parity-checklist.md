@@ -25,6 +25,8 @@
 | Data > Insert Case | `data.add_row` | Done | Insert case / empty row |
 | Data > Delete Case | `data.delete_row` | Done | Delete case / row |
 | Data > Sort Cases | `data.sort_cases` | Done | Multi-column sort (A/D), SPSS sysmis rules, DialogKit dialog, Undo/Redo |
+| Data > Sort Variables | `data.sort_variables` | Done | Sort variables by dictionary attributes (A/D), DialogKit dialog, SPSS SORT VARIABLES syntax, Undo/Redo |
+| Data > Transpose | `data.transpose` | Done | Transpose data matrix (rows <-> columns), CASE_LBL column, /NEWNAMES variable, DialogKit dialog, SPSS FLIP syntax, Undo/Redo |
 | Data > Select Cases | `data.select_cases` | Done | Filter/Delete cases, filter_$ variable, relational & logical expression builder, slash across excluded rows, status bar indicator, Undo/Redo |
 | Data > Split File | `data.split_file` | Done | Segment analysis by sub-groups (Compare groups / Organize output), SPSS SPLIT FILE BY / OFF syntax, status bar indicator, DialogKit dialog, Undo/Redo |
 | Data > Weight Cases | `data.weight_cases` | Done | Frequency & sampling weighting, SPSS WEIGHT BY / WEIGHT OFF syntax, status bar indicator, DialogKit dialog, Undo/Redo |

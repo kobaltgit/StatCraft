@@ -314,3 +314,55 @@ fn test_unique_values_and_filter_matching() {
     assert!(!ds.is_row_matched_by_filter(3, 0, &allowed, false));
     assert!(ds.is_row_matched_by_filter(3, 0, &allowed, true));
 }
+
+#[test]
+fn test_dataset_reorder_variables() {
+    let mut ds = DataSet::blank(2, 3).unwrap();
+    // Default vars are VAR00001, VAR00002, VAR00003
+    ds.set_cell(0, 0, RawValue::Number(10.0)).unwrap();
+    ds.set_cell(0, 1, RawValue::Number(20.0)).unwrap();
+    ds.set_cell(0, 2, RawValue::Number(30.0)).unwrap();
+
+    assert!(ds.reorder_variables(&[2, 0, 1]).is_ok());
+    assert_eq!(ds.dictionary.get(0).unwrap().name, "VAR00003");
+    assert_eq!(ds.dictionary.get(1).unwrap().name, "VAR00001");
+    assert_eq!(ds.dictionary.get(2).unwrap().name, "VAR00002");
+
+    assert_eq!(ds.get_cell(0, 0), Some(&RawValue::Number(30.0)));
+    assert_eq!(ds.get_cell(0, 1), Some(&RawValue::Number(10.0)));
+    assert_eq!(ds.get_cell(0, 2), Some(&RawValue::Number(20.0)));
+
+    assert!(ds.reorder_variables(&[0, 1]).is_err());
+    assert!(ds.reorder_variables(&[0, 0, 1]).is_err());
+}
+
+#[test]
+fn test_dataset_transpose() {
+    let mut ds = DataSet::blank(2, 2).unwrap();
+    // VAR00001, VAR00002
+    ds.set_cell(0, 0, RawValue::Number(1.0)).unwrap();
+    ds.set_cell(0, 1, RawValue::Number(2.0)).unwrap();
+    ds.set_cell(1, 0, RawValue::Number(3.0)).unwrap();
+    ds.set_cell(1, 1, RawValue::Number(4.0)).unwrap();
+
+    let (old_table, old_dict) = ds.transpose(None, None).unwrap();
+    assert_eq!(ds.col_count(), 3); // CASE_LBL + VAR001 + VAR002
+    assert_eq!(ds.row_count(), 2);
+
+    assert_eq!(ds.dictionary.get(0).unwrap().name, "CASE_LBL");
+    assert_eq!(ds.dictionary.get(1).unwrap().name, "VAR001");
+    assert_eq!(ds.dictionary.get(2).unwrap().name, "VAR002");
+
+    assert_eq!(ds.get_cell(0, 0), Some(&RawValue::Text("VAR00001".into())));
+    assert_eq!(ds.get_cell(1, 0), Some(&RawValue::Text("VAR00002".into())));
+    assert_eq!(ds.get_cell(0, 1), Some(&RawValue::Number(1.0)));
+    assert_eq!(ds.get_cell(1, 1), Some(&RawValue::Number(2.0)));
+    assert_eq!(ds.get_cell(0, 2), Some(&RawValue::Number(3.0)));
+    assert_eq!(ds.get_cell(1, 2), Some(&RawValue::Number(4.0)));
+
+    // Test restore_structure
+    ds.restore_structure(old_table, old_dict);
+    assert_eq!(ds.col_count(), 2);
+    assert_eq!(ds.row_count(), 2);
+    assert_eq!(ds.dictionary.get(0).unwrap().name, "VAR00001");
+}

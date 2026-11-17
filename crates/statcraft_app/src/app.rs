@@ -15,9 +15,10 @@ use crate::dialogs::{
     PairedSamplesTTestDialogState, PartialCorrDialogState, ProgrammabilityDialogState,
     RandomSeedDialogState, RankCasesDialogState, RecodeDialogState, ReliabilityDialogState,
     RepeatedGlmDialogState, ReplaceMissingDialogState, SelectCasesDialogState,
-    ShiftValuesDialogState, SortCasesDialogState, SplitFileDialogState, SummarizeDialogState,
-    TimeSeriesDialogState, UnivariateGlmDialogState, ValueLabelsDialogState,
-    VariableTypeDialogState, VisualBinningDialogState, WeightCasesDialogState,
+    ShiftValuesDialogState, SortCasesDialogState, SortVariablesDialogState, SplitFileDialogState,
+    SummarizeDialogState, TimeSeriesDialogState, TransposeDialogState, UnivariateGlmDialogState,
+    ValueLabelsDialogState, VariableTypeDialogState, VisualBinningDialogState,
+    WeightCasesDialogState,
 };
 use crate::recent_files::RecentFiles;
 use crate::views::{
@@ -119,6 +120,8 @@ pub struct StatCraftApp {
     pub optimal_binning_dialog_state: OptimalBinningDialogState,
     pub adp_dialog_state: AdpDialogState,
     pub sort_cases_dialog_state: SortCasesDialogState,
+    pub sort_variables_dialog_state: SortVariablesDialogState,
+    pub transpose_dialog_state: TransposeDialogState,
     pub select_cases_dialog_state: SelectCasesDialogState,
     pub split_file_dialog_state: SplitFileDialogState,
     pub weight_cases_dialog_state: WeightCasesDialogState,
@@ -207,6 +210,8 @@ impl StatCraftApp {
             optimal_binning_dialog_state: OptimalBinningDialogState::default(),
             adp_dialog_state: AdpDialogState::default(),
             sort_cases_dialog_state: SortCasesDialogState::default(),
+            sort_variables_dialog_state: SortVariablesDialogState::default(),
+            transpose_dialog_state: TransposeDialogState::default(),
             select_cases_dialog_state: SelectCasesDialogState::default(),
             split_file_dialog_state: SplitFileDialogState::default(),
             weight_cases_dialog_state: WeightCasesDialogState::default(),

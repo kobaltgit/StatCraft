@@ -14,10 +14,10 @@ use crate::commands::{
     RecodeIntoDifferentCommand, RecodeIntoSameCommand, RelatedSamplesTestCommand,
     ReliabilityCommand, RepeatedGlmCommand, ReplaceMissingCommand, SaveFileCommand,
     SelectCasesCommand, SetLabelCommand, SetMeasureCommand, ShiftValuesCommand, SortCasesCommand,
-    SplitFileCommand, SummarizeCommand, UnivariateGlmCommand, VarAddCommand, VarDeleteCommand,
-    VarRenameCommand, VarSetAlignCommand, VarSetDecimalsCommand, VarSetMissingValuesCommand,
-    VarSetTypeCommand, VarSetValueLabelsCommand, VarSetWidthCommand, VisualBinningCommand,
-    WeightCasesCommand,
+    SortVariablesCommand, SplitFileCommand, SummarizeCommand, TransposeCommand,
+    UnivariateGlmCommand, VarAddCommand, VarDeleteCommand, VarRenameCommand, VarSetAlignCommand,
+    VarSetDecimalsCommand, VarSetMissingValuesCommand, VarSetTypeCommand, VarSetValueLabelsCommand,
+    VarSetWidthCommand, VisualBinningCommand, WeightCasesCommand,
 };
 use serde::{Deserialize, Serialize};
 use serde_json::{json, Value};
@@ -120,6 +120,8 @@ impl CommandBus {
         bus.register(Box::new(ProgrammabilityCommand::new()));
         bus.register(Box::new(RandomSeedCommand::new()));
         bus.register(Box::new(SortCasesCommand::new()));
+        bus.register(Box::new(SortVariablesCommand::new()));
+        bus.register(Box::new(TransposeCommand::new()));
         bus.register(Box::new(SelectCasesCommand::new()));
         bus.register(Box::new(SplitFileCommand::new()));
         bus.register(Box::new(WeightCasesCommand::new()));

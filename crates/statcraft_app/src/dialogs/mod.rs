@@ -47,11 +47,13 @@ pub mod replace_missing_dialog;
 pub mod select_cases_dialog;
 pub mod shift_values_dialog;
 pub mod sort_cases_dialog;
+pub mod sort_variables_dialog;
 pub mod split_file_dialog;
 pub mod summarize_dialog;
 pub mod survival_km_dialog;
 pub mod survival_lifetables_dialog;
 pub mod time_series_dialog;
+pub mod transpose_dialog;
 pub mod ttest_indep_define_groups;
 pub mod ttest_indep_dialog;
 pub mod ttest_onesample_dialog;
@@ -181,6 +183,9 @@ pub use shift_values_dialog::{
 pub use sort_cases_dialog::{
     render_sort_cases_dialog, SortCasesDialogAction, SortCasesDialogState,
 };
+pub use sort_variables_dialog::{
+    render_sort_variables_dialog, SortVariablesDialogAction, SortVariablesDialogState,
+};
 pub use split_file_dialog::{
     render_split_file_dialog, SplitFileDialogAction, SplitFileDialogState,
 };
@@ -195,6 +200,7 @@ pub use time_series_dialog::{
     render_time_series_dialog, TimeSeriesDialogAction, TimeSeriesDialogState, TimeSeriesFnType,
     TimeSeriesItem,
 };
+pub use transpose_dialog::{render_transpose_dialog, TransposeDialogAction, TransposeDialogState};
 pub use ttest_indep_dialog::{
     render_ttest_indep_dialog, IndependentSamplesTTestDialogAction,
     IndependentSamplesTTestDialogState,
