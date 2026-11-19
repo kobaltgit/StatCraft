@@ -145,6 +145,7 @@ mod tests {
             id: 1,
             title_key: "output-log",
             custom_title: Some("Frequencies Analysis".to_string()),
+            dataset_name: Some("Employee data".to_string()),
             is_expanded: true,
             items: vec![
                 OutputItem {

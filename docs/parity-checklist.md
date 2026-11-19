@@ -30,6 +30,8 @@
 | Data > Select Cases | `data.select_cases` | Done | Filter/Delete cases, filter_$ variable, relational & logical expression builder, slash across excluded rows, status bar indicator, Undo/Redo |
 | Data > Split File | `data.split_file` | Done | Segment analysis by sub-groups (Compare groups / Organize output), SPSS SPLIT FILE BY / OFF syntax, status bar indicator, DialogKit dialog, Undo/Redo |
 | Data > Weight Cases | `data.weight_cases` | Done | Frequency & sampling weighting, SPSS WEIGHT BY / WEIGHT OFF syntax, status bar indicator, DialogKit dialog, Undo/Redo |
+| Data > Merge Files > Add Cases | `data.merge_cases` | Done | Vertical concatenation of cases across multi-file workspace or disk files (.sav, .csv, .stc, .xlsx), auto-pairing compatible columns, /IN=source indicator, DialogKit modal dialog, SPSS ADD FILES syntax, full undo/redo |
+| Data > Merge Files > Add Variables | `data.merge_vars` | Done | Horizontal dataset join (1:1 with keys, 1:N lookup table, sequential), key variable matching (/BY), duplicate collision resolution, /IN indicator, DialogKit modal dialog, SPSS MATCH FILES syntax, full undo/redo |
 | Transform > Compute Variable | `transform.compute` | Done | Expression evaluator, DialogKit calculator dialog, undo support |
 | Transform > Recode into Different Variables | `transform.recode.diff` | Done | Mapping engine (exact, ranges, sysmis, else), DialogKit dialog & Old and New Values subdialog, undo support |
 | Transform > Recode into Same Variables | `transform.recode.same` | Done | In-place recode, DialogKit dialog & Old and New Values subdialog, undo support |

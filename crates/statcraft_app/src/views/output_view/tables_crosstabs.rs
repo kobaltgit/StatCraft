@@ -1,4 +1,4 @@
-﻿use super::model::{
+use super::model::{
     OutputItem, OutputItemKind, OutputNotes, OutputProcedure, OutputViewerState, SelectedTarget,
 };
 use super::tables_common::{
@@ -19,14 +19,14 @@ impl OutputViewerState {
         let rows: Vec<String> = results.iter().map(|r| r.row_var.clone()).collect();
         let cols: Vec<String> = results.iter().map(|r| r.col_var.clone()).collect();
         let sps_log = statcraft_syntax::commands::CrosstabsCommand::to_sps(&rows, &cols, &options);
-
+        let active_cases = results
+            .first()
+            .map(|r| r.n_valid + r.n_missing)
+            .unwrap_or(0);
         let notes = OutputNotes {
-            dataset_name: "DataSet1".to_string(),
+            dataset_name: self.active_dataset_name.clone(),
             timestamp: "Session".to_string(),
-            active_cases: results
-                .first()
-                .map(|r| r.n_valid + r.n_missing)
-                .unwrap_or(0),
+            active_cases,
             active_vars: results.len(),
         };
 
@@ -34,6 +34,7 @@ impl OutputViewerState {
             id: proc_id,
             title_key: "output-crosstabs-title",
             custom_title: None,
+            dataset_name: Some(self.active_dataset_name.clone()),
             is_expanded: true,
             items: vec![
                 OutputItem {

@@ -17,7 +17,7 @@ impl OutputViewerState {
         let sps = sps_log.unwrap_or_else(|| "ADP\n  /PREPAREINPUTS.\nEXECUTE.".to_string());
 
         let notes = OutputNotes {
-            dataset_name: "DataSet1".to_string(),
+            dataset_name: self.active_dataset_name.clone(),
             timestamp: "Session".to_string(),
             active_cases: result
                 .partition_counts
@@ -30,6 +30,7 @@ impl OutputViewerState {
             id: proc_id,
             title_key: "output-adp-title",
             custom_title: None,
+            dataset_name: Some(self.active_dataset_name.clone()),
             is_expanded: true,
             items: vec![
                 OutputItem {

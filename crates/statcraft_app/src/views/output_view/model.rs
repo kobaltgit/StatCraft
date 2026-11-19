@@ -148,6 +148,8 @@ pub struct OutputProcedure {
     #[serde(with = "static_str_serde")]
     pub title_key: StaticStr,
     pub custom_title: Option<String>,
+    #[serde(default)]
+    pub dataset_name: Option<String>,
     pub is_expanded: bool,
     pub items: Vec<OutputItem>,
 }
@@ -171,6 +173,7 @@ pub struct OutputViewerState {
     pub selected_target: Option<SelectedTarget>,
     pub scroll_to_target: Option<SelectedTarget>,
     pub last_copied_id: Option<usize>,
+    pub active_dataset_name: String,
 }
 
 impl Default for OutputViewerState {
@@ -181,6 +184,7 @@ impl Default for OutputViewerState {
             selected_target: None,
             scroll_to_target: None,
             last_copied_id: None,
+            active_dataset_name: "DataSet1".to_string(),
         }
     }
 }
@@ -188,6 +192,19 @@ impl Default for OutputViewerState {
 impl OutputViewerState {
     pub fn new() -> Self {
         Self::default()
+    }
+
+    pub fn set_active_dataset(&mut self, name: impl Into<String>) {
+        self.active_dataset_name = name.into();
+    }
+
+    pub fn make_notes(&self, active_cases: usize, active_vars: usize) -> OutputNotes {
+        OutputNotes {
+            dataset_name: self.active_dataset_name.clone(),
+            timestamp: "Session".to_string(),
+            active_cases,
+            active_vars,
+        }
     }
 
     pub fn alloc_id(&mut self) -> usize {
@@ -216,6 +233,7 @@ impl OutputViewerState {
             id: proc_id,
             title_key: "output-log",
             custom_title: None,
+            dataset_name: None,
             is_expanded: true,
             items: vec![OutputItem {
                 id: item_id,
@@ -327,6 +345,7 @@ mod tests {
             id: proc_id,
             title_key: "output-descriptives-title",
             custom_title: Some("My Descriptives".to_string()),
+            dataset_name: Some("sample_survey.csv".to_string()),
             is_expanded: true,
             items: vec![OutputItem {
                 id: item_id,
@@ -348,9 +367,32 @@ mod tests {
             Some("My Descriptives")
         );
         assert_eq!(
+            restored.procedures[1].dataset_name.as_deref(),
+            Some("sample_survey.csv")
+        );
+        assert_eq!(
             restored.procedures[1].title_key,
             "output-descriptives-title"
         );
         assert!(restored.next_id > proc_id && restored.next_id > item_id);
+    }
+
+    #[test]
+    fn test_output_procedure_backward_compatibility_json() {
+        // Legacy JSON without dataset_name field
+        let legacy_json = r#"[
+            {
+                "id": 10,
+                "title_key": "output-log",
+                "custom_title": null,
+                "is_expanded": true,
+                "items": []
+            }
+        ]"#;
+
+        let mut state = OutputViewerState::new();
+        state.load_from_json(legacy_json).unwrap();
+        assert_eq!(state.procedures.len(), 1);
+        assert_eq!(state.procedures[0].dataset_name, None);
     }
 }

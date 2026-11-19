@@ -8,8 +8,14 @@ pub fn map_data_command(
     dataset: Option<&DataSet>,
 ) -> Result<Option<(&'static str, Value)>, SyntaxError> {
     match cmd.name.as_str() {
+        "DATASET NAME" => map_dataset_name(cmd),
+        "DATASET ACTIVATE" => map_dataset_activate(cmd),
+        "DATASET CLOSE" => map_dataset_close(cmd),
+        "DATASET DISPLAY" => Ok(Some(("dataset.display", json!({})))),
         "SORT CASES" => map_sort_cases(cmd, dataset),
         "SORT VARIABLES" => map_sort_variables(cmd),
+        "ADD FILES" => map_add_files(cmd),
+        "MATCH FILES" => map_match_files(cmd),
         "FLIP" => map_flip(cmd, dataset),
         "WEIGHT" => map_weight_cases(cmd),
         "FILTER" => map_filter_cases(cmd),
@@ -215,6 +221,136 @@ fn map_save_file(cmd: &ParsedCommand) -> Result<Option<(&'static str, Value)>, S
     Ok(Some(("data.save_file", json!({ "path": path }))))
 }
 
+fn map_add_files(cmd: &ParsedCommand) -> Result<Option<(&'static str, Value)>, SyntaxError> {
+    let mut file_path = String::new();
+    for sub in &cmd.subcommands {
+        if sub.name.eq_ignore_ascii_case("FILE") {
+            let val = sub
+                .raw_value
+                .trim()
+                .trim_matches('\'')
+                .trim_matches('"')
+                .trim();
+            if val != "*" && !val.is_empty() {
+                file_path = val.to_string();
+            }
+        }
+    }
+
+    if file_path.is_empty() {
+        return Err(SyntaxError::InvalidSubcommand {
+            line: cmd.line_num,
+            command: cmd.name.clone(),
+            subcommand: "FILE".to_string(),
+            reason: "ADD FILES requires a secondary file path (/FILE='...')".to_string(),
+        });
+    }
+
+    let in_variable = cmd.subcommand_value("IN").map(|s| s.trim().to_string());
+    let interleave_by: Option<Vec<String>> = cmd.subcommand_tokens("BY").map(|toks| toks.to_vec());
+
+    let mut renames = serde_json::Map::new();
+    if let Some(r_val) = cmd.subcommand_value("RENAME") {
+        for part in r_val.split('(') {
+            let clean = part.trim_end_matches(')').trim();
+            if let Some((old_n, new_n)) = clean.split_once('=') {
+                renames.insert(old_n.trim().to_string(), json!(new_n.trim()));
+            }
+        }
+    }
+
+    Ok(Some((
+        "data.merge_cases",
+        json!({
+            "file_path": file_path,
+            "in_variable": in_variable,
+            "renames": renames,
+            "interleave_by": interleave_by,
+        }),
+    )))
+}
+
+fn map_match_files(cmd: &ParsedCommand) -> Result<Option<(&'static str, Value)>, SyntaxError> {
+    let mut file_path = String::new();
+    let mut is_table = false;
+
+    for sub in &cmd.subcommands {
+        if sub.name.eq_ignore_ascii_case("TABLE") {
+            let val = sub
+                .raw_value
+                .trim()
+                .trim_matches('\'')
+                .trim_matches('"')
+                .trim();
+            if !val.is_empty() {
+                file_path = val.to_string();
+                is_table = true;
+            }
+        } else if sub.name.eq_ignore_ascii_case("FILE") {
+            let val = sub
+                .raw_value
+                .trim()
+                .trim_matches('\'')
+                .trim_matches('"')
+                .trim();
+            if val != "*" && !val.is_empty() && file_path.is_empty() {
+                file_path = val.to_string();
+            }
+        }
+    }
+
+    if file_path.is_empty() {
+        return Err(SyntaxError::InvalidSubcommand {
+            line: cmd.line_num,
+            command: cmd.name.clone(),
+            subcommand: "FILE".to_string(),
+            reason:
+                "MATCH FILES requires a secondary file or table path (/FILE='...' or /TABLE='...')"
+                    .to_string(),
+        });
+    }
+
+    let keys = cmd
+        .subcommand_tokens("BY")
+        .map(|toks| toks.to_vec())
+        .unwrap_or_default();
+    let method = if is_table {
+        "OneToManyTable"
+    } else if keys.is_empty() {
+        "Sequential"
+    } else {
+        "OneToOneWithKeys"
+    };
+
+    let drop_second = cmd
+        .subcommand_tokens("DROP")
+        .map(|toks| toks.to_vec())
+        .unwrap_or_default();
+    let in_second_variable = cmd.subcommand_value("IN").map(|s| s.trim().to_string());
+
+    let mut renames = serde_json::Map::new();
+    if let Some(r_val) = cmd.subcommand_value("RENAME") {
+        for part in r_val.split('(') {
+            let clean = part.trim_end_matches(')').trim();
+            if let Some((old_n, new_n)) = clean.split_once('=') {
+                renames.insert(old_n.trim().to_string(), json!(new_n.trim()));
+            }
+        }
+    }
+
+    Ok(Some((
+        "data.merge_vars",
+        json!({
+            "file_path": file_path,
+            "method": method,
+            "keys": keys,
+            "drop_second": drop_second,
+            "renames": renames,
+            "in_second_variable": in_second_variable,
+        }),
+    )))
+}
+
 fn map_sort_variables(cmd: &ParsedCommand) -> Result<Option<(&'static str, Value)>, SyntaxError> {
     let raw_tokens = cmd
         .subcommand_tokens("BY")
@@ -280,4 +416,63 @@ fn map_flip(
             "name_var": name_var
         }),
     )))
+}
+
+fn map_dataset_name(cmd: &ParsedCommand) -> Result<Option<(&'static str, Value)>, SyntaxError> {
+    let name = cmd
+        .subcommand_tokens("POSITIONAL")
+        .and_then(|t| t.first())
+        .or_else(|| cmd.subcommand_tokens("NAME").and_then(|t| t.first()))
+        .cloned()
+        .ok_or_else(|| SyntaxError::InvalidSubcommand {
+            line: cmd.line_num,
+            command: cmd.name.clone(),
+            subcommand: "NAME".to_string(),
+            reason: "Dataset name identifier is required".to_string(),
+        })?;
+
+    let window = cmd
+        .subcommand_value("WINDOW")
+        .map(|w| w.to_ascii_lowercase())
+        .unwrap_or_else(|| "asis".to_string());
+
+    Ok(Some((
+        "dataset.name",
+        json!({ "name": name, "window": window }),
+    )))
+}
+
+fn map_dataset_activate(cmd: &ParsedCommand) -> Result<Option<(&'static str, Value)>, SyntaxError> {
+    let name = cmd
+        .subcommand_tokens("POSITIONAL")
+        .and_then(|t| t.first())
+        .or_else(|| cmd.subcommand_tokens("NAME").and_then(|t| t.first()))
+        .cloned()
+        .ok_or_else(|| SyntaxError::InvalidSubcommand {
+            line: cmd.line_num,
+            command: cmd.name.clone(),
+            subcommand: "NAME".to_string(),
+            reason: "Dataset name identifier is required".to_string(),
+        })?;
+
+    let window = cmd
+        .subcommand_value("WINDOW")
+        .map(|w| w.to_ascii_lowercase())
+        .unwrap_or_else(|| "asis".to_string());
+
+    Ok(Some((
+        "dataset.activate",
+        json!({ "name": name, "window": window }),
+    )))
+}
+
+fn map_dataset_close(cmd: &ParsedCommand) -> Result<Option<(&'static str, Value)>, SyntaxError> {
+    let name = cmd
+        .subcommand_tokens("POSITIONAL")
+        .and_then(|t| t.first())
+        .or_else(|| cmd.subcommand_tokens("NAME").and_then(|t| t.first()))
+        .cloned()
+        .unwrap_or_else(|| "*".to_string());
+
+    Ok(Some(("dataset.close", json!({ "name": name }))))
 }

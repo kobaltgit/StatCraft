@@ -893,6 +893,9 @@ impl StatCraftApp {
         // 17. Data and Variable Management Dialogs
         self.handle_data_dialogs(ctx);
 
+        // 17b. Data Merge Files Dialogs
+        self.handle_merge_dialogs(ctx);
+
         // 18. Transform Dialogs
         self.handle_transform_dialogs(ctx);
 

@@ -339,6 +339,7 @@ fn test_exhaustive_enum_payloads_render_without_panics() {
         id: proc_id,
         title_key: "output-descriptives-title",
         custom_title: None,
+        dataset_name: Some("DataSet1".to_string()),
         is_expanded: true,
         items,
     });

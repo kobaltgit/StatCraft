@@ -19,7 +19,7 @@ impl OutputViewerState {
         });
 
         let notes = OutputNotes {
-            dataset_name: "DataSet1".to_string(),
+            dataset_name: self.active_dataset_name.clone(),
             timestamp: "Session".to_string(),
             active_cases: result.rows_affected,
             active_vars: result.created_vars.len() + result.modified_vars.len(),
@@ -29,6 +29,7 @@ impl OutputViewerState {
             id: proc_id,
             title_key: "output-programmability-title",
             custom_title: None,
+            dataset_name: Some(self.active_dataset_name.clone()),
             is_expanded: true,
             items: vec![
                 OutputItem {

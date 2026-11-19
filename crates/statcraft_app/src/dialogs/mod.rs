@@ -29,6 +29,7 @@ pub mod kruskal_wallis_dialog;
 pub mod logistic_regression_dialog;
 pub mod mcp_bridge_dialog;
 pub mod means_dialog;
+pub mod merge_dialog;
 pub mod missing_values_dialog;
 pub mod multinomial_logistic_dialog;
 pub mod nonparam_define_groups;
@@ -129,6 +130,10 @@ pub use logistic_regression_dialog::{
     LogisticRegressionDialogState,
 };
 pub use means_dialog::{render_means_dialog, MeansDialogAction, MeansDialogState};
+pub use merge_dialog::{
+    render_add_cases_dialog, render_add_vars_dialog, AddCasesDialogState, AddVarsDialogState,
+    MergeCasesAction, MergeVarsAction,
+};
 pub use missing_values_dialog::{
     render_missing_values_dialog, MissingValuesDialogAction, MissingValuesDialogState,
 };

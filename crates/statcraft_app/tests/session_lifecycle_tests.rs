@@ -339,6 +339,7 @@ fn test_save_and_load_full_project_with_output_and_syntax() {
             id: proc_id,
             title_key: "output-descriptives-title",
             custom_title: Some("Employee Income Descriptives".to_string()),
+            dataset_name: Some("DataSet1".to_string()),
             is_expanded: true,
             items: vec![statcraft_app::views::output_view::OutputItem {
                 id: item_id,

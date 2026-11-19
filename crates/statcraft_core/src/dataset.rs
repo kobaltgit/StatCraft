@@ -35,6 +35,56 @@ impl DeltaBuffer {
         self.undo_stack.push(edit);
         self.redo_stack.clear();
     }
+
+    pub fn can_undo(&self) -> bool {
+        !self.undo_stack.is_empty()
+    }
+
+    pub fn can_redo(&self) -> bool {
+        !self.redo_stack.is_empty()
+    }
+
+    pub fn undo(&mut self, table: &mut RawTable) -> Result<(), CoreError> {
+        if let Some(edit) = self.undo_stack.pop() {
+            let col = table
+                .columns
+                .get_mut(edit.coord.col)
+                .ok_or(CoreError::CellOutOfBounds {
+                    row: edit.coord.row,
+                    col: edit.coord.col,
+                })?;
+            if edit.coord.row >= col.values.len() {
+                return Err(CoreError::CellOutOfBounds {
+                    row: edit.coord.row,
+                    col: edit.coord.col,
+                });
+            }
+            col.values[edit.coord.row] = edit.old_val.clone();
+            self.redo_stack.push(edit);
+        }
+        Ok(())
+    }
+
+    pub fn redo(&mut self, table: &mut RawTable) -> Result<(), CoreError> {
+        if let Some(edit) = self.redo_stack.pop() {
+            let col = table
+                .columns
+                .get_mut(edit.coord.col)
+                .ok_or(CoreError::CellOutOfBounds {
+                    row: edit.coord.row,
+                    col: edit.coord.col,
+                })?;
+            if edit.coord.row >= col.values.len() {
+                return Err(CoreError::CellOutOfBounds {
+                    row: edit.coord.row,
+                    col: edit.coord.col,
+                });
+            }
+            col.values[edit.coord.row] = edit.new_val.clone();
+            self.undo_stack.push(edit);
+        }
+        Ok(())
+    }
 }
 
 #[derive(Debug, Clone, PartialEq)]
@@ -705,6 +755,24 @@ impl DataSet {
         transform::transpose(self, vars, name_var)
     }
 
+    pub fn merge_add_cases(
+        &mut self,
+        second_table: &RawTable,
+        second_dict: &VariableDictionary,
+        config: &merge::AddCasesConfig,
+    ) -> Result<(RawTable, VariableDictionary), CoreError> {
+        merge::add_cases(self, second_table, second_dict, config)
+    }
+
+    pub fn merge_add_variables(
+        &mut self,
+        second_table: &RawTable,
+        second_dict: &VariableDictionary,
+        config: &merge::AddVarsConfig,
+    ) -> Result<(RawTable, VariableDictionary), CoreError> {
+        merge::add_variables(self, second_table, second_dict, config)
+    }
+
     pub fn undo(&mut self) -> bool {
         if let Some(edit) = self.delta.undo_stack.pop() {
             let row = edit.coord.row;
@@ -793,6 +861,7 @@ pub fn parse_number_loose(text: &str) -> Option<f64> {
     cleaned.parse::<f64>().ok()
 }
 
+pub mod merge;
 mod transform;
 
 #[cfg(test)]

@@ -245,6 +245,7 @@ impl BridgeService {
                     id: proc_id,
                     title_key: "output-notes",
                     custom_title: Some(params.title.clone()),
+                    dataset_name: Some(output_view.active_dataset_name.clone()),
                     is_expanded: true,
                     items: vec![OutputItem {
                         id: item_id,

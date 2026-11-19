@@ -274,4 +274,27 @@ mod tests {
         assert_eq!(desc.len(), 1);
         assert_eq!(desc[0].variable, "salary");
     }
+
+    #[test]
+    fn test_dispatch_dataset_commands() {
+        let mut bus = CommandBus::with_defaults();
+        let mut ds = Some(make_test_dataset());
+
+        let sps = r#"
+        DATASET NAME Survey.
+        DATASET ACTIVATE Survey.
+        DATASET CLOSE *.
+        DATASET DISPLAY.
+        "#;
+        let results = SyntaxDispatcher::execute_batch(sps, &mut ds, &mut bus).unwrap();
+        assert_eq!(results.len(), 4);
+        assert_eq!(results[0].0.name, "DATASET NAME");
+        assert_eq!(results[0].1["dataset_name"], "Survey");
+        assert_eq!(results[1].0.name, "DATASET ACTIVATE");
+        assert_eq!(results[1].1["dataset_name"], "Survey");
+        assert_eq!(results[2].0.name, "DATASET CLOSE");
+        assert_eq!(results[2].1["dataset_name"], "*");
+        assert_eq!(results[3].0.name, "DATASET DISPLAY");
+        assert_eq!(results[3].1["action"], "display");
+    }
 }

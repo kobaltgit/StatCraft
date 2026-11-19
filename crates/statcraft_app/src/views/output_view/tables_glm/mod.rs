@@ -24,7 +24,7 @@ impl OutputViewerState {
         );
 
         let notes = OutputNotes {
-            dataset_name: "DataSet1".to_string(),
+            dataset_name: self.active_dataset_name.clone(),
             timestamp: "Session".to_string(),
             active_cases: result.n_valid,
             active_vars: result.tests.len(),
@@ -34,6 +34,7 @@ impl OutputViewerState {
             id: proc_id,
             title_key: "output-glm-univariate-title",
             custom_title: None,
+            dataset_name: Some(self.active_dataset_name.clone()),
             is_expanded: true,
             items: vec![
                 OutputItem {
@@ -78,7 +79,7 @@ impl OutputViewerState {
         );
 
         let notes = OutputNotes {
-            dataset_name: "DataSet1".to_string(),
+            dataset_name: self.active_dataset_name.clone(),
             timestamp: "Session".to_string(),
             active_cases: result.n_valid,
             active_vars: result.dependents.len(),
@@ -88,6 +89,7 @@ impl OutputViewerState {
             id: proc_id,
             title_key: "output-glm-multivariate-title",
             custom_title: None,
+            dataset_name: Some(self.active_dataset_name.clone()),
             is_expanded: true,
             items: vec![
                 OutputItem {
@@ -134,7 +136,7 @@ impl OutputViewerState {
         );
 
         let notes = OutputNotes {
-            dataset_name: "DataSet1".to_string(),
+            dataset_name: self.active_dataset_name.clone(),
             timestamp: "Session".to_string(),
             active_cases: result.n_valid,
             active_vars: result.measure_variables.len(),
@@ -144,6 +146,7 @@ impl OutputViewerState {
             id: proc_id,
             title_key: "output-glm-repeated-title",
             custom_title: None,
+            dataset_name: Some(self.active_dataset_name.clone()),
             is_expanded: true,
             items: vec![
                 OutputItem {

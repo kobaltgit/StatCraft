@@ -13,7 +13,9 @@ pub mod selection;
 pub use clipboard::{
     apply_auto_fill, parse_tsv_matrix, paste_matrix_into_dataset, serialize_range_to_tsv,
 };
-pub use context_menu::{render_context_menu, ContextMenuAction, GridContextMenuState};
+pub use context_menu::{
+    render_context_menu, ContextMenuAction, ContextMenuTarget, GridContextMenuState,
+};
 pub use editor::{render_cell_editor, EditorAction, EditorMove, GridEditorState};
 pub use filter_menu::{
     paint_filter_button, render_filter_popup, ColumnFilter, FilterMenuAction, GridFilterState,

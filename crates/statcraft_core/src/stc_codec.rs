@@ -1,12 +1,14 @@
 use crate::dataset::{DataSet, DeltaBuffer};
 use crate::split::SplitFileConfig;
 use crate::variable::VariableDictionary;
+use crate::workspace::WorkspaceManager;
 use statcraft_io::{
     export_raw_table_to_csv_path, load_stc_container, load_stc_container_from_path,
     save_stc_container, save_stc_container_to_path, CsvExportOptions, IoError, StcContainer,
+    StcDatasetRecord,
 };
 use std::io::{Read, Write};
-use std::path::Path;
+use std::path::{Path, PathBuf};
 
 pub fn project_to_stc(
     dataset: &DataSet,
@@ -110,6 +112,109 @@ pub fn load_stc_from_path<P: AsRef<Path>>(path: P) -> Result<DataSet, IoError> {
 pub fn save_csv_to_path<P: AsRef<Path>>(path: P, dataset: &DataSet) -> Result<(), IoError> {
     let options = CsvExportOptions::default();
     export_raw_table_to_csv_path(path, &dataset.table, &options)
+}
+
+pub fn workspace_to_stc(
+    workspace: &WorkspaceManager,
+    output_viewer_json: Option<String>,
+    syntax_text: Option<String>,
+) -> Result<StcContainer, IoError> {
+    let mut records = Vec::with_capacity(workspace.session_count());
+    for sess in workspace.sessions() {
+        let meta_json = serde_json::to_string(&sess.dataset.dictionary)
+            .map_err(|e| IoError::Serialization(e.to_string()))?;
+        let split_json = match &sess.dataset.split_file {
+            Some(sf) => {
+                Some(serde_json::to_string(sf).map_err(|e| IoError::Serialization(e.to_string()))?)
+            }
+            None => None,
+        };
+        records.push(StcDatasetRecord {
+            dataset_name: sess.name.clone(),
+            original_path: sess
+                .file_path
+                .as_ref()
+                .map(|p| p.to_string_lossy().to_string()),
+            metadata_json: meta_json,
+            table: sess.dataset.table.clone(),
+            active_filter_var: sess.dataset.active_filter_var.clone(),
+            weight_var: sess.dataset.weight_var.clone(),
+            split_file_json: split_json,
+        });
+    }
+
+    let active_idx = workspace
+        .active_session_id()
+        .and_then(|id| workspace.sessions().iter().position(|s| s.id == id));
+
+    Ok(StcContainer::with_workspace(
+        records,
+        active_idx,
+        output_viewer_json,
+        syntax_text,
+    ))
+}
+
+pub fn stc_to_workspace(container: StcContainer) -> Result<WorkspaceManager, IoError> {
+    let records = container.extract_datasets();
+    let mut ws = WorkspaceManager::new();
+
+    for rec in records {
+        let dictionary: VariableDictionary = serde_json::from_str(&rec.metadata_json)
+            .map_err(|e| IoError::Deserialization(e.to_string()))?;
+
+        let split_file: Option<SplitFileConfig> = match rec.split_file_json.as_deref() {
+            Some(s) => {
+                Some(serde_json::from_str(s).map_err(|e| IoError::Deserialization(e.to_string()))?)
+            }
+            None => None,
+        };
+
+        let dataset = DataSet {
+            table: rec.table,
+            dictionary,
+            delta: DeltaBuffer::new(),
+            active_filter_var: rec.active_filter_var,
+            split_file,
+            weight_var: rec.weight_var,
+        };
+
+        let path_buf = rec.original_path.map(PathBuf::from);
+        ws.add_dataset(dataset, rec.dataset_name, path_buf);
+    }
+
+    if let Some(active_idx) = container.active_dataset_index {
+        if let Some(target_session) = ws.sessions().get(active_idx) {
+            let id = target_session.id;
+            let _ = ws.activate_dataset(id);
+        }
+    }
+
+    if ws.session_count() == 0 {
+        return Ok(WorkspaceManager::new_blank());
+    }
+
+    Ok(ws)
+}
+
+pub fn save_workspace_stc_to_path<P: AsRef<Path>>(
+    path: P,
+    workspace: &WorkspaceManager,
+    output_viewer_json: Option<String>,
+    syntax_text: Option<String>,
+) -> Result<(), IoError> {
+    let container = workspace_to_stc(workspace, output_viewer_json, syntax_text)?;
+    save_stc_container_to_path(path, &container)
+}
+
+pub fn load_workspace_stc_from_path<P: AsRef<Path>>(
+    path: P,
+) -> Result<(WorkspaceManager, Option<String>, Option<String>), IoError> {
+    let container = load_stc_container_from_path(path)?;
+    let output_json = container.output_viewer_json.clone();
+    let syntax = container.syntax_text.clone();
+    let ws = stc_to_workspace(container)?;
+    Ok((ws, output_json, syntax))
 }
 
 #[cfg(test)]
@@ -269,5 +374,35 @@ mod tests {
         assert_eq!(loaded_syn, syntax_text);
 
         let _ = std::fs::remove_file(&project_path);
+    }
+
+    #[test]
+    fn test_save_load_multi_file_workspace_stc() {
+        let temp_dir = std::env::temp_dir();
+        let ws_path = temp_dir.join("statcraft_test_workspace_multi.stc");
+
+        let mut ws = WorkspaceManager::new();
+        let ds1 = DataSet::blank(15, 0).unwrap();
+        let ds2 = DataSet::blank(25, 0).unwrap();
+        let id1 = ws.add_dataset(ds1, "SurveyData", Some(PathBuf::from("survey.sav")));
+        let _id2 = ws.add_dataset(ds2, "ClientsData", Some(PathBuf::from("clients.csv")));
+        ws.activate_dataset(id1).unwrap();
+
+        save_workspace_stc_to_path(
+            &ws_path,
+            &ws,
+            Some("{\"output\":1}".to_string()),
+            Some("DESCRIPTIVES.".to_string()),
+        )
+        .unwrap();
+
+        let (loaded_ws, loaded_out, loaded_syn) = load_workspace_stc_from_path(&ws_path).unwrap();
+        assert_eq!(loaded_ws.session_count(), 2);
+        assert_eq!(loaded_ws.active_session().unwrap().name, "SurveyData");
+        assert_eq!(loaded_ws.active_dataset().unwrap().row_count(), 15);
+        assert_eq!(loaded_out.as_deref(), Some("{\"output\":1}"));
+        assert_eq!(loaded_syn.as_deref(), Some("DESCRIPTIVES."));
+
+        let _ = std::fs::remove_file(&ws_path);
     }
 }

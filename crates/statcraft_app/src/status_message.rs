@@ -96,6 +96,14 @@ pub enum StatusMessage {
         rows: usize,
         cols: usize,
     },
+    MergeCasesExecuted {
+        rows: usize,
+        cols: usize,
+    },
+    MergeVarsExecuted {
+        rows: usize,
+        cols: usize,
+    },
     SelectCasesExecuted {
         mode: String,
     },
@@ -350,6 +358,12 @@ impl StatusMessage {
             ),
             StatusMessage::TransposeExecuted { rows, cols } => {
                 t!("output-transpose-executed", rows = *rows, cols = *cols)
+            }
+            StatusMessage::MergeCasesExecuted { rows, cols } => {
+                t!("status-merge-cases-executed", rows = *rows, cols = *cols)
+            }
+            StatusMessage::MergeVarsExecuted { rows, cols } => {
+                t!("status-merge-vars-executed", rows = *rows, cols = *cols)
             }
             StatusMessage::SelectCasesExecuted { mode } => {
                 t!("output-select-cases-executed", mode = mode.as_str())

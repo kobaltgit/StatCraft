@@ -18,6 +18,15 @@ pub enum DataViewAction {
         column_name: String,
         ascending: bool,
     },
+    DeleteCases {
+        rows: Vec<usize>,
+    },
+    InsertCaseAbove {
+        row: usize,
+    },
+    InsertVariable {
+        col: usize,
+    },
 }
 
 /// Persistent UI state for the DataView spreadsheet grid.
@@ -221,10 +230,15 @@ pub fn render_data_view(
                 text,
                 move_direction,
             } => {
-                while row >= ds.row_count() {
-                    ds.add_empty_row();
+                let trimmed = text.trim();
+                if trimmed.is_empty() && row >= ds.row_count() {
+                    // Zero pollution: empty input in ghost row does not allocate rows in the dataset
+                } else {
+                    while row >= ds.row_count() {
+                        ds.add_empty_row();
+                    }
+                    let _ = ds.set_cell_parsed(row, col, &text);
                 }
-                let _ = ds.set_cell_parsed(row, col, &text);
 
                 if let Some(dir) = move_direction {
                     let mut next_r = row;
@@ -269,10 +283,16 @@ pub fn render_data_view(
                 state.editor_state.start_editing(r, c, ch.to_string());
             }
             KeyboardEvent::ClearSelected => {
-                for r in state.selection.range.min_row..=state.selection.range.max_row {
-                    for c in state.selection.range.min_col..=state.selection.range.max_col {
-                        if r < ds.row_count() && c < ds.col_count() {
-                            let _ = ds.set_cell_parsed(r, c, "");
+                if state.selection.is_full_rows {
+                    let rows: Vec<usize> =
+                        (state.selection.range.min_row..=state.selection.range.max_row).collect();
+                    action = DataViewAction::DeleteCases { rows };
+                } else {
+                    for r in state.selection.range.min_row..=state.selection.range.max_row {
+                        for c in state.selection.range.min_col..=state.selection.range.max_col {
+                            if r < ds.row_count() && c < ds.col_count() {
+                                let _ = ds.set_cell_parsed(r, c, "");
+                            }
                         }
                     }
                 }
@@ -383,8 +403,36 @@ pub fn render_data_view(
             }
             GridEvent::ContextMenuCell { row, col, pos } => {
                 state.filter_state.close();
-                state.selection = GridSelection::single(row, col);
-                state.context_menu_state.open(row, col, pos);
+                if !state.selection.contains(row, col) {
+                    state.selection = GridSelection::single(row, col);
+                }
+                state
+                    .context_menu_state
+                    .open_cell_range(state.selection.range, (row, col), pos);
+            }
+            GridEvent::ContextMenuRow { row, pos } => {
+                state.filter_state.close();
+                if !state.selection.contains_row(row) {
+                    state.selection = GridSelection::select_row(row, total_cols);
+                }
+                let rows: Vec<usize> = if state.selection.is_full_rows {
+                    (state.selection.range.min_row..=state.selection.range.max_row).collect()
+                } else {
+                    vec![row]
+                };
+                state.context_menu_state.open_row_header(row, rows, pos);
+            }
+            GridEvent::ContextMenuCol { col, pos } => {
+                state.filter_state.close();
+                if !state.selection.contains_col(col) {
+                    state.selection = GridSelection::select_col(col, total_rows);
+                }
+                let cols: Vec<usize> = if state.selection.is_full_cols {
+                    (state.selection.range.min_col..=state.selection.range.max_col).collect()
+                } else {
+                    vec![col]
+                };
+                state.context_menu_state.open_col_header(col, cols, pos);
             }
             GridEvent::ClickIntegrityBadge { row, col } => {
                 if let Some(cell) = ds.get_cell(row, col) {
@@ -480,7 +528,7 @@ pub fn render_data_view(
                     };
                 }
             }
-            ContextMenuAction::Copy => {
+            ContextMenuAction::Copy | ContextMenuAction::CopyRange => {
                 let tsv =
                     serialize_range_to_tsv(ds, &state.selection.range, state.show_value_labels);
                 ui.output_mut(|o| o.copied_text = tsv);
@@ -506,6 +554,69 @@ pub fn render_data_view(
                         );
                     }
                 }
+            }
+            ContextMenuAction::ClearContents => {
+                for r in state.selection.range.min_row..=state.selection.range.max_row {
+                    for c in state.selection.range.min_col..=state.selection.range.max_col {
+                        if r < ds.row_count() && c < ds.col_count() {
+                            let _ = ds.set_cell_parsed(r, c, "");
+                        }
+                    }
+                }
+                ui.ctx().request_repaint();
+            }
+            ContextMenuAction::InsertCaseAbove(row) => {
+                action = DataViewAction::InsertCaseAbove { row };
+            }
+            ContextMenuAction::DeleteCases(rows) => {
+                action = DataViewAction::DeleteCases { rows };
+            }
+            ContextMenuAction::ClearCases(rows) => {
+                for r in rows {
+                    for c in 0..ds.col_count() {
+                        if r < ds.row_count() {
+                            let _ = ds.set_cell_parsed(r, c, "");
+                        }
+                    }
+                }
+                ui.ctx().request_repaint();
+            }
+            ContextMenuAction::InsertVariable(col) => {
+                action = DataViewAction::InsertVariable { col };
+            }
+            ContextMenuAction::AutoFitCol(col) => {
+                let mut max_w = 50.0_f32;
+                if let Some(var) = ds.dictionary.get(col) {
+                    let text_w = ui.fonts(|f| {
+                        f.layout_no_wrap(
+                            var.name.clone(),
+                            FontId::proportional(12.0),
+                            Color32::WHITE,
+                        )
+                        .size()
+                        .x
+                    });
+                    max_w = max_w.max(text_w + 40.0);
+                }
+                let check_rows = total_rows.min(100);
+                for r in 0..check_rows {
+                    let val_str = ds.get_cell_display(r, col, state.show_value_labels);
+                    if !val_str.is_empty() {
+                        let text_w = ui.fonts(|f| {
+                            f.layout_no_wrap(val_str, FontId::proportional(12.0), Color32::WHITE)
+                                .size()
+                                .x
+                        });
+                        max_w = max_w.max(text_w + 24.0);
+                    }
+                }
+                let fitted_w = max_w.clamp(60.0, 600.0);
+                state.col_widths.insert(col, fitted_w);
+                let char_cols = ((fitted_w - 30.0) / 10.0).round().max(1.0) as usize;
+                if let Some(var) = ds.dictionary.get_mut(col) {
+                    var.columns = char_cols;
+                }
+                ui.ctx().request_repaint();
             }
             ContextMenuAction::Close => {}
         }

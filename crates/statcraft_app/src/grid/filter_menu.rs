@@ -20,6 +20,7 @@ pub struct GridFilterState {
     pub search_query: String,
     pub pending_allowed: HashSet<String>,
     pub pending_include_blanks: bool,
+    pub just_opened: bool,
 }
 
 impl GridFilterState {
@@ -70,6 +71,7 @@ impl GridFilterState {
         self.open_col = Some(col);
         self.open_pos = Some(button_pos);
         self.search_query.clear();
+        self.just_opened = true;
     }
 
     /// Closes the currently open auto-filter popup.
@@ -78,6 +80,7 @@ impl GridFilterState {
         self.open_pos = None;
         self.search_query.clear();
         self.pending_allowed.clear();
+        self.just_opened = false;
     }
 }
 
@@ -165,7 +168,7 @@ pub fn render_filter_popup(
     let popup_id = Id::new("grid_autofilter_popup");
     let area = Area::new(popup_id).order(Order::Foreground).fixed_pos(pos);
 
-    area.show(ui.ctx(), |ui| {
+    let area_res = area.show(ui.ctx(), |ui| {
         let frame = egui::Frame::menu(ui.style())
             .fill(Tokens::bg_panel())
             .stroke(Stroke::new(1.0_f32, Tokens::border()))
@@ -268,8 +271,19 @@ pub fn render_filter_popup(
         });
     });
 
+    let popup_rect = area_res.response.rect;
+
     if ui.input(|i| i.key_pressed(Key::Escape)) {
         action = Some(FilterMenuAction::Close);
+    } else if state.just_opened {
+        state.just_opened = false;
+    } else if ui.input(|i| i.pointer.any_pressed() || i.pointer.any_click()) {
+        if let Some(pos) = ui.input(|i| i.pointer.interact_pos().or_else(|| i.pointer.latest_pos()))
+        {
+            if !popup_rect.contains(pos) {
+                action = Some(FilterMenuAction::Close);
+            }
+        }
     }
 
     if action.is_some() {

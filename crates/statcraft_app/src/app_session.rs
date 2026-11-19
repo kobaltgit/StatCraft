@@ -1,17 +1,19 @@
 use super::app::{StatCraftApp, Tab};
+use super::dialogs::common::DialogShell;
 use super::dialogs::{
     render_confirm_save_dialog, ConfirmSaveAction, SelectCasesDialogState, SplitFileDialogState,
     WeightCasesDialogState,
 };
 use super::status_message::StatusMessage;
+use super::system_memory::check_memory_guard_for_files;
 use super::views::{DataViewState, OutputViewerState, VariableViewState};
 use super::widgets::{render_menu_item, MenuItemStatus};
 use egui::Ui;
 use serde_json::json;
 use statcraft_core::stc_codec::{
-    load_project_stc_from_path, save_csv_to_path, save_project_stc_to_path,
+    load_workspace_stc_from_path, save_csv_to_path, save_workspace_stc_to_path,
 };
-use statcraft_core::DataSet;
+use statcraft_core::{DataSet, WorkspaceManager};
 use statcraft_i18n::t;
 use statcraft_syntax::CommandBus;
 use std::fs;
@@ -22,6 +24,7 @@ pub enum PendingSessionAction {
     NewDataset,
     NewProject,
     CloseProject,
+    CloseDataset(usize),
     OpenPath(PathBuf),
 }
 
@@ -57,6 +60,9 @@ impl StatCraftApp {
     }
 
     pub fn has_unsaved_changes(&self) -> bool {
+        if self.workspace.is_any_dirty() {
+            return true;
+        }
         let current = self.current_checkpoint();
         match &self.saved_checkpoint {
             Some(saved) => saved != &current,
@@ -84,20 +90,23 @@ impl StatCraftApp {
             PendingSessionAction::NewDataset => self.execute_new_dataset(),
             PendingSessionAction::NewProject => self.execute_new_project(),
             PendingSessionAction::CloseProject => self.execute_close_project(),
+            PendingSessionAction::CloseDataset(id) => self.execute_close_dataset(id),
             PendingSessionAction::OpenPath(path) => self.load_file_from_path(path),
         }
     }
 
     pub fn execute_new_dataset(&mut self) {
-        self.dataset = DataSet::blank(40, 0).ok();
+        let blank_ds = DataSet::blank(40, 0).unwrap_or_else(|_| DataSet::empty());
+        if self.workspace.session_count() <= 1 {
+            self.workspace = WorkspaceManager::new();
+            self.workspace
+                .add_dataset(blank_ds.clone(), "DataSet1".to_string(), None);
+        } else {
+            let name = self.workspace.next_default_name();
+            self.workspace.add_dataset(blank_ds.clone(), name, None);
+        }
+        self.dataset = Some(blank_ds);
         self.current_file_path = None;
-        self.command_bus = CommandBus::with_defaults();
-        self.data_view_state = DataViewState::default();
-        self.variable_view_state = VariableViewState::default();
-        self.select_cases_dialog_state = SelectCasesDialogState::default();
-        self.split_file_dialog_state = SplitFileDialogState::default();
-        self.weight_cases_dialog_state = WeightCasesDialogState::default();
-
         self.ensure_tab_open(Tab::DataView);
         self.status_message = StatusMessage::NewDatasetCreated;
         self.output_view_state.add_log("NEW DATASET.");
@@ -105,7 +114,11 @@ impl StatCraftApp {
     }
 
     pub fn execute_new_project(&mut self) {
-        self.dataset = DataSet::blank(40, 0).ok();
+        self.workspace = WorkspaceManager::new();
+        let blank_ds = DataSet::blank(40, 0).unwrap_or_else(|_| DataSet::empty());
+        self.workspace
+            .add_dataset(blank_ds.clone(), "DataSet1".to_string(), None);
+        self.dataset = Some(blank_ds);
         self.current_file_path = None;
         self.command_bus = CommandBus::with_defaults();
         self.data_view_state = DataViewState::default();
@@ -122,7 +135,11 @@ impl StatCraftApp {
     }
 
     pub fn execute_close_project(&mut self) {
-        self.dataset = DataSet::blank(40, 0).ok();
+        self.workspace = WorkspaceManager::new();
+        let blank_ds = DataSet::blank(40, 0).unwrap_or_else(|_| DataSet::empty());
+        self.workspace
+            .add_dataset(blank_ds.clone(), "DataSet1".to_string(), None);
+        self.dataset = Some(blank_ds);
         self.current_file_path = None;
         self.command_bus = CommandBus::with_defaults();
         self.data_view_state = DataViewState::default();
@@ -349,6 +366,7 @@ impl StatCraftApp {
     }
 
     pub fn save_to_path(&mut self, path: PathBuf) {
+        self.sync_active_dataset_to_workspace();
         let ds = match &self.dataset {
             Some(ds) => ds,
             None => {
@@ -373,7 +391,7 @@ impl StatCraftApp {
             } else {
                 Some(self.syntax_editor_state.text.clone())
             };
-            save_project_stc_to_path(&path, ds, output_json, syntax_text)
+            save_workspace_stc_to_path(&path, &self.workspace, output_json, syntax_text)
         };
 
         match save_res {
@@ -388,6 +406,7 @@ impl StatCraftApp {
                         path: path_display.clone(),
                     };
                 } else {
+                    self.workspace.mark_all_clean();
                     self.status_message = StatusMessage::ProjectSaved {
                         path: path_display.clone(),
                     };
@@ -404,6 +423,17 @@ impl StatCraftApp {
     }
 
     pub fn load_file_from_path(&mut self, path: PathBuf) {
+        let estimated_bytes = fs::metadata(&path).map(|m| m.len()).unwrap_or(0);
+        if let Some(warning) = check_memory_guard_for_files(1, estimated_bytes) {
+            self.memory_guard_dialog_state.is_open = true;
+            self.memory_guard_dialog_state.warning = Some(warning);
+            self.memory_guard_dialog_state.pending_path = Some(path);
+            return;
+        }
+        self.force_load_file_from_path(path);
+    }
+
+    pub fn force_load_file_from_path(&mut self, path: PathBuf) {
         let file_name = path
             .file_name()
             .and_then(|n| n.to_str())
@@ -417,11 +447,10 @@ impl StatCraftApp {
             .to_ascii_lowercase();
 
         if ext == "stc" {
-            match load_project_stc_from_path(&path) {
-                Ok((ds, output_viewer_json, syntax_text)) => {
-                    let rows = ds.row_count();
-                    let cols = ds.col_count();
-                    self.dataset = Some(ds);
+            match load_workspace_stc_from_path(&path) {
+                Ok((ws, output_viewer_json, syntax_text)) => {
+                    self.workspace = ws;
+                    self.dataset = self.workspace.active_dataset().cloned();
                     self.current_file_path = Some(path.clone());
                     self.recent_files.add(path.clone());
                     self.recent_files.save_default();
@@ -432,6 +461,9 @@ impl StatCraftApp {
                     if let Some(syn) = syntax_text {
                         self.syntax_editor_state.text = syn;
                     }
+
+                    let rows = self.dataset.as_ref().map(|d| d.row_count()).unwrap_or(0);
+                    let cols = self.dataset.as_ref().map(|d| d.col_count()).unwrap_or(0);
 
                     self.status_message = StatusMessage::ProjectOpened {
                         name: file_name.clone(),
@@ -507,6 +539,30 @@ impl StatCraftApp {
             Ok(res) => {
                 let rows = res["rows"].as_u64().unwrap_or(0) as usize;
                 let cols = res["cols"].as_u64().unwrap_or(0) as usize;
+
+                if let Some(ds) = &self.dataset {
+                    let is_initial_blank = self.workspace.sessions().len() == 1
+                        && self
+                            .workspace
+                            .active_session()
+                            .map(|s| s.dataset.row_count() == 0 && !s.is_dirty)
+                            .unwrap_or(false);
+                    if is_initial_blank {
+                        if let Some(sess) = self.workspace.active_session_mut() {
+                            sess.dataset = ds.clone();
+                            sess.name = file_name.clone();
+                            sess.file_path = Some(path.clone());
+                            sess.is_dirty = false;
+                        }
+                    } else {
+                        let _ = self.workspace.add_dataset(
+                            ds.clone(),
+                            file_name.clone(),
+                            Some(path.clone()),
+                        );
+                    }
+                }
+
                 self.current_file_path = Some(path.clone());
                 self.recent_files.add(path.clone());
                 self.recent_files.save_default();
@@ -582,6 +638,62 @@ impl StatCraftApp {
 
     pub fn handle_session_dialogs(&mut self, ctx: &egui::Context) {
         self.handle_confirm_save_dialog(ctx);
+        self.handle_memory_guard_dialog(ctx);
+    }
+
+    pub fn handle_memory_guard_dialog(&mut self, ctx: &egui::Context) {
+        if !self.memory_guard_dialog_state.is_open {
+            return;
+        }
+
+        let mut is_open = self.memory_guard_dialog_state.is_open;
+        let mut proceed = false;
+        let mut cancel = false;
+
+        let warning = self.memory_guard_dialog_state.warning.clone();
+        let (file_count, size_mb, free_mb) = if let Some(w) = &warning {
+            (w.file_count, w.estimated_size_mb, w.free_ram_mb)
+        } else {
+            (1, 0, 0)
+        };
+
+        DialogShell::alert(t!("memory-guard-title")).show(ctx, &mut is_open, |ui| {
+            ui.vertical(|ui| {
+                ui.add_space(16.0);
+                ui.label(t!(
+                    "memory-guard-warning",
+                    count = file_count,
+                    size = size_mb,
+                    free = free_mb
+                ));
+                ui.add_space(20.0);
+                ui.separator();
+                ui.add_space(14.0);
+
+                ui.horizontal(|ui| {
+                    ui.with_layout(egui::Layout::right_to_left(egui::Align::Center), |ui| {
+                        if ui.button(t!("memory-guard-cancel")).clicked() {
+                            cancel = true;
+                        }
+                        if ui.button(t!("memory-guard-continue")).clicked() {
+                            proceed = true;
+                        }
+                    });
+                });
+            });
+        });
+
+        if !is_open || cancel {
+            self.memory_guard_dialog_state.is_open = false;
+            self.memory_guard_dialog_state.pending_path = None;
+            self.memory_guard_dialog_state.warning = None;
+        } else if proceed {
+            self.memory_guard_dialog_state.is_open = false;
+            self.memory_guard_dialog_state.warning = None;
+            if let Some(path) = self.memory_guard_dialog_state.pending_path.take() {
+                self.force_load_file_from_path(path);
+            }
+        }
     }
 
     pub fn handle_confirm_save_dialog(&mut self, ctx: &egui::Context) {

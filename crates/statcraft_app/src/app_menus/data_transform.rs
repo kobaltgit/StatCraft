@@ -33,8 +33,22 @@ impl StatCraftApp {
                     }
                     ui.separator();
                     ui.menu_button(t!("menu-data-merge-files"), |ui| {
-                        render_menu_item(ui, t!("menu-data-merge-cases"), MenuItemStatus::InDev);
-                        render_menu_item(ui, t!("menu-data-merge-vars"), MenuItemStatus::InDev);
+                        if render_menu_item(
+                            ui,
+                            t!("menu-data-merge-cases"),
+                            requires_dataset_status,
+                        )
+                        .clicked()
+                        {
+                            self.merge_cases_dialog_state.is_open = true;
+                            ui.close_menu();
+                        }
+                        if render_menu_item(ui, t!("menu-data-merge-vars"), requires_dataset_status)
+                            .clicked()
+                        {
+                            self.merge_vars_dialog_state.is_open = true;
+                            ui.close_menu();
+                        }
                     });
                     render_menu_item(ui, t!("menu-data-restructure"), MenuItemStatus::InDev);
                     render_menu_item(ui, t!("menu-data-aggregate"), MenuItemStatus::InDev);

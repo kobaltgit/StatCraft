@@ -2,7 +2,7 @@ use super::geo::Geo;
 use super::quadrant::QuadrantPaint;
 use super::selection::{CellRange, GridSelection};
 use crate::theme::Tokens;
-use egui::{pos2, vec2, CursorIcon, PointerButton, Pos2, Rect, Stroke, Ui, Vec2};
+use egui::{pos2, vec2, CursorIcon, PointerButton, Pos2, Rect, Ui, Vec2};
 
 /// Ongoing drag interactions within the grid.
 #[derive(Debug, Clone, Copy, PartialEq)]
@@ -65,9 +65,11 @@ pub enum GridEvent {
     },
     ContextMenuRow {
         row: usize,
+        pos: Pos2,
     },
     ContextMenuCol {
         col: usize,
+        pos: Pos2,
     },
     OpenColFilter {
         col: usize,
@@ -140,19 +142,7 @@ pub fn handle_grid_interactions(
         return events;
     }
 
-    // 4. Fill handle hit-test (Auto-fill drag initiation)
-    if selection.hit_test_fill_handle(geo, pos, 4.0) {
-        ui.ctx().set_cursor_icon(CursorIcon::Crosshair);
-        if ui.input(|i| i.pointer.button_pressed(PointerButton::Primary)) {
-            state.drag = Some(GridDrag::FillHandle {
-                source_range: selection.range,
-                target_range: selection.range,
-            });
-            return events;
-        }
-    }
-
-    // 5. Column boundary hit-test (Resize Cursor & Drag Initiation)
+    // 4. Column boundary hit-test (Resize Cursor & Drag Initiation)
     // Only active in column headers row
     let boundary_tolerance = 6.0_f32;
     if pos.y <= geo.quad_top_right.max.y {
@@ -216,7 +206,7 @@ pub fn handle_grid_interactions(
             });
 
             if ui.input(|i| i.pointer.button_clicked(PointerButton::Secondary)) {
-                events.push(GridEvent::ContextMenuCol { col });
+                events.push(GridEvent::ContextMenuCol { col, pos });
             } else if ui.input(|i| i.pointer.button_clicked(PointerButton::Primary)) {
                 if is_on_filter_btn {
                     let r = header_rect.unwrap_or(Rect::NOTHING);
@@ -238,7 +228,7 @@ pub fn handle_grid_interactions(
         if let Some(row) = geo.row_header_at_pos(pos) {
             state.hovered_row = Some(row);
             if ui.input(|i| i.pointer.button_clicked(PointerButton::Secondary)) {
-                events.push(GridEvent::ContextMenuRow { row });
+                events.push(GridEvent::ContextMenuRow { row, pos });
             } else if ui.input(|i| i.pointer.button_clicked(PointerButton::Primary)) {
                 events.push(GridEvent::SelectRow { row });
             }
@@ -427,41 +417,8 @@ fn handle_active_drag(
                 state.drag = None;
             }
         }
-        GridDrag::FillHandle {
-            source_range,
-            mut target_range,
-        } => {
-            ui.ctx().set_cursor_icon(CursorIcon::Crosshair);
-            if let Some((r, c)) = geo.cell_at_pos_clamped(pointer_pos) {
-                target_range.max_row = r.max(source_range.min_row);
-                target_range.max_col = c.max(source_range.min_col);
-                state.drag = Some(GridDrag::FillHandle {
-                    source_range,
-                    target_range,
-                });
-
-                let preview_sel = GridSelection {
-                    active_cell: (target_range.max_row, target_range.max_col),
-                    anchor_cell: (target_range.min_row, target_range.min_col),
-                    range: target_range,
-                    is_full_cols: false,
-                    is_full_rows: false,
-                };
-                if let Some(bounds) = preview_sel.bounding_rect(geo) {
-                    ui.painter().with_clip_rect(geo.quad_center).rect_stroke(
-                        bounds,
-                        0.0_f32,
-                        Stroke::new(1.5_f32, Tokens::accent()),
-                    );
-                }
-            }
+        GridDrag::FillHandle { .. } => {
             if !primary_down {
-                if target_range != source_range {
-                    events.push(GridEvent::AutoFillSeries {
-                        source_range,
-                        target_range,
-                    });
-                }
                 state.drag = None;
             }
         }

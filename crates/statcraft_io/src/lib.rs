@@ -18,5 +18,5 @@ pub use excel_loader::{
 pub use spss_loader::{load_spss_from_path, load_spss_from_reader, SpssData, SpssVariableInfo};
 pub use stc_codec::{
     load_stc_container, load_stc_container_from_path, save_stc_container,
-    save_stc_container_to_path, StcContainer, STC_FORMAT_VERSION,
+    save_stc_container_to_path, StcContainer, StcDatasetRecord, STC_FORMAT_VERSION,
 };

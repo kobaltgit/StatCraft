@@ -72,6 +72,12 @@ impl SyntaxParser {
 
         let second = words.next();
         let two_word = match (first.to_ascii_uppercase().as_str(), second) {
+            ("ADD", Some(s)) if s.eq_ignore_ascii_case("FILES") => Some("ADD FILES"),
+            ("MATCH", Some(s)) if s.eq_ignore_ascii_case("FILES") => Some("MATCH FILES"),
+            ("DATASET", Some(s)) if s.eq_ignore_ascii_case("NAME") => Some("DATASET NAME"),
+            ("DATASET", Some(s)) if s.eq_ignore_ascii_case("ACTIVATE") => Some("DATASET ACTIVATE"),
+            ("DATASET", Some(s)) if s.eq_ignore_ascii_case("CLOSE") => Some("DATASET CLOSE"),
+            ("DATASET", Some(s)) if s.eq_ignore_ascii_case("DISPLAY") => Some("DATASET DISPLAY"),
             ("RUN", Some(s)) if s.eq_ignore_ascii_case("COMMAND") => Some("RUN COMMAND"),
             ("SORT", Some(s)) if s.eq_ignore_ascii_case("CASES") => Some("SORT CASES"),
             ("SORT", Some(s))

@@ -17,7 +17,7 @@ impl OutputViewerState {
         let sps_log = "CODEBOOK ALL\n  /OPTIONS = MAXCATS(200).".to_string();
 
         let notes = OutputNotes {
-            dataset_name: "DataSet1".to_string(),
+            dataset_name: self.active_dataset_name.clone(),
             timestamp: "Session".to_string(),
             active_cases: result.total_cases,
             active_vars: result.total_variables,
@@ -27,6 +27,7 @@ impl OutputViewerState {
             id: proc_id,
             title_key: "output-codebook-title",
             custom_title: None,
+            dataset_name: Some(self.active_dataset_name.clone()),
             is_expanded: true,
             items: vec![
                 OutputItem {
@@ -71,7 +72,7 @@ impl OutputViewerState {
         );
 
         let notes = OutputNotes {
-            dataset_name: "DataSet1".to_string(),
+            dataset_name: self.active_dataset_name.clone(),
             timestamp: "Session".to_string(),
             active_cases: result.total_cases,
             active_vars: result.variable_names.len(),
@@ -81,6 +82,7 @@ impl OutputViewerState {
             id: proc_id,
             title_key: "output-summarize-title",
             custom_title: None,
+            dataset_name: Some(self.active_dataset_name.clone()),
             is_expanded: true,
             items: vec![
                 OutputItem {

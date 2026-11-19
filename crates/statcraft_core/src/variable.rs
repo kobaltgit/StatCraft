@@ -25,6 +25,9 @@ pub enum CoreError {
 
     #[error("I/O error: {0}")]
     Io(#[from] statcraft_io::IoError),
+
+    #[error("Merge error: {0}")]
+    MergeError(String),
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]

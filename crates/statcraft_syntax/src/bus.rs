@@ -3,15 +3,16 @@ use crate::commands::{
     AutoRecodeCommand, BatchReplaceCommand, CellEditCommand, CodebookCommand,
     ComputeVariableCommand, CorrelationsCommand, CountValuesCommand, CoxRegressionCommand,
     CreateDummiesCommand, CreateTimeSeriesCommand, CrosstabsCommand, CurveFitCommand,
-    DataAddRowCommand, DataDeleteRowCommand, DateTimeWizardCommand, DescriptivesCommand,
+    DataAddRowCommand, DataDeleteRowCommand, DatasetActivateCommand, DatasetCloseCommand,
+    DatasetDisplayCommand, DatasetNameCommand, DateTimeWizardCommand, DescriptivesCommand,
     ExploreCommand, FactorCommand, FrequenciesCommand, HelpCommand, ImportCsvCommand,
     ImportExcelCommand, ImportSpssCommand, IndependentSamplesTTestCommand, KMeansClusterCommand,
     KaplanMeierCommand, KruskalWallisCommand, LifeTablesCommand, LinearRegressionCommand,
-    LogisticRegressionCommand, MannWhitneyCommand, MeansCommand, MultinomialLogisticCommand,
-    MultivariateGlmCommand, OneSampleTTestCommand, OneWayAnovaCommand, OpenFileCommand,
-    OptimalBinningCommand, PairedSamplesTTestCommand, PartialCorrCommand,
-    PrepareDataModelingCommand, ProgrammabilityCommand, RandomSeedCommand, RankCasesCommand,
-    RecodeIntoDifferentCommand, RecodeIntoSameCommand, RelatedSamplesTestCommand,
+    LogisticRegressionCommand, MannWhitneyCommand, MeansCommand, MergeCasesCommand,
+    MergeVarsCommand, MultinomialLogisticCommand, MultivariateGlmCommand, OneSampleTTestCommand,
+    OneWayAnovaCommand, OpenFileCommand, OptimalBinningCommand, PairedSamplesTTestCommand,
+    PartialCorrCommand, PrepareDataModelingCommand, ProgrammabilityCommand, RandomSeedCommand,
+    RankCasesCommand, RecodeIntoDifferentCommand, RecodeIntoSameCommand, RelatedSamplesTestCommand,
     ReliabilityCommand, RepeatedGlmCommand, ReplaceMissingCommand, SaveFileCommand,
     SelectCasesCommand, SetLabelCommand, SetMeasureCommand, ShiftValuesCommand, SortCasesCommand,
     SortVariablesCommand, SplitFileCommand, SummarizeCommand, TransposeCommand,
@@ -122,12 +123,18 @@ impl CommandBus {
         bus.register(Box::new(SortCasesCommand::new()));
         bus.register(Box::new(SortVariablesCommand::new()));
         bus.register(Box::new(TransposeCommand::new()));
+        bus.register(Box::new(MergeCasesCommand::new()));
+        bus.register(Box::new(MergeVarsCommand::new()));
         bus.register(Box::new(SelectCasesCommand::new()));
         bus.register(Box::new(SplitFileCommand::new()));
         bus.register(Box::new(WeightCasesCommand::new()));
         bus.register(Box::new(SaveFileCommand));
         bus.register(Box::new(OpenFileCommand));
         bus.register(Box::new(HelpCommand));
+        bus.register(Box::new(DatasetNameCommand));
+        bus.register(Box::new(DatasetActivateCommand));
+        bus.register(Box::new(DatasetCloseCommand));
+        bus.register(Box::new(DatasetDisplayCommand));
         bus
     }
 

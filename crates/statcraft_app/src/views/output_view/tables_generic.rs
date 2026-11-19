@@ -220,6 +220,7 @@ impl OutputViewerState {
             id: proc_id,
             title_key: "output-generic-title",
             custom_title: Some(command_id.to_string()),
+            dataset_name: Some(self.active_dataset_name.clone()),
             is_expanded: true,
             items: vec![
                 OutputItem {

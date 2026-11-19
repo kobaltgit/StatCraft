@@ -1,41 +1,48 @@
 use crate::app_session::PendingSessionAction;
+use crate::app_tab_viewer::StatCraftTabViewer;
 use crate::bridge_service::BridgeService;
 use crate::dialogs::ConfirmSaveDialogState;
 use crate::dialogs::{
-    AdpDialogState, AutoRecodeDialogState, CodebookDialogState, ComputeDialogState,
-    CorrelationsDialogState, CountValuesDialogState, CoxRegressionDialogState,
-    CrosstabsDialogState, CurveFitDialogState, DateTimeDialogState, DescriptivesDialogState,
-    DummyDialogState, ExploreDialogState, FactorDialogState, FindReplaceDialogState,
-    FrequenciesDialogState, GoToDialogState, IndependentSamplesTTestDialogState, KMeansDialogState,
-    KaplanMeierDialogState, KruskalWallisDialogState, LifeTablesDialogState,
-    LinearRegressionDialogState, LogisticRegressionDialogState, McpBridgeDialogState,
-    MeansDialogState, MissingValuesDialogState, MultinomialLogisticDialogState,
-    MultivariateGlmDialogState, NonparamRelatedDialogState, NonparamTwoSampleDialogState,
-    OneSampleTTestDialogState, OneWayAnovaDialogState, OptimalBinningDialogState,
-    PairedSamplesTTestDialogState, PartialCorrDialogState, ProgrammabilityDialogState,
-    RandomSeedDialogState, RankCasesDialogState, RecodeDialogState, ReliabilityDialogState,
-    RepeatedGlmDialogState, ReplaceMissingDialogState, SelectCasesDialogState,
-    ShiftValuesDialogState, SortCasesDialogState, SortVariablesDialogState, SplitFileDialogState,
-    SummarizeDialogState, TimeSeriesDialogState, TransposeDialogState, UnivariateGlmDialogState,
-    ValueLabelsDialogState, VariableTypeDialogState, VisualBinningDialogState,
-    WeightCasesDialogState,
+    AddCasesDialogState, AddVarsDialogState, AdpDialogState, AutoRecodeDialogState,
+    CodebookDialogState, ComputeDialogState, CorrelationsDialogState, CountValuesDialogState,
+    CoxRegressionDialogState, CrosstabsDialogState, CurveFitDialogState, DateTimeDialogState,
+    DescriptivesDialogState, DummyDialogState, ExploreDialogState, FactorDialogState,
+    FindReplaceDialogState, FrequenciesDialogState, GoToDialogState,
+    IndependentSamplesTTestDialogState, KMeansDialogState, KaplanMeierDialogState,
+    KruskalWallisDialogState, LifeTablesDialogState, LinearRegressionDialogState,
+    LogisticRegressionDialogState, McpBridgeDialogState, MeansDialogState,
+    MissingValuesDialogState, MultinomialLogisticDialogState, MultivariateGlmDialogState,
+    NonparamRelatedDialogState, NonparamTwoSampleDialogState, OneSampleTTestDialogState,
+    OneWayAnovaDialogState, OptimalBinningDialogState, PairedSamplesTTestDialogState,
+    PartialCorrDialogState, ProgrammabilityDialogState, RandomSeedDialogState,
+    RankCasesDialogState, RecodeDialogState, ReliabilityDialogState, RepeatedGlmDialogState,
+    ReplaceMissingDialogState, SelectCasesDialogState, ShiftValuesDialogState,
+    SortCasesDialogState, SortVariablesDialogState, SplitFileDialogState, SummarizeDialogState,
+    TimeSeriesDialogState, TransposeDialogState, UnivariateGlmDialogState, ValueLabelsDialogState,
+    VariableTypeDialogState, VisualBinningDialogState, WeightCasesDialogState,
 };
 use crate::recent_files::RecentFiles;
 use crate::views::{
-    render_data_view, render_output_view, render_syntax_editor, render_variable_view,
-    DataViewAction, DataViewState, OutputViewerState, SyntaxEditorAction, SyntaxEditorState,
-    VariableViewAction, VariableViewState,
+    DataViewAction, DataViewState, DocumentTabAction, OutputViewerState, SyntaxEditorAction,
+    SyntaxEditorState, VariableViewAction, VariableViewState,
 };
 use crate::widgets::{
     render_caption_buttons, render_resize_zones, render_toolbar, title_x, MenuItemStatus,
     ToolbarAction, ToolbarPosition, CAPTION_BAR_HEIGHT, CAPTION_BUTTON_WIDTH,
 };
-use egui::{CentralPanel, SidePanel, TopBottomPanel, Ui};
-use egui_dock::{DockArea, DockState, NodeIndex, TabViewer};
-use statcraft_core::DataSet;
+use egui::{CentralPanel, SidePanel, TopBottomPanel};
+use egui_dock::{DockArea, DockState, NodeIndex};
+use statcraft_core::{DataSet, WorkspaceManager};
 use statcraft_i18n::t;
 use statcraft_syntax::CommandBus;
 use std::path::PathBuf;
+
+#[derive(Debug, Clone, Default)]
+pub struct MemoryGuardDialogState {
+    pub is_open: bool,
+    pub warning: Option<crate::system_memory::MemoryWarning>,
+    pub pending_path: Option<PathBuf>,
+}
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum Tab {
@@ -85,7 +92,11 @@ pub fn ensure_dock_tab_open(dock_state: &mut DockState<Tab>, tab: Tab) {
 }
 
 pub struct StatCraftApp {
+    pub workspace: WorkspaceManager,
     pub dataset: Option<DataSet>,
+    pub document_tab_scroll_offset: f32,
+    pub pending_document_tab_action: DocumentTabAction,
+    pub memory_guard_dialog_state: MemoryGuardDialogState,
     pub command_bus: CommandBus,
     pub dock_state: DockState<Tab>,
     pub data_view_state: DataViewState,
@@ -122,6 +133,8 @@ pub struct StatCraftApp {
     pub sort_cases_dialog_state: SortCasesDialogState,
     pub sort_variables_dialog_state: SortVariablesDialogState,
     pub transpose_dialog_state: TransposeDialogState,
+    pub merge_cases_dialog_state: AddCasesDialogState,
+    pub merge_vars_dialog_state: AddVarsDialogState,
     pub select_cases_dialog_state: SelectCasesDialogState,
     pub split_file_dialog_state: SplitFileDialogState,
     pub weight_cases_dialog_state: WeightCasesDialogState,
@@ -174,8 +187,15 @@ impl StatCraftApp {
         let surface = dock_state.main_surface_mut();
         surface.split_right(NodeIndex::root(), 0.35, vec![Tab::OutputViewer]);
 
+        let workspace = WorkspaceManager::new_blank();
+        let dataset = workspace.active_dataset().cloned();
+
         Self {
-            dataset: DataSet::blank(40, 0).ok(),
+            workspace,
+            dataset,
+            document_tab_scroll_offset: 0.0,
+            pending_document_tab_action: DocumentTabAction::None,
+            memory_guard_dialog_state: MemoryGuardDialogState::default(),
             command_bus: CommandBus::with_defaults(),
             dock_state,
             data_view_state: DataViewState::default(),
@@ -212,6 +232,8 @@ impl StatCraftApp {
             sort_cases_dialog_state: SortCasesDialogState::default(),
             sort_variables_dialog_state: SortVariablesDialogState::default(),
             transpose_dialog_state: TransposeDialogState::default(),
+            merge_cases_dialog_state: AddCasesDialogState::default(),
+            merge_vars_dialog_state: AddVarsDialogState::default(),
             select_cases_dialog_state: SelectCasesDialogState::default(),
             split_file_dialog_state: SplitFileDialogState::default(),
             weight_cases_dialog_state: WeightCasesDialogState::default(),
@@ -323,68 +345,6 @@ impl StatCraftApp {
     }
 }
 
-struct StatCraftTabViewer<'a> {
-    dataset: &'a mut Option<DataSet>,
-    data_view_state: &'a mut DataViewState,
-    variable_view_state: &'a mut VariableViewState,
-    output_view_state: &'a mut OutputViewerState,
-    syntax_editor_state: &'a mut SyntaxEditorState,
-    pending_data_action: &'a mut DataViewAction,
-    pending_variable_action: &'a mut VariableViewAction,
-    pending_syntax_action: &'a mut SyntaxEditorAction,
-}
-
-impl<'a> TabViewer for StatCraftTabViewer<'a> {
-    type Tab = Tab;
-
-    fn title(&mut self, tab: &mut Self::Tab) -> egui::WidgetText {
-        match tab {
-            Tab::DataView => t!("menu-view-data").into(),
-            Tab::VariableView => t!("menu-view-variables").into(),
-            Tab::OutputViewer => t!("menu-view-output").into(),
-            Tab::SyntaxEditor => t!("menu-file-new-syntax").into(),
-        }
-    }
-
-    fn ui(&mut self, ui: &mut Ui, tab: &mut Self::Tab) {
-        match tab {
-            Tab::DataView => {
-                let action = render_data_view(ui, self.dataset, self.data_view_state);
-                if action != DataViewAction::None {
-                    *self.pending_data_action = action;
-                }
-            }
-            Tab::VariableView => {
-                let action = render_variable_view(ui, self.dataset, self.variable_view_state);
-                if action != VariableViewAction::None {
-                    *self.pending_variable_action = action;
-                }
-            }
-            Tab::OutputViewer => {
-                render_output_view(ui, self.output_view_state);
-            }
-            Tab::SyntaxEditor => {
-                let action = render_syntax_editor(ui, self.syntax_editor_state);
-                if action != SyntaxEditorAction::None {
-                    *self.pending_syntax_action = action;
-                }
-            }
-        }
-    }
-
-    fn scroll_bars(&self, tab: &Self::Tab) -> [bool; 2] {
-        match tab {
-            Tab::DataView | Tab::VariableView | Tab::OutputViewer | Tab::SyntaxEditor => {
-                [false, false]
-            }
-        }
-    }
-
-    fn closeable(&mut self, tab: &mut Self::Tab) -> bool {
-        is_tab_closeable(*tab)
-    }
-}
-
 impl eframe::App for StatCraftApp {
     fn update(&mut self, ctx: &egui::Context, _frame: &mut eframe::Frame) {
         let is_dark = match self.theme_mode {
@@ -405,6 +365,9 @@ impl eframe::App for StatCraftApp {
             });
         }
 
+        let active_name = self.active_dataset_display_name();
+        self.output_view_state.set_active_dataset(active_name);
+
         self.bridge_service.process_requests(
             &mut self.dataset,
             &mut self.command_bus,
@@ -419,148 +382,7 @@ impl eframe::App for StatCraftApp {
         let is_maximized = ctx.input(|i| i.viewport().maximized.unwrap_or(false));
         render_resize_zones(ctx, is_maximized);
 
-        if ctx.input(|i| i.viewport().close_requested()) && self.has_unsaved_changes() {
-            ctx.send_viewport_cmd(egui::ViewportCommand::CancelClose);
-            self.request_session_action(PendingSessionAction::CloseProject);
-        }
-
-        if ctx.input_mut(|i| {
-            i.consume_shortcut(&egui::KeyboardShortcut::new(
-                egui::Modifiers::COMMAND | egui::Modifiers::SHIFT,
-                egui::Key::N,
-            ))
-        }) {
-            self.request_session_action(PendingSessionAction::NewProject);
-        }
-        if ctx.input_mut(|i| {
-            i.consume_shortcut(&egui::KeyboardShortcut::new(
-                egui::Modifiers::COMMAND,
-                egui::Key::N,
-            ))
-        }) {
-            self.request_session_action(PendingSessionAction::NewDataset);
-        }
-        if ctx.input_mut(|i| {
-            i.consume_shortcut(&egui::KeyboardShortcut::new(
-                egui::Modifiers::COMMAND,
-                egui::Key::O,
-            ))
-        }) {
-            self.open_data_dialog();
-        }
-        if ctx.input_mut(|i| {
-            i.consume_shortcut(&egui::KeyboardShortcut::new(
-                egui::Modifiers::COMMAND,
-                egui::Key::S,
-            ))
-        }) {
-            self.save_project();
-        }
-        if ctx.input_mut(|i| {
-            i.consume_shortcut(&egui::KeyboardShortcut::new(
-                egui::Modifiers::COMMAND | egui::Modifiers::SHIFT,
-                egui::Key::S,
-            ))
-        }) {
-            self.save_project_as();
-        }
-        if ctx.input_mut(|i| {
-            i.consume_shortcut(&egui::KeyboardShortcut::new(
-                egui::Modifiers::COMMAND | egui::Modifiers::SHIFT,
-                egui::Key::O,
-            ))
-        }) {
-            self.open_project_dialog();
-        }
-        if ctx.input_mut(|i| {
-            i.consume_shortcut(&egui::KeyboardShortcut::new(
-                egui::Modifiers::COMMAND,
-                egui::Key::F,
-            ))
-        }) {
-            self.open_find_dialog();
-        }
-        if ctx.input_mut(|i| {
-            i.consume_shortcut(&egui::KeyboardShortcut::new(
-                egui::Modifiers::COMMAND,
-                egui::Key::H,
-            ))
-        }) {
-            self.open_replace_dialog();
-        }
-        if ctx.input_mut(|i| {
-            i.consume_shortcut(&egui::KeyboardShortcut::new(
-                egui::Modifiers::COMMAND,
-                egui::Key::G,
-            ))
-        }) {
-            self.open_goto_case_dialog();
-        }
-        if ctx.input_mut(|i| {
-            i.consume_shortcut(&egui::KeyboardShortcut::new(
-                egui::Modifiers::COMMAND | egui::Modifiers::SHIFT,
-                egui::Key::C,
-            ))
-        }) {
-            self.copy_with_variable_names(ctx);
-        }
-        if ctx.input_mut(|i| {
-            i.consume_shortcut(&egui::KeyboardShortcut::new(
-                egui::Modifiers::COMMAND,
-                egui::Key::C,
-            ))
-        }) {
-            self.copy_selected_cell(ctx);
-        }
-        if ctx.input_mut(|i| {
-            i.consume_shortcut(&egui::KeyboardShortcut::new(
-                egui::Modifiers::COMMAND,
-                egui::Key::X,
-            ))
-        }) {
-            self.cut_selected_cell(ctx);
-        }
-        if ctx.input_mut(|i| {
-            i.consume_shortcut(&egui::KeyboardShortcut::new(
-                egui::Modifiers::COMMAND,
-                egui::Key::V,
-            ))
-        }) {
-            self.paste_selected_cell(ctx);
-        }
-
-        if ctx.input_mut(|i| {
-            i.consume_shortcut(&egui::KeyboardShortcut::new(
-                egui::Modifiers::ALT,
-                egui::Key::Num1,
-            ))
-        }) {
-            self.ensure_tab_open(Tab::DataView);
-        }
-        if ctx.input_mut(|i| {
-            i.consume_shortcut(&egui::KeyboardShortcut::new(
-                egui::Modifiers::ALT,
-                egui::Key::Num2,
-            ))
-        }) {
-            self.ensure_tab_open(Tab::VariableView);
-        }
-        if ctx.input_mut(|i| {
-            i.consume_shortcut(&egui::KeyboardShortcut::new(
-                egui::Modifiers::ALT,
-                egui::Key::Num3,
-            ))
-        }) {
-            self.ensure_tab_open(Tab::OutputViewer);
-        }
-        if ctx.input_mut(|i| {
-            i.consume_shortcut(&egui::KeyboardShortcut::new(
-                egui::Modifiers::ALT,
-                egui::Key::Num4,
-            ))
-        }) {
-            self.ensure_tab_open(Tab::SyntaxEditor);
-        }
+        self.handle_keyboard_shortcuts(ctx);
 
         // 1. Top Custom Title Bar (CSD)
         TopBottomPanel::top("title_bar")
@@ -777,9 +599,25 @@ impl eframe::App for StatCraftApp {
                 );
             }
             ToolbarAction::InsertVariable => {
-                let _ =
-                    self.command_bus
-                        .execute("var.add", &mut self.dataset, serde_json::json!({}));
+                let col_count = self.dataset.as_ref().map(|d| d.col_count()).unwrap_or(0);
+                let mut var_num = col_count + 1;
+                let mut var_name = format!("VAR{:05}", var_num);
+                if let Some(ds) = &self.dataset {
+                    while ds
+                        .dictionary
+                        .variables
+                        .iter()
+                        .any(|v| v.name.eq_ignore_ascii_case(&var_name))
+                    {
+                        var_num += 1;
+                        var_name = format!("VAR{:05}", var_num);
+                    }
+                }
+                let _ = self.command_bus.execute(
+                    "var.add",
+                    &mut self.dataset,
+                    serde_json::json!({ "name": var_name }),
+                );
             }
             ToolbarAction::ToggleValueLabels => {
                 self.data_view_state.show_value_labels = !self.data_view_state.show_value_labels;
@@ -796,6 +634,9 @@ impl eframe::App for StatCraftApp {
         // 3. Central Dock Area
         CentralPanel::default().show(ctx, |ui| {
             let mut tab_viewer = StatCraftTabViewer {
+                workspace: &self.workspace,
+                document_tab_scroll_offset: &mut self.document_tab_scroll_offset,
+                pending_document_tab_action: &mut self.pending_document_tab_action,
                 dataset: &mut self.dataset,
                 data_view_state: &mut self.data_view_state,
                 variable_view_state: &mut self.variable_view_state,
@@ -812,6 +653,22 @@ impl eframe::App for StatCraftApp {
                 .style(style)
                 .show_inside(ui, &mut tab_viewer);
         });
+
+        match self.pending_document_tab_action {
+            DocumentTabAction::Select(id) => {
+                self.switch_to_dataset(id);
+                self.pending_document_tab_action = DocumentTabAction::None;
+            }
+            DocumentTabAction::Close(id) => {
+                self.request_close_dataset(id);
+                self.pending_document_tab_action = DocumentTabAction::None;
+            }
+            DocumentTabAction::NewBlank => {
+                self.add_new_blank_dataset();
+                self.pending_document_tab_action = DocumentTabAction::None;
+            }
+            DocumentTabAction::None => {}
+        }
 
         // 4. Handle Variable View actions (opening modal dialogs)
         match self.pending_variable_action {
@@ -856,40 +713,85 @@ impl eframe::App for StatCraftApp {
             VariableViewAction::None => {}
         }
 
-        // 4c. Handle Data View actions (sorting)
-        if let DataViewAction::SortCases {
-            column_name,
-            ascending,
-        } = std::mem::replace(&mut self.pending_data_action, DataViewAction::None)
-        {
-            let dir_str = if ascending { "Ascending" } else { "Descending" };
-            let params = serde_json::json!({
-                "keys": [{
-                    "column_name": column_name,
-                    "direction": dir_str,
-                }]
-            });
-            match self
-                .command_bus
-                .execute("data.sort_cases", &mut self.dataset, params)
-            {
-                Ok(_) => {
-                    let keys = vec![statcraft_algo::SortKeySpec::new(
-                        column_name,
-                        if ascending {
-                            statcraft_algo::SortDirection::Ascending
-                        } else {
-                            statcraft_algo::SortDirection::Descending
-                        },
-                    )];
-                    let sps = statcraft_syntax::commands::SortCasesCommand::to_sps(&keys);
-                    self.output_view_state.add_entry(t!("output-log"), sps);
-                    self.status_message = StatusMessage::SortCasesExecuted { count: 1 };
-                }
-                Err(e) => {
-                    self.status_message = StatusMessage::Error(e.to_string());
+        // 4c. Handle Data View actions (sorting, deleting cases, inserting cases/vars)
+        match std::mem::replace(&mut self.pending_data_action, DataViewAction::None) {
+            DataViewAction::SortCases {
+                column_name,
+                ascending,
+            } => {
+                let dir_str = if ascending { "Ascending" } else { "Descending" };
+                let params = serde_json::json!({
+                    "keys": [{
+                        "column_name": column_name,
+                        "direction": dir_str,
+                    }]
+                });
+                match self
+                    .command_bus
+                    .execute("data.sort_cases", &mut self.dataset, params)
+                {
+                    Ok(_) => {
+                        let keys = vec![statcraft_algo::SortKeySpec::new(
+                            column_name,
+                            if ascending {
+                                statcraft_algo::SortDirection::Ascending
+                            } else {
+                                statcraft_algo::SortDirection::Descending
+                            },
+                        )];
+                        let sps = statcraft_syntax::commands::SortCasesCommand::to_sps(&keys);
+                        self.output_view_state.add_entry(t!("output-log"), sps);
+                        self.status_message = StatusMessage::SortCasesExecuted { count: 1 };
+                    }
+                    Err(e) => {
+                        self.status_message = StatusMessage::Error(e.to_string());
+                    }
                 }
             }
+            DataViewAction::DeleteCases { mut rows } => {
+                rows.sort_unstable();
+                rows.dedup();
+                for row_idx in rows.into_iter().rev() {
+                    let params = serde_json::json!({
+                        "row_index": row_idx,
+                    });
+                    let _ = self
+                        .command_bus
+                        .execute("data.delete_row", &mut self.dataset, params);
+                }
+            }
+            DataViewAction::InsertCaseAbove { row } => {
+                let params = serde_json::json!({
+                    "row_index": row,
+                });
+                let _ = self
+                    .command_bus
+                    .execute("data.add_row", &mut self.dataset, params);
+            }
+            DataViewAction::InsertVariable { col } => {
+                let col_count = self.dataset.as_ref().map(|d| d.col_count()).unwrap_or(0);
+                let mut var_num = col_count + 1;
+                let mut var_name = format!("VAR{:05}", var_num);
+                if let Some(ds) = &self.dataset {
+                    while ds
+                        .dictionary
+                        .variables
+                        .iter()
+                        .any(|v| v.name.eq_ignore_ascii_case(&var_name))
+                    {
+                        var_num += 1;
+                        var_name = format!("VAR{:05}", var_num);
+                    }
+                }
+                let params = serde_json::json!({
+                    "col_index": col,
+                    "name": var_name,
+                });
+                let _ = self
+                    .command_bus
+                    .execute("var.add", &mut self.dataset, params);
+            }
+            DataViewAction::None => {}
         }
 
         // 4b. Handle Syntax Editor actions (running batch or selection)

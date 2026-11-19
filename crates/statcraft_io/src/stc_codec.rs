@@ -11,6 +11,21 @@ pub const STC_FORMAT_VERSION: u32 = 1;
 const GZIP_MAGIC: [u8; 2] = [0x1f, 0x8b];
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+pub struct StcDatasetRecord {
+    pub dataset_name: String,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub original_path: Option<String>,
+    pub metadata_json: String,
+    pub table: RawTable,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub active_filter_var: Option<String>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub weight_var: Option<String>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub split_file_json: Option<String>,
+}
+
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct StcContainer {
     pub format_version: u32,
     pub dataset_name: String,
@@ -19,6 +34,10 @@ pub struct StcContainer {
     pub active_filter_var: Option<String>,
     pub weight_var: Option<String>,
     pub split_file_json: Option<String>,
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub workspace_datasets: Vec<StcDatasetRecord>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub active_dataset_index: Option<usize>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub output_viewer_json: Option<String>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
@@ -42,6 +61,8 @@ impl StcContainer {
             active_filter_var,
             weight_var,
             split_file_json,
+            workspace_datasets: Vec::new(),
+            active_dataset_index: None,
             output_viewer_json: None,
             syntax_text: None,
         }
@@ -66,8 +87,74 @@ impl StcContainer {
             active_filter_var,
             weight_var,
             split_file_json,
+            workspace_datasets: Vec::new(),
+            active_dataset_index: None,
             output_viewer_json,
             syntax_text,
+        }
+    }
+
+    pub fn with_workspace(
+        workspace_datasets: Vec<StcDatasetRecord>,
+        active_dataset_index: Option<usize>,
+        output_viewer_json: Option<String>,
+        syntax_text: Option<String>,
+    ) -> Self {
+        let (dataset_name, metadata_json, table, active_filter_var, weight_var, split_file_json) =
+            if let Some(first) = active_dataset_index
+                .and_then(|idx| workspace_datasets.get(idx))
+                .or_else(|| workspace_datasets.first())
+            {
+                (
+                    first.dataset_name.clone(),
+                    first.metadata_json.clone(),
+                    first.table.clone(),
+                    first.active_filter_var.clone(),
+                    first.weight_var.clone(),
+                    first.split_file_json.clone(),
+                )
+            } else {
+                (
+                    "DataSet1".to_string(),
+                    r#"{"variables":[]}"#.to_string(),
+                    RawTable {
+                        columns: vec![],
+                        row_count: 0,
+                    },
+                    None,
+                    None,
+                    None,
+                )
+            };
+
+        Self {
+            format_version: STC_FORMAT_VERSION,
+            dataset_name,
+            metadata_json,
+            table,
+            active_filter_var,
+            weight_var,
+            split_file_json,
+            workspace_datasets,
+            active_dataset_index,
+            output_viewer_json,
+            syntax_text,
+        }
+    }
+
+    pub fn extract_datasets(&self) -> Vec<StcDatasetRecord> {
+        if !self.workspace_datasets.is_empty() {
+            self.workspace_datasets.clone()
+        } else {
+            vec![StcDatasetRecord {
+                dataset_name: self.dataset_name.clone(),
+                original_path: None,
+                metadata_json: self.metadata_json.clone(),
+                table: self.table.clone(),
+                active_filter_var: self.active_filter_var.clone(),
+                weight_var: self.weight_var.clone(),
+                split_file_json: self.split_file_json.clone(),
+            }]
         }
     }
 }
@@ -190,5 +277,63 @@ mod tests {
             loaded.syntax_text.as_deref(),
             Some("DESCRIPTIVES VARIABLES=id.")
         );
+    }
+
+    #[test]
+    fn test_stc_container_with_workspace_roundtrip() {
+        let table1 = RawTable {
+            columns: vec![RawColumn {
+                name: "col1".to_string(),
+                data_type: RawDataType::Numeric,
+                values: vec![RawValue::Number(10.0)],
+            }],
+            row_count: 1,
+        };
+        let table2 = RawTable {
+            columns: vec![RawColumn {
+                name: "col2".to_string(),
+                data_type: RawDataType::Text,
+                values: vec![RawValue::Text("hello".to_string())],
+            }],
+            row_count: 1,
+        };
+
+        let ds1 = StcDatasetRecord {
+            dataset_name: "DataSet1".to_string(),
+            original_path: Some("file1.sav".to_string()),
+            metadata_json: r#"{"variables":[]}"#.to_string(),
+            table: table1,
+            active_filter_var: None,
+            weight_var: None,
+            split_file_json: None,
+        };
+        let ds2 = StcDatasetRecord {
+            dataset_name: "DataSet2".to_string(),
+            original_path: Some("file2.csv".to_string()),
+            metadata_json: r#"{"variables":[]}"#.to_string(),
+            table: table2,
+            active_filter_var: None,
+            weight_var: None,
+            split_file_json: None,
+        };
+
+        let container = StcContainer::with_workspace(
+            vec![ds1.clone(), ds2.clone()],
+            Some(1),
+            Some(r#"{"history":[]}"#.to_string()),
+            Some("FREQUENCIES col2.".to_string()),
+        );
+
+        let mut buf = Vec::new();
+        save_stc_container(&mut buf, &container).unwrap();
+
+        let loaded = load_stc_container(buf.as_slice()).unwrap();
+        assert_eq!(loaded.workspace_datasets.len(), 2);
+        assert_eq!(loaded.active_dataset_index, Some(1));
+        assert_eq!(loaded.dataset_name, "DataSet2");
+        let extracted = loaded.extract_datasets();
+        assert_eq!(extracted.len(), 2);
+        assert_eq!(extracted[0].dataset_name, "DataSet1");
+        assert_eq!(extracted[1].dataset_name, "DataSet2");
     }
 }

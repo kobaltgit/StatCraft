@@ -88,6 +88,50 @@ pub fn palette() -> &'static ThemePalette {
     }
 }
 
+/// Calculates a deterministic, aesthetically pleasing color for any dataset name
+/// using the Golden Ratio HSL distribution. Guaranteed to provide high contrast
+/// and stability across application restarts and dark/light modes.
+pub fn dataset_color(name: &str) -> Color32 {
+    let mut hash: u32 = 2166136261;
+    for b in name.as_bytes() {
+        hash = (hash ^ (*b as u32)).wrapping_mul(16777619);
+    }
+    let hue = (((hash as f64) * 137.507_764_050_037_85) % 360.0) as f32;
+    let is_dark = is_dark_mode();
+    let saturation = 0.65_f32;
+    let lightness = if is_dark { 0.60_f32 } else { 0.45_f32 };
+    hsl_to_color32(hue, saturation, lightness)
+}
+
+#[inline]
+pub fn color_with_alpha(color: Color32, alpha: u8) -> Color32 {
+    Color32::from_rgba_unmultiplied(color.r(), color.g(), color.b(), alpha)
+}
+
+fn hsl_to_color32(h: f32, s: f32, l: f32) -> Color32 {
+    let c = (1.0 - (2.0 * l - 1.0).abs()) * s;
+    let h_prime = (h.rem_euclid(360.0)) / 60.0;
+    let x = c * (1.0 - ((h_prime % 2.0) - 1.0).abs());
+    let (r1, g1, b1) = if (0.0..1.0).contains(&h_prime) {
+        (c, x, 0.0)
+    } else if (1.0..2.0).contains(&h_prime) {
+        (x, c, 0.0)
+    } else if (2.0..3.0).contains(&h_prime) {
+        (0.0, c, x)
+    } else if (3.0..4.0).contains(&h_prime) {
+        (0.0, x, c)
+    } else if (4.0..5.0).contains(&h_prime) {
+        (x, 0.0, c)
+    } else {
+        (c, 0.0, x)
+    };
+    let m = l - c / 2.0;
+    let r = ((r1 + m) * 255.0).clamp(0.0, 255.0) as u8;
+    let g = ((g1 + m) * 255.0).clamp(0.0, 255.0) as u8;
+    let b = ((b1 + m) * 255.0).clamp(0.0, 255.0) as u8;
+    Color32::from_rgb(r, g, b)
+}
+
 pub struct Tokens;
 
 impl Tokens {
@@ -250,5 +294,37 @@ mod tests {
             ratio_dark_muted >= 4.5,
             "Dark muted text contrast must exceed AA (4.5): got {ratio_dark_muted}"
         );
+    }
+
+    #[test]
+    fn test_dataset_color_deterministic() {
+        let name = "sample_survey.csv";
+        let color1 = dataset_color(name);
+        for _ in 0..50 {
+            let color2 = dataset_color(name);
+            assert_eq!(color1, color2, "dataset_color must be 100% deterministic");
+        }
+    }
+
+    #[test]
+    fn test_dataset_color_differentiation() {
+        let c1 = dataset_color("DataSet1");
+        let c2 = dataset_color("DataSet2");
+        let c3 = dataset_color("sample_survey.csv");
+        assert_ne!(c1, c2, "Different datasets should have different colors");
+        assert_ne!(c1, c3, "Different datasets should have different colors");
+        assert_ne!(c2, c3, "Different datasets should have different colors");
+    }
+
+    #[test]
+    fn test_color_with_alpha() {
+        let base = Color32::from_rgb(100, 150, 200);
+        let tinted = color_with_alpha(base, 42);
+        assert_eq!(tinted.a(), 42);
+        let [r, g, b, a] = tinted.to_srgba_unmultiplied();
+        assert!((r as i32 - 100).abs() <= 2);
+        assert!((g as i32 - 150).abs() <= 2);
+        assert!((b as i32 - 200).abs() <= 2);
+        assert_eq!(a, 42);
     }
 }

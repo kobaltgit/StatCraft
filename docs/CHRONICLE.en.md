@@ -3579,6 +3579,129 @@ Turnkey implementation of the "Data" menu procedures in strict accordance with t
    * Updated feature parity checklist `docs/parity-checklist.md` (60 documented commands);
    * 100% pass across all `cargo run -p xtask -j 1 -- ci` stages (`file-guard` across 445 files, `design-guard`, `layers`, `fmt`, `clippy -D warnings`, `test-corpus`, `test-undo`).
 
+---
+
+### Phase 85: Multi-File Workspace, Dataset Tabs & Memory Guard (Feature 010)
+*Time: November 18, 2026, 18:25 (~60 minutes)*
+
+Turnkey implementation of the multi-file workspace architecture, dataset document tabs, and cross-platform Memory Guard in strict adherence to the IBM SPSS Statistics 24 canon and ArtCraft ecosystem principles:
+1. **Storage Layer L0 (`statcraft_io::stc_codec`):**
+   * Extended the `.stc` container with `StcDatasetRecord` and `StcContainer::with_workspace`, maintaining 100% backward compatibility with previously saved single-dataset project files;
+   * Support for packing and extracting an arbitrary number of active dataset sessions, metadata dictionaries, active filters, and split-file states within a unified `.stc` archive.
+2. **Core & Compression Layer L1 (`statcraft_core`):**
+   * Module `workspace.rs`: fully-featured `WorkspaceManager` and `DocumentSession` with isolated Undo/Redo delta history, metadata, and view states per dataset;
+   * Module `compression.rs`: lossless in-memory compression — 1-bit `NullBitmask` for missing values, string dictionary encoding `DictionaryEncodedColumn`, and numeric compression `LosslessCompressedColumn` strictly preserving IEEE 754 `f64` precision (no lossy downcasting to `f32`);
+   * Added `undo` and `redo` helpers to the transactional `DeltaBuffer`.
+3. **Command Bus & Syntax Layer L5 (`statcraft_syntax`):**
+   * Implemented typed dataset management commands in `commands/dataset.rs`: `DATASET NAME`, `DATASET ACTIVATE`, `DATASET CLOSE`, `DATASET DISPLAY`;
+   * Integrated `.sps` syntax parsing into `CommandBus` with support for `WINDOW=ASIS` modifiers.
+4. **Cross-Platform Memory Guard L6 (`statcraft_app::system_memory`):**
+   * Native physical memory polling with zero external dependencies: Windows API (`GlobalMemoryStatusEx`), Linux (`/proc/meminfo`), macOS (`sysctl`), WebAssembly (`core::arch::wasm32`);
+   * Preflight checks before loading large files: triggers a non-blocking modal alert if opening large batches (>10 files) or files >250 MB under constrained system RAM (<500 MB or <15% available).
+5. **Vector Document Tab Strip L6 (`views::document_tabs`):**
+   * Horizontal `DocumentTabStrip` component (height 28 px) located directly above the active data grid;
+   * Strict Vector-First UI: vector table icon, dirty marker `*`, tab close button `✕`, horizontal chevron navigation `[ ‹ ] [ › ]`, and new blank dataset button `[ ➕ ]`;
+   * Mouse wheel horizontal scrolling and keyboard shortcuts: `Ctrl+Tab` / `Ctrl+Shift+Tab` (tab switching), `Ctrl+W` (close active dataset), `Ctrl+N` (new dataset), `Ctrl+Shift+N` (new project);
+   * Safe closure confirmation dialog for dirty tabs, distinct active dataset saving (`Ctrl+S`), and complete project container saving (`Ctrl+Shift+S`).
+6. **Architectural Decomposition of `app.rs`:**
+   * Prevented monolithic bloat by cleanly extracting `app_workspace.rs` (dataset sessions), `app_shortcuts.rs` (keyboard input handling), and `app_tab_viewer.rs` (egui-dock `TabViewer` implementation), dropping `app.rs` from 1100+ lines down to ~800 lines.
+7. **Quality Gate & Localization (DoD):**
+   * 100% bilingual Fluent localization (`locales/en.ftl`, `locales/ru.ftl`), clean `i18n_lint_test` without duplicate keys;
+   * 100% pass across all stages of `cargo run -p xtask -j 1 -- ci` (formatting, clippy with 0 warnings, layer validation, file-guard across 454 files, design-guard, full workspace test suite, corpus, and 41-command Undo/Redo matrix).
+
+---
+
+### Phase 86: Dataset Color Identity & Cross-Pane Visual Linking (Feature 011)
+*Time: November 18, 2026, 23:40 (~35 minutes)*
+
+Turnkey implementation of end-to-end dynamic dataset color identity and cross-pane visual linking (Brushing & Linking) between document tabs, the outline tree, and report notes in strict accordance with the Feature 011 plan and ArtCraft ecosystem canon:
+1. **Theme Color Engine (`statcraft_app::theme`):**
+   * Implemented a deterministic harmonic color generator `dataset_color(name)` based on the Golden Ratio HSL distribution (FNV-1a hash + golden angle $137.50776^\circ$).
+   * High contrast, guaranteed perceptual differentiation between concurrent datasets, theme-adaptive lightness (0.60 for dark, 0.45 for light), and 100% color stability across restarts.
+   * Helper `color_with_alpha` for translucent tints and borders.
+   * Unit tests for determinism, differentiation, and alpha blending in `theme::tests`.
+2. **Vector Document Tabs (`views::document_tabs`):**
+   * Table grid vector icon `[田]` styled in the dataset's identity color (full vibrancy on active tab, dimmed on inactive tabs).
+   * Active underline indicator and subtle translucent background highlight (`alpha = 25`) matching the dataset's identity color.
+3. **Output Viewer Model (`views::output_view::model`):**
+   * Field `#[serde(default)] pub dataset_name: Option<String>` added to `OutputProcedure` with automatic association in all analytical procedures (`builder.rs` and `tables_*.rs`).
+   * 100% backward compatibility verified via automated tests for legacy project JSON deserialization.
+   * Active dataset tracking in `OutputViewerState` synchronized on each workspace tab change.
+4. **Brushing & Linking in Outline Tree (`views::output_view::outline`):**
+   * Vector dataset badge chips rendered alongside procedure titles in the Outline navigation tree.
+   * Dynamic Brushing & Linking: badge chips matching the currently focused dataset tab are highlighted with full vibrancy, while historical calculations from background tabs are subtly muted.
+5. **Report Notes Block (`views::output_view::blocks`):**
+   * The `Active Dataset` row in procedure Notes displays the dataset name inside a styled vector badge chip with matching outline and background tint.
+6. **Quality Gate & Definition of Done (DoD):**
+   * 100% pass across all `cargo run -p xtask -j 1 -- ci` Quality Gate checks (fmt, clippy with 0 warnings, layers, file-guard on 454 files, design-guard, `output_viewer_invariants`, and 41-command Undo/Redo matrix).
 
 
 
+
+
+
+---
+
+### Phase 87: Data Merge Files (Add Cases & Add Variables, Feature 012)
+*Time: November 19, 2026, 03:35 (~55 minutes)*
+
+Turnkey implementation of dataset merging capabilities (menu "Data > Merge Files", items "Add Cases..." and "Add Variables..."), reviving the previous InDev placeholders into full-fledged interactive procedures in strict compliance with the IBM SPSS Statistics 24 canon (`ADD FILES` and `MATCH FILES`) and ArtCraft ecosystem principles:
+1. **Core Layer L1 (`statcraft_core::dataset::merge`):**
+   * Modularized into `crates/statcraft_core/src/dataset/merge/` strictly honoring the <= 500 lines per leaf module limit (`types.rs`, `cases.rs`, `vars.rs`, `source.rs`, `mod.rs`).
+   * Procedure `add_cases`: vertical row concatenation from two datasets with auto-pairing of compatible columns, `RawValue::Null` padding, automatic string width expansion, `/IN=source01` origin indicator, and optional interleaved case sorting via `/BY`.
+   * Procedure `add_variables`: horizontal feature joins (1:1 with key matching, 1:N lookup table `/TABLE`, sequential row-order join), automatic name collision resolution, and `/IN` indicator variables.
+   * Universal loader `source.rs`: loading secondary datasets seamlessly from `.sav`, `.zsav`, `.stc`, `.csv`, `.xlsx` files or directly from open sessions in `WorkspaceManager`.
+2. **Command Bus & Syntax Layer L5 (`statcraft_syntax`):**
+   * Implemented typed engine commands `data.merge_cases` (`MergeCasesCommand`) and `data.merge_vars` (`MergeVarsCommand`) with full Undo/Redo reversibility registered in `CommandBus`.
+   * Methods `to_sps`: generating canonical SPSS syntax for `ADD FILES` and `MATCH FILES`.
+   * Syntax parser integration in `syntax_parser::mappers::data` recognizing `ADD FILES` and `MATCH FILES` clauses.
+3. **Desktop GUI L6 (`statcraft_app`):**
+   * Created `dialogs/merge_dialog/` built on `DialogKit` (`DialogShell::standard`, `VariablePicker`, `TransferButton`, `DialogActionBar`, `GroupBox`), strictly Vector-First with 0 emojis and 0 tofu.
+   * Reusable `source_panel`: selection between concurrent open workspace tabs and external disk files via `rfd::FileDialog`.
+   * Action dispatch encapsulated in `app_dialogs_merge.rs` keeping `app_dialogs_data.rs` under strict line limits.
+   * Menu "Data > Merge Files": removed `InDev` status, activated real dialog opening handlers for `AddCasesDialog` and `AddVarsDialog`.
+4. **Localization & Quality Gate:**
+   * 100% bilingual Fluent localization (`locales/en.ftl`, `locales/ru.ftl`) with zero hardcoded string literals in UI.
+   * Successful verification across `file-guard` (468 files within limits), `design-guard`, `layers`, and `merge_dialog_invariants`.
+
+---
+
+### Phase 88: Grid Interaction Modernization & Invariants (Grid UX Invariants, Spec-Kit 013)
+*Time: November 19, 2026, 05:25 (~35 minutes)*
+
+Resolved 5 critical user interaction defects in the virtualized spreadsheet grid (`Data View`), adapting clean-room reference patterns from **GridCraft** (`storytold/gridcraft`) in strict adherence to the ArtCraft canon (100% safe Rust, zero dataset pollution, physical case deletion managed via L5 `CommandBus`):
+1. **Preserving Rectangular Selection on Right-Click:**
+   * `GridSelection::contains(row, col)` verifies if a cell is within the active range; right-clicking inside an existing marquee selection preserves the block instead of collapsing to a single cell.
+   * Dynamic context menu items adapt to selection bounds: multi-cell ranges surface "Copy Range ({count} cells)", paste, and clear contents.
+2. **Zero Pollution Invariant for Phantom Rows:**
+   * In `EditorAction::Commit`, if the editor loses focus with empty or whitespace input on a phantom row (`trimmed.is_empty() && row >= ds.row_count()`), row allocation is completely bypassed, preventing accidental insertion of rows with system missing values (`RawValue::Null` / `.`).
+   * The trailing new-case row header renders the canonical asterisk `*` (SPSS/GridCraft standard).
+3. **Physical Case Deletion via Delete Key & Menu Actions:**
+   * Differentiated `Delete` key semantics: cell selections clear values to `Null` preserving dataset dimensions, whereas full-row selections (`is_full_rows`) physically remove observations from the dataset via the L5 `data.delete_row` engine command with reduced sample size $N$ and complete Undo/Redo reversibility.
+4. **Row and Column Header Context Menus (`ContextMenuTarget`):**
+   * `GridEvent::ContextMenuRow` and `ContextMenuCol` now pass screen position `pos`.
+   * Extended `GridContextMenuState`: row headers provide "Insert Case Above" (`data.add_row`), "Delete Selected Cases ({count})" (`data.delete_row`), and "Clear Cases Values"; column headers provide ascending/descending sorts, "Insert Variable" (`var.add`), and "Auto-fit Column Width".
+5. **Click-Outside Dismissal (Eliminating Modal Traps):**
+   * Both the context menu and the column auto-filter popup (`render_filter_popup`) measure `popup_rect` and utilize a `just_opened` frame guard, dismissing immediately when clicking anywhere outside their boundaries without requiring `Escape`.
+6. **Testing & Quality Gate:**
+   * Added comprehensive integration suite `crates/statcraft_app/tests/grid_selection_and_phantom_row_invariants.rs` (5 tests covering right-click selection preservation, zero pollution phantom row commits, CommandBus deletion with undo, context menu targets, and full-row keyboard deletion);
+   * 100% pass across all Quality Gate checks: `file-guard` (469 files), `design-guard`, `layers`, `cargo clippy --workspace -j 1 -- -D warnings`, and `cargo fmt --check`.
+
+---
+
+### Phase 89: Eliminating False Fill Handle & Stabilizing Grid Range Selection (Spec-Kit 014)
+*Time: November 19, 2026, 06:45 (~25 minutes)*
+
+Resolved a critical regression where dragging the mouse from cell (0, 0) down the data table triggered unintended series auto-fill and corrupted data (defect `BUG-014`), aligning grid interaction with the reference IBM SPSS Statistics canon (cell range selection is strictly Read-Only):
+1. **Root Cause Analysis:**
+   * In `interact.rs`, `selection.hit_test_fill_handle(geo, pos, 4.0)` intercepted mouse clicks in a 14x14 px zone around the bottom-right corner of cell (0, 0), erroneously activating series extension `GridDrag::FillHandle` instead of marquee selection `GridDrag::SelectRange`.
+   * On mouse release, `apply_auto_fill` ran `while ds.row_count() <= target.max_row { ds.add_empty_row(); }`, forcibly appending phantom rows with system-missing values (`SYSMIS`) and replicating the cell (0, 0) value (e.g. `101.00`) down the column, overwriting existing records.
+2. **Eliminating the Fill Handle Marker from UI (SPSS Canon):**
+   * In `interact.rs`, completely removed the `hit_test_fill_handle` interceptor: clicking and dragging anywhere in `quad_center` is guaranteed to initiate pure range selection `SelectRange` or inline editing on double-click. In `handle_active_drag`, `GridDrag::FillHandle` is neutralized without producing mutation events.
+   * In `selection.rs`, removed fill handle square rendering from `paint_selection`, leaving a crisp 1.5 px vector perimeter outline.
+3. **Zero Allocation Invariant in Auto-Fill (`apply_auto_fill`):**
+   * In `clipboard.rs`, constrained `apply_auto_fill` strictly within existing dataset rows (`target.max_row.min(ds.row_count().saturating_sub(1))`). Row allocation `ds.add_empty_row()` was removed, guaranteeing that auto-fill never allocates phantom rows with missing values.
+4. **Testing & Quality Gate:**
+   * Added regression test `test_drag_selection_over_phantom_row_never_mutates_dataset` in `tests/grid_selection_and_phantom_row_invariants.rs`: verified that dragging selection from (0, 0) past existing rows into the phantom row `*` preserves row count (strictly 5) and preserves original values (101, 102, 103, 104, 105) intact.
+   * Added unit test `test_auto_fill_never_allocates_phantom_rows` in `clipboard.rs`.
+   * 100% pass across workspace tests, `file-guard` (469 files), `design-guard`, `layers`, `clippy -D warnings`, and `fmt --check`.

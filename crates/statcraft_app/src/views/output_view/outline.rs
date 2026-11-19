@@ -1,4 +1,4 @@
-﻿use super::extract_item_tsv;
+use super::extract_item_tsv;
 use super::model::{OutputItemKind, OutputViewerState, SelectedTarget};
 use crate::theme::Tokens;
 use crate::widgets::output_icons::{
@@ -150,11 +150,31 @@ pub fn render_outline_pane(ui: &mut Ui, state: &mut OutputViewerState) {
                         };
 
                         let title = proc.title();
+                        let badge_info = proc.dataset_name.as_ref().and_then(|ds_name| {
+                            let w = (ds_name.len() as f32 * 6.0 + 10.0).clamp(24.0, 75.0);
+                            let h = 14.0_f32;
+                            if text_rect.width() > w + 45.0 {
+                                let badge_r = egui::Rect::from_min_size(
+                                    pos2(text_rect.max.x - w - 4.0, text_rect.center().y - h / 2.0),
+                                    vec2(w, h),
+                                );
+                                Some((ds_name, badge_r, w))
+                            } else {
+                                None
+                            }
+                        });
+
+                        let title_available_w = if let Some((_, _, badge_w)) = &badge_info {
+                            (text_rect.width() - badge_w - 10.0).max(10.0)
+                        } else {
+                            (text_rect.width() - 4.0).max(10.0)
+                        };
+
                         let display_title = truncate_text_to_width(
                             ui,
                             &title,
                             &FontId::proportional(12.0),
-                            (text_rect.width() - 4.0).max(10.0),
+                            title_available_w,
                         );
 
                         ui.painter().with_clip_rect(text_rect).text(
@@ -164,6 +184,11 @@ pub fn render_outline_pane(ui: &mut Ui, state: &mut OutputViewerState) {
                             FontId::proportional(12.0),
                             text_color,
                         );
+
+                        if let Some((ds_name, badge_r, _)) = badge_info {
+                            let is_active_context = ds_name == &state.active_dataset_name;
+                            render_dataset_badge(ui.painter(), badge_r, ds_name, is_active_context);
+                        }
 
                         let text_resp = text_resp.on_hover_text(title);
 
@@ -379,4 +404,39 @@ fn truncate_text_to_width(ui: &Ui, text: &str, font: &FontId, max_width: f32) ->
     }
     truncated.push_str(ellipsis);
     truncated
+}
+
+fn render_dataset_badge(
+    painter: &egui::Painter,
+    rect: egui::Rect,
+    name: &str,
+    is_active_context: bool,
+) {
+    let ds_color = crate::theme::dataset_color(name);
+    let bg_alpha = if is_active_context { 45 } else { 18 };
+    let border_color = if is_active_context {
+        ds_color
+    } else {
+        crate::theme::color_with_alpha(ds_color, 110)
+    };
+    painter.rect_filled(
+        rect,
+        3.0_f32,
+        crate::theme::color_with_alpha(ds_color, bg_alpha),
+    );
+    painter.rect_stroke(rect, 3.0_f32, Stroke::new(1.0_f32, border_color));
+
+    let font_id = FontId::proportional(10.0);
+    let text_color = if is_active_context {
+        ds_color
+    } else {
+        Tokens::text_muted()
+    };
+    painter.with_clip_rect(rect).text(
+        rect.center(),
+        Align2::CENTER_CENTER,
+        name,
+        font_id,
+        text_color,
+    );
 }

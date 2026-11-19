@@ -112,60 +112,59 @@ pub fn paste_matrix_into_dataset(
 }
 
 /// Extends data series downwards from `source` range into `target` range (Auto-Fill Series).
+/// Restricts filling strictly within existing dataset rows without mutating dataset dimensions.
 pub fn apply_auto_fill(ds: &mut DataSet, source: &CellRange, target: &CellRange) {
-    if ds.col_count() == 0 || source == target {
+    if ds.col_count() == 0 || ds.row_count() == 0 || source == target {
         return;
     }
 
-    // Ensure enough rows
-    while ds.row_count() <= target.max_row {
-        ds.add_empty_row();
+    let max_target_row = target.max_row.min(ds.row_count().saturating_sub(1));
+    if max_target_row <= source.max_row {
+        return;
     }
 
-    if target.max_row > source.max_row {
-        let max_col = source.max_col.min(ds.col_count().saturating_sub(1));
-        for c in source.min_col..=max_col {
-            let mut source_values: Vec<String> = Vec::new();
-            for r in source.min_row..=source.max_row {
-                source_values.push(ds.get_cell_display(r, c, false));
+    let max_col = source.max_col.min(ds.col_count().saturating_sub(1));
+    for c in source.min_col..=max_col {
+        let mut source_values: Vec<String> = Vec::new();
+        for r in source.min_row..=source.max_row.min(ds.row_count().saturating_sub(1)) {
+            source_values.push(ds.get_cell_display(r, c, false));
+        }
+        if source_values.is_empty() {
+            continue;
+        }
+
+        let numeric_vals: Vec<Option<f64>> = source_values
+            .iter()
+            .map(|s| s.parse::<f64>().ok())
+            .collect();
+        let all_numeric = numeric_vals.iter().all(|v| v.is_some());
+
+        if all_numeric && source_values.len() >= 2 {
+            let v0 = numeric_vals[0].unwrap_or(0.0);
+            let v1 = numeric_vals[1].unwrap_or(0.0);
+            let step = v1 - v0;
+            let last_val = numeric_vals.last().copied().flatten().unwrap_or(0.0);
+            let mut cur = last_val;
+
+            for r in (source.max_row + 1)..=max_target_row {
+                cur += step;
+                let text = if cur.fract() == 0.0 {
+                    format!("{:.0}", cur)
+                } else {
+                    format!("{:.2}", cur)
+                };
+                let _ = ds.set_cell_parsed(r, c, &text);
             }
-            if source_values.is_empty() {
-                continue;
+        } else if all_numeric && source_values.len() == 1 {
+            let val_str = &source_values[0];
+            for r in (source.max_row + 1)..=max_target_row {
+                let _ = ds.set_cell_parsed(r, c, val_str);
             }
-
-            let numeric_vals: Vec<Option<f64>> = source_values
-                .iter()
-                .map(|s| s.parse::<f64>().ok())
-                .collect();
-            let all_numeric = numeric_vals.iter().all(|v| v.is_some());
-
-            if all_numeric && source_values.len() >= 2 {
-                let v0 = numeric_vals[0].unwrap_or(0.0);
-                let v1 = numeric_vals[1].unwrap_or(0.0);
-                let step = v1 - v0;
-                let last_val = numeric_vals.last().copied().flatten().unwrap_or(0.0);
-                let mut cur = last_val;
-
-                for r in (source.max_row + 1)..=target.max_row {
-                    cur += step;
-                    let text = if cur.fract() == 0.0 {
-                        format!("{:.0}", cur)
-                    } else {
-                        format!("{:.2}", cur)
-                    };
-                    let _ = ds.set_cell_parsed(r, c, &text);
-                }
-            } else if all_numeric && source_values.len() == 1 {
-                let val_str = &source_values[0];
-                for r in (source.max_row + 1)..=target.max_row {
-                    let _ = ds.set_cell_parsed(r, c, val_str);
-                }
-            } else {
-                let len = source_values.len();
-                for (idx, r) in ((source.max_row + 1)..=target.max_row).enumerate() {
-                    let val = &source_values[idx % len];
-                    let _ = ds.set_cell_parsed(r, c, val);
-                }
+        } else {
+            let len = source_values.len();
+            for (idx, r) in ((source.max_row + 1)..=max_target_row).enumerate() {
+                let val = &source_values[idx % len];
+                let _ = ds.set_cell_parsed(r, c, val);
             }
         }
     }
@@ -228,8 +227,9 @@ mod tests {
     fn test_auto_fill_numeric_series() {
         let mut ds = DataSet::empty();
         let _ = ds.add_variable("NUM", DataType::Numeric { decimals: 0 }, Measure::Scale);
-        ds.add_empty_row();
-        ds.add_empty_row();
+        for _ in 0..5 {
+            ds.add_empty_row();
+        }
         let _ = ds.set_cell_parsed(0, 0, "1");
         let _ = ds.set_cell_parsed(1, 0, "2");
 
@@ -241,5 +241,25 @@ mod tests {
         assert_eq!(ds.get_cell_display(2, 0, false), "3");
         assert_eq!(ds.get_cell_display(3, 0, false), "4");
         assert_eq!(ds.get_cell_display(4, 0, false), "5");
+    }
+
+    #[test]
+    fn test_auto_fill_never_allocates_phantom_rows() {
+        let mut ds = DataSet::empty();
+        let _ = ds.add_variable("NUM", DataType::Numeric { decimals: 0 }, Measure::Scale);
+        ds.add_empty_row();
+        ds.add_empty_row();
+        let _ = ds.set_cell_parsed(0, 0, "10");
+        let _ = ds.set_cell_parsed(1, 0, "20");
+
+        let source = CellRange::from_corners(0, 0, 1, 0);
+        let target = CellRange::from_corners(0, 0, 10, 0); // target way past row_count (2)
+
+        apply_auto_fill(&mut ds, &source, &target);
+        assert_eq!(
+            ds.row_count(),
+            2,
+            "apply_auto_fill must NEVER add new rows to dataset"
+        );
     }
 }

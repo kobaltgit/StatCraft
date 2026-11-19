@@ -846,10 +846,10 @@
   - [x] Сериализация диапазона `serialize_range_to_tsv` с экранированием кавычек, табуляций и переносов строк.
   - [x] Парсинг TSV-матрицы `parse_tsv_matrix`.
   - [x] Вставка матрицы ячеек `paste_matrix_into_dataset` в позицию курсора с автоматическим расширением строк датасета.
-  - [x] Серийное автозаполнение `apply_auto_fill` (протяжка за маркер Fill Handle): линейная арифметическая прогрессия для числовых серий и циклическое повторение для текстовых/категориальных значений.
+  - [x] Серийное автозаполнение `apply_auto_fill`: линейная арифметическая прогрессия для числовых серий и циклическое повторение для текстовых/категориальных значений (строго без аллокации новых строк в DataSet).
 - [x] Интерактивные манипуляции (`interact.rs`):
   - [x] Выделение протяжкой мыши (Marquee Drag Selection).
-  - [x] Хит-тестинг и протяжка за маркер Fill Handle с живой пунктирной рамкой предпросмотра диапазона.
+  - [x] Канон SPSS: выделение всегда Read-Only, маркер Fill Handle отключен в UI для исключения случайной порчи данных.
 - [x] Тестирование и Quality Gate:
   - [x] Юнит-тесты модулей `selection`, `keyboard`, `clipboard`, `editor`;
   - [x] Интеграционный тест `crates/statcraft_app/tests/grid_selection_clipboard_invariants.rs` (границы и нормализация `CellRange`, TSV copy/paste roundtrip, протяжка числовых серий, жизненный цикл редактора);
@@ -946,6 +946,89 @@
   - [x] Синхронизация семантических ключей в `locales/en.ftl` и `locales/ru.ftl` (100% покрытие, 0% сырой кириллицы).
   - [x] Инвариантные тесты диалогов и рендеринга вывода (`output_viewer_cox_invariants.rs`).
   - [x] 100% успешное прохождение всех проверок: `file-guard` (438 файлов), `design-guard`, `layers`, `parity`, `cargo test --workspace -j 1`, `ci`.
+
+## 59. Мультифайловый воркспейс, вкладки датасетов и Memory Guard (Feature 010 — Multi-File Workspace, Dataset Tabs & Memory Guard)
+- [x] L0 `statcraft_io::stc_codec`:
+  - [x] Поддержка контейнера `StcContainer::with_workspace` и записей `StcDatasetRecord` с сохранением полной обратной совместимости с одиночными файлами `.stc`.
+  - [x] Сохранение и извлечение нескольких датасетов с метаданными и состоянием в рамках единого `.stc`-файла.
+- [x] L1 `statcraft_core`:
+  - [x] `statcraft_core::workspace`: структуры `DocumentSession`, `WorkspaceManager`, переключение активных наборов, именование `DataSet1`, `DataSet2`..., отслеживание dirty-состояния (`is_dirty`).
+  - [x] `statcraft_core::compression`: сжатие в памяти без потерь — `NullBitmask` (1 бит на пропуск), `DictionaryEncodedColumn` (словарь строк), `LosslessCompressedColumn` со строгим сохранением `f64` без потери точности и без приведения к f32.
+  - [x] Методы `undo` и `redo` в `DeltaBuffer` с отслеживанием контрольной длины стека.
+- [x] L5 `statcraft_syntax`:
+  - [x] Команды `DATASET NAME`, `DATASET ACTIVATE`, `DATASET CLOSE`, `DATASET DISPLAY` в `statcraft_syntax::commands::dataset`.
+  - [x] Парсер канонического синтаксиса SPSS `.sps` и интеграция в `CommandBus`.
+- [x] L6 `statcraft_app`:
+  - [x] `statcraft_app::system_memory`: кроссплатформенный Memory Guard (Windows `GlobalMemoryStatusEx`, Linux `/proc/meminfo`, macOS `sysctl`, WASM), префлайт-чеки для тяжелых пакетов (>10 файлов или >250 МБ) с предупреждением при низкой доступной RAM (<500 МБ или <15%).
+  - [x] `views::document_tabs`: векторная панель вкладок датасетов (высота 28 px, Vector-First примитивы, без тофу и эмодзи, индикатор `*`, кнопка `✕`, шевроны `[ ‹ ] [ › ]`, кнопка `[ ➕ ]`).
+  - [x] Шорткаты: `Ctrl+Tab` (след. датасет), `Ctrl+Shift+Tab` (пред. датасет), `Ctrl+W` (закрыть текущий датасет), `Ctrl+N` (новый датасет), `Ctrl+Shift+N` (новый проект).
+  - [x] Декомпозиция `app.rs`: вынос логики воркспейса в `app_workspace.rs`, шорткатов в `app_shortcuts.rs`, просмотрщика дока в `app_tab_viewer.rs` (сокращение `app.rs` с 1100+ до ~800 строк).
+  - [x] Поддержка сохранения активной вкладки (`Ctrl+S`) и полного проекта (`Ctrl+Shift+S`) в `app_session.rs`, диалог подтверждения сохранения при закрытии измененных вкладок.
+- [x] i18n & Quality Gate:
+  - [x] Полная локализация во Fluent (`locales/en.ftl`, `locales/ru.ftl`) без дубликатов ключей.
+  - [x] 100% успешный прогон всех проверок: `xtask ci` (fmt, clippy с 0 warnings, layers, file-guard [454 файла], design-guard, workspace tests, parity, corpus, test-undo).
+
+## 60. Цветовая идентификация датасетов и сквозная визуальная связка (Feature 011 — Dataset Color Identity & Cross-Pane Visual Linking)
+- [x] L6 `statcraft_app::theme`:
+  - [x] Детерминированный цветовой генератор `dataset_color(name)` на базе HSL золотого сечения (Golden Ratio HSL distribution, FNV-1a hash + golden angle $137.508^\circ$).
+  - [x] Гарантия стабильности цвета при перезапусках, высокая контрастность и адаптивность к темной и светлой темам.
+  - [x] Хелпер `color_with_alpha` для работы с полупрозрачными подложками и рамками.
+  - [x] Unit-тесты детерминированности, дифференциации и альфа-канала (`theme::tests`).
+- [x] L6 `statcraft_app::views::document_tabs`:
+  - [x] Окрашивание векторной иконки таблицы `[田]` в индивидуальный цвет датасета `ds_color`.
+  - [x] Индикаторная полоса активной вкладки цветом `ds_color`.
+  - [x] Элегантная полупрозрачная фоновая подсветка активной вкладки (`color_with_alpha(ds_color, 25)`).
+- [x] L6 `statcraft_app::views::output_view`:
+  - [x] Поле `#[serde(default)] pub dataset_name: Option<String>` в структуре `OutputProcedure` с сохранением 100% обратной совместимости при десериализации старых файлов проектов.
+  - [x] Синхронизация имени активного набора данных `active_dataset_name` в `OutputViewerState` и привязка к сессиям воркспейса.
+  - [x] Векторные чипы-бейджи датасета в строках процедур дерева навигации (Outline Tree) с подсветкой активного контекста (Brushing & Linking).
+  - [x] Векторная плашка-чип в ячейке `Active Dataset` таблицы «Примечания» (Notes) с рамкой и фоном соответствующего цвета.
+- [x] Quality Gate & Definition of Done:
+  - [x] 100% успешный прогон всех проверок `cargo run -p xtask -j 1 -- ci` (fmt, clippy с 0 warnings, layers, file-guard на 454 файла, design-guard, тесты воркспейса, corpus, test-undo).
+
+## 61. Слияние файлов (Feature 012 — Merge Files: Add Cases & Add Variables)
+- [x] L1 `statcraft_core::dataset::merge`:
+  - [x] `types.rs`: структуры `AddCasesConfig`, `AddVarsConfig`, `MergeMethod` (OneToOneWithKeys, OneToManyTable, Sequential).
+  - [x] `cases.rs`: процедура `add_cases` (вертикальное объединение строк, автосопоставление совместимых типов, индикатор источника `/IN=source01`, расширение строковых ширин, заполнение `RawValue::Null`).
+  - [x] `vars.rs`: процедура `add_variables` (горизонтальное сопоставление по ключам `/BY`, табличное соответствие 1-к-N `/TABLE`, последовательное объединение по порядку строк, разрешение коллизий имен колонок).
+  - [x] `source.rs`: универсальная загрузка вторичного датасета из файлов (`.sav`, `.zsav`, `.csv`, `.stc`, `.xlsx`) или открытых сессий воркспейса.
+  - [x] Модульные тесты `dataset::merge::tests` с проверкой стабильности, слияния и отсутствия паник.
+- [x] L5 `statcraft_syntax`:
+  - [x] Типизированные команды `data.merge_cases` (`MergeCasesCommand`) и `data.merge_vars` (`MergeVarsCommand`) с регистрацией в `CommandBus`.
+  - [x] Генерация канонического синтаксиса SPSS `ADD FILES` и `MATCH FILES` с поддержкой `/RENAME`, `/IN`, `/BY`, `/TABLE`, `/DROP`.
+  - [x] Поддержка обратимости операций через `undo` в истории команд.
+  - [x] Интеграция в парсер синтаксиса SPSS в `syntax_parser::mappers::data`.
+- [x] L6 `statcraft_app`:
+  - [x] Диалоговые окна `AddCasesDialog` и `AddVarsDialog` на базе `DialogKit` (`DialogShell::standard`, `VariablePicker`, `TransferButton`, `DialogActionBar`, `GroupBox`).
+  - [x] `source_panel`: переиспользуемая панель выбора источника данных (открытый датасет из вкладок воркспейса или внешний файл через `rfd::FileDialog`).
+  - [x] Выделенный модуль `app_dialogs_merge.rs` для диспетчеризации действий диалогов слияния с соблюдением лимитов строк.
+  - [x] Активация пунктов меню `menu-data-merge-cases` и `menu-data-merge-vars` в `app_menus/data_transform.rs` со снятием метки `InDev`.
+  - [x] Сообщения статуса `MergeCasesExecuted` и `MergeVarsExecuted` в статусной строке и логирование синтаксиса в Output Viewer.
+- [x] i18n & Quality Gate:
+  - [x] 100% покрытие локализацией во Fluent (`locales/en.ftl`, `locales/ru.ftl`) без сырого текста в UI.
+  - [x] Прохождение проверок: `file-guard` (468 файлов в лимитах), `design-guard`, `layers`, `dialog_invariants`.
+
+## 61. Модернизация сетки данных и устранение багов взаимодействия (Spec-Kit 013 / Grid UX Invariants)
+- [x] Сохранение прямоугольного выделения при правом клике:
+  - [x] Метод `GridSelection::contains(row, col)` сохраняет диапазон, если клик попал внутрь него;
+  - [x] Контекстное меню адаптируется к размеру диапазона: «Копировать диапазон ({count} яч.)», «Очистить содержимое».
+- [x] Защита от загрязнения набора данных фантомными строками (Zero Pollution Invariant):
+  - [x] В `data_view.rs` при потере фокуса с пустым буфером (`trimmed.is_empty() && row >= ds.row_count()`) строка не аллоцируется в датасете;
+  - [x] Заголовок строки добавления отображает каноническую звездочку `*` (SPSS/GridCraft).
+- [x] Физическое удаление наблюдений через CommandBus:
+  - [x] Клавиша `Delete` при выделении строк через заголовок (`is_full_rows`) физически удаляет наблюдения через L5 `data.delete_row` с уменьшением выборки $N$ и поддержкой `undo`;
+  - [x] Клавиша `Delete` при обычном прямоугольном выделении ячеек очищает только значения в `Null`, сохраняя строки;
+  - [x] Пункт контекстного меню «Удалить выбранные наблюдения ({count})».
+- [x] Контекстные меню заголовков строк и колонок (`ContextMenuTarget`):
+  - [x] `RowHeader`: «Вставить наблюдение выше» (`data.add_row`), «Удалить выбранные наблюдения» (`data.delete_row`), «Очистить значения в наблюдениях»;
+  - [x] `ColHeader`: сортировка ASC/DESC, «Вставить переменную» (`var.add`), «Автоподбор ширины столбца»;
+  - [x] Передача позиции клика `pos` в событиях `GridEvent::ContextMenuRow` и `ContextMenuCol`.
+- [x] Устранение модальной ловушки (Click-Outside Dismissal):
+  - [x] Флаг `just_opened` защищает от ложного закрытия в кадр открытия;
+  - [x] Контекстное меню и всплывающее окно автофильтра (`render_filter_popup`) мгновенно закрываются при клике вне их прямоугольника без необходимости нажатия `Escape`.
+- [x] Тестирование и Quality Gate:
+  - [x] Интеграционный тестовый набор `crates/statcraft_app/tests/grid_selection_and_phantom_row_invariants.rs` (5 тестов);
+  - [x] 100% прохождение `file-guard` (469 файлов), `design-guard`, `layers`, `cargo clippy --workspace -j 1 -- -D warnings`, `cargo fmt --check`.
 
 ## 20. Планы будущих релизов (Backlog / Planned Features)
 - [ ] Мультимониторный режим рабочего пространства (Multi-Monitor Viewports & Pop-out Tabs):

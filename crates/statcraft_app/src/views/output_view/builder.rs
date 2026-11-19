@@ -16,6 +16,7 @@ impl OutputViewerState {
             id: proc_id,
             title_key: "output-dataset-imported-title",
             custom_title: None,
+            dataset_name: Some(name.clone()),
             is_expanded: true,
             items: vec![
                 OutputItem {
@@ -54,6 +55,7 @@ impl OutputViewerState {
             id: self.alloc_id(),
             title_key: proc_title_key,
             custom_title: None,
+            dataset_name: Some(notes.dataset_name.clone()),
             is_expanded: true,
             items: vec![
                 OutputItem {
@@ -91,12 +93,10 @@ impl OutputViewerState {
             "DESCRIPTIVES VARIABLES={}\n  /STATISTICS=MEAN STDDEV MIN MAX.",
             var_names.join(" ")
         );
-        let notes = OutputNotes {
-            dataset_name: "DataSet1".to_string(),
-            timestamp: "Session".to_string(),
-            active_cases: results.first().map(|r| r.n_valid).unwrap_or(0),
-            active_vars: results.len(),
-        };
+        let notes = self.make_notes(
+            results.first().map(|r| r.n_valid).unwrap_or(0),
+            results.len(),
+        );
         self.push_standard_procedure(
             "output-descriptives-title",
             sps_log,
@@ -118,17 +118,16 @@ impl OutputViewerState {
             var_names.join(" ")
         );
 
-        let notes = OutputNotes {
-            dataset_name: "DataSet1".to_string(),
-            timestamp: "Session".to_string(),
-            active_cases: results.first().map(|r| r.n_valid).unwrap_or(0),
-            active_vars: results.len(),
-        };
+        let notes = self.make_notes(
+            results.first().map(|r| r.n_valid).unwrap_or(0),
+            results.len(),
+        );
 
         let proc = OutputProcedure {
             id: proc_id,
             title_key: "output-frequencies",
             custom_title: None,
+            dataset_name: Some(notes.dataset_name.clone()),
             is_expanded: true,
             items: vec![
                 OutputItem {
@@ -180,17 +179,16 @@ impl OutputViewerState {
             var_names.join(" ")
         );
 
-        let notes = OutputNotes {
-            dataset_name: "DataSet1".to_string(),
-            timestamp: "Session".to_string(),
-            active_cases: results.first().map(|r| r.n_valid).unwrap_or(0),
-            active_vars: results.len(),
-        };
+        let notes = self.make_notes(
+            results.first().map(|r| r.n_valid).unwrap_or(0),
+            results.len(),
+        );
 
         let proc = OutputProcedure {
             id: proc_id,
             title_key: "output-ttest-onesample-title",
             custom_title: None,
+            dataset_name: Some(notes.dataset_name.clone()),
             is_expanded: true,
             items: vec![
                 OutputItem {
@@ -250,20 +248,19 @@ impl OutputViewerState {
             var_names.join(" ")
         );
 
-        let notes = OutputNotes {
-            dataset_name: "DataSet1".to_string(),
-            timestamp: "Session".to_string(),
-            active_cases: results
+        let notes = self.make_notes(
+            results
                 .first()
                 .map(|r| r.group1_stats.n + r.group2_stats.n)
                 .unwrap_or(0),
-            active_vars: results.len(),
-        };
+            results.len(),
+        );
 
         let proc = OutputProcedure {
             id: proc_id,
             title_key: "output-ttest-indep-title",
             custom_title: None,
+            dataset_name: Some(notes.dataset_name.clone()),
             is_expanded: true,
             items: vec![
                 OutputItem {
@@ -323,17 +320,16 @@ impl OutputViewerState {
             ci
         );
 
-        let notes = OutputNotes {
-            dataset_name: "DataSet1".to_string(),
-            timestamp: "Session".to_string(),
-            active_cases: results.first().map(|r| r.var1_stats.n).unwrap_or(0),
-            active_vars: pairs.len() * 2,
-        };
+        let notes = self.make_notes(
+            results.first().map(|r| r.var1_stats.n).unwrap_or(0),
+            pairs.len() * 2,
+        );
 
         let proc = OutputProcedure {
             id: proc_id,
             title_key: "output-ttest-paired-title",
             custom_title: None,
+            dataset_name: Some(notes.dataset_name.clone()),
             is_expanded: true,
             items: vec![
                 OutputItem {
@@ -387,21 +383,20 @@ impl OutputViewerState {
             factor
         );
 
-        let notes = OutputNotes {
-            dataset_name: "DataSet1".to_string(),
-            timestamp: "Session".to_string(),
-            active_cases: results
+        let notes = self.make_notes(
+            results
                 .first()
                 .and_then(|r| r.total_descriptives.as_ref())
                 .map(|td| td.n)
                 .unwrap_or(0),
-            active_vars: results.len() + 1,
-        };
+            results.len() + 1,
+        );
 
         let proc = OutputProcedure {
             id: proc_id,
             title_key: "output-anova-title",
             custom_title: None,
+            dataset_name: Some(notes.dataset_name.clone()),
             is_expanded: true,
             items: vec![
                 OutputItem {
@@ -442,6 +437,7 @@ impl OutputViewerState {
             id: proc_id,
             title_key: "output-log",
             custom_title: Some(title.clone()),
+            dataset_name: None,
             is_expanded: true,
             items: vec![OutputItem {
                 id: item_id,
@@ -475,12 +471,7 @@ impl OutputViewerState {
             .and_then(|v| v.groups.first())
             .map(|g| g.case_processing.n_total)
             .unwrap_or(0);
-        let notes = OutputNotes {
-            dataset_name: "DataSet1".to_string(),
-            timestamp: "Session".to_string(),
-            active_cases: n,
-            active_vars: res.variables.len(),
-        };
+        let notes = self.make_notes(n, res.variables.len());
         self.push_standard_procedure(
             "output-explore-title",
             log,

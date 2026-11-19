@@ -1,6 +1,6 @@
 use super::geo::Geo;
 use crate::theme::Tokens;
-use egui::{pos2, vec2, Color32, Painter, Pos2, Rect, Stroke};
+use egui::{pos2, vec2, Painter, Pos2, Rect, Stroke};
 
 /// A normalized rectangular range of grid cells `(min_row..=max_row, min_col..=max_col)`.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -189,6 +189,18 @@ impl GridSelection {
         self.range.contains_cell(row, col)
     }
 
+    /// Whether `row` is part of an active full-row selection.
+    #[inline]
+    pub fn contains_row(&self, row: usize) -> bool {
+        self.is_full_rows && row >= self.range.min_row && row <= self.range.max_row
+    }
+
+    /// Whether `col` is part of an active full-column selection.
+    #[inline]
+    pub fn contains_col(&self, col: usize) -> bool {
+        self.is_full_cols && col >= self.range.min_col && col <= self.range.max_col
+    }
+
     /// Computes the screen bounding rectangle for this selection within `quad_center`.
     pub fn bounding_rect(&self, geo: &Geo) -> Option<Rect> {
         let r0 = self.range.min_row;
@@ -230,7 +242,7 @@ impl GridSelection {
     }
 }
 
-/// Renders the range selection marquee, fill, and fill handle.
+/// Renders the range selection marquee perimeter (SPSS Canonical Design).
 pub fn paint_selection(painter: &Painter, geo: &Geo, selection: &GridSelection) {
     let bounds = match selection.bounding_rect(geo) {
         Some(b) => b,
@@ -242,12 +254,6 @@ pub fn paint_selection(painter: &Painter, geo: &Geo, selection: &GridSelection) 
 
     // Outer accent stroke (1.5 px) around selection perimeter
     p.rect_stroke(bounds, 0.0_f32, Stroke::new(1.5_f32, Tokens::accent()));
-
-    // Fill handle marker at bottom-right corner (6x6 px)
-    if let Some(handle_rect) = selection.fill_handle_rect(geo) {
-        p.rect_filled(handle_rect, 0.0_f32, Tokens::accent());
-        p.rect_stroke(handle_rect, 0.0_f32, Stroke::new(1.0_f32, Color32::WHITE));
-    }
 }
 
 #[cfg(test)]
@@ -306,5 +312,20 @@ mod tests {
 
         assert!(sel.hit_test_fill_handle(&geo, pos2(450.0, 80.0), 3.0));
         assert!(!sel.hit_test_fill_handle(&geo, pos2(400.0, 50.0), 3.0));
+    }
+
+    #[test]
+    fn test_row_and_col_contains() {
+        let row_sel = GridSelection::select_row(3, 10);
+        assert!(row_sel.contains_row(3));
+        assert!(!row_sel.contains_row(2));
+        assert!(!row_sel.contains_row(4));
+        assert!(!row_sel.contains_col(0)); // full row is not full col
+
+        let col_sel = GridSelection::select_col(5, 20);
+        assert!(col_sel.contains_col(5));
+        assert!(!col_sel.contains_col(4));
+        assert!(!col_sel.contains_col(6));
+        assert!(!col_sel.contains_row(0)); // full col is not full row
     }
 }

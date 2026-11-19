@@ -1,4 +1,4 @@
-﻿use super::model::{
+use super::model::{
     OutputItem, OutputItemKind, OutputNotes, OutputProcedure, OutputViewerState, SelectedTarget,
 };
 use super::tables_common::{
@@ -36,7 +36,7 @@ impl OutputViewerState {
             .unwrap_or(0);
 
         let notes = OutputNotes {
-            dataset_name: "DataSet1".to_string(),
+            dataset_name: self.active_dataset_name.clone(),
             timestamp: "Session".to_string(),
             active_cases,
             active_vars: pairs.len() * 2,
@@ -46,6 +46,7 @@ impl OutputViewerState {
             id: proc_id,
             title_key: "output-npar-related-title",
             custom_title: None,
+            dataset_name: Some(self.active_dataset_name.clone()),
             is_expanded: true,
             items: vec![
                 OutputItem {

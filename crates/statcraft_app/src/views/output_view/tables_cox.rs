@@ -24,7 +24,7 @@ impl OutputViewerState {
         );
 
         let notes = OutputNotes {
-            dataset_name: "DataSet1".to_string(),
+            dataset_name: self.active_dataset_name.clone(),
             timestamp: "Session".to_string(),
             active_cases: result.overall_summary.total_n,
             active_vars: result.covariate_names.len() + 2,
@@ -34,6 +34,7 @@ impl OutputViewerState {
             id: proc_id,
             title_key: "output-cox-title",
             custom_title: None,
+            dataset_name: Some(self.active_dataset_name.clone()),
             is_expanded: true,
             items: vec![
                 OutputItem {

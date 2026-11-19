@@ -1,4 +1,4 @@
-# StatCraft v0.4.0
+# StatCraft v0.4.1
 
 [English](#english) | [Русский](#русский)
 
@@ -7,66 +7,51 @@
 <a name="english"></a>
 ## English
 
-StatCraft v0.4.0 is a major milestone release representing the culmination of the **Table Modernization Initiative** alongside enhanced workspace reliability. This release transforms the Data View into a high-performance, virtualized, Excel/SPSS-grade spreadsheet grid capable of handling massive datasets with fluid 60 FPS interactions, deep keyboard ergonomics, multi-column filtering, canonical sorting via the engine command bus, rectangular clipboard exchange, and automated data integrity inspection.
+StatCraft v0.4.1 is a feature and stabilization release introducing **Multi-File Workspaces**, **Data Merging (Add Cases & Add Variables)**, **Memory Guard protection**, and comprehensive **Grid Selection & Interaction Modernization** adhering to the strict IBM SPSS Statistics clean-room canon.
 
-### 📊 Virtualized 4-Quadrant 2D Grid (Feature 006)
-* **Spatial 4-Quadrant Architecture:**
-  * Pinned top-left corner header (`quad_top_left`);
-  * Horizontal-scrolling pinned column variable headers (`quad_top_right`);
-  * Vertical-scrolling pinned row/case number headers (`quad_bottom_left`);
-  * 2D-scrolling central data cell canvas (`quad_center`).
-  * Row number headers remain firmly anchored to the left edge during horizontal scrolling.
-* **Prefix-Sum Spatial Indexing (`LineIndex`):**
-  * $O(\log N)$ binary search from screen pixels to logical rows and columns with zero heap allocations in `Uniform` mode for hundreds of thousands of cases.
-* **Interactive Column Resizing & Auto-Fit:**
-  * Visual drag-resizing with dynamic cursor switching (`ResizeHorizontal`) and accent guidelines;
-  * Double-click on header separator triggers instant column Auto-fit based on header and cell content;
-  * Two-way column width synchronization with SPSS dictionary metadata (`VariableMetadata.columns`).
+### 🗂️ Multi-File Workspace, Tabbed Datasets & Memory Guard (Feature 010 & 011)
+* **Concurrent Document Sessions (`WorkspaceManager`):**
+  * Open, manipulate, and switch between multiple datasets simultaneously in a unified window;
+  * Each dataset session maintains isolated Undo/Redo histories, filter states, split-file contexts, and selection metadata.
+* **Lossless In-Memory Compression:**
+  * Zero-copy bitmasks for missing values (`NullBitmask`), dictionary encoding for categorical strings (`DictionaryEncodedColumn`), and packed numeric columns (`LosslessCompressedColumn`) retaining full `f64` mathematical precision.
+* **SPSS Syntax Commands for Datasets:**
+  * Full parser and engine command execution for `DATASET NAME`, `DATASET ACTIVATE`, `DATASET CLOSE`, and `DATASET DISPLAY` with `WINDOW=ASIS` validation.
+* **Vector Document Tab Strip (`DocumentTabStrip`):**
+  * Horizontal tab bar with custom vector dataset icons, unsaved modification markers (`*`), close buttons (`✕`), smooth wheel scrolling, chevron overflow navigators, and quick dataset creation (`[ ➕ ]`);
+  * Full keyboard shortcuts: `Ctrl+Tab` / `Ctrl+Shift+Tab` (next/previous dataset), `Ctrl+W` (close current dataset).
+* **Cross-Platform System Memory Guard (`system_memory.rs`):**
+  * Native physical RAM probing without heavyweight dependencies: Windows API (`GlobalMemoryStatusEx`), Linux (`/proc/meminfo`), macOS (`sysctl`), and WebAssembly;
+  * Safety preflight check: proactively alerts users when opening large files (>250 MB) or batch operations (>10 files) if available RAM is critically low (<500 MB or <15%).
 
-### 🖱️ Range Selection, Keyboard Navigation & Direct Typing (Feature 007)
-* **Multi-Cell Range Selection:**
-  * Fluid marquee box selection via mouse dragging or Shift+click / Shift+drag;
-  * Vector selection rendering with 1.5 px accent perimeter border, non-blocking transparent cell background highlighting, and active cursor cell differentiation.
-* **Full Keyboard Ergonomics:**
-  * Navigation via Arrow keys, `Tab` / `Shift+Tab`, `Enter` / `Shift+Enter`, `Home` / `End`, `Ctrl+Home` / `Ctrl+End`;
-  * Dynamic range expansion via `Shift` + Arrow keys;
-  * **Direct Typing:** Immediately typing alphanumeric characters activates the inline cell editor without requiring pre-clicking or pressing Enter;
-  * Cell contents clearance via `Delete` or `Backspace`.
-* **Focused Inline Cell Editor:**
-  * In-place single-line `TextEdit` with visual focus ring and automatic commit on Enter/Tab or cancellation on Escape.
+### 🔗 Data Merging: Add Cases & Add Variables (Feature 012)
+* **Add Cases (`ADD FILES`):**
+  * Concatenate observations vertically from external files (`.sav`, `.zsav`, `.stc`, `.csv`, `.xlsx`) or active workspace tabs;
+  * Automated schema alignment, automatic variable type reconciliation, `/IN=var` source indicator tracking, and optional interleaved case ordering via `/BY`.
+* **Add Variables (`MATCH FILES`):**
+  * Merge variables horizontally across datasets: 1:1 key merges, 1:N lookup tables (`/TABLE`), and sequential merges without keys;
+  * Automated resolution of duplicate column collisions with clean rename suggestions and presence indicator flags (`/IN`).
+* **Canonical DialogKit Interface:**
+  * Clean-room dialog windows (`AddCasesDialog`, `AddVarsDialog`) with dual-pane variable selection, active workspace tab pickers, file browse dialogs, and instant SPSS syntax generation.
 
-### 📋 Rectangular TSV/CSV Clipboard & Auto-Fill Series (Feature 007)
-* **Native Rectangular Clipboard Transfer:**
-  * Bidirectional TSV/CSV clipboard serialization (`Ctrl+C`) and streaming parser (`Ctrl+V`);
-  * Multi-cell pasting with automatic row expansion when pasting external matrices.
-* **Series Auto-Fill (Fill Handle):**
-  * $6 \times 6$ px square Fill Handle marker pinned to the bottom-right corner of selection;
-  * Dragging the handle computes linear regression slopes for numeric sequences (`[1, 2, 3] -> [4, 5, 6]`) and cyclic repetition for categorical text.
+### 🛡️ Grid Interaction Modernization & Invariants (Spec-Kit 013)
+* **Preserving Rectangular Selection on Right-Click:**
+  * Right-clicking inside an active multi-cell selection preserves the highlighted rectangular block rather than collapsing to a single cell.
+* **Zero Pollution Invariant for Phantom Rows:**
+  * Committing empty or whitespace input on the trailing insertion row (`*`) leaves dataset dimensions intact, eliminating accidental rows with system-missing values (`SYSMIS` / `.`).
+* **Physical Case Deletion via Delete Key & Menu Actions:**
+  * Differentiated deletion semantics: cell range selections clear cell contents to `Null`; full-row selections (`is_full_rows`) physically delete cases via the engine command `data.delete_row` with reduced sample size $N$ and complete Undo/Redo reversibility.
+* **Row and Column Header Context Menus (`ContextMenuTarget`):**
+  * Row headers offer "Insert Case Above", "Delete Selected Cases ({count})", and "Clear Cases Values"; column headers offer Ascending/Descending sorts, "Insert Variable", and "Auto-fit Column Width".
+* **Click-Outside Dismissal (Eliminating Modal Traps):**
+  * Menus and column filter popups measure boundaries and dismiss automatically when clicking outside without requiring `Escape`.
 
-### 🔍 Column AutoFilter, Dropdowns & Rapid Sorting (Feature 008)
-* **Interactive Header AutoFilter:**
-  * Vector filter button in each column header (discrete downward chevron in idle state, filled accent funnel icon when filtered);
-  * Floating filter popup with live search, "Select All" / "Clear All" bulk toggles, checkbox checklist of unique values, and explicit "(Blanks)" handling;
-  * Dynamic evaluation of case eligibility via `DataSet::is_row_matched_by_filter`.
-* **Quick Sorting via CommandBus:**
-  * Instant Sort Ascending (A–Z) and Sort Descending (Z–A) from column filter and cell context menus;
-  * Executes as canonical engine command `data.sort_cases` with 100% reversible Undo/Redo (`Ctrl+Z` / `Ctrl+Y`) and full SPSS syntax logging (`SORT CASES BY <var> (A/D).`).
-
-### 🎯 Cell Context Menu, SPSS FILTER BY Visuals & Data Integrity (Feature 008)
-* **Cell Right-Click Context Menu:**
-  * "Filter by selected cell value", "Clear column filter", "Sort Ascending / Descending", and quick clipboard operations ("Copy", "Paste").
-* **SPSS FILTER BY Visualization Parity:**
-  * Filtered / inactive cases are not deleted: row numbers display a diagonal vector strikethrough, and cell values render in muted gray (`Tokens::text_muted()`), automatically excluding them from analytical procedures.
-* **Data Integrity Guards ("Numbers Stored as Text"):**
-  * Automated detector `is_number_stored_as_text` identifies numbers stored inside text fields;
-  * Excel-parity green corner triangle indicator in cell's top-left corner;
-  * Single click on badge converts value to `RawValue::Number`, preventing calculation errors.
-
-### 🗂️ Workspace Tab Lifecycle Management (Feature 005)
-* Core workspace tabs (**Data View**, **Variable View**, **Output Viewer**) are marked non-closeable (`is_closeable = false`), protecting users from accidental tab loss;
-* Auxiliary tabs (Syntax Editor) close cleanly with standard tab close buttons;
-* "Window" menu provides quick restoration and single-click switching;
-* Running SPSS syntax automatically ensures Output Viewer visibility before executing batches.
+### 🎯 SPSS Canon Range Selection & Fill Handle Removal (Spec-Kit 014 / BUG-014)
+* **Pure Read-Only Range Selection (SPSS Canon):**
+  * Eliminated the bottom-right fill handle click-interceptor and marker: dragging mouse across cells is guaranteed to perform strictly safe, read-only marquee selection (`SelectRange`);
+  * Completely prevents accidental cell value replication and phantom row allocation when selecting from cell `(0, 0)` down across the grid.
+* **Zero Mutation Invariant in Auto-Fill (`apply_auto_fill`):**
+  * Auto-fill algorithm is strictly capped to existing dataset rows (`target.max_row.min(ds.row_count().saturating_sub(1))`), completely barring `apply_auto_fill` from allocating new empty rows in the dataset.
 
 ### 📦 Multi-Platform Release Artifacts
 * **Windows (x64):** Inno Setup Installer (`.exe`) + Portable ZIP archive (silent GUI subsystem launch without terminal window).
@@ -78,68 +63,53 @@ StatCraft v0.4.0 is a major milestone release representing the culmination of th
 <a name="русский"></a>
 ## Русский
 
-Релиз StatCraft v0.4.0 — это масштабное обновление, знаменующее завершение комплексной инициативы **модернизации таблиц данных (Table Modernization Initiative)** и существенное повышение надежности рабочей среды. Данный релиз превращает Data View в высокопроизводительный, виртуализированный табличный процессор уровня Excel и IBM SPSS, способный отображать и плавно прокручивать (60 FPS) массивы из сотен тысяч наблюдений, с поддержкой сквозной клавиатурной навигации, автофильтрации колонок, канонической сортировки через шину команд, прямоугольного буфера обмена и автоматического контроля типов данных.
+Релиз StatCraft v0.4.1 — это функциональное обновление и стабилизация, внедряющие **мультифайловое рабочее пространство**, **слияние данных (добавление наблюдений и переменных)**, защиту оперативной памяти **Memory Guard**, а также комплексную **модернизацию интерактивного взаимодействия с сеткой данных** в строгом соответствии с эталонным каноном IBM SPSS Statistics и чистой комнаты.
 
-### 📊 Виртуализированная 4-квадрантная 2D-сетка (Feature 006)
-* **Пространственная 4-квадрантная архитектура:**
-  * Фиксированный верхний левый заголовок (`quad_top_left`);
-  * Колоночные заголовки переменных, закрепленные сверху и скроллящиеся по горизонтали (`quad_top_right`);
-  * Номера строк/наблюдений, закрепленные слева и скроллящиеся по вертикали (`quad_bottom_left`);
-  * Центральная область ячеек данных со скроллингом в 2D (`quad_center`).
-  * Номера строк больше не уплывают за левый край экрана при горизонтальной прокрутке.
-* **Пространственная индексация префиксными суммами (`LineIndex`):**
-  * $O(\log N)$ бинарный поиск от экранных координат к строкам и столбцам без единой аллокации памяти в режиме `Uniform` для сотен тысяч строк.
-* **Интерактивный ресайз столбцов и автоподбор ширины:**
-  * Изменение ширины перетаскиванием границы с динамической сменяемостью курсора (`ResizeHorizontal`) и направляющей линией;
-  * Двойной клик по разделителю заголовков автоматически подбирает оптимальную ширину (Auto-fit) по содержимому;
-  * Двусторонняя синхронизация ширины столбцов со словарем метаданных SPSS (`VariableMetadata.columns`).
+### 🗂️ Мультифайловый воркспейс, вкладки датасетов и Memory Guard (Feature 010 & 011)
+* **Параллельные сессии документов (`WorkspaceManager`):**
+  * Одновременное открытие, редактирование и переключение между несколькими наборами данных в едином окне программы;
+  * Каждая сессия изолированно хранит свою историю отмены/повтора (Undo/Redo), состояния фильтров, расщепления файлов и выделения ячеек.
+* **Сжатие таблиц в памяти без потерь:**
+  * Битовые маски пропусков (`NullBitmask`), словарное кодирование текстовых категорий (`DictionaryEncodedColumn`) и плотные числовые колонки (`LosslessCompressedColumn`) со 100% сохранением математической точности `f64`.
+* **Команды управления датасетами в синтаксисе SPSS:**
+  * Поддержка парсинга и выполнения команд `DATASET NAME`, `DATASET ACTIVATE`, `DATASET CLOSE`, `DATASET DISPLAY` с валидацией модификаторов `WINDOW=ASIS`.
+* **Векторная панель вкладок документов (`DocumentTabStrip`):**
+  * Вкладки с векторным значком таблицы, индикатором несохраненных изменений `*`, кнопкой закрытия `✕`, плавной прокруткой колесиком, кнопками навигации шевронами и кнопкой быстрого создания нового датасета `[ ➕ ]`;
+  * Горячие клавиши: `Ctrl+Tab` / `Ctrl+Shift+Tab` (переключение между датасетами), `Ctrl+W` (закрыть текущий датасет).
+* **Кроссплатформенный Memory Guard (`system_memory.rs`):**
+  * Нативный опрос доступной физической памяти ОС: Windows API (`GlobalMemoryStatusEx`), Linux (`/proc/meminfo`), macOS (`sysctl`), WebAssembly;
+  * Предохранитель: предупреждает пользователя перед открытием тяжелых файлов (>250 МБ) или пакетов (>10 файлов) при критически низком остатке оперативной памяти (<500 МБ или <15%).
 
-### 🖱️ Прямоугольное выделение, клавиатурная навигация и Direct Typing (Feature 007)
-* **Прямоугольное выделение диапазона ячеек:**
-  * Плавное выделение рамкой мышью, а также с зажатой клавишей `Shift` (Shift-click, Shift-drag);
-  * Векторная отрисовка: акцентная рамка 1.5 px по периметру, фоновая подсветка ячеек без перекрытия текста и визуальное выделение активной ячейки-курсора.
-* **Сквозная клавиатурная эргономика:**
-  * Навигация стрелками, клавишами `Tab` / `Shift+Tab`, `Enter` / `Shift+Enter`, `Home` / `End`, `Ctrl+Home` / `Ctrl+End`;
-  * Расширение выделения с удержанием `Shift`;
-  * **Direct Typing:** Мгновенный ввод данных в активную ячейку по нажатию буквенно-цифровых клавиш без предварительного двойного клика мышью или нажатия Enter;
-  * Быстрая очистка ячеек по `Delete` или `Backspace`.
-* **Фокусируемый инлайн-редактор ячеек:**
-  * Текстовое поле ввода `TextEdit` с акцентной рамкой фокуса, автосохранением по Enter/Tab и отменой по Escape.
+### 🔗 Слияние файлов: Добавить наблюдения и Добавить переменные (Feature 012)
+* **Добавить наблюдения (`ADD FILES`):**
+  * Вертикальное объединение строк из внешних файлов (`.sav`, `.zsav`, `.stc`, `.csv`, `.xlsx`) или соседних открытых вкладок;
+  * Автоматическое сопоставление одноименных полей, приведение типов, отслеживание источника `/IN=var` и опциональная сортировка с чередованием по ключам `/BY`.
+* **Добавить переменные (`MATCH FILES`):**
+  * Горизонтальное объединение колонок: объединение 1:1 по ключам, справочные таблицы 1:N (`/TABLE`), последовательное слияние без ключей;
+  * Автоматическое разрешение коллизий дублирующихся имен переменных и создание индикаторов присутствия (`/IN`).
+* **Диалоговые окна стандарта DialogKit:**
+  * Окна `AddCasesDialog` и `AddVarsDialog` с удобным двухколоночным выбором переменных, селектором открытых вкладок воркспейса, кнопкой обзора файлов на диске и генерацией канонического синтаксиса SPSS.
 
-### 📋 Прямоугольный буфер обмена TSV/CSV и автозаполнение (Feature 007)
-* **Прямоугольный буфер обмена с поддержкой внешних программ:**
-  * Двусторонняя сериализация диапазонов в TSV/CSV (`Ctrl+C`) и потоковый парсер вставки (`Ctrl+V`);
-  * Вставка многострочных матриц с авторасширением строк датасета.
-* **Серийное автозаполнение (Fill Handle):**
-  * Векторный маркер протяжки $6 \times 6$ px в правом нижнем углу выделения;
-  * Протяжка вычисляет шаг линейной арифметической прогрессии для чисел (`[1, 2, 3] -> [4, 5, 6]`) и циклическое повторение для текстовых данных.
+### 🛡️ Модернизация сетки данных и устранение багов взаимодействия (Spec-Kit 013)
+* **Сохранение прямоугольного выделения при правом клике:**
+  * Клик правой кнопкой мыши внутри выделенного блока ячеек больше не схлопывает диапазон в одну ячейку, сохраняя блок активным для команд контекстного меню.
+* **Защита от загрязнения датасета фантомными строками (Zero Pollution):**
+  * Фиксация пустого значения в строке добавления со звездочкой `*` не аллоцирует строк в датасете: появление случайных строк с системными пропусками `SYSMIS` (`.`) исключено.
+* **Физическое удаление наблюдений клавишей Delete и через меню:**
+  * Разделено поведение: удаление в диапазоне ячеек очищает значения; удаление при выделении строк целиком (`is_full_rows`) физически удаляет наблюдения через команду ядра `data.delete_row` с уменьшением объема выборки $N$ и поддержкой Undo.
+* **Контекстные меню заголовков строк и колонок (`ContextMenuTarget`):**
+  * Заголовки строк: «Вставить наблюдение выше», «Удалить выбранные наблюдения», «Очистить значения»; заголовки столбцов: сортировка A–Z / Z–A, «Вставить переменную», «Автоподбор ширины столбца».
+* **Закрытие меню по клику снаружи (Click-Outside Dismissal):**
+  * Контекстные меню и окна автофильтра закрываются при любом клике за пределами их границ без обязательного нажатия `Escape`.
 
-### 🔍 Колоночный автофильтр, выпадающее меню и быстрая сортировка (Feature 008)
-* **Колоночный автофильтр в заголовках:**
-  * Векторная кнопка в шапке столбца (шеврон в покое, залитая иконка воронки при активном фильтре);
-  * Плавающее окно автофильтра с живым поиском, переключателями «Выбрать все» / «Очистить», списком уникальных значений с чекбоксами и категорией «(Пустые)»;
-  * Оценка соответствия строк через `DataSet::is_row_matched_by_filter`.
-* **Быстрая сортировка через CommandBus:**
-  * Сортировка по возрастанию (A–Z) и убыванию (Z–A) из меню автофильтра и из контекстного меню;
-  * Выполняется как каноническая команда движка `data.sort_cases` со 100% обратимым Undo/Redo (`Ctrl+Z` / `Ctrl+Y`) и фиксацией в синтаксисе SPSS (`SORT CASES BY ...`).
+### 🎯 Канон SPSS: выделение ячеек строго Read-Only и удаление Fill Handle (Spec-Kit 014 / BUG-014)
+* **Чистое выделение без риска затирания данных:**
+  * Маркер автозаполнения и его хит-тест удалены из интерфейса сетки: перетаскивание мыши всегда является безопасной операцией выделения ячеек (`SelectRange`);
+  * Полностью устранена проблема случайного тиражирования значения ячейки `(0, 0)` и добавления фантомных строк при выделении таблицы мышью.
+* **Инвариант сохранности строк в алгоритме автозаполнения:**
+  * Вспомогательная функция `apply_auto_fill` строго ограничена существующими строками датасета без вызова `add_empty_row()`.
 
-### 🎯 Контекстное меню ячеек, визуализация фильтрации и аудит целостности (Feature 008)
-* **Контекстное меню ячеек (правый клик):**
-  * «Фильтровать по значению ячейки», «Очистить фильтр столбца», «Сортировка по возрастанию / убыванию», «Копировать» / «Вставить».
-* **Визуализация фильтрации (Паритет SPSS FILTER BY):**
-  * Отфильтрованные строки не удаляются: номера строк перечеркиваются диагональной линией, текст в ячейках отображается приглушенным серым цветом, и строки автоматически исключаются из расчетов аналитических процедур.
-* **Аудит целостности данных («Числа, сохраненные как текст»):**
-  * Автоматический детектор `is_number_stored_as_text` выявляет числовые данные внутри строковых полей;
-  * Зеленый треугольный маркер в верхнем левом углу ячейки в стиле Excel;
-  * Одиночный клик по маркеру мгновенно конвертирует значение в `RawValue::Number`.
-
-### 🗂️ Управление жизненным циклом вкладок (Feature 005)
-* Базовые представления (**Представление данных**, **Представление переменных**, **Просмотр вывода**) защищены от случайного закрытия (`is_closeable = false`);
-* Вспомогательные вкладки (Редактор синтаксиса) закрываются штатной кнопкой с крестиком;
-* Меню «Окно» обеспечивает мгновенное открытие и переключение между всеми вкладками;
-* Выполнение синтаксиса SPSS гарантирует автоматическое открытие вкладки Просмотра вывода.
-
-### 📦 Релизные сборки под все платформы
-* **Windows (x64):** Inno Setup Установщик (`.exe`) + Портативный ZIP-архив (тихий запуск без окна терминала).
-* **Linux (x64):** Пакет Debian (`.deb`) + Портативный архив TAR.GZ.
-* **macOS (Apple Silicon ARM64 & Intel x64):** Образ диска Apple DMG + Бандл приложения (`.app`) TAR.GZ.
+### 📦 Мультиплатформенные установочные пакеты
+* **Windows (x64):** Инсталлятор Inno Setup (`.exe`) + Портативный ZIP-архив (тихий запуск без консольного окна).
+* **Linux (x64):** Пакет Debian (`.deb`) + Портативный TAR.GZ-архив.
+* **macOS (Apple Silicon ARM64 & Intel x64):** Образ диска DMG + Пакет приложения (`.app`) TAR.GZ.

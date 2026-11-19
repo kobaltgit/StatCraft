@@ -60,13 +60,37 @@ pub fn render_notes_block(ui: &mut Ui, notes: &OutputNotes) {
                 ui.painter().rect_filled(r2, 0.0_f32, Tokens::bg_row_even());
                 ui.painter()
                     .rect_stroke(r2, 0.0_f32, Stroke::new(1.0_f32, Tokens::border()));
-                ui.painter().text(
-                    pos2(r2.min.x + 6.0, r2.center().y),
-                    Align2::LEFT_CENTER,
-                    val,
-                    FontId::proportional(11.0),
-                    Tokens::text_primary(),
-                );
+
+                if *label == "Active Dataset" {
+                    let ds_color = crate::theme::dataset_color(val);
+                    let badge_w = (val.len() as f32 * 6.5 + 16.0).clamp(32.0, val_w - 12.0);
+                    let badge_rect = egui::Rect::from_min_size(
+                        pos2(r2.min.x + 6.0, r2.min.y + 2.0),
+                        vec2(badge_w, row_h - 4.0),
+                    );
+                    ui.painter().rect_filled(
+                        badge_rect,
+                        3.0_f32,
+                        crate::theme::color_with_alpha(ds_color, 35),
+                    );
+                    ui.painter()
+                        .rect_stroke(badge_rect, 3.0_f32, Stroke::new(1.0_f32, ds_color));
+                    ui.painter().with_clip_rect(badge_rect).text(
+                        badge_rect.center(),
+                        Align2::CENTER_CENTER,
+                        val,
+                        FontId::proportional(11.0),
+                        ds_color,
+                    );
+                } else {
+                    ui.painter().text(
+                        pos2(r2.min.x + 6.0, r2.center().y),
+                        Align2::LEFT_CENTER,
+                        val,
+                        FontId::proportional(11.0),
+                        Tokens::text_primary(),
+                    );
+                }
             });
         }
     });
