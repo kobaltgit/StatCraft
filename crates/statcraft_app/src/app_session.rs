@@ -63,13 +63,27 @@ impl StatCraftApp {
         if self.workspace.is_any_dirty() {
             return true;
         }
+        if let Some(sess) = self.workspace.active_session() {
+            if let Some(ds) = &self.dataset {
+                if sess.is_dirty
+                    || ds.delta.undo_stack.len() != sess.delta_undo_checkpoint_len
+                    || sess.dataset.col_count() != ds.col_count()
+                    || sess.dataset.row_count() != ds.row_count()
+                    || sess.dataset.dictionary != ds.dictionary
+                {
+                    return true;
+                }
+            }
+        }
         let current = self.current_checkpoint();
         match &self.saved_checkpoint {
-            Some(saved) => saved != &current,
+            Some(saved) => {
+                saved.syntax_len != current.syntax_len
+                    || saved.command_history_len != current.command_history_len
+                    || saved.output_procedures_count != current.output_procedures_count
+            }
             None => {
-                current.col_count > 0
-                    || current.command_history_len > 0
-                    || current.delta_undo_len > 0
+                current.command_history_len > 0
                     || current.syntax_len > 0
                     || current.output_procedures_count > 0
             }
@@ -402,6 +416,13 @@ impl StatCraftApp {
                 self.recent_files.save_default();
 
                 if is_csv {
+                    if let Some(sess) = self.workspace.active_session_mut() {
+                        sess.mark_clean();
+                        sess.file_path = Some(path.clone());
+                        if let Some(name) = path.file_name().and_then(|n| n.to_str()) {
+                            sess.name = name.to_string();
+                        }
+                    }
                     self.status_message = StatusMessage::DataSaved {
                         path: path_display.clone(),
                     };
@@ -507,6 +528,8 @@ impl StatCraftApp {
         let is_spss = matches!(ext.as_str(), "sav" | "zsav");
         let is_excel = matches!(ext.as_str(), "xlsx" | "xls" | "ods" | "xlsm");
 
+        self.sync_active_dataset_to_workspace();
+
         let res = if is_spss {
             let params = json!({
                 "file_path": path.to_string_lossy(),
@@ -555,11 +578,14 @@ impl StatCraftApp {
                             sess.is_dirty = false;
                         }
                     } else {
-                        let _ = self.workspace.add_dataset(
+                        let id = self.workspace.add_dataset(
                             ds.clone(),
                             file_name.clone(),
                             Some(path.clone()),
                         );
+                        if let Some(sess) = self.workspace.get_session_mut(id) {
+                            sess.is_dirty = false;
+                        }
                     }
                 }
 

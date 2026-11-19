@@ -27,7 +27,11 @@ pub fn render_log_block(ui: &mut Ui, sps: &str) {
     }
 }
 
-pub fn render_notes_block(ui: &mut Ui, notes: &OutputNotes) {
+pub fn render_notes_block(
+    ui: &mut Ui,
+    notes: &OutputNotes,
+    workspace: Option<&statcraft_core::WorkspaceManager>,
+) {
     let row_h = 20.0_f32;
     let label_w = 160.0_f32;
     let val_w = 260.0_f32;
@@ -62,7 +66,10 @@ pub fn render_notes_block(ui: &mut Ui, notes: &OutputNotes) {
                     .rect_stroke(r2, 0.0_f32, Stroke::new(1.0_f32, Tokens::border()));
 
                 if *label == "Active Dataset" {
-                    let ds_color = crate::theme::dataset_color(val);
+                    let ds_color = workspace
+                        .and_then(|ws| ws.session_color_by_name(val))
+                        .and_then(|hex| crate::theme::hex_to_color32(&hex))
+                        .unwrap_or_else(|| crate::theme::dataset_color(val));
                     let badge_w = (val.len() as f32 * 6.5 + 16.0).clamp(32.0, val_w - 12.0);
                     let badge_rect = egui::Rect::from_min_size(
                         pos2(r2.min.x + 6.0, r2.min.y + 2.0),

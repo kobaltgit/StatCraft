@@ -1,4 +1,4 @@
-# StatCraft v0.4.1
+# StatCraft v0.4.2
 
 [English](#english) | [Русский](#русский)
 
@@ -7,54 +7,40 @@
 <a name="english"></a>
 ## English
 
-StatCraft v0.4.1 is a feature and stabilization release introducing **Multi-File Workspaces**, **Data Merging (Add Cases & Add Variables)**, **Memory Guard protection**, and comprehensive **Grid Selection & Interaction Modernization** adhering to the strict IBM SPSS Statistics clean-room canon.
+StatCraft v0.4.2 is a feature and stabilization release introducing **Dynamic Dataset Colors & Container Persistence** and **Tab Dirty Marker Positioning & Titlebar Normalization**, alongside the multi-dataset capabilities and grid interactions introduced in v0.4.1.
 
-### 🗂️ Multi-File Workspace, Tabbed Datasets & Memory Guard (Feature 010 & 011)
-* **Concurrent Document Sessions (`WorkspaceManager`):**
-  * Open, manipulate, and switch between multiple datasets simultaneously in a unified window;
-  * Each dataset session maintains isolated Undo/Redo histories, filter states, split-file contexts, and selection metadata.
-* **Lossless In-Memory Compression:**
-  * Zero-copy bitmasks for missing values (`NullBitmask`), dictionary encoding for categorical strings (`DictionaryEncodedColumn`), and packed numeric columns (`LosslessCompressedColumn`) retaining full `f64` mathematical precision.
-* **SPSS Syntax Commands for Datasets:**
-  * Full parser and engine command execution for `DATASET NAME`, `DATASET ACTIVATE`, `DATASET CLOSE`, and `DATASET DISPLAY` with `WINDOW=ASIS` validation.
-* **Vector Document Tab Strip (`DocumentTabStrip`):**
-  * Horizontal tab bar with custom vector dataset icons, unsaved modification markers (`*`), close buttons (`✕`), smooth wheel scrolling, chevron overflow navigators, and quick dataset creation (`[ ➕ ]`);
-  * Full keyboard shortcuts: `Ctrl+Tab` / `Ctrl+Shift+Tab` (next/previous dataset), `Ctrl+W` (close current dataset).
-* **Cross-Platform System Memory Guard (`system_memory.rs`):**
-  * Native physical RAM probing without heavyweight dependencies: Windows API (`GlobalMemoryStatusEx`), Linux (`/proc/meminfo`), macOS (`sysctl`), and WebAssembly;
-  * Safety preflight check: proactively alerts users when opening large files (>250 MB) or batch operations (>10 files) if available RAM is critically low (<500 MB or <15%).
+### 🎨 Dynamic Dataset Colors & Container Persistence (Spec-Kit 015 / BUG-015)
+* **Collision-Free Random Contrast Colors:**
+  * Implemented high-performance 64-bit SplitMix64 generator with continuous golden angle distribution ($137.50777^\circ$).
+  * Dynamically scans currently opened document tabs and guarantees a minimum angular distance $\ge 45^\circ$, completely preventing visually identical purple/violet clustering across datasets with similar names (`merge_base.csv`, `merge_add_cases.csv`, `merge_add_vars.csv`).
+  * Automatically tunes saturation ($0.65 \dots 0.85$) and optimizes lightness for both dark and light theme palettes.
+* **Cross-Pane Visual Identity:**
+  * Synchronized colors across the application: DocumentTabStrip active underlines, vector table grid icons, Outline Tree procedure chips, and Notes summary tables query session colors via `workspace.session_color_by_name`.
+* **Complete Persistence in `.stc` Containers:**
+  * Added `pub tab_color: Option<String>` with `skip_serializing_if = "Option::is_none"` across `StcDatasetRecord`, `StcContainer`, and `DocumentSession`.
+  * Saving multi-file workspaces preserves assigned tab colors into `.stc` project files.
+  * 100% backward compatibility: legacy v0.4.0 `.stc` project files deserialize seamlessly with automated contrast color assignment.
 
-### 🔗 Data Merging: Add Cases & Add Variables (Feature 012)
-* **Add Cases (`ADD FILES`):**
-  * Concatenate observations vertically from external files (`.sav`, `.zsav`, `.stc`, `.csv`, `.xlsx`) or active workspace tabs;
-  * Automated schema alignment, automatic variable type reconciliation, `/IN=var` source indicator tracking, and optional interleaved case ordering via `/BY`.
-* **Add Variables (`MATCH FILES`):**
-  * Merge variables horizontally across datasets: 1:1 key merges, 1:N lookup tables (`/TABLE`), and sequential merges without keys;
-  * Automated resolution of duplicate column collisions with clean rename suggestions and presence indicator flags (`/IN`).
-* **Canonical DialogKit Interface:**
-  * Clean-room dialog windows (`AddCasesDialog`, `AddVarsDialog`) with dual-pane variable selection, active workspace tab pickers, file browse dialogs, and instant SPSS syntax generation.
+### 🏷️ Tab Dirty Marker Positioning & Titlebar Normalization (BUG-016)
+* **Zero Text Overlap on Document Tabs:**
+  * Removed hardcoded coordinate truncation (`min(12) * 6.5`) that previously caused asterisk markers to render directly over filename characters (e.g. `cases` in `merge_add_cases.csv`).
+  * Right padding is safely reserved (`32.0 px` when dirty, `20.0 px` when clean).
+  * Long filenames cleanly truncate with an ellipsis (`truncate_at_width`), and the amber asterisk marker (`*`) is placed strictly after the title text (`text_x + text_w + 3.0`) with vertical centering (`Align2::LEFT_CENTER`).
+* **Titlebar Normalization & Unicode Compliance:**
+  * Completely eliminated the hardcoded bullet symbol ` •` (U+2022) from the window titlebar in strict compliance with Vector-First UI standards.
+  * Window title now renders cleanly: `file_name` for saved files, or `file_name *` when modified.
+* **Semantic Session Isolation in `has_unsaved_changes()`:**
+  * Refactored `has_unsaved_changes()` to compare active dataset state against its own session dictionary, dimensions, and delta undo checkpoint, eliminating false dirty triggers when switching between tabs with differing row/column counts.
+  * Saving datasets to CSV/TSV/TXT via `save_to_path` properly clears the dirty state via `sess.mark_clean()`.
 
-### 🛡️ Grid Interaction Modernization & Invariants (Spec-Kit 013)
-* **Preserving Rectangular Selection on Right-Click:**
-  * Right-clicking inside an active multi-cell selection preserves the highlighted rectangular block rather than collapsing to a single cell.
-* **Zero Pollution Invariant for Phantom Rows:**
-  * Committing empty or whitespace input on the trailing insertion row (`*`) leaves dataset dimensions intact, eliminating accidental rows with system-missing values (`SYSMIS` / `.`).
-* **Physical Case Deletion via Delete Key & Menu Actions:**
-  * Differentiated deletion semantics: cell range selections clear cell contents to `Null`; full-row selections (`is_full_rows`) physically delete cases via the engine command `data.delete_row` with reduced sample size $N$ and complete Undo/Redo reversibility.
-* **Row and Column Header Context Menus (`ContextMenuTarget`):**
-  * Row headers offer "Insert Case Above", "Delete Selected Cases ({count})", and "Clear Cases Values"; column headers offer Ascending/Descending sorts, "Insert Variable", and "Auto-fit Column Width".
-* **Click-Outside Dismissal (Eliminating Modal Traps):**
-  * Menus and column filter popups measure boundaries and dismiss automatically when clicking outside without requiring `Escape`.
-
-### 🎯 SPSS Canon Range Selection & Fill Handle Removal (Spec-Kit 014 / BUG-014)
-* **Pure Read-Only Range Selection (SPSS Canon):**
-  * Eliminated the bottom-right fill handle click-interceptor and marker: dragging mouse across cells is guaranteed to perform strictly safe, read-only marquee selection (`SelectRange`);
-  * Completely prevents accidental cell value replication and phantom row allocation when selecting from cell `(0, 0)` down across the grid.
-* **Zero Mutation Invariant in Auto-Fill (`apply_auto_fill`):**
-  * Auto-fill algorithm is strictly capped to existing dataset rows (`target.max_row.min(ds.row_count().saturating_sub(1))`), completely barring `apply_auto_fill` from allocating new empty rows in the dataset.
+### 🗂️ Included from v0.4.1: Multi-File Workspaces & Grid Modernization
+* **Concurrent Document Sessions (`WorkspaceManager`):** Open, edit, and switch between multiple datasets in a single window with isolated Undo/Redo histories, filter states, and split-file contexts.
+* **Cross-Platform Memory Guard:** Real-time RAM monitoring preventing out-of-memory crashes on massive files.
+* **Data Merging (`ADD FILES` & `MATCH FILES`):** Vertical case concatenation and horizontal variable merging with key-matching and `/IN` indicator flags.
+* **SPSS Canon Range Selection:** 100% safe, read-only grid selection without accidental cell replication or phantom row allocation.
 
 ### 📦 Multi-Platform Release Artifacts
-* **Windows (x64):** Inno Setup Installer (`.exe`) + Portable ZIP archive (silent GUI subsystem launch without terminal window).
+* **Windows (x64):** Inno Setup Installer (`.exe`) + Portable ZIP archive (silent GUI launch).
 * **Linux (x64):** Debian package (`.deb`) + Portable TAR.GZ archive.
 * **macOS (Apple Silicon ARM64 & Intel x64):** Apple DMG Disk Image + Application Bundle (`.app`) TAR.GZ.
 
@@ -63,53 +49,39 @@ StatCraft v0.4.1 is a feature and stabilization release introducing **Multi-File
 <a name="русский"></a>
 ## Русский
 
-Релиз StatCraft v0.4.1 — это функциональное обновление и стабилизация, внедряющие **мультифайловое рабочее пространство**, **слияние данных (добавление наблюдений и переменных)**, защиту оперативной памяти **Memory Guard**, а также комплексную **модернизацию интерактивного взаимодействия с сеткой данных** в строгом соответствии с эталонным каноном IBM SPSS Statistics и чистой комнаты.
+Релиз StatCraft v0.4.2 — это функциональное обновление и стабилизация, внедряющие **динамическую генерацию контрастных цветов датасетов и их сохранение в контейнере проекта `.stc`**, а также **исправление позиционирования маркера несохраненности на вкладках и нормализацию заголовка окна программы**.
 
-### 🗂️ Мультифайловый воркспейс, вкладки датасетов и Memory Guard (Feature 010 & 011)
-* **Параллельные сессии документов (`WorkspaceManager`):**
-  * Одновременное открытие, редактирование и переключение между несколькими наборами данных в едином окне программы;
-  * Каждая сессия изолированно хранит свою историю отмены/повтора (Undo/Redo), состояния фильтров, расщепления файлов и выделения ячеек.
-* **Сжатие таблиц в памяти без потерь:**
-  * Битовые маски пропусков (`NullBitmask`), словарное кодирование текстовых категорий (`DictionaryEncodedColumn`) и плотные числовые колонки (`LosslessCompressedColumn`) со 100% сохранением математической точности `f64`.
-* **Команды управления датасетами в синтаксисе SPSS:**
-  * Поддержка парсинга и выполнения команд `DATASET NAME`, `DATASET ACTIVATE`, `DATASET CLOSE`, `DATASET DISPLAY` с валидацией модификаторов `WINDOW=ASIS`.
-* **Векторная панель вкладок документов (`DocumentTabStrip`):**
-  * Вкладки с векторным значком таблицы, индикатором несохраненных изменений `*`, кнопкой закрытия `✕`, плавной прокруткой колесиком, кнопками навигации шевронами и кнопкой быстрого создания нового датасета `[ ➕ ]`;
-  * Горячие клавиши: `Ctrl+Tab` / `Ctrl+Shift+Tab` (переключение между датасетами), `Ctrl+W` (закрыть текущий датасет).
-* **Кроссплатформенный Memory Guard (`system_memory.rs`):**
-  * Нативный опрос доступной физической памяти ОС: Windows API (`GlobalMemoryStatusEx`), Linux (`/proc/meminfo`), macOS (`sysctl`), WebAssembly;
-  * Предохранитель: предупреждает пользователя перед открытием тяжелых файлов (>250 МБ) или пакетов (>10 файлов) при критически низком остатке оперативной памяти (<500 МБ или <15%).
+### 🎨 Динамические цвета датасетов и сохранение в .stc (Spec-Kit 015 / BUG-015)
+* **Контрастные случайные цвета без коллизий:**
+  * Внедрен 64-битный хэшер на базе SplitMix64 с непрерывным распределением по золотому сечению ($137.50777^\circ$).
+  * Алгоритм сканирует все открытые вкладки и гарантирует минимальное угловое расстояние $\ge 45^\circ$, полностью устраняя визуальное слияние в одинаковый фиолетовый оттенок для файлов со схожими именами (`merge_base.csv`, `merge_add_cases.csv`, `merge_add_vars.csv`).
+  * Автоматически варьирует насыщенность ($0.65 \dots 0.85$) и адаптирует светлоту под темную и светлую темы оформления.
+* **Сквозная цветовая идентификация:**
+  * Синхронизация цветов по всему интерфейсу: активное подчеркивание вкладки DocumentTabStrip, векторный значок таблицы, чипы процедур в дереве навигации (Outline Tree) и таблица «Примечания» (Notes) запрашивают цвет сессии через `workspace.session_color_by_name`.
+* **Сохранение в файлах проектов `.stc`:**
+  * Добавлено поле `pub tab_color: Option<String>` с атрибутом `skip_serializing_if = "Option::is_none"` в структуры `StcDatasetRecord`, `StcContainer` и `DocumentSession`.
+  * При сохранении проекта назначенные цвета вкладок фиксируются в файле `.stc` и восстанавливаются при повторном открытии.
+  * 100% обратная совместимость со старыми файлами проектов формата v0.4.0.
 
-### 🔗 Слияние файлов: Добавить наблюдения и Добавить переменные (Feature 012)
-* **Добавить наблюдения (`ADD FILES`):**
-  * Вертикальное объединение строк из внешних файлов (`.sav`, `.zsav`, `.stc`, `.csv`, `.xlsx`) или соседних открытых вкладок;
-  * Автоматическое сопоставление одноименных полей, приведение типов, отслеживание источника `/IN=var` и опциональная сортировка с чередованием по ключам `/BY`.
-* **Добавить переменные (`MATCH FILES`):**
-  * Горизонтальное объединение колонок: объединение 1:1 по ключам, справочные таблицы 1:N (`/TABLE`), последовательное слияние без ключей;
-  * Автоматическое разрешение коллизий дублирующихся имен переменных и создание индикаторов присутствия (`/IN`).
-* **Диалоговые окна стандарта DialogKit:**
-  * Окна `AddCasesDialog` и `AddVarsDialog` с удобным двухколоночным выбором переменных, селектором открытых вкладок воркспейса, кнопкой обзора файлов на диске и генерацией канонического синтаксиса SPSS.
+### 🏷️ Позиционирование маркера несохраненности и очистка шапки окна (BUG-016)
+* **Исключение наложения маркера на текст названия вкладки:**
+  * Удален хардкод отсечения `min(12) * 6.5`, приводивший к наложению звездочки на буквы слова `cases` посередине вкладки при длине имени более 12 символов.
+  * Справа гарантированно резервируется отступ (`32.0 px` при несохраненных изменениях, `20.0 px` при чистом состоянии).
+  * Длинные имена файлов аккуратно усекаются многоточием (`truncate_at_width`), а янтарная звездочка `*` позиционируется строго справа за текстом (`text_x + text_w + 3.0`) с вертикальным центрированием `Align2::LEFT_CENTER`.
+* **Нормализация заголовка окна программы:**
+  * Полностью удален захардкоженный Unicode-глиф точки ` •` (U+2022) в соответствии со стандартом Vector-First UI (п. 8 AGENTS.md).
+  * Заголовок окна отображается строго по стандарту: `file_name` для сохраненного файла или `file_name *` при наличии изменений.
+* **Семантическая изоляция сессий в `has_unsaved_changes()`:**
+  * Логика проверки несохраненных изменений изолирована для каждой сессии: сравниваются размеры, словарь и чекпоинт дельты активного датасета относительно его собственной сессии, устраняя ложные срабатывания при переключении между вкладками с разным числом строк/колонок.
+  * Сохранение набора данных в CSV/TSV/TXT в `save_to_path` корректно сбрасывает dirty-флаг сессии через `sess.mark_clean()`.
 
-### 🛡️ Модернизация сетки данных и устранение багов взаимодействия (Spec-Kit 013)
-* **Сохранение прямоугольного выделения при правом клике:**
-  * Клик правой кнопкой мыши внутри выделенного блока ячеек больше не схлопывает диапазон в одну ячейку, сохраняя блок активным для команд контекстного меню.
-* **Защита от загрязнения датасета фантомными строками (Zero Pollution):**
-  * Фиксация пустого значения в строке добавления со звездочкой `*` не аллоцирует строк в датасете: появление случайных строк с системными пропусками `SYSMIS` (`.`) исключено.
-* **Физическое удаление наблюдений клавишей Delete и через меню:**
-  * Разделено поведение: удаление в диапазоне ячеек очищает значения; удаление при выделении строк целиком (`is_full_rows`) физически удаляет наблюдения через команду ядра `data.delete_row` с уменьшением объема выборки $N$ и поддержкой Undo.
-* **Контекстные меню заголовков строк и колонок (`ContextMenuTarget`):**
-  * Заголовки строк: «Вставить наблюдение выше», «Удалить выбранные наблюдения», «Очистить значения»; заголовки столбцов: сортировка A–Z / Z–A, «Вставить переменную», «Автоподбор ширины столбца».
-* **Закрытие меню по клику снаружи (Click-Outside Dismissal):**
-  * Контекстные меню и окна автофильтра закрываются при любом клике за пределами их границ без обязательного нажатия `Escape`.
+### 🗂️ Включено из версии v0.4.1: Мультифайловый воркспейс и слияние данных
+* **Параллельные сессии документов (`WorkspaceManager`):** одновременная работа с несколькими датасетами в едином окне с изолированными историями Undo/Redo, фильтрами и расщеплением файлов.
+* **Кроссплатформенный Memory Guard:** мониторинг доступной оперативной памяти, предотвращающий сбои при открытии гигантских массивов данных.
+* **Слияние данных (`ADD FILES` и `MATCH FILES`):** вертикальное объединение строк и горизонтальное объединение переменных по ключам с созданием индикаторов источника `/IN`.
+* **Эталонное выделение диапазона ячеек (канон SPSS):** строго безопасное выделение без риска затирания данных или создания пустых фантомных строк.
 
-### 🎯 Канон SPSS: выделение ячеек строго Read-Only и удаление Fill Handle (Spec-Kit 014 / BUG-014)
-* **Чистое выделение без риска затирания данных:**
-  * Маркер автозаполнения и его хит-тест удалены из интерфейса сетки: перетаскивание мыши всегда является безопасной операцией выделения ячеек (`SelectRange`);
-  * Полностью устранена проблема случайного тиражирования значения ячейки `(0, 0)` и добавления фантомных строк при выделении таблицы мышью.
-* **Инвариант сохранности строк в алгоритме автозаполнения:**
-  * Вспомогательная функция `apply_auto_fill` строго ограничена существующими строками датасета без вызова `add_empty_row()`.
-
-### 📦 Мультиплатформенные установочные пакеты
-* **Windows (x64):** Инсталлятор Inno Setup (`.exe`) + Портативный ZIP-архив (тихий запуск без консольного окна).
+### 📦 Дистрибутивы релиза
+* **Windows (x64):** Установщик Inno Setup (`.exe`) + Портативный ZIP-архив (тихий запуск без консольного окна).
 * **Linux (x64):** Пакет Debian (`.deb`) + Портативный TAR.GZ-архив.
-* **macOS (Apple Silicon ARM64 & Intel x64):** Образ диска DMG + Пакет приложения (`.app`) TAR.GZ.
+* **macOS (Apple Silicon ARM64 & Intel x64):** Образ диска DMG + Приложение (`.app`) в архиве TAR.GZ.

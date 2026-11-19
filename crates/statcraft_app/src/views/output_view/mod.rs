@@ -77,7 +77,7 @@ pub use tables_survival::{
 pub use tables_ttest_indep::{indep_ttest_to_tsv, render_spss_indep_ttest_tables};
 pub use tables_ttest_onesample::{onesample_ttest_to_tsv, render_spss_onesample_ttest_tables};
 pub use tables_ttest_paired::{paired_ttest_to_tsv, render_spss_paired_ttest_tables};
-pub use view::render_output_view;
+pub use view::{render_output_view, render_output_view_with_workspace};
 
 pub fn extract_item_tsv(kind: &OutputItemKind) -> Option<String> {
     match kind {

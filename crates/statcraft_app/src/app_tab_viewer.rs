@@ -1,8 +1,9 @@
 use crate::app::{is_tab_closeable, Tab};
 use crate::views::{
-    render_data_view, render_output_view, render_syntax_editor, render_variable_view,
-    DataViewAction, DataViewState, DocumentTabAction, DocumentTabStrip, OutputViewerState,
-    SyntaxEditorAction, SyntaxEditorState, VariableViewAction, VariableViewState,
+    render_data_view, render_output_view_with_workspace, render_syntax_editor,
+    render_variable_view, DataViewAction, DataViewState, DocumentTabAction, DocumentTabStrip,
+    OutputViewerState, SyntaxEditorAction, SyntaxEditorState, VariableViewAction,
+    VariableViewState,
 };
 use egui::Ui;
 use egui_dock::TabViewer;
@@ -60,7 +61,7 @@ impl<'a> TabViewer for StatCraftTabViewer<'a> {
                 }
             }
             Tab::OutputViewer => {
-                render_output_view(ui, self.output_view_state);
+                render_output_view_with_workspace(ui, self.output_view_state, Some(self.workspace));
             }
             Tab::SyntaxEditor => {
                 let action = render_syntax_editor(ui, self.syntax_editor_state);

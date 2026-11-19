@@ -23,6 +23,9 @@ pub struct StcDatasetRecord {
     pub weight_var: Option<String>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub split_file_json: Option<String>,
+    /// Persistent dataset tab color hex (e.g. "#2E86AB")
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub tab_color: Option<String>,
 }
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
@@ -42,6 +45,8 @@ pub struct StcContainer {
     pub output_viewer_json: Option<String>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub syntax_text: Option<String>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub tab_color: Option<String>,
 }
 
 impl StcContainer {
@@ -65,6 +70,7 @@ impl StcContainer {
             active_dataset_index: None,
             output_viewer_json: None,
             syntax_text: None,
+            tab_color: None,
         }
     }
 
@@ -91,6 +97,7 @@ impl StcContainer {
             active_dataset_index: None,
             output_viewer_json,
             syntax_text,
+            tab_color: None,
         }
     }
 
@@ -100,32 +107,41 @@ impl StcContainer {
         output_viewer_json: Option<String>,
         syntax_text: Option<String>,
     ) -> Self {
-        let (dataset_name, metadata_json, table, active_filter_var, weight_var, split_file_json) =
-            if let Some(first) = active_dataset_index
-                .and_then(|idx| workspace_datasets.get(idx))
-                .or_else(|| workspace_datasets.first())
-            {
-                (
-                    first.dataset_name.clone(),
-                    first.metadata_json.clone(),
-                    first.table.clone(),
-                    first.active_filter_var.clone(),
-                    first.weight_var.clone(),
-                    first.split_file_json.clone(),
-                )
-            } else {
-                (
-                    "DataSet1".to_string(),
-                    r#"{"variables":[]}"#.to_string(),
-                    RawTable {
-                        columns: vec![],
-                        row_count: 0,
-                    },
-                    None,
-                    None,
-                    None,
-                )
-            };
+        let (
+            dataset_name,
+            metadata_json,
+            table,
+            active_filter_var,
+            weight_var,
+            split_file_json,
+            tab_color,
+        ) = if let Some(first) = active_dataset_index
+            .and_then(|idx| workspace_datasets.get(idx))
+            .or_else(|| workspace_datasets.first())
+        {
+            (
+                first.dataset_name.clone(),
+                first.metadata_json.clone(),
+                first.table.clone(),
+                first.active_filter_var.clone(),
+                first.weight_var.clone(),
+                first.split_file_json.clone(),
+                first.tab_color.clone(),
+            )
+        } else {
+            (
+                "DataSet1".to_string(),
+                r#"{"variables":[]}"#.to_string(),
+                RawTable {
+                    columns: vec![],
+                    row_count: 0,
+                },
+                None,
+                None,
+                None,
+                None,
+            )
+        };
 
         Self {
             format_version: STC_FORMAT_VERSION,
@@ -139,6 +155,7 @@ impl StcContainer {
             active_dataset_index,
             output_viewer_json,
             syntax_text,
+            tab_color,
         }
     }
 
@@ -154,6 +171,7 @@ impl StcContainer {
                 active_filter_var: self.active_filter_var.clone(),
                 weight_var: self.weight_var.clone(),
                 split_file_json: self.split_file_json.clone(),
+                tab_color: self.tab_color.clone(),
             }]
         }
     }
@@ -306,6 +324,7 @@ mod tests {
             active_filter_var: None,
             weight_var: None,
             split_file_json: None,
+            tab_color: Some("#10B981".to_string()),
         };
         let ds2 = StcDatasetRecord {
             dataset_name: "DataSet2".to_string(),
@@ -315,6 +334,7 @@ mod tests {
             active_filter_var: None,
             weight_var: None,
             split_file_json: None,
+            tab_color: Some("#F59E0B".to_string()),
         };
 
         let container = StcContainer::with_workspace(
@@ -331,9 +351,39 @@ mod tests {
         assert_eq!(loaded.workspace_datasets.len(), 2);
         assert_eq!(loaded.active_dataset_index, Some(1));
         assert_eq!(loaded.dataset_name, "DataSet2");
+        assert_eq!(loaded.tab_color, Some("#F59E0B".to_string()));
         let extracted = loaded.extract_datasets();
         assert_eq!(extracted.len(), 2);
         assert_eq!(extracted[0].dataset_name, "DataSet1");
+        assert_eq!(extracted[0].tab_color, Some("#10B981".to_string()));
         assert_eq!(extracted[1].dataset_name, "DataSet2");
+        assert_eq!(extracted[1].tab_color, Some("#F59E0B".to_string()));
+    }
+
+    #[test]
+    fn test_stc_legacy_container_without_colors_backward_compat() {
+        let legacy_json = r#"{
+            "format_version": 1,
+            "dataset_name": "LegacySet",
+            "metadata_json": "{\"variables\":[]}",
+            "table": {"columns": [], "row_count": 0},
+            "active_filter_var": null,
+            "weight_var": null,
+            "split_file_json": null,
+            "workspace_datasets": [
+                {
+                    "dataset_name": "LegacySet",
+                    "metadata_json": "{\"variables\":[]}",
+                    "table": {"columns": [], "row_count": 0}
+                }
+            ]
+        }"#;
+
+        let loaded: StcContainer = serde_json::from_str(legacy_json).unwrap();
+        assert_eq!(loaded.dataset_name, "LegacySet");
+        assert_eq!(loaded.tab_color, None);
+        let extracted = loaded.extract_datasets();
+        assert_eq!(extracted.len(), 1);
+        assert_eq!(extracted[0].tab_color, None);
     }
 }

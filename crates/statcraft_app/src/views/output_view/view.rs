@@ -21,6 +21,14 @@ use egui::{pos2, vec2, Align, Rect, ScrollArea, Sense, Stroke, Ui};
 use statcraft_i18n::t;
 
 pub fn render_output_view(ui: &mut Ui, state: &mut OutputViewerState) {
+    render_output_view_with_workspace(ui, state, None);
+}
+
+pub fn render_output_view_with_workspace(
+    ui: &mut Ui,
+    state: &mut OutputViewerState,
+    workspace: Option<&statcraft_core::WorkspaceManager>,
+) {
     if state.is_empty() {
         ui.centered_and_justified(|ui| {
             ui.label(t!("output-no-analysis"));
@@ -37,7 +45,7 @@ pub fn render_output_view(ui: &mut Ui, state: &mut OutputViewerState) {
     let left_rect = Rect::from_min_size(full_rect.min, vec2(outline_width, full_rect.height()));
     ui.allocate_new_ui(egui::UiBuilder::new().max_rect(left_rect), |ui| {
         ui.set_clip_rect(left_rect);
-        render_outline_pane(ui, state);
+        render_outline_pane(ui, state, workspace);
     });
 
     // 2. Vertical separator between panels
@@ -158,7 +166,7 @@ pub fn render_output_view(ui: &mut Ui, state: &mut OutputViewerState) {
                                         render_log_block(ui, sps);
                                     }
                                     OutputItemKind::Notes(notes) => {
-                                        render_notes_block(ui, notes);
+                                        render_notes_block(ui, notes, workspace);
                                     }
                                     OutputItemKind::DatasetSummary { name, rows, cols } => {
                                         ui.label(t!(

@@ -140,6 +140,7 @@ pub fn workspace_to_stc(
             active_filter_var: sess.dataset.active_filter_var.clone(),
             weight_var: sess.dataset.weight_var.clone(),
             split_file_json: split_json,
+            tab_color: sess.tab_color.clone(),
         });
     }
 
@@ -180,7 +181,12 @@ pub fn stc_to_workspace(container: StcContainer) -> Result<WorkspaceManager, IoE
         };
 
         let path_buf = rec.original_path.map(PathBuf::from);
-        ws.add_dataset(dataset, rec.dataset_name, path_buf);
+        let id = ws.add_dataset(dataset, rec.dataset_name, path_buf);
+        if let Some(color) = rec.tab_color {
+            if let Some(sess) = ws.get_session_mut(id) {
+                sess.set_tab_color(color);
+            }
+        }
     }
 
     if let Some(active_idx) = container.active_dataset_index {
@@ -402,6 +408,35 @@ mod tests {
         assert_eq!(loaded_ws.active_dataset().unwrap().row_count(), 15);
         assert_eq!(loaded_out.as_deref(), Some("{\"output\":1}"));
         assert_eq!(loaded_syn.as_deref(), Some("DESCRIPTIVES."));
+
+        let _ = std::fs::remove_file(&ws_path);
+    }
+
+    #[test]
+    fn test_save_load_multi_file_workspace_stc_color_persistence() {
+        let temp_dir = std::env::temp_dir();
+        let ws_path = temp_dir.join("statcraft_test_workspace_colors.stc");
+
+        let mut ws = WorkspaceManager::new();
+        let ds1 = DataSet::blank(10, 0).unwrap();
+        let ds2 = DataSet::blank(10, 0).unwrap();
+        let id1 = ws.add_dataset(ds1, "base.csv", None);
+        let id2 = ws.add_dataset(ds2, "add_cases.csv", None);
+
+        let color1 = ws.get_session(id1).unwrap().tab_color.clone();
+        let color2 = ws.get_session(id2).unwrap().tab_color.clone();
+        assert!(color1.is_some());
+        assert!(color2.is_some());
+        assert_ne!(color1, color2);
+
+        save_workspace_stc_to_path(&ws_path, &ws, None, None).unwrap();
+
+        let (loaded_ws, _, _) = load_workspace_stc_from_path(&ws_path).unwrap();
+        assert_eq!(loaded_ws.session_count(), 2);
+        let loaded_c1 = loaded_ws.sessions()[0].tab_color.clone();
+        let loaded_c2 = loaded_ws.sessions()[1].tab_color.clone();
+        assert_eq!(loaded_c1, color1);
+        assert_eq!(loaded_c2, color2);
 
         let _ = std::fs::remove_file(&ws_path);
     }

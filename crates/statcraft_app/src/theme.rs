@@ -88,18 +88,139 @@ pub fn palette() -> &'static ThemePalette {
     }
 }
 
-/// Calculates a deterministic, aesthetically pleasing color for any dataset name
-/// using the Golden Ratio HSL distribution. Guaranteed to provide high contrast
-/// and stability across application restarts and dark/light modes.
-pub fn dataset_color(name: &str) -> Color32 {
-    let mut hash: u32 = 2166136261;
-    for b in name.as_bytes() {
-        hash = (hash ^ (*b as u32)).wrapping_mul(16777619);
+pub fn hex_to_color32(hex: &str) -> Option<Color32> {
+    let clean = hex.trim().trim_start_matches('#');
+    if clean.len() == 6 {
+        let r = u8::from_str_radix(&clean[0..2], 16).ok()?;
+        let g = u8::from_str_radix(&clean[2..4], 16).ok()?;
+        let b = u8::from_str_radix(&clean[4..6], 16).ok()?;
+        Some(Color32::from_rgb(r, g, b))
+    } else if clean.len() == 3 {
+        let r = u8::from_str_radix(&clean[0..1], 16).ok()? * 17;
+        let g = u8::from_str_radix(&clean[1..2], 16).ok()? * 17;
+        let b = u8::from_str_radix(&clean[2..3], 16).ok()? * 17;
+        Some(Color32::from_rgb(r, g, b))
+    } else {
+        None
     }
+}
+
+pub fn color32_to_hex(c: Color32) -> String {
+    format!("#{:02X}{:02X}{:02X}", c.r(), c.g(), c.b())
+}
+
+pub fn color32_to_hsl(c: Color32) -> (f32, f32, f32) {
+    let r = c.r() as f32 / 255.0;
+    let g = c.g() as f32 / 255.0;
+    let b = c.b() as f32 / 255.0;
+    let max = r.max(g).max(b);
+    let min = r.min(g).min(b);
+    let delta = max - min;
+    let l = (max + min) / 2.0;
+    if delta.abs() < 1e-5 {
+        return (0.0, 0.0, l);
+    }
+    let s = if l > 0.5 {
+        delta / (2.0 - max - min)
+    } else {
+        delta / (max + min)
+    };
+    let h = if (max - r).abs() < 1e-5 {
+        ((g - b) / delta).rem_euclid(6.0) * 60.0
+    } else if (max - g).abs() < 1e-5 {
+        ((b - r) / delta + 2.0) * 60.0
+    } else {
+        ((r - g) / delta + 4.0) * 60.0
+    };
+    (h, s, l)
+}
+
+fn hue_distance(h1: f32, h2: f32) -> f32 {
+    let diff = (h1 - h2).abs().rem_euclid(360.0);
+    if diff > 180.0 {
+        360.0 - diff
+    } else {
+        diff
+    }
+}
+
+/// Generates a high-contrast Color32 avoiding angular hue collisions (< 45 deg)
+/// with any already open tabs/colors.
+pub fn generate_contrast_color(existing_colors: &[Color32], seed_str: &str) -> Color32 {
+    let mut h: u64 = 0xCBF29CE484222325;
+    for &b in seed_str.as_bytes() {
+        h = (h ^ (b as u64)).wrapping_mul(0x100000001B3);
+    }
+    let mut sm = h.wrapping_add(0x9E3779B97F4A7C15);
+    sm = (sm ^ (sm >> 30)).wrapping_mul(0xBF58476D1CE4E5B9);
+    sm = (sm ^ (sm >> 27)).wrapping_mul(0x94D049BB133111EB);
+    let hash = sm ^ (sm >> 31);
+
+    let mut base_hue = ((hash % 360) as f32) + ((hash >> 16) % 1000) as f32 / 1000.0;
+
+    let existing_hues: Vec<f32> = existing_colors
+        .iter()
+        .map(|&c| color32_to_hsl(c).0)
+        .collect();
+
+    const GOLDEN_ANGLE: f32 = 137.507_77;
+    if !existing_hues.is_empty() {
+        let mut best_hue = base_hue;
+        let mut max_min_dist = -1.0_f32;
+        for _ in 0..32 {
+            let min_d = existing_hues
+                .iter()
+                .map(|&eh| hue_distance(base_hue, eh))
+                .fold(f32::INFINITY, f32::min);
+
+            if min_d >= 45.0 {
+                best_hue = base_hue;
+                break;
+            }
+            if min_d > max_min_dist {
+                max_min_dist = min_d;
+                best_hue = base_hue;
+            }
+            base_hue = (base_hue + GOLDEN_ANGLE).rem_euclid(360.0);
+        }
+        base_hue = best_hue;
+    }
+
+    let is_dark = is_dark_mode();
+    let sat_offset = ((hash >> 32) % 200) as f32 / 1000.0;
+    let saturation = 0.65 + sat_offset;
+    let light_offset = ((hash >> 48) % 100) as f32 / 1000.0;
+    let lightness = if is_dark {
+        0.55 + light_offset
+    } else {
+        0.40 + light_offset
+    };
+
+    hsl_to_color32(base_hue, saturation, lightness)
+}
+
+/// Calculates a deterministic, aesthetically pleasing color for any dataset name
+/// using SplitMix64 and the Golden Ratio HSL distribution.
+pub fn dataset_color(name: &str) -> Color32 {
+    let mut h: u64 = 0xCBF29CE484222325;
+    for &b in name.as_bytes() {
+        h = (h ^ (b as u64)).wrapping_mul(0x100000001B3);
+    }
+    let mut sm = h.wrapping_add(0x9E3779B97F4A7C15);
+    sm = (sm ^ (sm >> 30)).wrapping_mul(0xBF58476D1CE4E5B9);
+    sm = (sm ^ (sm >> 27)).wrapping_mul(0x94D049BB133111EB);
+    let hash = sm ^ (sm >> 31);
+
     let hue = (((hash as f64) * 137.507_764_050_037_85) % 360.0) as f32;
     let is_dark = is_dark_mode();
-    let saturation = 0.65_f32;
-    let lightness = if is_dark { 0.60_f32 } else { 0.45_f32 };
+    let sat_offset = ((hash >> 32) % 150) as f32 / 1000.0;
+    let saturation = 0.65 + sat_offset;
+    let light_offset = ((hash >> 48) % 80) as f32 / 1000.0;
+    let lightness = if is_dark {
+        0.58 + light_offset
+    } else {
+        0.42 + light_offset
+    };
     hsl_to_color32(hue, saturation, lightness)
 }
 
@@ -326,5 +447,58 @@ mod tests {
         assert!((g as i32 - 150).abs() <= 2);
         assert!((b as i32 - 200).abs() <= 2);
         assert_eq!(a, 42);
+    }
+
+    #[test]
+    fn test_hex_conversion_roundtrip() {
+        let hex = "#2E86AB";
+        let c = hex_to_color32(hex).unwrap();
+        let back = color32_to_hex(c);
+        assert_eq!(back, hex);
+
+        let short_hex = "#FFF";
+        let c_white = hex_to_color32(short_hex).unwrap();
+        assert_eq!(c_white, Color32::from_rgb(255, 255, 255));
+    }
+
+    #[test]
+    fn test_generate_contrast_color_distance() {
+        let files = [
+            "merge_base.csv",
+            "merge_add_cases.csv",
+            "merge_add_vars.csv",
+        ];
+        let mut chosen: Vec<Color32> = Vec::new();
+
+        for file in files {
+            let color = generate_contrast_color(&chosen, file);
+            chosen.push(color);
+        }
+
+        assert_eq!(chosen.len(), 3);
+        assert_ne!(chosen[0], chosen[1]);
+        assert_ne!(chosen[1], chosen[2]);
+        assert_ne!(chosen[0], chosen[2]);
+
+        let h0 = color32_to_hsl(chosen[0]).0;
+        let h1 = color32_to_hsl(chosen[1]).0;
+        let h2 = color32_to_hsl(chosen[2]).0;
+
+        let d01 = hue_distance(h0, h1);
+        let d12 = hue_distance(h1, h2);
+        let d02 = hue_distance(h0, h2);
+
+        assert!(
+            d01 >= 45.0,
+            "Hues h0 ({h0}) and h1 ({h1}) distance must be >= 45 deg, got {d01}"
+        );
+        assert!(
+            d12 >= 45.0,
+            "Hues h1 ({h1}) and h2 ({h2}) distance must be >= 45 deg, got {d12}"
+        );
+        assert!(
+            d02 >= 45.0,
+            "Hues h0 ({h0}) and h2 ({h2}) distance must be >= 45 deg, got {d02}"
+        );
     }
 }

@@ -10,7 +10,11 @@ use crate::widgets::vector_arrow::paint_vector_arrow;
 use egui::{pos2, vec2, Align2, FontId, ScrollArea, Sense, Stroke, Ui};
 use statcraft_i18n::t;
 
-pub fn render_outline_pane(ui: &mut Ui, state: &mut OutputViewerState) {
+pub fn render_outline_pane(
+    ui: &mut Ui,
+    state: &mut OutputViewerState,
+    workspace: Option<&statcraft_core::WorkspaceManager>,
+) {
     let rect = ui.max_rect();
     ui.painter().rect_filled(rect, 0.0_f32, Tokens::bg_panel());
     ui.painter()
@@ -187,7 +191,13 @@ pub fn render_outline_pane(ui: &mut Ui, state: &mut OutputViewerState) {
 
                         if let Some((ds_name, badge_r, _)) = badge_info {
                             let is_active_context = ds_name == &state.active_dataset_name;
-                            render_dataset_badge(ui.painter(), badge_r, ds_name, is_active_context);
+                            render_dataset_badge(
+                                ui.painter(),
+                                badge_r,
+                                ds_name,
+                                is_active_context,
+                                workspace,
+                            );
                         }
 
                         let text_resp = text_resp.on_hover_text(title);
@@ -411,8 +421,12 @@ fn render_dataset_badge(
     rect: egui::Rect,
     name: &str,
     is_active_context: bool,
+    workspace: Option<&statcraft_core::WorkspaceManager>,
 ) {
-    let ds_color = crate::theme::dataset_color(name);
+    let ds_color = workspace
+        .and_then(|ws| ws.session_color_by_name(name))
+        .and_then(|hex| crate::theme::hex_to_color32(&hex))
+        .unwrap_or_else(|| crate::theme::dataset_color(name));
     let bg_alpha = if is_active_context { 45 } else { 18 };
     let border_color = if is_active_context {
         ds_color

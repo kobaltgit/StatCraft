@@ -3705,3 +3705,53 @@ Resolved a critical regression where dragging the mouse from cell (0, 0) down th
    * Added regression test `test_drag_selection_over_phantom_row_never_mutates_dataset` in `tests/grid_selection_and_phantom_row_invariants.rs`: verified that dragging selection from (0, 0) past existing rows into the phantom row `*` preserves row count (strictly 5) and preserves original values (101, 102, 103, 104, 105) intact.
    * Added unit test `test_auto_fill_never_allocates_phantom_rows` in `clipboard.rs`.
    * 100% pass across workspace tests, `file-guard` (469 files), `design-guard`, `layers`, `clippy -D warnings`, and `fmt --check`.
+
+---
+
+### Phase 90: Dynamic Dataset Color Generation and .stc Persistence (Spec-Kit 015)
+*Time: November 19, 2026, 12:00 (~30 minutes)*
+
+Implemented dynamic, collision-aware random color generation for dataset tabs with cross-pane visual identity and seamless `.stc` container persistence (resolving `BUG-015`):
+1. **Root Cause of Clustering Defect:**
+   * In v0.4.1, `dataset_color(name)` calculated hue blindly via 32-bit FNV-1a hash with fixed saturation ($S=0.65$) and lightness ($L=0.60$). Datasets with similar prefixes/suffixes (`merge_base.csv`, `merge_add_cases.csv`, `merge_add_vars.csv`) clustered into an identical purple hue slice ($280^\circ$–$308^\circ$), making tabs visually indistinguishable. Furthermore, tab colors were not saved to `.stc` projects and reset between sessions.
+2. **Dynamic Contrast Color Generator (`generate_contrast_hex` / `generate_contrast_color`):**
+   * Implemented high-quality 64-bit SplitMix64 hashing with continuous golden angle distribution ($137.50777^\circ$).
+   * The generator dynamically scans all currently open document tabs and enforces minimum angular hue distance $\ge 45^\circ$, preventing visual collisions across any arbitrary number of tabs without hardcoded color sets (Zero-Hardcode Palette).
+   * Dynamically modulates saturation ($0.65 \dots 0.85$) and tunes lightness for dark and light theme palettes.
+3. **Persistence in `.stc` Project Container with 100% Backward Compatibility:**
+   * Added `pub tab_color: Option<String>` with `skip_serializing_if = "Option::is_none"` across `StcDatasetRecord`, `StcContainer`, and `DocumentSession`.
+   * Saving multi-dataset workspaces (`save_workspace_stc_to_path`) persists hex colors directly into the `.stc` container.
+   * Reloading `.stc` restores exact colors byte-for-byte, while legacy `.stc` files without `tab_color` deserialize seamlessly with automatic contrast color assignment.
+4. **End-to-End Synchronization with Output Viewer:**
+   * Output Viewer now receives workspace context via `render_output_view_with_workspace`: procedure chips in Outline Tree and the `Active Dataset` badge in Notes tables query `workspace.session_color_by_name(name)`.
+   * Tab headers and analysis output badges are guaranteed 100% color consistency.
+5. **Testing & Quality Gate:**
+   * Added integration invariant test `test_dataset_color_generation_contrast_and_persistence` in `crates/statcraft_app/tests/dataset_color_persistence_tests.rs`: verified $\ge 45^\circ$ angular separation between `merge_base.csv`, `merge_add_cases.csv`, `merge_add_vars.csv` and verified byte-for-byte round-trip preservation in `.stc`.
+   * Added unit tests in `statcraft_core::workspace` (`test_dynamic_contrast_colors_for_similar_prefixes`) and `statcraft_core::stc_codec` (`test_save_load_multi_file_workspace_stc_color_persistence`).
+   * Validated backward compatibility with legacy containers in `statcraft_io::stc_codec`.
+   * 100% Quality Gate pass: `file-guard` (470 files compliant), `design-guard`, `layers`, `clippy -D warnings`, `fmt --check`, `cargo test --workspace -j 1`.
+
+---
+
+### Phase 91: Unsaved Changes Dirty Marker Positioning and False Titlebar Indicator Fix (BUG-016)
+*Time: November 19, 2026, 13:30 (~35 minutes)*
+
+Eliminated visual overlap of the unsaved changes dirty marker (`*`) over tab title text and resolved the persistent false indicator in the application titlebar (defect `BUG-016`):
+1. **Root Causes Analysis:**
+   * In `document_tabs.rs`, asterisk X-coordinate was hardcoded as `text_x + display_name.len().min(12) as f32 * 6.5 + 4.0`. For any filename longer than 12 characters (e.g. `merge_add_cases.csv`, 19 chars), `min(12)` clamped the position, rendering the asterisk directly over the letters `cases` in the middle of the tab.
+   * In the titlebar (`app.rs`), the title was formatted as `format!("{}{} •", file_name, asterisk)`. The bullet symbol ` •` (U+2022) was hardcoded at the end of the string and always appeared regardless of dirty state, creating a permanent visual impression of an unsaved marker (and violating Rule 8 of AGENTS.md).
+   * In `has_unsaved_changes()`, `SavedCheckpoint` tracked `col_count` and `row_count` of a single dataset. In a multi-document workspace, switching between datasets with differing column or row counts (e.g. `merge_base.csv` 5x4 vs `merge_add_cases.csv` 4x5) triggered false positive `saved != current`, turning on the asterisk in the titlebar.
+   * In `app_session.rs::save_to_path()`, saving data to CSV omitted `mark_clean()`, leaving the session dirty.
+2. **Document Tab Strip Rendering Refinement (`DocumentTabStrip`):**
+   * Guaranteed right padding reservation (`right_reserved = 32.0 px` when dirty, 20.0 px when clean).
+   * Tab title text is safely truncated via `layout_job` with `TextWrapping::truncate_at_width` strictly before the marker, preventing collisions.
+   * Amber asterisk `*` (`palette.measure_ordinal`) is positioned strictly after the text (`text_x + text_w + 3.0`) with vertical centering `Align2::LEFT_CENTER`.
+3. **Application Titlebar Normalization (`app.rs`):**
+   * Completely removed the prohibited ` •` glyph.
+   * Window title now renders cleanly: `file_name` (clean) or `file_name *` (modified).
+4. **Semantic Session Isolation in `has_unsaved_changes()` and CSV Clean Marking:**
+   * `has_unsaved_changes()` now inspects session-specific state against its own dictionary, dimensions, and delta undo checkpoint, eliminating cross-session interference upon tab switching.
+   * Saving to CSV marks the active session `sess.mark_clean()` and updates `delta_undo_checkpoint_len`.
+5. **Testing & Quality Gate:**
+   * Added integration test `test_multi_dataset_dirty_marker_isolation_and_csv_clean` in `crates/statcraft_app/tests/session_lifecycle_tests.rs`.
+   * 100% successful pass across all CI Quality Gates via `cargo run -p xtask -j 1 -- ci`.

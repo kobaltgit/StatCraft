@@ -98,7 +98,11 @@ impl DocumentTabStrip {
             let tab_id = ui.make_persistent_id(format!("doc_tab_{}", session.id));
             let tab_resp = ui.interact(tab_rect, tab_id, Sense::click());
 
-            let ds_color = crate::theme::dataset_color(session.file_name());
+            let ds_color = session
+                .tab_color
+                .as_deref()
+                .and_then(crate::theme::hex_to_color32)
+                .unwrap_or_else(|| crate::theme::dataset_color(session.file_name()));
 
             // Tab background & active underline
             let bg_color = if is_active {
@@ -159,21 +163,30 @@ impl DocumentTabStrip {
                 palette.text_muted
             };
             let text_x = tab_rect.min.x + 24.0;
-            let _max_text_w = (w - 44.0).max(10.0);
             let display_name = session.file_name();
-            let galley =
-                painter.layout_no_wrap(display_name.to_string(), font_id.clone(), text_color);
+
+            let right_reserved = if session.is_dirty { 32.0 } else { 20.0 };
+            let max_text_w = (w - 24.0 - right_reserved).max(10.0);
+
+            let mut job = egui::text::LayoutJob::simple_singleline(
+                display_name.to_string(),
+                font_id.clone(),
+                text_color,
+            );
+            job.wrap = egui::text::TextWrapping::truncate_at_width(max_text_w);
+            let galley = painter.layout_job(job);
 
             let text_pos = pos2(text_x, tab_rect.center().y - galley.size().y / 2.0);
+            let text_w = galley.size().x;
             painter.galley(text_pos, galley, text_color);
 
             if session.is_dirty {
                 let star_color = palette.measure_ordinal;
-                let star_x = text_x + display_name.len().min(12) as f32 * 6.5 + 4.0;
-                let star_pos = pos2(star_x.min(tab_rect.max.x - 22.0), tab_rect.center().y - 4.0);
+                let star_x = text_x + text_w + 3.0;
+                let star_pos = pos2(star_x, tab_rect.center().y);
                 painter.text(
                     star_pos,
-                    egui::Align2::LEFT_TOP,
+                    egui::Align2::LEFT_CENTER,
                     "*",
                     egui::FontId::proportional(14.0),
                     star_color,

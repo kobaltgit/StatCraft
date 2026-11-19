@@ -453,18 +453,23 @@ impl eframe::App for StatCraftApp {
                 }
 
                 let file_name = self
-                    .current_file_path
-                    .as_ref()
-                    .and_then(|p| p.file_name())
-                    .and_then(|n| n.to_str())
-                    .map(|s| s.to_string())
+                    .workspace
+                    .active_session()
+                    .map(|s| s.file_name().to_string())
+                    .or_else(|| {
+                        self.current_file_path
+                            .as_ref()
+                            .and_then(|p| p.file_name())
+                            .and_then(|n| n.to_str())
+                            .map(|s| s.to_string())
+                    })
                     .unwrap_or_else(|| match &self.status_message {
                         StatusMessage::DatasetImported { name, .. } => name.clone(),
                         StatusMessage::ProjectOpened { name, .. } => name.clone(),
-                        _ => "Untitled-1".to_string(),
+                        _ => "DataSet1".to_string(),
                     });
-                let asterisk = if self.has_unsaved_changes() { "*" } else { "" };
-                let project_title = format!("{}{} •", file_name, asterisk);
+                let asterisk = if self.has_unsaved_changes() { " *" } else { "" };
+                let project_title = format!("{}{}", file_name, asterisk);
 
                 let font_id = egui::FontId::proportional(12.5);
                 let galley = ui.painter().layout_no_wrap(

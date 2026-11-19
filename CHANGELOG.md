@@ -7,6 +7,55 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [0.4.2] - 2026-11-19
+
+### Added
+- **Dynamic Dataset Colors & Container Persistence (Spec-Kit 015):**
+  - High-performance, collision-aware random contrast color generator on 64-bit SplitMix64 and golden angle distribution ($137.50777^\circ$, $\ge 45^\circ$ angular distance between open tabs).
+  - Cross-pane color identity: DocumentTabStrip active underlines, vector grid icons, Outline Tree procedure chips, and Notes summary tables synchronized via `workspace.session_color_by_name`.
+  - Full `.stc` project container persistence (`pub tab_color: Option<String>`) with 100% backward compatibility with legacy containers.
+
+### Fixed
+- **Tab Dirty Marker Positioning & Overlap Elimination (BUG-016):**
+  - Removed hardcoded character truncation (`min(12) * 6.5`) that caused asterisk markers to render directly over filename characters on tabs with titles longer than 12 characters.
+  - Added guaranteed right padding reservation (32 px), clean ellipsis truncation via `truncate_at_width`, and vertical centering with `Align2::LEFT_CENTER`.
+- **Titlebar False Dirty Marker & Unicode Compliance (BUG-016):**
+  - Completely removed hardcoded Unicode bullet symbol ` •` (U+2022) from window titlebar in accordance with Vector-First UI rules.
+  - Normalized window title to render strictly `file_name` when clean and `file_name *` when modified.
+  - Refactored `has_unsaved_changes()` to semantically isolate active session state from global checkpoints, eliminating false dirty triggers upon switching between datasets with differing column/row counts.
+  - Fixed CSV/TSV/TXT saving in `save_to_path` to properly clear the session dirty flag via `sess.mark_clean()`.
+
+---
+
+## [0.4.1] - 2026-11-19
+
+### Added
+- **Multi-File Workspaces & Concurrent Document Sessions (Feature 010):**
+  - Open, edit, and switch between multiple datasets simultaneously in a unified workspace with isolated Undo/Redo histories, filter states, and split-file contexts.
+  - Lossless in-memory compression: `NullBitmask`, `DictionaryEncodedColumn`, and `LosslessCompressedColumn` retaining full `f64` precision.
+  - SPSS syntax commands for datasets: `DATASET NAME`, `DATASET ACTIVATE`, `DATASET CLOSE`, and `DATASET DISPLAY`.
+  - Vector document tab strip (`DocumentTabStrip`) with custom vector dataset icons, unsaved markers, close buttons, mouse wheel scrolling, chevron overflow navigators, and `Ctrl+Tab` / `Ctrl+Shift+Tab` / `Ctrl+W` shortcuts.
+- **Cross-Platform Memory Guard (Feature 011):**
+  - Native physical RAM probing across Windows (`GlobalMemoryStatusEx`), Linux (`/proc/meminfo`), macOS (`sysctl`), and WebAssembly.
+  - Preflight memory safety warnings before opening large files (>250 MB) or batch operations (>10 files) when available RAM is critically low (<500 MB or <15%).
+- **Data Merging: Add Cases & Add Variables (Feature 012):**
+  - Add Cases (`ADD FILES`): vertical concatenation from external files (`.sav`, `.zsav`, `.stc`, `.csv`, `.xlsx`) or active workspace tabs with schema alignment, type reconciliation, `/IN=var` tracking, and `/BY` sorting.
+  - Add Variables (`MATCH FILES`): horizontal merging across datasets (1:1 key merges, 1:N lookup tables `/TABLE`, sequential merges without keys) with collision resolution and `/IN` flags.
+  - Canonical DialogKit interfaces (`AddCasesDialog`, `AddVarsDialog`).
+- **Grid Selection & Interaction Modernization (Spec-Kit 013):**
+  - Preserved multi-cell selection on right-click.
+  - Zero Pollution invariant on phantom rows (`*`): empty input commits never allocate unwanted rows with system-missing values.
+  - Physical case deletion via `Delete` key on full rows, and cell clearing on rectangular selections.
+  - Row and column header context menus (`ContextMenuTarget`).
+  - Click-outside dismissal for popups and context menus without requiring `Escape`.
+
+### Fixed
+- **SPSS Canon Range Selection & Fill Handle Removal (Spec-Kit 014 / BUG-014):**
+  - Eliminated the corner fill handle click interceptor, converting all grid dragging to strictly safe, read-only range selection (`SelectRange`).
+  - Constrained `apply_auto_fill` strictly to existing dataset rows, completely barring phantom row allocations.
+
+---
+
 ## [0.4.0] - 2026-11-16
 
 ### Added

@@ -1,4 +1,4 @@
-# StatCraft Feature Guide (v0.4.0)
+# StatCraft Feature Guide (v0.4.2)
 
 This document serves as an exhaustive reference of all implemented capabilities, analytical procedures, mathematical algorithms, and user interface features available in the **StatCraft** statistical package.
 
@@ -54,6 +54,35 @@ Comprehensive variable metadata dictionary compliant with canonical IBM SPSS Sta
 
 ## 2. Dataset Management & Case Manipulations (Data Menu)
 
+### 2.1. Multi-File Workspaces & Concurrent Document Sessions
+* **Multi-File Workspace (`WorkspaceManager`):**
+  * Simultaneous handling of multiple datasets in a single window with isolated Undo/Redo delta buffers, active filters, split-file groupings, and selection states.
+  * In-memory lossless compression: `NullBitmask`, `DictionaryEncodedColumn`, and `LosslessCompressedColumn` retaining full `f64` numerical fidelity.
+  * Native SPSS syntax dataset commands: `DATASET NAME`, `DATASET ACTIVATE`, `DATASET CLOSE`, and `DATASET DISPLAY` with `WINDOW=ASIS` validation.
+* **Vector Document Tab Strip (`DocumentTabStrip`):**
+  * Horizontal tab bar with custom vector dataset icons, unsaved modification markers (`*`), close buttons (`✕`), smooth wheel scrolling, chevron overflow navigators, and quick dataset creation (`[ ➕ ]`).
+  * Keyboard navigation: `Ctrl+Tab` / `Ctrl+Shift+Tab` (switch datasets), `Ctrl+W` (close active dataset).
+  * **Precision Dirty Markers:** Clean text rendering with guaranteed right padding (32 px) and ellipsis truncation (`truncate_at_width`), ensuring unsaved asterisks (`*`) never collide with filename text.
+  * **Normalized Titlebar:** Clean application window title displaying active filename and dirty status without invalid Unicode glyphs.
+* **Dynamic Contrast Colors & Container Persistence (Spec-Kit 015):**
+  * Collision-free random color generation via 64-bit SplitMix64 and golden angle distribution ($137.50777^\circ$, $\ge 45^\circ$ distance between tabs), preventing visual clustering for datasets with similar prefixes (`merge_base.csv`, `merge_add_cases.csv`, `merge_add_vars.csv`).
+  * Cross-pane color identity: Active tab underlines, vector grid icons, Outline Tree procedure chips, and Notes summary tables query session colors via `workspace.session_color_by_name`.
+  * Complete persistence in `.stc` project files (`pub tab_color: Option<String>`) with 100% backward compatibility.
+* **Cross-Platform Memory Guard (`system_memory.rs`):**
+  * Real-time physical RAM polling across Windows (`GlobalMemoryStatusEx`), Linux (`/proc/meminfo`), macOS (`sysctl`), and WebAssembly.
+  * Preflight safety alerts proactively warning users before opening large files (>250 MB) or batch operations (>10 files) when available RAM is critically low (<500 MB or <15%).
+
+### 2.2. Data Merging: Add Cases & Add Variables (Feature 012)
+* **Add Cases (`ADD FILES`):**
+  * Vertical observation concatenation from external files (`.sav`, `.zsav`, `.stc`, `.csv`, `.xlsx`) or active workspace tabs.
+  * Automatic schema alignment, type reconciliation, `/IN=var` source indicator tracking, and optional interleaved case ordering via `/BY`.
+* **Add Variables (`MATCH FILES`):**
+  * Horizontal column merging across datasets: 1:1 key merges, 1:N lookup tables (`/TABLE`), and sequential merges without keys.
+  * Automated resolution of duplicate column collisions with clean rename suggestions and presence indicator flags (`/IN`).
+* **Canonical DialogKit Interface:**
+  * Clean-room dialog windows (`AddCasesDialog`, `AddVarsDialog`) with dual-pane variable pickers, active workspace tab selectors, file browse dialogs, and instant SPSS syntax generation.
+
+### 2.3. Case Filtering, Sorting & Weighting
 * **Sort Cases (`Sort Cases`):**
   * Multi-column stable sorting across an unlimited number of sorting keys.
   * Independent sorting direction per key: Ascending or Descending.
@@ -377,7 +406,6 @@ To guarantee complete technical honesty and transparency, the following modules 
 * **Advanced Document Exporters:**
   * Native rendering and direct export of Output Viewer documents to formatted PDF, Microsoft Word (`.docx`), and academic LaTeX formats (TSV for Excel, HTML, and Plain Text are fully implemented).
 * **Dataset Restructuring & File Operations (Data Menu):**
-  * File Merging (*Add Cases* vertical concatenation and *Add Variables* key-based horizontal JOIN).
   * Data Restructuring (*Restructure Wide to Long / Long to Wide*) and Data Aggregation (*Aggregate*).
 * **Time Series & Advanced Forecasting:**
   * ARIMA / SARIMA modeling, Exponential Smoothing (Holt-Winters), and autocorrelation diagnostics (ACF / PACF).

@@ -1030,6 +1030,42 @@
   - [x] Интеграционный тестовый набор `crates/statcraft_app/tests/grid_selection_and_phantom_row_invariants.rs` (5 тестов);
   - [x] 100% прохождение `file-guard` (469 файлов), `design-guard`, `layers`, `cargo clippy --workspace -j 1 -- -D warnings`, `cargo fmt --check`.
 
+## 62. Динамическая генерация случайных цветов датасетов и сохранение в .stc (Spec-Kit 015 — Dynamic Dataset Colors & Persistence)
+- [x] L0 `statcraft_io::stc_codec`:
+  - [x] Поле `pub tab_color: Option<String>` в `StcDatasetRecord` и `StcContainer` с `#[serde(default, skip_serializing_if = "Option::is_none")]`.
+  - [x] Сохранение и загрузка цвета вкладок со 100% обратной совместимостью со старыми файлами `.stc`.
+  - [x] Тесты `test_stc_container_with_workspace_roundtrip` и `test_stc_legacy_container_without_colors_backward_compat`.
+- [x] L1 `statcraft_core::workspace`:
+  - [x] Поле `pub tab_color: Option<String>` в `DocumentSession`, методы `set_tab_color`, `tab_color`.
+  - [x] Методы `WorkspaceManager::session_color_by_name`, `existing_tab_colors`, `sessions_mut`.
+  - [x] Математический генератор `generate_contrast_hex` на базе 64-битного SplitMix64 с угловой дистанцией $\ge 45^\circ$ по золотому сечению ($137.50777^\circ$).
+  - [x] Автоматическое присвоение цвета при вызове `add_dataset`.
+  - [x] Персистентность цветов в `statcraft_core::stc_codec` при сериализации/десериализации воркспейса.
+  - [x] Тесты `test_dynamic_contrast_colors_for_similar_prefixes` и `test_save_load_multi_file_workspace_stc_color_persistence`.
+- [x] L6 `statcraft_app`:
+  - [x] Функции `theme::hex_to_color32`, `color32_to_hex`, `color32_to_hsl`, `generate_contrast_color`, обновленный `dataset_color`.
+  - [x] Отрисовка вкладок `DocumentTabStrip` с чтением сохраненного цвета сессии.
+  - [x] Сквозная привязка цветов в `OutputViewer`: вызов `render_output_view_with_workspace`, отображение бейджей в Outline Tree и сводной таблицы Notes через `workspace.session_color_by_name`.
+  - [x] Интеграционный тест `dataset_color_persistence_tests.rs`.
+- [x] Quality Gate & Definition of Done:
+  - [x] 100% успешный прогон всех проверок: `file-guard` (470 файлов), `design-guard`, `layers`, `cargo clippy --workspace -j 1 -- -D warnings`, `cargo fmt --check`, `cargo test --workspace -j 1`.
+
+## 63. Исправление позиционирования маркера несохраненности на вкладках и устранение ложного маркера в шапке окна (BUG-016)
+- [x] L6 `statcraft_app::views::document_tabs`:
+  - [x] Устранение наложения звездочки на текст названия вкладки: удален хардкод `min(12) * 6.5`.
+  - [x] Резервирование гарантированного места справа (`right_reserved = 32.0 px`), аккуратное усечение имени файла через `truncate_at_width`.
+  - [x] Размещение звездочки `*` строго за текстом с вертикальным центрированием `Align2::LEFT_CENTER`.
+- [x] L6 `statcraft_app::app`:
+  - [x] Полное удаление захардкоженного глифа ` •` (U+2022) из заголовка окна программы в соответствии с п. 8 AGENTS.md.
+  - [x] Отображение заголовка строго в каноническом формате: `file_name` (для сохраненного) или `file_name *` (для измененного).
+- [x] L6 `statcraft_app::app_session`:
+  - [x] Рефакторинг `has_unsaved_changes()`: семантическая изоляция проверок изменений активной сессии от глобального чекпоинта; устранено ложное срабатывание при переключении между датасетами с разным числом строк/колонок.
+  - [x] Сброс флага `sess.mark_clean()` при сохранении данных в CSV/TSV/TXT в `save_to_path`.
+  - [x] Актуализация `delta_undo_checkpoint_len` в `statcraft_core::workspace::DocumentSession::mark_clean()`.
+- [x] Тестирование и Quality Gate:
+  - [x] Новый интеграционный тест `test_multi_dataset_dirty_marker_isolation_and_csv_clean` в `session_lifecycle_tests.rs`.
+  - [x] 100% прохождение полного Quality Gate `cargo run -p xtask -j 1 -- ci` (fmt, clippy с 0 warnings, layers, file-guard на 470 файлах, design-guard, тесты воркспейса, матрица обратимости undo/redo).
+
 ## 20. Планы будущих релизов (Backlog / Planned Features)
 - [ ] Мультимониторный режим рабочего пространства (Multi-Monitor Viewports & Pop-out Tabs):
   - [ ] Механизм открепления вкладок во внешние нативные окна ОС через `ctx.show_viewport_immediate`.

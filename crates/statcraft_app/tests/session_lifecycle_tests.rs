@@ -4,7 +4,7 @@ use statcraft_app::dialogs::render_confirm_save_dialog;
 use statcraft_app::recent_files::RecentFiles;
 use statcraft_app::views::output_view::OutputItemKind;
 use statcraft_app::{StatCraftApp, Tab};
-use statcraft_core::{DataType, Measure};
+use statcraft_core::{DataSet, DataType, Measure};
 use std::path::PathBuf;
 
 #[test]
@@ -572,4 +572,68 @@ fn test_theme_mode_persistence_serialization() {
     let sys_deserialized: statcraft_app::theme::ThemeMode =
         serde_json::from_str(&sys_json).unwrap();
     assert_eq!(sys_deserialized, statcraft_app::theme::ThemeMode::System);
+}
+
+#[test]
+fn test_multi_dataset_dirty_marker_isolation_and_csv_clean() {
+    let mut app = StatCraftApp::new_headless();
+
+    // Prepare dataset 1 (5 rows, 2 columns)
+    let mut ds1 = DataSet::blank(5, 0).unwrap();
+    ds1.add_variable("id", DataType::Numeric { decimals: 0 }, Measure::Scale)
+        .unwrap();
+    ds1.add_variable("score", DataType::Numeric { decimals: 2 }, Measure::Scale)
+        .unwrap();
+
+    // Prepare dataset 2 (10 rows, 4 columns)
+    let mut ds2 = DataSet::blank(10, 0).unwrap();
+    ds2.add_variable("code", DataType::Numeric { decimals: 0 }, Measure::Nominal)
+        .unwrap();
+    ds2.add_variable("age", DataType::Numeric { decimals: 0 }, Measure::Scale)
+        .unwrap();
+    ds2.add_variable("dept", DataType::String { max_len: 16 }, Measure::Nominal)
+        .unwrap();
+    ds2.add_variable("salary", DataType::Numeric { decimals: 2 }, Measure::Scale)
+        .unwrap();
+
+    let temp_dir = std::env::temp_dir();
+    let csv1_path = temp_dir.join("test_ds1.csv");
+    let csv2_path = temp_dir.join("test_ds2.csv");
+
+    // Initialize workspace sessions with paths
+    let id1 = app
+        .workspace
+        .add_dataset(ds1.clone(), "ds1.csv", Some(csv1_path.clone()));
+    let id2 = app
+        .workspace
+        .add_dataset(ds2.clone(), "ds2.csv", Some(csv2_path.clone()));
+    app.workspace.mark_all_clean();
+    let _ = app.workspace.activate_dataset(id1);
+    app.dataset = app.workspace.active_dataset().cloned();
+    app.current_file_path = Some(csv1_path.clone());
+    app.update_saved_checkpoint();
+
+    // Switching between datasets with different col/row counts MUST NOT falsely trigger unsaved changes
+    assert!(!app.has_unsaved_changes());
+    app.switch_to_dataset(id2);
+    assert!(!app.has_unsaved_changes());
+    app.switch_to_dataset(id1);
+    assert!(!app.has_unsaved_changes());
+
+    // Modify active dataset 1
+    if let Some(ds) = &mut app.dataset {
+        ds.set_cell_parsed(0, 0, "42.0").unwrap();
+    }
+    app.sync_active_dataset_to_workspace();
+    assert!(app.has_unsaved_changes());
+    assert!(app.workspace.get_session(id1).unwrap().is_dirty);
+    assert!(!app.workspace.get_session(id2).unwrap().is_dirty);
+
+    // Save dataset 1 as CSV -> must mark session 1 clean and clear unsaved changes
+    app.save_to_path(csv1_path.clone());
+    assert!(!app.workspace.get_session(id1).unwrap().is_dirty);
+    assert!(!app.has_unsaved_changes());
+
+    let _ = std::fs::remove_file(csv1_path);
+    let _ = std::fs::remove_file(csv2_path);
 }

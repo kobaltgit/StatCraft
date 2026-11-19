@@ -30,6 +30,8 @@ pub struct DocumentSession {
     pub scroll_offset: (f32, f32),
     pub selected_cell: Option<(usize, usize)>,
     pub delta_undo_checkpoint_len: usize,
+    /// Persistent hex color code of the tab (e.g. "#2E86AB")
+    pub tab_color: Option<String>,
 }
 
 impl DocumentSession {
@@ -48,7 +50,16 @@ impl DocumentSession {
             scroll_offset: (0.0, 0.0),
             selected_cell: None,
             delta_undo_checkpoint_len: 0,
+            tab_color: None,
         }
+    }
+
+    pub fn set_tab_color(&mut self, color: impl Into<String>) {
+        self.tab_color = Some(color.into());
+    }
+
+    pub fn tab_color(&self) -> Option<&str> {
+        self.tab_color.as_deref()
     }
 
     pub fn mark_dirty(&mut self) {
@@ -57,6 +68,7 @@ impl DocumentSession {
 
     pub fn mark_clean(&mut self) {
         self.is_dirty = false;
+        self.delta_undo_checkpoint_len = self.dataset.delta.undo_stack.len();
     }
 
     pub fn clear_dirty(&mut self) {
@@ -161,7 +173,9 @@ impl WorkspaceManager {
             name_str
         };
 
-        let session = DocumentSession::new(id, final_name, dataset, path);
+        let mut session = DocumentSession::new(id, final_name, dataset, path);
+        let existing = self.existing_tab_colors();
+        session.tab_color = Some(generate_contrast_hex(&existing, &session.name));
         self.sessions.push(session);
         self.active_session_id = Some(id);
         id
@@ -327,6 +341,144 @@ impl WorkspaceManager {
             sess.file_path = Some(p);
         }
     }
+
+    pub fn session_color_by_name(&self, name: &str) -> Option<String> {
+        self.sessions
+            .iter()
+            .find(|s| s.name.eq_ignore_ascii_case(name) || s.file_name().eq_ignore_ascii_case(name))
+            .and_then(|s| s.tab_color.clone())
+    }
+
+    pub fn existing_tab_colors(&self) -> Vec<String> {
+        self.sessions
+            .iter()
+            .filter_map(|s| s.tab_color.clone())
+            .collect()
+    }
+
+    pub fn sessions_mut(&mut self) -> &mut [DocumentSession] {
+        &mut self.sessions
+    }
+}
+
+/// Calculates a high-contrast HEX color code (#RRGGBB) avoiding angular collisions (< 45 deg)
+/// with any already open tabs.
+pub fn generate_contrast_hex(existing_hex_colors: &[String], seed_str: &str) -> String {
+    let mut h: u64 = 0xCBF29CE484222325;
+    for &b in seed_str.as_bytes() {
+        h = (h ^ (b as u64)).wrapping_mul(0x100000001B3);
+    }
+    // SplitMix64
+    let mut sm = h.wrapping_add(0x9E3779B97F4A7C15);
+    sm = (sm ^ (sm >> 30)).wrapping_mul(0xBF58476D1CE4E5B9);
+    sm = (sm ^ (sm >> 27)).wrapping_mul(0x94D049BB133111EB);
+    let hash = sm ^ (sm >> 31);
+
+    let mut base_hue = ((hash % 360) as f32) + ((hash >> 16) % 1000) as f32 / 1000.0;
+
+    let existing_hues: Vec<f32> = existing_hex_colors
+        .iter()
+        .filter_map(|hex| hex_to_rgb(hex))
+        .map(|(r, g, b)| rgb_to_hue(r, g, b))
+        .collect();
+
+    const GOLDEN_ANGLE: f32 = 137.507_77;
+    if !existing_hues.is_empty() {
+        let mut best_hue = base_hue;
+        let mut max_min_dist = -1.0_f32;
+        for _ in 0..32 {
+            let min_d = existing_hues
+                .iter()
+                .map(|&eh| {
+                    let diff = (base_hue - eh).abs().rem_euclid(360.0);
+                    if diff > 180.0 {
+                        360.0 - diff
+                    } else {
+                        diff
+                    }
+                })
+                .fold(f32::INFINITY, f32::min);
+
+            if min_d >= 45.0 {
+                best_hue = base_hue;
+                break;
+            }
+            if min_d > max_min_dist {
+                max_min_dist = min_d;
+                best_hue = base_hue;
+            }
+            base_hue = (base_hue + GOLDEN_ANGLE).rem_euclid(360.0);
+        }
+        base_hue = best_hue;
+    }
+
+    let sat_offset = ((hash >> 32) % 200) as f32 / 1000.0;
+    let saturation = 0.65 + sat_offset;
+    let light_offset = ((hash >> 48) % 100) as f32 / 1000.0;
+    let lightness = 0.52 + light_offset;
+
+    let (r, g, b) = hsl_to_rgb(base_hue, saturation, lightness);
+    format!("#{:02X}{:02X}{:02X}", r, g, b)
+}
+
+fn hex_to_rgb(hex: &str) -> Option<(u8, u8, u8)> {
+    let clean = hex.trim().trim_start_matches('#');
+    if clean.len() == 6 {
+        let r = u8::from_str_radix(&clean[0..2], 16).ok()?;
+        let g = u8::from_str_radix(&clean[2..4], 16).ok()?;
+        let b = u8::from_str_radix(&clean[4..6], 16).ok()?;
+        Some((r, g, b))
+    } else if clean.len() == 3 {
+        let r = u8::from_str_radix(&clean[0..1], 16).ok()? * 17;
+        let g = u8::from_str_radix(&clean[1..2], 16).ok()? * 17;
+        let b = u8::from_str_radix(&clean[2..3], 16).ok()? * 17;
+        Some((r, g, b))
+    } else {
+        None
+    }
+}
+
+fn rgb_to_hue(r: u8, g: u8, b: u8) -> f32 {
+    let rf = r as f32 / 255.0;
+    let gf = g as f32 / 255.0;
+    let bf = b as f32 / 255.0;
+    let max = rf.max(gf).max(bf);
+    let min = rf.min(gf).min(bf);
+    let delta = max - min;
+    if delta.abs() < 1e-5 {
+        return 0.0;
+    }
+    if (max - rf).abs() < 1e-5 {
+        ((gf - bf) / delta).rem_euclid(6.0) * 60.0
+    } else if (max - gf).abs() < 1e-5 {
+        ((bf - rf) / delta + 2.0) * 60.0
+    } else {
+        ((rf - gf) / delta + 4.0) * 60.0
+    }
+}
+
+fn hsl_to_rgb(h: f32, s: f32, l: f32) -> (u8, u8, u8) {
+    let c = (1.0 - (2.0 * l - 1.0).abs()) * s;
+    let h_prime = (h.rem_euclid(360.0)) / 60.0;
+    let x = c * (1.0 - ((h_prime % 2.0) - 1.0).abs());
+    let (r1, g1, b1) = if (0.0..1.0).contains(&h_prime) {
+        (c, x, 0.0)
+    } else if (1.0..2.0).contains(&h_prime) {
+        (x, c, 0.0)
+    } else if (2.0..3.0).contains(&h_prime) {
+        (0.0, c, x)
+    } else if (3.0..4.0).contains(&h_prime) {
+        (0.0, x, c)
+    } else if (4.0..5.0).contains(&h_prime) {
+        (x, 0.0, c)
+    } else {
+        (c, 0.0, x)
+    };
+    let m = l - c / 2.0;
+    let r = ((r1 + m) * 255.0).clamp(0.0, 255.0).round() as u8;
+    let g = ((g1 + m) * 255.0).clamp(0.0, 255.0).round() as u8;
+    let b = ((b1 + m) * 255.0).clamp(0.0, 255.0).round() as u8;
+    (r, g, b)
 }
 
 #[cfg(test)]
@@ -374,5 +526,58 @@ mod tests {
         ws.close_dataset(id2).unwrap();
         assert_eq!(ws.session_count(), 1);
         assert_eq!(ws.active_session().unwrap().name, "DataSet1");
+    }
+
+    #[test]
+    fn test_dynamic_contrast_colors_for_similar_prefixes() {
+        let mut ws = WorkspaceManager::new();
+        let ds1 = DataSet::empty();
+        let ds2 = DataSet::empty();
+        let ds3 = DataSet::empty();
+
+        let id1 = ws.add_dataset(ds1, "merge_base.csv", None);
+        let id2 = ws.add_dataset(ds2, "merge_add_cases.csv", None);
+        let id3 = ws.add_dataset(ds3, "merge_add_vars.csv", None);
+
+        let color1 = ws.get_session(id1).unwrap().tab_color.as_ref().unwrap();
+        let color2 = ws.get_session(id2).unwrap().tab_color.as_ref().unwrap();
+        let color3 = ws.get_session(id3).unwrap().tab_color.as_ref().unwrap();
+
+        assert_ne!(color1, color2);
+        assert_ne!(color1, color3);
+        assert_ne!(color2, color3);
+
+        let (r1, g1, b1) = hex_to_rgb(color1).unwrap();
+        let (r2, g2, b2) = hex_to_rgb(color2).unwrap();
+        let (r3, g3, b3) = hex_to_rgb(color3).unwrap();
+
+        let h1 = rgb_to_hue(r1, g1, b1);
+        let h2 = rgb_to_hue(r2, g2, b2);
+        let h3 = rgb_to_hue(r3, g3, b3);
+
+        let dist = |a: f32, b: f32| {
+            let d = (a - b).abs().rem_euclid(360.0);
+            if d > 180.0 {
+                360.0 - d
+            } else {
+                d
+            }
+        };
+
+        assert!(
+            dist(h1, h2) >= 45.0,
+            "Hues h1 ({h1}) and h2 ({h2}) must have distance >= 45 deg, got {}",
+            dist(h1, h2)
+        );
+        assert!(
+            dist(h2, h3) >= 45.0,
+            "Hues h2 ({h2}) and h3 ({h3}) must have distance >= 45 deg, got {}",
+            dist(h2, h3)
+        );
+        assert!(
+            dist(h1, h3) >= 45.0,
+            "Hues h1 ({h1}) and h3 ({h3}) must have distance >= 45 deg, got {}",
+            dist(h1, h3)
+        );
     }
 }
