@@ -95,6 +95,7 @@
 | **Блок 17** | Общая линейная модель (`UNIANOVA`, `GLM MULTIVARIATE`, `GLM REPEATED`) | `glm/` (`design_matrix.rs`, `type3_ss.rs`, `univariate.rs`, `multivariate.rs`, `repeated.rs`, `eigen.rs`) | **100% Верифицировано** | $\le 10^{-6}$ |
 | **Блок 18** | Кластерный анализ, отчёты и анализ выживаемости (`QUICK CLUSTER`, `CODEBOOK`, `SUMMARIZE`, `KM`, `SURVIVAL`) | `cluster_kmeans.rs`, `codebook_core.rs`, `summarize_core.rs`, `survival_km.rs`, `survival_lifetables.rs` | **100% Верифицировано** | $\le 10^{-6}$ |
 | **Блок 19** | Мультиномиальная логистическая регрессия (`NOMREG`) | `multinomial_logistic/` (`engine.rs`, `diagnostics.rs`, `mod.rs`, `types.rs`) | **100% Верифицировано** | $\le 10^{-6}$ |
+| **Блок 20** | Регрессия пропорциональных рисков Кокса (`COXREG`) | `cox/` (`baseline.rs`, `engine.rs`, `mod.rs`, `types.rs`) | **100% Верифицировано** | $\le 10^{-6}$ |
 
 ---
 
@@ -785,6 +786,120 @@
 
 ---
 
+### Блок 16: Продвинутая регрессия и частные корреляции (План 1)
+
+#### 16.1. `PARTIAL CORR` (Частные корреляции) (IBM Algorithms стр. 797–801)
+* **Реализация:** [`crates/statcraft_algo/src/partial_corr/`](../crates/statcraft_algo/src/partial_corr/) (`math.rs`, `listwise.rs`, `pairwise.rs`, `types.rs`)
+* **Командная шина L5:** [`crates/statcraft_syntax/src/commands/partial_corr_cmd.rs`](../crates/statcraft_syntax/src/commands/partial_corr_cmd.rs) (`stat.correlations.partial`)
+* **Тесты «Золотого оракула»:** `partial_corr::tests::test_partial_corr_golden_oracle_two_controls`, `test_partial_corr_one_control_analytical`
+* **Гипотезы Craft Anything:** `hyp_1` (supported)
+* **Сопоставление математических формул:**
+  * **Разбиение матрицы корреляций нулевого порядка:**
+    Для $p$ анализируемых переменных $X$ и $k$ контрольных переменных $Z$ формируется объединенная корреляционная матрица $R$:
+    $$R = \begin{pmatrix} R_{XX} & R_{XZ} \\ R_{ZX} & R_{ZZ} \end{pmatrix}$$
+  * **Дополнение Шура (Schur Complement):**
+    Матрица условных ковариаций вычисляется через обращение блока контрольных переменных $R_{ZZ}^{-1}$:
+    $$S = R_{XX} - R_{XZ} R_{ZZ}^{-1} R_{ZX}$$
+  * **Частные коэффициенты корреляции:**
+    $$r_{ij.Z} = \frac{S_{ij}}{\sqrt{S_{ii} S_{jj}}}, \quad i, j = 1, \dots, p$$
+  * **Степени свободы и проверка значимости:**
+    $$df = N - k - 2$$
+    Статистика Стьюдента: $t = r \sqrt{\frac{df}{1 - r^2}}$ с двусторонним $p = 2 \cdot P(T > |t|)$ или односторонним уровнем значимости.
+* **Вердикт:** **100% математическая эквивалентность канону SPSS и SciPy ($\le 10^{-6}$).**
+
+#### 16.2. `LOGISTIC REGRESSION` (Бинарная логистическая регрессия) (IBM Algorithms стр. 586–598)
+* **Реализация:** [`crates/statcraft_algo/src/logistic/`](../crates/statcraft_algo/src/logistic/) (`engine.rs`, `diagnostics.rs`, `math.rs`, `types.rs`)
+* **Командная шина L5:** [`crates/statcraft_syntax/src/commands/logistic_regression_cmd.rs`](../crates/statcraft_syntax/src/commands/logistic_regression_cmd.rs) (`stat.regression.binary_logistic`)
+* **Тесты «Золотого оракула»:** `logistic::tests::test_logistic_regression_golden_oracle`
+* **Гипотезы Craft Anything:** `hyp_1` (supported)
+* **Сопоставление математических формул:**
+  * **Модель логистического отклика:**
+    $$P(Y = 1 \mid x_i) = \pi_i = \frac{1}{1 + \exp(-\beta^T x_i)}$$
+  * **Оптимизация IRLS / Newton-Raphson:**
+    - Градиент (Score vector): $g(\beta) = X^T (y - \pi)$;
+    - Гессиан (Fisher Information): $H(\beta) = -X^T W X$, где $W = \text{diag}(\pi_i(1 - \pi_i))$;
+    - Итерационный шаг: $\beta^{(t+1)} = \beta^{(t)} + (X^T W X)^{-1} X^T (y - \pi)$;
+    - Асимптотическая ковариационная матрица: $\text{Var}(\hat{\beta}) = (X^T W X)^{-1}$.
+  * **Диагностика качества и согласия:**
+    - $-2 \text{ Log Likelihood}$: $-2 \ln L = -2 \sum [y_i \ln \pi_i + (1 - y_i) \ln(1 - \pi_i)]$;
+    - Псевдо-$R^2$ Кокса-Снелла: $R^2_{CS} = 1 - [L(0) / L(\hat{\beta})]^{2/N}$;
+    - Псевдо-$R^2$ Найджелкерка: $R^2_N = \frac{R^2_{CS}}{1 - [L(0)]^{2/N}}$;
+    - **Критерий согласия Хосмера-Лемешова:** Разбиение на 10 децилей риска, $H = \sum_{g=1}^G \frac{(O_{1g} - E_{1g})^2}{N_g \bar{\pi}_g (1 - \bar{\pi}_g)}$ с $df = G - 2 = 8$;
+    - **Матрица классификации 2x2:** Отсечение по порогу $\pi \ge 0.5$ с расчетом чувствительности, специфичности и процента правильного прогноза.
+* **Вердикт:** **100% математическая эквивалентность канону SPSS и Statsmodels ($\le 10^{-6}$).**
+
+#### 16.3. `CURVEFIT` (Оценка криволинейных моделей) (IBM Algorithms стр. 248–254)
+* **Реализация:** [`crates/statcraft_algo/src/curvefit/`](../crates/statcraft_algo/src/curvefit/) (`engine.rs`, `types.rs`)
+* **Командная шина L5:** [`crates/statcraft_syntax/src/commands/curvefit_cmd.rs`](../crates/statcraft_syntax/src/commands/curvefit_cmd.rs) (`stat.regression.curvefit`)
+* **Тесты «Золотого оракула»:** `curvefit::tests::test_curvefit_golden_oracle_all_six_models`
+* **Гипотезы Craft Anything:** `hyp_1` (supported)
+* **Сопоставление математических формул:**
+  * Оценка 6 канонических регрессионных кривых через линеаризующие преобразования и МНК:
+    1. **Linear:** $Y = b_0 + b_1 t$;
+    2. **Logarithmic:** $Y = b_0 + b_1 \ln(t)$ (допустимая область $t > 0$);
+    3. **Inverse:** $Y = b_0 + b_1 / t$ (допустимая область $t \ne 0$);
+    4. **Quadratic:** $Y = b_0 + b_1 t + b_2 t^2$;
+    5. **Power:** $\ln(Y) = \ln(b_0) + b_1 \ln(t) \implies Y = b_0 t^{b_1}$ ($t > 0, Y > 0$);
+    6. **Exponential:** $\ln(Y) = \ln(b_0) + b_1 t \implies Y = b_0 e^{b_1 t}$ ($Y > 0$).
+  * Сводная таблица параметров: $R^2$, $F$-критерий, степени свободы $df_1, df_2$, $p$-value, коэффициенты уравнения $b_0, b_1, b_2$ и стандартные ошибки.
+* **Вердикт:** **100% математическая эквивалентность канону SPSS и SciPy ($\le 10^{-6}$).**
+
+---
+
+### Блок 17: Общая линейная модель (GLM / UNIANOVA, MANOVA, REPEATED) (План 2)
+
+#### 17.1. `UNIANOVA` (Одномерный GLM / Type III SS) (IBM Algorithms стр. 476–505)
+* **Реализация:** [`crates/statcraft_algo/src/glm/`](../crates/statcraft_algo/src/glm/) (`univariate.rs`, `type3_ss.rs`, `design_matrix.rs`)
+* **Командная шина L5:** [`crates/statcraft_syntax/src/commands/glm_univariate_cmd.rs`](../crates/statcraft_syntax/src/commands/glm_univariate_cmd.rs) (`stat.glm.univariate`)
+* **Тесты «Золотого оракула»:** `glm::glm_tests::test_univariate_two_way_anova_type3`, `test_univariate_ancova_with_covariate`
+* **Гипотезы Craft Anything:** `hyp_2` (supported)
+* **Сопоставление математических формул:**
+  * **Ортогональная матрица плана с отклоняющими контрастами:**
+    Кодирование категориальных факторов через контрасты отклонений (Deviation contrasts с условием $\sum \alpha_i = 0$).
+    Решение нормальных уравнений МНК через SVD-декомпозицию Якоби: $\hat{\beta} = (X^T X)^{-1} X^T y$.
+  * **Суммы квадратов типа III (Type III Sum of Squares):**
+    Маргинальная редукция взвешенных средних Йейтса для каждого эффекта $E$:
+    $$SS(\text{Type III}) = R(E \mid \text{все остальные эффекты})$$
+    Средние квадраты: $MS_E = \frac{SS_E}{df_E}$, критерий Фишера: $F = \frac{MS_E}{MS_{\text{Error}}}$, $p$-value из $F(df_E, df_{\text{Error}})$.
+  * **Размер эффекта:** $\text{Partial } \eta^2 = \frac{SS_E}{SS_E + SS_{\text{Error}}}$.
+* **Вердикт:** **100% математическая эквивалентность канону SPSS и Statsmodels Type 3 ($\le 10^{-6}$).**
+
+#### 17.2. `GLM MULTIVARIATE` (Многомерный дисперсионный анализ MANOVA) (IBM Algorithms стр. 506–528)
+* **Реализация:** [`crates/statcraft_algo/src/glm/`](../crates/statcraft_algo/src/glm/) (`multivariate.rs`, `eigen.rs`)
+* **Командная шина L5:** [`crates/statcraft_syntax/src/commands/glm_multivariate_cmd.rs`](../crates/statcraft_syntax/src/commands/glm_multivariate_cmd.rs) (`stat.glm.multivariate`)
+* **Тесты «Золотого оракула»:** `glm::glm_tests::test_multivariate_manova_4_tests`
+* **Гипотезы Craft Anything:** `hyp_2` (supported)
+* **Сопоставление математических формул:**
+  * Модель многомерного отклика: $Y = X B + E$, где $Y$ — матрица $N \times p$.
+  * Вычисление матриц гипотезы $H$ и ошибки $E$ (SSCP matrices).
+  * **Спектральный анализ:** Обобщенные собственные значения матрицы $E^{-1/2} H E^{-1/2}$: $\lambda_1 \ge \lambda_2 \ge \dots \ge \lambda_s > 0$.
+  * **4 канонических критерия MANOVA:**
+    1. **Лямбда Уилкса (Wilks' Lambda):** $\Lambda = \prod_{i=1}^s \frac{1}{1 + \lambda_i}$ с точной/аппроксимативной $F$-статистикой Рао;
+    2. **След Пиллая (Pillai's Trace):** $V = \sum_{i=1}^s \frac{\lambda_i}{1 + \lambda_i}$ с $F$-аппроксимацией;
+    3. **След Хотеллинга-Лоули (Hotelling-Lawley Trace):** $T = \sum_{i=1}^s \lambda_i$ с $F$-аппроксимацией;
+    4. **Наибольший корень Роя (Roy's Largest Root):** $\theta = \frac{\lambda_{\max}}{1 + \lambda_{\max}}$ (верхняя граница $F$).
+* **Вердикт:** **100% математическая эквивалентность канону SPSS и Statsmodels MANOVA ($\le 10^{-6}$).**
+
+#### 17.3. `GLM REPEATED` (ANOVA повторных измерений) (IBM Algorithms стр. 529–548)
+* **Реализация:** [`crates/statcraft_algo/src/glm/`](../crates/statcraft_algo/src/glm/) (`repeated.rs`, `design_matrix.rs`)
+* **Командная шина L5:** [`crates/statcraft_syntax/src/commands/glm_repeated_cmd.rs`](../crates/statcraft_syntax/src/commands/glm_repeated_cmd.rs) (`stat.glm.repeated`)
+* **Тесты «Золотого оракула»:** `glm::glm_tests::test_repeated_measures_mauchly_sphericity`, `test_helmert_contrasts_orthonormal`
+* **Гипотезы Craft Anything:** `hyp_2` (supported)
+* **Сопоставление математических формул:**
+  * **Ортонормированная матрица контрастов Хельмерта $M$:** размерность $(k-1) \times k$, где $M M^T = I_{k-1}$.
+  * **Критерий сферичности Мокли (Mauchly's Sphericity Test):**
+    Трансформированная ковариационная матрица: $\Sigma = M S M^T$.
+    Статистика Мокли:
+    $$W = \frac{\det(\Sigma)}{\left[\frac{1}{k-1} \text{tr}(\Sigma)\right]^{k-1}}$$
+    Асимптотический критерий: $\chi^2 = - \left( d - \frac{2(k-1)^2 + (k-1) + 2}{6(k-1)} \right) \ln W$ со степенями свободы $df = \frac{(k-1)k}{2} - 1$.
+  * **Поправки эпсилон на нарушение сферичности:**
+    - **Гринхаус-Гейссер (Greenhouse-Geisser):** $\hat{\varepsilon} = \frac{[\text{tr}(\Sigma)]^2}{(k-1) \text{tr}(\Sigma^2)}$;
+    - **Хюйнх-Фельдт (Huynh-Feldt):** $\tilde{\varepsilon} = \frac{N(k-1)\hat{\varepsilon} - 2}{(k-1)[N - 1 - (k-1)\hat{\varepsilon}]}$;
+    - **Нижняя граница (Lower-bound):** $\varepsilon_{\min} = \frac{1}{k-1}$.
+* **Вердикт:** **100% математическая эквивалентность канону SPSS ($\le 10^{-6}$).**
+
+---
+
 ### Блок 18: Кластерный анализ, отчёты и анализ выживаемости (Feature 003 / План 3)
 
 #### 18.1. `QUICK CLUSTER` (K-Means кластеризация) (IBM Algorithms стр. 838–844)
@@ -887,9 +1002,38 @@
 
 ---
 
+### Блок 20: Регрессия пропорциональных рисков Кокса (Feature 010 — COXREG)
+
+#### 20.1. `COXREG` (Регрессия пропорциональных рисков Кокса) (IBM Algorithms стр. 265–275)
+* **Реализация:** [`crates/statcraft_algo/src/cox/`](../crates/statcraft_algo/src/cox/) (`baseline.rs`, `engine.rs`, `mod.rs`, `types.rs`)
+* **Командная шина L5:** [`crates/statcraft_syntax/src/commands/cox_regression_cmd.rs`](../crates/statcraft_syntax/src/commands/cox_regression_cmd.rs) (`stat.survival.cox`)
+* **Тесты «Золотого оракула»:** `crates/statcraft_algo/src/cox/tests.rs` (сверка с Python `lifelines.CoxPHFitter` $\le 10^{-6}$)
+* **Гипотезы Craft Anything:** `hyp_3` (supported)
+* **Сопоставление математических формул:**
+  * **Модель пропорциональных рисков:**
+    Функция интенсивности риска для наблюдения $i$ с вектором ковариат $x_i$:
+    $$h(t \mid x_i) = h_0(t) \exp(\beta^T x_i)$$
+  * **Лог-частичное правдоподобие и метод Ньютона-Рафсона:**
+    - Лог-частичное правдоподобие: $\ln L_p(\beta) = \sum_{s=1}^S \sum_{k=1}^{K_s} [\beta^T s_{sk} - d_{sk} \ln S^{(0)}_{sk}(\beta)]$;
+    - Вектор градиента (Score vector): $g(\beta) = \sum_{s=1}^S \sum_{k=1}^{K_s} [s_{sk} - d_{sk} \bar{x}_{sk}(\beta)]$;
+    - Информационная матрица Фишера: $I(\beta) = \sum_{s=1}^S \sum_{k=1}^{K_s} d_{sk} V_{sk}(\beta)$;
+    - **Аппроксимация связок (Ties):**
+      * **Бреслоу (Breslow — канонический дефолт SPSS):** стандартное множество риска при совпадении времени событий;
+      * **Эфрон (Efron):** модифицированный знаменатель риска $S^{(0)}_l = S^{(0)} - \frac{l}{d_k} W_k^D$ для повышенного разрешения при сильных связках;
+    - **Стратификация:** единый вектор коэффициентов $\beta$ для различных клинических страт со стратифицированными базовыми функциями риска $h_{0s}(t)$.
+  * **Статистический вывод и базовая выживаемость:**
+    - Омнибус-тесты (Omnibus Tests): $\chi^2 = 2[\ln L_p(\hat{\beta}) - \ln L_p(0)]$ с $df = p$;
+    - Оценки параметров: коэффициенты $B$, стандартные ошибки $SE = \sqrt{[\text{Var}(\hat{\beta})]_{jj}}$, критерий Вальда $\chi^2 = (B / SE)^2$, отношение рисков (Hazard Ratio) $\text{Exp}(B) = \exp(B)$ с 95% доверительным интервалом Вальда;
+    - Кумулятивный базовый риск по Бреслоу: $\hat{H}_{0s}(t) = \sum_{t_{(k)} \le t} \frac{d_k}{\sum_{j \in R_s(t_{(k)})} \exp(\hat{\beta}^T x_j)}$;
+    - Базовая выживаемость $\hat{S}_{0s}(t) = \exp(-\hat{H}_{0s}(t))$ и функция выживаемости при средних значениях ковариат $\hat{S}(t \mid \bar{x}) = [\hat{S}_{0s}(t)]^{\exp(\hat{\beta}^T \bar{x})}$;
+    - Векторный ступенчатый график функции выживаемости в Output Viewer.
+* **Вердикт:** **100% математическая эквивалентность канону SPSS и верификация против Lifelines ($\le 10^{-6}$).**
+
+---
+
 ## 4. Итоговое заключение аудита
 
-Все 19 ключевых блоков математического ядра, трансформаций данных, управления выборками, ввода-вывода и отчетности воркспейса StatCraft (Блоки 1 — 19, микропланы **M-01 — M-20**, **Планы 1 — 3** и **Feature 009**) прошли исчерпывающий инструментальный построчный Clean-Room аудит против официального руководства *IBM SPSS Statistics 24 Algorithms Guide* (1271 стр.):
+Все 20 ключевых блоков математического ядра, трансформаций данных, управления выборками, ввода-вывода и отчетности воркспейса StatCraft (Блоки 1 — 20, микропланы **M-01 — M-20**, **Планы 1 — 3**, **Feature 009** и **Feature 010**) прошли исчерпывающий инструментальный построчный Clean-Room аудит против официального руководства *IBM SPSS Statistics 24 Algorithms Guide* (1271 стр.):
 1. **Описательные статистики, частоты, таблицы сопряженности, средние (Блок 1):** 100% Верифицировано ($\le 10^{-6}$).
 2. **T-критерии и однофакторный дисперсионный анализ ANOVA (Блок 2):** 100% Верифицировано ($\le 10^{-6}$).
 3. **Корреляции, регрессия, факторный анализ, надежность (Блок 3):** 100% Верифицировано ($\le 10^{-6}$).
@@ -909,6 +1053,7 @@
 17. **Общая линейная модель: GLM / UNIANOVA, MANOVA и повторные измерения (Блок 17 / План 2):** 100% Верифицировано (ортогонализованная матрица плана с deviation contrasts и OLS Jacobi SVD; расчет Type III Sum of Squares через маргинальную редукцию моделей, $F$-критерии, $\text{Partial } \eta^2$; обобщенный спектральный анализ $E^{-1/2} H E^{-1/2}$ для MANOVA с 4 каноническими критериями: Wilks' $\Lambda$, Pillai, Hotelling-Lawley, Roy с $F$-аппроксимацией Рао; анализ повторных измерений с матрицей контрастов Хельмерта, критерием сферичности Мокли $W, \chi^2, p$ и поправками Гринхауса-Гейссера $\hat{\varepsilon}$, Хюйнха-Фельдта $\tilde{\varepsilon}$ и нижней границы; Golden Oracle против Statsmodels Type 3 и MANOVA).
 18. **Кластерный анализ, отчёты и анализ выживаемости (Блок 18 / План 3):** 100% Верифицировано (`QUICK CLUSTER` K-Means с инициализацией Maximin, ANOVA межкластерными $F$-критериями, динамической вставкой колонок `QCL_1`/`QCL_2` и 100% транзакционной обратимостью Undo/Redo; `CODEBOOK` метаданные и частоты/квартили HAVERAGE; `SUMMARIZE` построчные итоги и промежуточные итоги по факторам; `KM` функция дожития Каплана-Мейера с дисперсией Гринвуда и лог-ранговым тестом Мантеля-Кокса; `SURVIVAL` актуарные таблицы смертности/дожития с $n'_k, q_k, p_k, P_k, f_k, h_k$; Golden Oracle против SciPy и Lifelines $\le 10^{-6}$).
 19. **Мультиномиальная логистическая регрессия (Блок 19 / Feature 009):** 100% Верифицировано (обобщенные логиты с базовой категорией $J$, численный оптимизатор Ньютона-Рафсона/Fisher Scoring на `faer` с Ридж-регуляризацией сингулярного Гессиана $\lambda = 10^{-6}$ и гарантией Never Crash, критерии отношения правдоподобия LRT по каждому эффекту, критерии согласия Пирсона и девианса по субпопуляциям, псевдо-$R^2$ Кокса-Снелла, Найджелкерка, Макфаддена, оценки параметров с $\text{Exp}(B)$ и 95% ДИ Вальда, матрица классификации, категориальные факторы; Golden Oracle против Statsmodels $\le 10^{-6}$).
+20. **Регрессия пропорциональных рисков Кокса (Блок 20 / Feature 010):** 100% Верифицировано (оптимизация частичного правдоподобия Newton-Raphson, аппроксимация связок по Бреслоу и Эфрону, стратификация клинических групп, омнибус-тесты -2LL, оценки параметров с $\text{Exp}(B)$ и 95% ДИ Вальда, кумулятивный базовый риск Бреслоу и функция выживаемости при средних ковариатах, векторный ступенчатый график; Golden Oracle против Lifelines $\le 10^{-6}$).
 
 
 Каждая подтвержденная формула, расчет степеней свободы, поправки на связки рангов, генераторы уровней значимости $p$-value, AST-парсер выражений, календарный движок интервалов, операторы временных рядов, синтезатор словарей меток при перекодировании, фильтры подвыборок, кодеки ввода-вывода и сквозные инварианты метаданных подробно исследованы с точными ссылками на строки кода и фиксацией выявленных расхождений в доказательной базе Craft Anything.

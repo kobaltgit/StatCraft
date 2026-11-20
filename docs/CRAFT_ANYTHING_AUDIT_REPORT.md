@@ -1,14 +1,19 @@
 # Investigation report
 
-**Question:** Соответствуют ли модули M-09 (Programmability) и M-10 (SET SEED & RNG) каноническим алгоритмам и поведению IBM SPSS Statistics?
+**Question:** Математический аудит и документирование пропущенных процедур ядра statcraft_algo: Блок 16 (Продвинутая регрессия и частные корреляции), Блок 17 (Общая линейная модель GLM / UNIANOVA / MANOVA) и Блок 20 (Регрессия пропорциональных рисков Кокса COXREG) по канону IBM SPSS Statistics 24.
 
-**Purpose:** Математический и архитектурный аудит модулей M-09 (Programmability) и M-10 (SET SEED & RNG) по канону IBM SPSS.
+**Purpose:** Обеспечение 100% математической точности и полной доказательной базы в протоколах аудита SPSS_ALGORITHMS_AUDIT.md и SPSS_ALGORITHMS_AUDIT_RU.md по канону Clean-Room.
 
-**Done when:** Построчный аудит модулей M-09 и M-10 против канона IBM SPSS Statistics, фиксация гипотез и findings, тесты пройдены без сбоев.
+**Done when:** Построчная верификация математических формул и алгоритмов для Блоков 16, 17, 20, прогон эталонных тестов с -j 1, синхронное обновление русскоязычной и англоязычной спецификаций аудита, сохранение отчета расследования.
 
 ## What we looked at
 
-_No targets recorded._
+- crates/statcraft_algo/src/partial_corr/
+- crates/statcraft_algo/src/logistic/
+- crates/statcraft_algo/src/curvefit/
+- crates/statcraft_algo/src/glm/
+- crates/statcraft_algo/src/cox/
+- docs/IBM_SPSS_Statistics_Algorithms.pdf
 
 ## What we found
 
@@ -24,10 +29,5 @@ _None outstanding._
 
 ## Handoff
 
-Все микропланы Фазы 2 (M-01 — M-20) полностью проаудированы построчно с фиксацией доказательств в Craft Anything MCP. Результаты:
-1. Раздел A (M-01 — M-10): M-01 (expr_eval): зафиксированы 3 расхождения (приоритеты ** и NOT, 3VL Клини, нехватка SIN/COS/TAN/MOD/LG10). M-02 (time_series): зафиксировано расхождение SMA (реализован как trailing PMA). M-03 (shift), M-04 (date_time), M-05 (recode), M-06 (autorecode), M-07 (count), M-08 (dummies) — 100% подтверждены. M-09 (programmability) и M-10 (rng) — 100% подтверждены, отмечено использование SplitMix64 вместо LCG.
-2. Раздел B (M-11 — M-15): M-11 (select_cases: FILTER/DELETE), M-12 (sort_cases: стабильная сортировка, Ordering::Less для Null/NaN как наименьших значений), M-13 (weight_cases: w <= 0/NaN отсекаются в row_weight), M-14 (split_file: LAYERED/SEPARATE с автосортировкой), M-15 (variable: 11 атрибутов словаря, дискретные и интервальные MissingValues) — 100% соответствие канону SPSS.
-3. Раздел C (M-16 — M-19): M-16 (spss_loader: $FL2/$FL3, типы 1,2,3/4,7, байт-код и zsav zlib декомпрессия), M-17 (excel_loader: V_, _, автовывод), M-18 (csv: RFC 4180, round-trip), M-19 (stc: Parquet + JSON metadata) — 100% подтверждены.
-4. Раздел D (M-20): M-20 (reporting: двухъярусные заголовки PivotTable, подавление нуля .000 для p-value, экспорт HTML/TSV/TXT) — 100% подтверждено.
-Все тесты во всех затронутых крейтах (statcraft_algo, statcraft_core, statcraft_syntax, statcraft_io, statcraft_reporting) пройдены без ошибок (-j 1).
+Математический аудит и документирование пропущенных разделов успешно завершены. Блок 16 (PARTIAL CORR, LOGISTIC REGRESSION, CURVEFIT), Блок 17 (UNIANOVA, MANOVA, REPEATED MEASURES) и Блок 20 (COXREG) полностью верифицированы по канону IBM SPSS Statistics 24 Algorithms Guide. Все 26 эталонных тестов Golden Oracle в statcraft_algo пройдены с абсолютной точностью <= 1e-6. Документы docs/SPSS_ALGORITHMS_AUDIT_RU.md и docs/SPSS_ALGORITHMS_AUDIT.md синхронизированы, содержат полные формулы, степени свободы, алгоритмы оптимизации, тесты согласия и ссылки на страницы первоисточника. Все 20 блоков математического ядра теперь на 100% задокументированы.
 

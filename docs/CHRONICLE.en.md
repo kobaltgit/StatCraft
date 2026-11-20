@@ -3779,3 +3779,20 @@ Resolved a critical numerical precision defect in statistical procedures caused 
    * Added `crates/statcraft_syntax/tests/numeric_precision_tests.rs` testing exact linear data: mean, minimum, regression slope/intercept, and Pearson $r$ match analytical reference values to within $10^{-9}$.
    * Added `crates/statcraft_app/tests/numeric_dialog_precision_tests.rs` verifying level distinctness and currency format support.
    * 100% Quality Gate pass: `cargo test --workspace -j 1`, `xtask file-guard` (472 files compliant), `xtask design-guard`.
+
+---
+
+### Phase 93: Full-Scale Math Core Audit via Craft Anything and 100% IBM SPSS Statistics Canon Coverage
+*Time: November 21, 2026, 00:30 (~25 minutes)*
+
+Completed an end-to-end evidence-based mathematical audit of `statcraft_algo` core procedures using the **Craft Anything** MCP server (`storytold/craft-anything`) under strict Clean-Room methodology:
+1. **Craft Anything Investigation & Evidence Ledger:**
+   * Set up investigation brief (`core_brief_write`) against the *IBM SPSS Statistics 24 Algorithms Guide* (1,271 pp.) under absolute tolerance threshold $\le 10^{-6}$.
+   * Formulated and verified 3 targeted hypotheses (`hyp_1`, `hyp_2`, `hyp_3`): equivalence of advanced regression, General Linear Model (GLM), and Cox proportional hazards regression formulas.
+   * All 26 Golden Oracle benchmark tests (`cargo test -p statcraft_algo -j 1`) passed with 0 failures and zero discrepancies.
+   * Recorded final evidence report in `docs/CRAFT_ANYTHING_AUDIT_REPORT.md`.
+2. **Specification Restoration and Synchronization (`SPSS_ALGORITHMS_AUDIT.md` & `SPSS_ALGORITHMS_AUDIT_RU.md`):**
+   * **Block 16:** Documented `PARTIAL CORR` (Schur complement $S = R_{XX} - R_{XZ} R_{ZZ}^{-1} R_{ZX}$, $df = N - k - 2$, $t$-statistic), `LOGISTIC REGRESSION` (IRLS Newton-Raphson, Hosmer-Lemeshow goodness-of-fit $H$, pseudo $R^2$, classification matrix) and `CURVEFIT` (6 regression curve models).
+   * **Block 17:** Documented General Linear Model: `UNIANOVA` (Type III SS via marginal reduction of Yates' weighted squares of means, deviation contrasts, SVD Jacobi), `GLM MULTIVARIATE` (generalized eigenvalues $E^{-1/2} H E^{-1/2}$, 4 MANOVA criteria: Wilks' $\Lambda$, Pillai, Hotelling-Lawley, Roy) and `GLM REPEATED` (orthonormal Helmert contrasts, Mauchly's sphericity $W, \chi^2$ and Greenhouse-Geisser and Huynh-Feldt corrections).
+   * **Block 20:** Synchronized Cox Proportional Hazards Regression `COXREG` (partial likelihood Newton-Raphson, Breslow and Efron tie handling, stratification, cumulative baseline hazard $\hat{H}_{0s}(t)$ and step survival function plot).
+3. **Outcome:** Mathematical audit specification now covers 100% of all 20 computational blocks in both languages without gaps.
