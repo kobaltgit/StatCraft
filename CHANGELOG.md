@@ -7,6 +7,25 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [0.4.3] - 2026-11-20
+
+### Fixed
+- **Engine Calculation Precision & Full-Precision Cell Access (PR #5 by @jjohare):**
+  - Eliminated inadvertent numerical truncation caused by reading cell values through display formatting (`get_cell_display`). Statistical procedures now compute on full-precision 64-bit IEEE 754 stored values.
+  - Added `DataSet::get_cell_numeric` to `statcraft_core`, directly returning `Option<f64>` without intermediate heap string allocations or decimal precision loss.
+  - Migrated 21 procedure commands in `statcraft_syntax`: DESCRIPTIVES, REGRESSION, CORRELATIONS, PARTIAL CORR, ANOVA (One-Way), GLM (Univariate, Multivariate, Repeated Measures), t-tests (One-Sample, Independent, Paired), Nonparametric tests (Mann-Whitney, Kruskal-Wallis, Related Samples), CURVEFIT, FACTOR, RELIABILITY, LOGISTIC REGRESSION, MULTINOMIAL LOGISTIC, MEANS, and SELECT IF.
+  - Fixed calculations on columns formatted as `Dollar` or `Comma` (e.g. `$1,234.56`), which previously caused float parsing failures.
+  - Preserved display-string matching for categorical factor levels, grouping keys, and value labels.
+- **GUI Dialog Category Level Precision (`statcraft_app`):**
+  - Updated distinct dependent variable level counting in `logistic_regression_dialog.rs` and `multinomial_logistic_dialog/mod.rs` to use `ds.get_cell_numeric`, preventing distinct small-delta numeric categories (e.g., 0.001 vs 0.002) from collapsing under default `F8.2` print formats.
+
+### Added
+- **High-Precision Regression & Statistical Tests:**
+  - Added `crates/statcraft_syntax/tests/numeric_precision_tests.rs`: verified exact numerical equality to within $10^{-9}$ for mean, minimum, slope, intercept, and Pearson $r$.
+  - Added `crates/statcraft_app/tests/numeric_dialog_precision_tests.rs`: verified distinct category counting and currency format handling.
+
+---
+
 ## [0.4.2] - 2026-11-19
 
 ### Added
