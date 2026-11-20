@@ -130,12 +130,9 @@ pub fn render_multinomial_logistic_dialog(
             let active_rows = ds.active_row_indices();
             let mut unique_levels: Vec<f64> = Vec::new();
             for &r in &active_rows {
-                let s = ds.get_cell_display(r, col_idx, false);
-                if !s.trim().is_empty() && s != "." && s != "NA" {
-                    if let Ok(v) = s.parse::<f64>() {
-                        if v.is_finite() && !unique_levels.iter().any(|&u| (u - v).abs() < 1e-9) {
-                            unique_levels.push(v);
-                        }
+                if let Some(v) = ds.get_cell_numeric(r, col_idx) {
+                    if v.is_finite() && !unique_levels.iter().any(|&u| (u - v).abs() < 1e-9) {
+                        unique_levels.push(v);
                     }
                 }
             }

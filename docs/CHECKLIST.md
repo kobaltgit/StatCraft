@@ -1066,6 +1066,21 @@
   - [x] Новый интеграционный тест `test_multi_dataset_dirty_marker_isolation_and_csv_clean` в `session_lifecycle_tests.rs`.
   - [x] 100% прохождение полного Quality Gate `cargo run -p xtask -j 1 -- ci` (fmt, clippy с 0 warnings, layers, file-guard на 470 файлах, design-guard, тесты воркспейса, матрица обратимости undo/redo).
 
+## 64. Устранение потери точности вычислений процедур ядра и переход на get_cell_numeric (PR #5 от @jjohare)
+- [x] L1 `statcraft_core::dataset`:
+  - [x] Внедрение метода `DataSet::get_cell_numeric(&self, row: usize, col: usize) -> Option<f64>` для прямого извлечения вещественных чисел без строкового форматирования по `decimals`.
+  - [x] Безопасная обработка пропусков (`Null`, `""`, `"."`, `"NA"`) и парсинг числовых строк без паник.
+  - [x] Поддержка прямого извлечения чисел из ячеек с форматами `Dollar` и `Comma` без сбоев строкового парсинга.
+- [x] L5 `statcraft_syntax::commands` (21 процедура):
+  - [x] Замена `get_cell_display(...).parse::<f64>()` на `get_cell_numeric(...)` в `anova_oneway`, `correlations`, `curvefit`, `descriptives`, `factor`, `glm_multivariate`, `glm_repeated`, `glm_univariate`, `kruskal_wallis`, `logistic_regression`, `means`, `multinomial_logistic`, `nonparam_related`, `nonparam_twosample`, `partial_corr`, `regression_linear`, `reliability`, `select_cases`, `ttest_indep`, `ttest_onesample`, `ttest_paired`.
+  - [x] Сохранение группирующего поведения по строковым меткам на `get_cell_display`.
+- [x] L6 `statcraft_app::dialogs`:
+  - [x] Перевод подсчета уникальных уровней зависимой переменной в `logistic_regression_dialog` и `multinomial_logistic_dialog` на `get_cell_numeric`.
+- [x] Тестирование и Quality Gate:
+  - [x] Интеграционный тест точности ядра `crates/statcraft_syntax/tests/numeric_precision_tests.rs` (сверка с эталоном с точностью до $10^{-9}$).
+  - [x] Интеграционный тест точности диалогов `crates/statcraft_app/tests/numeric_dialog_precision_tests.rs`.
+  - [x] 100% прохождение Quality Gate: `cargo test --workspace -j 1`, `xtask file-guard`, `xtask design-guard`.
+
 ## 20. Планы будущих релизов (Backlog / Planned Features)
 - [ ] Мультимониторный режим рабочего пространства (Multi-Monitor Viewports & Pop-out Tabs):
   - [ ] Механизм открепления вкладок во внешние нативные окна ОС через `ctx.show_viewport_immediate`.

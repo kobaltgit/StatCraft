@@ -3755,3 +3755,27 @@ Eliminated visual overlap of the unsaved changes dirty marker (`*`) over tab tit
 5. **Testing & Quality Gate:**
    * Added integration test `test_multi_dataset_dirty_marker_isolation_and_csv_clean` in `crates/statcraft_app/tests/session_lifecycle_tests.rs`.
    * 100% successful pass across all CI Quality Gates via `cargo run -p xtask -j 1 -- ci`.
+
+---
+
+### Phase 92: Elimination of Procedure Calculation Precision Loss and Migration to get_cell_numeric (PR #5 by @jjohare)
+*Time: November 20, 2026, 21:15 (~35 minutes)*
+
+Resolved a critical numerical precision defect in statistical procedures caused by inadvertent rounding through variable print format `F8.2` (discovered and fixed in PR #5 by contributor `@jjohare`):
+1. **Root Cause of Precision Loss:**
+   * Previously, all 21 procedures across `statcraft_syntax` (`descriptives`, `correlations`, `regression`, `anova`, `ttest`, `glm`, `factor`, etc.) read cell values via `ds.get_cell_display(r, col, false).parse::<f64>()`.
+   * `get_cell_display` was designed strictly for on-screen representation and rounded numbers according to variable `decimals` format specification (defaulting to 2 decimals, `F8.2`).
+   * As a consequence, input data was implicitly truncated to 2 decimals prior to mathematical calculation: `0.123456` became `0.12`, small deltas and concentrations were zeroed, distorting regression slopes and shifting $p$-values. Furthermore, for variables with `DataType::Dollar` or `DataType::Comma`, parsing strings with `$` or thousand separators always failed as `None`, making currency columns unreadable to all statistical procedures.
+2. **Direct Numeric Access `get_cell_numeric` in Core (`statcraft_core`):**
+   * Added `DataSet::get_cell_numeric(&self, row: usize, col: usize) -> Option<f64>` extracting `RawValue::Number(*n)` directly from memory with zero heap allocations and full 64-bit IEEE 754 precision.
+   * Safely handles string missing values (`""`, `"."`, `"NA"`), while parsing valid numeric strings into `f64`.
+   * Formatted currencies (`Dollar`, `CustomCurrency`) and grouped numbers (`Comma`, `Dot`) are now read as clean floating-point numbers without string parse failures.
+3. **Refactoring of 21 Syntax Commands (`statcraft_syntax`):**
+   * Migrated all statistical computation commands to `ds.get_cell_numeric(r, col_idx)`.
+   * Grouping/factor keys and value labels intentionally remain on display strings to maintain categorical key behavior.
+4. **GUI Dialog Precision Polish (`statcraft_app`):**
+   * Updated `logistic_regression_dialog.rs` and `multinomial_logistic_dialog/mod.rs` dependent variable distinct level counting to use `ds.get_cell_numeric`, preventing erroneous collapsing of close decimal levels (such as 0.001 and 0.002).
+5. **Testing & Quality Gate:**
+   * Added `crates/statcraft_syntax/tests/numeric_precision_tests.rs` testing exact linear data: mean, minimum, regression slope/intercept, and Pearson $r$ match analytical reference values to within $10^{-9}$.
+   * Added `crates/statcraft_app/tests/numeric_dialog_precision_tests.rs` verifying level distinctness and currency format support.
+   * 100% Quality Gate pass: `cargo test --workspace -j 1`, `xtask file-guard` (472 files compliant), `xtask design-guard`.
