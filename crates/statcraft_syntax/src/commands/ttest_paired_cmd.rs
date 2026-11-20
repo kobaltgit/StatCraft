@@ -105,12 +105,7 @@ impl EngineCommand for PairedSamplesTTestCommand {
 
                     let mut values: Vec<Option<f64>> = Vec::with_capacity(active_rows.len());
                     for &r in &active_rows {
-                        let cell = ds.get_cell_display(r, col_idx, false);
-                        let val = if cell.trim().is_empty() || cell == "." || cell == "NA" {
-                            None
-                        } else {
-                            cell.parse::<f64>().ok()
-                        };
+                        let val = ds.get_cell_numeric(r, col_idx);
                         values.push(val);
                     }
                     col_data_cache.insert(v_name.clone(), values);

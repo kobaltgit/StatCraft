@@ -140,20 +140,10 @@ impl EngineCommand for CurveFitCommand {
         let mut indep_vals = Vec::with_capacity(active_rows.len());
 
         for &r in &active_rows {
-            let s_dep = ds.get_cell_display(r, dep_col_idx, false);
-            let val_dep = if s_dep.trim().is_empty() || s_dep == "." || s_dep == "NA" {
-                None
-            } else {
-                s_dep.parse::<f64>().ok()
-            };
+            let val_dep = ds.get_cell_numeric(r, dep_col_idx);
             dep_vals.push(val_dep);
 
-            let s_indep = ds.get_cell_display(r, indep_col_idx, false);
-            let val_indep = if s_indep.trim().is_empty() || s_indep == "." || s_indep == "NA" {
-                None
-            } else {
-                s_indep.parse::<f64>().ok()
-            };
+            let val_indep = ds.get_cell_numeric(r, indep_col_idx);
             indep_vals.push(val_indep);
         }
 

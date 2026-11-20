@@ -166,12 +166,7 @@ impl EngineCommand for PartialCorrCommand {
             vec![Vec::with_capacity(n_active); var_names.len()];
         for &r in &active_rows {
             for (v_idx, &col_idx) in var_col_indices.iter().enumerate() {
-                let s = ds.get_cell_display(r, col_idx, false);
-                let val = if s.trim().is_empty() || s == "." || s == "NA" {
-                    None
-                } else {
-                    s.parse::<f64>().ok()
-                };
+                let val = ds.get_cell_numeric(r, col_idx);
                 var_data[v_idx].push(val);
             }
         }
@@ -180,12 +175,7 @@ impl EngineCommand for PartialCorrCommand {
             vec![Vec::with_capacity(n_active); control_names.len()];
         for &r in &active_rows {
             for (c_idx, &col_idx) in control_col_indices.iter().enumerate() {
-                let s = ds.get_cell_display(r, col_idx, false);
-                let val = if s.trim().is_empty() || s == "." || s == "NA" {
-                    None
-                } else {
-                    s.parse::<f64>().ok()
-                };
+                let val = ds.get_cell_numeric(r, col_idx);
                 control_data[c_idx].push(val);
             }
         }

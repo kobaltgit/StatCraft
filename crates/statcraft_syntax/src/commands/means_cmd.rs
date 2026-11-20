@@ -212,8 +212,7 @@ impl EngineCommand for MeansCommand {
 
                 let mut dep_values: Vec<Option<f64>> = Vec::with_capacity(active_rows.len());
                 for &r in &active_rows {
-                    let cell = ds.get_cell_display(r, dep_col_idx, false);
-                    let val = cell.trim().parse::<f64>().ok();
+                    let val = ds.get_cell_numeric(r, dep_col_idx);
                     dep_values.push(val);
                 }
 

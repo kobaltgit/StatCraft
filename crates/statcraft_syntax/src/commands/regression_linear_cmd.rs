@@ -131,21 +131,11 @@ impl EngineCommand for LinearRegressionCommand {
         let mut weights = Vec::with_capacity(active_rows.len());
 
         for &r in &active_rows {
-            let dep_str = ds.get_cell_display(r, dep_col_idx, false);
-            let dep_val = if dep_str.trim().is_empty() || dep_str == "." || dep_str == "NA" {
-                None
-            } else {
-                dep_str.parse::<f64>().ok()
-            };
+            let dep_val = ds.get_cell_numeric(r, dep_col_idx);
             dep_vals.push(dep_val);
 
             for (p_idx, &c_idx) in indep_col_indices.iter().enumerate() {
-                let x_str = ds.get_cell_display(r, c_idx, false);
-                let x_val = if x_str.trim().is_empty() || x_str == "." || x_str == "NA" {
-                    None
-                } else {
-                    x_str.parse::<f64>().ok()
-                };
+                let x_val = ds.get_cell_numeric(r, c_idx);
                 indep_vals[p_idx].push(x_val);
             }
 

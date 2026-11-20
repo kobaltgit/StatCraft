@@ -139,13 +139,7 @@ impl EngineCommand for KruskalWallisCommand {
 
             let mut var_values: Vec<Option<f64>> = Vec::with_capacity(active_rows.len());
             for &row_idx in &active_rows {
-                let cell_str = ds.get_cell_display(row_idx, var_col_idx, false);
-                let cell_num = if cell_str.trim().is_empty() || cell_str == "." || cell_str == "NA"
-                {
-                    None
-                } else {
-                    cell_str.parse::<f64>().ok()
-                };
+                let cell_num = ds.get_cell_numeric(row_idx, var_col_idx);
                 var_values.push(cell_num);
             }
 

@@ -130,12 +130,7 @@ impl EngineCommand for MannWhitneyCommand {
 
             let mut var_values: Vec<Option<f64>> = Vec::with_capacity(active_rows.len());
             for &r in &active_rows {
-                let cell_str = ds.get_cell_display(r, col_idx, false);
-                let val = if cell_str.trim().is_empty() || cell_str == "." || cell_str == "NA" {
-                    None
-                } else {
-                    cell_str.parse::<f64>().ok()
-                };
+                let val = ds.get_cell_numeric(r, col_idx);
                 var_values.push(val);
             }
 

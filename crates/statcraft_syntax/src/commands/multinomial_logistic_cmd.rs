@@ -222,12 +222,7 @@ impl EngineCommand for MultinomialLogisticCommand {
 
         let mut dep_vals = Vec::with_capacity(n_active);
         for &r in &active_rows {
-            let s = ds.get_cell_display(r, dep_col_idx, false);
-            let val = if s.trim().is_empty() || s == "." || s == "NA" {
-                None
-            } else {
-                s.parse::<f64>().ok()
-            };
+            let val = ds.get_cell_numeric(r, dep_col_idx);
             dep_vals.push(val);
         }
 
@@ -235,12 +230,7 @@ impl EngineCommand for MultinomialLogisticCommand {
             vec![Vec::with_capacity(n_active); factors.len()];
         for &r in &active_rows {
             for (f_idx, &col_idx) in factor_col_indices.iter().enumerate() {
-                let s = ds.get_cell_display(r, col_idx, false);
-                let val = if s.trim().is_empty() || s == "." || s == "NA" {
-                    None
-                } else {
-                    s.parse::<f64>().ok()
-                };
+                let val = ds.get_cell_numeric(r, col_idx);
                 factor_vals[f_idx].push(val);
             }
         }
@@ -249,12 +239,7 @@ impl EngineCommand for MultinomialLogisticCommand {
             vec![Vec::with_capacity(n_active); covariates.len()];
         for &r in &active_rows {
             for (c_idx, &col_idx) in cov_col_indices.iter().enumerate() {
-                let s = ds.get_cell_display(r, col_idx, false);
-                let val = if s.trim().is_empty() || s == "." || s == "NA" {
-                    None
-                } else {
-                    s.parse::<f64>().ok()
-                };
+                let val = ds.get_cell_numeric(r, col_idx);
                 cov_vals[c_idx].push(val);
             }
         }
