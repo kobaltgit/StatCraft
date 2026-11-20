@@ -150,12 +150,7 @@ impl EngineCommand for LogisticRegressionCommand {
 
         let mut dep_vals = Vec::with_capacity(n_active);
         for &r in &active_rows {
-            let s = ds.get_cell_display(r, dep_col_idx, false);
-            let val = if s.trim().is_empty() || s == "." || s == "NA" {
-                None
-            } else {
-                s.parse::<f64>().ok()
-            };
+            let val = ds.get_cell_numeric(r, dep_col_idx);
             dep_vals.push(val);
         }
 
@@ -163,12 +158,7 @@ impl EngineCommand for LogisticRegressionCommand {
             vec![Vec::with_capacity(n_active); covariates.len()];
         for &r in &active_rows {
             for (c_idx, &col_idx) in cov_col_indices.iter().enumerate() {
-                let s = ds.get_cell_display(r, col_idx, false);
-                let val = if s.trim().is_empty() || s == "." || s == "NA" {
-                    None
-                } else {
-                    s.parse::<f64>().ok()
-                };
+                let val = ds.get_cell_numeric(r, col_idx);
                 cov_vals[c_idx].push(val);
             }
         }

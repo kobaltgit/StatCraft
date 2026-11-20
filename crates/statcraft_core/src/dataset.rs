@@ -402,6 +402,28 @@ impl DataSet {
         self.table.get_value(row, col)
     }
 
+    /// The cell's value as a number for computation, at full precision.
+    ///
+    /// A variable's print format (`decimals`) only governs how a value is shown, as in SPSS: it
+    /// never changes what a procedure computes. Procedures must read numbers through this method,
+    /// not by parsing [`Self::get_cell_display`], which rounds to the format's decimals. Missing
+    /// values (`Null`, and text cells that are empty, `.` or `NA`) and text that is not a number
+    /// give `None`.
+    pub fn get_cell_numeric(&self, row: usize, col: usize) -> Option<f64> {
+        match self.get_cell(row, col)? {
+            RawValue::Number(n) => Some(*n),
+            RawValue::Text(s) => {
+                let t = s.trim();
+                if t.is_empty() || t == "." || t == "NA" {
+                    None
+                } else {
+                    t.parse::<f64>().ok()
+                }
+            }
+            RawValue::Null => None,
+        }
+    }
+
     pub fn get_cell_display(&self, row: usize, col: usize, show_labels: bool) -> String {
         let raw = match self.get_cell(row, col) {
             Some(v) => v,

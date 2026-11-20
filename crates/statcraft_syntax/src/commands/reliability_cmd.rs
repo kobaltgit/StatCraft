@@ -137,12 +137,7 @@ impl EngineCommand for ReliabilityCommand {
 
             let mut vals: Vec<Option<f64>> = Vec::with_capacity(active_rows.len());
             for &r in &active_rows {
-                let cell_str = ds.get_cell_display(r, col_idx, false);
-                let v = if cell_str.trim().is_empty() || cell_str == "." || cell_str == "NA" {
-                    None
-                } else {
-                    cell_str.parse::<f64>().ok()
-                };
+                let v = ds.get_cell_numeric(r, col_idx);
                 vals.push(v);
             }
             var_data.push((var_name.clone(), vals));

@@ -133,8 +133,7 @@ impl EngineCommand for MultivariateGlmCommand {
             })?;
             let mut vals = Vec::with_capacity(active_rows.len());
             for &r in &active_rows {
-                let s = ds.get_cell_display(r, col_idx, false);
-                let val = s.parse::<f64>().unwrap_or(f64::NAN);
+                let val = ds.get_cell_numeric(r, col_idx).unwrap_or(f64::NAN);
                 vals.push(val);
             }
             dep_vectors.push(vals);
@@ -166,8 +165,7 @@ impl EngineCommand for MultivariateGlmCommand {
             })?;
             let mut c_vals = Vec::with_capacity(active_rows.len());
             for &r in &active_rows {
-                let s = ds.get_cell_display(r, col_idx, false);
-                let val = s.parse::<f64>().unwrap_or(f64::NAN);
+                let val = ds.get_cell_numeric(r, col_idx).unwrap_or(f64::NAN);
                 c_vals.push(val);
             }
             covariates.push((c_name.clone(), c_vals));

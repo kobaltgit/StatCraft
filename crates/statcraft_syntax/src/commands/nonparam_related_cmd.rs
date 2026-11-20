@@ -130,19 +130,9 @@ impl EngineCommand for RelatedSamplesTestCommand {
                 Vec::with_capacity(active_rows.len());
 
             for &r in &active_rows {
-                let cell1 = ds.get_cell_display(r, col1_idx, false);
-                let val1 = if cell1.trim().is_empty() || cell1 == "." || cell1 == "NA" {
-                    None
-                } else {
-                    cell1.trim().parse::<f64>().ok()
-                };
+                let val1 = ds.get_cell_numeric(r, col1_idx);
 
-                let cell2 = ds.get_cell_display(r, col2_idx, false);
-                let val2 = if cell2.trim().is_empty() || cell2 == "." || cell2 == "NA" {
-                    None
-                } else {
-                    cell2.trim().parse::<f64>().ok()
-                };
+                let val2 = ds.get_cell_numeric(r, col2_idx);
 
                 paired_data.push((val1, val2));
             }

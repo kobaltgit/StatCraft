@@ -238,8 +238,7 @@ impl EngineCommand for SelectCasesCommand {
                     let mut row_map = HashMap::new();
                     for c in 0..total_cols {
                         if let Some(meta) = ds.dictionary.get(c) {
-                            let cell_str = ds.get_cell_display(r, c, false);
-                            if let Ok(num) = cell_str.trim().parse::<f64>() {
+                            if let Some(num) = ds.get_cell_numeric(r, c) {
                                 row_map.insert(meta.name.clone(), num);
                             }
                         }
