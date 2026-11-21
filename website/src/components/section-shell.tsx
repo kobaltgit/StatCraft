@@ -42,7 +42,7 @@ export function SectionShell({
       )}
 
       {/* Centered Structural Container (1280px max-width) */}
-      <div className="relative mx-auto max-w-[1280px] border-x border-line">
+      <div className="relative mx-auto max-w-[1280px] border-x border-line py-16 sm:py-24">
         {ticks && (
           <>
             {/* Left drafting crosshair tick */}
