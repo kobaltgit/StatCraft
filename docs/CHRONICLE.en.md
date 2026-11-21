@@ -3796,3 +3796,32 @@ Completed an end-to-end evidence-based mathematical audit of `statcraft_algo` co
    * **Block 17:** Documented General Linear Model: `UNIANOVA` (Type III SS via marginal reduction of Yates' weighted squares of means, deviation contrasts, SVD Jacobi), `GLM MULTIVARIATE` (generalized eigenvalues $E^{-1/2} H E^{-1/2}$, 4 MANOVA criteria: Wilks' $\Lambda$, Pillai, Hotelling-Lawley, Roy) and `GLM REPEATED` (orthonormal Helmert contrasts, Mauchly's sphericity $W, \chi^2$ and Greenhouse-Geisser and Huynh-Feldt corrections).
    * **Block 20:** Synchronized Cox Proportional Hazards Regression `COXREG` (partial likelihood Newton-Raphson, Breslow and Efron tie handling, stratification, cumulative baseline hazard $\hat{H}_{0s}(t)$ and step survival function plot).
 3. **Outcome:** Mathematical audit specification now covers 100% of all 20 computational blocks in both languages without gaps.
+
+---
+
+### Phase 94: Official Web Portal, Interactive Wiki & Anonymous Researcher Issue Engine
+*Time: November 21, 2026, 15:30 (~40 minutes)*
+
+Architected and deployed the official web platform and high-usability Wiki/Documentation portal for **StatCraft** (`website/`) built with **Next.js 15 (App Router), React 19, Tailwind CSS v4, TypeScript, and KaTeX**, prepared for Vercel deployment:
+1. **Academic Positioning Without Marketing Hype:**
+   * Framed explicitly as an open-science computational experiment in 100% Safe Rust with strict academic disclaimers (not certified for critical clinical trials or formal legal evidence without independent verification);
+   * Dual collaboration focus: inviting statisticians and researchers to test edge cases on real datasets and systems engineers to optimize mathematical kernels.
+2. **Architectural Drafting Aesthetic (Blueprint Style):**
+   * Adapted PhotoCraft Companion's drafting visual identity to StatCraft's theme tokens (`crates/statcraft_app/src/theme.rs`): dark graphite backgrounds `#14161a` / `#0c0d10`, hairline rules, `.tick` crosshairs, sticky `.hud-label` eyebrows, and measure scale accents (Scale `#4696e6`, Ordinal `#e6a028`, Nominal `#46be78`).
+3. **Interactive Landing Page Modules:**
+   * `Hero`: academic manifesto, v0.4.3 build status, 4 architectural guarantee chips (20/20 SciPy Oracle blocks, 0 panics, Apache Arrow, socket 18492);
+   * `OracleBenchmark`: searchable and filterable 20-block verification matrix with live KaTeX mathematical formula rendering, IBM algorithm references, and inline discrepancy report triggers;
+   * `AgentLab`: interactive terminal demonstrating Model Context Protocol (MCP) and local JSON-RPC socket 18492 integration with AI assistants (Claude, Antigravity, local LLMs);
+   * `ArchitectureGuarantee`: L0–L6 layered hierarchy blueprint and comparative advantages of 100% Safe Rust over legacy C++ codebases;
+   * `CallForResearchers`: scholarly collaboration guidelines with privacy-first protocols for sharing mock cases and covariance matrices.
+4. **Ergonomic 3-Column Wiki / Knowledge Portal (`/docs` & `/ru/docs`):**
+   * Left navigation column with category grouping and real-time search;
+   * Center reading pane with KaTeX LaTeX math blocks and copyable canonical SPSS `.sps` syntax examples;
+   * Right floating on-page Table of Contents ("On this page") and quick GitHub links.
+5. **Anonymous Issue Engine (`/api/create-issue`):**
+   * Vercel Serverless Function enabling researchers without GitHub accounts to report calculation discrepancies;
+   * Anti-abuse protection with honeypot traps and IP rate limiting (5 requests per 10 minutes);
+   * Automatic issue submission with `community-report` and `needs-triage` labels to repository `kobaltgit/StatCraft`.
+6. **Verification & Quality:**
+   * Full Next.js static generation: 18 of 18 routes statically prerendered with 0 errors (exit code 0);
+   * Rust workspace quality: `xtask file-guard` (472 files verified) and `output_viewer_invariants` (11/11 passed).

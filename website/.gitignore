@@ -1,0 +1,8 @@
+node_modules/
+.next/
+out/
+build/
+.vercel/
+*.log
+.env*.local
+.pnpm-debug.log*
