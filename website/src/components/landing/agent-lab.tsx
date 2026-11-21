@@ -97,7 +97,7 @@ An independent-samples t-test was conducted to compare cholesterol levels in con
   };
 
   return (
-    <SectionShell id="agent-lab" eyebrow={t.eyebrow} className="bg-bg-sunken">
+    <SectionShell id="ai-lab" eyebrow={t.eyebrow} className="bg-bg-sunken">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="mb-10">
           <div className="flex flex-wrap items-center gap-3 mb-4">

@@ -62,7 +62,7 @@ export function Hero({ lang = 'en' }: HeroProps) {
   }[lang];
 
   return (
-    <section className="relative pt-12 pb-20 border-b border-line bg-gradient-to-b from-bg to-bg-sunken">
+    <section id="manifest" className="relative pt-12 pb-20 border-b border-line bg-gradient-to-b from-bg to-bg-sunken scroll-mt-14">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Academic status pill */}
         <div className="inline-flex items-center gap-2 px-3 py-1 rounded border border-amber/30 bg-amber/10 text-amber text-xs font-mono font-medium tracking-wider mb-6">
@@ -100,7 +100,7 @@ export function Hero({ lang = 'en' }: HeroProps) {
           </Link>
 
           <a
-            href="#oracle-matrix"
+            href="#benchmark"
             className="inline-flex items-center gap-2 px-5 py-3 rounded bg-bg-raised text-text font-medium hover:bg-bg-raised/80 border border-line text-sm transition-colors"
           >
             <Binary className="w-4 h-4 text-emerald" />

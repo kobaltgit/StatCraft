@@ -57,7 +57,7 @@ export function OracleBenchmark({ lang = 'en' }: OracleBenchmarkProps) {
   }, [searchTerm, lang]);
 
   return (
-    <SectionShell id="oracle-matrix" eyebrow={t.eyebrow} className="bg-bg">
+    <SectionShell id="benchmark" eyebrow={t.eyebrow} className="bg-bg">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Section Header */}
         <div className="mb-10">

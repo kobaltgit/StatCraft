@@ -53,7 +53,7 @@ export function ArchitectureGuarantee({ lang = 'en' }: ArchitectureGuaranteeProp
   ];
 
   return (
-    <SectionShell id="architecture" eyebrow={t.eyebrow} className="bg-bg">
+    <SectionShell id="why-rust" eyebrow={t.eyebrow} className="bg-bg">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="mb-10">
           <h2 className="text-2xl sm:text-4xl font-bold text-white tracking-tight mb-4">

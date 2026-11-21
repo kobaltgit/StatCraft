@@ -1,8 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
-import { Download, ExternalLink, AlertTriangle, BookOpen } from "lucide-react";
+import { usePathname, useRouter } from "next/navigation";
+import { Download, ExternalLink, AlertTriangle, BookOpen, Menu, X, Cpu, Binary, Layers, Users } from "lucide-react";
 import React, { useState } from "react";
 import { ModalReportIssue } from "./modal-report-issue";
 
@@ -11,24 +11,86 @@ interface SiteNavProps {
 }
 
 export function SiteNav({ lang = "en" }: SiteNavProps) {
-  const pathname = usePathname();
+  const pathname = usePathname() || "/";
+  const router = useRouter();
   const isRu = lang === "ru" || pathname.startsWith("/ru");
   const [modalOpen, setModalOpen] = useState(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   // Target path when switching languages
   const alternateLangPath = isRu
-    ? pathname.replace(/^\/ru/, "") || "/"
+    ? pathname.replace(/^\/ru(\/|$)/, "$1") || "/"
     : `/ru${pathname === "/" ? "" : pathname}`;
+
+  const navLinks = [
+    {
+      id: "manifest",
+      label: isRu ? "Манифест" : "Manifest",
+      href: isRu ? "/ru#manifest" : "/#manifest",
+      icon: <BookOpen className="w-4 h-4 text-amber" />,
+    },
+    {
+      id: "benchmark",
+      label: isRu ? "Оракул 20 блоков" : "Oracle Matrix",
+      href: isRu ? "/ru#benchmark" : "/#benchmark",
+      icon: <Binary className="w-4 h-4 text-emerald" />,
+    },
+    {
+      id: "ai-lab",
+      label: isRu ? "ИИ & MCP" : "AI & MCP",
+      href: isRu ? "/ru#ai-lab" : "/#ai-lab",
+      icon: <Cpu className="w-4 h-4 text-blue-400" />,
+    },
+    {
+      id: "why-rust",
+      label: isRu ? "Safe Rust" : "Safe Rust",
+      href: isRu ? "/ru#why-rust" : "/#why-rust",
+      icon: <Layers className="w-4 h-4 text-purple-400" />,
+    },
+    {
+      id: "researchers",
+      label: isRu ? "Сотрудничество" : "Collaboration",
+      href: isRu ? "/ru#researchers" : "/#researchers",
+      icon: <Users className="w-4 h-4 text-amber" />,
+    },
+  ];
+
+  const handleNavClick = (e: React.MouseEvent<HTMLAnchorElement>, id: string, targetHref: string) => {
+    setMobileMenuOpen(false);
+
+    // If currently on home page (/ or /ru)
+    const isHomePage = pathname === "/" || pathname === "/ru";
+    if (isHomePage) {
+      e.preventDefault();
+      const el = document.getElementById(id);
+      if (el) {
+        el.scrollIntoView({ behavior: "smooth" });
+        window.history.pushState(null, "", `#${id}`);
+      } else {
+        router.push(targetHref);
+      }
+    }
+  };
 
   return (
     <>
       <nav className="sticky top-0 left-0 z-40 w-full border-b border-line bg-bg/95 backdrop-blur-md">
         <div className="flex h-12 items-stretch justify-between">
-          {/* Left: Brand Identity */}
+          {/* Left: Brand Identity & Mobile Hamburger */}
           <div className="flex items-stretch">
+            {/* Mobile Hamburger Button */}
+            <button
+              type="button"
+              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+              className="lg:hidden flex items-center justify-center px-3.5 border-r border-line text-text-muted hover:text-white"
+              aria-label="Toggle menu"
+            >
+              {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+            </button>
+
             <Link
               href={isRu ? "/ru" : "/"}
-              className="flex items-center gap-3 border-r border-line px-5 hover:opacity-85 transition-opacity"
+              className="flex items-center gap-3 border-r border-line px-4 sm:px-5 hover:opacity-85 transition-opacity"
             >
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
@@ -36,40 +98,33 @@ export function SiteNav({ lang = "en" }: SiteNavProps) {
                 alt="StatCraft"
                 className="h-6 w-auto"
               />
-              <span className="font-mono text-xs font-semibold tracking-wider text-ink-strong">
+              <span className="font-mono text-xs font-semibold tracking-wider text-white">
                 STATCRAFT
               </span>
-              <span className="text-[10px] px-2 py-0.5 rounded-full bg-accent/20 text-accent-ink border border-accent/40 font-mono">
+              <span className="hidden sm:inline-block text-[10px] px-2 py-0.5 rounded-full bg-accent/20 text-blue-300 border border-accent/40 font-mono">
                 v0.4.3
               </span>
             </Link>
 
             {/* Desktop Nav Links */}
             <div className="hidden lg:flex items-stretch">
-              <Link
-                href={isRu ? "/ru#manifest" : "#manifest"}
-                className="flex items-center px-4 hud-label text-muted hover:text-ink hover:bg-invert-bg hover:text-invert-fg transition-colors"
-              >
-                {isRu ? "Манифест" : "Manifest"}
-              </Link>
-              <Link
-                href={isRu ? "/ru#benchmark" : "#benchmark"}
-                className="flex items-center px-4 hud-label text-muted hover:text-ink hover:bg-invert-bg hover:text-invert-fg transition-colors"
-              >
-                {isRu ? "Оракул 20 блоков" : "Oracle Matrix"}
-              </Link>
-              <Link
-                href={isRu ? "/ru#ai-lab" : "#ai-lab"}
-                className="flex items-center px-4 hud-label text-muted hover:text-ink hover:bg-invert-bg hover:text-invert-fg transition-colors"
-              >
-                {isRu ? "ИИ & MCP" : "AI & MCP"}
-              </Link>
+              {navLinks.map((link) => (
+                <a
+                  key={link.id}
+                  href={link.href}
+                  onClick={(e) => handleNavClick(e, link.id, link.href)}
+                  className="flex items-center px-3.5 xl:px-4 text-xs font-mono text-text-muted hover:text-white hover:bg-bg-raised transition-colors cursor-pointer"
+                >
+                  {link.label}
+                </a>
+              ))}
+
               <Link
                 href={isRu ? "/ru/docs" : "/docs"}
-                className="flex items-center gap-1.5 px-4 hud-label text-accent-ink hover:text-white hover:bg-accent transition-colors font-semibold"
+                className="flex items-center gap-1.5 px-3.5 xl:px-4 text-xs font-mono text-blue-400 hover:text-white hover:bg-accent/20 transition-colors font-semibold"
               >
                 <BookOpen className="h-3 w-3" />
-                <span>{isRu ? "База знаний (Вики)" : "Documentation"}</span>
+                <span>{isRu ? "Вики / Документация" : "Docs / Wiki"}</span>
               </Link>
             </div>
           </div>
@@ -78,8 +133,9 @@ export function SiteNav({ lang = "en" }: SiteNavProps) {
           <div className="flex items-stretch">
             {/* Report Discrepancy Button */}
             <button
+              type="button"
               onClick={() => setModalOpen(true)}
-              className="flex items-center gap-1.5 px-3.5 border-l border-line text-xs font-medium text-ordinal hover:bg-ordinal/10 transition-colors"
+              className="flex items-center gap-1.5 px-3 sm:px-3.5 border-l border-line text-xs font-medium text-amber hover:bg-amber/10 transition-colors"
             >
               <AlertTriangle className="h-3.5 w-3.5" />
               <span className="hidden sm:inline">
@@ -91,14 +147,14 @@ export function SiteNav({ lang = "en" }: SiteNavProps) {
             <div className="flex items-center px-3 border-l border-line text-xs font-mono">
               <Link
                 href={isRu ? alternateLangPath : pathname}
-                className={`px-1.5 py-0.5 rounded ${!isRu ? "bg-accent text-white font-bold" : "text-muted hover:text-ink"}`}
+                className={`px-1.5 py-0.5 rounded ${!isRu ? "bg-accent text-white font-bold" : "text-text-muted hover:text-white"}`}
               >
                 EN
               </Link>
-              <span className="text-faint mx-1">/</span>
+              <span className="text-line mx-1">/</span>
               <Link
                 href={isRu ? pathname : alternateLangPath}
-                className={`px-1.5 py-0.5 rounded ${isRu ? "bg-accent text-white font-bold" : "text-muted hover:text-ink"}`}
+                className={`px-1.5 py-0.5 rounded ${isRu ? "bg-accent text-white font-bold" : "text-text-muted hover:text-white"}`}
               >
                 RU
               </Link>
@@ -109,9 +165,9 @@ export function SiteNav({ lang = "en" }: SiteNavProps) {
               href="https://github.com/kobaltgit/StatCraft"
               target="_blank"
               rel="noreferrer"
-              className="flex items-center gap-1.5 border-l border-line px-4 text-xs font-mono text-muted hover:text-ink hover:bg-bg-raised transition-colors"
+              className="flex items-center gap-1.5 border-l border-line px-3 sm:px-4 text-xs font-mono text-text-muted hover:text-white hover:bg-bg-raised transition-colors"
             >
-              <span>GitHub</span>
+              <span className="hidden sm:inline">GitHub</span>
               <ExternalLink className="h-3 w-3" />
             </a>
 
@@ -120,16 +176,72 @@ export function SiteNav({ lang = "en" }: SiteNavProps) {
               href="https://github.com/kobaltgit/StatCraft/releases"
               target="_blank"
               rel="noreferrer"
-              className="hidden md:flex items-center gap-2 border-l border-line bg-accent px-5 font-mono text-xs font-semibold text-white hover:bg-accent/90 transition-colors"
+              className="hidden md:flex items-center gap-2 border-l border-line bg-accent px-4 xl:px-5 font-mono text-xs font-semibold text-white hover:bg-accent-hover transition-colors"
             >
               <Download className="h-3.5 w-3.5" />
-              <span>{isRu ? "Сборка v0.4.3" : "Release v0.4.3"}</span>
+              <span>v0.4.3</span>
             </a>
           </div>
         </div>
+
+        {/* Mobile Dropdown Menu Drawer */}
+        {mobileMenuOpen && (
+          <div className="lg:hidden border-t border-line bg-bg-sunken shadow-2xl px-4 py-4 space-y-3 animate-in fade-in slide-in-from-top-2 duration-200">
+            <div className="space-y-1">
+              <div className="text-[11px] font-mono text-text-muted uppercase px-2 py-1">
+                {isRu ? "Разделы" : "Navigation"}
+              </div>
+
+              {navLinks.map((link) => (
+                <a
+                  key={link.id}
+                  href={link.href}
+                  onClick={(e) => handleNavClick(e, link.id, link.href)}
+                  className="flex items-center gap-2.5 px-2.5 py-2 rounded text-sm text-text-muted hover:text-white hover:bg-bg-raised transition-colors cursor-pointer"
+                >
+                  {link.icon}
+                  <span>{link.label}</span>
+                </a>
+              ))}
+
+              <Link
+                href={isRu ? "/ru/docs" : "/docs"}
+                onClick={() => setMobileMenuOpen(false)}
+                className="flex items-center gap-2.5 px-2.5 py-2 rounded text-sm text-blue-400 font-semibold hover:bg-accent/20 transition-colors"
+              >
+                <BookOpen className="w-4 h-4 text-blue-400" />
+                <span>{isRu ? "База знаний (Вики)" : "Documentation / Wiki"}</span>
+              </Link>
+            </div>
+
+            <div className="pt-3 border-t border-line flex flex-col gap-2">
+              <button
+                type="button"
+                onClick={() => {
+                  setMobileMenuOpen(false);
+                  setModalOpen(true);
+                }}
+                className="w-full flex items-center justify-center gap-2 px-3 py-2 rounded bg-amber/10 border border-amber/20 text-amber text-xs font-mono"
+              >
+                <AlertTriangle className="w-3.5 h-3.5" />
+                <span>{isRu ? "Сообщить о расхождении в расчетах" : "Report Numerical Discrepancy"}</span>
+              </button>
+
+              <a
+                href="https://github.com/kobaltgit/StatCraft/releases"
+                target="_blank"
+                rel="noreferrer"
+                className="w-full flex items-center justify-center gap-2 px-3 py-2 rounded bg-accent text-white text-xs font-mono font-medium"
+              >
+                <Download className="w-3.5 h-3.5" />
+                <span>{isRu ? "Скачать релиз v0.4.3" : "Download Release v0.4.3"}</span>
+              </a>
+            </div>
+          </div>
+        )}
       </nav>
 
-      {/* Interactive Modal */}
+      {/* Interactive Issue Reporting Modal */}
       <ModalReportIssue
         isOpen={modalOpen}
         onClose={() => setModalOpen(false)}

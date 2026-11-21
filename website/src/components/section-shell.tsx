@@ -28,7 +28,7 @@ export function SectionShell({
   }
 
   return (
-    <section id={id} className={`relative ${className}`}>
+    <section id={id} className={`relative scroll-mt-12 ${className}`}>
       {/* Top Hairline Rule */}
       <span aria-hidden className="absolute inset-x-0 top-0 h-px bg-line" />
 

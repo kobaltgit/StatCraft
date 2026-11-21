@@ -268,4 +268,139 @@ The repository enforces a strict unidirectional dependency hierarchy checked via
 * L5: \`statcraft_syntax\` (Шина CommandBus и парсер .sps)
 * L6: \`statcraft_app\` (Графический интерфейс egui)`,
   },
+  {
+    slug: "spss-sav-codecs",
+    category: "data-management",
+    categoryTitleEn: "Data Management & IO",
+    categoryTitleRu: "Управление данными и ввод-вывод",
+    titleEn: "SPSS .sav & .zsav Codecs",
+    titleRu: "Кодеки файлов SPSS .sav и .zsav",
+    descriptionEn: "Streaming binary reader and writer for classical and zlib-compressed SPSS system files.",
+    descriptionRu: "Потоковое чтение и запись бинарных системных файлов SPSS с компрессией zlib.",
+    oracleStatus: "Clean-Room GNU PSPP Spec Verified",
+    spssPage: "Crates: statcraft_io",
+    syntaxExample: `GET FILE='survey_2026.sav'.
+SAVE OUTFILE='survey_cleaned.zsav'
+  /COMPRESSED.`,
+    toc: [
+      { id: "sav-architecture", titleEn: "1. Binary Record Structure", titleRu: "1. Структура бинарных записей" },
+      { id: "compression", titleEn: "2. Compression Schemes (Bytecode & ZLIB)", titleRu: "2. Схемы сжатия (Байткод и ZLIB)" },
+      { id: "roundtrip", titleEn: "3. Lossless Roundtrip Guarantee", titleRu: "3. Гарантия обратимости без потерь" },
+    ],
+    contentEn: `### 1. Binary Record Structure
+The \`statcraft_io\` crate implements a complete binary parser and writer for SPSS system files without external C libraries:
+* **Record Type 1**: General file header (release number, weight variable index, case count, timestamp);
+* **Record Type 2**: Variable dictionary (type, print/write format, 8-character legacy name);
+* **Record Type 3/4**: Value labels dictionary and variable assignment bindings;
+* **Record Type 7**: Extended metadata (long variable names, UTF-8 character encoding, measure level, display width).
+
+### 2. Compression Schemes (Bytecode & ZLIB)
+* **Uncompressed & Bytecode**: Standard 8-byte chunks packed into 8-element instruction blocks;
+* **Zstandard / ZLIB (.zsav)**: Block-based stream decompression enabling sub-second loads for million-row files.
+
+### 3. Lossless Roundtrip Guarantee
+Files written by StatCraft open flawlessly in IBM SPSS Statistics 20–29 with all variable labels, categorical coding schemes, and missing value definitions 100% preserved.`,
+    contentRu: `### 1. Структура бинарных записей
+Крейт \`statcraft_io\` реализует полный бинарный парсер и генератор системных файлов SPSS без сторонних C-библиотек:
+* **Запись Тип 1**: Заголовок файла (номер версии, индекс весовой переменной, число наблюдений);
+* **Запись Тип 2**: Словарь переменных (тип, формат отображения, 8-символьное имя);
+* **Записи Тип 3/4**: Словари меток значений и привязка к переменным;
+* **Запись Тип 7**: Расширенные метаданные (длинные имена переменных, кодировка UTF-8, шкала измерения, ширина колонок).
+
+### 2. Схемы сжатия (Байткод и ZLIB)
+* **Стандартный байткод**: Упаковка 8-байтовых чисел в блоки инструкций;
+* **ZLIB компрессия (.zsav)**: Блочная декомпрессия, обеспечивающая открытие миллионных массивов за доли секунды.
+
+### 3. Гарантия обратимости без потерь
+Файлы, сохраненные в StatCraft, открываются в IBM SPSS Statistics версий 20–29 с полным сохранением меток, шкал и кодов пропусков.`,
+  },
+  {
+    slug: "oneway-anova-procedure",
+    category: "procedures",
+    categoryTitleEn: "Statistical Procedures",
+    categoryTitleRu: "Статистические процедуры",
+    titleEn: "One-Way ANOVA & Post-Hoc Tests",
+    titleRu: "Однофакторный дисперсионный анализ (One-Way ANOVA)",
+    descriptionEn: "Between-groups and within-groups variance partition, Levene's test, Welch/Brown-Forsythe adjustments, and Tukey HSD.",
+    descriptionRu: "Разложение межгрупповой и внутригрупповой дисперсии, тест Левена, поправки Уэлча / Брауна-Форсайта и критерий Тьюки HSD.",
+    oracleStatus: "Verified vs SciPy (≤ 10⁻⁶)",
+    spssPage: "IBM SPSS Algorithms pp. 741–748",
+    syntaxExample: `ONEWAY salary BY educ
+  /STATISTICS=DESCRIPTIVES HOMOGENEITY
+  /POSTHOC=TUKEY BONFERRONI ALPHA(0.05).`,
+    toc: [
+      { id: "partition", titleEn: "1. Sum of Squares Partition", titleRu: "1. Разложение суммы квадратов" },
+      { id: "robust-tests", titleEn: "2. Robust Tests of Equality of Means", titleRu: "2. Робастные критерии равенства средних" },
+      { id: "post-hoc", titleEn: "3. Multiple Comparisons (Post-Hoc)", titleRu: "3. Множественные сравнения (Post-Hoc)" },
+    ],
+    contentEn: `### 1. Sum of Squares Partition
+One-Way ANOVA decomposes total variance into between-groups and within-groups (error) sum of squares:
+$$SS_{total} = SS_{between} + SS_{within}$$
+
+The test statistic is evaluated as:
+$$F = \\frac{MS_{between}}{MS_{within}} = \\frac{SS_{between} / (k - 1)}{SS_{within} / (N - k)}$$
+
+### 2. Robust Tests of Equality of Means
+When homogeneity of variance is rejected by Levene's test, StatCraft provides Welch's $F^*$ and Brown-Forsythe's $F_{BF}$ statistics with adjusted fractional degrees of freedom.
+
+### 3. Multiple Comparisons (Post-Hoc)
+Pairwise group differences are evaluated via Tukey's Honestly Significant Difference (HSD) based on the Studentized range distribution $q$, as well as Bonferroni and Scheffé adjustments.`,
+    contentRu: `### 1. Разложение суммы квадратов
+Однофакторный дисперсионный анализ раскладывает общую дисперсию на межгрупповую и внутригрупповую (остаточную) суммы квадратов:
+$$SS_{total} = SS_{between} + SS_{within}$$
+
+Статистика критерия Фишера:
+$$F = \\frac{MS_{between}}{MS_{within}} = \\frac{SS_{between} / (k - 1)}{SS_{within} / (N - k)}$$
+
+### 2. Робастные критерии равенства средних
+При нарушении равенства дисперсий по тесту Левена StatCraft автоматически рассчитывает робастные статистики Уэлча ($F^*$) и Брауна-Форсайта ($F_{BF}$) с дробными степенями свободы.
+
+### 3. Множественные сравнения (Post-Hoc)
+Попарные различия групп оцениваются критерием Тьюки (Tukey HSD) на основе распределения стьюдентизированного размаха $q$, а также поправками Бонферрони и Шеффе.`,
+  },
+  {
+    slug: "linear-regression-procedure",
+    category: "procedures",
+    categoryTitleEn: "Statistical Procedures",
+    categoryTitleRu: "Статистические процедуры",
+    titleEn: "Linear Regression & Diagnostics",
+    titleRu: "Линейная регрессия и диагностика",
+    descriptionEn: "Ordinary Least Squares (OLS), ANOVA partition, collinearity diagnostics (VIF, Tolerance), and Durbin-Watson autocorrelation.",
+    descriptionRu: "Метод наименьших квадратов (МНК), ANOVA-разложение, диагностика мультиколлинеарности (VIF, толерантность) и критерий Дарбина-Уотсона.",
+    oracleStatus: "Verified vs SciPy (≤ 10⁻⁶)",
+    spssPage: "IBM SPSS Algorithms pp. 883–894",
+    syntaxExample: `REGRESSION
+  /DEPENDENT salary
+  /METHOD=ENTER educ prevexp
+  /STATISTICS=COEFF R ANOVA COLLIN TOL ZPP.`,
+    toc: [
+      { id: "ols-formulation", titleEn: "1. OLS Formulation & Normal Equations", titleRu: "1. МНК и нормальные уравнения" },
+      { id: "collinearity", titleEn: "2. Collinearity Statistics (VIF & Tolerance)", titleRu: "2. Диагностика мультиколлинеарности" },
+      { id: "residual-diagnostics", titleEn: "3. Residual Autocorrelation", titleRu: "3. Анализ автокорреляции остатков" },
+    ],
+    contentEn: `### 1. OLS Formulation & Normal Equations
+Linear regression solves the coefficient vector $\\mathbf{b}$ via QR/Cholesky decomposition of the normal equations:
+$$\\mathbf{b} = (\\mathbf{X}^T \\mathbf{X})^{-1} \\mathbf{X}^T \\mathbf{y}$$
+
+StatCraft outputs full standardized coefficients $\\beta_j$, standard errors, $t$-values, and two-tailed significance levels.
+
+### 2. Collinearity Statistics (VIF & Tolerance)
+For each predictor $j$, the tolerance $Tol_j = 1 - R_j^2$ and Variance Inflation Factor $VIF_j = 1 / Tol_j$ are computed to detect multicollinearity.
+
+### 3. Residual Autocorrelation
+Durbin-Watson $d$ is computed from residual differences to verify independent errors:
+$$d = \\frac{\\sum_{i=2}^N (e_i - e_{i-1})^2}{\\sum_{i=1}^N e_i^2}$$`,
+    contentRu: `### 1. МНК и нормальные уравнения
+Линейная регрессия находит вектор коэффициентов $\\mathbf{b}$ через QR-разложение нормальных уравнений:
+$$\\mathbf{b} = (\\mathbf{X}^T \\mathbf{X})^{-1} \\mathbf{X}^T \\mathbf{y}$$
+
+StatCraft формирует полные таблицы со стандартизованными коэффициентами $\\beta$, стандартными ошибками, $t$-статистиками и уровнями значимости.
+
+### 2. Диагностика мультиколлинеарности
+Для каждого предиктора $j$ рассчитываются толерантность $Tol_j = 1 - R_j^2$ и коэффициент инфляции дисперсии $VIF_j = 1 / Tol_j$.
+
+### 3. Анализ автокорреляции остатков
+Критерий Дарбина-Уотсона $d$ проверяет независимость остатков:
+$$d = \\frac{\\sum_{i=2}^N (e_i - e_{i-1})^2}{\\sum_{i=1}^N e_i^2}$$`,
+  },
 ];
