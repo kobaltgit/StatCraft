@@ -20,10 +20,37 @@ export function SiteNav({ lang = "en" }: SiteNavProps) {
   const [modalOpen, setModalOpen] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
-  // Target path when switching languages
-  const alternateLangPath = isRu
+  // Clean target paths for EN and RU
+  const targetEnPath = pathname.startsWith("/ru")
     ? pathname.replace(/^\/ru(\/|$)/, "$1") || "/"
+    : pathname;
+
+  const targetRuPath = pathname.startsWith("/ru")
+    ? pathname
     : `/ru${pathname === "/" ? "" : pathname}`;
+
+  const handleLanguageSwitch = (targetLang: "en" | "ru", e: React.MouseEvent) => {
+    e.preventDefault();
+    if ((targetLang === "ru" && isRu) || (targetLang === "en" && !isRu)) {
+      return;
+    }
+
+    // 1. Set client-side cookie
+    document.cookie = `statcraft_lang=${targetLang}; path=/; max-age=31536000; SameSite=Lax`;
+
+    // 2. Preserve current URL hash (e.g. #benchmark, #ai-lab)
+    const currentHash = typeof window !== "undefined" ? window.location.hash : "";
+
+    // 3. Compute destination base path
+    const targetBase = targetLang === "ru" ? targetRuPath : targetEnPath;
+
+    // 4. Append ?lang= to force middleware synchronization and bypass stale client cache
+    const separator = targetBase.includes("?") ? "&" : "?";
+    const finalUrl = `${targetBase}${separator}lang=${targetLang}${currentHash}`;
+
+    // 5. Navigate with full page state refresh
+    window.location.href = finalUrl;
+  };
 
   const navLinks = [
     {
@@ -147,26 +174,36 @@ export function SiteNav({ lang = "en" }: SiteNavProps) {
             </button>
 
             {/* Language Switcher */}
-            <div className="flex items-center px-3 border-l border-line text-xs font-mono">
-              <Link
-                href={isRu ? alternateLangPath : pathname}
-                onClick={() => {
-                  document.cookie = "statcraft_lang=en; path=/; max-age=31536000; SameSite=Lax";
-                }}
-                className={`px-1.5 py-0.5 rounded ${!isRu ? "bg-accent text-white font-bold" : "text-text-muted hover:text-white"}`}
+            <div className="flex items-center px-2.5 sm:px-3 border-l border-line text-xs font-mono">
+              <button
+                type="button"
+                onClick={(e) => handleLanguageSwitch("en", e)}
+                disabled={!isRu}
+                className={`px-1.5 py-0.5 rounded transition-colors ${
+                  !isRu
+                    ? "bg-accent text-white font-bold cursor-default"
+                    : "text-text-muted hover:text-white cursor-pointer"
+                }`}
+                aria-label="Switch to English"
+                title={!isRu ? "English (Active)" : "Switch to English"}
               >
                 EN
-              </Link>
-              <span className="text-line mx-1">/</span>
-              <Link
-                href={isRu ? pathname : alternateLangPath}
-                onClick={() => {
-                  document.cookie = "statcraft_lang=ru; path=/; max-age=31536000; SameSite=Lax";
-                }}
-                className={`px-1.5 py-0.5 rounded ${isRu ? "bg-accent text-white font-bold" : "text-text-muted hover:text-white"}`}
+              </button>
+              <span className="text-line mx-1 select-none">/</span>
+              <button
+                type="button"
+                onClick={(e) => handleLanguageSwitch("ru", e)}
+                disabled={isRu}
+                className={`px-1.5 py-0.5 rounded transition-colors ${
+                  isRu
+                    ? "bg-accent text-white font-bold cursor-default"
+                    : "text-text-muted hover:text-white cursor-pointer"
+                }`}
+                aria-label="Переключить на русский"
+                title={isRu ? "Русский (Активен)" : "Переключить на русский"}
               >
                 RU
-              </Link>
+              </button>
             </div>
 
             {/* Support author on Lava.top */}
@@ -174,7 +211,7 @@ export function SiteNav({ lang = "en" }: SiteNavProps) {
               href="https://app.lava.top/kobaltgit"
               target="_blank"
               rel="noopener noreferrer"
-              className="flex items-center gap-1.5 border-l border-line px-3 sm:px-3.5 text-xs font-mono text-amber hover:bg-amber/10 transition-colors"
+              className="hidden sm:flex items-center gap-1.5 border-l border-line px-3 sm:px-3.5 text-xs font-mono text-amber hover:bg-amber/10 transition-colors"
               title="Buy me a coffee on Lava.top"
             >
               <Coffee className="h-3.5 w-3.5 text-amber" />
@@ -186,7 +223,7 @@ export function SiteNav({ lang = "en" }: SiteNavProps) {
               href="https://github.com/kobaltgit/StatCraft"
               target="_blank"
               rel="noreferrer"
-              className="flex items-center gap-1.5 border-l border-line px-3 sm:px-4 text-xs font-mono text-text-muted hover:text-white hover:bg-bg-raised transition-colors"
+              className="hidden sm:flex items-center gap-1.5 border-l border-line px-3 sm:px-4 text-xs font-mono text-text-muted hover:text-white hover:bg-bg-raised transition-colors"
             >
               <span className="hidden sm:inline">GitHub</span>
               <ExternalLink className="h-3 w-3" />
@@ -228,6 +265,43 @@ export function SiteNav({ lang = "en" }: SiteNavProps) {
             </div>
 
             <div className="pt-3 border-t border-line flex flex-col gap-2">
+              {/* Mobile Language Switcher Row */}
+              <div className="flex items-center justify-between px-3 py-2 rounded bg-bg border border-line text-xs font-mono">
+                <span className="text-text-muted">{isRu ? "Язык интерфейса" : "Language"}</span>
+                <div className="flex items-center gap-1.5">
+                  <button
+                    type="button"
+                    onClick={(e) => {
+                      setMobileMenuOpen(false);
+                      handleLanguageSwitch("en", e);
+                    }}
+                    disabled={!isRu}
+                    className={`px-2.5 py-1 rounded transition-colors ${
+                      !isRu
+                        ? "bg-accent text-white font-bold cursor-default"
+                        : "text-text-muted hover:text-white cursor-pointer"
+                    }`}
+                  >
+                    English
+                  </button>
+                  <button
+                    type="button"
+                    onClick={(e) => {
+                      setMobileMenuOpen(false);
+                      handleLanguageSwitch("ru", e);
+                    }}
+                    disabled={isRu}
+                    className={`px-2.5 py-1 rounded transition-colors ${
+                      isRu
+                        ? "bg-accent text-white font-bold cursor-default"
+                        : "text-text-muted hover:text-white cursor-pointer"
+                    }`}
+                  >
+                    Русский
+                  </button>
+                </div>
+              </div>
+
               <button
                 type="button"
                 onClick={() => {

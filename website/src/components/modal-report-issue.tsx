@@ -73,8 +73,8 @@ export function ModalReportIssue({
   }
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm animate-in fade-in duration-200">
-      <div className="relative w-full max-w-xl rounded-xl border border-line-strong bg-bg-raised p-6 shadow-2xl text-ink">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/80 backdrop-blur-sm animate-in fade-in duration-200">
+      <div className="relative w-full max-w-xl max-h-[92vh] overflow-y-auto rounded-xl border border-line-strong bg-bg-raised p-4 sm:p-6 shadow-2xl text-ink">
         {/* Header with drafting tick */}
         <span aria-hidden className="tick -top-[5px] -left-[5px]" />
         <span aria-hidden className="tick -top-[5px] -right-[5px]" />

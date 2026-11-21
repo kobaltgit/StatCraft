@@ -89,40 +89,40 @@ export function Hero({ lang = 'en' }: HeroProps) {
         {/* Critical Academic Disclaimer */}
         <div className="mb-10 p-4 rounded border border-amber/20 bg-amber/5 text-amber-200/90 text-xs sm:text-sm leading-relaxed flex items-start gap-3">
           <AlertTriangle className="w-5 h-5 text-amber shrink-0 mt-0.5" />
-          <div>{t.disclaimer}</div>
+          <div className="break-words">{t.disclaimer}</div>
         </div>
 
         {/* Primary CTA Buttons */}
-        <div className="flex flex-wrap items-center gap-4 mb-16">
+        <div className="flex flex-col sm:flex-row sm:flex-wrap items-stretch sm:items-center gap-3 sm:gap-4 mb-16">
           {/* Direct Binary Download for Auto-Detected OS */}
           <DownloadButton lang={lang} variant="hero" />
 
           <Link
             href={lang === 'ru' ? '/ru/docs' : '/docs'}
-            className="inline-flex items-center gap-2 px-5 py-3 rounded bg-bg-raised text-text font-medium hover:bg-bg-raised/80 border border-line text-sm transition-colors"
+            className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-5 py-3 rounded bg-bg-raised text-text font-medium hover:bg-bg-raised/80 border border-line text-sm transition-colors text-center"
           >
-            {t.btnDocs}
-            <ArrowRight className="w-4 h-4" />
+            <span>{t.btnDocs}</span>
+            <ArrowRight className="w-4 h-4 shrink-0" />
           </Link>
 
           <a
             href="#benchmark"
-            className="inline-flex items-center gap-2 px-5 py-3 rounded bg-bg-raised text-text font-medium hover:bg-bg-raised/80 border border-line text-sm transition-colors"
+            className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-5 py-3 rounded bg-bg-raised text-text font-medium hover:bg-bg-raised/80 border border-line text-sm transition-colors text-center"
           >
-            <Binary className="w-4 h-4 text-emerald" />
-            {t.btnAudit}
+            <Binary className="w-4 h-4 text-emerald shrink-0" />
+            <span>{t.btnAudit}</span>
           </a>
 
           <a
             href="https://github.com/kobaltgit/StatCraft"
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center gap-2 px-5 py-3 rounded bg-bg-raised text-text-muted font-medium hover:text-white border border-line text-sm transition-colors"
+            className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-5 py-3 rounded bg-bg-raised text-text-muted font-medium hover:text-white border border-line text-sm transition-colors text-center"
           >
-            <svg className="w-4 h-4 fill-current" viewBox="0 0 24 24">
+            <svg className="w-4 h-4 fill-current shrink-0" viewBox="0 0 24 24">
               <path fillRule="evenodd" clipRule="evenodd" d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.53 1.032 1.53 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z" />
             </svg>
-            {t.btnGithub}
+            <span>{t.btnGithub}</span>
           </a>
 
           {/* Support author on Lava.top */}
@@ -130,20 +130,20 @@ export function Hero({ lang = 'en' }: HeroProps) {
             href="https://app.lava.top/kobaltgit"
             target="_blank"
             rel="noopener noreferrer"
-            className="group inline-flex items-center gap-2 px-5 py-3 rounded border border-amber/40 bg-amber/10 text-amber hover:bg-amber hover:text-black font-medium text-sm transition-all shadow-sm"
+            className="w-full sm:w-auto group inline-flex items-center justify-center gap-2 px-5 py-3 rounded border border-amber/40 bg-amber/10 text-amber hover:bg-amber hover:text-black font-medium text-sm transition-all shadow-sm text-center"
             title="Buy me a coffee on Lava.top"
           >
-            <Coffee className="w-4 h-4 transition-colors" />
+            <Coffee className="w-4 h-4 shrink-0 transition-colors" />
             <span>{lang === 'ru' ? 'Поддержать (Lava.top)' : 'Buy me Coffee'}</span>
           </a>
 
           <button
             type="button"
             onClick={() => setReportModalOpen(true)}
-            className="inline-flex items-center gap-2 px-4 py-3 rounded text-text-muted hover:text-amber text-sm font-mono transition-colors cursor-pointer"
+            className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-4 py-3 rounded border border-line/60 sm:border-transparent bg-bg-raised/40 sm:bg-transparent text-text-muted hover:text-amber text-sm font-mono transition-colors cursor-pointer text-center"
           >
-            <MessageSquarePlus className="w-4 h-4 text-amber" />
-            {t.btnReport}
+            <MessageSquarePlus className="w-4 h-4 text-amber shrink-0" />
+            <span>{t.btnReport}</span>
           </button>
         </div>
 

@@ -154,11 +154,11 @@ export function CallForResearchers({ lang = 'en' }: CallForResearchersProps) {
               href="https://news.ycombinator.com/item?id=50411522"
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 text-xs font-mono text-text-muted hover:text-[#ff6600] transition-colors"
+              className="inline-flex items-center gap-2 text-xs font-mono text-text-muted hover:text-[#ff6600] transition-colors text-center max-w-full px-2"
             >
-              <span className="w-2 h-2 rounded-full bg-[#ff6600]" />
-              <span>{lang === 'ru' ? 'Обсуждение на Hacker News: «I\'m Rewriting IBM SPSS Statistics in 100% Safe Rust, Alone»' : 'Discussion on Hacker News: «I\'m Rewriting IBM SPSS Statistics in 100% Safe Rust, Alone»'}</span>
-              <ExternalLink className="w-3 h-3 text-[#ff6600]" />
+              <span className="w-2 h-2 rounded-full bg-[#ff6600] shrink-0" />
+              <span className="break-words">{lang === 'ru' ? 'Обсуждение на Hacker News: «I\'m Rewriting IBM SPSS Statistics in 100% Safe Rust, Alone»' : 'Discussion on Hacker News: «I\'m Rewriting IBM SPSS Statistics in 100% Safe Rust, Alone»'}</span>
+              <ExternalLink className="w-3 h-3 text-[#ff6600] shrink-0" />
             </a>
           </div>
         </div>

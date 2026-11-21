@@ -122,13 +122,13 @@ export function ArchitectureGuarantee({ lang = 'en' }: ArchitectureGuaranteeProp
               {layers.map((l) => (
                 <div
                   key={l.code}
-                  className="p-2.5 rounded bg-[#14161a] border border-line flex items-center justify-between"
+                  className="p-2.5 rounded bg-[#14161a] border border-line flex flex-col sm:flex-row sm:items-center justify-between gap-1 sm:gap-2.5"
                 >
-                  <div className="flex items-center gap-2.5">
+                  <div className="flex items-center gap-2.5 shrink-0">
                     <span className={`font-bold ${l.color}`}>{l.code}</span>
                     <span className="text-white font-medium">{l.name}</span>
                   </div>
-                  <span className="text-[11px] text-text-muted truncate max-w-[180px] sm:max-w-[220px]">
+                  <span className="text-[11px] text-text-muted sm:text-right break-words">
                     {l.desc}
                   </span>
                 </div>

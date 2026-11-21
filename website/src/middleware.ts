@@ -125,7 +125,7 @@ export function middleware(request: NextRequest) {
     }
   }
 
-  // 4. If visiting '/ru' or '/ru/*', ensure cookie is synchronized
+  // 4. Synchronize cookie with active language prefix
   if (pathname.startsWith('/ru')) {
     const res = NextResponse.next();
     if (cookieLang !== 'ru') {
@@ -136,11 +136,19 @@ export function middleware(request: NextRequest) {
       });
     }
     return res;
+  } else {
+    const res = NextResponse.next();
+    if (cookieLang !== 'en') {
+      res.cookies.set('statcraft_lang', 'en', {
+        path: '/',
+        maxAge: 60 * 60 * 24 * 365,
+        sameSite: 'lax',
+      });
+    }
+    return res;
   }
-
-  return NextResponse.next();
 }
 
 export const config = {
-  matcher: ['/', '/docs', '/ru', '/ru/:path*'],
+  matcher: ['/', '/docs', '/docs/:path*', '/ru', '/ru/:path*'],
 };
