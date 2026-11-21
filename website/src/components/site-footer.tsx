@@ -2,7 +2,7 @@
 
 import React from "react";
 import Link from "next/link";
-import { ExternalLink, ShieldCheck, Download } from "lucide-react";
+import { ExternalLink, ShieldCheck, Download, Coffee } from "lucide-react";
 import { useRelease } from "@/lib/use-release";
 
 interface SiteFooterProps {
@@ -119,6 +119,18 @@ export function SiteFooter({ lang = "en" }: SiteFooterProps) {
                 >
                   <span>GitHub Issues</span>
                   <ExternalLink className="h-3 w-3" />
+                </a>
+              </li>
+              <li>
+                <a
+                  href="https://app.lava.top/kobaltgit"
+                  target="_blank"
+                  rel="noreferrer"
+                  className="hover:text-amber text-amber/90 transition inline-flex items-center gap-1.5"
+                >
+                  <Coffee className="h-3 w-3 text-amber" />
+                  <span>{isRu ? "Поддержать (Lava.top)" : "Buy me a Coffee"}</span>
+                  <ExternalLink className="h-2.5 w-2.5 opacity-60" />
                 </a>
               </li>
               <li>

@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import Link from 'next/link';
-import { ArrowRight, AlertTriangle, ShieldCheck, Cpu, Database, Binary, MessageSquarePlus } from 'lucide-react';
+import { ArrowRight, AlertTriangle, ShieldCheck, Cpu, Database, Binary, MessageSquarePlus, Coffee } from 'lucide-react';
 import { ModalReportIssue } from '../modal-report-issue';
 import { DownloadButton } from '../download-button';
 import { useRelease } from '@/lib/use-release';
@@ -76,7 +76,7 @@ export function Hero({ lang = 'en' }: HeroProps) {
         {/* Main Title */}
         <h1 className="text-3xl sm:text-5xl lg:text-6xl font-bold tracking-tight text-white mb-6">
           <span>{t.titleP1}</span>{' '}
-          <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 via-indigo-300 to-emerald-400">
+          <span className="font-serif italic font-normal text-transparent bg-clip-text bg-gradient-to-r from-blue-400 via-indigo-300 to-emerald-400">
             {t.titleP2}
           </span>
         </h1>
@@ -123,6 +123,18 @@ export function Hero({ lang = 'en' }: HeroProps) {
               <path fillRule="evenodd" clipRule="evenodd" d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.53 1.032 1.53 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z" />
             </svg>
             {t.btnGithub}
+          </a>
+
+          {/* Support author on Lava.top */}
+          <a
+            href="https://app.lava.top/kobaltgit"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="group inline-flex items-center gap-2 px-5 py-3 rounded border border-amber/40 bg-amber/10 text-amber hover:bg-amber hover:text-black font-medium text-sm transition-all shadow-sm"
+            title="Buy me a coffee on Lava.top"
+          >
+            <Coffee className="w-4 h-4 transition-colors" />
+            <span>{lang === 'ru' ? 'Поддержать (Lava.top)' : 'Buy me Coffee'}</span>
           </a>
 
           <button

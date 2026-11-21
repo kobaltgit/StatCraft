@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { ExternalLink, AlertTriangle, BookOpen, Menu, X, Cpu, Binary, Layers, Users } from "lucide-react";
+import { ExternalLink, AlertTriangle, BookOpen, Menu, X, Cpu, Binary, Layers, Users, Coffee } from "lucide-react";
 import React, { useState } from "react";
 import { ModalReportIssue } from "./modal-report-issue";
 import { DownloadButton } from "./download-button";
@@ -169,6 +169,18 @@ export function SiteNav({ lang = "en" }: SiteNavProps) {
               </Link>
             </div>
 
+            {/* Support author on Lava.top */}
+            <a
+              href="https://app.lava.top/kobaltgit"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center gap-1.5 border-l border-line px-3 sm:px-3.5 text-xs font-mono text-amber hover:bg-amber/10 transition-colors"
+              title="Buy me a coffee on Lava.top"
+            >
+              <Coffee className="h-3.5 w-3.5 text-amber" />
+              <span className="hidden xl:inline">{isRu ? "Поддержать" : "Coffee"}</span>
+            </a>
+
             {/* GitHub Repo */}
             <a
               href="https://github.com/kobaltgit/StatCraft"
@@ -227,6 +239,16 @@ export function SiteNav({ lang = "en" }: SiteNavProps) {
                 <AlertTriangle className="w-3.5 h-3.5" />
                 <span>{isRu ? "Сообщить о расхождении в расчетах" : "Report Numerical Discrepancy"}</span>
               </button>
+
+              <a
+                href="https://app.lava.top/kobaltgit"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-full flex items-center justify-center gap-2 px-3 py-2 rounded bg-amber/10 border border-amber/30 text-amber hover:bg-amber/20 text-xs font-mono transition-colors"
+              >
+                <Coffee className="w-3.5 h-3.5 text-amber" />
+                <span>{isRu ? "Поддержать проект (Lava.top)" : "Buy me a Coffee (Lava.top)"}</span>
+              </a>
 
               <DownloadButton lang={isRu ? "ru" : "en"} variant="mobile" />
             </div>
