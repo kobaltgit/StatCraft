@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import './globals.css';
+import { LocaleDetector } from '@/components/locale-detector';
 
 export const metadata: Metadata = {
   metadataBase: new URL('https://statcraft.dev'),
@@ -38,6 +39,7 @@ export default function RootLayout({
         />
       </head>
       <body className="min-h-screen bg-bg text-text antialiased font-sans selection:bg-accent/30 selection:text-white">
+        <LocaleDetector />
         {children}
       </body>
     </html>

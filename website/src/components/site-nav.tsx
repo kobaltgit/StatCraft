@@ -2,9 +2,11 @@
 
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { Download, ExternalLink, AlertTriangle, BookOpen, Menu, X, Cpu, Binary, Layers, Users } from "lucide-react";
+import { ExternalLink, AlertTriangle, BookOpen, Menu, X, Cpu, Binary, Layers, Users } from "lucide-react";
 import React, { useState } from "react";
 import { ModalReportIssue } from "./modal-report-issue";
+import { DownloadButton } from "./download-button";
+import { useRelease } from "@/lib/use-release";
 
 interface SiteNavProps {
   lang?: "en" | "ru";
@@ -13,6 +15,7 @@ interface SiteNavProps {
 export function SiteNav({ lang = "en" }: SiteNavProps) {
   const pathname = usePathname() || "/";
   const router = useRouter();
+  const { tagName } = useRelease();
   const isRu = lang === "ru" || pathname.startsWith("/ru");
   const [modalOpen, setModalOpen] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -102,7 +105,7 @@ export function SiteNav({ lang = "en" }: SiteNavProps) {
                 STATCRAFT
               </span>
               <span className="hidden sm:inline-block text-[10px] px-2 py-0.5 rounded-full bg-accent/20 text-blue-300 border border-accent/40 font-mono">
-                v0.4.3
+                {tagName}
               </span>
             </Link>
 
@@ -147,6 +150,9 @@ export function SiteNav({ lang = "en" }: SiteNavProps) {
             <div className="flex items-center px-3 border-l border-line text-xs font-mono">
               <Link
                 href={isRu ? alternateLangPath : pathname}
+                onClick={() => {
+                  document.cookie = "statcraft_lang=en; path=/; max-age=31536000; SameSite=Lax";
+                }}
                 className={`px-1.5 py-0.5 rounded ${!isRu ? "bg-accent text-white font-bold" : "text-text-muted hover:text-white"}`}
               >
                 EN
@@ -154,6 +160,9 @@ export function SiteNav({ lang = "en" }: SiteNavProps) {
               <span className="text-line mx-1">/</span>
               <Link
                 href={isRu ? pathname : alternateLangPath}
+                onClick={() => {
+                  document.cookie = "statcraft_lang=ru; path=/; max-age=31536000; SameSite=Lax";
+                }}
                 className={`px-1.5 py-0.5 rounded ${isRu ? "bg-accent text-white font-bold" : "text-text-muted hover:text-white"}`}
               >
                 RU
@@ -171,16 +180,8 @@ export function SiteNav({ lang = "en" }: SiteNavProps) {
               <ExternalLink className="h-3 w-3" />
             </a>
 
-            {/* Download Latest Release Button */}
-            <a
-              href="https://github.com/kobaltgit/StatCraft/releases"
-              target="_blank"
-              rel="noreferrer"
-              className="hidden md:flex items-center gap-2 border-l border-line bg-accent px-4 xl:px-5 font-mono text-xs font-semibold text-white hover:bg-accent-hover transition-colors"
-            >
-              <Download className="h-3.5 w-3.5" />
-              <span>v0.4.3</span>
-            </a>
+            {/* Download Latest Release Button with OS Auto-detect & Direct Download */}
+            <DownloadButton lang={isRu ? "ru" : "en"} variant="nav" />
           </div>
         </div>
 
@@ -227,15 +228,7 @@ export function SiteNav({ lang = "en" }: SiteNavProps) {
                 <span>{isRu ? "Сообщить о расхождении в расчетах" : "Report Numerical Discrepancy"}</span>
               </button>
 
-              <a
-                href="https://github.com/kobaltgit/StatCraft/releases"
-                target="_blank"
-                rel="noreferrer"
-                className="w-full flex items-center justify-center gap-2 px-3 py-2 rounded bg-accent text-white text-xs font-mono font-medium"
-              >
-                <Download className="w-3.5 h-3.5" />
-                <span>{isRu ? "Скачать релиз v0.4.3" : "Download Release v0.4.3"}</span>
-              </a>
+              <DownloadButton lang={isRu ? "ru" : "en"} variant="mobile" />
             </div>
           </div>
         )}

@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { DOC_SECTIONS, DocSection } from '@/lib/docs-data';
 import { Search, BookOpen, ChevronRight, Binary, ShieldCheck, Bot, Database } from 'lucide-react';
+import { useRelease } from '@/lib/use-release';
 
 interface DocsSidebarProps {
   lang?: 'en' | 'ru';
@@ -15,6 +16,7 @@ interface DocsSidebarProps {
 export function DocsSidebar({ lang = 'en', className = '', onLinkClick }: DocsSidebarProps) {
   const pathname = usePathname();
   const [query, setQuery] = useState('');
+  const { version } = useRelease();
 
   const t = {
     en: {
@@ -142,7 +144,7 @@ export function DocsSidebar({ lang = 'en', className = '', onLinkClick }: DocsSi
 
       {/* Sidebar footer status */}
       <div className="p-3 border-t border-line text-[11px] font-mono text-text-muted flex items-center justify-between">
-        <span>Build 0.4.3</span>
+        <span>Build {version}</span>
         <span className="text-emerald">20 / 20 Verified</span>
       </div>
     </aside>

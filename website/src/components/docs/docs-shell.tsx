@@ -5,6 +5,7 @@ import { SiteNav } from '../site-nav';
 import { SiteFooter } from '../site-footer';
 import { DocsSidebar } from './docs-sidebar';
 import { Menu, X } from 'lucide-react';
+import { useRelease } from '@/lib/use-release';
 
 interface DocsShellProps {
   children: React.ReactNode;
@@ -13,6 +14,7 @@ interface DocsShellProps {
 
 export function DocsShell({ children, lang = 'en' }: DocsShellProps) {
   const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);
+  const { tagName } = useRelease();
 
   return (
     <div className="min-h-screen flex flex-col bg-bg text-text">
@@ -28,7 +30,7 @@ export function DocsShell({ children, lang = 'en' }: DocsShellProps) {
           {mobileSidebarOpen ? <X className="w-4 h-4" /> : <Menu className="w-4 h-4" />}
           <span>{lang === 'ru' ? 'Меню разделов вики' : 'Wiki Navigation Menu'}</span>
         </button>
-        <span className="text-[11px] font-mono text-text-muted">v0.4.3</span>
+        <span className="text-[11px] font-mono text-text-muted">{tagName}</span>
       </div>
 
       <div className="flex-1 flex max-w-7xl w-full mx-auto relative">

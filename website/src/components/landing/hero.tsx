@@ -4,6 +4,8 @@ import React, { useState } from 'react';
 import Link from 'next/link';
 import { ArrowRight, AlertTriangle, ShieldCheck, Cpu, Database, Binary, MessageSquarePlus } from 'lucide-react';
 import { ModalReportIssue } from '../modal-report-issue';
+import { DownloadButton } from '../download-button';
+import { useRelease } from '@/lib/use-release';
 
 interface HeroProps {
   lang?: 'en' | 'ru';
@@ -11,10 +13,11 @@ interface HeroProps {
 
 export function Hero({ lang = 'en' }: HeroProps) {
   const [reportModalOpen, setReportModalOpen] = useState(false);
+  const { version } = useRelease();
 
   const t = {
     en: {
-      badge: 'ACADEMIC EXPERIMENT // BUILD 0.4.3',
+      badge: `ACADEMIC EXPERIMENT // BUILD ${version}`,
       titleP1: 'Open-Science Statistical Computing.',
       titleP2: 'Verified to 10⁻⁶ Precision.',
       lead: 'An experimental, 100% Safe Rust alternative for statistical data analysis. Clean-room mathematical engine built on Apache Arrow and Polars with native Model Context Protocol (MCP) integration for AI-guided empirical research.',
@@ -37,7 +40,7 @@ export function Hero({ lang = 'en' }: HeroProps) {
       stat4Desc: 'Real-time JSON-RPC socket 18492 for Antigravity, Claude, and local LLMs',
     },
     ru: {
-      badge: 'АКАДЕМИЧЕСКИЙ ЭКСПЕРИМЕНТ // СБОРКА 0.4.3',
+      badge: `АКАДЕМИЧЕСКИЙ ЭКСПЕРИМЕНТ // СБОРКА ${version}`,
       titleP1: 'Статистические вычисления открытой науки.',
       titleP2: 'Проверено с точностью до 10⁻⁶.',
       lead: 'Экспериментальная альтернатива классическим статистическим пакетам на 100% безопасном Rust. Чистая математическая реализация на базе Apache Arrow и Polars со встроенным протоколом MCP для совместных исследований с ИИ.',
@@ -91,9 +94,12 @@ export function Hero({ lang = 'en' }: HeroProps) {
 
         {/* Primary CTA Buttons */}
         <div className="flex flex-wrap items-center gap-4 mb-16">
+          {/* Direct Binary Download for Auto-Detected OS */}
+          <DownloadButton lang={lang} variant="hero" />
+
           <Link
             href={lang === 'ru' ? '/ru/docs' : '/docs'}
-            className="inline-flex items-center gap-2 px-5 py-3 rounded bg-accent text-white font-medium hover:bg-accent-hover text-sm transition-colors shadow-sm"
+            className="inline-flex items-center gap-2 px-5 py-3 rounded bg-bg-raised text-text font-medium hover:bg-bg-raised/80 border border-line text-sm transition-colors"
           >
             {t.btnDocs}
             <ArrowRight className="w-4 h-4" />

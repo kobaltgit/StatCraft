@@ -1,6 +1,9 @@
+'use client';
+
 import React from "react";
 import Link from "next/link";
-import { ExternalLink, ShieldCheck, Heart } from "lucide-react";
+import { ExternalLink, ShieldCheck, Download } from "lucide-react";
+import { useRelease } from "@/lib/use-release";
 
 interface SiteFooterProps {
   lang?: "en" | "ru";
@@ -8,6 +11,8 @@ interface SiteFooterProps {
 
 export function SiteFooter({ lang = "en" }: SiteFooterProps) {
   const isRu = lang === "ru";
+  const { tagName, primaryAsset, osLabelRu, osLabelEn } = useRelease();
+  const osLabel = isRu ? osLabelRu : osLabelEn;
 
   return (
     <footer className="relative border-t border-line bg-bg-sunken text-muted text-xs">
@@ -65,12 +70,23 @@ export function SiteFooter({ lang = "en" }: SiteFooterProps) {
               </li>
               <li>
                 <a
+                  href={primaryAsset.downloadUrl}
+                  download
+                  className="hover:text-ink transition inline-flex items-center gap-1.5 text-accent font-mono"
+                  title={`${isRu ? 'Скачать бинарник' : 'Download binary'}: ${primaryAsset.name}`}
+                >
+                  <Download className="h-3 w-3" />
+                  <span>{isRu ? `Скачать ${tagName} (${osLabel})` : `Download ${tagName} (${osLabel})`}</span>
+                </a>
+              </li>
+              <li>
+                <a
                   href="https://github.com/kobaltgit/StatCraft/releases"
                   target="_blank"
                   rel="noreferrer"
                   className="hover:text-ink transition inline-flex items-center gap-1"
                 >
-                  <span>{isRu ? "Релизы программы" : "Releases"}</span>
+                  <span>{isRu ? "Все релизы на GitHub" : "All GitHub Releases"}</span>
                   <ExternalLink className="h-3 w-3" />
                 </a>
               </li>
