@@ -92,7 +92,7 @@ export function OracleBenchmark({ lang = 'en' }: OracleBenchmarkProps) {
           {searchTerm && (
             <button
               onClick={() => setSearchTerm('')}
-              className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-text-muted hover:text-white"
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-text-muted hover:text-white cursor-pointer"
             >
               Esc
             </button>
@@ -117,7 +117,7 @@ export function OracleBenchmark({ lang = 'en' }: OracleBenchmarkProps) {
                 <button
                   type="button"
                   onClick={() => setExpandedId(isExpanded ? null : block.id)}
-                  className="w-full text-left px-5 py-4 flex items-center justify-between gap-4"
+                  className="w-full text-left px-5 py-4 flex items-center justify-between gap-4 cursor-pointer"
                 >
                   <div className="flex items-center gap-3 sm:gap-4 min-w-0">
                     <span className="font-mono text-xs sm:text-sm text-text-muted w-8 shrink-0">
@@ -219,7 +219,7 @@ export function OracleBenchmark({ lang = 'en' }: OracleBenchmarkProps) {
                         <button
                           type="button"
                           onClick={() => setSelectedBlockForReport(`Block #${block.number}: ${title} (${block.procedures.join(', ')})`)}
-                          className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded bg-bg text-amber border border-amber/30 hover:bg-amber/10 text-xs font-mono transition-colors"
+                          className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded bg-bg text-amber border border-amber/30 hover:bg-amber/10 text-xs font-mono transition-colors cursor-pointer"
                         >
                           <Flag className="w-3 h-3" />
                           {t.reportButton}

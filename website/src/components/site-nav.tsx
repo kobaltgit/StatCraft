@@ -135,7 +135,7 @@ export function SiteNav({ lang = "en" }: SiteNavProps) {
             <button
               type="button"
               onClick={() => setModalOpen(true)}
-              className="flex items-center gap-1.5 px-3 sm:px-3.5 border-l border-line text-xs font-medium text-amber hover:bg-amber/10 transition-colors"
+              className="flex items-center gap-1.5 px-3 sm:px-3.5 border-l border-line text-xs font-medium text-amber hover:bg-amber/10 transition-colors cursor-pointer"
             >
               <AlertTriangle className="h-3.5 w-3.5" />
               <span className="hidden sm:inline">
@@ -221,7 +221,7 @@ export function SiteNav({ lang = "en" }: SiteNavProps) {
                   setMobileMenuOpen(false);
                   setModalOpen(true);
                 }}
-                className="w-full flex items-center justify-center gap-2 px-3 py-2 rounded bg-amber/10 border border-amber/20 text-amber text-xs font-mono"
+                className="w-full flex items-center justify-center gap-2 px-3 py-2 rounded bg-amber/10 border border-amber/20 text-amber text-xs font-mono cursor-pointer hover:bg-amber/20 transition-colors"
               >
                 <AlertTriangle className="w-3.5 h-3.5" />
                 <span>{isRu ? "Сообщить о расхождении в расчетах" : "Report Numerical Discrepancy"}</span>

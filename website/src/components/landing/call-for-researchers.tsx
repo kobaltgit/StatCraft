@@ -94,7 +94,7 @@ export function CallForResearchers({ lang = 'en' }: CallForResearchersProps) {
             <button
               type="button"
               onClick={() => setReportModalOpen(true)}
-              className="w-full inline-flex items-center justify-center gap-2 px-4 py-3 rounded bg-amber/10 text-amber hover:bg-amber/20 border border-amber/30 text-sm font-medium transition-colors"
+              className="w-full inline-flex items-center justify-center gap-2 px-4 py-3 rounded bg-amber/10 text-amber hover:bg-amber/20 border border-amber/30 text-sm font-medium transition-colors cursor-pointer"
             >
               <MessageSquarePlus className="w-4 h-4" />
               {t.resCta}

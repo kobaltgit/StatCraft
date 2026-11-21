@@ -122,7 +122,7 @@ export function Hero({ lang = 'en' }: HeroProps) {
           <button
             type="button"
             onClick={() => setReportModalOpen(true)}
-            className="inline-flex items-center gap-2 px-4 py-3 rounded text-text-muted hover:text-amber text-sm font-mono transition-colors"
+            className="inline-flex items-center gap-2 px-4 py-3 rounded text-text-muted hover:text-amber text-sm font-mono transition-colors cursor-pointer"
           >
             <MessageSquarePlus className="w-4 h-4 text-amber" />
             {t.btnReport}

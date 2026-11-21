@@ -65,7 +65,7 @@ export function DocsToc({ section, lang = 'en', className = '' }: DocsTocProps) 
         <button
           type="button"
           onClick={() => setReportModalOpen(true)}
-          className="w-full inline-flex items-center gap-2 px-3 py-2 rounded bg-amber/10 border border-amber/20 text-amber hover:bg-amber/20 text-xs font-mono transition-colors"
+          className="w-full inline-flex items-center gap-2 px-3 py-2 rounded bg-amber/10 border border-amber/20 text-amber hover:bg-amber/20 text-xs font-mono transition-colors cursor-pointer"
         >
           <Flag className="w-3.5 h-3.5" />
           <span>{t.reportIssue}</span>
