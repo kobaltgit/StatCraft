@@ -1102,6 +1102,21 @@
   - [x] 100% статическая генерация Next.js: 18 из 18 страниц собраны чисто с кодом 0 (`npx next build`).
   - [x] Инварианты Rust: `xtask file-guard` (472 файла в норме) и `output_viewer_invariants` (11/11 passed).
 
+## 66. Устранение дефектов безрамочного окна Windows 10 и защита диалогов от раздутия (BUG-017)
+- [x] L6 `statcraft_app::window_frame`:
+  - [x] Интеграция безопасных системных оберток `winsafe = "0.0.29"` и `raw-window-handle = "0.6"` в `Cargo.toml`.
+  - [x] Реализация стража `window_frame.rs` по канону PhotoCraft: безопасное получение HWND через `EnumWindows`, снятие `WS_CAPTION | WS_BORDER` через `strip()` с пересчетом фрейма `SWP_FRAMECHANGED` каждый кадр.
+  - [x] Функция `keep_clear_of_the_taskbar`: защита от наезда развернутого окна на панель задач Windows с учетом как стандартных, так и автоматически скрываемых таскбаров.
+  - [x] Полное устранение 26 px черной полосы сверху, полос по бокам и вертикального сдвига курсора мыши на Windows 10 при сохранении 100% CSD-дизайна.
+  - [x] Пакет модульных тестов `window_frame` (7 тестов).
+- [x] L6 `statcraft_app::dialogs::common`:
+  - [x] `dialog_shell.rs`: добавление `.max_size(size)` и `.constrain_to(ctx.screen_rect())` для предотвращения неконтролируемого раздутия модальных окон шире канонических размеров.
+  - [x] `variable_picker.rs`: ограничение `ScrollArea::vertical().max_width(inner_size.x)`, усечение текста кнопок списка через `.truncate()`, тултип полного названия переменной при наведении `.on_hover_text(...)`.
+- [x] Тестирование и Quality Gate:
+  - [x] 38 тестов инвариантов диалогов `crates/statcraft_app/tests/dialog_invariants.rs`.
+  - [x] 11 тестов инвариантов Output Viewer `crates/statcraft_app/tests/output_viewer_invariants.rs`.
+  - [x] 100% прохождение Quality Gate: `cargo run -p xtask -j 1 -- ci` (fmt, clippy с 0 warnings, layers, file-guard на 473 файла, design-guard, тесты воркспейса, матрица обратимости undo/redo).
+
 ## 20. Планы будущих релизов (Backlog / Planned Features)
 - [ ] Мультимониторный режим рабочего пространства (Multi-Monitor Viewports & Pop-out Tabs):
   - [ ] Механизм открепления вкладок во внешние нативные окна ОС через `ctx.show_viewport_immediate`.

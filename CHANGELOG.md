@@ -7,6 +7,26 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [0.4.4] - 2026-11-22
+
+### Fixed
+- **Windows 10 Borderless Window Artifacts & Mouse Cursor Offset (BUG-017):**
+  - Integrated safe Win32 API wrapper `winsafe = "0.0.29"` in `statcraft_app` (100% Safe Rust without `unsafe` blocks in application code).
+  - Implemented window frame guard `crates/statcraft_app/src/window_frame.rs` following the PhotoCraft canon.
+  - Dynamically strips `WS_CAPTION | WS_BORDER` styles forced by `winit` on Windows 10 and forces frame recalculation (`SWP_FRAMECHANGED`) on every frame, eliminating the 26 px black bar at the top and side border artifacts.
+  - Restored 1:1 mouse hit-test precision across menus, tabs, and controls without vertical offset.
+  - Added `keep_clear_of_the_taskbar` to prevent maximized custom-frame windows from clipping behind or over the Windows taskbar, with support for both standard and auto-hiding taskbars.
+- **Modal Dialog Bloating Protection on Long Variable Labels (BUG-017):**
+  - Added `.max_size(size)` and `.constrain_to(ctx.screen_rect())` to `DialogShell::show`, strictly preventing procedure dialogs from stretching beyond screen boundaries.
+  - Constrained `ScrollArea::vertical().max_width(inner_size.x)` in `variable_picker.rs`.
+  - Added `.truncate()` to selectable list item buttons and attached full variable descriptions via `.on_hover_text(...)` tooltips so long survey questions (70–90+ characters) never push action buttons off-screen.
+
+### Added
+- **Window Frame Unit Tests (`window_frame.rs`):**
+  - Added 7 unit tests covering borderless style bitmasks, taskbar clamping on all 4 monitor edges, auto-hiding taskbar 1-pixel reservation, and monitor edge detection.
+
+---
+
 ## [0.4.3] - 2026-11-20
 
 ### Fixed

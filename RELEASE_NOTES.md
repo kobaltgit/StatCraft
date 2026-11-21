@@ -1,4 +1,4 @@
-# StatCraft v0.4.3
+# StatCraft v0.4.4
 
 [English](#english) | [Русский](#русский)
 
@@ -7,79 +7,94 @@
 <a name="english"></a>
 ## English
 
-StatCraft v0.4.3 is a critical precision and numerical stability release that restores full 64-bit IEEE 754 precision across all analytical procedures and dialogs, completely eliminating inadvertent decimal rounding from variable display formats.
+StatCraft v0.4.4 is a dedicated stability and user experience release addressing OS-level window frame composition on Windows 10 and safeguarding statistical dialog layouts against label bloating.
 
-### 🎯 Full-Precision Procedure Calculations (PR #5 by @jjohare)
-* **Direct Numeric Access (`DataSet::get_cell_numeric`):**
-  * Core data storage in `statcraft_core` now provides `get_cell_numeric(&self, row: usize, col: usize) -> Option<f64>`, extracting stored numbers directly from memory.
-  * **Zero Allocation & High Performance:** Replaces costly `format!` string allocations and subsequent float parsing with direct pointer dereferencing, providing significant speedups on large datasets.
-  * **Print Format Decoupling:** Variable print formats (`decimals`, e.g. `F8.2`) now strictly govern screen and export display only, adhering to the IBM SPSS canon where display formats never alter underlying computation.
-* **Refactoring Across 21 Analytical Procedures (`statcraft_syntax`):**
-  * Completely eliminated precision loss across all analytical modules:
-    * **Descriptives & Moments:** `DESCRIPTIVES`, `MEANS`.
-    * **Correlation & Regression:** `CORRELATIONS`, `PARTIAL CORR`, `REGRESSION` (Linear), `CURVEFIT`.
-    * **Group Comparisons & ANOVA:** `ONE-WAY ANOVA`, `T-TEST` (One-Sample, Independent, Paired).
-    * **General Linear Model:** `GLM UNIVARIATE`, `GLM MULTIVARIATE`, `GLM REPEATED`.
-    * **Nonparametric Tests:** `MANN-WHITNEY`, `KRUSKAL-WALLIS`, `RELATED SAMPLES` (Wilcoxon/Sign).
-    * **Multivariate & Advanced:** `FACTOR`, `RELIABILITY`, `LOGISTIC REGRESSION`, `MULTINOMIAL LOGISTIC` (`NOMREG`), `SELECT IF`.
-* **Currency & Formatted Number Computation:**
-  * Fixed an issue where variables with currency (`Dollar`, `CustomCurrency`) or thousands separators (`Comma`, `Dot`) failed to parse in numerical procedures. All formatted numeric columns now compute accurately.
-* **Categorical Key Preservation:**
-  * Factor variables, grouping keys, and value labels intentionally remain evaluated via display strings to preserve exact text-matching behavior for categorical groups.
+### 🪟 Windows 10 Borderless Window Artifacts & Cursor Precision (BUG-017)
+* **Zero Black Bars & Accurate Hit-Testing:**
+  * Fixed an issue on Windows 10 where the desktop compositor (DWM) reserved unpainted non-client caption and border areas (`WS_CAPTION | WS_BORDER`), causing a ~26 px black bar across the top of the window and vertically offsetting mouse interaction coordinates.
+  * Integrated safe Win32 API wrapper `winsafe = "0.0.29"` in `crates/statcraft_app` (100% Safe Rust without `unsafe` blocks in application code).
+  * Implemented dedicated window frame guard `crates/statcraft_app/src/window_frame.rs` based on the proven PhotoCraft canon:
+    * `strip(hwnd)`: dynamically removes unwanted caption and border styles on each frame and triggers `SWP_FRAMECHANGED` recalculation.
+    * `keep_clear_of_the_taskbar(hwnd)`: ensures maximized custom-frame windows properly respect desktop work areas, supporting both standard and auto-hiding taskbars without under-clipping.
+  * Preserves 100% of StatCraft's authentic Client-Side Decoration (CSD) appearance while restoring pixel-perfect 1:1 mouse tracking.
+  * Verified through 7 automated unit tests.
 
-### 🖥️ GUI Dialog Precision Polish (`statcraft_app`)
-* **Distinct Level Detection in Dialogs:**
-  * Updated category counting in `logistic_regression_dialog` and `multinomial_logistic_dialog` to use `ds.get_cell_numeric`.
-  * Prevents distinct category levels with small deltas (e.g. `0.001` vs `0.002`) from collapsing into a single level under default `F8.2` display formats.
+### 🛡️ Modal Dialog Layout Protection against Long Variable Labels (BUG-017)
+* **Strict Dialog Boundary Guard:**
+  * Updated `DialogShell::show` in `crates/statcraft_app/src/dialogs/common/dialog_shell.rs` to enforce `.max_size(size)` and `.constrain_to(ctx.screen_rect())`.
+  * Prevents statistical procedure dialogs from stretching beyond canonical dimensions ($560 \times 430$ px) regardless of variable metadata lengths.
+* **Smart Variable Picker Truncation:**
+  * In `crates/statcraft_app/src/dialogs/common/variable_picker.rs`, constrained `ScrollArea::vertical().max_width(inner_size.x)`.
+  * Selectable variable items now cleanly truncate with ellipsis (`.truncate()`), while displaying the complete survey question text in an on-hover tooltip (`.on_hover_text(...)`).
+  * Action buttons (`[ OK ]`, `[ Paste ]`, `[ Reset ]`, `[ Cancel ]`) remain firmly anchored on-screen even on survey datasets with 70–90+ character question labels.
 
-### 🧪 Golden Oracle Precision Verification
-* **Precision Invariant Tests (`numeric_precision_tests.rs`):**
-  * Added regression test suite verifying exact numerical tolerance $\le 10^{-9}$ for mean, minimum, slope, intercept, and Pearson $r$.
-* **Dialog Category Tests (`numeric_dialog_precision_tests.rs`):**
-  * Automated testing verifying category separation, currency format compatibility, and missing-value isolation.
+### 📋 Full Changelog for v0.4.4
+```markdown
+## [0.4.4] - 2026-11-22
+
+### Fixed
+- **Windows 10 Borderless Window Artifacts & Mouse Cursor Offset (BUG-017):**
+  - Integrated safe Win32 API wrapper `winsafe = "0.0.29"` in `statcraft_app` (100% Safe Rust without `unsafe` blocks in application code).
+  - Implemented window frame guard `crates/statcraft_app/src/window_frame.rs` following the PhotoCraft canon.
+  - Dynamically strips `WS_CAPTION | WS_BORDER` styles forced by `winit` on Windows 10 and forces frame recalculation (`SWP_FRAMECHANGED`) on every frame, eliminating the 26 px black bar at the top and side border artifacts.
+  - Restored 1:1 mouse hit-test precision across menus, tabs, and controls without vertical offset.
+  - Added `keep_clear_of_the_taskbar` to prevent maximized custom-frame windows from clipping behind or over the Windows taskbar, with support for both standard and auto-hiding taskbars.
+- **Modal Dialog Bloating Protection on Long Variable Labels (BUG-017):**
+  - Added `.max_size(size)` and `.constrain_to(ctx.screen_rect())` to `DialogShell::show`, strictly preventing procedure dialogs from stretching beyond screen boundaries.
+  - Constrained `ScrollArea::vertical().max_width(inner_size.x)` in `variable_picker.rs`.
+  - Added `.truncate()` to selectable list item buttons and attached full variable descriptions via `.on_hover_text(...)` tooltips so long survey questions (70–90+ characters) never push action buttons off-screen.
+
+### Added
+- **Window Frame Unit Tests (`window_frame.rs`):**
+  - Added 7 unit tests covering borderless style bitmasks, taskbar clamping on all 4 monitor edges, auto-hiding taskbar 1-pixel reservation, and monitor edge detection.
+```
 
 ### 📦 Multi-Platform Release Artifacts
-* **Windows (x64):** Inno Setup Installer (`.exe`) + Portable ZIP archive (silent GUI launch).
-* **Linux (x64):** Debian package (`.deb`) + Portable TAR.GZ archive.
-* **macOS (Apple Silicon ARM64 & Intel x64):** Apple DMG Disk Image + Application Bundle (`.app`) TAR.GZ.
+* **Windows (x64):** Inno Setup Installer (`statcraft-windows-x64-installer.exe`) + Portable ZIP archive (`statcraft-windows-x64.zip`).
+* **Linux (x64):** Debian package (`statcraft_0.4.4_amd64.deb`) + Portable TAR.GZ archive (`statcraft-linux-x64.tar.gz`).
+* **macOS (Apple Silicon ARM64 & Intel x64):** DMG Disk Images + Portable TAR.GZ Application Bundles (`.app`).
 
 ---
 
 <a name="русский"></a>
 ## Русский
 
-Релиз StatCraft v0.4.3 — это критическое обновление математической точности и стабильности, восстанавливающее вычисления с полной 64-битной точностью IEEE 754 во всех статистических процедурах и диалогах, полностью устраняя неявное округление чисел через экранные форматы переменных.
+Релиз StatCraft v0.4.4 посвящён повышению стабильности и эргономики интерфейса: устранению системных дефектов отрисовки безрамочного окна на Windows 10 и защите модальных диалогов от раздутия длинными метками переменных.
 
-### 🎯 Вычисления с полной машинной точностью (PR #5 от @jjohare)
-* **Прямой числовой доступ (`DataSet::get_cell_numeric`):**
-  * В хранилище данных `statcraft_core` добавлен метод `get_cell_numeric(&self, row: usize, col: usize) -> Option<f64>`, извлекающий сырые числа `RawValue::Number` напрямую из памяти.
-  * **Нулевые аллокации и ускорение:** Устранены промежуточные выделения строк в куче `format!` и обратный парсинг строк, что кратно ускоряет расчеты процедур на больших массивах данных.
-  * **Разделение отображения и вычислений:** Спецификация формата печати (`decimals`, например `F8.2`) теперь управляет исключительно представлением на экране, строго по канону IBM SPSS, где формат печати никогда не искажает точность математического ядра.
-* **Рефакторинг 21 процедуры синтаксиса (`statcraft_syntax`):**
-  * Полностью устранена потеря точности во всех аналитических процедурах:
-    * **Описательные статистики:** `DESCRIPTIVES`, `MEANS`.
-    * **Корреляции и регрессия:** `CORRELATIONS`, `PARTIAL CORR`, `REGRESSION` (линейная), `CURVEFIT`.
-    * **Сравнение средних и ANOVA:** `ONE-WAY ANOVA`, `T-TEST` (одновыборочный, двухвыборочный, парный).
-    * **Общая линейная модель:** `GLM UNIVARIATE`, `GLM MULTIVARIATE`, `GLM REPEATED`.
-    * **Непараметрические критерии:** `MANN-WHITNEY`, `KRUSKAL-WALLIS`, `RELATED SAMPLES` (Вилкоксон / Знаки).
-    * **Многомерные и специализированные:** `FACTOR`, `RELIABILITY`, `LOGISTIC REGRESSION`, `MULTINOMIAL LOGISTIC` (`NOMREG`), `SELECT IF`.
-* **Корректные вычисления по колонкам с валютами и разделителями:**
-  * Устранена проблема, из-за которой переменные с форматами валют (`Dollar`, `CustomCurrency`) или разделителями тысяч (`Comma`, `Dot`) выдавали ошибку парсинга в процедурах. Теперь расчеты по валютным колонкам выполняются безошибочно.
-* **Сохранение группирующего поведения:**
-  * Факторные переменные, ключи группировки и метки значений осознанно сохранены на строковом сопоставлении для точной группировки категориальных уровней.
+### 🪟 Устранение артефактов безрамочного окна и точность курсора на Windows 10 (BUG-017)
+* **Ликвидация черных полос и смещения кликов:**
+  * Устранена проблема Windows 10, при которой оконный менеджер DWM резервировал неокрашиваемую неклиентскую область `WS_CAPTION | WS_BORDER`, создавая черную полосу ~26 px сверху окна и сдвигая вертикальные координаты курсора мыши.
+  * Подключена безопасная типобезопасная обертка системных вызовов `winsafe = "0.0.29"` в `crates/statcraft_app` (100% Safe Rust без использования ключевого слова `unsafe`).
+  * Реализован модуль стража окна `crates/statcraft_app/src/window_frame.rs` по канону PhotoCraft:
+    * `strip(hwnd)`: динамически снимает стили заголовка и границы при каждом кадре и инициирует пересчет области окна `SWP_FRAMECHANGED`.
+    * `keep_clear_of_the_taskbar(hwnd)`: предотвращает заезд развернутого окна на панель задач Windows с корректной поддержкой обычных и автоматически скрываемых таскбаров.
+  * Сохранено 100% оригинального внешнего вида Client-Side Decoration (CSD) и восстановлена точность хит-теста мыши 1:1.
+  * Покрыто 7 модульными тестами геометрии и стилей окна.
 
-### 🖥️ Точность в диалоговых окнах GUI (`statcraft_app`)
-* **Определение уникальных уровней в диалогах:**
-  * Подсчет уникальных категорий зависимой переменной в `logistic_regression_dialog` и `multinomial_logistic_dialog` переведен на `ds.get_cell_numeric`.
-  * Исключено ошибочное объединение близких числовых категорий (например, `0.001` и `0.002`) при формате печати `F8.2`.
+### 🛡️ Защита модальных окон DialogKit от раздутия длинными строками (BUG-017)
+* **Жесткий контроль границ диалогов:**
+  * В `DialogShell::show` добавлены ограничения `.max_size(size)` и `.constrain_to(ctx.screen_rect())`.
+  * Диалоговые окна статистических процедур гарантированно не растягиваются шире установленных канонических размеров ($560 \times 430$ px) и никогда не выходят за границы монитора.
+* **Умное усечение в списках переменных:**
+  * В `variable_picker.rs` контейнеру `ScrollArea::vertical()` задано ограничение `.max_width(inner_size.x)`.
+  * Элементы списков переменных автоматически усекаются с многоточием (`.truncate()`), а полный текст вопроса анкеты выводится во всплывающем тултипе при наведении (`.on_hover_text(...)`).
+  * Кнопки действий (`[ OK ]`, `[ Вставить ]`, `[ Сброс ]`, `[ Отмена ]`) всегда остаются на виду даже на анкетах с вопросами по 70–90+ символов.
 
-### 🧪 Верификация тестами Золотого Оракула
-* **Тесты математической точности (`numeric_precision_tests.rs`):**
-  * Внедрен тестовый пакет с допуском $\le 10^{-9}$ для среднего, минимума, наклона, интерсепта и корреляции Пирсона $r$.
-* **Тесты диалогов (`numeric_dialog_precision_tests.rs`):**
-  * Автоматизированная проверка разделения категорий, совместимости с форматами валют и изоляции пропусков.
+### 📋 Полный журнал изменений (Changelog v0.4.4)
+```markdown
+## [0.4.4] - 2026-11-22
 
-### 📦 Мультиплатформенные артефакты релиза
-* **Windows (x64):** Инсталлятор Inno Setup (`.exe`) + портативный ZIP-архив (тихий запуск GUI).
-* **Linux (x64):** Пакет Debian (`.deb`) + портативный архив TAR.GZ.
-* **macOS (Apple Silicon ARM64 и Intel x64):** Образ DMG + бандл приложения (`.app`) TAR.GZ.
+### Исправлено
+- **Артефакты безрамочного окна и сдвиг курсора мыши на Windows 10 (BUG-017):**
+  - Интегрирована безопасная обертка Win32 API `winsafe = "0.0.29"` (100% Safe Rust без `unsafe`).
+  - Реализован страж окна `window_frame.rs` со снятием `WS_CAPTION | WS_BORDER` и защитой от перекрытия панели задач при максимизации.
+  - Устранена черная полоса 26 px сверху и восстановлен точный хит-тест мыши 1:1.
+- **Защита модальных диалогов от раздутия длинными именами (BUG-017):**
+  - Ограничения `max_size` и `constrain_to` в `DialogShell`.
+  - Усечение текста элементов списков `VariablePicker` с тултипом полного названия при наведении.
+```
+
+### 📦 Артефакты сборки
+* **Windows (x64):** Установщик Inno Setup (`statcraft-windows-x64-installer.exe`) + Портативный ZIP-архив (`statcraft-windows-x64.zip`).
+* **Linux (x64):** Пакет Debian (`statcraft_0.4.4_amd64.deb`) + Портативный TAR.GZ (`statcraft-linux-x64.tar.gz`).
+* **macOS (Apple Silicon ARM64 & Intel x64):** Образы дисков DMG + Пакеты приложений (`.app`) в TAR.GZ.

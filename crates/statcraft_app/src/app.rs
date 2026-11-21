@@ -175,6 +175,7 @@ pub struct StatCraftApp {
     pub saved_checkpoint: Option<crate::app_session::SavedCheckpoint>,
     pub theme_mode: crate::theme::ThemeMode,
     applied_dark_mode: Option<bool>,
+    pub window_frame_guard: Option<crate::window_frame::WindowFrameFn>,
 }
 
 pub const STORAGE_KEY_LANGUAGE: &str = "statcraft_language";
@@ -274,6 +275,7 @@ impl StatCraftApp {
             saved_checkpoint: None,
             theme_mode: crate::theme::ThemeMode::Dark,
             applied_dark_mode: None,
+            window_frame_guard: None,
         }
     }
 
@@ -327,6 +329,8 @@ impl StatCraftApp {
             app.bridge_service.start();
         }
 
+        app.window_frame_guard = crate::window_frame::service(cc);
+
         app
     }
 
@@ -347,6 +351,10 @@ impl StatCraftApp {
 
 impl eframe::App for StatCraftApp {
     fn update(&mut self, ctx: &egui::Context, _frame: &mut eframe::Frame) {
+        if let Some(guard) = self.window_frame_guard.as_mut() {
+            guard();
+        }
+
         let is_dark = match self.theme_mode {
             crate::theme::ThemeMode::Dark => true,
             crate::theme::ThemeMode::Light => false,

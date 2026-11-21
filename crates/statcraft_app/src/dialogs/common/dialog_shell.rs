@@ -90,6 +90,8 @@ impl DialogShell {
             .resizable(self.resizable)
             .collapsible(self.collapsible)
             .fixed_size(size)
+            .max_size(size)
+            .constrain_to(ctx.screen_rect())
             .anchor(Align2::CENTER_CENTER, [0.0, 0.0]);
 
         if let Some(id) = self.id {

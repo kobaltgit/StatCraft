@@ -27,6 +27,7 @@ pub mod system_memory;
 pub mod theme;
 pub mod views;
 pub mod widgets;
+pub mod window_frame;
 
 pub use app::{ensure_dock_tab_open, is_tab_closeable, StatCraftApp, Tab};
 pub use recent_files::RecentFiles;

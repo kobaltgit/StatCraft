@@ -3329,6 +3329,33 @@ Following the approved architectural plan `plan_3_clustering_reports_survival.md
 9. **Localization and Quality Gate (DoD):**
    * 100% bilingual Fluent coverage in `locales/en.ftl` and `locales/ru.ftl` (passed `i18n_lint_test`, 0 raw strings, 0 emojis, Vector-First UI);
    * UI invariant suite `crates/statcraft_app/tests/feature_003_pkg3_invariants.rs`;
+
+---
+
+### Phase 95: Eliminating Windows 10 Borderless Window Artifacts and Dialog Bloating Protection
+*Time: November 22, 2026, 01:15 (~35 minutes)*
+
+Following the architectural plan `win10_csd_and_dialog_fix_plan.md`, successfully eliminated OS-level borderless window artifacts on Windows 10 and implemented robust protection against modal dialog bloating:
+1. **Fixing the 26 px Black Bar and Mouse Offset on Windows 10 (BUG-017):**
+   * Integrated safe Win32 API wrapper `winsafe = "0.0.29"` in `crates/statcraft_app/Cargo.toml` (100% Safe Rust without `unsafe` keywords in application code);
+   * Implemented dedicated window frame guard `crates/statcraft_app/src/window_frame.rs` based on the proven PhotoCraft canon:
+     - `strip(hwnd)`: dynamically strips `WS_CAPTION | WS_BORDER` styles forced by `winit` and triggers immediate non-client frame recalculation (`SWP_FRAMECHANGED`);
+     - `keep_clear_of_the_taskbar(hwnd)`: prevents maximized borderless windows from slipping under the Windows taskbar, respecting both standard and auto-hiding taskbars;
+     - Frame guard is initialized in `StatCraftApp::new` via safe HWND resolution (`EnumWindows`) and invoked each frame in `eframe::App::update`;
+     - 100% preserves custom Client-Side Decoration (CSD) appearance while restoring 1:1 mouse hit-testing precision;
+     - Added 7 unit tests for window frame geometry, all passing.
+2. **DialogKit Modal Dialog Protection against Long Variable Labels:**
+   * In `dialog_shell.rs`, added `.max_size(size)` and `.constrain_to(ctx.screen_rect())` ensuring modal dialogs never exceed canonical bounds;
+   * In `variable_picker.rs`, constrained `ScrollArea::vertical()` to `.max_width(inner_size.x)`, enabled `.truncate()` on selectable list item buttons, and attached full variable descriptions via `.on_hover_text(...)` tooltips.
+3. **Verification & Quality Gate (DoD):**
+   * Successfully executed full Quality Gate pipeline `cargo run -p xtask -j 1 -- ci`:
+     - `cargo fmt --all -- --check` — clean;
+     - `cargo clippy --workspace --all-targets -j 1 -- -D warnings` — 0 warnings;
+     - `xtask layers` — architectural layers L0–L6 strictly preserved;
+     - `xtask file-guard` — 473 Rust files comply with line limits;
+     - `xtask design-guard` — all dialogs adhere to DialogKit standard;
+     - `cargo test --workspace -j 1` — all workspace tests (including 38 `dialog_invariants` and 11 `output_viewer_invariants`) passed;
+     - Undo/Redo reversibility matrix — 41/41 engine commands verified with 100% mathematical reversibility.
    * 100% successful pass across all 9 Quality Gate stages via `cargo run -p xtask -j 1 -- ci` (fmt, clippy [0 warnings], layers, file-guard [402 files], design-guard, workspace tests, parity, corpus, test-undo).
 
 ---

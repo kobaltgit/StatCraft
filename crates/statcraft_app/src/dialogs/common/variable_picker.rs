@@ -47,6 +47,7 @@ pub fn render_variable_list_panel(
 
                 ScrollArea::vertical()
                     .id_salt(list_id)
+                    .max_width(inner_size.x)
                     .auto_shrink([false, false])
                     .show(ui, |ui| {
                         for (idx, item) in items.iter().enumerate() {
@@ -55,7 +56,14 @@ pub fn render_variable_list_panel(
                                 let (rect, _) = ui.allocate_exact_size(icon_size, Sense::hover());
                                 paint_measure_icon(ui.painter(), rect, item.measure);
 
-                                let res = ui.selectable_label(item.is_selected, &item.display_text);
+                                let item_width = (inner_size.x - icon_size.x - 12.0).max(40.0);
+                                let btn = egui::Button::new(&item.display_text)
+                                    .selected(item.is_selected)
+                                    .frame(item.is_selected)
+                                    .truncate();
+                                let res = ui
+                                    .add_sized(vec2(item_width, 18.0), btn)
+                                    .on_hover_text(&item.display_text);
                                 if res.clicked() {
                                     event = ListEvent::Clicked(idx);
                                 }
