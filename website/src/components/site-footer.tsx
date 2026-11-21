@@ -135,12 +135,12 @@ export function SiteFooter({ lang = "en" }: SiteFooterProps) {
               </li>
               <li>
                 <a
-                  href="https://news.ycombinator.com"
+                  href="https://news.ycombinator.com/item?id=50411522"
                   target="_blank"
                   rel="noreferrer"
                   className="hover:text-ink transition inline-flex items-center gap-1"
                 >
-                  <span>Hacker News Discussion</span>
+                  <span>{isRu ? "Дискуссия на Hacker News" : "Hacker News Discussion"}</span>
                   <ExternalLink className="h-3 w-3" />
                 </a>
               </li>

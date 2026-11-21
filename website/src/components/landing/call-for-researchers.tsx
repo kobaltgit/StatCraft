@@ -3,7 +3,7 @@
 import React, { useState } from 'react';
 import { SectionShell } from '../section-shell';
 import { ModalReportIssue } from '../modal-report-issue';
-import { FlaskConical, Code2, ShieldAlert, HeartHandshake, ArrowRight, MessageSquarePlus } from 'lucide-react';
+import { FlaskConical, Code2, ShieldAlert, HeartHandshake, ArrowRight, MessageSquarePlus, ExternalLink } from 'lucide-react';
 
 interface CallForResearchersProps {
   lang?: 'en' | 'ru';
@@ -146,8 +146,20 @@ export function CallForResearchers({ lang = 'en' }: CallForResearchersProps) {
           <blockquote className="text-sm sm:text-base italic text-white/90 leading-relaxed mb-3">
             {t.quote}
           </blockquote>
-          <div className="text-xs font-mono text-text-muted">
+          <div className="text-xs font-mono text-text-muted mb-4">
             StatCraft Open-Science Project // MIT OR Apache-2.0
+          </div>
+          <div className="pt-3 border-t border-line/40 flex justify-center">
+            <a
+              href="https://news.ycombinator.com/item?id=50411522"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 text-xs font-mono text-text-muted hover:text-[#ff6600] transition-colors"
+            >
+              <span className="w-2 h-2 rounded-full bg-[#ff6600]" />
+              <span>{lang === 'ru' ? 'Обсуждение на Hacker News: «I\'m Rewriting IBM SPSS Statistics in 100% Safe Rust, Alone»' : 'Discussion on Hacker News: «I\'m Rewriting IBM SPSS Statistics in 100% Safe Rust, Alone»'}</span>
+              <ExternalLink className="w-3 h-3 text-[#ff6600]" />
+            </a>
           </div>
         </div>
       </div>
