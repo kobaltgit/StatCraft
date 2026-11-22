@@ -172,10 +172,12 @@ fn test_exhaustive_enum_payloads_render_without_panics() {
             custom_title: None,
             kind: OutputItemKind::FrequenciesTables(vec![FrequencyResult {
                 variable: "missing_var".to_string(),
+                variable_label: None,
                 n_valid: 0,
                 n_missing: 5,
                 categories: vec![],
                 quartiles: None,
+                statistics: None,
             }]),
         },
         // One-Sample T-Test with 0 df and None stats

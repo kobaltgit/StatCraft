@@ -47,10 +47,10 @@ The entire implementation adheres strictly to the ArtCraft ecosystem standards:
 * Expands the keyword `ALL` into all active dataset variables.
 
 ### 2.3. `SyntaxDispatcher` (`crates/statcraft_syntax/src/syntax_parser/dispatcher.rs`)
-* Decoupled command mappers (`mappers/stats.rs` and `mappers/data.rs`).
+* Decoupled command mappers organized in modular subpackages (`mappers/stats/`, `mappers/data.rs`, `mappers/advanced_regression.rs`, `mappers/glm.rs`, `mappers/pkg3.rs`, `mappers/variables.rs`).
 * Translates parsed commands into strongly-typed JSON parameters for `CommandBus`:
   1. `DESCRIPTIVES /VARIABLES=vars /STATISTICS=MEAN STDDEV MIN MAX...` $\to$ `"stat.descriptives"`
-  2. `FREQUENCIES /VARIABLES=vars` $\to$ `"stat.frequencies"`
+  2. `FREQUENCIES /VARIABLES=vars [/FORMAT={TABLE|NOTABLE} {AVALUE|DVALUE|AFREQ|DFREQ}] [/STATISTICS=[DEFAULT] [MEAN] [SEMEAN] [MEDIAN] [MODE] [SUM] [STDDEV] [VARIANCE] [RANGE] [MINIMUM] [MAXIMUM] [SKEWNESS] [KURTOSIS] [ALL] [NONE]] [/PERCENTILES=values] [/NTILES=n] [/ORDER={ANALYSIS|VARIABLE}]` $\to$ `"stat.frequencies"`
   3. `CROSSTABS /TABLES=row BY col /STATISTICS=CHISQ` $\to$ `"stat.crosstabs"`
   4. `T-TEST GROUPS=var(1 2) /VARIABLES=vars` $\to$ `"stat.ttest.indep"`
   5. `T-TEST PAIRS=v1 WITH v2 (PAIRED)` $\to$ `"stat.ttest.paired"`
@@ -106,9 +106,9 @@ Fuzzing across malformed, truncated, and corrupted syntax inputs:
 **Result:** `test_never_crash_on_fuzzed_and_malformed_syntax` passed with 0 panics. All errors returned as structured `Err(SyntaxError)`.
 
 ### 3.3. Quality Gate Checks
-* `cargo test --workspace -j 1`: **100% Passed (112 unit tests in syntax, 37 dialog invariants, 11 output invariants, 12 session tests, 0 failures)**
-* `cargo run -p xtask -j 1 -- file-guard`: **279/279 files within size limits**
-* `cargo run -p xtask -j 1 -- layers`: **Strict architectural layering preserved**
+* `cargo test --workspace -j 1`: **100% Passed (133 unit tests in syntax, 58 syntax integration tests, 37 dialog invariants, 11 output invariants, 12 session tests, 0 failures)**
+* `cargo run -p xtask -j 1 -- file-guard`: **482/482 files within size limits (<= 500 lines for standard modules)**
+* `cargo run -p xtask -j 1 -- layers`: **Strict architectural layering preserved (L0 -> L1 -> L2 -> L5 -> L6)**
 * `cargo run -p xtask -j 1 -- design-guard`: **DialogKit canonical design fully compliant**
 
 ---

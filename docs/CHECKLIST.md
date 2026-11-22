@@ -1117,6 +1117,89 @@
   - [x] 11 тестов инвариантов Output Viewer `crates/statcraft_app/tests/output_viewer_invariants.rs`.
   - [x] 100% прохождение Quality Gate: `cargo run -p xtask -j 1 -- ci` (fmt, clippy с 0 warnings, layers, file-guard на 473 файла, design-guard, тесты воркспейса, матрица обратимости undo/redo).
 
+## 67. Декомпозиция ядра FREQUENCIES, 14 одномерных статистик по стандарту SPSS и Golden Oracle
+- [x] L2 `statcraft_algo::frequencies`:
+  - [x] Архитектурная декомпозиция монолита `frequencies.rs` (405 строк) на модульный пакет `crates/statcraft_algo/src/frequencies/` с жестким соблюдением лимита $\le 500$ строк на файл (Rule 12 File Size Guard):
+    - [x] `options.rs`: структуры `FrequenciesStatisticsOptions` и `PercentilesOptions`;
+    - [x] `percentiles.rs`: вычисление процентилей по методу SPSS HAVERAGE (Weibull / Type 6), N-тили (`compute_ntiles`), пользовательские срезы (`compute_custom_percentiles`), коррекция для сгруппированных данных (`group_midpoints`);
+    - [x] `stats.rs`: полный расчет 14 одномерных статистик (Mean, SE Mean, Median, Mode, Sum, Std Dev, Variance, Range, Min, Max, Skewness, SE Skewness, Kurtosis, SE Kurtosis) с каноническим правилом Mode Tie-Breaker (наименьшее значение при мультимодальности + флаг `has_multiple_modes`);
+    - [x] `table.rs`: расчет частот, процентов, валидных процентов и кумулятивных процентов с поддержкой весов и пользовательских пропусков;
+    - [x] `mod.rs`: единый публичный фасад со 100% обратной совместимостью для L5 (`statcraft_syntax`) и L6 (`statcraft_app`).
+- [x] Тестирование и Quality Gate:
+  - [x] Прецизионный Golden Oracle тест `crates/statcraft_algo/tests/frequencies_oracle_test.rs` со сверкой с эталонами SciPy/SPSS ($\Delta \le 10^{-6}$).
+  - [x] 100% успешный прогон тестов: 218 тестов `statcraft_algo`, 11 тестов `output_viewer_invariants`, `output_viewer_navigation`.
+  - [x] `cargo run -p xtask -j 1 -- file-guard` (все 478 файлов Rust в пределах лимитов строк).
+  - [x] `cargo run -p xtask -j 1 -- layers` (все слои L0–L6 строго соблюдены).
+  - [x] `cargo clippy -p statcraft_algo --tests -j 1 -- -D warnings` (0 предупреждений).
+  - [x] `cargo fmt --check` (чисто).
+
+## 68. Командная шина `statcraft_syntax` и двусторонний SPSS-синтаксис FREQUENCIES (Этап 2)
+- [x] L5 `statcraft_syntax::commands::frequencies_cmd`:
+  - [x] Расширение `specs()`: валидационная JSON-схема для объектов `statistics` (12 дескриптивных метрик), `percentiles` (квартили, N-тили, custom cutpoints), `group_midpoints`, `display_tables` и `order`.
+  - [x] Реализация `execute()`: извлечение параметров в `FrequenciesStatisticsOptions`, вызов `statcraft_algo::compute_frequencies_full`, подавление параметрических статистик для шкалы `Nominal` и каноническая пересортировка категорий (`apply_order` для `dvalue`, `afreq`, `dfreq`) с пересчетом кумулятивных процентов.
+  - [x] Каноническая генерация синтаксиса `to_sps_from_params` (`FREQUENCIES VARIABLES=... /FORMAT=... /STATISTICS=... /PERCENTILES=... /NTILES=... /ORDER=...`).
+  - [x] Декомпозиция монолита `frequencies_cmd.rs` на подпапку `commands/frequencies_cmd/` (`mod.rs`, `sps.rs`, `tests.rs`) с соблюдением лимита $\le 500$ строк на файл (Rule 12 File Size Guard).
+- [x] L5 `statcraft_syntax::syntax_parser::mappers::stats`:
+  - [x] Декомпозиция модуля `stats.rs` (490 строк) на подпапку `mappers/stats/` (`mod.rs`, `frequencies.rs`, `ttest.rs`) с жестким соблюдением лимита $\le 500$ строк.
+  - [x] Поддержка ключевых слов SPSS для `/STATISTICS`: макросы `DEFAULT`, `ALL`, `NONE` и индивидуальные метрики `MEAN`, `SEMEAN`, `MEDIAN`, `MODE`, `SUM`, `STDDEV`, `VARIANCE`, `RANGE`, `MINIMUM`, `MAXIMUM`, `SKEWNESS`, `KURTOSIS`.
+  - [x] Поддержка подкоманд `/PERCENTILES`, `/NTILES`, `/FORMAT` (`TABLE`, `NOTABLE`, `DVALUE`, `AFREQ`, `DFREQ`), `/ORDER` (`ANALYSIS`, `VARIABLE`).
+- [x] Тестирование и Quality Gate:
+  - [x] 100% прохождение 133 тестов `statcraft_syntax` и 58 интеграционных тестов синтаксиса.
+  - [x] 100% прохождение 11 тестов инвариантов Output Viewer (`output_viewer_invariants`).
+  - [x] `cargo run -p xtask -j 1 -- file-guard` (482 файла Rust в пределах лимитов строк).
+  - [x] `cargo run -p xtask -j 1 -- layers` и `cargo run -p xtask -j 1 -- design-guard` (полное соответствие канону).
+
+## 69. Модальный поддиалог «Частоты: Статистики» и модернизация DialogKit (Этап 3)
+- [x] L6 `statcraft_app::dialogs::frequencies_dialog`:
+  - [x] Архитектурная декомпозиция диалога «Частоты» на модульный подпакет `crates/statcraft_app/src/dialogs/frequencies_dialog/` (`mod.rs`, `state.rs`, `statistics_subdialog.rs`) с соблюдением лимита $\le 500$ строк на файл;
+  - [x] Модальный поддиалог «Частоты: Статистики» (`statistics_subdialog.rs`, $380 \times 460$ px) на базе `DialogShell` и `SubdialogActionBar`:
+    - [x] `GroupBox` «Значения процентилей»: чекбоксы `Квартили`, `Процентили для: [ 10 ] равных групп`, интерактивный редактор пользовательских процентилей с кнопками `[ Добавить ] [ Изменить ] [ Удалить ]` и компактным списком с автосортировкой;
+    - [x] `GroupBox` «Положение центра распределения»: Среднее, Медиана, Мода, Сумма;
+    - [x] Чекбокс «Значения — центры групп» (`group_midpoints`);
+    - [x] `GroupBox` «Разброс»: Стд. отклонение, Дисперсия, Размах, Минимум, Максимум, Станд. ошибка среднего;
+    - [x] `GroupBox` «Распределение»: Асимметрия, Эксцесс;
+    - [x] `SubdialogActionBar`: сохранение настроек по `[ Продолжить ]` и откат к снимку по `[ Отмена ]` / закрытию окна;
+  - [x] Модернизация главного диалога «Частоты»:
+    - [x] Боковая панель `SubdialogSidebar`: активная кнопка `[ Статистика... ]`, кнопки `[ Диаграммы... ]`, `[ Формат... ]`, `[ Стиль... ]`, `[ Бутстреп... ]`;
+    - [x] Чекбоксы `Выводить таблицы частот` и `Создать таблицы стилей APA`;
+    - [x] Полная передача всех параметров статистик и процентилей в командную шину `stat.frequencies` и генератор SPSS `.sps`-синтаксиса (`to_sps_from_params`);
+  - [x] Декомпозиция тестов `crates/statcraft_app/tests/dialog_invariants.rs` на подпапку `tests/dialog_invariants/` (`fixtures.rs`, `extended_dialogs.rs`) с удержанием размера файлов $\le 550$ строк;
+  - [x] Полная двуязычная локализация (Zero-Hardcode i18n): 19 новых семантических ключей в `locales/en.ftl` и `locales/ru.ftl`;
+  - [x] Quality Gate: 100% прохождение `xtask file-guard` (486 файлов), `xtask design-guard`, `xtask layers`, `i18n_lint_test` и 39 тестов `dialog_invariants`.
+
+## 70. Сводная таблица «Статистики» и таблицы частот в Output Viewer (Этап 4)
+- [x] L6 `statcraft_app::views::output_view::tables_frequencies`:
+  - [x] Архитектурная декомпозиция монолита `tables_frequencies.rs` (375 строк) на модульный пакет `crates/statcraft_app/src/views/output_view/tables_frequencies/` с жестким соблюдением лимита $\le 500$ строк на файл (Rule 12 File Size Guard):
+    - [x] `mod.rs`: координация рендеринга блока процедуры и экспорт в TSV;
+    - [x] `stats_summary_table.rs`: аутентичная сводная таблица SPSS «Статистика» (Statistics Summary Table) с динамическим набором строк (N Valid, N Missing, 14 одномерных статистик, процентили и сноска о множественных модах);
+    - [x] `freq_table.rs`: детальные таблицы частот категорий для каждой переменной с метками значений, процентами, валидными и кумулятивными процентами;
+  - [x] Поддержка режима `/FORMAT=NOTABLE` (`display_tables: false`): подавление вывода детальных таблиц частот с сохранением сводной таблицы «Статистика»;
+  - [x] Канонический экспорт `frequencies_to_tsv`: объединение сводной таблицы статистик и таблиц частот в единый форматированный поток TSV для Word/Excel;
+  - [x] Инвариантные интеграционные тесты `crates/statcraft_app/tests/output_viewer_frequencies_invariants.rs`:
+    - [x] Проверка канонического рендеринга в headless egui `Context` без паник;
+    - [x] Проверка наличия всех заголовков, метрик, сносок о модах и меток значений в TSV;
+    - [x] Проверка подавления детальных таблиц в режиме `NOTABLE`;
+  - [x] Полная двуязычная локализация (Zero-Hardcode i18n): 19 новых семантических ключей в `locales/en.ftl` и `locales/ru.ftl`;
+  - [x] Quality Gate: 100% прохождение `xtask file-guard` (489 файлов), `xtask design-guard`, `xtask layers`, `cargo clippy --workspace -j 1 -- -D warnings` и полного набора тестов `xtask ci`.
+
+## 71. Восстановление статистик для номинальных шкал и отображение меток переменных
+- [x] L2 `statcraft_algo::frequencies::table`:
+  - [x] Расширение `FrequencyResult` полем `pub variable_label: Option<String>`;
+  - [x] Реализация методов `display_title()` (`Метка [Имя]`) и `display_label_or_name()`;
+  - [x] Модульные тесты форматирования заголовков и меток.
+- [x] L5 `statcraft_syntax::commands::frequencies_cmd`:
+  - [x] Устранение искусственного подавления статистик и процентилей для `Measure::Nominal`: расчет всех статистик для любых числовых переменных по канону SPSS;
+  - [x] Проброс `var_meta.label` в результат `FrequencyResult`;
+  - [x] Модульные тесты вычисления статистик для номинальных переменных и извлечения меток.
+- [x] L6 `statcraft_app::views::output_view`:
+  - [x] `freq_table.rs`: отображение содержательных меток переменных в заголовках таблиц частот (`Таблица частот: Метка [Имя]`);
+  - [x] `stats_summary_table.rs`: отображение меток переменных в заголовках колонок сводной таблицы «Статистика» с тултипом полного имени и технического идентификатора;
+  - [x] `builder.rs`: добавление метода `add_frequencies_with_log(results, sps_log)` и сохранение обратной совместимости `add_frequencies`;
+  - [x] `app_dialogs.rs` и `syntax_runner.rs`: генерация и протоколирование реального SPSS-синтаксиса (`/STATISTICS=...`, `/PERCENTILES=...`, `/ORDER=...`) в журнале `Log`;
+  - [x] Инвариантные интеграционные тесты отображения меток и журнала в `output_viewer_frequencies_invariants.rs`.
+- [x] Quality Gate (DoD):
+  - [x] 100% прохождение `cargo run -p xtask -j 1 -- ci` (`file-guard` по 489 файлам, `design-guard`, `layers`, `clippy -D warnings`, полный тестовый набор воркспейса и матрица обратимости 41 команды).
+
 ## 20. Планы будущих релизов (Backlog / Planned Features)
 - [ ] Мультимониторный режим рабочего пространства (Multi-Monitor Viewports & Pop-out Tabs):
   - [ ] Механизм открепления вкладок во внешние нативные окна ОС через `ctx.show_viewport_immediate`.

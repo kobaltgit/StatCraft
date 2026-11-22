@@ -1,3 +1,9 @@
+pub mod state;
+pub mod statistics_subdialog;
+
+pub use state::*;
+pub use statistics_subdialog::*;
+
 use super::common::{
     format_var_display, render_variable_list_panel, ActionBarAction, DialogActionBar, DialogShell,
     ListEvent, SubdialogSidebar, TransferButton, VariableListItem,
@@ -5,38 +11,6 @@ use super::common::{
 use egui::vec2;
 use statcraft_core::DataSet;
 use statcraft_i18n::t;
-
-#[derive(Debug, Clone)]
-pub struct FrequenciesDialogState {
-    pub is_open: bool,
-    pub source_selected: Option<usize>,
-    pub target_selected: Option<usize>,
-    pub selected_vars: Vec<String>,
-    pub display_tables: bool,
-}
-
-impl Default for FrequenciesDialogState {
-    fn default() -> Self {
-        Self {
-            is_open: false,
-            source_selected: None,
-            target_selected: None,
-            selected_vars: Vec::new(),
-            display_tables: true,
-        }
-    }
-}
-
-pub enum FrequenciesDialogAction {
-    Run {
-        vars: Vec<String>,
-        display_tables: bool,
-    },
-    Paste {
-        vars: Vec<String>,
-    },
-    None,
-}
 
 pub fn render_frequencies_dialog(
     ctx: &egui::Context,
@@ -54,6 +28,11 @@ pub fn render_frequencies_dialog(
             return FrequenciesDialogAction::None;
         }
     };
+
+    // Subdialogs
+    if state.show_statistics {
+        render_statistics_subdialog(ctx, state);
+    }
 
     let mut action = FrequenciesDialogAction::None;
     let mut close_dialog = false;
@@ -197,8 +176,14 @@ pub fn render_frequencies_dialog(
                 egui::Layout::top_down(egui::Align::Min),
                 |ui| {
                     ui.add_space(18.0);
-                    let _ = SubdialogSidebar::button(ui, t!("dialog-btn-statistics"), false);
+                    if SubdialogSidebar::button(ui, t!("dialog-btn-statistics"), true).clicked() {
+                        state.stats_backup = Some(state.stats.clone());
+                        state.show_statistics = true;
+                    }
                     let _ = SubdialogSidebar::button(ui, t!("dialog-btn-charts"), false);
+                    let _ = SubdialogSidebar::button(ui, t!("dialog-btn-format"), false);
+                    let _ = SubdialogSidebar::button(ui, t!("dialog-btn-style"), false);
+                    let _ = SubdialogSidebar::button(ui, t!("dialog-btn-bootstrap"), false);
                 },
             );
         });
@@ -208,6 +193,8 @@ pub fn render_frequencies_dialog(
             &mut state.display_tables,
             t!("dialog-frequencies-display-tables"),
         );
+        ui.add_space(2.0);
+        ui.checkbox(&mut state.apa_tables, t!("dialog-freq-apa-tables"));
 
         // Bottom Action Bar
         let can_run = !state.selected_vars.is_empty();
@@ -219,19 +206,25 @@ pub fn render_frequencies_dialog(
                 action = FrequenciesDialogAction::Run {
                     vars: state.selected_vars.clone(),
                     display_tables: state.display_tables,
+                    apa_tables: state.apa_tables,
+                    statistics: state.stats.to_statistics_json(),
+                    percentiles: state.stats.to_percentiles_json(),
+                    group_midpoints: state.stats.group_midpoints,
                 };
             }
             ActionBarAction::Paste => {
                 close_dialog = true;
                 action = FrequenciesDialogAction::Paste {
                     vars: state.selected_vars.clone(),
+                    display_tables: state.display_tables,
+                    apa_tables: state.apa_tables,
+                    statistics: state.stats.to_statistics_json(),
+                    percentiles: state.stats.to_percentiles_json(),
+                    group_midpoints: state.stats.group_midpoints,
                 };
             }
             ActionBarAction::Reset => {
-                state.selected_vars.clear();
-                state.source_selected = None;
-                state.target_selected = None;
-                state.display_tables = true;
+                state.reset();
             }
             ActionBarAction::Cancel => {
                 close_dialog = true;

@@ -15,6 +15,7 @@ fn test_output_viewer_procedure_and_item_auto_scroll() {
     // 2. Add Frequencies procedure with a table (contains nested ScrollArea::horizontal)
     let freq_sample = vec![statcraft_algo::FrequencyResult {
         variable: "gender".to_string(),
+        variable_label: None,
         n_valid: 100,
         n_missing: 0,
         categories: vec![
@@ -36,6 +37,7 @@ fn test_output_viewer_procedure_and_item_auto_scroll() {
             },
         ],
         quartiles: None,
+        statistics: None,
     }];
     state.add_frequencies(freq_sample);
 

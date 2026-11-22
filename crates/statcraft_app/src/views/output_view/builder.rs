@@ -106,17 +106,11 @@ impl OutputViewerState {
         );
     }
 
-    pub fn add_frequencies(&mut self, results: Vec<FrequencyResult>) {
+    pub fn add_frequencies_with_log(&mut self, results: Vec<FrequencyResult>, sps_log: String) {
         let proc_id = self.alloc_id();
         let log_id = self.alloc_id();
         let notes_id = self.alloc_id();
         let item_id = self.alloc_id();
-
-        let var_names: Vec<&str> = results.iter().map(|r| r.variable.as_str()).collect();
-        let sps_log = format!(
-            "FREQUENCIES VARIABLES={}\n  /ORDER=ANALYSIS.",
-            var_names.join(" ")
-        );
 
         let notes = self.make_notes(
             results.first().map(|r| r.n_valid).unwrap_or(0),
@@ -158,6 +152,15 @@ impl OutputViewerState {
             item_idx: 2,
         });
         self.scroll_to_target = self.selected_target;
+    }
+
+    pub fn add_frequencies(&mut self, results: Vec<FrequencyResult>) {
+        let var_names: Vec<&str> = results.iter().map(|r| r.variable.as_str()).collect();
+        let sps_log = format!(
+            "FREQUENCIES VARIABLES={}\n  /ORDER=ANALYSIS.",
+            var_names.join(" ")
+        );
+        self.add_frequencies_with_log(results, sps_log);
     }
 
     pub fn add_onesample_ttest(

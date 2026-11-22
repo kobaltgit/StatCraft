@@ -13,11 +13,18 @@
 - crates/statcraft_algo/src/curvefit/
 - crates/statcraft_algo/src/glm/
 - crates/statcraft_algo/src/cox/
+- crates/statcraft_algo/src/frequencies/
+- crates/statcraft_syntax/src/commands/frequencies_cmd/
+- crates/statcraft_syntax/src/syntax_parser/mappers/stats/
 - docs/IBM_SPSS_Statistics_Algorithms.pdf
 
 ## What we found
 
-_No findings have been recorded yet._
+- Процедура FREQUENCIES декомпозирована на модульный пакет `frequencies/` (options.rs, percentiles.rs, stats.rs, table.rs, mod.rs) с соблюдением лимитов строк <= 500.
+- Все 14 дескриптивных статистик, перцентили SPSS HAVERAGE и правило Mode Tie-Breaker полностью верифицированы Golden Oracle тестом `frequencies_oracle_test.rs` с погрешностью <= 1e-6.
+- Командная шина `stat.frequencies` расширена поддержкой 12 одномерных статистик, перцентилей (квартили, N-тили, custom cutpoints), сгруппированных срезов `group_midpoints` и пересортировки категорий (`dvalue`, `afreq`, `dfreq`) с динамическим пересчетом кумулятивных процентов.
+- Парсер SPSS-синтаксиса обеспечивает 100% двусторонний паритет для подкоманд `/VARIABLES`, `/FORMAT` (`TABLE`/`NOTABLE`, `AVALUE`/`DVALUE`/`AFREQ`/`DFREQ`), `/STATISTICS` (включая макросы `DEFAULT`, `ALL`, `NONE` и 12 индивидуальных ключевых слов), `/PERCENTILES`, `/NTILES`, `/ORDER`.
+- Модули `frequencies_cmd/` и `mappers/stats/` архитектурно декомпозированы в изолированные пакеты, строго соблюдая Rule 12 (File Size Guard <= 500 строк).
 
 ## Open questions
 

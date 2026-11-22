@@ -26,7 +26,7 @@ export const AUDIT_BLOCKS: AuditBlock[] = [
     titleRu: "Описательные статистики, частоты и таблицы сопряженности",
     procedures: ["DESCRIPTIVES", "FREQUENCIES", "CROSSTABS", "MEANS"],
     referencePage: "pp. 368–370, 446–448, 221–226",
-    implementationFiles: ["descriptives.rs", "frequencies.rs", "crosstabs.rs", "means.rs"],
+    implementationFiles: ["descriptives.rs", "frequencies/", "crosstabs.rs", "means.rs"],
     status: "verified",
     oraclePrecision: "≤ 10⁻⁶ (SciPy & IBM Canon)",
     formulas: [
@@ -49,8 +49,8 @@ export const AUDIT_BLOCKS: AuditBlock[] = [
         descriptionRu: "Поправка Йейтса на непрерывность и точный критерий Фишера",
       },
     ],
-    notesEn: "HAVERAGE canonical quantile interpolation r = p*(N+1) verified.",
-    notesRu: "Квартили HAVERAGE r = p*(N+1) верифицированы.",
+    notesEn: "HAVERAGE canonical quantile interpolation r = p*(N+1), 14 univariate statistics and Mode Tie-Breaker verified.",
+    notesRu: "Квартили HAVERAGE r = p*(N+1), 14 дескриптивных статистик и Mode Tie-Breaker верифицированы.",
   },
   {
     id: "block-2",

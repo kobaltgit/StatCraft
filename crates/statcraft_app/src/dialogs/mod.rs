@@ -110,6 +110,7 @@ pub use find_replace_dialog::{
 };
 pub use frequencies_dialog::{
     render_frequencies_dialog, FrequenciesDialogAction, FrequenciesDialogState,
+    FrequenciesStatisticsState,
 };
 pub use glm_multivariate_dialog::{
     render_multivariate_glm_dialog, MultivariateGlmDialogAction, MultivariateGlmDialogState,

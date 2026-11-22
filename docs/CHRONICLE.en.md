@@ -3852,3 +3852,164 @@ Architected and deployed the official web platform and high-usability Wiki/Docum
 6. **Verification & Quality:**
    * Full Next.js static generation: 18 of 18 routes statically prerendered with 0 errors (exit code 0);
    * Rust workspace quality: `xtask file-guard` (472 files verified) and `output_viewer_invariants` (11/11 passed).
+
+
+---
+
+### Phase 95: Elimination of Windows 10 Frameless Window Defects & DialogKit Measure Inflation Guard
+*Time: November 22, 2026, 01:15 (~35 minutes)*
+
+In accordance with `win10_csd_and_dialog_fix_plan.md`, eliminated system frameless rendering defects on Windows 10 and prevented modal dialog inflation by long variable labels:
+1. **Windows 10 26 px Black Bar & Mouse Offset Fix (BUG-017):**
+   * Integrated safe Win32 API wrapper `winsafe = "0.0.29"` in `crates/statcraft_app/Cargo.toml` (100% Safe Rust without `unsafe`);
+   * Implemented window frame guard `crates/statcraft_app/src/window_frame.rs` following the PhotoCraft canon:
+     - `strip(hwnd)`: dynamically strips `WS_CAPTION | WS_BORDER` imposed by `winit` and triggers frame recalculation (`SWP_FRAMECHANGED`);
+     - `keep_clear_of_the_taskbar(hwnd)`: prevents maximized frameless windows from sliding beneath standard or auto-hidden taskbars;
+     - Initialized in `StatCraftApp::new` via safe HWND enumeration (`EnumWindows`) and updated each frame in `eframe::App::update`;
+     - Preserved 100% Client-Side Decoration (CSD) appearance with exact 1:1 mouse hit-testing;
+     - Added 7 unit tests for window frame guards.
+2. **DialogKit Modal Protection Against Long Labels:**
+   * Added `.max_size(size)` and `.constrain_to(ctx.screen_rect())` to `dialog_shell.rs`, enforcing canonical bounds;
+   * In `variable_picker.rs`, added `.max_width(inner_size.x)` to `ScrollArea::vertical()`, enabled `.truncate()` on items, and displayed full label in `.on_hover_text(...)`.
+3. **Verification & Quality Gate:**
+   * 100% Quality Gate pass via `cargo run -p xtask -j 1 -- ci`: fmt, clippy (0 warnings), layers, file-guard (473 files), design-guard, full test suite (38 dialog invariants, 11 output viewer invariants), undo/redo reversibility matrix.
+
+---
+
+### Phase 96: FREQUENCIES Core Decomposition, 14 SPSS Univariate Statistics & Golden Oracle
+*Time: November 22, 2026, 03:50 (~25 minutes)*
+
+In strict accordance with IBM SPSS Statistics canon and Rule 12 (File Size Guard), successfully completed Phase 1 of the Frequencies computational engine modernization:
+1. **Architectural Decomposition of FREQUENCIES Core (`crates/statcraft_algo`):**
+   * Decomposed monolithic `frequencies.rs` (405 lines) into modular subpackage `crates/statcraft_algo/src/frequencies/` with all files $\le 500$ lines:
+     - `options.rs` (83 lines): configuration structs `FrequenciesStatisticsOptions` (14 statistics, percentiles, grouped midpoints) and `PercentilesOptions` (quartiles, N-tiles, custom cutpoints);
+     - `percentiles.rs` (237 lines): percentile calculation using standard **SPSS HAVERAGE** (Weibull / Type 6, rank $r = p \cdot (n + 1)$ with linear interpolation), N-tiles `compute_ntiles`, custom percentiles `compute_custom_percentiles`, and grouped midpoints `compute_grouped_percentile`;
+     - `stats.rs` (308 lines): calculation of central tendency, dispersion, and distribution shape metrics:
+       * Mean $\bar{x}$, variance $s^2$, standard deviation $s$, standard error of mean $SE_{\bar{x}}$;
+       * Range, minimum, maximum, sum;
+       * Canonical SPSS Mode Tie-Breaker: smallest numeric value selected when maximum frequencies are tied, setting `has_multiple_modes = true`;
+       * Skewness ($g_1$) and excess kurtosis ($g_2$) with standard errors $SE_{\text{skew}}$ and $SE_{\text{kurt}}$ using Fisher's unbiased formulas;
+     - `table.rs` (310 lines): frequency counts, percents, valid percents, and cumulative percents with support for weights and user missing values;
+     - `mod.rs` (18 lines): public facade preserving 100% backward compatibility for dependent crates (`statcraft_syntax`, `statcraft_app`).
+2. **Precision Golden Oracle Verification (`tests/frequencies_oracle_test.rs`):**
+   * Implemented comprehensive test suite verified against analytical solutions and SciPy/SPSS standards with tolerance $\le 10^{-6}$:
+     - `test_golden_oracle_symmetric_uniform_sample`: verified 11 descriptive metrics on uniform sample $1 \dots 10$ (including exact kurtosis $-1.2$ and standard error of skewness);
+     - `test_golden_oracle_asymmetric_sample_with_unique_mode`: validated right-skewed distribution and unique mode;
+     - `test_golden_oracle_weighted_equivalence`: confirmed equality of weighted items and replicated observations;
+     - `test_golden_oracle_percentiles_ntiles_and_custom`: verified deciles and custom cutpoints;
+     - `test_compute_frequencies_full_integration`: end-to-end frequency table and descriptive statistics calculation in a single pass.
+3. **Quality Gate & UI Invariants:**
+   * All 218 unit and integration tests of `statcraft_algo` passed with exit code 0;
+   * All 11 tests of `output_viewer_invariants` and `output_viewer_navigation` passed without errors;
+   * Linter `cargo run -p xtask -j 1 -- file-guard` verified file size compliance for all 478 Rust files;
+   * Architectural linter `cargo run -p xtask -j 1 -- layers` confirmed strict layer boundary compliance;
+   * Compiler checks `cargo clippy -p statcraft_algo --tests -j 1 -- -D warnings` and `cargo fmt --check` finished with zero warnings.
+
+---
+
+### Phase 97: `statcraft_syntax` Command Bus & Dual-Direction SPSS Syntax for FREQUENCIES (Phase 2)
+*Time: November 22, 2026, 04:55 (~35 minutes)*
+
+Successfully implemented Phase 2 of the FREQUENCIES modernization — integration into the engine's `CommandBus` and full IBM SPSS Statistics syntax parser adhering to Spec-Kit standards and Rule 12 (File Size Guard):
+1. **Command Bus L5 (`statcraft_syntax::commands::frequencies_cmd`):**
+   * Extended `specs()` parameter schema for AI agents: added typed properties `statistics` (12 descriptive metrics), `percentiles` (quartiles, N-tiles, custom cutpoints), `group_midpoints`, `display_tables`, and `order`;
+   * In `execute()`, mapped parameters to `FrequenciesStatisticsOptions` passed to `statcraft_algo::compute_frequencies_full`, guaranteed parametric statistics suppression for Nominal scales (`Measure::Nominal`), and canonical category reordering (`dvalue`, `afreq`, `dfreq`) with dynamic cumulative percentage recalculation;
+   * Implemented canonical syntax generator `to_sps_from_params` for accurate `.sps` script reproduction;
+   * Applied preventative architectural decomposition: converted `frequencies_cmd.rs` into subpackage `frequencies_cmd/` (`mod.rs`, `sps.rs`, `tests.rs`), strictly avoiding the 500-line ceiling.
+2. **SPSS Syntax Parser (`statcraft_syntax::syntax_parser::mappers::stats`):**
+   * Decomposed module `stats.rs` (490 lines) into structured subpackage `mappers/stats/` (`mod.rs`, `frequencies.rs`, `ttest.rs`) with 100% backward compatibility;
+   * Implemented full support for `/STATISTICS` subcommand:
+     - Batch macros: `DEFAULT` (Mean, StdDev, Min, Max), `ALL` (all 12 statistics), `NONE` (explicit suppression);
+     - Individual keywords: `MEAN`, `SEMEAN`, `MEDIAN`, `MODE`, `SUM`, `STDDEV`, `VARIANCE`, `RANGE`, `MINIMUM`, `MAXIMUM`, `SKEWNESS`, `KURTOSIS`;
+   * Implemented parsing for `/PERCENTILES` (cutpoint list), `/NTILES=n`, `/FORMAT=NOTABLE / DFREQ`, and `/ORDER=ANALYSIS / VARIABLE`.
+3. **Quality Gate & Invariant Testing:**
+   * All 133 unit tests of `statcraft_syntax` and 58 integration syntax tests passed with 100% success (`cargo test -p statcraft_syntax -j 1`);
+   * All 11 tests of Output Viewer invariants (`output_viewer_invariants`) passed without error;
+   * Linter `cargo run -p xtask -j 1 -- file-guard` verified file limits for all 482 Rust files across the workspace;
+   * Architectural linters `cargo run -p xtask -j 1 -- layers` and `cargo run -p xtask -j 1 -- design-guard` confirmed full compliance with ecosystem canon.
+
+---
+
+### Phase 98: "Frequencies: Statistics" Modal Subdialog and DialogKit Modernization (Phase 3)
+*Time: November 22, 2026, 08:35 (~35 minutes)*
+
+In strict accordance with the **DialogKit** design guide (`docs/DESIGN_GUIDE.md`), Spec-Kit requirements, and Rule 12 (`File Size Guard`), Phase 3 of the Frequencies procedure modernization has been implemented вЂ” a modal "Frequencies: Statistics" subdialog and updated main dialog layout:
+1. **Frequencies Dialog Decomposition (`statcraft_app::dialogs::frequencies_dialog`):**
+   * Decomposed the monolithic file `frequencies_dialog.rs` into a clean subpackage `crates/statcraft_app/src/dialogs/frequencies_dialog/`:
+     - `state.rs` (152 lines): structures `FrequenciesStatisticsState`, `FrequenciesDialogState`, and action `FrequenciesDialogAction` with JSON serialization methods for engine parameters (`statistics`, `percentiles`, `group_midpoints`);
+     - `statistics_subdialog.rs` (215 lines): modal subdialog for configuring statistics and percentiles using `DialogShell::new` ($380 \times 460$ px);
+     - `mod.rs` (230 lines): main dialog coordinating subdialogs, variable list pickers, and user actions.
+   * Every file in the package is strictly bounded below the $\le 500$ line threshold (Rule 12).
+2. **"Frequencies: Statistics" Modal Subdialog (`statistics_subdialog.rs`):**
+   * Canonical two-column SPSS layout built on `DialogKit` components:
+     - **GroupBox "Percentile Values":** checkboxes `Quartiles`, `Cut points for: [ 10 ] equal groups` (with custom $N$ intervals), numerical percentile text edit ($0.1 \dots 99.9$) with buttons `[ Add ] [ Change ] [ Remove ]` and a compact ascending-sorted list;
+     - **GroupBox "Central Tendency":** Mean, Median, Mode, Sum;
+     - **Checkbox "Values are group midpoints"** (`group_midpoints`);
+     - **GroupBox "Dispersion":** Std. deviation, Variance, Range, Minimum, Maximum, S.E. mean;
+     - **GroupBox "Distribution":** Skewness, Kurtosis;
+   * Bottom action bar using canonical Type 2 widget `SubdialogActionBar::new(true)` (`[ Continue ] [ Cancel ] [ Help ]`):
+     - Pressing `[ Continue ]` applies the options;
+     - Pressing `[ Cancel ]` or window close ('X') immediately reverts changes to the pre-opening snapshot (`stats_backup`).
+3. **Main Frequencies Dialog Modernization:**
+   * Right `SubdialogSidebar`: active `[ Statistics... ]` button opening the subdialog, reserved buttons `[ Charts... ]`, `[ Format... ]`, `[ Style... ]`, `[ Bootstrap... ]`;
+   * Added checkboxes `Display frequency tables` and `Create APA style tables`;
+   * The `[ Reset ]` button (`ActionBarAction::Reset`) clears selected variables and resets all statistics to SPSS defaults;
+   * Full parameter package forwarded upon execution to `CommandBus` and syntax generation via `FrequenciesCommand::to_sps_from_params`.
+4. **Test Suite Decomposition (`tests/dialog_invariants.rs`):**
+   * To prevent exceeding the 1000-line limit, `dialog_invariants.rs` was architecturally decomposed into `tests/dialog_invariants/` (`fixtures.rs` and `extended_dialogs.rs`);
+   * Added new precision headless test `test_headless_render_frequencies_statistics_subdialog`;
+   * All 39 dialog invariant tests (38 preexisting + 1 new) passed with 100% test integrity.
+5. **Bilingual Localization & Quality Gate:**
+   * Added 19 new semantic translation keys in `locales/en.ftl` and `locales/ru.ftl` (Zero-Hardcode i18n);
+   * 100% success on `i18n_lint_test`, `xtask design-guard`, `xtask file-guard` (486 files), `xtask layers`, and `output_viewer_invariants`.
+
+---
+
+### Phase 99: "Statistics" Summary Table and Frequency Tables in Output Viewer (Phase 4)
+*Time: November 22, 2026, 09:10 (~35 minutes)*
+
+In strict accordance with IBM SPSS Statistics reporting standards, Spec-Kit requirements, and Rule 12 (`File Size Guard`), Phase 4 of the Frequencies procedure modernization has been implemented — the authentic "Statistics" summary pivot table and the architectural decomposition of the frequencies rendering module in the Output Viewer:
+1. **Architectural Decomposition of Frequency Tables (`output_view::tables_frequencies`):**
+   * The previously monolithic file `tables_frequencies.rs` (375 lines) has been converted into a structured subpackage `crates/statcraft_app/src/views/output_view/tables_frequencies/`:
+     - `stats_summary_table.rs` (305 lines): authentic SPSS "Statistics" summary table with variable column headers and dynamic row composition;
+     - `freq_table.rs` (255 lines): detailed category distribution tables for each variable with support for value labels, frequencies, raw, valid, and cumulative percentages;
+     - `mod.rs` (50 lines): procedure output coordination and TSV clipboard/file export.
+   * All package files strictly adhere to the $\le 500$ line per file threshold (Rule 12).
+2. **Authentic SPSS "Statistics" Summary Table (`stats_summary_table.rs`):**
+   * Column headers contain the names of all analyzed variables (`salary`, `educ`, `gender`);
+   * Row headers follow the canonical SPSS metric order:
+     - Mandatory block: $N$ Valid, $N$ Missing;
+     - 14 univariate statistics (only rows computed for at least one variable are rendered): Mean, Std. Error of Mean, Median, Mode, Std. Deviation, Variance, Skewness, Std. Error of Skewness, Kurtosis, Std. Error of Kurtosis, Range, Minimum, Maximum, Sum;
+     - Percentiles: header row "Percentiles" followed by indented rows for all unique percentiles in the analysis (quartiles 25, 50, 75, $N$-tiles, and custom cutpoints);
+   * Multiple modes footnote support: when ties occur, the mode value is marked with flag `a` (`format!("{:.4} a", mode)`), and a footnote `t!("output-freq-mode-footnote")` ("a. Multiple modes exist. The smallest value is shown.") is rendered below the table;
+   * Variables without requested statistics (such as nominal scales) are filled with `.` without layout distortion.
+3. **Canonical `/FORMAT=NOTABLE` Mode Support:**
+   * In `statcraft_syntax::commands::frequencies_cmd`, parameter `display_tables: false` (`/FORMAT=NOTABLE`) is now observed;
+   * When frequency tables are suppressed, detailed category tables are omitted, while the "Statistics" summary table is preserved in both the Output Viewer and TSV export.
+4. **Invariant Integration Testing (`tests/output_viewer_frequencies_invariants.rs`):**
+   * Added an integration test suite validating panic-free headless rendering in the `egui` context and TSV export integrity for both summary and category tables;
+   * Verified table suppression behavior under `NOTABLE` mode.
+5. **Bilingual Localization and Quality Gate (DoD):**
+   * Added 19 semantic translation keys to `locales/en.ftl` and `locales/ru.ftl` (Zero-Hardcode i18n);
+   * 100% pass across all stages of `cargo run -p xtask -j 1 -- ci` (`file-guard` over 489 files, `design-guard`, `layers`, `cargo fmt --check`, `cargo clippy --workspace -j 1 -- -D warnings`, full workspace test suite, and Undo/Redo reversibility matrix).
+
+
+---
+
+### Phase 100: Nominal Scale Numeric Statistics Restoration & Variable Labels Display
+*Time: November 22, 2026, 10:55 (~30 minutes)*
+
+Successfully implemented enhancements to the Frequencies procedure for production workflows with real-world research datasets (including sociological and healthcare survey microdata) in strict compliance with the IBM SPSS Statistics canon:
+1. **Restoration of Descriptive Statistics & Percentiles for Numeric Variables:**
+   * Removed the artificial suppression of `res.quartiles = None` and `res.statistics = None` when `Measure::Nominal` in `statcraft_syntax::commands::frequencies_cmd`.
+   * In full alignment with SPSS behavior, univariate statistics (Mean, Median, Mode, Quartiles, Percentiles, Range, Variance, etc.) are computed for all numeric data regardless of the nominal/ordinal scale assignment. Statistics are suppressed exclusively for non-numeric text variables within `compute_frequencies_full`.
+2. **Variable Labels Display in Output Viewer and TSV Export:**
+   * Added `variable_label: Option<String>` to `statcraft_algo::FrequencyResult` along with helper methods `display_title()` (returning `Label [Name]` or raw `Name` if label is absent) and `display_label_or_name()`.
+   * Frequency table headers in `freq_table.rs` now render as `Frequency Table: Label [Name]`, providing researchers with immediate substantive context.
+   * In the "Statistics" summary table (`stats_summary_table.rs`), column headers now display variable labels with interactive hover tooltips indicating full label and technical variable identifier.
+   * TSV export preserves human-readable variable labels in both summary and frequency table sections.
+3. **Authentic Syntax Journaling in Output Log:**
+   * Method `add_frequencies_with_log` in `OutputViewerState` and invocation pipelines in `app_dialogs.rs` and `syntax_runner.rs` now journal the actual executed SPSS syntax generated by `FrequenciesCommand::to_sps_from_params` (including `/STATISTICS=...`, `/PERCENTILES=...`, `/FORMAT=...`).
+4. **Testing and Quality Gate (DoD):**
+   * Added unit tests in `statcraft_algo` (`table.rs`), `statcraft_syntax` (`tests.rs`), and headless integration invariant tests in `statcraft_app` (`output_viewer_frequencies_invariants.rs`).
+   * 100% pass across all stages of `cargo run -p xtask -j 1 -- ci` (formatting, clippy, design-guard, file-guard across 489 files, and 41-command Undo/Redo reversibility matrix).

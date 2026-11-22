@@ -29,6 +29,7 @@ pub fn sample_descriptives() -> DescriptivesResult {
 pub fn sample_frequencies() -> FrequencyResult {
     FrequencyResult {
         variable: "gender".to_string(),
+        variable_label: None,
         n_valid: 100,
         n_missing: 0,
         categories: vec![
@@ -50,6 +51,7 @@ pub fn sample_frequencies() -> FrequencyResult {
             },
         ],
         quartiles: None,
+        statistics: None,
     }
 }
 

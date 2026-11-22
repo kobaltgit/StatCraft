@@ -57,7 +57,8 @@ pub fn run_syntax_batch(
             }
             "FREQUENCIES" => {
                 if let Ok(results) = serde_json::from_value::<Vec<FrequencyResult>>(res_val) {
-                    output_view.add_frequencies(results);
+                    output_view
+                        .add_frequencies_with_log(results, block.raw_text.trim().to_string());
                 }
             }
             "EXAMINE" | "EXPLORE" => {

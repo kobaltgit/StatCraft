@@ -67,7 +67,7 @@ Beyond isolated unit testing, StatCraft enforces mathematical and architectural 
 
 4. **Global Weighting (`WEIGHT BY`) & File Split (`SPLIT FILE`):**
    * Case weighting (`ds.row_weight`) is supported in moment calculations across:
-     - `crosstabs.rs`, `descriptives.rs`, `factor.rs`, `frequencies.rs`, `means.rs`, `regression.rs`, `reliability.rs`, `weight_cases.rs`.
+     - `crosstabs.rs`, `descriptives.rs`, `factor.rs`, `frequencies/`, `means.rs`, `regression.rs`, `reliability.rs`, `weight_cases.rs`.
    * Status note: Weighting for bivariate correlations and t-tests, as well as automatic multi-group split-file table rendering in Output Viewer, are scheduled for future milestone updates.
 
 ---
@@ -76,7 +76,7 @@ Beyond isolated unit testing, StatCraft enforces mathematical and architectural 
 
 | Block | Procedure Group | Implementation Files | Status | Oracle Precision |
 |---|---|---|---|---|
-| **Block 1** | Descriptives & Frequencies (`DESCRIPTIVES`, `FREQUENCIES`, `CROSSTABS`, `MEANS`) | `descriptives.rs`, `frequencies.rs`, `crosstabs.rs`, `means.rs` | **100% Verified** | $\le 10^{-6}$ |
+| **Block 1** | Descriptives & Frequencies (`DESCRIPTIVES`, `FREQUENCIES`, `CROSSTABS`, `MEANS`) | `descriptives.rs`, `frequencies/`, `crosstabs.rs`, `means.rs` | **100% Verified** | $\le 10^{-6}$ |
 | **Block 2** | Mean Comparisons (`T-TEST 1-SAMPLE`, `T-TEST INDEP`, `T-TEST PAIRED`, `ONE-WAY ANOVA`) | `ttest_onesample.rs`, `ttest_indep.rs`, `ttest_paired.rs`, `anova_oneway.rs` | **100% Verified** | $\le 10^{-6}$ |
 | **Block 3** | Associations & Multivariates (`CORRELATIONS`, `REGRESSION`, `FACTOR`, `RELIABILITY`) | `correlations.rs`, `regression.rs`, `factor.rs`, `reliability.rs` | **100% Verified** | $\le 10^{-6}$ |
 | **Block 4** | Nonparametric Tests (`MANN-WHITNEY`, `KRUSKAL-WALLIS`, `WILCOXON`, `SIGN`) | `nonparam_twosample.rs`, `kruskal_wallis.rs`, `nonparam_related.rs` | **100% Verified** | $\le 10^{-6}$ |
@@ -118,13 +118,17 @@ Beyond isolated unit testing, StatCraft enforces mathematical and architectural 
 * **Verdict:** **100% Mathematical Equivalence to SPSS Canon.**
 
 #### 1.2. `FREQUENCIES` (IBM Algorithms pp. 446–448)
-* **Implementation:** [`crates/statcraft_algo/src/frequencies.rs`](../crates/statcraft_algo/src/frequencies.rs)
-* **Golden Oracle Tests:** `frequencies::tests::test_frequency_numeric_sorting_and_quartiles`
+* **Implementation:** [`crates/statcraft_algo/src/frequencies/`](../crates/statcraft_algo/src/frequencies/) (`options.rs`, `percentiles.rs`, `stats.rs`, `table.rs`, `mod.rs`)
+* **Golden Oracle Tests:** `frequencies::table::tests::test_frequency_numeric_sorting_and_quartiles`, `frequencies_oracle_test` (`crates/statcraft_algo/tests/frequencies_oracle_test.rs`)
 * **Mathematical Formula Verification:**
   * `Percent`: $\frac{f_j}{W_{total}} \times 100$ (including missing cases);
   * `Valid Percent`: $\frac{f_j}{W_{valid}} \times 100$ (excluding missing cases);
   * `Cumulative Percent`: Cumulative summation of `Valid Percent`;
-  * **Quantiles & Quartiles:** Canonical **SPSS HAVERAGE** linear interpolation (rank $r = p \cdot (N + 1)$).
+  * **Quantiles, Quartiles & Deciles:** Canonical **SPSS HAVERAGE** linear interpolation (Weibull / Type 6, rank $r = p \cdot (N + 1)$), N-tiles, and grouped midpoints;
+  * **14 Descriptive Statistics:** Mean $\bar{X}$, sum, minimum, maximum, range, variance $s^2$, standard deviation $s$, standard error of mean $SE(\bar{X})$;
+  * **Skewness & Kurtosis:** Fisher unbiased estimators ($g_1, g_2$) with exact standard errors $SE(g_1), SE(g_2)$;
+  * **Mode (Mode Tie-Breaker):** On tied maximum frequencies, SPSS selects the smallest numeric value and sets `has_multiple_modes = true`.
+  * **L5 Command Bus & Syntax:** Typed `FrequenciesCommand` (`stat.frequencies`) in `crates/statcraft_syntax/src/commands/frequencies_cmd/` with canonical category ordering (`dvalue`, `afreq`, `dfreq`), suppression of parametric metrics for Nominal scales, and bidirectional SPSS syntax (`/FORMAT`, `/STATISTICS`, `/PERCENTILES`, `/NTILES`, `/ORDER`).
 * **Verdict:** **100% Mathematical Equivalence to SPSS Canon.**
 
 #### 1.3. `CROSSTABS` (IBM Algorithms pp. 221–226)

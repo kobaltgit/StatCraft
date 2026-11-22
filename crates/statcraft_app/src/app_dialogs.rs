@@ -67,11 +67,26 @@ impl StatCraftApp {
             FrequenciesDialogAction::Run {
                 vars,
                 display_tables,
+                apa_tables: _,
+                statistics,
+                percentiles,
+                group_midpoints,
             } => {
-                let params = json!({
-                    "vars": vars,
-                    "display_tables": display_tables
-                });
+                let mut params_map = serde_json::Map::new();
+                params_map.insert("vars".to_string(), json!(vars));
+                params_map.insert("display_tables".to_string(), json!(display_tables));
+                if let Some(s) = statistics {
+                    params_map.insert("statistics".to_string(), s);
+                }
+                if let Some(p) = percentiles {
+                    params_map.insert("percentiles".to_string(), p);
+                }
+                if group_midpoints {
+                    params_map.insert("group_midpoints".to_string(), json!(true));
+                }
+                let params = serde_json::Value::Object(params_map);
+                let sps_log =
+                    statcraft_syntax::commands::FrequenciesCommand::to_sps_from_params(&params);
                 match self
                     .command_bus
                     .execute("stat.frequencies", &mut self.dataset, params)
@@ -83,7 +98,8 @@ impl StatCraftApp {
                         {
                             let count = results.len();
                             if display_tables {
-                                self.output_view_state.add_frequencies(results);
+                                self.output_view_state
+                                    .add_frequencies_with_log(results, sps_log);
                             }
                             self.status_message = StatusMessage::FrequenciesExecuted { count };
                         }
@@ -93,8 +109,29 @@ impl StatCraftApp {
                     }
                 }
             }
-            FrequenciesDialogAction::Paste { vars } => {
-                let sps = statcraft_syntax::commands::FrequenciesCommand::to_sps(&vars);
+            FrequenciesDialogAction::Paste {
+                vars,
+                display_tables,
+                apa_tables: _,
+                statistics,
+                percentiles,
+                group_midpoints,
+            } => {
+                let mut params_map = serde_json::Map::new();
+                params_map.insert("vars".to_string(), json!(vars));
+                params_map.insert("display_tables".to_string(), json!(display_tables));
+                if let Some(s) = statistics {
+                    params_map.insert("statistics".to_string(), s);
+                }
+                if let Some(p) = percentiles {
+                    params_map.insert("percentiles".to_string(), p);
+                }
+                if group_midpoints {
+                    params_map.insert("group_midpoints".to_string(), json!(true));
+                }
+                let params = serde_json::Value::Object(params_map);
+                let sps =
+                    statcraft_syntax::commands::FrequenciesCommand::to_sps_from_params(&params);
                 self.output_view_state.add_entry(t!("output-log"), sps);
             }
             FrequenciesDialogAction::None => {}

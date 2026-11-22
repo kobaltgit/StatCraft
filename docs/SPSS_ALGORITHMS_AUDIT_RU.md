@@ -67,7 +67,7 @@
 
 4. **Глобальное взвешивание (`WEIGHT BY`) и разделение файлов (`SPLIT FILE`):**
    * Взвешивание наблюдений (`ds.row_weight`) внедрено в расчет статистических моментов процедур:
-     - `crosstabs.rs`, `descriptives.rs`, `factor.rs`, `frequencies.rs`, `means.rs`, `regression.rs`, `reliability.rs`, `weight_cases.rs`.
+     - `crosstabs.rs`, `descriptives.rs`, `factor.rs`, `frequencies/`, `means.rs`, `regression.rs`, `reliability.rs`, `weight_cases.rs`.
    * Статус: Взвешивание в парных корреляциях и t-критериях, а также рендеринг сводных таблиц раздельно по группам `SPLIT FILE` в Output Viewer, запланированы в рамках развития дорожной карты.
 
 ---
@@ -76,7 +76,7 @@
 
 | Блок | Группа процедур | Файлы реализации | Статус | Точность Oracle |
 |---|---|---|---|---|
-| **Блок 1** | Описательные статистики (`DESCRIPTIVES`, `FREQUENCIES`, `CROSSTABS`, `MEANS`) | `descriptives.rs`, `frequencies.rs`, `crosstabs.rs`, `means.rs` | **100% Верифицировано** | $\le 10^{-6}$ |
+| **Блок 1** | Описательные статистики (`DESCRIPTIVES`, `FREQUENCIES`, `CROSSTABS`, `MEANS`) | `descriptives.rs`, `frequencies/`, `crosstabs.rs`, `means.rs` | **100% Верифицировано** | $\le 10^{-6}$ |
 | **Блок 2** | Сравнение средних (`T-TEST 1-SAMPLE`, `T-TEST INDEP`, `T-TEST PAIRED`, `ONE-WAY ANOVA`) | `ttest_onesample.rs`, `ttest_indep.rs`, `ttest_paired.rs`, `anova_oneway.rs` | **100% Верифицировано** | $\le 10^{-6}$ |
 | **Блок 3** | Связи и многомерный анализ (`CORRELATIONS`, `REGRESSION`, `FACTOR`, `RELIABILITY`) | `correlations.rs`, `regression.rs`, `factor.rs`, `reliability.rs` | **100% Верифицировано** | $\le 10^{-6}$ |
 | **Блок 4** | Непараметрические критерии (`MANN-WHITNEY`, `KRUSKAL-WALLIS`, `WILCOXON`, `SIGN`) | `nonparam_twosample.rs`, `kruskal_wallis.rs`, `nonparam_related.rs` | **100% Верифицировано** | $\le 10^{-6}$ |
@@ -118,13 +118,17 @@
 * **Вердикт:** **100% математическая эквивалентность канону.**
 
 #### 1.2. `FREQUENCIES` (IBM Algorithms стр. 446–448)
-* **Реализация:** [`crates/statcraft_algo/src/frequencies.rs`](../crates/statcraft_algo/src/frequencies.rs)
-* **Тесты:** `frequencies::tests::test_frequency_numeric_sorting_and_quartiles`
+* **Реализация:** [`crates/statcraft_algo/src/frequencies/`](../crates/statcraft_algo/src/frequencies/) (`options.rs`, `percentiles.rs`, `stats.rs`, `table.rs`, `mod.rs`)
+* **Тесты:** `frequencies::table::tests::test_frequency_numeric_sorting_and_quartiles`, `frequencies_oracle_test` (`crates/statcraft_algo/tests/frequencies_oracle_test.rs`)
 * **Сопоставление формул:**
   * `Percent`: $\frac{f_j}{W_{total}} \times 100$ (включая пропущенные значения);
   * `Valid Percent`: $\frac{f_j}{W_{valid}} \times 100$ (только валидные наблюдения);
   * `Cumulative Percent`: кумулятивная сумма `Valid Percent`;
-  * **Квантили/Квартили:** каноническая интерполяция **SPSS HAVERAGE** (ранг $r = p \cdot (N + 1)$).
+  * **Квантили/Квартили/Децили:** каноническая интерполяция **SPSS HAVERAGE** (Weibull / Type 6, ранг $r = p \cdot (N + 1)$), N-тили и сгруппированные срезы;
+  * **14 дескриптивных статистик:** среднее $\bar{X}$, сумма, минимум, максимум, размах, дисперсия $s^2$, стд. отклонение $s$, стд. ошибка среднего $SE(\bar{X})$;
+  * **Асимметрия и эксцесс:** несмещенные оценки Фишера ($g_1, g_2$) с точными стандартными ошибками $SE(g_1), SE(g_2)$;
+  * **Мода (Mode Tie-Breaker):** при мультимодальности по канону SPSS выбирается наименьшее числовое значение с флагом `has_multiple_modes = true`.
+  * **L5 Командная шина и синтаксис:** типизированная команда `FrequenciesCommand` (`stat.frequencies`) в `crates/statcraft_syntax/src/commands/frequencies_cmd/` с поддержкой канонической сортировки (`dvalue`, `afreq`, `dfreq`), подавлением параметрических статистик для номинальных шкал и двусторонним SPSS-синтаксисом (`/FORMAT`, `/STATISTICS`, `/PERCENTILES`, `/NTILES`, `/ORDER`).
 * **Вердикт:** **100% математическая эквивалентность канону.**
 
 #### 1.3. `CROSSTABS` (IBM Algorithms стр. 221–226)
