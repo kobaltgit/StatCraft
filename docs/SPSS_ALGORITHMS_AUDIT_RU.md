@@ -118,8 +118,8 @@
 * **Вердикт:** **100% математическая эквивалентность канону.**
 
 #### 1.2. `FREQUENCIES` (IBM Algorithms стр. 446–448)
-* **Реализация:** [`crates/statcraft_algo/src/frequencies/`](../crates/statcraft_algo/src/frequencies/) (`options.rs`, `percentiles.rs`, `stats.rs`, `table.rs`, `mod.rs`)
-* **Тесты:** `frequencies::table::tests::test_frequency_numeric_sorting_and_quartiles`, `frequencies_oracle_test` (`crates/statcraft_algo/tests/frequencies_oracle_test.rs`)
+* **Реализация:** [`crates/statcraft_algo/src/frequencies/`](../crates/statcraft_algo/src/frequencies/) (`options.rs`, `percentiles.rs`, `stats.rs`, `table.rs`, `charts.rs`, `mod.rs`)
+* **Тесты:** `frequencies::table::tests::test_frequency_numeric_sorting_and_quartiles`, `frequencies_oracle_test` (`crates/statcraft_algo/tests/frequencies_oracle_test.rs`), `frequencies_charts_oracle_test` (`crates/statcraft_algo/tests/frequencies_charts_oracle_test.rs`)
 * **Сопоставление формул:**
   * `Percent`: $\frac{f_j}{W_{total}} \times 100$ (включая пропущенные значения);
   * `Valid Percent`: $\frac{f_j}{W_{valid}} \times 100$ (только валидные наблюдения);
@@ -128,7 +128,13 @@
   * **14 дескриптивных статистик:** среднее $\bar{X}$, сумма, минимум, максимум, размах, дисперсия $s^2$, стд. отклонение $s$, стд. ошибка среднего $SE(\bar{X})$;
   * **Асимметрия и эксцесс:** несмещенные оценки Фишера ($g_1, g_2$) с точными стандартными ошибками $SE(g_1), SE(g_2)$;
   * **Мода (Mode Tie-Breaker):** при мультимодальности по канону SPSS выбирается наименьшее числовое значение с флагом `has_multiple_modes = true`.
-  * **L5 Командная шина и синтаксис:** типизированная команда `FrequenciesCommand` (`stat.frequencies`) в `crates/statcraft_syntax/src/commands/frequencies_cmd/` с поддержкой канонической сортировки (`dvalue`, `afreq`, `dfreq`), подавлением параметрических статистик для номинальных шкал и двусторонним SPSS-синтаксисом (`/FORMAT`, `/STATISTICS`, `/PERCENTILES`, `/NTILES`, `/ORDER`).
+  * **Диаграммы распределений и адаптивный биннинг (`charts.rs`):**
+    * Агрегация категорий столбчатых и круговых диаграмм с обязательной фильтрацией пропущенных наблюдений;
+    * Адаптивный расчет шага карманов гистограммы по правилу Скотта: $h = 3.49 \cdot s \cdot N^{-1/3}$;
+    * Округление шага сетки до легко читаемых круглых значений через `calculate_nice_step` (ряд $\{1, 2, 5, 10\} \times 10^k$);
+    * Расчет 101 точки теоретической плотности Гаусса $\mathcal{N}(\mu, \sigma^2)$, смасштабированной под интегральную площадь гистограммы: $y(x) = \frac{1}{\sigma \sqrt{2\pi}} e^{-\frac{1}{2}\left(\frac{x - \mu}{\sigma}\right)^2} \times (N \cdot bin\_width)$ (сверено с `scipy.stats.norm.pdf` с точностью $\le 10^{-6}$);
+    * Безопасная обработка вырожденных случаев: нулевая дисперсия ($s = 0$), малая выборка ($N < 2$) и строковые переменные без паник возвращают `None` либо единственный монолитный карман.
+  * **L5 Командная шина и синтаксис:** типизированная команда `FrequenciesCommand` (`stat.frequencies`) в `crates/statcraft_syntax/src/commands/frequencies_cmd/` с поддержкой канонической сортировки (`dvalue`, `afreq`, `dfreq`), подавлением параметрических статистик для номинальных шкал, автоматическим расчетом диаграмм и двусторонним SPSS-синтаксисом (`/FORMAT`, `/STATISTICS`, `/PERCENTILES`, `/NTILES`, `/BARCHART`, `/PIECHART`, `/HISTOGRAM [NORMAL]`, `/ORDER`).
 * **Вердикт:** **100% математическая эквивалентность канону.**
 
 #### 1.3. `CROSSTABS` (IBM Algorithms стр. 221–226)

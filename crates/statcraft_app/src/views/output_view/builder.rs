@@ -117,32 +117,46 @@ impl OutputViewerState {
             results.len(),
         );
 
+        let charts: Vec<statcraft_algo::FrequencyChartResult> =
+            results.iter().filter_map(|r| r.chart.clone()).collect();
+
+        let mut items = vec![
+            OutputItem {
+                id: log_id,
+                title_key: "output-log",
+                custom_title: None,
+                kind: OutputItemKind::Log(sps_log),
+            },
+            OutputItem {
+                id: notes_id,
+                title_key: "output-notes",
+                custom_title: None,
+                kind: OutputItemKind::Notes(notes.clone()),
+            },
+            OutputItem {
+                id: item_id,
+                title_key: "output-frequencies-table",
+                custom_title: None,
+                kind: OutputItemKind::FrequenciesTables(results),
+            },
+        ];
+
+        if !charts.is_empty() {
+            items.push(OutputItem {
+                id: self.alloc_id(),
+                title_key: "output-frequencies-charts",
+                custom_title: None,
+                kind: OutputItemKind::FrequencyCharts(charts),
+            });
+        }
+
         let proc = OutputProcedure {
             id: proc_id,
             title_key: "output-frequencies",
             custom_title: None,
             dataset_name: Some(notes.dataset_name.clone()),
             is_expanded: true,
-            items: vec![
-                OutputItem {
-                    id: log_id,
-                    title_key: "output-log",
-                    custom_title: None,
-                    kind: OutputItemKind::Log(sps_log),
-                },
-                OutputItem {
-                    id: notes_id,
-                    title_key: "output-notes",
-                    custom_title: None,
-                    kind: OutputItemKind::Notes(notes),
-                },
-                OutputItem {
-                    id: item_id,
-                    title_key: "output-frequencies-table",
-                    custom_title: None,
-                    kind: OutputItemKind::FrequenciesTables(results),
-                },
-            ],
+            items,
         };
 
         self.procedures.push(proc);
@@ -169,11 +183,6 @@ impl OutputViewerState {
         test_value: f64,
         ci: f64,
     ) {
-        let proc_id = self.alloc_id();
-        let log_id = self.alloc_id();
-        let notes_id = self.alloc_id();
-        let item_id = self.alloc_id();
-
         let var_names: Vec<&str> = results.iter().map(|r| r.variable.as_str()).collect();
         let sps_log = format!(
             "T-TEST /TESTVAL={}\n  /CRITERIA=CI({:.2})\n  /VARIABLES={}.",
@@ -187,45 +196,17 @@ impl OutputViewerState {
             results.len(),
         );
 
-        let proc = OutputProcedure {
-            id: proc_id,
-            title_key: "output-ttest-onesample-title",
-            custom_title: None,
-            dataset_name: Some(notes.dataset_name.clone()),
-            is_expanded: true,
-            items: vec![
-                OutputItem {
-                    id: log_id,
-                    title_key: "output-log",
-                    custom_title: None,
-                    kind: OutputItemKind::Log(sps_log),
-                },
-                OutputItem {
-                    id: notes_id,
-                    title_key: "output-notes",
-                    custom_title: None,
-                    kind: OutputItemKind::Notes(notes),
-                },
-                OutputItem {
-                    id: item_id,
-                    title_key: "output-ttest-onesample-title",
-                    custom_title: None,
-                    kind: OutputItemKind::OneSampleTTest {
-                        results,
-                        test_value,
-                        ci,
-                    },
-                },
-            ],
-        };
-
-        self.procedures.push(proc);
-        let new_proc_idx = self.procedures.len() - 1;
-        self.selected_target = Some(SelectedTarget::Item {
-            proc_idx: new_proc_idx,
-            item_idx: 2,
-        });
-        self.scroll_to_target = self.selected_target;
+        self.push_standard_procedure(
+            "output-ttest-onesample-title",
+            sps_log,
+            notes,
+            "output-ttest-onesample-title",
+            OutputItemKind::OneSampleTTest {
+                results,
+                test_value,
+                ci,
+            },
+        );
     }
 
     pub fn add_indep_ttest(

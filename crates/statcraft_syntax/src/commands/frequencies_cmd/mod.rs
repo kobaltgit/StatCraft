@@ -3,9 +3,11 @@ pub mod sps;
 mod tests;
 
 use crate::command::{CommandError, EngineCommand};
+use serde::{Deserialize, Serialize};
 use serde_json::{json, Value};
 use statcraft_algo::{
-    compute_frequencies_full, FrequenciesStatisticsOptions, FrequencyInputItem, FrequencyResult,
+    compute_frequencies_full, compute_frequency_chart, ChartType, ChartValueMode,
+    FrequenciesStatisticsOptions, FrequencyChartSpec, FrequencyInputItem, FrequencyResult,
 };
 use statcraft_core::DataSet;
 use statcraft_io::RawValue;
@@ -80,6 +82,26 @@ impl EngineCommand for FrequenciesCommand {
                     "enum": ["analysis", "variable", "avalue", "dvalue", "afreq", "dfreq"],
                     "description": "Category ordering (ascending/descending value or frequency)",
                     "default": "analysis"
+                },
+                "charts": {
+                    "type": "object",
+                    "description": "Chart options for frequency distributions",
+                    "properties": {
+                        "chart_type": {
+                            "type": "string",
+                            "enum": ["none", "bar", "pie", "histogram"],
+                            "default": "none"
+                        },
+                        "values": {
+                            "type": "string",
+                            "enum": ["frequencies", "percentages"],
+                            "default": "frequencies"
+                        },
+                        "normal_curve": {
+                            "type": "boolean",
+                            "default": false
+                        }
+                    }
                 }
             }
         })
@@ -115,6 +137,7 @@ impl EngineCommand for FrequenciesCommand {
         }
 
         let stats_options = parse_options(&params);
+        let chart_spec = parse_charts_options(&params).map(|opts| opts.to_spec());
         let display_tables = params
             .get("display_tables")
             .and_then(|v| v.as_bool())
@@ -194,6 +217,21 @@ impl EngineCommand for FrequenciesCommand {
             // Apply category re-ordering if requested
             sps::apply_order(&mut res.categories, order);
 
+            if let Some(ref spec) = chart_spec {
+                let valid_nums: Vec<f64> = items
+                    .iter()
+                    .filter(|it| !it.is_missing)
+                    .filter_map(|it| it.numeric_value)
+                    .collect();
+                res.chart = compute_frequency_chart(
+                    spec,
+                    var_name,
+                    res.variable_label.as_deref(),
+                    &res.categories,
+                    &valid_nums,
+                );
+            }
+
             if !display_tables {
                 res.categories.clear();
             }
@@ -262,6 +300,67 @@ fn parse_options(params: &Value) -> Option<FrequenciesStatisticsOptions> {
     }
 
     Some(opts)
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+pub struct ChartCommandOptions {
+    pub chart_type: String, // "none" | "bar" | "pie" | "histogram"
+    pub values: String,     // "frequencies" | "percentages"
+    pub normal_curve: bool,
+}
+
+impl ChartCommandOptions {
+    pub fn to_spec(&self) -> FrequencyChartSpec {
+        let chart_type = match self.chart_type.to_ascii_lowercase().as_str() {
+            "bar" => ChartType::Bar,
+            "pie" => ChartType::Pie,
+            "histogram" => ChartType::Histogram,
+            _ => ChartType::None,
+        };
+        let value_mode = match self.values.to_ascii_lowercase().as_str() {
+            "percentages" | "percent" => ChartValueMode::Percentages,
+            _ => ChartValueMode::Frequencies,
+        };
+        FrequencyChartSpec {
+            chart_type,
+            value_mode,
+            normal_curve: self.normal_curve,
+        }
+    }
+}
+
+impl Default for ChartCommandOptions {
+    fn default() -> Self {
+        Self {
+            chart_type: "none".to_string(),
+            values: "frequencies".to_string(),
+            normal_curve: false,
+        }
+    }
+}
+
+pub fn parse_charts_options(params: &Value) -> Option<ChartCommandOptions> {
+    params.get("charts").and_then(|c| {
+        let chart_type = c
+            .get("chart_type")
+            .and_then(|v| v.as_str())
+            .unwrap_or("none");
+        if chart_type == "none" {
+            return None;
+        }
+        Some(ChartCommandOptions {
+            chart_type: chart_type.to_string(),
+            values: c
+                .get("values")
+                .and_then(|v| v.as_str())
+                .unwrap_or("frequencies")
+                .to_string(),
+            normal_curve: c
+                .get("normal_curve")
+                .and_then(|v| v.as_bool())
+                .unwrap_or(false),
+        })
+    })
 }
 
 impl FrequenciesCommand {

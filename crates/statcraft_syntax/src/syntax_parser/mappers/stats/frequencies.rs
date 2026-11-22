@@ -55,6 +55,9 @@ pub fn map_frequencies(
     // 5. Group midpoints
     let group_midpoints = cmd.has_token("STATISTICS", "GROUPED") || cmd.has_subcommand("GROUPED");
 
+    // 6. Charts
+    let charts = parse_spss_charts(cmd);
+
     let mut result = json!({
         "vars": vars,
         "display_tables": display_tables,
@@ -69,6 +72,9 @@ pub fn map_frequencies(
     }
     if group_midpoints {
         result["group_midpoints"] = json!(true);
+    }
+    if let Some(ch) = charts {
+        result["charts"] = ch;
     }
 
     Ok(Some(("stat.frequencies", result)))
@@ -185,6 +191,58 @@ fn parse_spss_percentiles(cmd: &ParsedCommand) -> Option<Value> {
     }
 }
 
+fn parse_spss_charts(cmd: &ParsedCommand) -> Option<Value> {
+    if cmd.has_subcommand("BARCHART")
+        || cmd.has_token("CHARTS", "BARCHART")
+        || cmd.has_token("CHARTS", "BAR")
+    {
+        let is_percent = cmd.has_token("BARCHART", "PERCENT")
+            || cmd.has_token("BARCHART", "PERCENTAGES")
+            || cmd.has_token("CHARTS", "PERCENT");
+        return Some(json!({
+            "chart_type": "bar",
+            "values": if is_percent { "percentages" } else { "frequencies" },
+            "normal_curve": false,
+        }));
+    }
+
+    if cmd.has_subcommand("PIECHART")
+        || cmd.has_token("CHARTS", "PIECHART")
+        || cmd.has_token("CHARTS", "PIE")
+    {
+        let is_percent = cmd.has_token("PIECHART", "PERCENT")
+            || cmd.has_token("PIECHART", "PERCENTAGES")
+            || cmd.has_token("CHARTS", "PERCENT");
+        return Some(json!({
+            "chart_type": "pie",
+            "values": if is_percent { "percentages" } else { "frequencies" },
+            "normal_curve": false,
+        }));
+    }
+
+    if cmd.has_subcommand("HISTOGRAM")
+        || cmd.has_token("CHARTS", "HISTOGRAM")
+        || cmd.has_token("CHARTS", "HIST")
+    {
+        let normal = cmd.has_token("HISTOGRAM", "NORMAL") || cmd.has_token("CHARTS", "NORMAL");
+        return Some(json!({
+            "chart_type": "histogram",
+            "values": "frequencies",
+            "normal_curve": normal,
+        }));
+    }
+
+    if cmd.has_token("CHARTS", "NONE") {
+        return Some(json!({
+            "chart_type": "none",
+            "values": "frequencies",
+            "normal_curve": false,
+        }));
+    }
+
+    None
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -242,5 +300,40 @@ mod tests {
         let pcts = &val["percentiles"];
         assert_eq!(pcts["ntiles"], 10);
         assert_eq!(pcts["custom"], json!([10.0, 25.0, 75.0, 90.0]));
+    }
+
+    #[test]
+    fn test_map_frequencies_charts() {
+        // Bar chart with percent
+        let blocks =
+            SyntaxLexer::split_commands("FREQUENCIES VARIABLES=salary\n  /BARCHART PERCENT.")
+                .unwrap();
+        let cmd = SyntaxParser::parse_command(&blocks[0]).unwrap();
+        let (_, val) = map_frequencies(&cmd, None).unwrap().unwrap();
+        let charts = &val["charts"];
+        assert_eq!(charts["chart_type"], "bar");
+        assert_eq!(charts["values"], "percentages");
+        assert_eq!(charts["normal_curve"], false);
+
+        // Pie chart default (freq)
+        let blocks =
+            SyntaxLexer::split_commands("FREQUENCIES VARIABLES=gender\n  /PIECHART.").unwrap();
+        let cmd = SyntaxParser::parse_command(&blocks[0]).unwrap();
+        let (_, val) = map_frequencies(&cmd, None).unwrap().unwrap();
+        let charts = &val["charts"];
+        assert_eq!(charts["chart_type"], "pie");
+        assert_eq!(charts["values"], "frequencies");
+        assert_eq!(charts["normal_curve"], false);
+
+        // Histogram with normal curve
+        let blocks =
+            SyntaxLexer::split_commands("FREQUENCIES VARIABLES=score\n  /HISTOGRAM NORMAL.")
+                .unwrap();
+        let cmd = SyntaxParser::parse_command(&blocks[0]).unwrap();
+        let (_, val) = map_frequencies(&cmd, None).unwrap().unwrap();
+        let charts = &val["charts"];
+        assert_eq!(charts["chart_type"], "histogram");
+        assert_eq!(charts["values"], "frequencies");
+        assert_eq!(charts["normal_curve"], true);
     }
 }

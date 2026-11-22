@@ -38,6 +38,7 @@ fn test_output_viewer_procedure_and_item_auto_scroll() {
         ],
         quartiles: None,
         statistics: None,
+        chart: None,
     }];
     state.add_frequencies(freq_sample);
 

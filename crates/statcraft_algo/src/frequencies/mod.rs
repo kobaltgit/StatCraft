@@ -1,9 +1,16 @@
+pub mod charts;
 pub mod options;
 pub mod percentiles;
 pub mod stats;
 pub mod table;
 
-pub use options::{FrequenciesStatisticsOptions, PercentilesOptions};
+pub use charts::{
+    calculate_nice_step, compute_bar_chart, compute_frequency_chart, compute_histogram,
+    compute_pie_chart, BarCategoryData, FrequencyChartResult, HistogramBinData, HistogramSummary,
+};
+pub use options::{
+    ChartType, ChartValueMode, FrequenciesStatisticsOptions, FrequencyChartSpec, PercentilesOptions,
+};
 pub use percentiles::{
     compute_custom_percentiles, compute_grouped_percentile, compute_ntiles, compute_percentile,
     compute_percentiles_with_options, compute_quartiles, PercentileValue,

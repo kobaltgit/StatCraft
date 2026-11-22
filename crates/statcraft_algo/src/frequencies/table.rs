@@ -1,3 +1,4 @@
+use super::charts::FrequencyChartResult;
 use super::options::FrequenciesStatisticsOptions;
 use super::percentiles::compute_quartiles;
 use super::stats::{compute_frequencies_statistics, FrequenciesStatisticsResult};
@@ -35,6 +36,8 @@ pub struct FrequencyResult {
     pub quartiles: Option<(f64, f64, f64)>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub statistics: Option<FrequenciesStatisticsResult>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub chart: Option<FrequencyChartResult>,
 }
 
 impl FrequencyResult {
@@ -226,6 +229,7 @@ pub fn compute_frequencies_full(
         categories,
         quartiles,
         statistics,
+        chart: None,
     }
 }
 

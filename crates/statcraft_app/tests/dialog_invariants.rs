@@ -10,16 +10,17 @@ use statcraft_app::dialogs::{
     AutoRecodeDialogState, AutoRecodePair, ComputeDialogAction, ComputeDialogState,
     CorrelationsDialogAction, CorrelationsDialogState, CrosstabsDialogAction, CrosstabsDialogState,
     DescriptivesDialogAction, DescriptivesDialogState, DialogCasesAction, DialogSelectMode,
-    FrequenciesDialogAction, FrequenciesDialogState, IndependentSamplesTTestDialogAction,
-    IndependentSamplesTTestDialogState, KruskalWallisDialogAction, KruskalWallisDialogState,
-    MissingValuesDialogAction, MissingValuesDialogState, NonparamRelatedDialogAction,
-    NonparamRelatedDialogState, NonparamTwoSampleDialogAction, NonparamTwoSampleDialogState,
-    OneSampleTTestDialogAction, OneSampleTTestDialogState, OneWayAnovaDialogAction,
-    OneWayAnovaDialogState, PairedSamplesTTestDialogAction, PairedSamplesTTestDialogState,
-    RecodeDialogAction, RecodeDialogState, RecodeMode, RecodePair, SelectCasesDialogAction,
-    SelectCasesDialogState, SortCasesDialogAction, SortCasesDialogState, SplitFileDialogAction,
-    SplitFileDialogState, ValueLabelsDialogAction, ValueLabelsDialogState,
-    VariableTypeDialogAction, VariableTypeDialogState,
+    FrequenciesChartType, FrequenciesChartValue, FrequenciesDialogAction, FrequenciesDialogState,
+    IndependentSamplesTTestDialogAction, IndependentSamplesTTestDialogState,
+    KruskalWallisDialogAction, KruskalWallisDialogState, MissingValuesDialogAction,
+    MissingValuesDialogState, NonparamRelatedDialogAction, NonparamRelatedDialogState,
+    NonparamTwoSampleDialogAction, NonparamTwoSampleDialogState, OneSampleTTestDialogAction,
+    OneSampleTTestDialogState, OneWayAnovaDialogAction, OneWayAnovaDialogState,
+    PairedSamplesTTestDialogAction, PairedSamplesTTestDialogState, RecodeDialogAction,
+    RecodeDialogState, RecodeMode, RecodePair, SelectCasesDialogAction, SelectCasesDialogState,
+    SortCasesDialogAction, SortCasesDialogState, SplitFileDialogAction, SplitFileDialogState,
+    ValueLabelsDialogAction, ValueLabelsDialogState, VariableTypeDialogAction,
+    VariableTypeDialogState,
 };
 use statcraft_core::{DataType, MissingValues, SplitFileMode};
 use std::collections::BTreeMap;
@@ -119,6 +120,36 @@ fn test_headless_render_frequencies_statistics_subdialog() {
 
     let pct_json = state.stats.to_percentiles_json().expect("percentiles JSON");
     assert_eq!(pct_json["custom"], serde_json::json!([25.0, 75.0]));
+}
+
+#[test]
+fn test_headless_render_frequencies_charts_subdialog() {
+    let ctx = egui::Context::default();
+    let ds = create_test_dataset();
+    let mut state = FrequenciesDialogState {
+        is_open: true,
+        show_charts: true,
+        ..Default::default()
+    };
+    state.charts.chart_type = FrequenciesChartType::Bar;
+    state.charts.values = FrequenciesChartValue::Percentages;
+
+    let _ = ctx.run(Default::default(), |ctx| {
+        let action = render_frequencies_dialog(ctx, Some(&ds), &mut state);
+        match action {
+            FrequenciesDialogAction::None => {}
+            _ => panic!("Expected None during subdialog configuration"),
+        }
+    });
+
+    assert!(state.show_charts);
+    assert_eq!(state.charts.chart_type, FrequenciesChartType::Bar);
+    assert_eq!(state.charts.values, FrequenciesChartValue::Percentages);
+
+    let charts_json = state.charts.to_json().expect("charts JSON");
+    assert_eq!(charts_json["chart_type"], "bar");
+    assert_eq!(charts_json["values"], "percentages");
+    assert_eq!(charts_json["normal_curve"], false);
 }
 
 #[test]

@@ -323,6 +323,40 @@ pub fn paint_icon_collapse_all(painter: &Painter, rect: Rect, color: Color32) {
     );
 }
 
+/// Paints a vector Chart icon (3 vertical bar columns on a baseline)
+pub fn paint_output_chart_icon(painter: &Painter, rect: Rect, color: Color32) {
+    let center = rect.center();
+    let base_y = center.y + 5.5_f32;
+    let stroke = Stroke::new(1.0_f32, color);
+
+    // Baseline
+    painter.line_segment(
+        [
+            pos2(center.x - 6.0_f32, base_y),
+            pos2(center.x + 6.0_f32, base_y),
+        ],
+        stroke,
+    );
+
+    // 3 bars with heights 5.0, 9.0, 7.0
+    let b1 = Rect::from_min_max(
+        pos2(center.x - 5.0_f32, base_y - 5.0_f32),
+        pos2(center.x - 2.5_f32, base_y),
+    );
+    let b2 = Rect::from_min_max(
+        pos2(center.x - 1.5_f32, base_y - 9.5_f32),
+        pos2(center.x + 1.0_f32, base_y),
+    );
+    let b3 = Rect::from_min_max(
+        pos2(center.x + 2.0_f32, base_y - 7.0_f32),
+        pos2(center.x + 4.5_f32, base_y),
+    );
+
+    painter.rect_filled(b1, 0.0_f32, color);
+    painter.rect_filled(b2, 0.0_f32, color);
+    painter.rect_filled(b3, 0.0_f32, color);
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;

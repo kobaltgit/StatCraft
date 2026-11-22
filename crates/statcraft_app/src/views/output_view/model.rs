@@ -1,12 +1,12 @@
 use serde::{Deserialize, Serialize};
 use statcraft_algo::{
     AdpResult, BivariateCorrelationsResult, CodebookResult, CoxRegressionResult, CrosstabResult,
-    CurveFitResult, DescriptivesResult, ExploreResult, FactorAnalysisResult, FrequencyResult,
-    IndepTTestResult, KMResult, KMeansResult, KruskalWallisResult, LifeTableResult,
-    LinearRegressionResult, LogisticRegressionResult, MannWhitneyResult, MeansProcedureResult,
-    MultinomialLogisticResult, OneSampleTTestResult, OneWayAnovaResult, PairedTTestResult,
-    PartialCorrResult, ProgrammabilityResult, RelatedPairTestResult, ReliabilityResult,
-    SummarizeResult,
+    CurveFitResult, DescriptivesResult, ExploreResult, FactorAnalysisResult, FrequencyChartResult,
+    FrequencyResult, IndepTTestResult, KMResult, KMeansResult, KruskalWallisResult,
+    LifeTableResult, LinearRegressionResult, LogisticRegressionResult, MannWhitneyResult,
+    MeansProcedureResult, MultinomialLogisticResult, OneSampleTTestResult, OneWayAnovaResult,
+    PairedTTestResult, PartialCorrResult, ProgrammabilityResult, RelatedPairTestResult,
+    ReliabilityResult, SummarizeResult,
 };
 use statcraft_i18n::t;
 
@@ -56,6 +56,7 @@ pub enum OutputItemKind {
     },
     DescriptivesTable(Vec<DescriptivesResult>),
     FrequenciesTables(Vec<FrequencyResult>),
+    FrequencyCharts(Vec<FrequencyChartResult>),
     OneSampleTTest {
         results: Vec<OneSampleTTestResult>,
         test_value: f64,

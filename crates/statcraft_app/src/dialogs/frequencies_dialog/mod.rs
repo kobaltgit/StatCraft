@@ -1,6 +1,8 @@
+pub mod charts_subdialog;
 pub mod state;
 pub mod statistics_subdialog;
 
+pub use charts_subdialog::*;
 pub use state::*;
 pub use statistics_subdialog::*;
 
@@ -32,6 +34,9 @@ pub fn render_frequencies_dialog(
     // Subdialogs
     if state.show_statistics {
         render_statistics_subdialog(ctx, state);
+    }
+    if state.show_charts {
+        render_charts_subdialog(ctx, state);
     }
 
     let mut action = FrequenciesDialogAction::None;
@@ -180,7 +185,10 @@ pub fn render_frequencies_dialog(
                         state.stats_backup = Some(state.stats.clone());
                         state.show_statistics = true;
                     }
-                    let _ = SubdialogSidebar::button(ui, t!("dialog-btn-charts"), false);
+                    if SubdialogSidebar::button(ui, t!("dialog-btn-charts"), true).clicked() {
+                        state.charts_backup = Some(state.charts.clone());
+                        state.show_charts = true;
+                    }
                     let _ = SubdialogSidebar::button(ui, t!("dialog-btn-format"), false);
                     let _ = SubdialogSidebar::button(ui, t!("dialog-btn-style"), false);
                     let _ = SubdialogSidebar::button(ui, t!("dialog-btn-bootstrap"), false);
@@ -210,6 +218,7 @@ pub fn render_frequencies_dialog(
                     statistics: state.stats.to_statistics_json(),
                     percentiles: state.stats.to_percentiles_json(),
                     group_midpoints: state.stats.group_midpoints,
+                    charts: state.charts.to_json(),
                 };
             }
             ActionBarAction::Paste => {
@@ -221,6 +230,7 @@ pub fn render_frequencies_dialog(
                     statistics: state.stats.to_statistics_json(),
                     percentiles: state.stats.to_percentiles_json(),
                     group_midpoints: state.stats.group_midpoints,
+                    charts: state.charts.to_json(),
                 };
             }
             ActionBarAction::Reset => {

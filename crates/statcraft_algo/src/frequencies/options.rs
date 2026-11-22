@@ -80,3 +80,41 @@ impl PercentilesOptions {
         self.quartiles || self.ntiles.is_some() || !self.custom.is_empty()
     }
 }
+
+/// Chart types supported by the FREQUENCIES procedure.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize, Default)]
+#[serde(rename_all = "snake_case")]
+pub enum ChartType {
+    #[default]
+    None,
+    Bar,
+    Pie,
+    Histogram,
+}
+
+/// Chart values mode: counts/frequencies vs percentages.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize, Default)]
+#[serde(rename_all = "snake_case")]
+pub enum ChartValueMode {
+    #[default]
+    Frequencies,
+    Percentages,
+}
+
+/// Specification for frequency chart generation.
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Default)]
+pub struct FrequencyChartSpec {
+    pub chart_type: ChartType,
+    pub value_mode: ChartValueMode,
+    pub normal_curve: bool,
+}
+
+impl FrequencyChartSpec {
+    pub fn none() -> Self {
+        Self::default()
+    }
+
+    pub fn is_active(&self) -> bool {
+        self.chart_type != ChartType::None
+    }
+}

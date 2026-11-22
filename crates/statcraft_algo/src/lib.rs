@@ -123,12 +123,14 @@ pub use factor_types::{
     FactorExtractionMethod, FactorOptions, KmoBartlettResult, VarianceExplainedRow,
 };
 pub use frequencies::{
-    compute_custom_percentiles, compute_frequencies, compute_frequencies_detailed,
-    compute_frequencies_full, compute_frequencies_statistics, compute_grouped_percentile,
-    compute_ntiles, compute_percentile, compute_percentiles_with_options, compute_quartiles,
-    compute_statistics_from_slice, FrequenciesStatisticsOptions, FrequenciesStatisticsResult,
-    FrequencyCategory, FrequencyInputItem, FrequencyResult, FrequencyTable, PercentileValue,
-    PercentilesOptions,
+    calculate_nice_step, compute_bar_chart, compute_custom_percentiles, compute_frequencies,
+    compute_frequencies_detailed, compute_frequencies_full, compute_frequencies_statistics,
+    compute_frequency_chart, compute_grouped_percentile, compute_histogram, compute_ntiles,
+    compute_percentile, compute_percentiles_with_options, compute_pie_chart, compute_quartiles,
+    compute_statistics_from_slice, BarCategoryData, ChartType, ChartValueMode,
+    FrequenciesStatisticsOptions, FrequenciesStatisticsResult, FrequencyCategory,
+    FrequencyChartResult, FrequencyChartSpec, FrequencyInputItem, FrequencyResult, FrequencyTable,
+    HistogramBinData, HistogramSummary, PercentileValue, PercentilesOptions,
 };
 pub use kruskal_wallis::{
     compute_kruskal_wallis, compute_kruskal_wallis_from_groups, KruskalWallisGroupStats,

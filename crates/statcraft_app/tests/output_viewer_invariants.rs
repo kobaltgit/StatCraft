@@ -178,6 +178,7 @@ fn test_exhaustive_enum_payloads_render_without_panics() {
                 categories: vec![],
                 quartiles: None,
                 statistics: None,
+                chart: None,
             }]),
         },
         // One-Sample T-Test with 0 df and None stats

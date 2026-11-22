@@ -1200,6 +1200,75 @@
 - [x] Quality Gate (DoD):
   - [x] 100% прохождение `cargo run -p xtask -j 1 -- ci` (`file-guard` по 489 файлам, `design-guard`, `layers`, `clippy -D warnings`, полный тестовый набор воркспейса и матрица обратимости 41 команды).
 
+## 72. Частоты: Диаграммы (Frequencies: Charts) — Этап 1: Поддиалог DialogKit и синтаксис SPSS
+- [x] L6 `statcraft_app::dialogs::frequencies_dialog`:
+  - [x] Создание модального поддиалога `charts_subdialog.rs` ($360 \times 300$ px) по канону `DialogKit`;
+  - [x] Группы радиокнопок «Тип диаграммы» (Нет, Столбчатые, Круговые, Гистограммы);
+  - [x] Флажок нормальной кривой для гистограмм с правилом взаимной блокировки;
+  - [x] Группа «Значения на диаграмме» (Частоты / Проценты) с блокировкой для гистограмм и опции «Нет»;
+  - [x] Кнопка «Диаграммы...» в `SubdialogSidebar` и синхронизация состояния с откатом по Cancel;
+- [x] L5 `statcraft_syntax`:
+  - [x] Расширение `specs()` команды `stat.frequencies` блоком `charts`;
+  - [x] Структура `ChartCommandOptions` и парсер параметров `parse_charts_options`;
+  - [x] Сериализация в SPSS `.sps` подкоманд `/BARCHART [FREQ|PERCENT]`, `/PIECHART [FREQ|PERCENT]`, `/HISTOGRAM [NORMAL]` в `sps.rs`;
+  - [x] Распознавание подкоманд графиков в маппере `syntax_parser/mappers/stats/frequencies.rs`;
+- [x] Локализация и верификация:
+  - [x] 100% покрытие строковых ключей в `locales/en.ftl` и `locales/ru.ftl` (Zero-Hardcode i18n);
+  - [x] Модульные тесты синтаксиса и маппера в `statcraft_syntax`;
+  - [x] Headless инвариантный тест `test_headless_render_frequencies_charts_subdialog` в `statcraft_app`;
+  - [x] Успешное прохождение `xtask file-guard` (490 файлов), `xtask design-guard` и `xtask layers`.
+
+## 73. Частоты: Диаграммы (Frequencies: Charts) — Этап 2: Математические модели и алгоритмический расчет графиков
+- [x] L2 `statcraft_algo::frequencies::options`:
+  - [x] Спецификации типов диаграмм `ChartType` (`None`, `Bar`, `Pie`, `Histogram`), `ChartValueMode` (`Frequencies`, `Percentages`) и `FrequencyChartSpec`;
+- [x] L2 `statcraft_algo::frequencies::charts`:
+  - [x] Структуры `BarCategoryData`, `HistogramBinData`, `HistogramSummary`, `FrequencyChartResult`;
+  - [x] Алгоритм биннинга гистограмм с правилом Скотта ($h = 3.49 \cdot \sigma \cdot n^{-1/3}$) и округлением до красивых шагов `calculate_nice_step`;
+  - [x] Генерация точек нормальной кривой Гаусса $\mathcal{N}(\mu, \sigma^2)$, смасштабированных под площадь гистограммы ($scale = N \cdot bin\_width$);
+  - [x] Безопасная обработка вырожденных случаев: нулевая дисперсия ($s = 0$), выборки малого объема ($N < 2$), нечисловые строковые переменные (возврат `None` без паник);
+  - [x] Агрегация категорий для столбчатых и круговых диаграмм с фильтрацией пропущенных значений;
+- [x] L2 `statcraft_algo::frequencies::table`:
+  - [x] Расширение `FrequencyResult` опциональным полем `pub chart: Option<FrequencyChartResult>` с сохранением 100% обратной совместимости;
+- [x] L5 `statcraft_syntax::commands::frequencies_cmd`:
+  - [x] Интеграция `FrequencyChartSpec` в выполнение команды `stat.frequencies`: автоматический расчет графиков для каждой переменной при вызове с параметрами `charts`;
+  - [x] Модульные тесты `test_frequencies_with_charts_execution` в `statcraft_syntax`;
+- [x] Математический Golden Oracle (`frequencies_charts_oracle_test.rs`):
+  - [x] Сверка точек плотности нормального распределения и шага сетки с формулами `scipy.stats.norm.pdf` и `numpy.histogram` с точностью $\le 10^{-6}$;
+  - [x] Тесты вырожденных выборок, суммы процентов категорий ($100.0 \pm 10^{-6}$) и порядка категорий;
+- [x] Definition of Done:
+  - [x] 100% прохождение `cargo test -p statcraft_algo --test frequencies_charts_oracle_test -j 1`;
+  - [x] 100% прохождение всех инвариантных тестов (`output_viewer_invariants`, `output_viewer_frequencies_invariants`, `output_viewer_navigation`, `dialog_invariants`);
+  - [x] 100% прохождение линтеров `xtask file-guard` (492 файла), `xtask layers`, `xtask design-guard` и `clippy -- -D warnings`.
+
+## 74. Частоты: Диаграммы (Frequencies: Charts) — Этап 3: Векторный рендеринг в Output Viewer, дерево Outline и экспорт (L6)
+- [x] L6 `statcraft_app::views::output_view::model`:
+  - [x] Добавление варианта `FrequencyCharts(Vec<FrequencyChartResult>)` в перечисление `OutputItemKind`;
+- [x] L6 `statcraft_app::views::output_view::tables_frequencies`:
+  - [x] Модуль `freq_chart_bar_pie.rs` ($\le 500$ строк):
+    - [x] Векторный рендеринг столбчатых диаграмм (`render_bar_chart`): расчет масштабирования осей, сетка, столбцы с ховером, метки значений и категорий;
+    - [x] Векторный рендеринг круговых диаграмм (`render_pie_chart`): триангуляция секторов `convex_polygon`, аутентичная палитра цветов `PIE_PALETTE`, боковая легенда с долями;
+    - [x] Экспорт диаграмм в TSV (`bar_or_pie_chart_to_tsv`);
+  - [x] Модуль `freq_chart_histogram.rs` ($\le 500$ строк):
+    - [x] Векторный рендеринг гистограмм (`render_histogram`): непрерывная ось $X$, смежные монолитные столбцы бинов;
+    - [x] Наложение кривой Гаусса $\mathcal{N}(\mu, \sigma^2)$ оранжевым контуром SPSS (`Color32::from_rgb(0xED, 0x7D, 0x31)`);
+    - [x] Аутентичная плашка статистик SPSS в правом верхнем углу (Mean, Std. Dev., N);
+    - [x] Экспорт гистограмм в TSV (`histogram_chart_to_tsv`);
+  - [x] Диспетчеры `render_frequency_chart`, `render_frequency_charts` и `frequency_charts_to_tsv` в `tables_frequencies/mod.rs`;
+- [x] L6 `statcraft_app::views::output_view::outline`:
+  - [x] Векторная миниатюра иконки графика `paint_output_chart_icon` (3 вертикальных столбца на базовой линии) в `widgets/output_icons.rs`;
+  - [x] Отображение иконки графика в дереве оглавления Outline при наличии элемента `FrequencyCharts`;
+- [x] L6 `statcraft_app::views::output_view::view` и `builder`:
+  - [x] Рендеринг блоков графиков `OutputItemKind::FrequencyCharts` в главном представлении;
+  - [x] Метод `add_frequencies_with_log`: автоматическое добавление узла `FrequencyCharts` при наличии рассчитанных графиков в `FrequencyResult`;
+- [x] L6 `statcraft_app::views::output_view::export`:
+  - [x] Поддержка экспорта блоков графиков в сводные отчеты TSV, TXT и HTML;
+- [x] Инвариантные тесты и качество (DoD):
+  - [x] 6/6 тестов в `output_viewer_frequencies_invariants.rs` (столбчатые, круговые диаграммы, гистограммы с кривой Гаусса, TSV-экспорт, Outline-узел);
+  - [x] 11/11 тестов в `output_viewer_invariants.rs`;
+  - [x] 40/40 тестов в `dialog_invariants.rs`;
+  - [x] `xtask file-guard` (494 файла, все строго $\le 500$ строк), `xtask design-guard`, `xtask layers` и `cargo clippy --workspace -j 1 -- -D warnings`.
+
+
 ## 20. Планы будущих релизов (Backlog / Planned Features)
 - [ ] Мультимониторный режим рабочего пространства (Multi-Monitor Viewports & Pop-out Tabs):
   - [ ] Механизм открепления вкладок во внешние нативные окна ОС через `ctx.show_viewport_immediate`.

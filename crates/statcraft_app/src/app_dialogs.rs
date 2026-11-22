@@ -71,6 +71,7 @@ impl StatCraftApp {
                 statistics,
                 percentiles,
                 group_midpoints,
+                charts,
             } => {
                 let mut params_map = serde_json::Map::new();
                 params_map.insert("vars".to_string(), json!(vars));
@@ -83,6 +84,9 @@ impl StatCraftApp {
                 }
                 if group_midpoints {
                     params_map.insert("group_midpoints".to_string(), json!(true));
+                }
+                if let Some(c) = charts {
+                    params_map.insert("charts".to_string(), c);
                 }
                 let params = serde_json::Value::Object(params_map);
                 let sps_log =
@@ -116,6 +120,7 @@ impl StatCraftApp {
                 statistics,
                 percentiles,
                 group_midpoints,
+                charts,
             } => {
                 let mut params_map = serde_json::Map::new();
                 params_map.insert("vars".to_string(), json!(vars));
@@ -128,6 +133,9 @@ impl StatCraftApp {
                 }
                 if group_midpoints {
                     params_map.insert("group_midpoints".to_string(), json!(true));
+                }
+                if let Some(c) = charts {
+                    params_map.insert("charts".to_string(), c);
                 }
                 let params = serde_json::Value::Object(params_map);
                 let sps =

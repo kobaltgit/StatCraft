@@ -53,7 +53,10 @@ pub use tables_curvefit::{curvefit_to_tsv, render_spss_curvefit_tables};
 pub use tables_descriptives::{descriptives_to_tsv, render_spss_descriptives_pivot_table};
 pub use tables_explore::{explore_to_tsv, render_spss_explore_pivot_tables};
 pub use tables_factor::{factor_to_tsv, render_spss_factor};
-pub use tables_frequencies::{frequencies_to_tsv, render_spss_frequencies_tables};
+pub use tables_frequencies::{
+    frequencies_to_tsv, frequency_charts_to_tsv, render_frequency_charts,
+    render_spss_frequencies_tables,
+};
 pub use tables_generic::{generic_report_to_tsv, render_spss_generic_report};
 pub use tables_glm::*;
 pub use tables_kruskal::{kruskal_wallis_to_tsv, render_spss_kruskal_wallis_tables};
@@ -83,6 +86,7 @@ pub fn extract_item_tsv(kind: &OutputItemKind) -> Option<String> {
     match kind {
         OutputItemKind::DescriptivesTable(res) => Some(descriptives_to_tsv(res)),
         OutputItemKind::FrequenciesTables(res) => Some(frequencies_to_tsv(res)),
+        OutputItemKind::FrequencyCharts(charts) => Some(frequency_charts_to_tsv(charts)),
         OutputItemKind::OneSampleTTest { results, .. } => Some(onesample_ttest_to_tsv(results)),
         OutputItemKind::IndepTTest { results, .. } => Some(indep_ttest_to_tsv(results)),
         OutputItemKind::PairedTTest { results, .. } => Some(paired_ttest_to_tsv(results)),

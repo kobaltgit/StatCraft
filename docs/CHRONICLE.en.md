@@ -4013,3 +4013,81 @@ Successfully implemented enhancements to the Frequencies procedure for productio
 4. **Testing and Quality Gate (DoD):**
    * Added unit tests in `statcraft_algo` (`table.rs`), `statcraft_syntax` (`tests.rs`), and headless integration invariant tests in `statcraft_app` (`output_viewer_frequencies_invariants.rs`).
    * 100% pass across all stages of `cargo run -p xtask -j 1 -- ci` (formatting, clippy, design-guard, file-guard across 489 files, and 41-command Undo/Redo reversibility matrix).
+
+---
+
+### Phase 101: Frequencies Charts — Stage 1: DialogKit Subdialog, State & SPSS Syntax (.sps)
+*Time: November 22, 2026, 20:15 (~20 minutes)*
+
+Successfully implemented Stage 1 of the Frequencies Charts feature (Feature 017) in strict compliance with the IBM SPSS Statistics canon and the `DialogKit` design system:
+1. **Canonical "Frequencies: Charts" Modal Subdialog (`charts_subdialog.rs`):**
+   * Created a Type 2 modal subdialog ($360 \times 300$ px) utilizing `DialogShell::subdialog`;
+   * "Chart Type" group: radio options `None`, `Bar charts`, `Pie charts`, `Histograms:`;
+   * Indented checkbox `Show normal curve on histogram`, conditionally enabled only when "Histograms:" is selected;
+   * "Chart Values" group: `Frequencies` and `Percentages` options, enabled exclusively for Bar and Pie charts (disabled for Histograms and None);
+   * Standard `SubdialogActionBar` (`[ Continue ] [ Cancel ] [ Help ]`) with robust state backup and cancellation rollback.
+2. **Sidebar Integration and Dialog State (`statcraft_app`):**
+   * Activated the `Charts...` button in `SubdialogSidebar` of the main Frequencies dialog;
+   * Extended `FrequenciesDialogState` with `charts: FrequenciesChartOptions` and `charts_backup`;
+   * Actions `FrequenciesDialogAction::Run` and `Paste` propagate the chart JSON payload into `app_dialogs.rs`.
+3. **Command Bus and SPSS Bidirectional Syntax (`statcraft_syntax`):**
+   * Extended `stat.frequencies` command `specs()` with the `charts` schema (`chart_type`, `values`, `normal_curve`);
+   * In `sps.rs`, implemented canonical emission of `/BARCHART [FREQ|PERCENT]`, `/PIECHART [FREQ|PERCENT]`, `/HISTOGRAM [NORMAL]` subcommands for the Paste action;
+   * In `syntax_parser/mappers/stats/frequencies.rs`, added parsing for `/BARCHART`, `/PIECHART`, `/HISTOGRAM [NORMAL]`, and `/CHARTS` subcommands.
+4. **Testing, i18n & Quality Gate (DoD):**
+   * Added unit tests for syntax generation and parsing in `statcraft_syntax`;
+   * Added headless rendering invariant test `test_headless_render_frequencies_charts_subdialog` in `dialog_invariants.rs`;
+   * 100% coverage with bilingual Fluent localization in `locales/en.ftl` and `locales/ru.ftl` (Zero-Hardcode i18n);
+   * 100% clean passes for `xtask file-guard` (all 490 files within strict limits), `xtask design-guard`, and `xtask layers`.
+
+---
+
+### Phase 102: Frequencies Charts — Stage 2: Mathematical Models and Chart Computation (L2 statcraft_algo)
+*Time: November 22, 2026, 20:35 (~20 minutes)*
+
+Implemented Stage 2 of the Frequencies Charts feature (Feature 017 — Frequencies: Charts) — pure mathematical data structures, categorical aggregation, and adaptive histogram binning in `statcraft_algo`:
+1. **Chart Options Specifications (`options.rs`):**
+   * Introduced `ChartType` (`None`, `Bar`, `Pie`, `Histogram`), `ChartValueMode` (`Frequencies`, `Percentages`), and `FrequencyChartSpec` with serde serialization and default implementations.
+2. **Chart Algorithms and Data Structures (`charts.rs`):**
+   * Data structures `BarCategoryData` (labels, value representations, counts, and percentages) and `HistogramBinData` (interval boundaries `left`/`right`, `midpoint`, counts, and percentages);
+   * `HistogramSummary` (sample mean $\mu$, sample standard deviation $\sigma$, sample size $N$, `bin_width`, bins vector, and normal curve coordinates);
+   * Output payload `FrequencyChartResult` (`Bar`, `Pie`, `Histogram`) with title and variable name formatters;
+   * Adaptive histogram binning algorithm `compute_histogram` using Scott's rule ($h = 3.49 \cdot s \cdot n^{-1/3}$) paired with human-readable grid step rounding via `calculate_nice_step` (steps in $1, 2, 5, 10 \times 10^k$);
+   * Generation of 101 theoretical points for the Gaussian normal distribution curve $\mathcal{N}(\mu, \sigma^2)$, correctly scaled to match the histogram area ($scale = N \cdot bin\_width$);
+   * Resilience to degenerate distributions: zero variance ($s = 0$), small sample sizes ($N < 2$), and string variables safely yield `None` or a single bin without runtime panics;
+   * `compute_bar_chart` and `compute_pie_chart` aggregation functions with strict missing values exclusion;
+   * Unified dispatcher `compute_frequency_chart`.
+3. **Integration with Result Payloads and Command Bus:**
+   * Extended `FrequencyResult` with an optional `pub chart: Option<FrequencyChartResult>` field with `skip_serializing_if = "Option::is_none"` ensuring 100% backward compatibility;
+   * Wired automated chart computation into `commands/frequencies_cmd/mod.rs` when `charts` options are provided;
+   * Added unit tests `test_frequencies_with_charts_execution` covering Bar charts and Histograms with normal curve overlay.
+4. **Mathematical Verification via Golden Oracle (`frequencies_charts_oracle_test.rs`):**
+   * 6 dedicated unit tests verifying normal distribution probability density points and bin properties against `scipy.stats.norm.pdf` and `numpy.histogram` with precision $\le 10^{-6}$;
+   * Verified category percentage sums ($100.0 \pm 10^{-6}$), category ordering retention, and absence of panics;
+   * 100% clean passes for all output viewer invariants (`output_viewer_invariants`, `output_viewer_frequencies_invariants`, `output_viewer_navigation`), `xtask file-guard` (492 files), and `cargo clippy -- -D warnings`.
+
+---
+
+### Phase 103: Frequencies Charts — Stage 3: Vector Rendering in Output Viewer, Outline Tree & Export (L6)
+*Time: November 22, 2026, 21:05 (~30 minutes)*
+
+Completed the final third stage of the frequency distribution charts feature (Feature 017 — Frequencies: Charts) — native graphical interface in Output Viewer, Outline tree navigation, and report export:
+1. **Vector-First Chart Rendering without external heavyweight dependencies (L6):**
+   * Module `freq_chart_bar_pie.rs` ($\le 500$ lines):
+     - Bar Charts (`render_bar_chart`): continuous axis scaling with human-readable tick rounding (`calculate_nice_axis_max`), gridlines, category bars with hover highlighting, value labels, and category ticks;
+     - Pie Charts (`render_pie_chart`): sector triangulation via `Shape::convex_polygon` starting at 12 o'clock, authentic SPSS 10-color contrasting palette (`PIE_PALETTE`), side legend with swatches and proportions;
+   * Module `freq_chart_histogram.rs` ($\le 500$ lines):
+     - Histograms (`render_histogram`): contiguous bin columns without gaps, continuous numeric $X$-axis;
+     - Smooth Gaussian normal distribution curve overlay $\mathcal{N}(\mu, \sigma^2)$ in authentic SPSS orange (`Color32::from_rgb(0xED, 0x7D, 0x31)`);
+     - Authentic SPSS summary statistics badge in the upper-right corner (`Mean`, `Std. Dev.`, `N`).
+2. **Output Viewer & Command Coordinator Integration:**
+   * Added `OutputItemKind::FrequencyCharts(Vec<FrequencyChartResult>)` to output model;
+   * In `builder.rs`, `add_frequencies_with_log` automatically appends a dedicated chart item to the procedure tree when charts are present;
+   * Refactored repetitive procedures in `builder.rs` through `push_standard_procedure`, reducing file size to 467 lines (well below the 500-line ceiling).
+3. **Outline Tree & Export:**
+   * Vector chart icon `paint_output_chart_icon` (3 vertical columns on a baseline) in `widgets/output_icons.rs`;
+   * Navigation and context menu support in Outline tree (`outline.rs`);
+   * Tabular chart export to TSV, TXT, and HTML via `frequency_charts_to_tsv` and `extract_item_tsv`.
+4. **Definition of Done (DoD):**
+   * 100% tests passing in workspace (including 6/6 tests in `output_viewer_frequencies_invariants.rs`);
+   * Full compliance with `xtask file-guard` (all 494 files $\le 500$ lines), `xtask design-guard` (zero emojis, canonical DialogKit), `xtask layers`, and `cargo clippy -- -D warnings`.

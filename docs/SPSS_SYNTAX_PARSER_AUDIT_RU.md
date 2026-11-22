@@ -50,7 +50,7 @@
 * Декомпозированные мапперы команд в модульных пакетах (`mappers/stats/`, `mappers/data.rs`, `mappers/advanced_regression.rs`, `mappers/glm.rs`, `mappers/pkg3.rs`, `mappers/variables.rs`).
 * Преобразование распарсенных команд в строго типизированные JSON-параметры `CommandBus`:
   1. `DESCRIPTIVES /VARIABLES=vars /STATISTICS=MEAN STDDEV MIN MAX...` $\to$ `"stat.descriptives"`
-  2. `FREQUENCIES /VARIABLES=vars [/FORMAT={TABLE|NOTABLE} {AVALUE|DVALUE|AFREQ|DFREQ}] [/STATISTICS=[DEFAULT] [MEAN] [SEMEAN] [MEDIAN] [MODE] [SUM] [STDDEV] [VARIANCE] [RANGE] [MINIMUM] [MAXIMUM] [SKEWNESS] [KURTOSIS] [ALL] [NONE]] [/PERCENTILES=values] [/NTILES=n] [/ORDER={ANALYSIS|VARIABLE}]` $\to$ `"stat.frequencies"`
+  2. `FREQUENCIES /VARIABLES=vars [/FORMAT={TABLE|NOTABLE} {AVALUE|DVALUE|AFREQ|DFREQ}] [/STATISTICS=[DEFAULT] [MEAN] [SEMEAN] [MEDIAN] [MODE] [SUM] [STDDEV] [VARIANCE] [RANGE] [MINIMUM] [MAXIMUM] [SKEWNESS] [KURTOSIS] [ALL] [NONE]] [/PERCENTILES=values] [/NTILES=n] [/BARCHART {FREQ|PERCENT}] [/PIECHART {FREQ|PERCENT}] [/HISTOGRAM [NORMAL]] [/ORDER={ANALYSIS|VARIABLE}]` $\to$ `"stat.frequencies"`
   3. `CROSSTABS /TABLES=row BY col /STATISTICS=CHISQ` $\to$ `"stat.crosstabs"`
   4. `T-TEST GROUPS=var(1 2) /VARIABLES=vars` $\to$ `"stat.ttest.indep"`
   5. `T-TEST PAIRS=v1 WITH v2 (PAIRED)` $\to$ `"stat.ttest.paired"`
@@ -88,6 +88,8 @@ $$\text{Диалог / Команда} \xrightarrow{\text{to\_sps}} \text{Стр
 Файл `crates/statcraft_syntax/tests/syntax_roundtrip_and_fuzz_tests.rs`:
 * `test_roundtrip_descriptives` — ПРОЙДЕН
 * `test_roundtrip_frequencies` — ПРОЙДЕН
+* `test_map_frequencies_charts` — ПРОЙДЕН (Bar, Pie, Histogram с нормальной кривой)
+* `test_to_sps_from_params_with_charts` — ПРОЙДЕН
 * `test_roundtrip_sort_cases` — ПРОЙДЕН
 * `test_roundtrip_split_file` — ПРОЙДЕН
 * `test_roundtrip_weight_cases` — ПРОЙДЕН
@@ -106,8 +108,8 @@ $$\text{Диалог / Команда} \xrightarrow{\text{to\_sps}} \text{Стр
 **Результат:** Тест `test_never_crash_on_fuzzed_and_malformed_syntax` завершен с 0 паник. Все ошибки возвращаются в виде типизированных `Err(SyntaxError)`.
 
 ### 3.3. Соответствие Definition of Done
-* `cargo test --workspace -j 1`: **100% успешно (133 теста в syntax, 58 интеграционных тестов синтаксиса, 37 инвариантов окон, 11 инвариантов output, 12 тестов сессии, 0 ошибок)**
-* `cargo run -p xtask -j 1 -- file-guard`: **482 из 482 файлов укладываются в лимиты строк (<= 500 строк для модулей)**
+* `cargo test --workspace -j 1`: **100% успешно (133 теста в syntax, 58 интеграционных тестов синтаксиса, 40 инвариантов окон, 11 инвариантов output, 12 тестов сессии, 0 ошибок)**
+* `cargo run -p xtask -j 1 -- file-guard`: **490 из 490 файлов укладываются в лимиты строк (<= 500 строк для модулей)**
 * `cargo run -p xtask -j 1 -- layers`: **Слоистая архитектура экосистемы ArtCraft строго соблюдена (L0 -> L1 -> L2 -> L5 -> L6)**
 * `cargo run -p xtask -j 1 -- design-guard`: **Дизайн диалоговых окон строго соответствует канону DialogKit**
 

@@ -30,8 +30,8 @@ Phase 3 concludes the comprehensive audit of StatCraft, evaluating the user-faci
 
 ## 2. Section E: Output Viewer & Canonical Pivot Tables
 
-### M-21: Base Output Statistics Tables
-* **Implementation:** `crates/statcraft_app/src/views/output_view/` (`tables_descriptives.rs`, `tables_frequencies.rs`, `tables_crosstabs.rs`, `tables_means.rs`, `tables_common.rs`)
+### M-21: Base Output Statistics Tables & Vector Charts
+* **Implementation:** `crates/statcraft_app/src/views/output_view/` (`tables_descriptives.rs`, `tables_frequencies.rs`, `tables_frequencies/freq_chart_bar_pie.rs`, `tables_frequencies/freq_chart_histogram.rs`, `tables_crosstabs.rs`, `tables_means.rs`, `tables_common.rs`)
 * **SPSS Reference:** *Base Statistics Output Tables Specification*
 * **Craft Anything Hypothesis:** `hyp_33` (Supported)
 * **Audited Invariants & Evidence:**
@@ -39,6 +39,11 @@ Phase 3 concludes the comprehensive audit of StatCraft, evaluating the user-faci
   2. **Frequencies Table:** Implements the 4-column standard (`Frequency`, `Percent`, `Valid Percent`, `Cumulative Percent`) with dedicated rows for `Total Valid`, `Missing (System / User)`, and `Total`.
   3. **Crosstabulation Table:** Multi-tier nested layout displaying `Count`, `Expected Count`, `% within Row`, `% within Column`, `% of Total`, and `Residuals`. Integrated `Chi-Square Tests` sub-table (Pearson, Continuity Correction, Likelihood Ratio, Fisher's Exact, Linear-by-Linear).
   4. **P-Value Formatting:** Significance values below $0.001$ are formatted with leading-zero suppression as `< .001` per APA / SPSS conventions.
+  5. **Vector-First Frequencies Charts:**
+     - **Bar Charts (`BarChart`):** Automated Y-axis nice tick scaling (`calculate_nice_step`), subtle horizontal gridlines, interactive bar hover highlight, value labels (frequencies or percentages) above bars, and category labels along the X-axis.
+     - **Pie Charts (`PieChart`):** Sector triangulation via `convex_polygon` starting at 12 o'clock, canonical 10-color `PIE_PALETTE`, and vector legend on the right with color swatches, category labels, and percentage shares.
+     - **Histograms (`Histogram`):** Continuous X-axis with contiguous touching bins, theoretical Gaussian normal density curve overlay $\mathcal{N}(\mu, \sigma^2)$ in authentic SPSS orange (`#ED7D31`), and distribution statistics badge in the top-right corner (`Mean`, `Std. Dev.`, `N`).
+     - **Rendering Standard:** 100% vector primitives via `ui.painter()`, zero raster images, zero emojis, and zero unsupported Unicode glyphs.
 
 ### M-22: Compare Means Output Tables
 * **Implementation:** `tables_ttest_onesample.rs`, `tables_ttest_indep.rs`, `tables_ttest_paired.rs`, `tables_anova.rs`
@@ -61,14 +66,14 @@ Phase 3 concludes the comprehensive audit of StatCraft, evaluating the user-faci
   5. **Nonparametric Suite:** Ranks and Test Statistics tables for Mann-Whitney $U$, Wilcoxon Signed Ranks ($W$), and Kruskal-Wallis ($H$).
 
 ### M-24: Outline Tree Navigation & Output Export
-* **Implementation:** `outline.rs`, `blocks.rs`, `builder.rs`, `export.rs`, `model.rs`
+* **Implementation:** `outline.rs`, `blocks.rs`, `builder.rs`, `export.rs`, `model.rs`, `widgets/output_icons.rs`
 * **SPSS Reference:** *SPSS Viewer DOM & Export Framework*
 * **Craft Anything Hypothesis:** `hyp_36` (Supported)
 * **Audited Invariants & Evidence:**
-  1. **Outline Hierarchy:** Document Tree structure: `Output Root` $\to$ `Procedure Node` $\to$ `Log (.sps syntax)` $\to$ `Notes` $\to$ `Pivot Tables`.
-  2. **Interactive Navigation:** Clicking any tree item smooth-scrolls the canvas to target.
+  1. **Outline Hierarchy:** Document Tree structure: `Output Root` $\to$ `Procedure Node` $\to$ `Log (.sps syntax)` $\to$ `Notes` $\to$ `Pivot Tables` $\to$ `FrequencyCharts` (vector icon `paint_output_chart_icon`: 3 columns on a baseline).
+  2. **Interactive Navigation:** Clicking any tree item smooth-scrolls the canvas to target table or chart.
   3. **Context Menu Actions:** Right-click support on individual nodes: Copy as TSV, Copy as Text, and Delete.
-  4. **Export Engine:** Full document or individual table export into TSV, styled HTML, and Plain Text via `statcraft_reporting`.
+  4. **Export Engine:** Full document or individual table/chart export into TSV, styled HTML, and Plain Text via `statcraft_reporting`. Supports tabular chart distribution export to TSV (`frequency_charts_to_tsv`).
 
 ---
 
@@ -117,14 +122,15 @@ Phase 3 concludes the comprehensive audit of StatCraft, evaluating the user-faci
   4. **Precondition Guard:** `[ OK ]` button automatically disables when procedural inputs are invalid.
   5. **VariablePicker & TransferButton:** Vector measure icons (Scale, Ordinal, Nominal) and adaptive transfer buttons (`->` / `<-`).
 
-### M-29: Procedural Dialogs Suite (37 Dialogs)
-* **Implementation:** `crates/statcraft_app/src/dialogs/*.rs`
+### M-29: Procedural Dialogs Suite (37 Dialogs & Subdialogs)
+* **Implementation:** `crates/statcraft_app/src/dialogs/*.rs` (including `frequencies_dialog/charts_subdialog.rs` and `statistics_subdialog.rs`)
 * **SPSS Reference:** *SPSS Procedural Dialogs Suite*
 * **Craft Anything Hypothesis:** `hyp_41` (Supported)
 * **Audited Invariants & Evidence:**
   1. **Design Guard Linter (`cargo run -p xtask -j 1 -- design-guard`):** 0 violations. Zero raw button calls, 100% DialogKit compliance.
-  2. **Reset Idempotence:** Clicking `[ Reset ]` restores all parameters and lists to exact defaults across all 37 dialogs.
-  3. **Automated Suite:** Verified via `cargo test -p statcraft_app --test dialog_invariants -j 1` (37/37 passing).
+  2. **Subdialog Canonical Architecture:** Type 2 modal subdialogs (such as *Frequencies: Charts*, $360 \times 300$ px) use `DialogShell::subdialog`, `GroupBox` and `SubdialogActionBar` (`[ Continue ] [ Cancel ] [ Help ]`) with rollback on cancel. Mutual exclusivity rules enforced (Histogram vs Bar/Pie, normal curve gating).
+  3. **Reset Idempotence:** Clicking `[ Reset ]` restores all parameters and lists to exact defaults across all dialogs.
+  4. **Automated Suite:** Verified via `cargo test -p statcraft_app --test dialog_invariants -j 1` (40/40 passing).
 
 ---
 

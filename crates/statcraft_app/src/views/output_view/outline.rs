@@ -2,9 +2,9 @@ use super::extract_item_tsv;
 use super::model::{OutputItemKind, OutputViewerState, SelectedTarget};
 use crate::theme::Tokens;
 use crate::widgets::output_icons::{
-    paint_icon_collapse_all, paint_icon_expand_all, paint_icon_trash, paint_output_folder_icon,
-    paint_output_log_icon, paint_output_notes_icon, paint_output_root_icon,
-    paint_output_table_icon, paint_output_warning_icon,
+    paint_icon_collapse_all, paint_icon_expand_all, paint_icon_trash, paint_output_chart_icon,
+    paint_output_folder_icon, paint_output_log_icon, paint_output_notes_icon,
+    paint_output_root_icon, paint_output_table_icon, paint_output_warning_icon,
 };
 use crate::widgets::vector_arrow::paint_vector_arrow;
 use egui::{pos2, vec2, Align2, FontId, ScrollArea, Sense, Stroke, Ui};
@@ -249,6 +249,9 @@ pub fn render_outline_pane(
                                         icon_rect,
                                         icon_color,
                                     ),
+                                    OutputItemKind::FrequencyCharts(_) => {
+                                        paint_output_chart_icon(ui.painter(), icon_rect, icon_color)
+                                    }
                                     _ => {
                                         paint_output_table_icon(ui.painter(), icon_rect, icon_color)
                                     }

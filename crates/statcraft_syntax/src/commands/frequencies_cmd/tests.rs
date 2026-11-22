@@ -1,5 +1,6 @@
 use super::*;
 use serde_json::json;
+use statcraft_algo::FrequencyChartResult;
 use statcraft_core::DataSet;
 use statcraft_io::{load_csv_from_reader, CsvOptions};
 
@@ -119,6 +120,45 @@ fn test_to_sps_from_params() {
 }
 
 #[test]
+fn test_to_sps_from_params_with_charts() {
+    // Bar chart with percent
+    let params_bar = json!({
+        "vars": ["salary"],
+        "charts": {
+            "chart_type": "bar",
+            "values": "percentages",
+            "normal_curve": false
+        }
+    });
+    let sps = FrequenciesCommand::to_sps_from_params(&params_bar);
+    assert!(sps.contains("  /BARCHART PERCENT"));
+
+    // Pie chart with frequencies
+    let params_pie = json!({
+        "vars": ["gender"],
+        "charts": {
+            "chart_type": "pie",
+            "values": "frequencies",
+            "normal_curve": false
+        }
+    });
+    let sps = FrequenciesCommand::to_sps_from_params(&params_pie);
+    assert!(sps.contains("  /PIECHART FREQ"));
+
+    // Histogram with normal curve
+    let params_hist = json!({
+        "vars": ["score"],
+        "charts": {
+            "chart_type": "histogram",
+            "values": "frequencies",
+            "normal_curve": true
+        }
+    });
+    let sps = FrequenciesCommand::to_sps_from_params(&params_hist);
+    assert!(sps.contains("  /HISTOGRAM NORMAL"));
+}
+
+#[test]
 fn test_frequencies_nominal_numeric_stats_and_label() {
     let cmd = FrequenciesCommand;
     let mut ds = Some(make_test_dataset());
@@ -156,4 +196,62 @@ fn test_frequencies_nominal_numeric_stats_and_label() {
     assert!(stats.mean.is_some());
     assert!(stats.median.is_some());
     assert!(gender_res.quartiles.is_some());
+}
+
+#[test]
+fn test_frequencies_with_charts_execution() {
+    let cmd = FrequenciesCommand;
+    let mut ds = Some(make_test_dataset());
+
+    // 1. Bar chart with percentages
+    let params_bar = json!({
+        "vars": ["gender"],
+        "charts": {
+            "chart_type": "bar",
+            "values": "percentages"
+        }
+    });
+    let res_bar = cmd.execute(&mut ds, params_bar).expect("Execution success");
+    let results_bar: Vec<FrequencyResult> = serde_json::from_value(res_bar).expect("Valid JSON");
+    assert!(results_bar[0].chart.is_some());
+    if let Some(FrequencyChartResult::Bar {
+        is_percentages,
+        categories,
+        ..
+    }) = &results_bar[0].chart
+    {
+        assert!(is_percentages);
+        assert_eq!(categories.len(), 2);
+        assert_eq!(categories[0].label, "Male");
+        assert_eq!(categories[0].count, 3.0);
+        assert!((categories[0].percent - 60.0).abs() < 1e-6);
+        assert_eq!(categories[1].label, "Female");
+        assert_eq!(categories[1].count, 2.0);
+        assert!((categories[1].percent - 40.0).abs() < 1e-6);
+    } else {
+        panic!("Expected Bar chart");
+    }
+
+    // 2. Histogram with normal curve
+    let params_hist = json!({
+        "vars": ["score"],
+        "charts": {
+            "chart_type": "histogram",
+            "values": "frequencies",
+            "normal_curve": true
+        }
+    });
+    let res_hist = cmd
+        .execute(&mut ds, params_hist)
+        .expect("Execution success");
+    let results_hist: Vec<FrequencyResult> = serde_json::from_value(res_hist).expect("Valid JSON");
+    assert!(results_hist[0].chart.is_some());
+    if let Some(FrequencyChartResult::Histogram { summary, .. }) = &results_hist[0].chart {
+        assert_eq!(summary.n_valid, 5);
+        assert!((summary.mean - 91.0).abs() < 1e-6);
+        assert!(summary.normal_curve_points.is_some());
+        assert!(!summary.bins.is_empty());
+    } else {
+        panic!("Expected Histogram chart");
+    }
 }

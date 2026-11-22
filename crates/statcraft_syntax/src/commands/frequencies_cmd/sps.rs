@@ -125,6 +125,50 @@ pub fn to_sps_from_params(params: &Value) -> String {
         }
     }
 
+    // CHARTS
+    if let Some(charts) = params.get("charts") {
+        let chart_type = charts
+            .get("chart_type")
+            .and_then(|v| v.as_str())
+            .unwrap_or("");
+        match chart_type {
+            "bar" => {
+                let is_percent = charts
+                    .get("values")
+                    .and_then(|v| v.as_str())
+                    .map(|s| {
+                        s.eq_ignore_ascii_case("percentages") || s.eq_ignore_ascii_case("percent")
+                    })
+                    .unwrap_or(false);
+                let val = if is_percent { "PERCENT" } else { "FREQ" };
+                lines.push(format!("  /BARCHART {}", val));
+            }
+            "pie" => {
+                let is_percent = charts
+                    .get("values")
+                    .and_then(|v| v.as_str())
+                    .map(|s| {
+                        s.eq_ignore_ascii_case("percentages") || s.eq_ignore_ascii_case("percent")
+                    })
+                    .unwrap_or(false);
+                let val = if is_percent { "PERCENT" } else { "FREQ" };
+                lines.push(format!("  /PIECHART {}", val));
+            }
+            "histogram" => {
+                let normal = charts
+                    .get("normal_curve")
+                    .and_then(|v| v.as_bool())
+                    .unwrap_or(false);
+                if normal {
+                    lines.push("  /HISTOGRAM NORMAL".to_string());
+                } else {
+                    lines.push("  /HISTOGRAM".to_string());
+                }
+            }
+            _ => {}
+        }
+    }
+
     // ORDER
     if let Some(ord) = order {
         if ord.eq_ignore_ascii_case("variable") {

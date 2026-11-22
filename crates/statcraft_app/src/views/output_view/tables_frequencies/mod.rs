@@ -1,10 +1,15 @@
+pub mod freq_chart_bar_pie;
+pub mod freq_chart_histogram;
 pub mod freq_table;
 pub mod stats_summary_table;
 
-use egui::Ui;
+pub use freq_chart_bar_pie::*;
+pub use freq_chart_histogram::*;
 pub use freq_table::render_single_frequency_table;
-use statcraft_algo::FrequencyResult;
 pub use stats_summary_table::render_stats_summary_table;
+
+use egui::Ui;
+use statcraft_algo::{FrequencyChartResult, FrequencyResult};
 
 pub fn render_spss_frequencies_tables(ui: &mut Ui, results: &[FrequencyResult]) {
     if results.is_empty() {
@@ -20,6 +25,30 @@ pub fn render_spss_frequencies_tables(ui: &mut Ui, results: &[FrequencyResult]) 
                 render_single_frequency_table(ui, res);
                 ui.add_space(16.0_f32);
             }
+        }
+    });
+}
+
+pub fn render_frequency_chart(ui: &mut Ui, chart: &FrequencyChartResult) {
+    match chart {
+        FrequencyChartResult::Bar { .. } | FrequencyChartResult::Pie { .. } => {
+            render_bar_or_pie_chart(ui, chart);
+        }
+        FrequencyChartResult::Histogram { .. } => {
+            render_histogram_chart(ui, chart);
+        }
+    }
+}
+
+pub fn render_frequency_charts(ui: &mut Ui, charts: &[FrequencyChartResult]) {
+    if charts.is_empty() {
+        return;
+    }
+
+    ui.vertical(|ui| {
+        for chart in charts {
+            render_frequency_chart(ui, chart);
+            ui.add_space(16.0_f32);
         }
     });
 }
@@ -42,5 +71,22 @@ pub fn frequencies_to_tsv(results: &[FrequencyResult]) -> String {
         }
     }
 
+    out
+}
+
+pub fn frequency_charts_to_tsv(charts: &[FrequencyChartResult]) -> String {
+    let mut out = String::new();
+    for chart in charts {
+        match chart {
+            FrequencyChartResult::Bar { .. } | FrequencyChartResult::Pie { .. } => {
+                out.push_str(&bar_or_pie_chart_to_tsv(chart));
+                out.push('\n');
+            }
+            FrequencyChartResult::Histogram { .. } => {
+                out.push_str(&histogram_chart_to_tsv(chart));
+                out.push('\n');
+            }
+        }
+    }
     out
 }

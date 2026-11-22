@@ -1,4 +1,57 @@
+use serde::{Deserialize, Serialize};
 use serde_json::{json, Value};
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
+pub enum FrequenciesChartType {
+    None,
+    Bar,
+    Pie,
+    Histogram,
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
+pub enum FrequenciesChartValue {
+    Frequencies,
+    Percentages,
+}
+
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+pub struct FrequenciesChartOptions {
+    pub chart_type: FrequenciesChartType,
+    pub values: FrequenciesChartValue,
+    pub normal_curve: bool,
+}
+
+impl Default for FrequenciesChartOptions {
+    fn default() -> Self {
+        Self {
+            chart_type: FrequenciesChartType::None,
+            values: FrequenciesChartValue::Frequencies,
+            normal_curve: false,
+        }
+    }
+}
+
+impl FrequenciesChartOptions {
+    pub fn to_json(&self) -> Option<Value> {
+        if self.chart_type == FrequenciesChartType::None {
+            return None;
+        }
+        Some(json!({
+            "chart_type": match self.chart_type {
+                FrequenciesChartType::None => "none",
+                FrequenciesChartType::Bar => "bar",
+                FrequenciesChartType::Pie => "pie",
+                FrequenciesChartType::Histogram => "histogram",
+            },
+            "values": match self.values {
+                FrequenciesChartValue::Frequencies => "frequencies",
+                FrequenciesChartValue::Percentages => "percentages",
+            },
+            "normal_curve": self.normal_curve,
+        }))
+    }
+}
 
 #[derive(Debug, Clone, PartialEq)]
 pub struct FrequenciesStatisticsState {
@@ -128,6 +181,7 @@ impl FrequenciesStatisticsState {
 pub struct FrequenciesDialogState {
     pub is_open: bool,
     pub show_statistics: bool,
+    pub show_charts: bool,
     pub source_selected: Option<usize>,
     pub target_selected: Option<usize>,
     pub selected_vars: Vec<String>,
@@ -135,6 +189,8 @@ pub struct FrequenciesDialogState {
     pub apa_tables: bool,
     pub stats: FrequenciesStatisticsState,
     pub stats_backup: Option<FrequenciesStatisticsState>,
+    pub charts: FrequenciesChartOptions,
+    pub charts_backup: Option<FrequenciesChartOptions>,
 }
 
 impl Default for FrequenciesDialogState {
@@ -142,6 +198,7 @@ impl Default for FrequenciesDialogState {
         Self {
             is_open: false,
             show_statistics: false,
+            show_charts: false,
             source_selected: None,
             target_selected: None,
             selected_vars: Vec::new(),
@@ -149,6 +206,8 @@ impl Default for FrequenciesDialogState {
             apa_tables: false,
             stats: FrequenciesStatisticsState::default(),
             stats_backup: None,
+            charts: FrequenciesChartOptions::default(),
+            charts_backup: None,
         }
     }
 }
@@ -162,7 +221,10 @@ impl FrequenciesDialogState {
         self.apa_tables = false;
         self.stats = FrequenciesStatisticsState::default();
         self.stats_backup = None;
+        self.charts = FrequenciesChartOptions::default();
+        self.charts_backup = None;
         self.show_statistics = false;
+        self.show_charts = false;
     }
 }
 
@@ -174,6 +236,7 @@ pub enum FrequenciesDialogAction {
         statistics: Option<Value>,
         percentiles: Option<Value>,
         group_midpoints: bool,
+        charts: Option<Value>,
     },
     Paste {
         vars: Vec<String>,
@@ -182,6 +245,7 @@ pub enum FrequenciesDialogAction {
         statistics: Option<Value>,
         percentiles: Option<Value>,
         group_midpoints: bool,
+        charts: Option<Value>,
     },
     None,
 }

@@ -7,6 +7,36 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [0.4.5] - 2026-11-22
+
+### Added
+- **Frequencies: Charts Subdialog & Complete SPSS Parity (Feature 017):**
+  - Implemented authentic canonical SPSS subdialog «Frequencies: Charts» (`Частоты: Диаграммы`) via DialogKit `DialogShell::subdialog(360, 300)` (`crates/statcraft_app/src/dialogs/frequencies_dialog/charts_subdialog.rs`).
+  - Added radio group *Chart Type*: None (default), Bar charts, Pie charts, and Histograms with indented checkbox *Show normal curve on histogram*.
+  - Added radio group *Chart Values*: Frequencies (default) and Percentages with contextual interactivity (authentically enabled only for Bar and Pie charts, disabled when None or Histograms is selected).
+  - Added subdialog state management with cancellation rollback and reset support in `FrequenciesDialogState`.
+  - Added bidirectional SPSS syntax support: serialization to `/BARCHART [FREQ|PERCENT]`, `/PIECHART [FREQ|PERCENT]`, and `/HISTOGRAM [NORMAL]` on Paste, and syntax parser recognition in `statcraft_run_syntax`.
+- **Vector-First Chart Rendering in Output Viewer (`statcraft_app`):**
+  - Implemented 100% pure vector chart rendering using `ui.painter()` (zero emojis, zero non-standard Unicode glyphs) with tokens-aware theme styling:
+    - `freq_chart_bar_pie.rs`: Bar charts with category X-axis, frequency/percentage Y-ticks, hover highlights, value labels, and Pie charts with vector polygon slice fans, adaptive palette, and percentage legend.
+    - `freq_chart_histogram.rs`: Continuous contiguous bins, smooth overlaid Gaussian density curve, and authentic top-right SPSS Statistics Legend Box (`Mean`, `Std. Dev.`, `N`).
+  - Integrated charts into Output Viewer Outline navigation tree with dedicated vector chart icons (`paint_output_chart_icon`).
+  - Added structured tabular and textual fallback summaries for chart items during TSV and HTML export.
+- **Mathematical Histogram Binning & Normal Density Scaling (`statcraft_algo`):**
+  - Implemented pure algorithmic module `crates/statcraft_algo/src/frequencies/charts.rs`:
+    - Adaptive Freedman-Diaconis and Scott bin width calculation with "nice" step rounding ($1, 2, 2.5, 5, 10 \times 10^k$).
+    - Scaled Gaussian density curve overlay matching histogram frequency area: $y = \frac{N \cdot h}{\sigma \sqrt{2\pi}} \exp\left(-\frac{(x - \mu)^2}{2\sigma^2}\right)$.
+    - Robust edge-case handling for zero variance ($s = 0$), sample sizes $N < 2$, missing values, and non-numeric variables.
+  - Added Golden Oracle validation suite in `frequencies_charts_oracle_test.rs` matching SciPy reference outputs.
+
+### Fixed
+- **Frequencies Summary Statistics on Numeric Nominal Variables (Feature 016 Parity):**
+  - Removed artificial suppression of summary statistics and percentiles for numeric variables marked with `Measure::Nominal`, bringing full parity with IBM SPSS Statistics.
+  - Replaced raw technical identifiers with authentic SPSS Variable Labels (`Label [Name]`) in frequency table titles and summary statistics column headers.
+  - Synchronized Output Viewer executed syntax log with exact `/STATISTICS` and `/PERCENTILES` subcommands.
+
+---
+
 ## [0.4.4] - 2026-11-22
 
 ### Fixed

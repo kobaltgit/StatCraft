@@ -1,9 +1,10 @@
 use statcraft_algo::{
-    FrequenciesStatisticsResult, FrequencyCategory, FrequencyResult, PercentileValue,
+    BarCategoryData, FrequenciesStatisticsResult, FrequencyCategory, FrequencyChartResult,
+    FrequencyResult, HistogramBinData, HistogramSummary, PercentileValue,
 };
 use statcraft_app::views::output_view::{
-    frequencies_to_tsv, render_output_view, OutputItem, OutputItemKind, OutputNotes,
-    OutputProcedure, OutputViewerState, SelectedTarget,
+    extract_item_tsv, frequencies_to_tsv, render_output_view, OutputItem, OutputItemKind,
+    OutputNotes, OutputProcedure, OutputViewerState, SelectedTarget,
 };
 
 fn sample_rich_frequencies() -> Vec<FrequencyResult> {
@@ -55,6 +56,7 @@ fn sample_rich_frequencies() -> Vec<FrequencyResult> {
                     PercentileValue::new(90.0, 60000.0),
                 ],
             }),
+            chart: None,
         },
         FrequencyResult {
             variable: "educ".to_string(),
@@ -81,6 +83,7 @@ fn sample_rich_frequencies() -> Vec<FrequencyResult> {
                 sum: Some(6395.0),
                 percentiles: vec![],
             }),
+            chart: None,
         },
         FrequencyResult {
             variable: "gender".to_string(),
@@ -107,6 +110,7 @@ fn sample_rich_frequencies() -> Vec<FrequencyResult> {
             ],
             quartiles: None,
             statistics: None,
+            chart: None,
         },
     ]
 }
@@ -335,6 +339,7 @@ fn test_frequencies_with_variable_labels_rendering_and_tsv() {
             sum: Some(160.0),
             percentiles: vec![],
         }),
+        chart: None,
     }];
 
     let tsv = frequencies_to_tsv(&results);
@@ -362,6 +367,249 @@ fn test_frequencies_with_variable_labels_rendering_and_tsv() {
         _ => panic!("Item 0 must be Log"),
     }
 
+    let _ = ctx.run(egui::RawInput::default(), |ui_ctx| {
+        egui::CentralPanel::default().show(ui_ctx, |ui| {
+            render_output_view(ui, &mut state);
+        });
+    });
+}
+
+#[test]
+fn test_frequencies_charts_bar_and_pie_rendering_and_tsv() {
+    let _ = statcraft_i18n::init_i18n();
+    statcraft_i18n::set_language("en");
+
+    let bar_chart = FrequencyChartResult::Bar {
+        var_name: "gender".to_string(),
+        var_label: Some("Gender Identity".to_string()),
+        is_percentages: true,
+        categories: vec![
+            BarCategoryData {
+                label: "Female".to_string(),
+                value_repr: "f".to_string(),
+                count: 216.0,
+                percent: 45.6,
+            },
+            BarCategoryData {
+                label: "Male".to_string(),
+                value_repr: "m".to_string(),
+                count: 258.0,
+                percent: 54.4,
+            },
+        ],
+    };
+
+    let pie_chart = FrequencyChartResult::Pie {
+        var_name: "jobcat".to_string(),
+        var_label: Some("Employment Category".to_string()),
+        is_percentages: false,
+        slices: vec![
+            BarCategoryData {
+                label: "Clerical".to_string(),
+                value_repr: "1".to_string(),
+                count: 363.0,
+                percent: 76.6,
+            },
+            BarCategoryData {
+                label: "Custodial".to_string(),
+                value_repr: "2".to_string(),
+                count: 27.0,
+                percent: 5.7,
+            },
+            BarCategoryData {
+                label: "Manager".to_string(),
+                value_repr: "3".to_string(),
+                count: 84.0,
+                percent: 17.7,
+            },
+        ],
+    };
+
+    let charts_kind = OutputItemKind::FrequencyCharts(vec![bar_chart, pie_chart]);
+    let tsv = extract_item_tsv(&charts_kind).expect("Charts must produce TSV");
+    assert!(tsv.contains("Bar Chart: gender"));
+    assert!(tsv.contains("Female\t216\t45.60%"));
+    assert!(tsv.contains("Pie Chart: jobcat"));
+    assert!(tsv.contains("Clerical\t363\t76.60%"));
+
+    let ctx = egui::Context::default();
+    let mut state = OutputViewerState::new();
+    let proc_id = state.alloc_id();
+    let item_id = state.alloc_id();
+    state.procedures.push(OutputProcedure {
+        id: proc_id,
+        title_key: "output-frequencies",
+        custom_title: None,
+        dataset_name: Some("EmployeeData".to_string()),
+        is_expanded: true,
+        items: vec![OutputItem {
+            id: item_id,
+            title_key: "output-frequencies-charts",
+            custom_title: None,
+            kind: charts_kind,
+        }],
+    });
+
+    let _ = ctx.run(egui::RawInput::default(), |ui_ctx| {
+        egui::CentralPanel::default().show(ui_ctx, |ui| {
+            render_output_view(ui, &mut state);
+        });
+    });
+}
+
+#[test]
+fn test_frequencies_charts_histogram_rendering_and_tsv() {
+    let _ = statcraft_i18n::init_i18n();
+    statcraft_i18n::set_language("en");
+
+    let hist_chart = FrequencyChartResult::Histogram {
+        var_name: "salary".to_string(),
+        var_label: Some("Current Salary".to_string()),
+        summary: HistogramSummary {
+            mean: 34419.57,
+            std_dev: 17075.66,
+            n_valid: 474,
+            bin_width: 10000.0,
+            bins: vec![
+                HistogramBinData {
+                    left: 10000.0,
+                    right: 20000.0,
+                    midpoint: 15000.0,
+                    count: 65,
+                    percent: 13.7,
+                },
+                HistogramBinData {
+                    left: 20000.0,
+                    right: 30000.0,
+                    midpoint: 25000.0,
+                    count: 220,
+                    percent: 46.4,
+                },
+                HistogramBinData {
+                    left: 30000.0,
+                    right: 40000.0,
+                    midpoint: 35000.0,
+                    count: 105,
+                    percent: 22.2,
+                },
+            ],
+            normal_curve_points: Some(vec![
+                (10000.0, 15.0),
+                (20000.0, 120.0),
+                (30000.0, 210.0),
+                (40000.0, 95.0),
+            ]),
+        },
+    };
+
+    let charts_kind = OutputItemKind::FrequencyCharts(vec![hist_chart]);
+    let tsv = extract_item_tsv(&charts_kind).expect("Histogram must produce TSV");
+    assert!(tsv.contains("Histogram: salary"));
+    assert!(tsv.contains("Mean=34419.57"));
+    assert!(tsv.contains("StdDev=17075.660"));
+    assert!(tsv.contains("N=474"));
+    assert!(tsv.contains("10000.000\t20000.000\t15000.000\t65\t13.70%"));
+
+    let ctx = egui::Context::default();
+    let mut state = OutputViewerState::new();
+    let proc_id = state.alloc_id();
+    let item_id = state.alloc_id();
+    state.procedures.push(OutputProcedure {
+        id: proc_id,
+        title_key: "output-frequencies",
+        custom_title: None,
+        dataset_name: Some("EmployeeData".to_string()),
+        is_expanded: true,
+        items: vec![OutputItem {
+            id: item_id,
+            title_key: "output-frequencies-charts",
+            custom_title: None,
+            kind: charts_kind,
+        }],
+    });
+
+    let _ = ctx.run(egui::RawInput::default(), |ui_ctx| {
+        egui::CentralPanel::default().show(ui_ctx, |ui| {
+            render_output_view(ui, &mut state);
+        });
+    });
+}
+
+#[test]
+fn test_frequencies_builder_with_charts_adds_chart_item() {
+    let _ = statcraft_i18n::init_i18n();
+    statcraft_i18n::set_language("en");
+
+    let results = vec![FrequencyResult {
+        variable: "gender".to_string(),
+        variable_label: Some("Gender".to_string()),
+        n_valid: 474,
+        n_missing: 0,
+        categories: vec![
+            FrequencyCategory {
+                value: "f".to_string(),
+                label: Some("Female".to_string()),
+                count: 216,
+                percent: 45.6,
+                valid_percent: Some(45.6),
+                cumulative_percent: Some(45.6),
+            },
+            FrequencyCategory {
+                value: "m".to_string(),
+                label: Some("Male".to_string()),
+                count: 258,
+                percent: 54.4,
+                valid_percent: Some(54.4),
+                cumulative_percent: Some(100.0),
+            },
+        ],
+        quartiles: None,
+        statistics: None,
+        chart: Some(FrequencyChartResult::Bar {
+            var_name: "gender".to_string(),
+            var_label: Some("Gender".to_string()),
+            is_percentages: false,
+            categories: vec![
+                BarCategoryData {
+                    label: "Female".to_string(),
+                    value_repr: "f".to_string(),
+                    count: 216.0,
+                    percent: 45.6,
+                },
+                BarCategoryData {
+                    label: "Male".to_string(),
+                    value_repr: "m".to_string(),
+                    count: 258.0,
+                    percent: 54.4,
+                },
+            ],
+        }),
+    }];
+
+    let mut state = OutputViewerState::new();
+    state.add_frequencies_with_log(
+        results,
+        "FREQUENCIES VARIABLES=gender\n  /BARCHART FREQ.\n".to_string(),
+    );
+
+    assert_eq!(state.procedures.len(), 1);
+    let proc = &state.procedures[0];
+    assert_eq!(
+        proc.items.len(),
+        4,
+        "Should have Log, Notes, FrequenciesTables, and FrequencyCharts"
+    );
+
+    // Item 3 must be FrequencyCharts
+    match &proc.items[3].kind {
+        OutputItemKind::FrequencyCharts(charts) => {
+            assert_eq!(charts.len(), 1);
+            assert_eq!(charts[0].var_name(), "gender");
+        }
+        _ => panic!("Item 3 must be FrequencyCharts"),
+    }
+
+    let ctx = egui::Context::default();
     let _ = ctx.run(egui::RawInput::default(), |ui_ctx| {
         egui::CentralPanel::default().show(ui_ctx, |ui| {
             render_output_view(ui, &mut state);
