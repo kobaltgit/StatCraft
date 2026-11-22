@@ -48,9 +48,15 @@ export const AUDIT_BLOCKS: AuditBlock[] = [
         descriptionEn: "2x2 table continuity correction & exact hypergeometric test",
         descriptionRu: "Поправка Йейтса на непрерывность и точный критерий Фишера",
       },
+      {
+        name: "Scott's Binning & Normal Curve Scaling",
+        latex: "h = 3.49 s N^{-1/3}, \\quad y(x) = \\frac{N \\cdot h}{s \\sqrt{2\\pi}} \\exp\\left(-\\frac{(x - \\bar{X})^2}{2s^2}\\right)",
+        descriptionEn: "Adaptive histogram binning with round step grid & area-scaled Gaussian normal density curve",
+        descriptionRu: "Адаптивный биннинг гистограмм по Скотту с округлением шага и масштабирование кривой Гаусса",
+      },
     ],
-    notesEn: "HAVERAGE canonical quantile interpolation r = p*(N+1), 14 univariate statistics and Mode Tie-Breaker verified.",
-    notesRu: "Квартили HAVERAGE r = p*(N+1), 14 дескриптивных статистик и Mode Tie-Breaker верифицированы.",
+    notesEn: "HAVERAGE canonical quantile interpolation r = p*(N+1), 14 univariate statistics, Mode Tie-Breaker, and Scott histogram binning with normal curve verified.",
+    notesRu: "Квартили HAVERAGE r = p*(N+1), 14 дескриптивных статистик, Mode Tie-Breaker, адаптивный биннинг гистограмм Скотта и кривая Гаусса верифицированы.",
   },
   {
     id: "block-2",

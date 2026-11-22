@@ -6,6 +6,7 @@ import { ArrowRight, AlertTriangle, ShieldCheck, Cpu, Database, Binary, MessageS
 import { ModalReportIssue } from '../modal-report-issue';
 import { DownloadButton } from '../download-button';
 import { useRelease } from '@/lib/use-release';
+import { AUDIT_BLOCKS } from '@/lib/audit-data';
 
 interface HeroProps {
   lang?: 'en' | 'ru';
@@ -15,6 +16,9 @@ export function Hero({ lang = 'en' }: HeroProps) {
   const [reportModalOpen, setReportModalOpen] = useState(false);
   const { version } = useRelease();
 
+  const totalBlocks = AUDIT_BLOCKS.length;
+  const verifiedBlocks = AUDIT_BLOCKS.filter(b => b.status === 'verified').length;
+
   const t = {
     en: {
       badge: `ACADEMIC EXPERIMENT // BUILD ${version}`,
@@ -23,10 +27,10 @@ export function Hero({ lang = 'en' }: HeroProps) {
       lead: 'An experimental, 100% Safe Rust alternative for statistical data analysis. Clean-room mathematical engine built on Apache Arrow and Polars with native Model Context Protocol (MCP) integration for AI-guided empirical research.',
       disclaimer: 'Academic Notice: StatCraft is an independent open-science software project. It is not affiliated with or certified by IBM SPSS Statistics. Do not use for clinical diagnostic decisions or legal compliance without independent statistical replication.',
       btnDocs: 'Documentation & Wiki',
-      btnAudit: '20-Block Audit Matrix',
+      btnAudit: `${totalBlocks}-Block Audit Matrix`,
       btnGithub: 'Source on GitHub',
       btnReport: 'Report Discrepancy',
-      stat1Val: '20 / 20',
+      stat1Val: `${verifiedBlocks} / ${totalBlocks}`,
       stat1Lbl: 'Audit Blocks Verified',
       stat1Desc: 'Independent validation against SciPy Golden Oracle (Δ < 10⁻⁶)',
       stat2Val: '0 Panics',
@@ -46,10 +50,10 @@ export function Hero({ lang = 'en' }: HeroProps) {
       lead: 'Экспериментальная альтернатива классическим статистическим пакетам на 100% безопасном Rust. Чистая математическая реализация на базе Apache Arrow и Polars со встроенным протоколом MCP для совместных исследований с ИИ.',
       disclaimer: 'Уведомление об исследовательской природе: StatCraft — независимый проект открытой науки. Программа не аффилирована с IBM SPSS Statistics. Не предназначена для клинических медицинских диагнозов и судебной экспертизы без независимого воспроизведения расчетов.',
       btnDocs: 'Документация и Вики',
-      btnAudit: 'Матрица аудита 20 блоков',
+      btnAudit: `Матрица аудита ${totalBlocks} блоков`,
       btnGithub: 'Исходный код GitHub',
       btnReport: 'Сообщить о расхождении',
-      stat1Val: '20 из 20',
+      stat1Val: `${verifiedBlocks} из ${totalBlocks}`,
       stat1Lbl: 'Блоков аудита проверено',
       stat1Desc: 'Сверка с «Золотым оракулом» SciPy (допуск Δ < 10⁻⁶)',
       stat2Val: '0 паник',

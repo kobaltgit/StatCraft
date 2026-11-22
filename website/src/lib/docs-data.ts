@@ -403,4 +403,55 @@ StatCraft формирует полные таблицы со стандарти
 Критерий Дарбина-Уотсона $d$ проверяет независимость остатков:
 $$d = \\frac{\\sum_{i=2}^N (e_i - e_{i-1})^2}{\\sum_{i=1}^N e_i^2}$$`,
   },
+  {
+    slug: "frequencies-and-charts",
+    category: "procedures",
+    categoryTitleEn: "Statistical Procedures",
+    categoryTitleRu: "Статистические процедуры",
+    titleEn: "Frequencies & Distribution Charts",
+    titleRu: "Частоты и диаграммы распределений",
+    descriptionEn: "Univariate frequency analysis, percentiles, quartiles, and authentic SPSS vector charts (Bar, Pie, and Gaussian Histograms).",
+    descriptionRu: "Частотный анализ, процентили, квартили и аутентичные векторные диаграммы SPSS (столбчатые, круговые и гистограммы с кривой Гаусса).",
+    oracleStatus: "Verified vs SciPy & PSPP (≤ 10⁻⁶)",
+    spssPage: "IBM SPSS Algorithms pp. 368–370, 446–448",
+    syntaxExample: `FREQUENCIES VARIABLES=salary educ
+  /FORMAT=AVALUE TABLE
+  /STATISTICS=MEAN MEDIAN MODE STDDEV VARIANCE SKEWNESS KURTOSIS
+  /PERCENTILES=10 25 50 75 90
+  /HISTOGRAM NORMAL
+  /ORDER=ANALYSIS.`,
+    toc: [
+      { id: "univariate-stats", titleEn: "1. 14 Univariate Descriptives & HAVERAGE", titleRu: "1. 14 описательных статистик и HAVERAGE" },
+      { id: "charts-subdialog", titleEn: "2. Charts Subdialog & Contextual Controls", titleRu: "2. Поддиалог «Диаграммы...» и правила блокировки" },
+      { id: "gaussian-histograms", titleEn: "3. Scott's Binning & Normal Curve Overlay", titleRu: "3. Биннинг Скотта и наложение кривой Гаусса" },
+    ],
+    contentEn: `### 1. 14 Univariate Descriptives & HAVERAGE
+The \`FREQUENCIES\` command computes comprehensive measures of central tendency (Mean, Median, Mode with tie-breaking, Sum), dispersion (Std. Dev, Variance, Range, Min, Max, S.E. Mean), and distribution shape (Fisher skewness and kurtosis with standard errors). Percentiles and quartiles strictly adhere to the canonical **SPSS HAVERAGE** (Weibull / Type 6) rank interpolation formula: $r = p \\cdot (N + 1)$.
+
+### 2. Charts Subdialog & Contextual Controls
+The authentic \`Frequencies: Charts\` modal subdialog provides full SPSS parity:
+* **Bar Charts:** Category levels along the horizontal axis, frequency or percentage bars.
+* **Pie Charts:** High-precision vector polygon slice fans with category percentage legend.
+* **Histograms:** Automatically enabled normal distribution curve overlay.
+* **Contextual Safety:** Chart values (Frequencies vs. Percentages) are selectively enabled only for Bar and Pie charts, and automatically muted for Histograms.
+
+### 3. Scott's Binning & Normal Curve Overlay
+Continuous histograms utilize Scott's optimal reference rule $h = 3.49 s N^{-1/3}$ with rounding to round grid steps ($1, 2, 2.5, 5, 10 \\times 10^k$). The Gaussian normal distribution curve is smoothly rendered and frequency-scaled to the histogram area:
+$$y(x) = \\frac{N \\cdot h}{s \\sqrt{2\\pi}} \\exp\\left(-\\frac{(x - \\bar{X})^2}{2s^2}\\right)$$
+The top-right statistics legend displays exact sample properties: $\\text{Mean}$, $\\text{Std. Dev.}$, and $N$.`,
+    contentRu: `### 1. 14 описательных статистик и HAVERAGE
+Процедура \`FREQUENCIES\` рассчитывает полный спектр одномерных показателей положения (среднее, медиана, мода с выбором наименьшего значения при совпадении частот, сумма), разброса (стд. отклонение, дисперсия, размах, минимум, максимум, ошибка среднего) и формы (асимметрия и эксцесс Фишера с ошибками репрезентативности). Расчет процентилей и квартилей строго следует канонической формуле интерполяции рангов **SPSS HAVERAGE** (Type 6): $r = p \\cdot (N + 1)$.
+
+### 2. Поддиалог «Диаграммы...» и правила блокировки
+Аутентичный модальный поддиалог «Частоты: Диаграммы» обеспечивает 100% паритет с IBM SPSS:
+* **Столбчатые диаграммы:** категории на оси абсцисс, шкала абсолютных частот или процентов.
+* **Круговые диаграммы:** векторные сектора с палитровой заливкой и боковой легендой долей.
+* **Гистограммы:** непрерывные смежные карманы с опциональным наложением кривой Гаусса.
+* **Контекстная блокировка:** переключатель «Значения на диаграмме» (Частоты/Проценты) активен только для столбчатых и круговых диаграмм, а для гистограмм блокируется.
+
+### 3. Биннинг Скотта и наложение кривой Гаусса
+Разбиение на карманы рассчитывается по оптимальному правилу Скотта $h = 3.49 s N^{-1/3}$ с округлением шага до круглых чисел ($1, 2, 2.5, 5, 10 \\times 10^k$). Кривая нормального распределения Гаусса масштабируется по суммарной площади частот гистограммы:
+$$y(x) = \\frac{N \\cdot h}{s \\sqrt{2\\pi}} \\exp\\left(-\\frac{(x - \\bar{X})^2}{2s^2}\\right)$$
+Аутентичная плашка в правом верхнем углу диаграммы отображает выборочные параметры: $\\text{Mean}$, $\\text{Std. Dev.}$ и $N$.`,
+  },
 ];

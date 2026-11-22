@@ -16,13 +16,16 @@ export function OracleBenchmark({ lang = 'en' }: OracleBenchmarkProps) {
   const [expandedId, setExpandedId] = useState<string | null>('block-1');
   const [selectedBlockForReport, setSelectedBlockForReport] = useState<string | null>(null);
 
+  const totalBlocks = AUDIT_BLOCKS.length;
+  const verifiedBlocks = AUDIT_BLOCKS.filter(b => b.status === 'verified').length;
+
   const t = {
     en: {
       eyebrow: '02 / MATHEMATICAL AUDIT',
-      title: 'The 20-Block SciPy Golden Oracle Matrix',
+      title: `The ${totalBlocks}-Block SciPy Golden Oracle Matrix`,
       lead: 'Every statistical procedure in StatCraft is verified against reference Python/SciPy implementations and classical academic benchmarks. Clean-room implementations without proprietary IBM code.',
       searchPlaceholder: 'Filter by procedure (e.g. T-TEST, LOGISTIC, ANOVA) or keyword...',
-      allVerifiedBadge: '20 OF 20 VERIFIED',
+      allVerifiedBadge: `${verifiedBlocks} OF ${totalBlocks} VERIFIED`,
       toleranceBadge: 'PRECISION TOLERANCE: Δ ≤ 10⁻⁶',
       referenceText: 'IBM Manual Reference',
       crateFilesText: 'Rust Algo Files',
@@ -32,10 +35,10 @@ export function OracleBenchmark({ lang = 'en' }: OracleBenchmarkProps) {
     },
     ru: {
       eyebrow: '02 / МАТЕМАТИЧЕСКИЙ АУДИТ',
-      title: 'Матрица верификации 20 блоков «Золотого оракула» SciPy',
+      title: `Матрица верификации ${totalBlocks} блоков «Золотого оракула» SciPy`,
       lead: 'Каждая статистическая процедура StatCraft проверена против референтных реализаций Python/SciPy и классических академических источников. 100% чистая комната без заимствования проприетарного кода.',
       searchPlaceholder: 'Поиск по процедуре (напр. T-TEST, LOGISTIC, ANOVA) или названию...',
-      allVerifiedBadge: '20 ИЗ 20 ПРОВЕРЕНО',
+      allVerifiedBadge: `${verifiedBlocks} ИЗ ${totalBlocks} ПРОВЕРЕНО`,
       toleranceBadge: 'ДОПУСК ТОЧНОСТИ: Δ ≤ 10⁻⁶',
       referenceText: 'Страницы алгоритмов IBM',
       crateFilesText: 'Файлы алгоритмов Rust',
