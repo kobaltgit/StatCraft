@@ -3,7 +3,7 @@ import './globals.css';
 import { LocaleDetector } from '@/components/locale-detector';
 
 export const metadata: Metadata = {
-  metadataBase: new URL('https://statcraft.dev'),
+  metadataBase: new URL('https://statcraft-mu.vercel.app'),
   title: 'StatCraft // Open-Science Statistical Computing in Safe Rust',
   description: 'An experimental, 100% Safe Rust re-implementation of classical statistical procedures. Verified against SciPy Golden Oracle (Δ ≤ 10⁻⁶) with native Model Context Protocol (MCP) bridge.',
   icons: {

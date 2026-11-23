@@ -3,19 +3,28 @@
 </p>
 
 <div align="center">
+  <h3>
+    <a href="https://statcraft-mu.vercel.app/">🌐 https://statcraft-mu.vercel.app/</a>
+  </h3>
+  <p>
+    <strong>Official Website, Web Documentation & Binary Releases</strong>
+  </p>
+
   <p>
     <a href="README.md"><strong>English</strong></a> |
     <a href="README.ru.md">Русский</a>
   </p>
 
   <p>
+    <a href="https://statcraft-mu.vercel.app/"><img src="https://img.shields.io/badge/Website-statcraft--mu.vercel.app-007ACC?logo=vercel&logoColor=white" alt="Website: statcraft-mu.vercel.app" /></a>
     <a href="https://www.rust-lang.org/"><img src="https://img.shields.io/badge/Rust-1.80%2B-orange?logo=rust" alt="Rust 1.80+" /></a>
     <a href="LICENSE-MIT"><img src="https://img.shields.io/badge/License-MIT%20OR%20Apache--2.0-blue.svg" alt="License: MIT OR Apache-2.0" /></a>
     <img src="https://img.shields.io/badge/Platform-Windows%20%7C%20Linux%20%7C%20macOS-lightgrey.svg" alt="Platform: Windows | Linux | macOS" />
     <img src="https://img.shields.io/badge/Architecture-100%25%20Safe%20Rust-brightgreen.svg" alt="100% Safe Rust" />
-    <img src="https://img.shields.io/badge/Tests-Passing%20(300%2B)-success.svg" alt="Tests: 300+ Passing" />
+    <img src="https://img.shields.io/badge/Tests-770%2B%20Passing-success.svg" alt="Tests: 770+ Passing" />
+    <img src="https://img.shields.io/badge/Oracle-SciPy%20(Δ%20%3C%2010⁻⁶)-blueviolet.svg" alt="Oracle: SciPy (Δ < 10⁻⁶)" />
     <img src="https://img.shields.io/badge/i18n-EN%20%7C%20RU-informational.svg" alt="i18n: EN | RU" />
-    <a href="#4-statcraft-bridge--ai-agents-model-context-protocol--code-mode"><img src="https://img.shields.io/badge/MCP-Live%20GUI%20Bridge%20%26%20Code%20Mode-6366F1?logo=anthropic&logoColor=white" alt="MCP: Live GUI Bridge & Code Mode" /></a>
+    <a href="#4-statcraft-bridge--ai-agents-model-context-protocol--code-mode"><img src="https://img.shields.io/badge/MCP-Live%20Bridge%20%26%20Code%20Mode-6366F1?logo=anthropic&logoColor=white" alt="MCP: Live Bridge & Code Mode" /></a>
     <a href="https://remade.wiki/projects/statcraft/"><img src="https://remade.wiki/badges/listed-on-remade-classic.svg" alt="Listed on Remade" /></a>
     <a href="https://app.lava.top/kobaltgit"><img src="https://img.shields.io/badge/Sponsor-Lava.top-FF5C35?logo=githubsponsors&logoColor=white" alt="Sponsor: Lava.top" /></a>
   </p>
@@ -25,9 +34,12 @@
 
 ## Overview
 
-**StatCraft** is a free, modern, open-source statistical software package built entirely in **100% pure Safe Rust**. Designed as an uncompromising, clean-room alternative to proprietary statistical suites such as IBM SPSS Statistics, StatCraft combines academic precision, instantaneous launch times, and guaranteed crash immunity.
+> [!NOTE]
+> 🔬 **Academic Notice:** StatCraft is an independent open-science software project. It is not affiliated with or certified by IBM SPSS Statistics. Do not use for clinical diagnostic decisions or legal compliance without independent statistical replication.
 
-Whether you are conducting psychological research, analyzing clinical trials, teaching university statistics, or manipulating enterprise datasets, StatCraft provides an intuitive graphical interface alongside a deterministic, syntax-driven analytical engine.
+**StatCraft** is an experimental alternative for statistical data analysis built in **100% pure Safe Rust**. Developed as an open-science computational project, it combines a clean-room mathematical engine on Apache Arrow and Polars with native Model Context Protocol (MCP) integration for AI-assisted empirical research.
+
+We do not claim StatCraft is a ready-made commercial replacement. It is an open-science computational experiment. We invite researchers, statisticians, and developers to explore the calculations, test edge cases against legacy suites (SPSS, R, Stata), and help make scientific computing transparent, verifiable, and reproducible.
 
 <p align="center">
   <img src="assets/screenshot.png" alt="StatCraft Graphical Interface" width="100%" />
@@ -37,15 +49,18 @@ Whether you are conducting psychological research, analyzing clinical trials, te
 
 ---
 
-## Core Pillars & Design Principles
+## Core Pillars & Architectural Principles
 
-* **100% Safe Rust & Never Crash Guarantee:** Zero `unsafe` blocks, zero panics (`panic!`, `unwrap()`, `expect()`). Malformed datasets, empty samples, or division by zero yield explicit, typed `Result<T, E>` errors rather than application crashes.
+Statistical software must never crash mid-calculation or produce silent numerical errors. StatCraft enforces strict memory safety, layered dependencies, and a zero-panic contract:
+
+* **Zero-Panic Contract (100% Safe Rust):** All non-test code strictly forbids `unwrap()`, `expect()`, `panic!()`, and `unsafe`. Potential errors (singular matrices, division by zero, insufficient sample size) are propagated through typed `Result<T, StatError>` rather than application crashes.
+* **Clean-Room Implementation:** Developed without proprietary IBM SPSS code or assets. Algorithms are derived from published academic papers, ISO standards, and GNU PSPP specifications, independently verified against a SciPy Golden Oracle ($\Delta < 10^{-6}$).
 * **Commands, Not Handlers:** Every analytical procedure and user interaction is an atomic engine command (`EngineCommand`). All commands support non-destructive Undo/Redo, serialize to standard SPSS syntax (`.sps`), and can be scripted headlessly.
-* **Agent-Ready & MCP Bridge (Code Mode):** Built-in local IPC socket (port 18493) and Model Context Protocol (MCP) server (`--mcp` flag). Enables external autonomous AI agents (Antigravity, Claude, ChatGPT, Ollama) to inspect metadata, execute batch syntax, perform mathematical computations, and stream live results into the Output Viewer.
-* **SPSS-Style Canonical Output Viewer:** Hierarchical navigation outline tree paired with authentic multi-level pivot tables. Results can be copied to the clipboard with one click as structured TSV data that pastes cleanly into Microsoft Excel without distorted columns or unwanted date conversions.
+* **Arrow Columnar Memory:** Datasets live in contiguous Apache Arrow arrays. Numerical transformations and filtering execute via SIMD-accelerated Polars engines with zero garbage collection pauses.
+* **Canonical SPSS-Style Output Viewer:** Hierarchical navigation outline tree paired with authentic multi-level pivot tables. Results copy to clipboard as structured TSV that pastes into Microsoft Excel cleanly without distorted columns or unwanted date conversions.
 * **Vector-First UI:** Rendered with native `egui` via `ui.painter()` and vector SVG icons. Strict zero-emoji and zero-unsupported Unicode symbol policy eliminates tofu squares (`□`) across all platforms.
 * **Zero-Hardcode i18n:** 100% of user-facing strings are decoupled into Project Fluent catalogs (`locales/en.ftl`, `locales/ru.ftl`) with real-time runtime language switching.
-* **Resource Guard:** Thread-limited builds (`-j 1`, `codegen-units = 1`) protect development workstations from memory exhaustion.
+* **Resource Guard:** Thread-limited compilation (`-j 1`, `codegen-units = 1`) protects development workstations from memory exhaustion.
 
 ---
 
@@ -93,40 +108,47 @@ Whether you are conducting psychological research, analyzing clinical trials, te
 
 ### 4. StatCraft Bridge & AI Agents (Model Context Protocol / Code Mode)
 
-StatCraft is the world's first statistical software package natively equipped with the **Model Context Protocol (MCP)** and direct two-way control via autonomous AI agents (Antigravity, Claude, ChatGPT, Ollama, and local LLMs).
+StatCraft features native **Model Context Protocol (MCP)** integration and a local IPC socket (port 18493) for bidirectional communication with AI assistants (Antigravity, Claude, ChatGPT, Ollama, and local LLMs).
 
 <details>
-<summary><b>🔍 Why StatCraft Bridge? Zero SPSS Experience Required (Click to expand)</b></summary>
+<summary><b>🔍 How the StatCraft Bridge Works (Click to expand)</b></summary>
 
-#### You No Longer Need to Learn SPSS: Statistical Analysis in Natural Language
+#### Natural Language Statistical Analysis with Deterministic Execution
 
-Historically, performing rigorous statistical analysis required mastering legacy statistical GUI suites (SPSS, SAS, Stata) or writing complex code in R and Python. Researchers had to memorize arcane syntax commands (`DESCRIPTIVES VARIABLES=...`), navigate dozens of nested dialog boxes, or write data wrangling scripts from scratch.
+StatCraft Bridge allows researchers to connect external AI agents directly to the local analytical engine. Instead of manually writing scripts or navigating complex dialog boxes, users can query and analyze datasets via conversational prompts:
+> *"Inspect the loaded survey dataset. Compare the mean salary between males and females using an independent-samples t-test, check Levene's test for equality of variances, and report whether the difference is statistically significant."*
 
-**With StatCraft Bridge, that barrier is completely gone:** Connect your favorite AI assistant to StatCraft and describe what you want in plain human language:
-> *"Inspect the loaded survey dataset. Compare the mean salary between males and females using an independent-samples t-test, check Levene's test for equality of variances, and explain in simple terms whether the difference is statistically significant."*
+The connected AI agent:
+1. Queries dataset metadata, measurement scales, and variable labels through the MCP bridge;
+2. Formulates and executes atomic commands via StatCraft's core;
+3. Retrieves validated mathematical output tables;
+4. Generates an empirical summary with effect sizes, test statistics, and $p$-value interpretations.
 
-The AI agent will autonomously:
-1. Query dataset metadata and variable dictionaries via the bridge;
-2. Generate and execute commands through StatCraft's core;
-3. Retrieve verified mathematical output tables;
-4. Present a plain-language summary with effect sizes and $p$-value interpretations.
+#### Key Architectural Advantages:
 
-#### Why Use StatCraft Bridge Instead of Plain LLM Chat?
-
-1. **Absolute Mathematical Exactness vs. LLM Hallucinations:**
-   Large Language Models frequently hallucinate when processing thousands of numbers, calculating means, or estimating non-linear test statistics. StatCraft serves as the **deterministic calculation oracle**: the LLM guides the inquiry, while native Rust handles the math with $\le 10^{-6}$ precision verified against SciPy and SPSS algorithms.
-2. **Real-Time Visual Synchronization on Your Screen:**
-   As the agent executes procedures, the StatCraft desktop GUI updates live in front of you. Authentic Pivot Tables appear in the Output Viewer, syntax logs record the audit trail, and all results can be copied into Excel with a single click.
+1. **Deterministic Computation vs. LLM Arithmetic Errors:**
+   Large Language Models frequently hallucinate or approximate numbers when aggregating raw data or estimating test statistics. StatCraft serves as the **deterministic calculation oracle**: the LLM guides the workflow, while native Rust executes verified mathematics ($\Delta < 10^{-6}$ vs. SciPy).
+2. **Real-Time Visual Synchronization in the GUI:**
+   As procedures run, the desktop interface updates live. Structured Pivot Tables appear in the Output Viewer, syntax logs record the audit trail, and tables can be copied directly into spreadsheets.
 3. **100% Local & Privacy-Preserving:**
-   The socket bridge runs locally (`127.0.0.1:18493`). Your medical, corporate, or private research data never leaves your workstation.
+   The bridge operates over a local IPC socket (`127.0.0.1:18493`). Research, clinical, and proprietary datasets remain strictly on your machine.
 4. **Autonomous Code Mode:**
-   Agents can run arbitrary SPSS syntax scripts (`.sps`), sort cases, filter subsets, recode scales, handle missing values, and trigger any of StatCraft's statistical modeling procedures.
+   Agents can execute batch SPSS syntax scripts (`.sps`), sort cases, filter subsets, recode variables, and run statistical procedures programmatically.
 
-#### How to Connect Your AI Agent
+#### How to Connect
 
-* **Desktop GUI:** Open `Extensions -> MCP Bridge / Copilot` in StatCraft. The dialog provides live server status, activity logs, and one-click configuration snippets for Antigravity, Claude Desktop, and Cursor.
-* **Headless CLI (stdio MCP):** Configure `statcraft.exe --mcp` inside your MCP client settings.
+* **Desktop GUI:** Open `Extensions -> MCP Bridge / Copilot` in StatCraft. The dialog displays connection status, live logs, and one-click setup snippets for Antigravity, Claude Desktop, and Cursor.
+* **Headless CLI (stdio MCP):** Launch `statcraft.exe --mcp` inside your client's MCP configuration.
 </details>
+
+---
+
+## 🔬 Open Invitation to Researchers & Developers
+
+We do not claim StatCraft is a complete commercial replacement. It is an open-science computational experiment. We welcome domain expertise, empirical datasets, and rigorous scrutiny to make scientific computing transparent and reproducible:
+
+* **For Statisticians & Researchers:** Challenge our numbers. Run your empirical datasets through StatCraft and compare results against SPSS, R, or Stata. Found a discrepancy ($\Delta > 10^{-6}$)? Report it directly on **[statcraft-mu.vercel.app](https://statcraft-mu.vercel.app/)** or open an issue on GitHub.
+* **For Systems Engineers:** Help build safe, high-performance computational foundations in Safe Rust (optimizing linear algebra via `faer` and `statrs` without `unsafe`, contributing new procedures, and expanding the MCP toolset).
 
 ---
 
@@ -185,6 +207,9 @@ cargo run -p xtask -j 1 -- design-guard
 
 # Verify SPSS feature parity status
 cargo run -p xtask -j 1 -- parity
+
+# Check website benchmark matrix and documentation parity
+cargo run -p xtask -j 1 -- sync-site --check
 ```
 
 ---
@@ -198,14 +223,18 @@ cargo run -p xtask -j 1 -- parity
 | [`crates/statcraft_algo`](crates/statcraft_algo) | Pure mathematical algorithms (t-tests, ANOVA, regression, correlations, factor PCA, nonparametrics, frequencies) |
 | [`crates/statcraft_core`](crates/statcraft_core) | In-memory `DataSet`, `RawTable`, `VariableDictionary`, measurement scales, metadata |
 | [`crates/statcraft_io`](crates/statcraft_io) | Data codecs: streaming CSV/TSV, Excel workbooks (.xlsx/.xls/.ods), and SPSS files (.sav/.zsav) |
+| [`crates/statcraft_reporting`](crates/statcraft_reporting) | Pivot table models, hierarchical presentation, TSV, HTML, and text rendering |
+| [`crates/statcraft_bridge`](crates/statcraft_bridge) | Local IPC socket server (port 18493) and Model Context Protocol (MCP) server |
 | [`crates/statcraft_i18n`](crates/statcraft_i18n) | Localization engine powered by Project Fluent (`locales/*.ftl`) |
-| [`xtask`](xtask) | CI/CD automation: `file-guard`, `layers`, `design-guard`, `parity` |
+| [`website/`](website) | Official web portal, interactive docs, benchmarks, and binary release downloads ([statcraft-mu.vercel.app](https://statcraft-mu.vercel.app/)) |
+| [`xtask`](xtask) | CI/CD automation: `file-guard`, `layers`, `design-guard`, `parity`, `sync-site` |
 | [`docs/`](docs) | Architecture guides, design specs, roadmaps, and development chronicle |
 
 ---
 
 ## Documentation
 
+* **[Official Website & Web Documentation (statcraft-mu.vercel.app)](https://statcraft-mu.vercel.app/)** — Interactive web documentation, Golden Oracle benchmark matrix vs IBM SPSS 24, OS auto-detection for release binaries, and discrepancy reporting.
 * **[Comprehensive Feature Guide (FEATURES.md)](docs/FEATURES.md)** / **[Справочник возможностей (RU)](docs/FEATURES_RU.md)** — Exhaustive catalog of all implemented statistical procedures, data transformations, formulas, and UI tools.
 * [Contributor Guide (CONTRIBUTING.md)](CONTRIBUTING.md) — Comprehensive development regulations, Resource Guard (-j 1), architecture rules, and Definition of Done.
 * [SPSS Feature Parity Checklist](docs/parity-checklist.md) — Comprehensive tracking of implemented SPSS commands and menus.
@@ -218,9 +247,9 @@ cargo run -p xtask -j 1 -- parity
 
 ## 💖 Support & Sponsorship
 
-**StatCraft** is an ambitious, mathematically rigorous, clean-room statistical suite built in **100% pure Safe Rust** with zero legacy C/Fortran code. Developing clean-room analytical algorithms (parametric & non-parametric tests, ANOVA, Levene, regression, syntax pipelines, and canonical pivot tables) requires immense research and mathematical verification.
+**StatCraft** is an independent open-science software project built in **100% pure Safe Rust** with zero legacy C/Fortran code. Implementing clean-room statistical algorithms, verifiable matrix algebra, and authentic pivot tables requires sustained research, verification, and engineering effort.
 
-If **StatCraft** helps your academic research, university coursework, or statistical workflows, and you would like to support its ongoing development:
+If **StatCraft** is helpful to your empirical research, coursework, or data workflows, you can support its continued open development:
 
 <div align="center">
 

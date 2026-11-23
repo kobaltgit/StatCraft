@@ -4204,3 +4204,26 @@ Implemented complete automated bidirectional synchronization between the project
    * Any manual edit to features documentation without running `xtask sync-site` halts CI and blocks push.
 4. **Quality Gate & DoD Verification:**
    * 100% successful pass for all Quality Gates via `cargo run -p xtask -j 1 -- ci` and `npx next build` (45/45 static pages generated).
+
+---
+
+### Phase 108: README Harmonization with Official Portal & Academic Tone Calibration
+*Time: November 23, 2026, 21:50 (~20 minutes)*
+
+Executed a comprehensive revision and harmonization of project documentation (`README.md`, `README.ru.md`, and Next.js site metadata in `website/src/app/layout.tsx`):
+1. **Official Website Integration:**
+   * Embedded the live deployment URL directly at the top of both README variants: `🌐 https://statcraft-mu.vercel.app/`;
+   * Integrated a dedicated Vercel badge (`Website: statcraft-mu.vercel.app`);
+   * Connected links across project structure, documentation references, and researcher invitations;
+   * Updated `metadataBase` in `website/src/app/layout.tsx` to match the active host.
+2. **Academic Grounding & Removal of Marketing Hyperbole:**
+   * Completely eliminated inflated marketing claims ("uncompromising alternative", "guaranteed crash immunity", "world's first", "barrier completely gone");
+   * Prefaced the Overview with an explicit **Academic Notice** regarding the experimental, open-science nature of the package and the requirement of independent statistical replication;
+   * Introduced the **Open Invitation to Researchers & Developers** section encouraging empirical edge-case testing, peer review, and direct discrepancy reporting ($\Delta > 10^{-6}$) via the portal or GitHub;
+   * Reframed the Model Context Protocol (MCP) and AI integration around deterministic calculation oracle guarantees, local socket privacy (port 18493), and live GUI synchronization.
+3. **Metric & Structural Updates:**
+   * Updated test count badge from legacy `300+` to verified `770+ Passing`;
+   * Added SciPy Golden Oracle verification badge ($\Delta < 10^{-6}$);
+   * Added omitted workspace crates to the project structure table (`statcraft_reporting`, `statcraft_bridge`, `website/`).
+4. **Definition of Done Verification:**
+   * 100% successful pass across all 10 gates in `cargo run -p xtask -j 1 -- ci`.
