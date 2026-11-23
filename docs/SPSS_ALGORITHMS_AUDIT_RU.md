@@ -119,22 +119,27 @@
 
 #### 1.2. `FREQUENCIES` (IBM Algorithms стр. 446–448)
 * **Реализация:** [`crates/statcraft_algo/src/frequencies/`](../crates/statcraft_algo/src/frequencies/) (`options.rs`, `percentiles.rs`, `stats.rs`, `table.rs`, `charts.rs`, `mod.rs`)
-* **Тесты:** `frequencies::table::tests::test_frequency_numeric_sorting_and_quartiles`, `frequencies_oracle_test` (`crates/statcraft_algo/tests/frequencies_oracle_test.rs`), `frequencies_charts_oracle_test` (`crates/statcraft_algo/tests/frequencies_charts_oracle_test.rs`)
+* **Тесты:** `frequencies::table::tests::test_frequency_numeric_sorting_and_quartiles`, `frequencies_oracle_test` (`crates/statcraft_algo/tests/frequencies_oracle_test.rs`), `frequencies_charts_oracle_test` (`crates/statcraft_algo/tests/frequencies_charts_oracle_test.rs`), `frequencies_order_and_limit_test` (`crates/statcraft_algo/tests/frequencies_order_and_limit_test.rs`)
 * **Сопоставление формул:**
   * `Percent`: $\frac{f_j}{W_{total}} \times 100$ (включая пропущенные значения);
   * `Valid Percent`: $\frac{f_j}{W_{valid}} \times 100$ (только валидные наблюдения);
-  * `Cumulative Percent`: кумулятивная сумма `Valid Percent`;
+  * `Cumulative Percent`: кумулятивная сумма `Valid Percent` с динамическим пересчетом при пересортировке категорий;
   * **Квантили/Квартили/Децили:** каноническая интерполяция **SPSS HAVERAGE** (Weibull / Type 6, ранг $r = p \cdot (N + 1)$), N-тили и сгруппированные срезы;
   * **14 дескриптивных статистик:** среднее $\bar{X}$, сумма, минимум, максимум, размах, дисперсия $s^2$, стд. отклонение $s$, стд. ошибка среднего $SE(\bar{X})$;
   * **Асимметрия и эксцесс:** несмещенные оценки Фишера ($g_1, g_2$) с точными стандартными ошибками $SE(g_1), SE(g_2)$;
   * **Мода (Mode Tie-Breaker):** при мультимодальности по канону SPSS выбирается наименьшее числовое значение с флагом `has_multiple_modes = true`.
+  * **Параметры формата и порядка категорий (`options.rs`, `table.rs`):**
+    * Режимы сортировки категорий (`CategoryOrder`): `AValue` (по возрастанию значений), `DValue` (по убыванию значений), `AFreq` (по возрастанию частот), `DFreq` (по убыванию частот);
+    * Динамический пересчет кумулятивных процентов `recalculate_cumulative_percents` на основе `valid_percent` в новом порядке;
+    * Организация вывода нескольких переменных (`MultipleVarsMode`): `Compare` (сравнение) vs `Variable` (последовательно по переменным);
+    * Подавление таблиц по порогу `LIMIT(n)`: при $N_{categories} > n$ выставляется `table_suppressed = true` и категории очищаются с сохранением дескриптивных статистик и графиков.
   * **Диаграммы распределений и адаптивный биннинг (`charts.rs`):**
     * Агрегация категорий столбчатых и круговых диаграмм с обязательной фильтрацией пропущенных наблюдений;
     * Адаптивный расчет шага карманов гистограммы по правилу Скотта: $h = 3.49 \cdot s \cdot N^{-1/3}$;
     * Округление шага сетки до легко читаемых круглых значений через `calculate_nice_step` (ряд $\{1, 2, 5, 10\} \times 10^k$);
     * Расчет 101 точки теоретической плотности Гаусса $\mathcal{N}(\mu, \sigma^2)$, смасштабированной под интегральную площадь гистограммы: $y(x) = \frac{1}{\sigma \sqrt{2\pi}} e^{-\frac{1}{2}\left(\frac{x - \mu}{\sigma}\right)^2} \times (N \cdot bin\_width)$ (сверено с `scipy.stats.norm.pdf` с точностью $\le 10^{-6}$);
     * Безопасная обработка вырожденных случаев: нулевая дисперсия ($s = 0$), малая выборка ($N < 2$) и строковые переменные без паник возвращают `None` либо единственный монолитный карман.
-  * **L5 Командная шина и синтаксис:** типизированная команда `FrequenciesCommand` (`stat.frequencies`) в `crates/statcraft_syntax/src/commands/frequencies_cmd/` с поддержкой канонической сортировки (`dvalue`, `afreq`, `dfreq`), подавлением параметрических статистик для номинальных шкал, автоматическим расчетом диаграмм и двусторонним SPSS-синтаксисом (`/FORMAT`, `/STATISTICS`, `/PERCENTILES`, `/NTILES`, `/BARCHART`, `/PIECHART`, `/HISTOGRAM [NORMAL]`, `/ORDER`).
+  * **L5 Командная шина и синтаксис:** типизированная команда `FrequenciesCommand` (`stat.frequencies`) в `crates/statcraft_syntax/src/commands/frequencies_cmd/` с поддержкой канонической сортировки (`dvalue`, `afreq`, `dfreq`), порога подавления таблиц `LIMIT(n)`, подавлением параметрических статистик для номинальных шкал, автоматическим расчетом диаграмм и двусторонним SPSS-синтаксисом (`/FORMAT`, `/STATISTICS`, `/PERCENTILES`, `/NTILES`, `/BARCHART`, `/PIECHART`, `/HISTOGRAM [NORMAL]`, `/ORDER`).
 * **Вердикт:** **100% математическая эквивалентность канону.**
 
 #### 1.3. `CROSSTABS` (IBM Algorithms стр. 221–226)

@@ -81,6 +81,70 @@ impl PercentilesOptions {
     }
 }
 
+/// Category sort order in frequency table (SPSS /FORMAT=AVALUE | DVALUE | AFREQ | DFREQ)
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize, Default)]
+#[serde(rename_all = "snake_case")]
+pub enum CategoryOrder {
+    #[default]
+    AValue, // Ascending values
+    DValue, // Descending values
+    AFreq,  // Ascending frequencies
+    DFreq,  // Descending frequencies
+}
+
+impl CategoryOrder {
+    pub fn from_str_loose(s: &str) -> Self {
+        match s.trim().to_ascii_lowercase().as_str() {
+            "dvalue" => CategoryOrder::DValue,
+            "afreq" => CategoryOrder::AFreq,
+            "dfreq" => CategoryOrder::DFreq,
+            _ => CategoryOrder::AValue,
+        }
+    }
+
+    pub fn as_str(&self) -> &'static str {
+        match self {
+            CategoryOrder::AValue => "avalue",
+            CategoryOrder::DValue => "dvalue",
+            CategoryOrder::AFreq => "afreq",
+            CategoryOrder::DFreq => "dfreq",
+        }
+    }
+}
+
+/// Organization of output when analyzing multiple variables (SPSS /FORMAT=COMPARE | VARIABLE)
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize, Default)]
+#[serde(rename_all = "snake_case")]
+pub enum MultipleVarsMode {
+    #[default]
+    Compare, // Compare variables (single summary table with columns per variable)
+    Variable, // Organize output by variables (separate statistics and table per variable)
+}
+
+impl MultipleVarsMode {
+    pub fn from_str_loose(s: &str) -> Self {
+        match s.trim().to_ascii_lowercase().as_str() {
+            "variable" => MultipleVarsMode::Variable,
+            _ => MultipleVarsMode::Compare,
+        }
+    }
+
+    pub fn as_str(&self) -> &'static str {
+        match self {
+            MultipleVarsMode::Compare => "compare",
+            MultipleVarsMode::Variable => "variable",
+        }
+    }
+}
+
+/// Format parameters for the FREQUENCIES procedure (SPSS /FORMAT)
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Default)]
+pub struct FrequenciesFormatOptions {
+    pub order: CategoryOrder,
+    pub multiple_vars_mode: MultipleVarsMode,
+    pub suppress_tables_limit: Option<usize>, // None = no limit, Some(n) = suppress when > n categories
+}
+
 /// Chart types supported by the FREQUENCIES procedure.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize, Default)]
 #[serde(rename_all = "snake_case")]

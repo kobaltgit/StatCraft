@@ -360,7 +360,7 @@ export const AUDIT_BLOCKS: AuditBlock[] = [
     number: 13,
     titleEn: "I/O Codecs Subsystem",
     titleRu: "Подсистема кодеков ввода-вывода",
-    procedures: ["SPSS .sav/.zsav", "EXCEL .xlsx/.ods", "CSV", "PARQUET .stc"],
+    procedures: ["SPSS .sav/.zsav", "EXCEL .xlsx/.xls/.ods", "CSV", "PARQUET .stc"],
     referencePage: "Record Types 1,2,3/4,7 & RFC 4180",
     implementationFiles: ["spss_loader/", "excel_loader.rs", "csv_loader.rs", "csv_writer.rs", "stc_codec.rs"],
     status: "verified",

@@ -3784,3 +3784,78 @@
 4. **Контроль качества (DoD):**
    * 100% успешный прогон тестов воркспейса (включая специализированный блок тестов `output_viewer_frequencies_invariants.rs`);
    * Строгое прохождение линтеров `xtask file-guard` (все 494 файла $\le 500$ строк), `xtask design-guard` (0 эмодзи, канонический DialogKit), `xtask layers` и `cargo clippy -- -D warnings`.
+
+---
+
+### Фаза 104: Частоты: Формат — Этап 1: Ядро, Алгоритмы и Синтаксис SPSS (L2 statcraft_algo & L5 statcraft_syntax)
+*Время: 23 ноября 2026, 09:20 (~25 минут)*
+
+Реализован первый этап поддержки параметров форматирования частотного анализа (Feature 018 — Frequencies: Format / SPSS `FREQUENCIES /FORMAT`) — математические типы, унифицированная сортировка категорий, подавление таблиц по порогу `LIMIT(n)` и синтаксический анализ:
+1. **Математические типы и опции формата L2 (`options.rs`):**
+   * Перечисление `CategoryOrder` (`AValue`, `DValue`, `AFreq`, `DFreq`) с поддержкой безопасного парсинга `from_str_loose` и `as_str`;
+   * Перечисление `MultipleVarsMode` (`Compare`, `Variable`) для организации вывода при анализе нескольких переменных;
+   * Структура `FrequenciesFormatOptions` с параметрами `order`, `multiple_vars_mode` и опциональным порогом `suppress_tables_limit`.
+2. **Алгоритмы сортировки и подавления таблиц L2 (`table.rs`):**
+   * В структуру `FrequencyResult` добавлено поле `pub table_suppressed: bool` с атрибутом `#[serde(default)]` для 100% обратной совместимости;
+   * Функции `sort_categories` и `recalculate_cumulative_percents`: каноническая пересортировка категорий с пересчетом кумулятивных процентов от `valid_percent`;
+   * Функция `apply_format_options`: сортировка категорий и автоматическое подавление таблицы категорий при превышении заданного порога $N > \text{limit}$.
+3. **Командная шина и синтаксис SPSS L5 (`frequencies_cmd`, `sps.rs`, `syntax_parser`):**
+   * Расширение спецификации `specs()` параметрами `order` (`"avalue"`, `"dvalue"`, `"afreq"`, `"dfreq"`), `multiple_vars_mode` (`"compare"`, `"variable"`) и `suppress_tables_limit` (`integer >= 1`);
+   * В `execute()` команды `stat.frequencies`: применение `format_options` с сохранением рассчитанных графиков и статистик при подавлении таблиц категорий;
+   * Сериализатор синтаксиса `sps.rs`: генерация канонической подкоманды `/FORMAT` (например, `/FORMAT=DFREQ VARIABLE LIMIT(10)`);
+   * Парсер синтаксиса `mappers/stats/frequencies.rs`: извлечение токенов `LIMIT(n)` и `LIMIT n`, а также режимов `COMPARE` и `VARIABLE` в подкоманде `/FORMAT`.
+4. **Контроль качества (Definition of Done):**
+   * Новый интеграционный тестовый модуль `frequencies_order_and_limit_test.rs` в `statcraft_algo` (проверка всех 4 режимов сортировки, пересчета кумулятивных процентов и порогов `LIMIT(n)`);
+   * Тесты round-trip синтаксиса и выполнения с `suppress_tables_limit` в `frequencies_cmd/tests.rs`;
+   * 100% прохождение всех инвариантных тестов (`output_viewer_invariants`, `output_viewer_frequencies_invariants`, `output_viewer_navigation`);
+   * Полное соблюдение лимитов `xtask file-guard` (495 файлов, все $\le 500$ строк), `xtask layers`, `xtask design-guard` и компиляция `cargo clippy --workspace -j 1 -- -D warnings` с 0 предупреждений.
+
+---
+
+### Фаза 105: Автоматизация синхронизации аудита сайта и CI Gate (xtask sync-site & CI Gate 10)
+*Время: 23 ноября 2026, 09:35 (~20 минут)*
+
+Реализована и внедрена в пайплайн контроля качества автоматическая валидация соответствия матрицы аудита алгоритмов SPSS (`docs/SPSS_ALGORITHMS_AUDIT.md`) и интерактивного сайта (`website/src/lib/audit-data.ts`, `docs-data.ts`):
+1. **Подсистема синхронизации `xtask sync-site` (`xtask/src/sync_site.rs`):**
+   * Модуль объемом 280 строк ($\le 500$ строк согласно `file-guard`), 100% safe Rust без единой паники;
+   * Парсинг Markdown-матрицы Section 2 и TypeScript-структуры `AUDIT_BLOCKS`;
+   * Проверка совпадения числа блоков (20 из 20);
+   * Валидация соответствия списка процедур (включая нестрогое сопоставление канонических имен синтаксиса и расширенных описаний);
+   * Рекурсивная проверка физического существования всех файлов реализации во всех крейтах воркспейса (`crates/**`);
+   * Проверка наличия всех 9 ключевых разделов документации в `website/src/lib/docs-data.ts`.
+2. **Интеграция в полный CI Quality Gate (`xtask/src/ci.rs`):**
+   * Добавлен десятый обязательный шлюз: `=== [CI Gate] Website Audit Synchronization (xtask sync-site --check) ===`;
+   * Любое несоответствие матрицы, отсутствие файлов реализации или пропуск страниц документации блокирует прохождение CI и запрещает push в репозиторий через Git-хук `.githooks/pre-push`.
+3. **Регистрация в интерфейсе xtask (`xtask/src/main.rs`):**
+   * Добавлена команда `cargo xtask sync-site [--check]` с отображением в справке утилиты.
+4. **Контроль качества (DoD):**
+   * Все 10 шлюзов Quality Gate пройдены со 100% успехом (`cargo run -p xtask -j 1 -- ci`);
+   * Файл `website/src/lib/audit-data.ts` приведен в полное соответствие с аудитом (добавлен формат `.xls` в кодеки Block 13);
+   * Пройдены `cargo fmt --all -- --check`, `cargo clippy --workspace --all-targets -j 1 -- -D warnings`, `file-guard` (496 файлов), `layers`, `design-guard`, `test-corpus`, `test-undo` и модульные тесты `sync_site.rs`.
+
+
+---
+
+### Фаза 105: Частоты: Формат — Этап 2: Диалоговое окно по канону DialogKit и синхронизация параметров (L6 statcraft_app)
+*Время: 23 ноября 2026, 09:40 (~20 минут)*
+
+Завершен второй этап реализации функционала форматирования частотного анализа (Feature 018 — Frequencies: Format) — графический интерфейс модального поддиалога, синхронизация состояния и интеграция с исполнителем команд:
+1. **Состояние диалога и транзакционный откат (`state.rs`):**
+   * Создана структура `FrequenciesFormatState` (`order`, `multiple_vars_mode`, `suppress_tables`, `max_categories_input`) с валидацией числового порога `suppress_tables_limit()`;
+   * В `FrequenciesDialogState` интегрированы `format`, `format_backup` и флаг модальности `show_format`;
+   * При открытии поддиалога фиксируется снимок состояния `format_backup`, обеспечивающий транзакционный откат при отмене (`Cancel`) или закрытии окна;
+   * В действия `FrequenciesDialogAction::Run` и `Paste` добавлены параметры `order`, `multiple_vars_mode` и `suppress_tables_limit`.
+2. **Верстка поддиалога по канону DialogKit (`format_subdialog.rs`):**
+   * Модальное окно `DialogShell::subdialog(t!("dialog-freq-format-title"))` ($360 \times 300$ px);
+   * Двухколоночный ряд с группами переключателей `GroupBox`:
+     - Левая колонка: группа «Упорядочить по» (Возрастанию значений, Убыванию значений, Возрастанию количеств, Убыванию количеств);
+     - Правая колонка: группа «Несколько переменных» (Сравнить переменные, Выводить по переменным);
+   * Нижний блок подавления таблиц: чекбокс «Отключить таблицы со многими категориями» и зависимое поле ввода «Максимальное число категорий: [10]» с авто-блокировкой при выключенном чекбоксе;
+   * Панель действий Type 2 `SubdialogActionBar` (`[ Продолжить ] [ Отмена ] [ Справка ]`) с санитаризацией введенного числа категорий ($\ge 1$).
+3. **Интеграция с главным окном и исполнительской шиной (`mod.rs`, `app_dialogs.rs`):**
+   * В боковой панели `SubdialogSidebar` активирована кнопка `[ Формат... ]`;
+   * В `app_dialogs.rs` параметры формата пробрасываются в командную шину `stat.frequencies` и в генератор журнала синтаксиса `.sps`.
+4. **Контроль качества (Definition of Done):**
+   * Добавлен модульный headless-тест инвариантов диалога `test_headless_render_frequencies_format_subdialog` в `dialog_invariants.rs` (все 41 тест пройдены успешно);
+   * 100% покрытие строковых ключей в каталогах Fluent `locales/ru.ftl` и `locales/en.ftl` (Zero-Hardcode i18n);
+   * 100% прохождение `xtask design-guard` (полное соответствие канону DialogKit, 0 эмодзи), `xtask file-guard` (497 файлов Rust в лимитах $\le 500$ строк) и чистый прогон `cargo clippy -p statcraft_app -j 1 -- -D warnings`.

@@ -53,6 +53,7 @@ pub fn sample_frequencies() -> FrequencyResult {
         quartiles: None,
         statistics: None,
         chart: None,
+        table_suppressed: false,
     }
 }
 

@@ -24,11 +24,48 @@ pub fn map_frequencies(
     }
 
     // 1. Table display and format
-    let display_tables = !(cmd.has_token("FORMAT", "NOTABLE")
-        || cmd.has_token("FORMAT", "NOTABLES")
-        || cmd.has_token("FORMAT", "LIMIT"));
+    let display_tables =
+        !(cmd.has_token("FORMAT", "NOTABLE") || cmd.has_token("FORMAT", "NOTABLES"));
 
-    // 2. Order
+    // 2. Parse LIMIT(n) from /FORMAT
+    let mut suppress_tables_limit = None;
+    if let Some(format_sub) = cmd.subcommand("FORMAT") {
+        for (i, tok) in format_sub.tokens.iter().enumerate() {
+            let upper = tok.to_ascii_uppercase();
+            if upper.starts_with("LIMIT(") && upper.ends_with(')') {
+                let inside = tok[6..tok.len() - 1].trim();
+                if let Ok(limit) = inside.parse::<usize>() {
+                    if limit >= 1 {
+                        suppress_tables_limit = Some(limit);
+                    }
+                }
+            } else if upper == "LIMIT" {
+                if let Some(next_tok) = format_sub.tokens.get(i + 1) {
+                    let clean = next_tok
+                        .trim()
+                        .trim_start_matches('(')
+                        .trim_end_matches(')');
+                    if let Ok(limit) = clean.parse::<usize>() {
+                        if limit >= 1 {
+                            suppress_tables_limit = Some(limit);
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    // 3. Multiple variables mode (COMPARE vs VARIABLE)
+    let mut multiple_vars_mode = "compare";
+    if cmd.has_token("FORMAT", "VARIABLE") {
+        multiple_vars_mode = "variable";
+    } else if cmd.has_token("FORMAT", "COMPARE") {
+        multiple_vars_mode = "compare";
+    } else if cmd.has_token("ORDER", "VARIABLE") {
+        multiple_vars_mode = "variable";
+    }
+
+    // 4. Order
     let mut order = "analysis";
     if cmd.has_token("ORDER", "VARIABLE") {
         order = "variable";
@@ -46,23 +83,28 @@ pub fn map_frequencies(
         order = "avalue";
     }
 
-    // 3. Statistics
+    // 5. Statistics
     let statistics = parse_spss_statistics(cmd);
 
-    // 4. Percentiles and NTILES
+    // 6. Percentiles and NTILES
     let percentiles = parse_spss_percentiles(cmd);
 
-    // 5. Group midpoints
+    // 7. Group midpoints
     let group_midpoints = cmd.has_token("STATISTICS", "GROUPED") || cmd.has_subcommand("GROUPED");
 
-    // 6. Charts
+    // 8. Charts
     let charts = parse_spss_charts(cmd);
 
     let mut result = json!({
         "vars": vars,
         "display_tables": display_tables,
         "order": order,
+        "multiple_vars_mode": multiple_vars_mode,
     });
+
+    if let Some(limit) = suppress_tables_limit {
+        result["suppress_tables_limit"] = json!(limit);
+    }
 
     if let Some(stats) = statistics {
         result["statistics"] = stats;
@@ -335,5 +377,20 @@ mod tests {
         assert_eq!(charts["chart_type"], "histogram");
         assert_eq!(charts["values"], "frequencies");
         assert_eq!(charts["normal_curve"], true);
+    }
+
+    #[test]
+    fn test_map_frequencies_format_limit_and_mode() {
+        let blocks = SyntaxLexer::split_commands(
+            "FREQUENCIES VARIABLES=salary educ\n  /FORMAT=DFREQ VARIABLE LIMIT(10)\n  /ORDER=ANALYSIS.",
+        )
+        .unwrap();
+        let cmd = SyntaxParser::parse_command(&blocks[0]).unwrap();
+        let (_, val) = map_frequencies(&cmd, None).unwrap().unwrap();
+
+        assert_eq!(val["order"], "dfreq");
+        assert_eq!(val["multiple_vars_mode"], "variable");
+        assert_eq!(val["suppress_tables_limit"], 10);
+        assert_eq!(val["display_tables"], true);
     }
 }

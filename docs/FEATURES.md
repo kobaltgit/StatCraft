@@ -163,7 +163,11 @@ All statistical algorithms in StatCraft are implemented in **100% pure Safe Rust
   * Spicer (1972) recurrence moments: Valid $N$, Sum, Mean, Std. Error of Mean, Variance, Std. Deviation, Range, Minimum, Maximum, Skewness (with SE), and Bliss sample excess Kurtosis (with SE).
 * **Frequencies (`Frequencies`):**
   * Authentic SPSS frequency tables: Counts, Percent, Valid Percent (excluding missings), Cumulative Percent.
+  * Category sorting: ascending/descending values (`AVALUE`/`DVALUE`) or frequencies (`AFREQ`/`DFREQ`) with dynamic cumulative percent recalculation.
+  * Table suppression threshold (`LIMIT(n)`): automatically suppresses categorical tables when category count exceeds threshold $n$, preserving statistics and charts.
+  * Multi-variable output layout: `COMPARE` vs `VARIABLE`.
   * Quartiles ($Q_1, Q_2, Q_3$) and custom percentiles computed via the canonical HAVERAGE interpolation standard ($r = p(N+1)$).
+  * Vector-first distribution charts: Bar charts, Pie charts, and Histograms with optional Gaussian normal curve overlay.
 * **Crosstabs (`Crosstabs`):**
   * Two-way $R \times C$ contingency tables.
   * Observed counts, expected counts, unstandardized residuals, row percentages, column percentages, and total percentages.

@@ -450,6 +450,19 @@ dialog-freq-charts-histogram-normal = Показать на гистограмм
 dialog-freq-charts-values-group = Значения на диаграмме
 dialog-freq-charts-values-freq = Частоты
 dialog-freq-charts-values-percent = Проценты
+
+# Поддиалог «Частоты: Формат»
+dialog-freq-format-title = Частоты: Формат
+dialog-freq-format-order-group = Упорядочить по
+dialog-freq-format-order-asc-values = Возрастанию значений
+dialog-freq-format-order-desc-values = Убыванию значений
+dialog-freq-format-order-asc-counts = Возрастанию количеств
+dialog-freq-format-order-desc-counts = Убыванию количеств
+dialog-freq-format-multivars-group = Несколько переменных
+dialog-freq-format-multivars-compare = Сравнить переменные
+dialog-freq-format-multivars-variable = Выводить по переменным
+dialog-freq-format-suppress-checkbox = Отключить таблицы со многими категориями
+dialog-freq-format-max-categories = Максимальное число категорий:
 output-frequencies = Частоты
 output-frequencies-title = Таблица частот: { $name }
 output-frequencies-table = Таблица частот

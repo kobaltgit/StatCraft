@@ -10,6 +10,7 @@ mod hooks;
 mod icon;
 mod layers;
 mod parity;
+mod sync_site;
 mod undo_matrix;
 
 fn main() {
@@ -43,6 +44,13 @@ fn main() {
         "parity" => {
             if let Err(e) = parity::check_parity(&workspace_root) {
                 eprintln!("[ERROR] {}", e);
+                std::process::exit(1);
+            }
+        }
+        "sync-site" => {
+            let check_only = args.iter().any(|a| a == "--check");
+            if let Err(e) = sync_site::sync_site(&workspace_root, check_only) {
+                eprintln!("\n[SYNC-SITE FAILED] {}", e);
                 std::process::exit(1);
             }
         }
@@ -99,6 +107,9 @@ fn main() {
             );
             println!("  cargo xtask layers     Check L0..L6 architectural layering rules");
             println!("  cargo xtask parity     Check and update SPSS feature parity checklist");
+            println!(
+                "  cargo xtask sync-site  Audit & sync website benchmark matrix and docs (--check)"
+            );
             println!("  cargo xtask test-corpus  Run real-world corpora and codec fuzzing audit");
             println!("  cargo xtask test-undo    Run exhaustive Undo/Redo reversibility matrix across all 45 commands");
             println!("  cargo xtask bench-stress Run extreme stress test (100k/1M rows, 21 procs, UI FPS, memory probe)");

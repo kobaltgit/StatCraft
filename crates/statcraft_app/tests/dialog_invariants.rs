@@ -153,6 +153,38 @@ fn test_headless_render_frequencies_charts_subdialog() {
 }
 
 #[test]
+fn test_headless_render_frequencies_format_subdialog() {
+    let ctx = egui::Context::default();
+    let ds = create_test_dataset();
+    let mut state = FrequenciesDialogState {
+        is_open: true,
+        show_format: true,
+        ..Default::default()
+    };
+    state.format.order = statcraft_algo::CategoryOrder::DFreq;
+    state.format.multiple_vars_mode = statcraft_algo::MultipleVarsMode::Variable;
+    state.format.suppress_tables = true;
+    state.format.max_categories_input = "25".to_string();
+
+    let _ = ctx.run(Default::default(), |ctx| {
+        let action = render_frequencies_dialog(ctx, Some(&ds), &mut state);
+        match action {
+            FrequenciesDialogAction::None => {}
+            _ => panic!("Expected None during subdialog configuration"),
+        }
+    });
+
+    assert!(state.show_format);
+    assert_eq!(state.format.order, statcraft_algo::CategoryOrder::DFreq);
+    assert_eq!(
+        state.format.multiple_vars_mode,
+        statcraft_algo::MultipleVarsMode::Variable
+    );
+    assert!(state.format.suppress_tables);
+    assert_eq!(state.format.suppress_tables_limit(), Some(25));
+}
+
+#[test]
 fn test_headless_render_anova_dialog() {
     let ctx = egui::Context::default();
     let ds = create_test_dataset();

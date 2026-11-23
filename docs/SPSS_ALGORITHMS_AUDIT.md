@@ -119,22 +119,27 @@ Beyond isolated unit testing, StatCraft enforces mathematical and architectural 
 
 #### 1.2. `FREQUENCIES` (IBM Algorithms pp. 446–448)
 * **Implementation:** [`crates/statcraft_algo/src/frequencies/`](../crates/statcraft_algo/src/frequencies/) (`options.rs`, `percentiles.rs`, `stats.rs`, `table.rs`, `charts.rs`, `mod.rs`)
-* **Golden Oracle Tests:** `frequencies::table::tests::test_frequency_numeric_sorting_and_quartiles`, `frequencies_oracle_test` (`crates/statcraft_algo/tests/frequencies_oracle_test.rs`), `frequencies_charts_oracle_test` (`crates/statcraft_algo/tests/frequencies_charts_oracle_test.rs`)
+* **Golden Oracle Tests:** `frequencies::table::tests::test_frequency_numeric_sorting_and_quartiles`, `frequencies_oracle_test` (`crates/statcraft_algo/tests/frequencies_oracle_test.rs`), `frequencies_charts_oracle_test` (`crates/statcraft_algo/tests/frequencies_charts_oracle_test.rs`), `frequencies_order_and_limit_test` (`crates/statcraft_algo/tests/frequencies_order_and_limit_test.rs`)
 * **Mathematical Formula Verification:**
   * `Percent`: $\frac{f_j}{W_{total}} \times 100$ (including missing cases);
   * `Valid Percent`: $\frac{f_j}{W_{valid}} \times 100$ (excluding missing cases);
-  * `Cumulative Percent`: Cumulative summation of `Valid Percent`;
+  * `Cumulative Percent`: Cumulative summation of `Valid Percent` dynamically recalculated upon category sorting;
   * **Quantiles, Quartiles & Deciles:** Canonical **SPSS HAVERAGE** linear interpolation (Weibull / Type 6, rank $r = p \cdot (N + 1)$), N-tiles, and grouped midpoints;
   * **14 Descriptive Statistics:** Mean $\bar{X}$, sum, minimum, maximum, range, variance $s^2$, standard deviation $s$, standard error of mean $SE(\bar{X})$;
   * **Skewness & Kurtosis:** Fisher unbiased estimators ($g_1, g_2$) with exact standard errors $SE(g_1), SE(g_2)$;
   * **Mode (Mode Tie-Breaker):** On tied maximum frequencies, SPSS selects the smallest numeric value and sets `has_multiple_modes = true`.
+  * **Category Ordering & Format Options (`options.rs`, `table.rs`):**
+    * Category ordering modes (`CategoryOrder`): `AValue` (ascending value), `DValue` (descending value), `AFreq` (ascending frequency count), `DFreq` (descending frequency count);
+    * Dynamic recalculation of `cumulative_percent` based on `valid_percent` in sorted order;
+    * Multi-variable organization modes (`MultipleVarsMode`): `Compare` vs `Variable`;
+    * Frequency table suppression threshold `LIMIT(n)`: when $N_{categories} > n$, sets `table_suppressed = true` and clears category rows while preserving summary statistics and charts.
   * **Frequencies Charts & Adaptive Binning (`charts.rs`):**
     * Bar and Pie chart distribution aggregation with strict missing cases exclusion;
     * Histogram adaptive bin width selection using Scott's rule: $h = 3.49 \cdot s \cdot N^{-1/3}$;
     * Human-readable step rounding via `calculate_nice_step` (grid steps $\{1, 2, 5, 10\} \times 10^k$);
     * Theoretical Gaussian normal density curve $\mathcal{N}(\mu, \sigma^2)$ scaled to match the total histogram area: $y(x) = \frac{1}{\sigma \sqrt{2\pi}} e^{-\frac{1}{2}\left(\frac{x - \mu}{\sigma}\right)^2} \times (N \cdot bin\_width)$ (verified against `scipy.stats.norm.pdf` with precision $\le 10^{-6}$);
     * Safe degenerate handling for $s = 0$, $N < 2$, and non-numeric string variables returning `None` or a single bin without panics.
-  * **L5 Command Bus & Syntax:** Typed `FrequenciesCommand` (`stat.frequencies`) in `crates/statcraft_syntax/src/commands/frequencies_cmd/` with canonical category ordering (`dvalue`, `afreq`, `dfreq`), suppression of parametric metrics for Nominal scales, automated chart computation, and bidirectional SPSS syntax (`/FORMAT`, `/STATISTICS`, `/PERCENTILES`, `/NTILES`, `/BARCHART`, `/PIECHART`, `/HISTOGRAM [NORMAL]`, `/ORDER`).
+  * **L5 Command Bus & Syntax:** Typed `FrequenciesCommand` (`stat.frequencies`) in `crates/statcraft_syntax/src/commands/frequencies_cmd/` with canonical category ordering (`dvalue`, `afreq`, `dfreq`), suppression threshold `LIMIT(n)`, suppression of parametric metrics for Nominal scales, automated chart computation, and bidirectional SPSS syntax (`/FORMAT`, `/STATISTICS`, `/PERCENTILES`, `/NTILES`, `/BARCHART`, `/PIECHART`, `/HISTOGRAM [NORMAL]`, `/ORDER`).
 * **Verdict:** **100% Mathematical Equivalence to SPSS Canon.**
 
 #### 1.3. `CROSSTABS` (IBM Algorithms pp. 221–226)

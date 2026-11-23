@@ -255,3 +255,71 @@ fn test_frequencies_with_charts_execution() {
         panic!("Expected Histogram chart");
     }
 }
+
+#[test]
+fn test_frequencies_roundtrip_format_limit_and_mode() {
+    let params = json!({
+        "vars": ["salary", "educ"],
+        "order": "dfreq",
+        "multiple_vars_mode": "variable",
+        "suppress_tables_limit": 10,
+        "statistics": {
+            "mean": true,
+            "median": true
+        }
+    });
+
+    let sps = FrequenciesCommand::to_sps_from_params(&params);
+    assert!(sps.starts_with("FREQUENCIES VARIABLES=salary educ"));
+    assert!(sps.contains("/FORMAT=DFREQ VARIABLE LIMIT(10)"));
+    assert!(sps.contains("/STATISTICS=MEAN MEDIAN"));
+    assert!(sps.contains("/ORDER=ANALYSIS."));
+
+    use crate::syntax_parser::lexer::SyntaxLexer;
+    use crate::syntax_parser::mappers::stats::frequencies::map_frequencies;
+    use crate::syntax_parser::parser::SyntaxParser;
+
+    let blocks = SyntaxLexer::split_commands(&sps).unwrap();
+    assert_eq!(blocks.len(), 1);
+    let parsed_cmd = SyntaxParser::parse_command(&blocks[0]).unwrap();
+    let (id, val) = map_frequencies(&parsed_cmd, None).unwrap().unwrap();
+
+    assert_eq!(id, "stat.frequencies");
+    assert_eq!(val["vars"], json!(["salary", "educ"]));
+    assert_eq!(val["order"], "dfreq");
+    assert_eq!(val["multiple_vars_mode"], "variable");
+    assert_eq!(val["suppress_tables_limit"], 10);
+    assert_eq!(val["statistics"]["mean"], true);
+    assert_eq!(val["statistics"]["median"], true);
+}
+
+#[test]
+fn test_frequencies_execution_with_suppress_tables_limit() {
+    let cmd = FrequenciesCommand;
+    let mut ds = Some(make_test_dataset());
+
+    // Dataset has 2 categories for gender (1, 2)
+    // If suppress_tables_limit = 1, since 2 > 1, table should be suppressed!
+    let params = json!({
+        "vars": ["gender"],
+        "suppress_tables_limit": 1
+    });
+
+    let res = cmd.execute(&mut ds, params).expect("Execution success");
+    let results: Vec<FrequencyResult> = serde_json::from_value(res).expect("Valid JSON");
+    assert_eq!(results.len(), 1);
+    assert!(results[0].table_suppressed);
+    assert!(results[0].categories.is_empty());
+    assert_eq!(results[0].n_valid, 5);
+
+    // If suppress_tables_limit = 2, since 2 <= 2, table is NOT suppressed
+    let params2 = json!({
+        "vars": ["gender"],
+        "suppress_tables_limit": 2
+    });
+    let res2 = cmd.execute(&mut ds, params2).expect("Execution success");
+    let results2: Vec<FrequencyResult> = serde_json::from_value(res2).expect("Valid JSON");
+    assert_eq!(results2.len(), 1);
+    assert!(!results2[0].table_suppressed);
+    assert_eq!(results2[0].categories.len(), 2);
+}

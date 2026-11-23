@@ -110,7 +110,7 @@ pub use find_replace_dialog::{
 };
 pub use frequencies_dialog::{
     render_frequencies_dialog, FrequenciesChartOptions, FrequenciesChartType,
-    FrequenciesChartValue, FrequenciesDialogAction, FrequenciesDialogState,
+    FrequenciesChartValue, FrequenciesDialogAction, FrequenciesDialogState, FrequenciesFormatState,
     FrequenciesStatisticsState,
 };
 pub use glm_multivariate_dialog::{

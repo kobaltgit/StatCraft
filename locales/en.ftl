@@ -450,6 +450,19 @@ dialog-freq-charts-histogram-normal = Show normal curve on histogram
 dialog-freq-charts-values-group = Chart Values
 dialog-freq-charts-values-freq = Frequencies
 dialog-freq-charts-values-percent = Percentages
+
+# Frequencies Format Subdialog
+dialog-freq-format-title = Frequencies: Format
+dialog-freq-format-order-group = Order by
+dialog-freq-format-order-asc-values = Ascending values
+dialog-freq-format-order-desc-values = Descending values
+dialog-freq-format-order-asc-counts = Ascending counts
+dialog-freq-format-order-desc-counts = Descending counts
+dialog-freq-format-multivars-group = Multiple variables
+dialog-freq-format-multivars-compare = Compare variables
+dialog-freq-format-multivars-variable = Organize output by variables
+dialog-freq-format-suppress-checkbox = Suppress tables with many categories
+dialog-freq-format-max-categories = Maximum number of categories:
 output-frequencies = Frequencies
 output-frequencies-title = Frequency Table: { $name }
 output-frequencies-table = Frequencies Table

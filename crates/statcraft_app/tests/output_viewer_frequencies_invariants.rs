@@ -57,6 +57,7 @@ fn sample_rich_frequencies() -> Vec<FrequencyResult> {
                 ],
             }),
             chart: None,
+            table_suppressed: false,
         },
         FrequencyResult {
             variable: "educ".to_string(),
@@ -84,6 +85,7 @@ fn sample_rich_frequencies() -> Vec<FrequencyResult> {
                 percentiles: vec![],
             }),
             chart: None,
+            table_suppressed: false,
         },
         FrequencyResult {
             variable: "gender".to_string(),
@@ -111,6 +113,7 @@ fn sample_rich_frequencies() -> Vec<FrequencyResult> {
             quartiles: None,
             statistics: None,
             chart: None,
+            table_suppressed: false,
         },
     ]
 }
@@ -340,6 +343,7 @@ fn test_frequencies_with_variable_labels_rendering_and_tsv() {
             percentiles: vec![],
         }),
         chart: None,
+        table_suppressed: false,
     }];
 
     let tsv = frequencies_to_tsv(&results);
@@ -584,6 +588,7 @@ fn test_frequencies_builder_with_charts_adds_chart_item() {
                 },
             ],
         }),
+        table_suppressed: false,
     }];
 
     let mut state = OutputViewerState::new();

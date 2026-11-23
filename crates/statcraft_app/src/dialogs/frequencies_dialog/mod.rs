@@ -1,8 +1,10 @@
 pub mod charts_subdialog;
+pub mod format_subdialog;
 pub mod state;
 pub mod statistics_subdialog;
 
 pub use charts_subdialog::*;
+pub use format_subdialog::*;
 pub use state::*;
 pub use statistics_subdialog::*;
 
@@ -37,6 +39,9 @@ pub fn render_frequencies_dialog(
     }
     if state.show_charts {
         render_charts_subdialog(ctx, state);
+    }
+    if state.show_format {
+        render_format_subdialog(ctx, state);
     }
 
     let mut action = FrequenciesDialogAction::None;
@@ -189,7 +194,10 @@ pub fn render_frequencies_dialog(
                         state.charts_backup = Some(state.charts.clone());
                         state.show_charts = true;
                     }
-                    let _ = SubdialogSidebar::button(ui, t!("dialog-btn-format"), false);
+                    if SubdialogSidebar::button(ui, t!("dialog-btn-format"), true).clicked() {
+                        state.format_backup = Some(state.format.clone());
+                        state.show_format = true;
+                    }
                     let _ = SubdialogSidebar::button(ui, t!("dialog-btn-style"), false);
                     let _ = SubdialogSidebar::button(ui, t!("dialog-btn-bootstrap"), false);
                 },
@@ -208,6 +216,19 @@ pub fn render_frequencies_dialog(
         let can_run = !state.selected_vars.is_empty();
         let bar_action = DialogActionBar::new(can_run).show(ui);
 
+        let order = if state.format.order != statcraft_algo::CategoryOrder::AValue {
+            Some(state.format.order.as_str().to_string())
+        } else {
+            None
+        };
+        let multiple_vars_mode =
+            if state.format.multiple_vars_mode != statcraft_algo::MultipleVarsMode::Compare {
+                Some(state.format.multiple_vars_mode.as_str().to_string())
+            } else {
+                None
+            };
+        let suppress_tables_limit = state.format.suppress_tables_limit();
+
         match bar_action {
             ActionBarAction::Ok => {
                 close_dialog = true;
@@ -219,6 +240,9 @@ pub fn render_frequencies_dialog(
                     percentiles: state.stats.to_percentiles_json(),
                     group_midpoints: state.stats.group_midpoints,
                     charts: state.charts.to_json(),
+                    order,
+                    multiple_vars_mode,
+                    suppress_tables_limit,
                 };
             }
             ActionBarAction::Paste => {
@@ -231,6 +255,9 @@ pub fn render_frequencies_dialog(
                     percentiles: state.stats.to_percentiles_json(),
                     group_midpoints: state.stats.group_midpoints,
                     charts: state.charts.to_json(),
+                    order,
+                    multiple_vars_mode,
+                    suppress_tables_limit,
                 };
             }
             ActionBarAction::Reset => {

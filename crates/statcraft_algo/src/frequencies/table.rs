@@ -1,5 +1,5 @@
 use super::charts::FrequencyChartResult;
-use super::options::FrequenciesStatisticsOptions;
+use super::options::{CategoryOrder, FrequenciesFormatOptions, FrequenciesStatisticsOptions};
 use super::percentiles::compute_quartiles;
 use super::stats::{compute_frequencies_statistics, FrequenciesStatisticsResult};
 use serde::{Deserialize, Serialize};
@@ -38,6 +38,9 @@ pub struct FrequencyResult {
     pub statistics: Option<FrequenciesStatisticsResult>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub chart: Option<FrequencyChartResult>,
+    /// Indicates whether the category table was suppressed due to exceeding LIMIT(n)
+    #[serde(default)]
+    pub table_suppressed: bool,
 }
 
 impl FrequencyResult {
@@ -230,6 +233,53 @@ pub fn compute_frequencies_full(
         quartiles,
         statistics,
         chart: None,
+        table_suppressed: false,
+    }
+}
+
+/// Sorts frequency categories according to CategoryOrder (SPSS /FORMAT=AVALUE|DVALUE|AFREQ|DFREQ)
+/// and recalculates cumulative percentages.
+pub fn sort_categories(categories: &mut [FrequencyCategory], order: CategoryOrder) {
+    let needs_recalc = match order {
+        CategoryOrder::AValue => false,
+        CategoryOrder::DValue => {
+            categories.reverse();
+            true
+        }
+        CategoryOrder::AFreq => {
+            categories.sort_by_key(|c| c.count);
+            true
+        }
+        CategoryOrder::DFreq => {
+            categories.sort_by_key(|a| std::cmp::Reverse(a.count));
+            true
+        }
+    };
+
+    if needs_recalc {
+        recalculate_cumulative_percents(categories);
+    }
+}
+
+/// Recalculates cumulative percentages for sorted categories based on valid_percent.
+pub fn recalculate_cumulative_percents(categories: &mut [FrequencyCategory]) {
+    let mut running = 0.0;
+    for cat in categories.iter_mut() {
+        if let Some(vp) = cat.valid_percent {
+            running += vp;
+            cat.cumulative_percent = Some(running);
+        }
+    }
+}
+
+/// Applies format options: sorts categories, and suppresses tables if categories exceed limit.
+pub fn apply_format_options(result: &mut FrequencyResult, format: &FrequenciesFormatOptions) {
+    sort_categories(&mut result.categories, format.order);
+    if let Some(limit) = format.suppress_tables_limit {
+        if result.categories.len() > limit {
+            result.table_suppressed = true;
+            result.categories.clear();
+        }
     }
 }
 

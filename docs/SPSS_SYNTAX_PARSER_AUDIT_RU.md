@@ -50,7 +50,7 @@
 * Декомпозированные мапперы команд в модульных пакетах (`mappers/stats/`, `mappers/data.rs`, `mappers/advanced_regression.rs`, `mappers/glm.rs`, `mappers/pkg3.rs`, `mappers/variables.rs`).
 * Преобразование распарсенных команд в строго типизированные JSON-параметры `CommandBus`:
   1. `DESCRIPTIVES /VARIABLES=vars /STATISTICS=MEAN STDDEV MIN MAX...` $\to$ `"stat.descriptives"`
-  2. `FREQUENCIES /VARIABLES=vars [/FORMAT={TABLE|NOTABLE} {AVALUE|DVALUE|AFREQ|DFREQ}] [/STATISTICS=[DEFAULT] [MEAN] [SEMEAN] [MEDIAN] [MODE] [SUM] [STDDEV] [VARIANCE] [RANGE] [MINIMUM] [MAXIMUM] [SKEWNESS] [KURTOSIS] [ALL] [NONE]] [/PERCENTILES=values] [/NTILES=n] [/BARCHART {FREQ|PERCENT}] [/PIECHART {FREQ|PERCENT}] [/HISTOGRAM [NORMAL]] [/ORDER={ANALYSIS|VARIABLE}]` $\to$ `"stat.frequencies"`
+  2. `FREQUENCIES /VARIABLES=vars [/FORMAT={TABLE|NOTABLE} {AVALUE|DVALUE|AFREQ|DFREQ} {COMPARE|VARIABLE} [LIMIT(n)]] [/STATISTICS=[DEFAULT] [MEAN] [SEMEAN] [MEDIAN] [MODE] [SUM] [STDDEV] [VARIANCE] [RANGE] [MINIMUM] [MAXIMUM] [SKEWNESS] [KURTOSIS] [ALL] [NONE]] [/PERCENTILES=values] [/NTILES=n] [/BARCHART {FREQ|PERCENT}] [/PIECHART {FREQ|PERCENT}] [/HISTOGRAM [NORMAL]] [/ORDER={ANALYSIS|VARIABLE}]` $\to$ `"stat.frequencies"`
   3. `CROSSTABS /TABLES=row BY col /STATISTICS=CHISQ` $\to$ `"stat.crosstabs"`
   4. `T-TEST GROUPS=var(1 2) /VARIABLES=vars` $\to$ `"stat.ttest.indep"`
   5. `T-TEST PAIRS=v1 WITH v2 (PAIRED)` $\to$ `"stat.ttest.paired"`
@@ -88,6 +88,9 @@ $$\text{Диалог / Команда} \xrightarrow{\text{to\_sps}} \text{Стр
 Файл `crates/statcraft_syntax/tests/syntax_roundtrip_and_fuzz_tests.rs`:
 * `test_roundtrip_descriptives` — ПРОЙДЕН
 * `test_roundtrip_frequencies` — ПРОЙДЕН
+* `test_frequencies_roundtrip_format_limit_and_mode` — ПРОЙДЕН (FORMAT с DFREQ, VARIABLE, LIMIT(n))
+* `test_map_frequencies_format_limit_and_mode` — ПРОЙДЕН
+* `test_frequencies_execution_with_suppress_tables_limit` — ПРОЙДЕН
 * `test_map_frequencies_charts` — ПРОЙДЕН (Bar, Pie, Histogram с нормальной кривой)
 * `test_to_sps_from_params_with_charts` — ПРОЙДЕН
 * `test_roundtrip_sort_cases` — ПРОЙДЕН

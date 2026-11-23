@@ -1,5 +1,60 @@
 use serde::{Deserialize, Serialize};
 use serde_json::{json, Value};
+use statcraft_algo::{CategoryOrder, MultipleVarsMode};
+
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+pub struct FrequenciesFormatState {
+    /// Порядок категорий: AValue = Ascending Values, DValue = Descending Values, AFreq = Ascending Counts, DFreq = Descending Counts
+    pub order: CategoryOrder,
+    /// Организация нескольких переменных: Compare = Compare Variables, Variable = Organize by Variables
+    pub multiple_vars_mode: MultipleVarsMode,
+    /// Чекбокс «Отключить таблицы со многими категориями»
+    pub suppress_tables: bool,
+    /// Значение поля «Максимальное число категорий: [10]»
+    pub max_categories_input: String,
+}
+
+impl Default for FrequenciesFormatState {
+    fn default() -> Self {
+        Self {
+            order: CategoryOrder::AValue,
+            multiple_vars_mode: MultipleVarsMode::Compare,
+            suppress_tables: false,
+            max_categories_input: "10".to_string(),
+        }
+    }
+}
+
+impl FrequenciesFormatState {
+    pub fn order_str(&self) -> Option<String> {
+        match self.order {
+            CategoryOrder::AValue => None,
+            CategoryOrder::DValue => Some("dvalue".to_string()),
+            CategoryOrder::AFreq => Some("afreq".to_string()),
+            CategoryOrder::DFreq => Some("dfreq".to_string()),
+        }
+    }
+
+    pub fn multiple_vars_mode_str(&self) -> Option<String> {
+        match self.multiple_vars_mode {
+            MultipleVarsMode::Compare => None,
+            MultipleVarsMode::Variable => Some("variable".to_string()),
+        }
+    }
+
+    pub fn suppress_tables_limit(&self) -> Option<usize> {
+        if self.suppress_tables {
+            self.max_categories_input
+                .trim()
+                .parse::<usize>()
+                .ok()
+                .filter(|&n| n >= 1)
+                .or(Some(10))
+        } else {
+            None
+        }
+    }
+}
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
 pub enum FrequenciesChartType {
@@ -182,6 +237,7 @@ pub struct FrequenciesDialogState {
     pub is_open: bool,
     pub show_statistics: bool,
     pub show_charts: bool,
+    pub show_format: bool,
     pub source_selected: Option<usize>,
     pub target_selected: Option<usize>,
     pub selected_vars: Vec<String>,
@@ -191,6 +247,8 @@ pub struct FrequenciesDialogState {
     pub stats_backup: Option<FrequenciesStatisticsState>,
     pub charts: FrequenciesChartOptions,
     pub charts_backup: Option<FrequenciesChartOptions>,
+    pub format: FrequenciesFormatState,
+    pub format_backup: Option<FrequenciesFormatState>,
 }
 
 impl Default for FrequenciesDialogState {
@@ -199,6 +257,7 @@ impl Default for FrequenciesDialogState {
             is_open: false,
             show_statistics: false,
             show_charts: false,
+            show_format: false,
             source_selected: None,
             target_selected: None,
             selected_vars: Vec::new(),
@@ -208,6 +267,8 @@ impl Default for FrequenciesDialogState {
             stats_backup: None,
             charts: FrequenciesChartOptions::default(),
             charts_backup: None,
+            format: FrequenciesFormatState::default(),
+            format_backup: None,
         }
     }
 }
@@ -223,8 +284,11 @@ impl FrequenciesDialogState {
         self.stats_backup = None;
         self.charts = FrequenciesChartOptions::default();
         self.charts_backup = None;
+        self.format = FrequenciesFormatState::default();
+        self.format_backup = None;
         self.show_statistics = false;
         self.show_charts = false;
+        self.show_format = false;
     }
 }
 
@@ -237,6 +301,9 @@ pub enum FrequenciesDialogAction {
         percentiles: Option<Value>,
         group_midpoints: bool,
         charts: Option<Value>,
+        order: Option<String>,
+        multiple_vars_mode: Option<String>,
+        suppress_tables_limit: Option<usize>,
     },
     Paste {
         vars: Vec<String>,
@@ -246,6 +313,9 @@ pub enum FrequenciesDialogAction {
         percentiles: Option<Value>,
         group_midpoints: bool,
         charts: Option<Value>,
+        order: Option<String>,
+        multiple_vars_mode: Option<String>,
+        suppress_tables_limit: Option<usize>,
     },
     None,
 }

@@ -1,32 +1,8 @@
 use serde_json::Value;
-use statcraft_algo::FrequencyCategory;
+use statcraft_algo::{sort_categories, CategoryOrder, FrequencyCategory};
 
 pub fn apply_order(categories: &mut [FrequencyCategory], order: &str) {
-    let needs_recalc = match order.to_ascii_lowercase().as_str() {
-        "dvalue" => {
-            categories.reverse();
-            true
-        }
-        "afreq" => {
-            categories.sort_by_key(|c| c.count);
-            true
-        }
-        "dfreq" => {
-            categories.sort_by_key(|a| std::cmp::Reverse(a.count));
-            true
-        }
-        _ => false,
-    };
-
-    if needs_recalc {
-        let mut running = 0.0;
-        for cat in categories.iter_mut() {
-            if let Some(vp) = cat.valid_percent {
-                running += vp;
-                cat.cumulative_percent = Some(running);
-            }
-        }
-    }
+    sort_categories(categories, CategoryOrder::from_str_loose(order));
 }
 
 pub fn to_sps(vars: &[String]) -> String {
@@ -57,6 +33,8 @@ pub fn to_sps_from_params(params: &Value) -> String {
         .and_then(|v| v.as_bool())
         .unwrap_or(true);
     let order = params.get("order").and_then(|v| v.as_str());
+    let multiple_vars_mode = params.get("multiple_vars_mode").and_then(|v| v.as_str());
+    let suppress_tables_limit = params.get("suppress_tables_limit").and_then(|v| v.as_u64());
 
     let mut format_tokens = Vec::new();
     if !display_tables {
@@ -69,6 +47,14 @@ pub fn to_sps_from_params(params: &Value) -> String {
             }
             _ => {}
         }
+    }
+    if let Some(mvm) = multiple_vars_mode {
+        if mvm.eq_ignore_ascii_case("variable") {
+            format_tokens.push("VARIABLE".to_string());
+        }
+    }
+    if let Some(limit) = suppress_tables_limit {
+        format_tokens.push(format!("LIMIT({})", limit));
     }
     if !format_tokens.is_empty() {
         lines.push(format!("  /FORMAT={}", format_tokens.join(" ")));

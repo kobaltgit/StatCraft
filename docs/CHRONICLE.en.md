@@ -4091,3 +4091,78 @@ Completed the final third stage of the frequency distribution charts feature (Fe
 4. **Definition of Done (DoD):**
    * 100% tests passing in workspace (including 6/6 tests in `output_viewer_frequencies_invariants.rs`);
    * Full compliance with `xtask file-guard` (all 494 files $\le 500$ lines), `xtask design-guard` (zero emojis, canonical DialogKit), `xtask layers`, and `cargo clippy -- -D warnings`.
+
+---
+
+### Phase 104: Frequencies Format — Stage 1: Engine, Algorithms & SPSS Syntax (L2 statcraft_algo & L5 statcraft_syntax)
+*Time: November 23, 2026, 09:20 (~25 minutes)*
+
+Completed the first stage of the frequency distribution format options feature (Feature 018 — Frequencies: Format / SPSS `FREQUENCIES /FORMAT`) — mathematical types, unified category ordering, table suppression threshold `LIMIT(n)`, and syntax processing:
+1. **Mathematical Types & Format Options in L2 (`options.rs`):**
+   * Added `CategoryOrder` enum (`AValue`, `DValue`, `AFreq`, `DFreq`) with resilient `from_str_loose` and `as_str` conversions;
+   * Added `MultipleVarsMode` enum (`Compare`, `Variable`) for multi-variable output organization;
+   * Added `FrequenciesFormatOptions` struct encapsulating `order`, `multiple_vars_mode`, and optional `suppress_tables_limit`.
+2. **Category Ordering & Table Suppression in L2 (`table.rs`):**
+   * Extended `FrequencyResult` with `pub table_suppressed: bool` annotated with `#[serde(default)]` for 100% backward compatibility;
+   * Added `sort_categories` and `recalculate_cumulative_percents` for canonical re-ordering with precise recalculation of cumulative percentages based on `valid_percent`;
+   * Added `apply_format_options` to sort categories and suppress table when category count exceeds threshold $N > \text{limit}$.
+3. **Command Bus & SPSS Syntax in L5 (`frequencies_cmd`, `sps.rs`, `syntax_parser`):**
+   * Extended `specs()` in `stat.frequencies` with `order` (`"avalue"`, `"dvalue"`, `"afreq"`, `"dfreq"`), `multiple_vars_mode` (`"compare"`, `"variable"`), and `suppress_tables_limit` (`integer >= 1`);
+   * Integrated format options in `execute()`, ensuring statistics and charts are preserved when category tables are suppressed;
+   * SPSS syntax generator in `sps.rs`: serialization of the canonical `/FORMAT` subcommand (e.g., `/FORMAT=DFREQ VARIABLE LIMIT(10)`);
+   * Syntax mapper in `mappers/stats/frequencies.rs`: token parser for `LIMIT(n)` and `LIMIT n` as well as `COMPARE` and `VARIABLE` modes in `/FORMAT`.
+4. **Definition of Done (DoD):**
+   * New test suite `frequencies_order_and_limit_test.rs` in `statcraft_algo` covering all 4 ordering modes, cumulative percent recalculation, and `LIMIT(n)` thresholds;
+   * Unit tests for round-trip syntax generation and execution with `suppress_tables_limit` in `frequencies_cmd/tests.rs`;
+   * 100% passes for all invariant test suites (`output_viewer_invariants`, `output_viewer_frequencies_invariants`, `output_viewer_navigation`);
+   * Strict compliance with `xtask file-guard` (495 files, all $\le 500$ lines), `xtask layers`, `xtask design-guard`, and `cargo clippy --workspace -j 1 -- -D warnings` with zero warnings.
+
+---
+
+### Phase 105: Website Audit Synchronization & CI Gate Automation (xtask sync-site & CI Gate 10)
+*Time: November 23, 2026, 09:35 (~20 minutes)*
+
+Implemented and embedded automated validation into the quality pipeline to guarantee 100% synchronization between the SPSS algorithms audit matrix (`docs/SPSS_ALGORITHMS_AUDIT.md`) and the project website (`website/src/lib/audit-data.ts`, `docs-data.ts`):
+1. **Synchronization Engine `xtask sync-site` (`xtask/src/sync_site.rs`):**
+   * Compact module of 280 lines ($\le 500$ lines pursuant to `file-guard`), 100% safe Rust with zero panics;
+   * Parses Markdown matrix Section 2 and TypeScript `AUDIT_BLOCKS` structure;
+   * Verifies block count parity (20 of 20);
+   * Validates procedure list equivalence with resilient matching across syntax identifiers;
+   * Recursively verifies physical existence of all implementation files across all workspace crates (`crates/**`);
+   * Verifies presence of all 9 core documentation section slugs in `website/src/lib/docs-data.ts`.
+2. **Full CI Quality Gate Integration (`xtask/src/ci.rs`):**
+   * Added tenth mandatory gate: `=== [CI Gate] Website Audit Synchronization (xtask sync-site --check) ===`;
+   * Any matrix discrepancy, missing implementation file, or omitted documentation page halts CI and blocks push attempts via the `.githooks/pre-push` git hook.
+3. **CLI Interface Registration (`xtask/src/main.rs`):**
+   * Added `cargo xtask sync-site [--check]` command with updated CLI help text.
+4. **Quality Gate & DoD Verification:**
+   * All 10 Quality Gates passed with 100% success via `cargo run -p xtask -j 1 -- ci`;
+   * Synchronized `website/src/lib/audit-data.ts` (added `.xls` to Block 13 codec descriptors);
+   * 100% pass across `cargo fmt`, `cargo clippy -- -D warnings`, `file-guard` (496 files compliant), `layers`, `design-guard`, `test-corpus`, `test-undo`, and unit tests.
+
+
+---
+
+### Phase 105: Frequencies Format — Stage 2: DialogKit Canonical Subdialog & Parameter Synchronization (L6 statcraft_app)
+*Time: November 23, 2026, 09:40 (~20 minutes)*
+
+Completed the second stage of the frequency distribution format options feature (Feature 018 — Frequencies: Format) — modal subdialog graphical interface, state synchronization, and execution pipeline wiring:
+1. **Dialog State & Transactional Undo/Cancel (`state.rs`):**
+   * Implemented `FrequenciesFormatState` struct (`order`, `multiple_vars_mode`, `suppress_tables`, `max_categories_input`) with validated integer limit parser `suppress_tables_limit()`;
+   * Integrated `format`, `format_backup`, and `show_format` into `FrequenciesDialogState`;
+   * Taking a state snapshot on opening enables transactional rollback if the user hits `Cancel` or dismisses the window;
+   * Extended `FrequenciesDialogAction::Run` and `Paste` variants with `order`, `multiple_vars_mode`, and `suppress_tables_limit`.
+2. **Subdialog Layout with Canonical DialogKit (`format_subdialog.rs`):**
+   * Modal window built with `DialogShell::subdialog(t!("dialog-freq-format-title"))` ($360 \times 300$ px);
+   * Two-column section utilizing `GroupBox`:
+     - Left column: `Order by` group (Ascending values, Descending values, Ascending counts, Descending counts);
+     - Right column: `Multiple variables` group (Compare variables, Organize output by variables);
+   * Bottom category suppression row: checkbox "Suppress tables with many categories" and dependent numeric field "Maximum number of categories: [10]" disabled when unchecked;
+   * Type 2 `SubdialogActionBar` (`[ Continue ] [ Cancel ] [ Help ]`) with numeric validation ensuring category limit $\ge 1$.
+3. **Main Dialog & Command Pipeline Integration (`mod.rs`, `app_dialogs.rs`):**
+   * Enabled the `[ Format... ]` button on the `SubdialogSidebar`;
+   * Forwarded format options from `FrequenciesDialogAction` to the `stat.frequencies` command bus payload and the `.sps` syntax log in `app_dialogs.rs`.
+4. **Definition of Done (DoD) & Verification:**
+   * Added headless invariant test `test_headless_render_frequencies_format_subdialog` in `dialog_invariants.rs` (41/41 tests passing);
+   * 100% string key coverage in Fluent translation catalogs `locales/ru.ftl` and `locales/en.ftl` (Zero-Hardcode i18n);
+   * Full compliance with `xtask design-guard` (DialogKit canon, zero emojis), `xtask file-guard` (497 Rust files within $\le 500$ lines), and clean `cargo clippy -p statcraft_app -j 1 -- -D warnings`.

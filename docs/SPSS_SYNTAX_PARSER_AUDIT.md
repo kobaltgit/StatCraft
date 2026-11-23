@@ -50,7 +50,7 @@ The entire implementation adheres strictly to the ArtCraft ecosystem standards:
 * Decoupled command mappers organized in modular subpackages (`mappers/stats/`, `mappers/data.rs`, `mappers/advanced_regression.rs`, `mappers/glm.rs`, `mappers/pkg3.rs`, `mappers/variables.rs`).
 * Translates parsed commands into strongly-typed JSON parameters for `CommandBus`:
   1. `DESCRIPTIVES /VARIABLES=vars /STATISTICS=MEAN STDDEV MIN MAX...` $\to$ `"stat.descriptives"`
-  2. `FREQUENCIES /VARIABLES=vars [/FORMAT={TABLE|NOTABLE} {AVALUE|DVALUE|AFREQ|DFREQ}] [/STATISTICS=[DEFAULT] [MEAN] [SEMEAN] [MEDIAN] [MODE] [SUM] [STDDEV] [VARIANCE] [RANGE] [MINIMUM] [MAXIMUM] [SKEWNESS] [KURTOSIS] [ALL] [NONE]] [/PERCENTILES=values] [/NTILES=n] [/BARCHART {FREQ|PERCENT}] [/PIECHART {FREQ|PERCENT}] [/HISTOGRAM [NORMAL]] [/ORDER={ANALYSIS|VARIABLE}]` $\to$ `"stat.frequencies"`
+  2. `FREQUENCIES /VARIABLES=vars [/FORMAT={TABLE|NOTABLE} {AVALUE|DVALUE|AFREQ|DFREQ} {COMPARE|VARIABLE} [LIMIT(n)]] [/STATISTICS=[DEFAULT] [MEAN] [SEMEAN] [MEDIAN] [MODE] [SUM] [STDDEV] [VARIANCE] [RANGE] [MINIMUM] [MAXIMUM] [SKEWNESS] [KURTOSIS] [ALL] [NONE]] [/PERCENTILES=values] [/NTILES=n] [/BARCHART {FREQ|PERCENT}] [/PIECHART {FREQ|PERCENT}] [/HISTOGRAM [NORMAL]] [/ORDER={ANALYSIS|VARIABLE}]` $\to$ `"stat.frequencies"`
   3. `CROSSTABS /TABLES=row BY col /STATISTICS=CHISQ` $\to$ `"stat.crosstabs"`
   4. `T-TEST GROUPS=var(1 2) /VARIABLES=vars` $\to$ `"stat.ttest.indep"`
   5. `T-TEST PAIRS=v1 WITH v2 (PAIRED)` $\to$ `"stat.ttest.paired"`
@@ -88,6 +88,9 @@ $$\text{Dialog / Command} \xrightarrow{\text{to\_sps}} \text{Syntax String} \xri
 Verified in `crates/statcraft_syntax/tests/syntax_roundtrip_and_fuzz_tests.rs`:
 * `test_roundtrip_descriptives` — PASSED
 * `test_roundtrip_frequencies` — PASSED
+* `test_frequencies_roundtrip_format_limit_and_mode` — PASSED (FORMAT with DFREQ, VARIABLE, LIMIT(n))
+* `test_map_frequencies_format_limit_and_mode` — PASSED
+* `test_frequencies_execution_with_suppress_tables_limit` — PASSED
 * `test_map_frequencies_charts` — PASSED (Bar, Pie, Histogram with Normal curve)
 * `test_to_sps_from_params_with_charts` — PASSED
 * `test_roundtrip_sort_cases` — PASSED

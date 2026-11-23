@@ -1268,6 +1268,51 @@
   - [x] 40/40 тестов в `dialog_invariants.rs`;
   - [x] `xtask file-guard` (494 файла, все строго $\le 500$ строк), `xtask design-guard`, `xtask layers` и `cargo clippy --workspace -j 1 -- -D warnings`.
 
+## 75. Частоты: Формат (Frequencies: Format) — Этап 1: Ядро, Алгоритмы и Синтаксис SPSS (L2 & L5)
+- [x] L2 `statcraft_algo::frequencies::options`:
+  - [x] Перечисление порядка категорий `CategoryOrder` (`AValue`, `DValue`, `AFreq`, `DFreq`) с поддержкой `from_str_loose` и `as_str`;
+  - [x] Перечисление организации вывода нескольких переменных `MultipleVarsMode` (`Compare`, `Variable`);
+  - [x] Структура `FrequenciesFormatOptions` с поддержкой `order`, `multiple_vars_mode` и порога `suppress_tables_limit`;
+- [x] L2 `statcraft_algo::frequencies::table`:
+  - [x] Поле `table_suppressed: bool` в `FrequencyResult` с атрибутом `#[serde(default)]`;
+  - [x] Унифицированная сортировка `sort_categories` и пересчет кумулятивных процентов `recalculate_cumulative_percents`;
+  - [x] Функция `apply_format_options` для сортировки и подавления таблицы категорий при превышении лимита;
+- [x] L5 `statcraft_syntax::commands::frequencies_cmd`:
+  - [x] Расширение `specs()` параметрами `order`, `multiple_vars_mode`, `suppress_tables_limit`;
+  - [x] Интеграция `format_options` в `execute()` с сохранением графиков и статистик при подавлении таблиц категорий;
+  - [x] Сериализация подкоманды `/FORMAT` в `sps.rs` (`VARIABLE`, `LIMIT(n)`, `NOTABLE`, `DFREQ`/`AFREQ`/`DVALUE`/`AVALUE`);
+- [x] L5 `statcraft_syntax::syntax_parser::mappers::stats::frequencies`:
+  - [x] Парсер токенов `LIMIT(n)` и `LIMIT n` с извлечением числового порога;
+  - [x] Распознавание режимов `COMPARE` и `VARIABLE` в подкоманде `/FORMAT`;
+- [x] Тестирование и верификация (DoD):
+  - [x] Тесты `frequencies_order_and_limit_test.rs` в `statcraft_algo` (4 режима сортировки, расчет кумулятивных процентов, пороги `LIMIT(n)`);
+  - [x] Тесты round-trip и исполнения с `suppress_tables_limit` в `frequencies_cmd/tests.rs`;
+  - [x] Тесты маппера синтаксиса в `syntax_parser/mappers/stats/frequencies.rs`;
+  - [x] 100% прохождение всех инвариантных тестов (`output_viewer_invariants`, `output_viewer_frequencies_invariants`, `output_viewer_navigation`);
+  - [x] `xtask file-guard` (495 файлов, все $\le 500$ строк), `xtask layers`, `xtask design-guard` и `cargo clippy --workspace -j 1 -- -D warnings`.
+
+## 76. Частоты: Формат (Frequencies: Format) — Этап 2: Диалоговое окно по канону DialogKit и синхронизация параметров (L6 statcraft_app)
+- [x] L6 `statcraft_app::dialogs::frequencies_dialog::state`:
+  - [x] Структура `FrequenciesFormatState` (`order`, `multiple_vars_mode`, `suppress_tables`, `max_categories_input`) и метод `suppress_tables_limit()`;
+  - [x] Интеграция `format`, `format_backup`, `show_format` в `FrequenciesDialogState` со снимками состояния и транзакционным откатом по Cancel;
+  - [x] Расширение `FrequenciesDialogAction` вариантами `Run` и `Paste` с параметрами `order`, `multiple_vars_mode`, `suppress_tables_limit`;
+- [x] L6 `statcraft_app::dialogs::frequencies_dialog::format_subdialog`:
+  - [x] Модальный поддиалог «Частоты: Формат» (`DialogShell::subdialog`, $360 \times 300$ px);
+  - [x] Двухколоночный ряд `GroupBox`:
+    - `GroupBox` «Упорядочить по» (Возрастанию значений, Убыванию значений, Возрастанию количеств, Убыванию количеств);
+    - `GroupBox` «Несколько переменных» (Сравнить переменные, Выводить по переменным);
+  - [x] Блок «Отключить таблицы со многими категориями» с чекбоксом и зависимым числовым полем «Максимальное число категорий: [10]»;
+  - [x] Панель `SubdialogActionBar` Type 2 (`[ Продолжить ] [ Отмена ] [ Справка ]`) с валидацией целочисленного лимита $\ge 1$;
+- [x] L6 `statcraft_app::app_dialogs`:
+  - [x] Активация кнопки `[ Формат... ]` в `SubdialogSidebar`;
+  - [x] Проброс параметров формата в словарь параметров шины команд `stat.frequencies` и журнал синтаксиса `.sps`;
+- [x] Zero-Hardcode i18n (`locales/ru.ftl`, `locales/en.ftl`):
+  - [x] Добавлены строковые ключи `dialog-freq-format-*` без сырых строк в UI;
+- [x] Тестирование и верификация (DoD):
+  - [x] Headless-тест инвариантов диалога `test_headless_render_frequencies_format_subdialog` в `dialog_invariants.rs` (41/41 тест пройден);
+  - [x] 100% прохождение `output_viewer_frequencies_invariants.rs` и `output_viewer_invariants.rs`;
+  - [x] Полное прохождение `cargo run -p xtask -j 1 -- design-guard`, `file-guard` (497 файлов, все $\le 500$ строк) и `cargo clippy -p statcraft_app -j 1 -- -D warnings`.
+
 
 ## 20. Планы будущих релизов (Backlog / Planned Features)
 - [ ] Мультимониторный режим рабочего пространства (Multi-Monitor Viewports & Pop-out Tabs):

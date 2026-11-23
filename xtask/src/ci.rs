@@ -82,6 +82,11 @@ pub fn run_ci(root: &Path) -> Result<(), String> {
     crate::undo_matrix::run_undo_matrix(root)?;
     println!(">>> [OK] Undo/Redo reversibility matrix");
 
+    // 10. Website audit & documentation synchronization check
+    println!("\n=== [CI Gate] Website Audit Synchronization (xtask sync-site --check) ===");
+    crate::sync_site::sync_site(root, true)?;
+    println!(">>> [OK] Website audit synchronization");
+
     println!("\n=======================================================");
     println!("  ALL CI QUALITY GATES PASSED! (ArtCraft DoD: 100% OK) ");
     println!("=======================================================\n");

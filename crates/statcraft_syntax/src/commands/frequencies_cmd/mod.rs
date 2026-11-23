@@ -6,8 +6,9 @@ use crate::command::{CommandError, EngineCommand};
 use serde::{Deserialize, Serialize};
 use serde_json::{json, Value};
 use statcraft_algo::{
-    compute_frequencies_full, compute_frequency_chart, ChartType, ChartValueMode,
-    FrequenciesStatisticsOptions, FrequencyChartSpec, FrequencyInputItem, FrequencyResult,
+    compute_frequencies_full, compute_frequency_chart, CategoryOrder, ChartType, ChartValueMode,
+    FrequenciesFormatOptions, FrequenciesStatisticsOptions, FrequencyChartSpec, FrequencyInputItem,
+    FrequencyResult, MultipleVarsMode,
 };
 use statcraft_core::DataSet;
 use statcraft_io::RawValue;
@@ -79,9 +80,20 @@ impl EngineCommand for FrequenciesCommand {
                 },
                 "order": {
                     "type": "string",
-                    "enum": ["analysis", "variable", "avalue", "dvalue", "afreq", "dfreq"],
+                    "enum": ["avalue", "dvalue", "afreq", "dfreq", "analysis", "variable"],
                     "description": "Category ordering (ascending/descending value or frequency)",
-                    "default": "analysis"
+                    "default": "avalue"
+                },
+                "multiple_vars_mode": {
+                    "type": "string",
+                    "enum": ["compare", "variable"],
+                    "description": "Organization of output for multiple variables",
+                    "default": "compare"
+                },
+                "suppress_tables_limit": {
+                    "type": ["integer", "null"],
+                    "minimum": 1,
+                    "description": "Suppress frequency tables if number of categories exceeds this limit"
                 },
                 "charts": {
                     "type": "object",
@@ -142,10 +154,26 @@ impl EngineCommand for FrequenciesCommand {
             .get("display_tables")
             .and_then(|v| v.as_bool())
             .unwrap_or(true);
-        let order = params
+        let order_str = params
             .get("order")
             .and_then(|v| v.as_str())
-            .unwrap_or("analysis");
+            .unwrap_or("avalue");
+        let category_order = CategoryOrder::from_str_loose(order_str);
+        let multiple_vars_mode_str = params
+            .get("multiple_vars_mode")
+            .and_then(|v| v.as_str())
+            .unwrap_or("compare");
+        let multiple_vars_mode = MultipleVarsMode::from_str_loose(multiple_vars_mode_str);
+        let suppress_tables_limit = params
+            .get("suppress_tables_limit")
+            .and_then(|v| v.as_u64())
+            .map(|n| n as usize);
+
+        let format_options = FrequenciesFormatOptions {
+            order: category_order,
+            multiple_vars_mode,
+            suppress_tables_limit,
+        };
 
         let mut results: Vec<FrequencyResult> = Vec::new();
         let active_rows = ds.active_row_indices();
@@ -214,8 +242,8 @@ impl EngineCommand for FrequenciesCommand {
                 Some(var_meta.label.clone())
             };
 
-            // Apply category re-ordering if requested
-            sps::apply_order(&mut res.categories, order);
+            // Apply category ordering
+            statcraft_algo::sort_categories(&mut res.categories, format_options.order);
 
             if let Some(ref spec) = chart_spec {
                 let valid_nums: Vec<f64> = items
@@ -230,6 +258,14 @@ impl EngineCommand for FrequenciesCommand {
                     &res.categories,
                     &valid_nums,
                 );
+            }
+
+            // Suppress categories table if number of categories exceeds limit
+            if let Some(limit) = format_options.suppress_tables_limit {
+                if res.categories.len() > limit {
+                    res.table_suppressed = true;
+                    res.categories.clear();
+                }
             }
 
             if !display_tables {

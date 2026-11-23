@@ -72,6 +72,9 @@ impl StatCraftApp {
                 percentiles,
                 group_midpoints,
                 charts,
+                order,
+                multiple_vars_mode,
+                suppress_tables_limit,
             } => {
                 let mut params_map = serde_json::Map::new();
                 params_map.insert("vars".to_string(), json!(vars));
@@ -87,6 +90,15 @@ impl StatCraftApp {
                 }
                 if let Some(c) = charts {
                     params_map.insert("charts".to_string(), c);
+                }
+                if let Some(o) = order {
+                    params_map.insert("order".to_string(), json!(o));
+                }
+                if let Some(m) = multiple_vars_mode {
+                    params_map.insert("multiple_vars_mode".to_string(), json!(m));
+                }
+                if let Some(l) = suppress_tables_limit {
+                    params_map.insert("suppress_tables_limit".to_string(), json!(l));
                 }
                 let params = serde_json::Value::Object(params_map);
                 let sps_log =
@@ -121,6 +133,9 @@ impl StatCraftApp {
                 percentiles,
                 group_midpoints,
                 charts,
+                order,
+                multiple_vars_mode,
+                suppress_tables_limit,
             } => {
                 let mut params_map = serde_json::Map::new();
                 params_map.insert("vars".to_string(), json!(vars));
@@ -136,6 +151,15 @@ impl StatCraftApp {
                 }
                 if let Some(c) = charts {
                     params_map.insert("charts".to_string(), c);
+                }
+                if let Some(o) = order {
+                    params_map.insert("order".to_string(), json!(o));
+                }
+                if let Some(m) = multiple_vars_mode {
+                    params_map.insert("multiple_vars_mode".to_string(), json!(m));
+                }
+                if let Some(l) = suppress_tables_limit {
+                    params_map.insert("suppress_tables_limit".to_string(), json!(l));
                 }
                 let params = serde_json::Value::Object(params_map);
                 let sps =
