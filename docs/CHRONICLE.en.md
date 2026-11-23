@@ -4143,26 +4143,64 @@ Implemented and embedded automated validation into the quality pipeline to guara
 
 ---
 
-### Phase 105: Frequencies Format — Stage 2: DialogKit Canonical Subdialog & Parameter Synchronization (L6 statcraft_app)
-*Time: November 23, 2026, 09:40 (~20 minutes)*
+### Phase 106: Frequencies Format — Stage 3: Output Viewer Representation, End-to-End Invariant Tests & Quality Gate (L6 statcraft_app)
+*Time: November 23, 2026, 10:15 (~25 minutes)*
 
-Completed the second stage of the frequency distribution format options feature (Feature 018 — Frequencies: Format) — modal subdialog graphical interface, state synchronization, and execution pipeline wiring:
-1. **Dialog State & Transactional Undo/Cancel (`state.rs`):**
-   * Implemented `FrequenciesFormatState` struct (`order`, `multiple_vars_mode`, `suppress_tables`, `max_categories_input`) with validated integer limit parser `suppress_tables_limit()`;
-   * Integrated `format`, `format_backup`, and `show_format` into `FrequenciesDialogState`;
-   * Taking a state snapshot on opening enables transactional rollback if the user hits `Cancel` or dismisses the window;
-   * Extended `FrequenciesDialogAction::Run` and `Paste` variants with `order`, `multiple_vars_mode`, and `suppress_tables_limit`.
-2. **Subdialog Layout with Canonical DialogKit (`format_subdialog.rs`):**
-   * Modal window built with `DialogShell::subdialog(t!("dialog-freq-format-title"))` ($360 \times 300$ px);
-   * Two-column section utilizing `GroupBox`:
-     - Left column: `Order by` group (Ascending values, Descending values, Ascending counts, Descending counts);
-     - Right column: `Multiple variables` group (Compare variables, Organize output by variables);
-   * Bottom category suppression row: checkbox "Suppress tables with many categories" and dependent numeric field "Maximum number of categories: [10]" disabled when unchecked;
-   * Type 2 `SubdialogActionBar` (`[ Continue ] [ Cancel ] [ Help ]`) with numeric validation ensuring category limit $\ge 1$.
-3. **Main Dialog & Command Pipeline Integration (`mod.rs`, `app_dialogs.rs`):**
-   * Enabled the `[ Format... ]` button on the `SubdialogSidebar`;
-   * Forwarded format options from `FrequenciesDialogAction` to the `stat.frequencies` command bus payload and the `.sps` syntax log in `app_dialogs.rs`.
-4. **Definition of Done (DoD) & Verification:**
-   * Added headless invariant test `test_headless_render_frequencies_format_subdialog` in `dialog_invariants.rs` (41/41 tests passing);
-   * 100% string key coverage in Fluent translation catalogs `locales/ru.ftl` and `locales/en.ftl` (Zero-Hardcode i18n);
-   * Full compliance with `xtask design-guard` (DialogKit canon, zero emojis), `xtask file-guard` (497 Rust files within $\le 500$ lines), and clean `cargo clippy -p statcraft_app -j 1 -- -D warnings`.
+Completed the final stage of the frequency distribution format options feature (Feature 018 — Frequencies: Format / SPSS `FREQUENCIES /FORMAT`), connecting format options with the Output Viewer rendering engine, TSV export pipeline, and comprehensive invariant tests:
+1. **Frequency Table Suppression Indication (`freq_table.rs`):**
+   * When `LIMIT(n)` category threshold is exceeded, `res.table_suppressed == true` triggers an SPSS-authentic italic note in `Tokens::text_muted()`: *"The frequency table for variable [NAME] is not displayed because the number of categories exceeds the specified limit."* via semantic key `output-freq-table-suppressed-note`;
+   * Computed univariate statistics in the Statistics table and generated distribution charts (histograms with normal curve, bar charts) remain fully visible;
+   * Updated `frequency_table_to_tsv` to export the suppression notice to TSV streams.
+2. **Multiple Variables Output Organization (`MultipleVarsMode` in `mod.rs` & `builder.rs`):**
+   * Extended `FrequencyResult` with `pub multiple_vars_mode: MultipleVarsMode` (`#[serde(default)]`), populated by the `stat.frequencies` command handler;
+   * **`Compare` mode (default):** displays a single unified summary statistics table (one column per variable), sequential category tables, and an outline Charts node;
+   * **`Variable` mode:** organizes output into autonomous consecutive blocks for each variable (personal statistics $\to$ frequency table $\to$ chart), with charts rendered inline without duplication;
+   * TSV export `frequencies_to_tsv` produces structured columns and variable blocks matching the selected mode.
+3. **End-to-End Invariant Testing (DoD):**
+   * Added tests in `output_viewer_frequencies_invariants.rs`:
+     - `test_frequencies_limit_suppression_renders_note_and_preserves_statistics`: verifies report generation under `LIMIT(10)`, suppression note display, and statistics retention;
+     - `test_frequencies_multivars_compare_and_variable_modes`: verifies output organization and sequencing under `Compare` and `Variable` modes;
+   * Added tests in `dialog_invariants.rs`:
+     - `test_frequencies_format_subdialog_transactionality_on_cancel`: verifies transactional rollback of all format settings to `format_backup` upon Cancel;
+     - `test_frequencies_format_subdialog_commit_and_action_run`: verifies parameter persistence via Continue -> Ok and generation of `FrequenciesDialogAction::Run` with `order`, `multiple_vars_mode`, `suppress_tables_limit`.
+4. **Quality Gate & Definition of Done:**
+   * 100% pass across all 10 gates in `cargo run -p xtask -j 1 -- ci`:
+     - `cargo fmt --all -- --check` (clean);
+     - `cargo clippy --workspace --all-targets -j 1 -- -D warnings` (0 warnings);
+     - `cargo run -p xtask -j 1 -- file-guard` (498 Rust files strictly within $\le 500$ lines);
+     - `cargo run -p xtask -j 1 -- design-guard` (DialogKit compliant, zero emojis);
+     - `cargo run -p xtask -j 1 -- layers` (L0–L6 hierarchy intact);
+     - Full workspace test suite pass (0 failures);
+     - Undo/Redo reversibility matrix (41 commands);
+     - Website audit synchronization `xtask sync-site --check` (20 blocks, 9 documentation sections).
+
+
+---
+
+### Phase 107: Automatic Website Documentation Generation from FEATURES.md (xtask sync-features)
+*Time: November 23, 2026, 11:00 (~25 minutes)*
+
+Implemented complete automated bidirectional synchronization between the project website documentation and the feature guide (`docs/FEATURES.md` and `docs/FEATURES_RU.md`):
+1. **Generation Subsystem `xtask sync-features` (`xtask/src/sync_features.rs`):**
+   * Compact module of 303 lines ($\le 500$ lines pursuant to `file-guard`), 100% safe Rust;
+   * Parses 9 fundamental capability domains from `docs/FEATURES.md` and `docs/FEATURES_RU.md`:
+     1. Dual-View Tabular Editors (`features-tabular-editors`);
+     2. Dataset Management & Case Manipulations (`features-case-manipulations`);
+     3. Non-Destructive Transformations & Variable Recoding (`features-transformations`);
+     4. Comprehensive Statistical Procedures & Tests (`features-statistical-procedures`);
+     5. Output Viewer & Pivot Tables (`features-output-management`);
+     6. SPSS Syntax & Command Bus (`features-spss-syntax`);
+     7. AI Readiness & Model Context Protocol (`features-ai-mcp-bridge`);
+     8. Design System, Reliability (Never Crash) & Localization (`features-design-and-reliability`);
+     9. Development Roadmap (`features-roadmap`);
+   * Automatically extracts section summaries, constructs Table of Contents `toc` with slug anchors, and safely JSON-escapes bilingual strings;
+   * Generates typed module `website/src/lib/features-docs.ts`.
+2. **Website Integration (`website/src/lib/docs-data.ts`):**
+   * Array `DOC_SECTIONS` dynamically combines baseline research manifest articles with the 9 auto-generated feature pages;
+   * Total static pre-rendered Next.js pages expanded to 45 (18 documentation pages in both EN and RU);
+   * Instant search and navigation sidebar index the entirety of StatCraft capabilities.
+3. **Strict Enforcement in CI Quality Gate (`xtask/src/sync_site.rs`):**
+   * `cargo xtask sync-site --check` validates parity of `features-docs.ts` against `docs/FEATURES*.md`;
+   * Any manual edit to features documentation without running `xtask sync-site` halts CI and blocks push.
+4. **Quality Gate & DoD Verification:**
+   * 100% successful pass for all Quality Gates via `cargo run -p xtask -j 1 -- ci` and `npx next build` (45/45 static pages generated).

@@ -54,6 +54,7 @@ pub fn sample_frequencies() -> FrequencyResult {
         statistics: None,
         chart: None,
         table_suppressed: false,
+        multiple_vars_mode: statcraft_algo::MultipleVarsMode::Compare,
     }
 }
 

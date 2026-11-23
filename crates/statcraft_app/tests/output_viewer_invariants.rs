@@ -180,6 +180,7 @@ fn test_exhaustive_enum_payloads_render_without_panics() {
                 statistics: None,
                 chart: None,
                 table_suppressed: false,
+                multiple_vars_mode: statcraft_algo::MultipleVarsMode::Compare,
             }]),
         },
         // One-Sample T-Test with 0 df and None stats

@@ -250,6 +250,9 @@ pub fn sync_site(workspace_root: &Path, check_only: bool) -> Result<(), String> 
         }
     }
 
+    // 6. Synchronize / validate features documentation generated from docs/FEATURES.md
+    crate::sync_features::sync_features(workspace_root, check_only)?;
+
     if check_only {
         println!(
             "[xtask sync-site OK] All {} audit blocks and {} documentation sections are verified and in sync.",

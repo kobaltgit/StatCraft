@@ -466,6 +466,7 @@ dialog-freq-format-max-categories = Максимальное число кате
 output-frequencies = Частоты
 output-frequencies-title = Таблица частот: { $name }
 output-frequencies-table = Таблица частот
+output-freq-table-suppressed-note = Таблица частот для переменной { $name } не выводится, так как число категорий превышает заданный лимит.
 output-frequencies-charts = Диаграммы
 output-frequencies-executed = Процедура «Частоты» выполнена для { $count } переменной(ых).
 output-chart-bar = Столбчатая диаграмма

@@ -1314,6 +1314,27 @@
   - [x] Полное прохождение `cargo run -p xtask -j 1 -- design-guard`, `file-guard` (497 файлов, все $\le 500$ строк) и `cargo clippy -p statcraft_app -j 1 -- -D warnings`.
 
 
+## 77. Частоты: Формат (Frequencies: Format) — Этап 3: Представление вывода (Output Viewer), сквозные тесты и Quality Gate (L6 statcraft_app)
+- [x] L6 `statcraft_app::views::output_view::tables_frequencies`:
+  - [x] Индикация подавления таблиц (`freq_table.rs`): при `res.table_suppressed == true` рендерится аккуратный блок-уведомление в стиле SPSS (`t!("output-freq-table-suppressed-note")`), при этом рассчитанные статистики и графики продолжают полноценно отображаться;
+  - [x] Экспорт в TSV (`frequency_table_to_tsv`): вывод уведомления о подавлении таблицы для переменной;
+  - [x] Организация вывода при анализе нескольких переменных (`MultipleVarsMode` в `mod.rs`):
+    - [x] Режим `Compare` (по умолчанию): единая сводная таблица описательных статистик по всем переменным, последовательные таблицы частот и завершающий блок диаграмм;
+    - [x] Режим `Variable`: автономные последовательные блоки для каждой исследуемой переменной (персональная статистика -> таблица частот -> диаграмма);
+    - [x] Экспорт в TSV (`frequencies_to_tsv`): аутентичная группировка строк в режимах `Compare` и `Variable`;
+  - [x] Построитель отчетов (`builder.rs`): адаптивное размещение графиков в `OutputProcedure.items` в зависимости от `MultipleVarsMode`;
+- [x] Сквозные инвариантные тесты:
+  - [x] `output_viewer_frequencies_invariants.rs`:
+    - [x] `test_frequencies_limit_suppression_renders_note_and_preserves_statistics`: проверка блока уведомления и сохранения статистик при `LIMIT(10)`;
+    - [x] `test_frequencies_multivars_compare_and_variable_modes`: проверка структуры вывода, порядка таблиц и графиков в режимах `Compare` и `Variable`;
+  - [x] `dialog_invariants.rs`:
+    - [x] `test_frequencies_format_subdialog_transactionality_on_cancel`: транзакционность поддиалога «Формат» и полный откат настроек по Cancel;
+    - [x] `test_frequencies_format_subdialog_commit_and_action_run`: фиксация настроек по Continue -> Ok и генерация `FrequenciesDialogAction::Run` с параметрами `order`, `multiple_vars_mode`, `suppress_tables_limit`;
+- [x] Zero-Hardcode i18n (`locales/ru.ftl`, `locales/en.ftl`):
+  - [x] Семантический ключ `output-freq-table-suppressed-note` на русском и английском языках;
+- [x] Quality Gate (Definition of Done):
+  - [x] 100% прохождение полного Quality Gate: `cargo run -p xtask -j 1 -- ci` (10/10 шлюзов, включая `fmt`, `clippy -D warnings`, `file-guard` 498 файлов, `design-guard`, `layers`, матрицу обратимости Undo/Redo 41 команды и синхронизацию сайта `sync-site`).
+
 ## 20. Планы будущих релизов (Backlog / Planned Features)
 - [ ] Мультимониторный режим рабочего пространства (Multi-Monitor Viewports & Pop-out Tabs):
   - [ ] Механизм открепления вкладок во внешние нативные окна ОС через `ctx.show_viewport_immediate`.

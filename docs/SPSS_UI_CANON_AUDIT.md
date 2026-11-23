@@ -31,7 +31,7 @@ Phase 3 concludes the comprehensive audit of StatCraft, evaluating the user-faci
 ## 2. Section E: Output Viewer & Canonical Pivot Tables
 
 ### M-21: Base Output Statistics Tables & Vector Charts
-* **Implementation:** `crates/statcraft_app/src/views/output_view/` (`tables_descriptives.rs`, `tables_frequencies.rs`, `tables_frequencies/freq_chart_bar_pie.rs`, `tables_frequencies/freq_chart_histogram.rs`, `tables_crosstabs.rs`, `tables_means.rs`, `tables_common.rs`)
+* **Implementation:** `crates/statcraft_app/src/views/output_view/` (`tables_descriptives.rs`, `tables_frequencies/` (`freq_table.rs`, `stats_summary_table.rs`, `freq_chart_bar_pie.rs`, `freq_chart_histogram.rs`, `mod.rs`), `tables_crosstabs.rs`, `tables_means.rs`, `tables_common.rs`)
 * **SPSS Reference:** *Base Statistics Output Tables Specification*
 * **Craft Anything Hypothesis:** `hyp_33` (Supported)
 * **Audited Invariants & Evidence:**
@@ -44,6 +44,8 @@ Phase 3 concludes the comprehensive audit of StatCraft, evaluating the user-faci
      - **Pie Charts (`PieChart`):** Sector triangulation via `convex_polygon` starting at 12 o'clock, canonical 10-color `PIE_PALETTE`, and vector legend on the right with color swatches, category labels, and percentage shares.
      - **Histograms (`Histogram`):** Continuous X-axis with contiguous touching bins, theoretical Gaussian normal density curve overlay $\mathcal{N}(\mu, \sigma^2)$ in authentic SPSS orange (`#ED7D31`), and distribution statistics badge in the top-right corner (`Mean`, `Std. Dev.`, `N`).
      - **Rendering Standard:** 100% vector primitives via `ui.painter()`, zero raster images, zero emojis, and zero unsupported Unicode glyphs.
+  6. **Table Suppression Notice (`table_suppressed`):** When categories exceed threshold `LIMIT(n)`, displays an authentic italic notification in `Tokens::text_muted()` (*"The frequency table for variable [NAME] is not displayed because the number of categories exceeds the specified limit."*), preserving the summary Statistics table and vector charts.
+  7. **Multi-Variable Output Organization (`MultipleVarsMode`):** Supports `Compare` (single unified summary table, sequential frequency tables, separate charts node) and `Variable` (consecutive blocks per variable: personal statistics $\to$ frequency table $\to$ inline chart). Verified via `output_viewer_frequencies_invariants.rs` (8/8 passing).
 
 ### M-22: Compare Means Output Tables
 * **Implementation:** `tables_ttest_onesample.rs`, `tables_ttest_indep.rs`, `tables_ttest_paired.rs`, `tables_anova.rs`
@@ -123,14 +125,16 @@ Phase 3 concludes the comprehensive audit of StatCraft, evaluating the user-faci
   5. **VariablePicker & TransferButton:** Vector measure icons (Scale, Ordinal, Nominal) and adaptive transfer buttons (`->` / `<-`).
 
 ### M-29: Procedural Dialogs Suite (37 Dialogs & Subdialogs)
-* **Implementation:** `crates/statcraft_app/src/dialogs/*.rs` (including `frequencies_dialog/charts_subdialog.rs` and `statistics_subdialog.rs`)
+* **Implementation:** `crates/statcraft_app/src/dialogs/*.rs` (including `frequencies_dialog/format_subdialog.rs`, `charts_subdialog.rs` and `statistics_subdialog.rs`)
 * **SPSS Reference:** *SPSS Procedural Dialogs Suite*
 * **Craft Anything Hypothesis:** `hyp_41` (Supported)
 * **Audited Invariants & Evidence:**
   1. **Design Guard Linter (`cargo run -p xtask -j 1 -- design-guard`):** 0 violations. Zero raw button calls, 100% DialogKit compliance.
-  2. **Subdialog Canonical Architecture:** Type 2 modal subdialogs (such as *Frequencies: Charts*, $360 \times 300$ px) use `DialogShell::subdialog`, `GroupBox` and `SubdialogActionBar` (`[ Continue ] [ Cancel ] [ Help ]`) with rollback on cancel. Mutual exclusivity rules enforced (Histogram vs Bar/Pie, normal curve gating).
+  2. **Subdialog Canonical Architecture:** Type 2 modal subdialogs (including *Frequencies: Statistics*, *Frequencies: Charts*, and *Frequencies: Format*, $360 \times 300$ px) use `DialogShell::subdialog`, `GroupBox` and `SubdialogActionBar` (`[ Continue ] [ Cancel ] [ Help ]`) with rollback on cancel.
+     - *Frequencies: Format*: two-column selection of category ordering (`CategoryOrder` — 4 radio options), multi-variable organization (`MultipleVarsMode` — 2 radio options), checkbox and dependent threshold input for category table suppression `LIMIT(n)`;
+     - *Frequencies: Charts*: mutual exclusivity rules (Histogram vs Bar/Pie, normal curve gating).
   3. **Reset Idempotence:** Clicking `[ Reset ]` restores all parameters and lists to exact defaults across all dialogs.
-  4. **Automated Suite:** Verified via `cargo test -p statcraft_app --test dialog_invariants -j 1` (40/40 passing).
+  4. **Automated Suite:** Verified via `cargo test -p statcraft_app --test dialog_invariants -j 1` (43/43 passing, including `test_frequencies_format_subdialog_transactionality_on_cancel` and `test_frequencies_format_subdialog_commit_and_action_run`).
 
 ---
 

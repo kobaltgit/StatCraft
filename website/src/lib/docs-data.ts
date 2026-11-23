@@ -1,3 +1,5 @@
+import { FEATURE_SECTIONS } from './features-docs';
+
 export interface DocSection {
   slug: string;
   titleEn: string;
@@ -15,7 +17,7 @@ export interface DocSection {
   toc: { id: string; titleEn: string; titleRu: string }[];
 }
 
-export const DOC_SECTIONS: DocSection[] = [
+const BASE_DOC_SECTIONS: DocSection[] = [
   {
     slug: "experiment-manifest",
     category: "getting-started",
@@ -454,4 +456,9 @@ The top-right statistics legend displays exact sample properties: $\\text{Mean}$
 $$y(x) = \\frac{N \\cdot h}{s \\sqrt{2\\pi}} \\exp\\left(-\\frac{(x - \\bar{X})^2}{2s^2}\\right)$$
 Аутентичная плашка в правом верхнем углу диаграммы отображает выборочные параметры: $\\text{Mean}$, $\\text{Std. Dev.}$ и $N$.`,
   },
+];
+
+export const DOC_SECTIONS: DocSection[] = [
+  ...BASE_DOC_SECTIONS,
+  ...FEATURE_SECTIONS,
 ];

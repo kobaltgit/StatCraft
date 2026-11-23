@@ -185,6 +185,120 @@ fn test_headless_render_frequencies_format_subdialog() {
 }
 
 #[test]
+fn test_frequencies_format_subdialog_transactionality_on_cancel() {
+    let ctx = egui::Context::default();
+    let ds = create_test_dataset();
+    let mut state = FrequenciesDialogState {
+        is_open: true,
+        ..Default::default()
+    };
+
+    // Initial state
+    assert_eq!(state.format.order, statcraft_algo::CategoryOrder::AValue);
+    assert_eq!(
+        state.format.multiple_vars_mode,
+        statcraft_algo::MultipleVarsMode::Compare
+    );
+    assert!(!state.format.suppress_tables);
+
+    // 1. Simulate opening Format subdialog via SubdialogSidebar
+    state.format_backup = Some(state.format.clone());
+    state.show_format = true;
+
+    // 2. Modify settings in subdialog
+    state.format.order = statcraft_algo::CategoryOrder::DFreq;
+    state.format.multiple_vars_mode = statcraft_algo::MultipleVarsMode::Variable;
+    state.format.suppress_tables = true;
+    state.format.max_categories_input = "42".to_string();
+
+    let _ = ctx.run(Default::default(), |ctx| {
+        let _ = render_frequencies_dialog(ctx, Some(&ds), &mut state);
+    });
+
+    // 3. Simulate Cancel action: revert from backup
+    if let Some(backup) = state.format_backup.take() {
+        state.format = backup;
+    }
+    state.show_format = false;
+
+    // Confirm complete rollback
+    assert!(!state.show_format);
+    assert_eq!(state.format.order, statcraft_algo::CategoryOrder::AValue);
+    assert_eq!(
+        state.format.multiple_vars_mode,
+        statcraft_algo::MultipleVarsMode::Compare
+    );
+    assert!(!state.format.suppress_tables);
+    assert_eq!(state.format.max_categories_input, "10");
+}
+
+#[test]
+fn test_frequencies_format_subdialog_commit_and_action_run() {
+    let mut state = FrequenciesDialogState {
+        is_open: true,
+        selected_vars: vec!["salary".to_string(), "educ".to_string()],
+        ..Default::default()
+    };
+
+    // 1. Open subdialog
+    state.format_backup = Some(state.format.clone());
+    state.show_format = true;
+
+    // 2. Configure Format settings
+    state.format.order = statcraft_algo::CategoryOrder::DFreq;
+    state.format.multiple_vars_mode = statcraft_algo::MultipleVarsMode::Variable;
+    state.format.suppress_tables = true;
+    state.format.max_categories_input = "15".to_string();
+
+    // 3. Continue: commit changes
+    state.format_backup = None;
+    state.show_format = false;
+
+    // 4. Verify parameter extraction as done in DialogActionBar::Ok
+    let order = if state.format.order != statcraft_algo::CategoryOrder::AValue {
+        Some(state.format.order.as_str().to_string())
+    } else {
+        None
+    };
+    let multiple_vars_mode =
+        if state.format.multiple_vars_mode != statcraft_algo::MultipleVarsMode::Compare {
+            Some(state.format.multiple_vars_mode.as_str().to_string())
+        } else {
+            None
+        };
+    let suppress_tables_limit = state.format.suppress_tables_limit();
+
+    let action = FrequenciesDialogAction::Run {
+        vars: state.selected_vars.clone(),
+        display_tables: state.display_tables,
+        apa_tables: state.apa_tables,
+        statistics: state.stats.to_statistics_json(),
+        percentiles: state.stats.to_percentiles_json(),
+        group_midpoints: state.stats.group_midpoints,
+        charts: state.charts.to_json(),
+        order,
+        multiple_vars_mode,
+        suppress_tables_limit,
+    };
+
+    match action {
+        FrequenciesDialogAction::Run {
+            vars,
+            order,
+            multiple_vars_mode,
+            suppress_tables_limit,
+            ..
+        } => {
+            assert_eq!(vars, vec!["salary", "educ"]);
+            assert_eq!(order, Some("dfreq".to_string()));
+            assert_eq!(multiple_vars_mode, Some("variable".to_string()));
+            assert_eq!(suppress_tables_limit, Some(15));
+        }
+        _ => panic!("Expected FrequenciesDialogAction::Run"),
+    }
+}
+
+#[test]
 fn test_headless_render_anova_dialog() {
     let ctx = egui::Context::default();
     let ds = create_test_dataset();

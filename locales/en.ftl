@@ -466,6 +466,7 @@ dialog-freq-format-max-categories = Maximum number of categories:
 output-frequencies = Frequencies
 output-frequencies-title = Frequency Table: { $name }
 output-frequencies-table = Frequencies Table
+output-freq-table-suppressed-note = The frequency table for variable { $name } is not displayed because the number of categories exceeds the specified limit.
 output-frequencies-charts = Charts
 output-frequencies-executed = Frequencies executed for { $count } variable(s).
 output-chart-bar = Bar Chart

@@ -10,6 +10,7 @@ mod hooks;
 mod icon;
 mod layers;
 mod parity;
+mod sync_features;
 mod sync_site;
 mod undo_matrix;
 

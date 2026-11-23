@@ -1,6 +1,6 @@
 use statcraft_algo::{
     BarCategoryData, FrequenciesStatisticsResult, FrequencyCategory, FrequencyChartResult,
-    FrequencyResult, HistogramBinData, HistogramSummary, PercentileValue,
+    FrequencyResult, HistogramBinData, HistogramSummary, MultipleVarsMode, PercentileValue,
 };
 use statcraft_app::views::output_view::{
     extract_item_tsv, frequencies_to_tsv, render_output_view, OutputItem, OutputItemKind,
@@ -58,6 +58,7 @@ fn sample_rich_frequencies() -> Vec<FrequencyResult> {
             }),
             chart: None,
             table_suppressed: false,
+            multiple_vars_mode: MultipleVarsMode::Compare,
         },
         FrequencyResult {
             variable: "educ".to_string(),
@@ -86,6 +87,7 @@ fn sample_rich_frequencies() -> Vec<FrequencyResult> {
             }),
             chart: None,
             table_suppressed: false,
+            multiple_vars_mode: MultipleVarsMode::Compare,
         },
         FrequencyResult {
             variable: "gender".to_string(),
@@ -114,6 +116,7 @@ fn sample_rich_frequencies() -> Vec<FrequencyResult> {
             statistics: None,
             chart: None,
             table_suppressed: false,
+            multiple_vars_mode: MultipleVarsMode::Compare,
         },
     ]
 }
@@ -344,6 +347,7 @@ fn test_frequencies_with_variable_labels_rendering_and_tsv() {
         }),
         chart: None,
         table_suppressed: false,
+        multiple_vars_mode: MultipleVarsMode::Compare,
     }];
 
     let tsv = frequencies_to_tsv(&results);
@@ -589,6 +593,7 @@ fn test_frequencies_builder_with_charts_adds_chart_item() {
             ],
         }),
         table_suppressed: false,
+        multiple_vars_mode: MultipleVarsMode::Compare,
     }];
 
     let mut state = OutputViewerState::new();
@@ -618,6 +623,230 @@ fn test_frequencies_builder_with_charts_adds_chart_item() {
     let _ = ctx.run(egui::RawInput::default(), |ui_ctx| {
         egui::CentralPanel::default().show(ui_ctx, |ui| {
             render_output_view(ui, &mut state);
+        });
+    });
+}
+
+#[test]
+fn test_frequencies_limit_suppression_renders_note_and_preserves_statistics() {
+    let _ = statcraft_i18n::init_i18n();
+    statcraft_i18n::set_language("en");
+
+    let results = vec![FrequencyResult {
+        variable: "salary".to_string(),
+        variable_label: Some("Current Salary".to_string()),
+        n_valid: 474,
+        n_missing: 0,
+        categories: vec![],
+        quartiles: Some((24000.0, 28875.0, 37000.0)),
+        statistics: Some(FrequenciesStatisticsResult {
+            mean: Some(34419.57),
+            se_mean: Some(784.31),
+            median: Some(28875.0),
+            mode: Some(30750.0),
+            has_multiple_modes: false,
+            std_dev: Some(17075.66),
+            variance: Some(291578191.0),
+            skewness: None,
+            se_skewness: None,
+            kurtosis: None,
+            se_kurtosis: None,
+            range: Some(119250.0),
+            min: Some(15750.0),
+            max: Some(135000.0),
+            sum: Some(16314875.0),
+            percentiles: vec![],
+        }),
+        chart: Some(FrequencyChartResult::Bar {
+            var_name: "salary".to_string(),
+            var_label: Some("Current Salary".to_string()),
+            is_percentages: false,
+            categories: vec![BarCategoryData {
+                label: "Tier 1".to_string(),
+                value_repr: "1".to_string(),
+                count: 100.0,
+                percent: 21.1,
+            }],
+        }),
+        table_suppressed: true,
+        multiple_vars_mode: MultipleVarsMode::Compare,
+    }];
+
+    let tsv = frequencies_to_tsv(&results);
+    assert!(tsv.contains("Statistics"), "Must preserve statistics table");
+    assert!(tsv.contains("Mean\t34419.5700"));
+    assert!(
+        tsv.contains("The frequency table for variable Current Salary [salary] is not displayed because the number of categories exceeds the specified limit."),
+        "Must contain suppression note in TSV:\n{}",
+        tsv
+    );
+
+    let ctx = egui::Context::default();
+    let mut state = OutputViewerState::new();
+    state.add_frequencies_with_log(
+        results,
+        "FREQUENCIES VARIABLES=salary\n  /FORMAT=LIMIT(10).\n".to_string(),
+    );
+
+    let _ = ctx.run(egui::RawInput::default(), |ui_ctx| {
+        egui::CentralPanel::default().show(ui_ctx, |ui| {
+            render_output_view(ui, &mut state);
+        });
+    });
+}
+
+#[test]
+fn test_frequencies_multivars_compare_and_variable_modes() {
+    let _ = statcraft_i18n::init_i18n();
+    statcraft_i18n::set_language("en");
+
+    let make_results = |mode: MultipleVarsMode| {
+        vec![
+            FrequencyResult {
+                variable: "varA".to_string(),
+                variable_label: Some("Variable A".to_string()),
+                n_valid: 100,
+                n_missing: 0,
+                categories: vec![FrequencyCategory {
+                    value: "1".to_string(),
+                    label: Some("Yes".to_string()),
+                    count: 60,
+                    percent: 60.0,
+                    valid_percent: Some(60.0),
+                    cumulative_percent: Some(60.0),
+                }],
+                quartiles: None,
+                statistics: Some(FrequenciesStatisticsResult {
+                    mean: Some(1.4),
+                    se_mean: None,
+                    median: Some(1.0),
+                    mode: Some(1.0),
+                    has_multiple_modes: false,
+                    std_dev: Some(0.49),
+                    variance: None,
+                    skewness: None,
+                    se_skewness: None,
+                    kurtosis: None,
+                    se_kurtosis: None,
+                    range: None,
+                    min: Some(1.0),
+                    max: Some(2.0),
+                    sum: Some(140.0),
+                    percentiles: vec![],
+                }),
+                chart: Some(FrequencyChartResult::Bar {
+                    var_name: "varA".to_string(),
+                    var_label: Some("Variable A".to_string()),
+                    is_percentages: false,
+                    categories: vec![BarCategoryData {
+                        label: "Yes".to_string(),
+                        value_repr: "1".to_string(),
+                        count: 60.0,
+                        percent: 60.0,
+                    }],
+                }),
+                table_suppressed: false,
+                multiple_vars_mode: mode,
+            },
+            FrequencyResult {
+                variable: "varB".to_string(),
+                variable_label: Some("Variable B".to_string()),
+                n_valid: 100,
+                n_missing: 0,
+                categories: vec![FrequencyCategory {
+                    value: "2".to_string(),
+                    label: Some("No".to_string()),
+                    count: 40,
+                    percent: 40.0,
+                    valid_percent: Some(40.0),
+                    cumulative_percent: Some(40.0),
+                }],
+                quartiles: None,
+                statistics: Some(FrequenciesStatisticsResult {
+                    mean: Some(2.2),
+                    se_mean: None,
+                    median: Some(2.0),
+                    mode: Some(2.0),
+                    has_multiple_modes: false,
+                    std_dev: Some(0.51),
+                    variance: None,
+                    skewness: None,
+                    se_skewness: None,
+                    kurtosis: None,
+                    se_kurtosis: None,
+                    range: None,
+                    min: Some(1.0),
+                    max: Some(3.0),
+                    sum: Some(220.0),
+                    percentiles: vec![],
+                }),
+                chart: Some(FrequencyChartResult::Bar {
+                    var_name: "varB".to_string(),
+                    var_label: Some("Variable B".to_string()),
+                    is_percentages: false,
+                    categories: vec![BarCategoryData {
+                        label: "No".to_string(),
+                        value_repr: "2".to_string(),
+                        count: 40.0,
+                        percent: 40.0,
+                    }],
+                }),
+                table_suppressed: false,
+                multiple_vars_mode: mode,
+            },
+        ]
+    };
+
+    // 1. Compare mode: single summary header with both columns
+    let comp_results = make_results(MultipleVarsMode::Compare);
+    let comp_tsv = frequencies_to_tsv(&comp_results);
+    assert!(
+        comp_tsv.contains("Variable A\tVariable B"),
+        "Compare mode combines columns"
+    );
+
+    let ctx = egui::Context::default();
+    let mut comp_state = OutputViewerState::new();
+    comp_state.add_frequencies_with_log(
+        comp_results,
+        "FREQUENCIES VARIABLES=varA varB\n  /FORMAT=COMPARE.\n".to_string(),
+    );
+    assert_eq!(
+        comp_state.procedures[0].items.len(),
+        4,
+        "Compare mode has separate Charts item"
+    );
+
+    let _ = ctx.run(egui::RawInput::default(), |ui_ctx| {
+        egui::CentralPanel::default().show(ui_ctx, |ui| {
+            render_output_view(ui, &mut comp_state);
+        });
+    });
+
+    // 2. Variable mode: each variable has its own statistics followed by table and chart
+    let var_results = make_results(MultipleVarsMode::Variable);
+    let var_tsv = frequencies_to_tsv(&var_results);
+    assert!(
+        !var_tsv.contains("Variable A\tVariable B"),
+        "Variable mode separates statistics tables"
+    );
+    assert!(var_tsv.contains("Bar Chart: varA"));
+    assert!(var_tsv.contains("Bar Chart: varB"));
+
+    let mut var_state = OutputViewerState::new();
+    var_state.add_frequencies_with_log(
+        var_results,
+        "FREQUENCIES VARIABLES=varA varB\n  /FORMAT=VARIABLE.\n".to_string(),
+    );
+    assert_eq!(
+        var_state.procedures[0].items.len(),
+        3,
+        "Variable mode embeds charts directly in variable blocks"
+    );
+
+    let _ = ctx.run(egui::RawInput::default(), |ui_ctx| {
+        egui::CentralPanel::default().show(ui_ctx, |ui| {
+            render_output_view(ui, &mut var_state);
         });
     });
 }

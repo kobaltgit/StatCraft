@@ -31,7 +31,7 @@
 ## 2. Раздел E: Output Viewer и канонические сводные таблицы
 
 ### M-21: Таблицы базовой описательной статистики и диаграммы
-* **Файлы реализации:** `crates/statcraft_app/src/views/output_view/` (`tables_descriptives.rs`, `tables_frequencies.rs`, `tables_frequencies/freq_chart_bar_pie.rs`, `tables_frequencies/freq_chart_histogram.rs`, `tables_crosstabs.rs`, `tables_means.rs`, `tables_common.rs`)
+* **Файлы реализации:** `crates/statcraft_app/src/views/output_view/` (`tables_descriptives.rs`, `tables_frequencies/` (`freq_table.rs`, `stats_summary_table.rs`, `freq_chart_bar_pie.rs`, `freq_chart_histogram.rs`, `mod.rs`), `tables_crosstabs.rs`, `tables_means.rs`, `tables_common.rs`)
 * **Канон SPSS:** *Base Statistics Output Tables Specification*
 * **Гипотеза Craft Anything:** `hyp_33` (Подтверждена / Supported)
 * **Проверенные инварианты и доказательства:**
@@ -44,6 +44,8 @@
      - **Круговые диаграммы (`PieChart`):** Секторная заливка методом триангуляции `convex_polygon` по часовой стрелке с 12:00, каноническая 10-цветовая палитра `PIE_PALETTE`, векторная легенда справа со свотчами и процентами.
      - **Гистограммы (`Histogram`):** Непрерывная шкала $X$ с касающимися бинами, наложение нормальной кривой Гаусса $\mathcal{N}(\mu, \sigma^2)$ канонического оранжевого цвета SPSS (`#ED7D31`) и статистический бейдж распределения в правом верхнем углу (`Mean`, `Std. Dev.`, `N`).
      - **Стандарт рендеринга:** 100% векторная графика `ui.painter()`, нулевое использование растра, эмодзи и неподдерживаемых глифов Unicode.
+  6. **Индикация подавления таблиц (`table_suppressed`):** При превышении лимита категорий `LIMIT(n)` выводится аутентичное курсивное уведомление цвета `Tokens::text_muted()` (*«Таблица частот для переменной [NAME] не выводится, так как число категорий превышает заданный лимит.»*) с полным сохранением сводной таблицы «Статистика» и диаграмм.
+  7. **Организация вывода нескольких переменных (`MultipleVarsMode`):** Поддерживает режимы `Compare` (единая сводная таблица описательных статистик, последовательные таблицы частот, отдельный узел графиков) и `Variable` (автономные блоки по каждой переменной: персональная статистика $\to$ таблица частот $\to$ диаграмма). Проверено через `output_viewer_frequencies_invariants.rs` (8/8 успешно).
 
 ### M-22: Таблицы сравнения средних
 * **Файлы реализации:** `tables_ttest_onesample.rs`, `tables_ttest_indep.rs`, `tables_ttest_paired.rs`, `tables_anova.rs`
@@ -123,14 +125,16 @@
   5. **Компоненты выбора переменных:** Векторные значки шкал (Scale, Ordinal, Nominal) и адаптивная кнопка переноса `TransferButton` (`->` / `<-`).
 
 ### M-29: Пакет процедурных диалогов (37 диалогов и поддиалоги)
-* **Файлы реализации:** `crates/statcraft_app/src/dialogs/*.rs` (включая `frequencies_dialog/charts_subdialog.rs` и `statistics_subdialog.rs`)
+* **Файлы реализации:** `crates/statcraft_app/src/dialogs/*.rs` (включая `frequencies_dialog/format_subdialog.rs`, `charts_subdialog.rs` и `statistics_subdialog.rs`)
 * **Канон SPSS:** *SPSS Procedural Dialogs Suite*
 * **Гипотеза Craft Anything:** `hyp_41` (Подтверждена / Supported)
 * **Проверенные инварианты и доказательства:**
   1. **Статический линтер Design Guard (`cargo run -p xtask -j 1 -- design-guard`):** 0 нарушений. Полный запрет сырых кнопок `ui.button(...)`, 100% покрытие `DialogKit`.
-  2. **Каноническая архитектура поддиалогов:** Модальные поддиалоги Type 2 (включая *«Частоты: Диаграммы»*, $360 \times 300$ px) строятся на базе `DialogShell::subdialog`, `GroupBox` и `SubdialogActionBar` (`[ Продолжить ] [ Отмена ] [ Справка ]`) с надежным откатом изменений при отмене. Реализованы правила взаимной блокировки (Гистограммы vs Столбчатые/Круговые, доступность нормальной кривой).
+  2. **Каноническая архитектура поддиалогов:** Модальные поддиалоги Type 2 (включая *«Частоты: Статистики»*, *«Частоты: Диаграммы»* и *«Частоты: Формат»*, $360 \times 300$ px) строятся на базе `DialogShell::subdialog`, `GroupBox` и `SubdialogActionBar` (`[ Продолжить ] [ Отмена ] [ Справка ]`) с надежным откатом изменений при отмене.
+     - *«Частоты: Формат»*: двухколоночный выбор порядка категорий (`CategoryOrder` — 4 радиокнопки), организации вывода переменных (`MultipleVarsMode` — 2 радиокнопки), чекбокс и зависимое поле порога подавления таблиц со многими категориями `LIMIT(n)`;
+     - *«Частоты: Диаграммы»*: правила взаимной блокировки (Гистограммы vs Столбчатые/Круговые, доступность нормальной кривой).
   3. **Идемпотентность кнопки Reset:** Нажатие `[ Reset ]` гарантированно возвращает все списки и флаги в исходное состояние во всех диалогах.
-  4. **Автоматический набор тестов:** Пройдено через `cargo test -p statcraft_app --test dialog_invariants -j 1` (40/40 успешно).
+  4. **Автоматический набор тестов:** Пройдено через `cargo test -p statcraft_app --test dialog_invariants -j 1` (43/43 успешно, включая `test_frequencies_format_subdialog_transactionality_on_cancel` и `test_frequencies_format_subdialog_commit_and_action_run`).
 
 ---
 

@@ -8,6 +8,18 @@ pub fn render_single_frequency_table(ui: &mut Ui, res: &FrequencyResult) {
     ui.strong(t!("output-frequencies-title", name = title.as_str()));
     ui.add_space(6.0_f32);
 
+    if res.table_suppressed {
+        ui.label(
+            egui::RichText::new(t!(
+                "output-freq-table-suppressed-note",
+                name = title.as_str()
+            ))
+            .italics()
+            .color(Tokens::text_muted()),
+        );
+        return;
+    }
+
     let n_total = res.n_valid + res.n_missing;
     let valid_percent_total = if n_total > 0 {
         (res.n_valid as f64 / n_total as f64) * 100.0
@@ -253,6 +265,16 @@ pub fn frequency_table_to_tsv(res: &FrequencyResult) -> String {
     let mut out = String::new();
     let title = res.display_title();
     out.push_str(&format!("{}\n", title));
+
+    if res.table_suppressed {
+        out.push_str(&t!(
+            "output-freq-table-suppressed-note",
+            name = title.as_str()
+        ));
+        out.push('\n');
+        return out;
+    }
+
     let headers = [
         t!("output-col-value"),
         t!("output-col-frequency"),

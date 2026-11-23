@@ -260,6 +260,9 @@ impl EngineCommand for FrequenciesCommand {
                 );
             }
 
+            // Organization mode for multiple variables
+            res.multiple_vars_mode = format_options.multiple_vars_mode;
+
             // Suppress categories table if number of categories exceeds limit
             if let Some(limit) = format_options.suppress_tables_limit {
                 if res.categories.len() > limit {

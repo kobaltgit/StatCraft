@@ -120,6 +120,11 @@ impl OutputViewerState {
         let charts: Vec<statcraft_algo::FrequencyChartResult> =
             results.iter().filter_map(|r| r.chart.clone()).collect();
 
+        let mode = results
+            .first()
+            .map(|r| r.multiple_vars_mode)
+            .unwrap_or(statcraft_algo::MultipleVarsMode::Compare);
+
         let mut items = vec![
             OutputItem {
                 id: log_id,
@@ -141,7 +146,7 @@ impl OutputViewerState {
             },
         ];
 
-        if !charts.is_empty() {
+        if mode == statcraft_algo::MultipleVarsMode::Compare && !charts.is_empty() {
             items.push(OutputItem {
                 id: self.alloc_id(),
                 title_key: "output-frequencies-charts",

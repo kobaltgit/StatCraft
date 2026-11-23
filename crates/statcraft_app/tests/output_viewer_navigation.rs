@@ -40,6 +40,7 @@ fn test_output_viewer_procedure_and_item_auto_scroll() {
         statistics: None,
         chart: None,
         table_suppressed: false,
+        multiple_vars_mode: statcraft_algo::MultipleVarsMode::Compare,
     }];
     state.add_frequencies(freq_sample);
 

@@ -1,5 +1,7 @@
 use super::charts::FrequencyChartResult;
-use super::options::{CategoryOrder, FrequenciesFormatOptions, FrequenciesStatisticsOptions};
+use super::options::{
+    CategoryOrder, FrequenciesFormatOptions, FrequenciesStatisticsOptions, MultipleVarsMode,
+};
 use super::percentiles::compute_quartiles;
 use super::stats::{compute_frequencies_statistics, FrequenciesStatisticsResult};
 use serde::{Deserialize, Serialize};
@@ -41,6 +43,9 @@ pub struct FrequencyResult {
     /// Indicates whether the category table was suppressed due to exceeding LIMIT(n)
     #[serde(default)]
     pub table_suppressed: bool,
+    /// Mode of organizing output for multiple variables (SPSS /FORMAT=COMPARE | VARIABLE)
+    #[serde(default)]
+    pub multiple_vars_mode: MultipleVarsMode,
 }
 
 impl FrequencyResult {
@@ -234,6 +239,7 @@ pub fn compute_frequencies_full(
         statistics,
         chart: None,
         table_suppressed: false,
+        multiple_vars_mode: MultipleVarsMode::Compare,
     }
 }
 
