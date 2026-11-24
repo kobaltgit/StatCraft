@@ -323,3 +323,35 @@ fn test_frequencies_execution_with_suppress_tables_limit() {
     assert!(!results2[0].table_suppressed);
     assert_eq!(results2[0].categories.len(), 2);
 }
+
+#[test]
+fn test_frequencies_sps_generation_with_table_styles() {
+    let params = json!({
+        "vars": ["salary"],
+        "order": "analysis",
+        "table_styles": [
+            {
+                "table_target": { "Subtype": "Frequencies" },
+                "value_target": { "Label": "Frequency" },
+                "dimension": "Columns",
+                "condition": { "GreaterThan": 100.0 },
+                "format": {
+                    "bold": true,
+                    "italic": false,
+                    "bg_color": [220, 245, 220],
+                    "text_color": null,
+                    "reset_defaults": false
+                }
+            }
+        ]
+    });
+
+    let sps = FrequenciesCommand::to_sps_from_params(&params);
+    assert!(sps.contains("FREQUENCIES VARIABLES=salary"));
+    assert!(sps.contains("OUTPUT MODIFY"));
+    assert!(sps.contains("/SELECT TABLES"));
+    assert!(sps.contains("/IF SUBTYPES=['Frequencies']"));
+    assert!(sps.contains("/TABLECELLS SELECT=['Frequency'] SELECTDIMENSION=COLUMNS"));
+    assert!(sps.contains("CONDITION=GT(100)"));
+    assert!(sps.contains("STYLE=BACKGROUNDCOLOR(RGB(220, 245, 220)) FONTSTYLE=BOLD."));
+}

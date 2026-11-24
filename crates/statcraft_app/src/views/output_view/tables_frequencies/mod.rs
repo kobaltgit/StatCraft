@@ -2,11 +2,13 @@ pub mod freq_chart_bar_pie;
 pub mod freq_chart_histogram;
 pub mod freq_table;
 pub mod stats_summary_table;
+pub mod style_report;
 
 pub use freq_chart_bar_pie::*;
 pub use freq_chart_histogram::*;
 pub use freq_table::render_single_frequency_table;
 pub use stats_summary_table::render_stats_summary_table;
+pub use style_report::*;
 
 use egui::Ui;
 use statcraft_algo::{FrequencyChartResult, FrequencyResult, MultipleVarsMode};

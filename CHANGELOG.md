@@ -7,6 +7,40 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [0.4.6] - 2026-11-24
+
+### Added
+- **Table Style & Conditional Formatting Parity (Feature 019 / IBM SPSS OUTPUT MODIFY):**
+  - Implemented the complete typed conditional formatting engine in `statcraft_reporting::styling` (`CellStyleFormat`, `CellCondition`, `TableStyleRule`, `CellTargetScope`, `ConditionalFormattingEngine`).
+  - Added support for 12 value predicate conditions: `All`, `Equal`, `NotEqual`, `LessThan`, `LessOrEqual`, `GreaterThan`, `GreaterOrEqual`, `Between`, `NotBetween`, `TopN`, `BottomN`, `SysMis`.
+  - Added target dimension selection (`Columns`, `Rows`, `Both`) and value targeting (`AllDataCells`, label filter).
+  - Added 3-way application scope in `format_subdialog.rs`: `Only Cells` (default), `Entire Column`, and `Entire Row`.
+  - Added replacement value substitution (`replace_value`) allowing users to replace matching cell values with custom strings.
+- **Authentic IBM SPSS Table Style Dialog Suite (DialogKit):**
+  - Main Dialog `TableStyleDialog`: 5 in-cell ComboBox columns (*Table, Value, Dimension, Condition, Format*), live rule summary indicators, rule reordering (`[ Move Up ]`, `[ Move Down ]`), rule cloning (`[ Duplicate ]`), and transactional rollback on cancel.
+  - Condition Subdialog `TableStyleConditionSubdialog`: Value targeting, `[ ] Absolute Value` checkbox for modulus magnitude comparisons, lower/upper range bounds, and Top/Bottom N inputs.
+  - Format Subdialog `TableStyleFormatSubdialog`:
+    - Top `Preview` box with live sample text `123` reflecting font style, colors, and borders in real-time.
+    - Typography toolbar with active selection states: `[ B ]`, `[ I ]`, `[ U ]`.
+    - Authentic 5x6 SPSS Color Matrix Palette (`color_palette.rs`) with dedicated swatches for White, Black, No Color (diagonal red slash), 30 canonical SPSS color shades, and custom RGB picker.
+    - Comprehensive 34 cell format masks (`format_masks.rs`): numbers, decimals, scientific notation, percentages, quarters, weeks, timestamps, and named days/months.
+    - Decimals spinner and TableLook defaults reset switch.
+- **Output Viewer Styled Table Rendering & Reporting:**
+  - High-performance vector rendering in Output Viewer (`tables_common.rs`) with cell background fills, custom text colors, and synthetic faux bold (`egui::text::LayoutJob` with overstrike) preserving italic slant and underline simultaneously without font suppression (`BUG-019`).
+  - Implemented auxiliary "Conditional Styles Report" audit table summarizing applied targets, conditions, and modified cell tallies.
+  - Added canonical IBM SPSS `OUTPUT MODIFY` syntax generation upon Paste action (`/SELECT TABLES /IF SUBTYPES=['Frequencies'] /TABLECELLS SELECT=[DIMENSION=...] CONDITION=... STYLE=[...]`).
+  - Updated HTML report export to serialize inline CSS styles preserving cell formatting, background colors, and underlines.
+- **Zero-Hardcode Fluent Localization:**
+  - Added 44+ semantic translation keys in `locales/ru.ftl` and `locales/en.ftl` covering all 34 format masks, colors, and dialog labels.
+
+### Fixed
+- **Architectural Decomposition of App Dialog Coordinator (BUG-018):**
+  - Proactively decomposed `crates/statcraft_app/src/app_dialogs.rs` to prevent exceeding the 1000-line coordinator ceiling (Rule 12.1/12.2), extracting canonical descriptive procedures into `crates/statcraft_app/src/app_dialogs_stats.rs` (284 lines).
+- **Typography Rendering in Output Viewer & Format Preview (BUG-019):**
+  - Resolved `egui` italic and bold conflict where `painter.text` suppressed italics and `RichText::strong` was overridden by custom text colors. Synthesized robust faux bold over slanted `Galley` via `LayoutJob`.
+
+---
+
 ## [0.4.5] - 2026-11-22
 
 ### Added

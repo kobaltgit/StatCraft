@@ -267,7 +267,7 @@ fn render_html_table(html: &mut String, table: &ReportTable) {
     }
 
     html.push_str("<tbody>\n");
-    for row in &table.rows {
+    for (row_idx, row) in table.rows.iter().enumerate() {
         html.push_str("<tr>\n");
         for (col_idx, cell) in row.iter().enumerate() {
             let align_class = table
@@ -279,9 +279,34 @@ fn render_html_table(html: &mut String, table: &ReportTable) {
                     CellAlignment::Right => "align-right",
                 })
                 .unwrap_or("align-left");
+
+            let mut style_attr = String::new();
+            if let Some(style) = table.cell_styles.get(&(row_idx, col_idx)) {
+                let mut css_rules = Vec::new();
+                if style.bold {
+                    css_rules.push("font-weight: bold;".to_string());
+                }
+                if style.italic {
+                    css_rules.push("font-style: italic;".to_string());
+                }
+                if style.underline {
+                    css_rules.push("text-decoration: underline;".to_string());
+                }
+                if let Some([r, g, b]) = style.text_color {
+                    css_rules.push(format!("color: rgb({}, {}, {});", r, g, b));
+                }
+                if let Some([r, g, b]) = style.bg_color {
+                    css_rules.push(format!("background-color: rgb({}, {}, {});", r, g, b));
+                }
+                if !css_rules.is_empty() {
+                    style_attr = format!(" style=\"{}\"", css_rules.join(" "));
+                }
+            }
+
             html.push_str(&format!(
-                "<td class=\"{}\">{}</td>\n",
+                "<td class=\"{}\"{}>{}</td>\n",
                 align_class,
+                style_attr,
                 escape_html(cell)
             ));
         }
@@ -357,5 +382,39 @@ mod tests {
         let html = export_document_to_html(&doc);
         assert!(html.contains("<!DOCTYPE html>"));
         assert!(html.contains("StatCraft Output Report"));
+    }
+
+    #[test]
+    fn test_export_html_with_cell_styles() {
+        use crate::styling::CellStyleFormat;
+
+        let mut doc = ReportDocument::new("Styled Report");
+        let mut sec = ReportSection::new("Section 1");
+        let mut table = ReportTable::new("Styled Table");
+        table.headers = vec!["ColA".to_string(), "ColB".to_string()];
+        table.rows = vec![
+            vec!["10".to_string(), "20".to_string()],
+            vec!["30".to_string(), "40".to_string()],
+        ];
+        table.cell_styles.insert(
+            (0, 1),
+            CellStyleFormat {
+                bold: true,
+                italic: false,
+                underline: false,
+                text_color: Some([255, 0, 0]),
+                bg_color: Some([255, 255, 0]),
+                format_mask_idx: 0,
+                decimals: None,
+                target_scope: Default::default(),
+                replace_value: None,
+                reset_defaults: false,
+            },
+        );
+        sec.add_item(ReportItem::Table(table));
+        doc.add_section(sec);
+
+        let html = export_document_to_html(&doc);
+        assert!(html.contains("style=\"font-weight: bold; color: rgb(255, 0, 0); background-color: rgb(255, 255, 0);\""));
     }
 }

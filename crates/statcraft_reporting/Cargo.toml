@@ -7,3 +7,4 @@ authors = ["StatCraft Contributors"]
 
 [dependencies]
 statcraft_i18n = { path = "../statcraft_i18n" }
+serde = { version = "1.0", features = ["derive"] }

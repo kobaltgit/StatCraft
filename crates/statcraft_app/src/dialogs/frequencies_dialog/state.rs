@@ -249,6 +249,7 @@ pub struct FrequenciesDialogState {
     pub charts_backup: Option<FrequenciesChartOptions>,
     pub format: FrequenciesFormatState,
     pub format_backup: Option<FrequenciesFormatState>,
+    pub table_style: crate::dialogs::table_style_dialog::TableStyleState,
 }
 
 impl Default for FrequenciesDialogState {
@@ -269,6 +270,7 @@ impl Default for FrequenciesDialogState {
             charts_backup: None,
             format: FrequenciesFormatState::default(),
             format_backup: None,
+            table_style: crate::dialogs::table_style_dialog::TableStyleState::default(),
         }
     }
 }
@@ -286,6 +288,7 @@ impl FrequenciesDialogState {
         self.charts_backup = None;
         self.format = FrequenciesFormatState::default();
         self.format_backup = None;
+        self.table_style.reset();
         self.show_statistics = false;
         self.show_charts = false;
         self.show_format = false;
@@ -304,6 +307,8 @@ pub enum FrequenciesDialogAction {
         order: Option<String>,
         multiple_vars_mode: Option<String>,
         suppress_tables_limit: Option<usize>,
+        table_styles: Option<Value>,
+        create_style_report: bool,
     },
     Paste {
         vars: Vec<String>,
@@ -316,6 +321,8 @@ pub enum FrequenciesDialogAction {
         order: Option<String>,
         multiple_vars_mode: Option<String>,
         suppress_tables_limit: Option<usize>,
+        table_styles: Option<Value>,
+        create_style_report: bool,
     },
     None,
 }

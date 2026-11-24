@@ -159,10 +159,151 @@ pub fn to_sps_from_params(params: &Value) -> String {
     if let Some(ord) = order {
         if ord.eq_ignore_ascii_case("variable") {
             lines.push("  /ORDER=VARIABLE.".to_string());
-            return lines.join("\n");
+        } else {
+            lines.push("  /ORDER=ANALYSIS.".to_string());
+        }
+    } else {
+        lines.push("  /ORDER=ANALYSIS.".to_string());
+    }
+
+    let freqs_sps = lines.join("\n");
+
+    if let Some(styles_arr) = params.get("table_styles").and_then(|v| v.as_array()) {
+        if let Some(modify_cmd) = format_output_modify(styles_arr) {
+            return format!("{}\n\n{}", freqs_sps, modify_cmd);
         }
     }
 
-    lines.push("  /ORDER=ANALYSIS.".to_string());
-    lines.join("\n")
+    freqs_sps
+}
+
+pub fn format_output_modify(styles: &[Value]) -> Option<String> {
+    if styles.is_empty() {
+        return None;
+    }
+
+    let mut out = String::from("OUTPUT MODIFY\n  /SELECT TABLES\n  /IF SUBTYPES=['Frequencies']");
+
+    let num_rules = styles.len();
+    for (idx, rule) in styles.iter().enumerate() {
+        let is_last = idx + 1 == num_rules;
+
+        // 1. SELECT and SELECTDIMENSION
+        let select_str = match rule.get("value_target") {
+            Some(Value::String(s)) if s == "AllDataCells" => "SELECT=ALL".to_string(),
+            Some(Value::Object(map)) => {
+                if let Some(Value::String(lbl)) = map.get("Label") {
+                    format!("SELECT=['{}']", lbl)
+                } else {
+                    "SELECT=ALL".to_string()
+                }
+            }
+            _ => "SELECT=ALL".to_string(),
+        };
+
+        let dim_str = match rule.get("dimension").and_then(|v| v.as_str()) {
+            Some("Rows") => "SELECTDIMENSION=ROWS",
+            Some("Both") => "SELECTDIMENSION=BOTH",
+            _ => "SELECTDIMENSION=COLUMNS",
+        };
+
+        out.push_str(&format!("\n  /TABLECELLS {} {}", select_str, dim_str));
+
+        // 2. CONDITION
+        if let Some(cond) = rule.get("condition") {
+            let cond_str = format_condition_sps(cond);
+            if !cond_str.is_empty() {
+                out.push_str(&format!("\n    CONDITION={}", cond_str));
+            }
+        }
+
+        // 3. STYLE
+        let mut style_parts = Vec::new();
+        if let Some(fmt) = rule.get("format") {
+            if let Some(true) = fmt.get("reset_defaults").and_then(|v| v.as_bool()) {
+                style_parts.push("RESET=YES".to_string());
+            } else {
+                if let Some(bg) = fmt.get("bg_color").and_then(|v| v.as_array()) {
+                    if bg.len() == 3 {
+                        let r = bg[0].as_u64().unwrap_or(0);
+                        let g = bg[1].as_u64().unwrap_or(0);
+                        let b = bg[2].as_u64().unwrap_or(0);
+                        style_parts.push(format!("BACKGROUNDCOLOR(RGB({}, {}, {}))", r, g, b));
+                    }
+                }
+                if let Some(fg) = fmt.get("text_color").and_then(|v| v.as_array()) {
+                    if fg.len() == 3 {
+                        let r = fg[0].as_u64().unwrap_or(0);
+                        let g = fg[1].as_u64().unwrap_or(0);
+                        let b = fg[2].as_u64().unwrap_or(0);
+                        style_parts.push(format!("TEXTCOLOR(RGB({}, {}, {}))", r, g, b));
+                    }
+                }
+                let bold = fmt.get("bold").and_then(|v| v.as_bool()).unwrap_or(false);
+                let italic = fmt.get("italic").and_then(|v| v.as_bool()).unwrap_or(false);
+                if bold && italic {
+                    style_parts.push("FONTSTYLE=BOLD ITALIC".to_string());
+                } else if bold {
+                    style_parts.push("FONTSTYLE=BOLD".to_string());
+                } else if italic {
+                    style_parts.push("FONTSTYLE=ITALIC".to_string());
+                }
+            }
+        }
+
+        if !style_parts.is_empty() {
+            out.push_str(&format!("\n    STYLE={}", style_parts.join(" ")));
+        }
+
+        if is_last {
+            out.push('.');
+        }
+    }
+
+    Some(out)
+}
+
+fn format_condition_sps(cond: &Value) -> String {
+    match cond {
+        Value::String(s) if s == "All" => "ALL".to_string(),
+        Value::String(s) if s == "SysMis" => "SYSMIS".to_string(),
+        Value::Object(map) => {
+            if let Some(v) = map.get("Equal").and_then(|x| x.as_f64()) {
+                format!("EQ({})", v)
+            } else if let Some(v) = map.get("NotEqual").and_then(|x| x.as_f64()) {
+                format!("NE({})", v)
+            } else if let Some(v) = map.get("LessThan").and_then(|x| x.as_f64()) {
+                format!("LT({})", v)
+            } else if let Some(v) = map.get("LessOrEqual").and_then(|x| x.as_f64()) {
+                format!("LE({})", v)
+            } else if let Some(v) = map.get("GreaterThan").and_then(|x| x.as_f64()) {
+                format!("GT({})", v)
+            } else if let Some(v) = map.get("GreaterOrEqual").and_then(|x| x.as_f64()) {
+                format!("GE({})", v)
+            } else if let Some(arr) = map.get("Between").and_then(|x| x.as_array()) {
+                if arr.len() == 2 {
+                    let low = arr[0].as_f64().unwrap_or(0.0);
+                    let high = arr[1].as_f64().unwrap_or(0.0);
+                    format!("BETWEEN({}, {})", low, high)
+                } else {
+                    String::new()
+                }
+            } else if let Some(arr) = map.get("NotBetween").and_then(|x| x.as_array()) {
+                if arr.len() == 2 {
+                    let low = arr[0].as_f64().unwrap_or(0.0);
+                    let high = arr[1].as_f64().unwrap_or(0.0);
+                    format!("NOTBETWEEN({}, {})", low, high)
+                } else {
+                    String::new()
+                }
+            } else if let Some(n) = map.get("TopN").and_then(|x| x.as_u64()) {
+                format!("TOP({})", n)
+            } else if let Some(n) = map.get("BottomN").and_then(|x| x.as_u64()) {
+                format!("BOTTOM({})", n)
+            } else {
+                String::new()
+            }
+        }
+        _ => String::new(),
+    }
 }

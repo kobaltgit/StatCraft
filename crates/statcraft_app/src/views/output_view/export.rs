@@ -44,6 +44,9 @@ pub fn procedures_to_report_document(procedures: &[OutputProcedure]) -> ReportDo
                     ];
                     section.add_item(ReportItem::Table(table));
                 }
+                OutputItemKind::ReportTable(table) => {
+                    section.add_item(ReportItem::Table(table.clone()));
+                }
                 _ => {
                     if let Some(tsv) = extract_item_tsv(&item.kind) {
                         let lines: Vec<&str> = tsv.lines().collect();
@@ -95,6 +98,7 @@ pub fn procedures_to_report_document(procedures: &[OutputProcedure]) -> ReportDo
                                 rows: data_rows,
                                 alignments,
                                 footnotes,
+                                cell_styles: std::collections::HashMap::new(),
                             };
                             section.add_item(ReportItem::Table(table));
                         }

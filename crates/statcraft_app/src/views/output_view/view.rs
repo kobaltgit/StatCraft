@@ -3,18 +3,19 @@ use super::model::{OutputItemKind, OutputViewerState, SelectedTarget};
 use super::outline::render_outline_pane;
 use super::{extract_item_tsv, render_crosstabs_item, render_log_block, render_notes_block};
 use super::{
-    render_frequency_charts, render_spss_adp_tables, render_spss_codebook_tables,
-    render_spss_correlations_tables, render_spss_cox_regression, render_spss_curvefit_tables,
-    render_spss_descriptives_pivot_table, render_spss_explore_pivot_tables, render_spss_factor,
-    render_spss_frequencies_tables, render_spss_generic_report, render_spss_indep_ttest_tables,
-    render_spss_kmeans_tables, render_spss_kruskal_wallis_tables, render_spss_lifetables,
-    render_spss_linear_regression, render_spss_logistic_tables, render_spss_mann_whitney_tables,
-    render_spss_means, render_spss_multinomial_logistic_tables,
-    render_spss_multivariate_glm_tables, render_spss_onesample_ttest_tables,
-    render_spss_oneway_anova_tables, render_spss_paired_ttest_tables,
-    render_spss_partial_corr_tables, render_spss_programmability_tables,
-    render_spss_related_samples_tables, render_spss_reliability, render_spss_repeated_glm_tables,
-    render_spss_summarize_tables, render_spss_survival_tables, render_spss_univariate_glm_tables,
+    render_frequency_charts, render_report_table, render_spss_adp_tables,
+    render_spss_codebook_tables, render_spss_correlations_tables, render_spss_cox_regression,
+    render_spss_curvefit_tables, render_spss_descriptives_pivot_table,
+    render_spss_explore_pivot_tables, render_spss_factor, render_spss_frequencies_tables,
+    render_spss_generic_report, render_spss_indep_ttest_tables, render_spss_kmeans_tables,
+    render_spss_kruskal_wallis_tables, render_spss_lifetables, render_spss_linear_regression,
+    render_spss_logistic_tables, render_spss_mann_whitney_tables, render_spss_means,
+    render_spss_multinomial_logistic_tables, render_spss_multivariate_glm_tables,
+    render_spss_onesample_ttest_tables, render_spss_oneway_anova_tables,
+    render_spss_paired_ttest_tables, render_spss_partial_corr_tables,
+    render_spss_programmability_tables, render_spss_related_samples_tables,
+    render_spss_reliability, render_spss_repeated_glm_tables, render_spss_summarize_tables,
+    render_spss_survival_tables, render_spss_univariate_glm_tables,
 };
 use crate::theme::Tokens;
 use egui::{pos2, vec2, Align, Rect, ScrollArea, Sense, Stroke, Ui};
@@ -327,6 +328,9 @@ pub fn render_output_view_with_workspace(
                                             table_headers,
                                             table_rows,
                                         );
+                                    }
+                                    OutputItemKind::ReportTable(table) => {
+                                        render_report_table(ui, table);
                                     }
                                 }
 

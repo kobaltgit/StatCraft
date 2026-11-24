@@ -53,6 +53,7 @@ pub mod split_file_dialog;
 pub mod summarize_dialog;
 pub mod survival_km_dialog;
 pub mod survival_lifetables_dialog;
+pub mod table_style_dialog;
 pub mod time_series_dialog;
 pub mod transpose_dialog;
 pub mod ttest_indep_define_groups;
@@ -203,6 +204,7 @@ pub use survival_km_dialog::{
 pub use survival_lifetables_dialog::{
     render_survival_lifetables_dialog, LifeTablesDialogAction, LifeTablesDialogState,
 };
+pub use table_style_dialog::{render_table_style_dialog, TableStyleState};
 pub use time_series_dialog::{
     render_time_series_dialog, TimeSeriesDialogAction, TimeSeriesDialogState, TimeSeriesFnType,
     TimeSeriesItem,

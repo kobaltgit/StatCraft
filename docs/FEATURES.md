@@ -342,6 +342,16 @@ All statistical algorithms in StatCraft are implemented in **100% pure Safe Rust
   * Outline toolstrip: collapse all, expand all, clear entire output, and delete selected nodes with the `Delete` key.
 * **Authentic Pivot Tables:**
   * High-fidelity reproduction of IBM SPSS Statistics typography and layouts: nested multi-tier headers, alternating row striping, right-aligned numeric formatting, and criterion footnotes.
+* **Table Style & Conditional Formatting Engine:**
+  * Declarative typed engine applying conditional formatting across pivot table cells based on value predicates (`All`, `Equal`, `NotEqual`, `LessThan`, `LessOrEqual`, `GreaterThan`, `GreaterOrEqual`, `Between`, `NotBetween`, `TopN`, `BottomN`, `SysMis`).
+  * Dimension and value targeting across table subtypes, columns, rows, and label tokens with substring protection.
+  * Visual formatting options (bold, italic, underline, RGB text color, RGB background color, decimal places, value replacement) and TableLook defaults reset.
+  * Canonical IBM SPSS Format subdialog parity: 34 cell format masks (numbers, currencies, scientific, dates, times, days, months), authentic 5x6 SPSS color matrix with special White/Black/No Color swatches and custom RGB picker, and 3-way application scope (*Only Cells, Entire Column, Entire Row*).
+  * Authentic IBM SPSS DialogKit interface: 5 in-cell ComboBox columns (*Table, Value, Dimension, Condition, Format*), live sample preview box, typography toolbar (`[ B ] [ I ] [ U ]`), rule reordering, and transactional rollback on cancel.
+  * Output Viewer rendering with custom background fills, custom typography colors, and dynamic column layouts.
+  * Auxiliary "Conditional Styles Report" audit table summarizing applied targets, conditions, and modified cell tallies.
+  * Canonical SPSS `OUTPUT MODIFY` syntax generation upon Paste action.
+  * Rich HTML report export preserving applied cell styling via inline CSS attributes.
 * **One-Click Excel TSV Export:**
   * Dedicated `[ Copy Table (TSV) ]` button in each table header.
   * Structured Tab-Separated Values (TSV) format engineered for Microsoft Excel and Google Sheets: pastes cleanly with zero column shifting, date corruption, or text truncation.

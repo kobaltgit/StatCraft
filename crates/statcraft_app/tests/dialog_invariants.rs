@@ -32,6 +32,9 @@ use fixtures::create_test_dataset;
 #[path = "dialog_invariants/extended_dialogs.rs"]
 mod extended_dialogs;
 
+#[path = "dialog_invariants/table_style_invariants.rs"]
+mod table_style_invariants;
+
 #[test]
 fn test_dialog_canonical_sizes() {
     assert_eq!(DialogSize::Standard.to_vec2(), egui::vec2(560.0, 430.0));
@@ -279,6 +282,8 @@ fn test_frequencies_format_subdialog_commit_and_action_run() {
         order,
         multiple_vars_mode,
         suppress_tables_limit,
+        table_styles: state.table_style.rules_to_json(),
+        create_style_report: state.table_style.create_style_report,
     };
 
     match action {

@@ -122,6 +122,7 @@ pub enum OutputItemKind {
         table_headers: Vec<String>,
         table_rows: Vec<Vec<String>>,
     },
+    ReportTable(statcraft_reporting::model::ReportTable),
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]

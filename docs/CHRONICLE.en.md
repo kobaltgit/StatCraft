@@ -4227,3 +4227,151 @@ Executed a comprehensive revision and harmonization of project documentation (`R
    * Added omitted workspace crates to the project structure table (`statcraft_reporting`, `statcraft_bridge`, `website/`).
 4. **Definition of Done Verification:**
    * 100% successful pass across all 10 gates in `cargo run -p xtask -j 1 -- ci`.
+
+---
+
+### Phase 109: Table Style & Conditional Formatting — Phase 1: Data Model, Styling Engine, and Contracts (L4 + L5)
+*Time: November 24, 2026, 16:15 (~30 minutes)*
+
+Established the architectural computational foundation for the "Table Style" and conditional formatting subsystem (**Feature 019: Table Style / Conditional Formatting**):
+1. **Rule Model & Neutral Evaluation Engine L4 (`statcraft_reporting`):**
+   * Implemented modular leaf file `crates/statcraft_reporting/src/styling.rs` (363 lines, $\le 500$ lines pursuant to `file-guard`), 100% safe Rust;
+   * Designed declarative typed model:
+     - `TableStyleRule`: atomic formatting rule with table targeting (`table_target`), dimension addressing (`dimension`), target value selector (`value_target`), condition predicate (`condition`), and formatting style (`format`);
+     - `TableTarget`: match all eligible tables (`AllEligible`) or specific subtype (`Subtype(String)`);
+     - `DimensionTarget`: target columns (`Columns`), rows (`Rows`), or all cells (`Both`);
+     - `TargetValue`: apply to all data cells (`AllDataCells`) or filter by header/row label (`Label(String)`);
+     - `CellCondition`: value predicates (`All`, `Equal`, `NotEqual`, `LessThan`, `LessOrEqual`, `GreaterThan`, `GreaterOrEqual`, `Between`, `NotBetween`, `TopN(usize)`, `BottomN(usize)`, `SysMis`);
+     - `CellStyleFormat`: typography (`bold`, `italic`), text color RGB (`text_color`), background color RGB (`bg_color`), and defaults reset directive (`reset_defaults`).
+   * Computational engine `ConditionalFormattingEngine`:
+     - Strict top-to-bottom rule evaluation priority (subsequent rules override overlapping cell coordinates);
+     - Built-in ranking algorithms `TopN` and `BottomN` across columns, rows, and whole tables;
+     - Tokenized label matching `label_matches`: eliminates substring false positives (e.g. searching `"Male"` never erroneously matches `"Female"`, while `"Percent"` correctly matches `"Valid Percent"`);
+     - Safe floating-point parser `parse_num`: parses numeric cells with `%` stripping, comma thousands grouping, and European decimal comma handling without panicking.
+2. **Table Model Integration & Web Export L4 (`statcraft_reporting`):**
+   * Extended `ReportTable` in `model.rs` with `pub cell_styles: HashMap<(usize, usize), CellStyleFormat>`;
+   * In HTML report generator `html_export.rs`, implemented dynamic injection of inline CSS styles into `<td>` elements (`style="font-weight: bold; color: rgb(...); background-color: rgb(...);"`).
+3. **Command Bus Schema Extension L5 (`statcraft_syntax`):**
+   * Updated `stat.frequencies` command (`frequencies_cmd/mod.rs`) JSON schema `specs()` with `table_styles` (array of formatting rules) and `create_style_report` flag for AI agents.
+4. **Quality Control & Definition of Done:**
+   * Developed integration test suite `crates/statcraft_reporting/tests/styling_tests.rs` (8 tests for predicates, ordering, TopN/BottomN, numeric parsing, and reset);
+   * Added HTML export test `test_export_html_with_cell_styles` in `html_export.rs`;
+   * 100% pass on all workspace tests with `-j 1` (`statcraft_reporting`, `statcraft_syntax`, `output_viewer_invariants`);
+   * Full Quality Gate pass: `cargo run -p xtask -j 1 -- file-guard` (500 files within limits), `xtask layers` (L4/L5 adherence), `clippy -- -D warnings`, `cargo fmt --check`.
+
+---
+
+### Phase 110: Table Style & Conditional Formatting — Phase 2: DialogKit UI & Dialog Coordinator Decomposition (L6 statcraft_app)
+*Time: November 24, 2026, 16:55 (~40 minutes)*
+
+Implemented a complete user interface suite for table style customization and conditional formatting (**Feature 019: Table Style / Conditional Formatting**) strictly adhering to IBM SPSS Statistics standards and the StatCraft DialogKit design system:
+1. **Modular Subpackage `table_style_dialog` (`crates/statcraft_app/src/dialogs/table_style_dialog/`):**
+   * All 4 modules strictly adhere to the $\le 500$ lines limit mandated by `file-guard`:
+     - `state.rs` (230 lines): typed state `TableStyleState`, rule management operations (`add_rule`, `duplicate_rule`, `move_rule_up`, `move_rule_down`, `delete_rule`), transactional snapshot (`backup`) for guaranteed rollback on cancellation, and JSON serialization for the CommandBus;
+     - `condition_subdialog.rs` (185 lines): modal subdialog `TableStyleConditionDialog` ($400 \times 340$ px) built on `DialogShell`, toggling between "All values" and "Based on conditions", a dropdown of 11 operators (comparisons, ranges, Top/Bottom N, SysMis), and safe numeric parsing;
+     - `format_subdialog.rs` (185 lines): modal subdialog `TableStyleFormatDialog` ($420 \times 420$ px), typography checkboxes (Bold, Italic), background and text color palettes from design system tokens, defaults reset checkbox, and an interactive Live Preview cell container;
+     - `mod.rs` (272 lines): main window `TableStyleDialog` ($640 \times 420$ px), 5-column scrollable rules table with clickable condition and format cells for rapid editing, action sidebar buttons, and report generation checkbox.
+2. **Integration with Frequencies Dialog (`frequencies_dialog`):**
+   * Activated `[ Style... ]` button in the `SubdialogSidebar` of the Frequencies dialog with transactional state backup;
+   * Passed `table_styles` and `create_style_report` into `FrequenciesDialogAction::Run` and `Paste` actions.
+3. **Architectural Decomposition of Dialog Coordinator (Rule 12.2 Anti-Goodhart Counterweight):**
+   * In response to developer feedback, performed preventative decomposition of `crates/statcraft_app/src/app_dialogs.rs`: extracted `app_dialogs_stats.rs` (284 lines) covering the canonical SPSS Descriptive Statistics cluster (*Descriptives, Frequencies, Explore, Crosstabs*);
+   * Reduced `app_dialogs.rs` from a precarious 994 lines down to a clean 723 lines, restoring a solid safety margin well below the 1000-line ceiling.
+4. **Zero-Hardcode i18n (`locales/ru.ftl`, `locales/en.ftl`):**
+   * Added 35+ semantic localization keys with zero hardcoded literals in UI code (100% pass on `i18n_lint_test`).
+5. **Quality Control & Definition of Done:**
+   * Developed integration tests in `crates/statcraft_app/tests/dialog_invariants/table_style_invariants.rs` (6/6 tests: basic headless render, rollback transactionality, rule mutations, and Frequencies dialog integration);
+   * 49/49 tests passing in `dialog_invariants.rs`, 11/11 in `output_viewer_invariants.rs`, 8/8 in `output_viewer_frequencies_invariants.rs`;
+   * 100% pass on `xtask file-guard` (506 files within limits), `xtask design-guard` (0 violations), `xtask layers`, and `cargo clippy --workspace -j 1 -- -D warnings`.
+
+---
+
+### Phase 111: Table Style & Conditional Formatting — Phase 3: Output Viewer Rendering, Audit Report Table, and End-to-End Integration (L6 statcraft_app + L5 statcraft_syntax)
+*Time: November 24, 2026, 17:35 (~40 minutes)*
+
+Successfully completed Phase 3 of the table styling and conditional formatting architecture (**Feature 019: Table Style / Conditional Formatting**), unifying the L4 analytics engine, L5 syntax generators, and L6 presentation layer:
+1. **L4 Report Model Serialization (`statcraft_reporting`):**
+   * Implemented `Serialize` and `Deserialize` derivations for `ReportTable` and `CellAlignment`;
+   * Added `cell_styles_serde` module ensuring `HashMap<(usize, usize), CellStyleFormat>` serializes into a clean JSON sequence of `[[row, col], style]` pairs.
+2. **Output Viewer Styled Cell Rendering L6 (`statcraft_app`):**
+   * Added `ReportTable(statcraft_reporting::model::ReportTable)` variant to `OutputItemKind`;
+   * In `tables_common.rs`, implemented `render_report_table` and `render_data_row_styled`:
+     - Custom background fill (`bg_color`) rendered via `ui.painter().rect_filled`;
+     - Custom typography colors (`text_color`) and font weighting (`bold`);
+     - Dynamic column width layout with responsive horizontal scrolling (`ScrollArea::horizontal`);
+   * End-to-end preservation in TSV export (`extract_item_tsv`) and HTML export (`procedures_to_report_document`), preserving inline CSS formatting for web export.
+3. **Frequencies Styling Module & Audit Report Table (`tables_frequencies::style_report`):**
+   * Created modular leaf file `style_report.rs` (241 lines, $\le 500$ lines pursuant to `file-guard`), converting `FrequencyResult` to `ReportTable` and applying rules through `ConditionalFormattingEngine`;
+   * When "Create styles report" (`create_style_report`) is enabled, the system automatically appends an auxiliary *«Conditional Styles Report»* audit table to Output Viewer:
+     - Columns: *Table*, *Target*, *Condition*, *Format*, *Modified Cells Count*;
+     - Accurately tallies all modified data cells across categories and summary totals.
+4. **Canonical SPSS `OUTPUT MODIFY` Syntax Generation L5 (`statcraft_syntax`):**
+   * Extended `to_sps_from_params` in `FREQUENCIES` command to generate authentic SPSS `OUTPUT MODIFY` syntax:
+     - Selection targeting `/SELECT TABLES /IF SUBTYPES=['Frequencies']`;
+     - Dimension and cell styling block `/TABLECELLS SELECT=[DIMENSION=...] CONDITION=... STYLE=[...]`;
+     - Translation of logical operators (`EQ`, `NE`, `LT`, `LE`, `GT`, `GE`, `BETWEEN`, `SYSMIS`) and RGB color specifications `BACKGROUND=RGB(...) COLOR=RGB(...) FONTSTYLE=BOLD`.
+5. **Zero-Hardcode i18n (`locales/ru.ftl`, `locales/en.ftl`):**
+   * Registered 6 bilingual semantic localization keys (`dialog-style-report-title`, `dialog-style-report-col-table`, `dialog-style-report-col-target`, `dialog-style-report-col-condition`, `dialog-style-report-col-format`, `dialog-style-report-col-modified`).
+6. **Testing & End-to-End Verification (DoD):**
+   * Developed end-to-end test suite `crates/statcraft_app/tests/table_style_e2e_test.rs` (5 tests):
+     - `test_frequencies_with_table_style_rule`: verifies cell background styling and bold typography;
+     - `test_create_style_report_generates_audit_table`: verifies audit table generation and modified cell counts;
+     - `test_output_modify_syntax_paste_generation`: verifies SPSS `OUTPUT MODIFY` syntax generation;
+     - `test_html_export_preserves_table_styles`: verifies inline CSS generation in exported HTML;
+     - `test_headless_egui_render_with_styled_table`: headless egui context rendering without panics;
+   * Added unit test `test_frequencies_sps_generation_with_table_styles` in `frequencies_cmd/tests.rs`;
+   * 100% clean Quality Gate execution via `cargo run -p xtask -j 1 -- ci` (10/10 gates passed).
+
+---
+
+### Phase 112: 100% Visual and Structural SPSS Parity Alignment for Table Style
+*Time: November 24, 2026, 18:40 (~45 minutes)*
+
+Following visual testing and audit of live IBM SPSS Statistics screenshots, conducted a comprehensive UI and structural remediation of the **Table Style (Feature 019: Table Style / Conditional Formatting)** dialog complex:
+1. **Critical egui Layout Remediation:**
+   * Resolved the horizontal layout bug that broke table row positioning: isolated the rules table inside a dedicated `ui.vertical(|ui| { ... })` container, ensuring the horizontal separator sits strictly below header columns and row contents stack vertically in natural order.
+2. **Restoration of 5 Canonical Rule Columns:**
+   * Removed artificial `№` sequence column;
+   * Restored 5 authentic columns with native inline dropdowns (`ComboBox`) directly in table cells:
+     1. `Table`: `ComboBox` (*All eligible tables, Frequencies, Statistics*);
+     2. `Value`: `ComboBox` (*All data cells, Count (N), Mean, Median, Percent*);
+     3. `Dimension`: `ComboBox` (*Columns, Rows, Columns and rows*);
+     4. `Condition`: clickable cell opening the Condition subdialog;
+     5. `Format`: clickable cell opening the Format subdialog;
+   * Segmented the right actions column: `[ Add ]`, `[ Duplicate ]`, `[ Move Up ]`, `[ Move Down ]`, spacer, and `[ Delete ]` positioned at the lower boundary.
+3. **Canonical "Table Style : Condition" Subdialog:**
+   * Added context label `Value used in condition :`;
+   * Structured `Apply formatting` (`GroupBox`);
+   * Added `First value:` field with `[ ] Absolute value` checkbox, `Second value:` field (for ranges), and `Count:` field (for Top/Bottom N).
+4. **Canonical "Table Style : Format" Subdialog:**
+   * Embedded centered `GroupBox: Preview` frame ($180 \times 40$ px) with live updating sample number `123`;
+   * Typography toolbar with `[ B ]`, `[ I ]`, `[ U ]` toggles, font color picker, and background color fill selector;
+   * `Format: [ As is v ]` selector, decimal places checkbox and spinbox, `Apply to: [ Cells only v ]` dropdown, and replacement value field.
+5. **Quality Control & Definition of Done:**
+   * 49/49 `dialog_invariants` tests and 5/5 `table_style_e2e_test` tests passing;
+   * 100% clean Quality Gate pass via `cargo run -p xtask -j 1 -- ci` (10/10 gates);
+   * Release binary `statcraft_app.exe` successfully rebuilt.
+
+---
+
+### Phase 114: Table Style Font Rendering Fix — Harmonious Bold, Italic & Underline Support
+*Time: November 24, 2026, 20:20 (~25 minutes)*
+
+Following typography auditing and the resolution of `BUG-019` in the "Table Style : Format" subdialog and Pivot Table cells, font rendering was fully overhauled:
+1. **Root Cause Analysis:**
+   * In `egui`'s default font runtime, dedicated bold TTF font faces are absent. `RichText::strong()` merely recolors text to `strong_text_color()`, which was silenced by custom `.color(fg)`.
+   * An initial attempt to apply faux bold using `painter.text()` revealed that `painter.text()` forcibly defaults `italics: false`, stripping italic slanting completely.
+2. **Architectural Solution (LayoutJob + Faux Bold):**
+   * Font rendering was migrated to `egui::text::LayoutJob` with `TextFormat { italics: is_italic, underline: is_underline, font_id, color }`.
+   * The font subsystem `ui.fonts(|f| f.layout_job(job))` produces an authentically slanted `Galley` of glyphs supporting true italics and underlines.
+   * Bold styling is synthesized via subpixel overstrike (faux bold) directly across the slanted `Galley` at `+vec2(0.7, 0.0)` and `+vec2(0.35, 0.35)`.
+   * Consequently, **bold, italic, and underline function harmoniously and concurrently** in both the preview sample `123` and in Pivot Table cells (`tables_common.rs`).
+3. **Interactive Toolbar Toggles:**
+   * Buttons `[ B ]`, `[ I ]`, `[ U ]` now render `.selected(...)` active styling and properly toggle off `fmt_use_defaults`.
+4. **Quality Control & Definition of Done:**
+   * 50/50 `dialog_invariants` tests passing;
+   * 100% clean Quality Gate execution via `cargo run -p xtask -j 1 -- ci` (10/10 gates, `file-guard`, `design-guard`, clippy with `-D warnings`, fmt);
+   * Release binary `statcraft_app.exe` successfully rebuilt.
+
+
+

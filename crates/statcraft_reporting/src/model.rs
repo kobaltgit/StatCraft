@@ -1,3 +1,7 @@
+use crate::styling::CellStyleFormat;
+use serde::{Deserialize, Serialize};
+use std::collections::HashMap;
+
 #[derive(Clone, Debug, Default)]
 pub struct ReportDocument {
     pub title: String,
@@ -57,7 +61,7 @@ pub struct ReportNotes {
     pub active_vars: usize,
 }
 
-#[derive(Clone, Copy, Debug, PartialEq, Eq, Default)]
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Default, Serialize, Deserialize)]
 pub enum CellAlignment {
     #[default]
     Left,
@@ -65,13 +69,41 @@ pub enum CellAlignment {
     Right,
 }
 
-#[derive(Clone, Debug, Default)]
+pub mod cell_styles_serde {
+    use super::*;
+    use serde::{Deserialize, Deserializer, Serialize, Serializer};
+
+    pub fn serialize<S>(
+        styles: &HashMap<(usize, usize), CellStyleFormat>,
+        s: S,
+    ) -> Result<S::Ok, S::Error>
+    where
+        S: Serializer,
+    {
+        let mut list: Vec<((usize, usize), &CellStyleFormat)> =
+            styles.iter().map(|(k, v)| (*k, v)).collect();
+        list.sort_by_key(|(k, _)| *k);
+        list.serialize(s)
+    }
+
+    pub fn deserialize<'de, D>(d: D) -> Result<HashMap<(usize, usize), CellStyleFormat>, D::Error>
+    where
+        D: Deserializer<'de>,
+    {
+        let list = Vec::<((usize, usize), CellStyleFormat)>::deserialize(d)?;
+        Ok(list.into_iter().collect())
+    }
+}
+
+#[derive(Clone, Debug, Default, Serialize, Deserialize)]
 pub struct ReportTable {
     pub title: String,
     pub headers: Vec<String>,
     pub rows: Vec<Vec<String>>,
     pub alignments: Vec<CellAlignment>,
     pub footnotes: Vec<String>,
+    #[serde(default, with = "cell_styles_serde")]
+    pub cell_styles: HashMap<(usize, usize), CellStyleFormat>,
 }
 
 impl ReportTable {
@@ -82,6 +114,7 @@ impl ReportTable {
             rows: Vec::new(),
             alignments: Vec::new(),
             footnotes: Vec::new(),
+            cell_styles: HashMap::new(),
         }
     }
 }

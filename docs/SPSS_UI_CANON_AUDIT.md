@@ -46,6 +46,14 @@ Phase 3 concludes the comprehensive audit of StatCraft, evaluating the user-faci
      - **Rendering Standard:** 100% vector primitives via `ui.painter()`, zero raster images, zero emojis, and zero unsupported Unicode glyphs.
   6. **Table Suppression Notice (`table_suppressed`):** When categories exceed threshold `LIMIT(n)`, displays an authentic italic notification in `Tokens::text_muted()` (*"The frequency table for variable [NAME] is not displayed because the number of categories exceeds the specified limit."*), preserving the summary Statistics table and vector charts.
   7. **Multi-Variable Output Organization (`MultipleVarsMode`):** Supports `Compare` (single unified summary table, sequential frequency tables, separate charts node) and `Variable` (consecutive blocks per variable: personal statistics $\to$ frequency table $\to$ inline chart). Verified via `output_viewer_frequencies_invariants.rs` (8/8 passing).
+  8. **Table Styling & Conditional Formatting Engine:** Implemented at reporting layer L4 (`statcraft_reporting::styling`). Provides declarative `TableStyleRule` mechanisms for cell styling based on numeric predicates (`All`, `Equal`, `NotEqual`, `LessThan`, `LessOrEqual`, `GreaterThan`, `GreaterOrEqual`, `Between`, `NotBetween`, `TopN`, `BottomN`, `SysMis`), dimension targeting (`Columns`, `Rows`, `Both`), label tokens (with substring false-positive protection), and HTML CSS export. Verified via `styling_tests.rs` (8/8 passing).
+  9. **Output Viewer Styled Tables & Audit Report:**
+     - Integration of `ReportTable` into `OutputItemKind` viewer hierarchy.
+     - Styled cell rendering in `tables_common.rs` with custom background fill `bg_color` via `ui.painter().rect_filled`, text color `text_color`, and bold typography `bold`.
+     - Automated auxiliary *«Conditional Styles Report»* audit table (`dialog-style-report-title`) with columns *Table*, *Target*, *Condition*, *Format*, *Modified Cells Count* when `create_style_report` is enabled.
+     - Canonical SPSS `OUTPUT MODIFY` syntax generation upon Paste action (`/SELECT TABLES /IF SUBTYPES=['Frequencies']` and `/TABLECELLS SELECT=[DIMENSION=...] CONDITION=... STYLE=[...]`).
+     - End-to-end styling retention in TSV and HTML export with inline CSS generation (`font-weight`, `color`, `background-color`).
+     - Verified via end-to-end test suite `table_style_e2e_test.rs` (5/5 passing) and syntax generation test `frequencies_cmd/tests.rs`.
 
 ### M-22: Compare Means Output Tables
 * **Implementation:** `tables_ttest_onesample.rs`, `tables_ttest_indep.rs`, `tables_ttest_paired.rs`, `tables_anova.rs`
@@ -124,8 +132,8 @@ Phase 3 concludes the comprehensive audit of StatCraft, evaluating the user-faci
   4. **Precondition Guard:** `[ OK ]` button automatically disables when procedural inputs are invalid.
   5. **VariablePicker & TransferButton:** Vector measure icons (Scale, Ordinal, Nominal) and adaptive transfer buttons (`->` / `<-`).
 
-### M-29: Procedural Dialogs Suite (37 Dialogs & Subdialogs)
-* **Implementation:** `crates/statcraft_app/src/dialogs/*.rs` (including `frequencies_dialog/format_subdialog.rs`, `charts_subdialog.rs` and `statistics_subdialog.rs`)
+### M-29: Procedural Dialogs Suite (37 Dialogs, Subdialogs & Table Style)
+* **Implementation:** `crates/statcraft_app/src/dialogs/*.rs` (including `frequencies_dialog/format_subdialog.rs`, `charts_subdialog.rs`, `statistics_subdialog.rs`, `table_style_dialog/` (`mod.rs`, `state.rs`, `condition_subdialog.rs`, `format_subdialog.rs`), coordinator `app_dialogs.rs` and decomposed module `app_dialogs_stats.rs`)
 * **SPSS Reference:** *SPSS Procedural Dialogs Suite*
 * **Craft Anything Hypothesis:** `hyp_41` (Supported)
 * **Audited Invariants & Evidence:**
@@ -133,8 +141,18 @@ Phase 3 concludes the comprehensive audit of StatCraft, evaluating the user-faci
   2. **Subdialog Canonical Architecture:** Type 2 modal subdialogs (including *Frequencies: Statistics*, *Frequencies: Charts*, and *Frequencies: Format*, $360 \times 300$ px) use `DialogShell::subdialog`, `GroupBox` and `SubdialogActionBar` (`[ Continue ] [ Cancel ] [ Help ]`) with rollback on cancel.
      - *Frequencies: Format*: two-column selection of category ordering (`CategoryOrder` — 4 radio options), multi-variable organization (`MultipleVarsMode` — 2 radio options), checkbox and dependent threshold input for category table suppression `LIMIT(n)`;
      - *Frequencies: Charts*: mutual exclusivity rules (Histogram vs Bar/Pie, normal curve gating).
-  3. **Reset Idempotence:** Clicking `[ Reset ]` restores all parameters and lists to exact defaults across all dialogs.
-  4. **Automated Suite:** Verified via `cargo test -p statcraft_app --test dialog_invariants -j 1` (43/43 passing, including `test_frequencies_format_subdialog_transactionality_on_cancel` and `test_frequencies_format_subdialog_commit_and_action_run`).
+  3. **Table Style & Conditional Formatting Dialog Suite:**
+     - Main rules dialog `TableStyleDialog` ($640 \times 420$ px): 5-column interactive rules grid (Enabled, Scope, Condition, Format, Delete), action buttons for rule addition, duplication, reordering (Up / Down), summary report generation toggle, and rule clearing.
+     - Condition subdialog `TableStyleConditionDialog` ($400 \times 340$ px): dimension targeting (`Columns`, `Rows`, `Both`), 11 numeric comparison operators with single/interval inputs.
+     - Format subdialog `TableStyleFormatDialog` ($420 \times 420$ px): typography (Bold, Italic), token palette swatches for text and background colors, interactive live preview sample box `SamplePreviewBox`.
+     - Transactionality: complete transactional snapshot mechanisms (`backup` / `cancel` / `confirm`) guaranteeing rollbacks on cancel across all subdialogs and the main dialog.
+     - Integration in `FrequenciesDialog`: activated `[ Style... ]` (`dialog-btn-style`) sidebar button, rule JSON serialization, and pipeline action dispatch.
+  4. **Coordinator Architectural Decomposition (Rules 12.1 & 12.2 Anti-Goodhart):**
+     - Upon integrating `table_styles`, `crates/statcraft_app/src/app_dialogs.rs` reached 994 lines (approaching the 1000-line ceiling).
+     - In strict adherence to Rule 12.2 ("Decompose, Never Cut"), an architectural decomposition was conducted: the canonical SPSS Descriptive Statistics group (*Descriptives, Frequencies, Explore, Crosstabs*) was extracted into `crates/statcraft_app/src/app_dialogs_stats.rs` (284 lines).
+     - `app_dialogs.rs` was reduced to **723 lines** (277 lines headroom) with 100% feature and logic retention, fully satisfying `xtask file-guard`.
+  5. **Reset Idempotence:** Clicking `[ Reset ]` restores all parameters and lists to exact defaults across all dialogs.
+  6. **Automated Suite:** Verified via `cargo test -p statcraft_app --test dialog_invariants -j 1` (**49/49 passing**, including 6 tests in `table_style_invariants.rs`: rendering, rule manipulation, cancellation rollback, condition subdialog, format subdialog, frequencies integration).
 
 ---
 
@@ -182,11 +200,18 @@ Phase 3 concludes the comprehensive audit of StatCraft, evaluating the user-faci
 * **Total Microplans Audited:** 13 (M-21 through M-33)
 * **Craft Anything Hypotheses Confirmed:** 13/13 (100% Supported)
 * **Automated Invariant Tests:**
-  - `dialog_invariants`: 37/37 PASSED
+  - `dialog_invariants`: 49/49 PASSED (including 6 tests for the Table Style DialogKit suite)
   - `output_viewer_invariants`: 11/11 PASSED
+  - `output_viewer_frequencies_invariants`: 8/8 PASSED
+  - `table_styling_tests`: 8/8 PASSED (in `statcraft_reporting`)
+  - `table_style_e2e_tests`: 5/5 PASSED (in `statcraft_app`, end-to-end rendering, audit table, OUTPUT MODIFY, and HTML)
   - `session_lifecycle_tests`: 12/12 PASSED
-  - `i18n_lint_test`: 4/4 PASSED
+  - `i18n_lint_test`: 18/18 PASSED (in `statcraft_i18n`)
   - `xtask design-guard`: 0 violations PASSED
-  - `xtask file-guard`: 267 files PASSED
+  - `xtask file-guard`: 508 files PASSED (including verification of `app_dialogs_stats.rs` decomposition)
   - `xtask layers`: PASSED
+  - `xtask parity`: PASSED
+  - `xtask sync-site --check`: PASSED
+  - `cargo clippy -p statcraft_app -j 1 -- -D warnings`: 0 warnings PASSED
+  - `cargo fmt --check`: PASSED
 * **Overall Phase 3 Verdict:** **FULL SPSS CANONICAL COMPLIANCE ACHIEVED**.

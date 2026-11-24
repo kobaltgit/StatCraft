@@ -46,6 +46,7 @@ pub use outline::render_outline_pane;
 pub use tables_adp::{adp_to_tsv, render_spss_adp_tables};
 pub use tables_anova::{anova_to_tsv, render_spss_oneway_anova_tables};
 pub use tables_cluster::{kmeans_to_tsv, render_spss_kmeans_tables};
+pub use tables_common::render_report_table;
 pub use tables_correlations::{correlations_to_tsv, render_spss_correlations_tables};
 pub use tables_cox::{cox_to_tsv, render_spss_cox_regression};
 pub use tables_crosstabs::{crosstabs_to_tsv, render_crosstabs_item};
@@ -137,6 +138,18 @@ pub fn extract_item_tsv(kind: &OutputItemKind) -> Option<String> {
             table_headers,
             table_rows,
         )),
+        OutputItemKind::ReportTable(table) => {
+            let mut out = String::new();
+            if !table.headers.is_empty() {
+                out.push_str(&table.headers.join("\t"));
+                out.push('\n');
+            }
+            for row in &table.rows {
+                out.push_str(&row.join("\t"));
+                out.push('\n');
+            }
+            Some(out)
+        }
         _ => None,
     }
 }

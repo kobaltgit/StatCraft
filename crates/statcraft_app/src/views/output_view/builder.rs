@@ -182,6 +182,22 @@ impl OutputViewerState {
         self.add_frequencies_with_log(results, sps_log);
     }
 
+    pub fn add_frequencies_styled(
+        &mut self,
+        results: Vec<FrequencyResult>,
+        sps_log: String,
+        table_styles: Option<&[statcraft_reporting::styling::TableStyleRule]>,
+        create_style_report: bool,
+    ) {
+        super::tables_frequencies::build_frequencies_procedure(
+            self,
+            results,
+            sps_log,
+            table_styles,
+            create_style_report,
+        );
+    }
+
     pub fn add_onesample_ttest(
         &mut self,
         results: Vec<OneSampleTTestResult>,

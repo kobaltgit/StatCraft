@@ -1335,6 +1335,117 @@
 - [x] Quality Gate (Definition of Done):
   - [x] 100% прохождение полного Quality Gate: `cargo run -p xtask -j 1 -- ci` (10/10 шлюзов, включая `fmt`, `clippy -D warnings`, `file-guard` 498 файлов, `design-guard`, `layers`, матрицу обратимости Undo/Redo 41 команды и синхронизацию сайта `sync-site`).
 
+## 78. Стиль таблицы и условное форматирование (Table Style / Conditional Formatting) — Этап 1: Модель данных, движок стилизации и контракты (L4 statcraft_reporting + L5 statcraft_syntax)
+- [x] L4 `statcraft_reporting::styling`:
+  - [x] Структура типизированных правил `TableStyleRule` (`table_target`, `value_target`, `dimension`, `condition`, `format`);
+  - [x] Перечисление `TableTarget` (`AllEligible`, `Subtype(String)`);
+  - [x] Перечисление `TargetValue` (`AllDataCells`, `Label(String)`);
+  - [x] Перечисление `DimensionTarget` (`Columns`, `Rows`, `Both`);
+  - [x] Перечисление условий `CellCondition` (`All`, `Equal`, `NotEqual`, `LessThan`, `LessOrEqual`, `GreaterThan`, `GreaterOrEqual`, `Between`, `NotBetween`, `TopN(usize)`, `BottomN(usize)`, `SysMis`);
+  - [x] Спецификация формата `CellStyleFormat` (`bold`, `italic`, `text_color`, `bg_color`, `reset_defaults`);
+  - [x] Движок форматирования `ConditionalFormattingEngine`:
+    - [x] `apply_rules(table, subtype, rules)` и `apply(table, rules)`;
+    - [x] Приоритет применения правил «сверху вниз» с переопределением ячеек при пересечении координат;
+    - [x] Обработка `reset_defaults` с удалением пользовательских стилей ячейки;
+    - [x] Безопасный парсинг чисел `parse_num` (поддержка процентов, разделителей тысяч, десятичных точек и запятых);
+    - [x] Алгоритмы ранжирования `TopN` и `BottomN` по колонкам, строкам и всей таблице;
+    - [x] Сопоставление меток `label_matches` с защитой от ложных срабатываний подстрок (например, `"Male"` vs `"Female"`);
+- [x] L4 `statcraft_reporting::model`:
+  - [x] Расширение `ReportTable` полем `cell_styles: HashMap<(usize, usize), CellStyleFormat>`;
+  - [x] Обновление конструктора `ReportTable::new` и `Default`;
+- [x] L4 `statcraft_reporting::html_export`:
+  - [x] Инъекция CSS-атрибутов (`font-weight`, `font-style`, `color`, `background-color`) в ячейки `<td>` сводных таблиц;
+- [x] L5 `statcraft_syntax::commands::frequencies_cmd`:
+  - [x] Расширение JSON-схемы `specs()` свойствами `table_styles` и `create_style_report`;
+- [x] Тестирование и верификация (DoD):
+  - [x] Интеграционный тест-сьют `styling_tests.rs` (8 тестов: предикаты, приоритет, TopN/BottomN, парсинг чисел, SysMis, reset_defaults);
+  - [x] Тест экспорта стилей в HTML `test_export_html_with_cell_styles` в `html_export.rs`;
+  - [x] 100% прохождение тестов: `cargo test -p statcraft_reporting -j 1` (14/14), `cargo test -p statcraft_syntax -j 1`, `output_viewer_invariants` (11/11);
+  - [x] Строгое соответствие `file-guard` ($\le 500$ строк на модуль), `layers` (L4 $\to$ Utility, L6 $\to$ L4) и `cargo clippy -D warnings`.
+
+## 79. Стиль таблицы и условное форматирование (Table Style / Conditional Formatting) — Этап 2: Графический интерфейс DialogKit (L6 statcraft_app)
+- [x] L6 `statcraft_app::dialogs::table_style_dialog`:
+  - [x] Модуль `state.rs` ($\le 500$ строк): стейт `TableStyleState`, управление списком правил (`add_rule`, `duplicate_rule`, `move_rule_up`, `move_rule_down`, `delete_rule`), сериализация в JSON и транзакционный откат по `Cancel`;
+  - [x] Модуль `condition_subdialog.rs` ($\le 500$ строк): канонический поддиалог `TableStyleConditionDialog` (макет снимка 180105), контекстная метка `Значение, используемое в условии :`, группа `Применить форматирование`, выпадающий список 11 операторов, поле `Первое значение` с чекбоксом `[ ] Абсолютное значение`, поле `Второе значение` и поле `Количество`;
+  - [x] Модуль `format_subdialog.rs` ($\le 500$ строк): канонический поддиалог `TableStyleFormatDialog` (макет снимка 180115), центрированный блок `GroupBox: Просмотр` с числом `123`, тулбар векторных кнопок `[ B ] [ I ] [ U ]`, палитра цветов текста и фона, селектор `Формат: [ Как есть v ]`, чекбокс `Изменить количество десятичных знаков` со спинбоксом `Десятичные: [ 0 ]`, селектор `Применить к: [ Только ячейки v ]` и поле замены значения;
+  - [x] Модуль `mod.rs` ($\le 500$ строк): главное окно `TableStyleDialog` ($660 \times 440$ px), устранение горизонтального сбоя верстки egui, заголовок **«Условия»**, 5 канонических колонок с inline `ComboBox` прямо в ячейках (`Таблица`, `Значение`, `измерение`, `Условие`, `Формат`), кнопки управления с отделенной кнопкой `[ Удалить ]` внизу и чекбокс создания отчета;
+- [x] L6 `statcraft_app::dialogs::frequencies_dialog`:
+  - [x] Интеграция `table_style: TableStyleState` в `FrequenciesDialogState`;
+  - [x] Активация кнопки `[ Стиль... ]` в `SubdialogSidebar` диалога «Частоты»;
+  - [x] Проброс параметров `table_styles` и `create_style_report` в действия `Run` и `Paste`;
+- [x] L6 Архитектурная декомпозиция (Rule 12.2 Anti-Goodhart Counterweight):
+  - [x] Выделение модуля `app_dialogs_stats.rs` (284 строки) для канонической группы описательных статистик SPSS (*Descriptives, Frequencies, Explore, Crosstabs*);
+  - [x] Разгрузка `app_dialogs.rs` с 994 до 723 строк с огромным запасом надежности до лимита 1000 строк;
+- [x] Zero-Hardcode i18n (`locales/ru.ftl`, `locales/en.ftl`):
+  - [x] 45+ семантических ключей локализации для всех заголовков, столбцов, операторов, цветов, тулбара и образца ячейки (100% прохождение `i18n_lint_test`);
+- [x] Тестирование и верификация (DoD):
+  - [x] Модуль тестов `table_style_invariants.rs` (6/6 тестов: headless-рендер, транзакционность отката, добавление/клонирование/перемещение/удаление, интеграция с диалогом «Частоты»);
+  - [x] 49/49 тестов в `dialog_invariants.rs`, 11/11 в `output_viewer_invariants.rs`, 8/8 в `output_viewer_frequencies_invariants.rs`;
+  - [x] 100% прохождение `xtask file-guard` (506 файлов $\le 500$ строк), `xtask design-guard` (0 нарушений), `xtask layers` и `cargo clippy -D warnings`.
+
+## 80. Стиль таблицы и условное форматирование (Table Style / Conditional Formatting) — Этап 3: Рендеринг в Output Viewer, таблица аудита и сквозная интеграция (L6 statcraft_app + L5 statcraft_syntax)
+- [x] L4 `statcraft_reporting::model`:
+  - [x] Сериализация и десериализация `ReportTable` и `CellAlignment` (`#[derive(Serialize, Deserialize)]`);
+  - [x] Модуль `cell_styles_serde` для безопасной сериализации `HashMap<(usize, usize), CellStyleFormat>` в JSON в виде пар `[[row, col], style]`;
+- [x] L6 `statcraft_app::views::output_view`:
+  - [x] Расширение `OutputItemKind` вариантом `ReportTable(statcraft_reporting::model::ReportTable)`;
+  - [x] Отображение стилизованных ячеек в `tables_common.rs` (`render_report_table`, `render_data_row_styled`):
+    - [x] Поддержка пользовательского цвета фона ячейки (`bg_color`) с заливкой прямоугольника `ui.painter().rect_filled`;
+    - [x] Поддержка пользовательского цвета текста (`text_color`) и полужирного начертания (`bold`);
+    - [x] Динамический расчет ширины колонок и горизонтальный скроллинг `ScrollArea::horizontal`;
+  - [x] Экспорт в TSV (`extract_item_tsv`) и HTML (`procedures_to_report_document`): сквозное сохранение таблиц `ReportTable` и инлайн CSS-стилей при экспорте отчета;
+  - [x] Модуль `tables_frequencies::style_report`:
+    - [x] Конвертация `FrequencyResult` в `ReportTable` (`frequency_result_to_report_table`) и применение правил через `ConditionalFormattingEngine`;
+    - [x] Автоматическая генерация вспомогательной таблицы аудита «Conditional Styles Report» (`dialog-style-report-title`) при включенном флаге `create_style_report`: колонки *Таблица*, *Цель*, *Условие*, *Формат*, *Количество измененных ячеек*;
+    - [x] Построение процедуры `build_frequencies_procedure` и интеграция в `builder.rs` (`add_frequencies_styled`);
+- [x] L6 `statcraft_app::app_dialogs_stats`:
+  - [x] Парсинг JSON-правил `table_styles` в `FrequenciesDialogAction::Run` и передача в `add_frequencies_styled`;
+- [x] L5 `statcraft_syntax::commands::frequencies_cmd`:
+  - [x] Генерация канонического синтаксиса SPSS `OUTPUT MODIFY` в `to_sps_from_params`:
+    - [x] Секции `/SELECT TABLES /IF SUBTYPES=['Frequencies']`;
+    - [x] Блок `/TABLECELLS SELECT=[DIMENSION=...] CONDITION=... STYLE=[...]`;
+    - [x] Трансляция условий `EQ`, `NE`, `LT`, `LE`, `GT`, `GE`, `BETWEEN`, `SYSMIS` и цветов RGB в `BACKGROUND=RGB(...) COLOR=RGB(...) FONTSTYLE=BOLD/REGULAR`;
+- [x] Zero-Hardcode i18n (`locales/ru.ftl`, `locales/en.ftl`):
+  - [x] 6 семантических ключей локализации отчета аудита (`dialog-style-report-title`, `dialog-style-report-col-table`, `dialog-style-report-col-target`, `dialog-style-report-col-condition`, `dialog-style-report-col-format`, `dialog-style-report-col-modified`);
+- [x] Тестирование и сквозная верификация (DoD):
+  - [x] Тест-сьют `table_style_e2e_test.rs` (5 тестов):
+    - [x] `test_frequencies_with_table_style_rule`: проверка применения правил форматирования к ячейкам (0, 1) таблицы частот;
+    - [x] `test_create_style_report_generates_audit_table`: проверка формирования таблицы аудита и подсчета модифицированных ячеек;
+    - [x] `test_output_modify_syntax_paste_generation`: проверка генерации синтаксиса `OUTPUT MODIFY`;
+    - [x] `test_html_export_preserves_table_styles`: проверка инлайн CSS в экспортированном HTML;
+    - [x] `test_headless_egui_render_with_styled_table`: headless рендеринг таблицы `ReportTable` в egui Context без единой паники;
+  - [x] Модульный тест `test_frequencies_sps_generation_with_table_styles` в `frequencies_cmd/tests.rs`;
+  - [x] 100% соблюдение `file-guard` ($\le 500$ строк на файл) и `layers` (L6 $\to$ L4/L5, L4 не зависит от L6).
+
+## 81. Стиль таблицы и условное форматирование — Этап 4: 100% Канонический паритет поддиалога «Стиль таблицы : Формат» (IBM SPSS Statistics 9-Screenshot Parity)
+- [x] L4 `statcraft_reporting::styling`:
+  - [x] Добавлено перечисление `CellTargetScope` (`CellsOnly`, `EntireColumn`, `EntireRow`);
+  - [x] Расширена структура `CellStyleFormat` (`underline`, `format_mask_idx`, `decimals`, `target_scope`, `replace_value`);
+  - [x] Расширен движок `ConditionalFormattingEngine`: поддержка распространения форматирования на строку (`EntireRow`) или столбец (`EntireColumn`), поддержка строковой замены `replace_value`;
+  - [x] Экспорт `CellTargetScope` в `statcraft_reporting::lib`;
+  - [x] Тесты в `styling_tests.rs`: `test_cell_target_scope_entire_column_and_row`;
+- [x] L4 `statcraft_reporting::html_export`:
+  - [x] Поддержка CSS-правила `text-decoration: underline;` при экспорте стилизованных таблиц в HTML;
+- [x] L6 `statcraft_app::dialogs::table_style_dialog`:
+  - [x] Модуль `format_masks.rs` (45 строк $\le 500$): массив всех 34 канонических масок IBM SPSS Statistics (`dialog-format-mask-*`) и резолвер `get_format_mask_label`;
+  - [x] Модуль `color_palette.rs` (235 строк $\le 500$): каноническая палитра цветов SPSS (специальная строка Белый/Черный/Без цвета с красной диагональной чертой, 5 строк по 6 тематических оттенков, векторная отрисовка, вызов кастомного цвета через `color_edit_button_srgb`);
+  - [x] Модуль `format_subdialog.rs` (310 строк $\le 500$): полная интеграция с кнопками `[ B ] [ I ] [ U ]`, каноническими кнопками палитры шрифта и заливки, выпадающим списком 34 форматов, переключателем десятичных знаков, выпадающим списком `Применить к:` (`Только ячейки`, `Весь столбец`, `Вся строка`) и полем замены значения;
+  - [x] Модуль `state.rs`: инициализация и сохранение всех расширенных полей формата;
+  - [x] Модуль `mod.rs`: учет подчеркивания `fmt.underline` в сводке `format_style_summary`;
+- [x] L6 `statcraft_app::views::output_view::tables_common`:
+  - [x] Векторная отрисовка подчеркивания `underline` в ячейках сводных таблиц `render_cell_content`;
+- [x] Zero-Hardcode i18n (`locales/ru.ftl`, `locales/en.ftl`):
+  - [x] 44 новых ключа Fluent для всех 34 масок, вариантов `Применить к:`, тултипов и палитры цветов;
+- [x] Тестирование и верификация (DoD):
+  - [x] Тест `test_table_style_format_subdialog_commit_full_spss_parity` в `table_style_invariants.rs`;
+  - [x] 100% прохождение всех 50 тестов в `dialog_invariants.rs`;
+  - [x] 100% прохождение всех 9 тестов в `styling_tests.rs`;
+  - [x] 100% прохождение `xtask file-guard` (510 файлов $\le 500$ строк);
+  - [x] 100% прохождение `xtask design-guard` (0 нарушений стандарта DialogKit);
+  - [x] 100% прохождение `cargo fmt --check` и `cargo clippy --workspace -j 1 -- -D warnings`;
+  - [x] 100% прохождение полного Quality Gate `cargo run -p xtask -j 1 -- ci`.
+
+
 ## 20. Планы будущих релизов (Backlog / Planned Features)
 - [ ] Мультимониторный режим рабочего пространства (Multi-Monitor Viewports & Pop-out Tabs):
   - [ ] Механизм открепления вкладок во внешние нативные окна ОС через `ctx.show_viewport_immediate`.

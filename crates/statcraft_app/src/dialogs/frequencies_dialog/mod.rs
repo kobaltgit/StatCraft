@@ -43,6 +43,9 @@ pub fn render_frequencies_dialog(
     if state.show_format {
         render_format_subdialog(ctx, state);
     }
+    if state.table_style.is_open {
+        crate::dialogs::table_style_dialog::render_table_style_dialog(ctx, &mut state.table_style);
+    }
 
     let mut action = FrequenciesDialogAction::None;
     let mut close_dialog = false;
@@ -198,7 +201,11 @@ pub fn render_frequencies_dialog(
                         state.format_backup = Some(state.format.clone());
                         state.show_format = true;
                     }
-                    let _ = SubdialogSidebar::button(ui, t!("dialog-btn-style"), false);
+                    if SubdialogSidebar::button(ui, t!("dialog-btn-style"), true).clicked() {
+                        state.table_style.backup = Some(state.table_style.rules.clone());
+                        state.table_style.backup_report = state.table_style.create_style_report;
+                        state.table_style.is_open = true;
+                    }
                     let _ = SubdialogSidebar::button(ui, t!("dialog-btn-bootstrap"), false);
                 },
             );
@@ -229,6 +236,9 @@ pub fn render_frequencies_dialog(
             };
         let suppress_tables_limit = state.format.suppress_tables_limit();
 
+        let table_styles = state.table_style.rules_to_json();
+        let create_style_report = state.table_style.create_style_report;
+
         match bar_action {
             ActionBarAction::Ok => {
                 close_dialog = true;
@@ -243,6 +253,8 @@ pub fn render_frequencies_dialog(
                     order,
                     multiple_vars_mode,
                     suppress_tables_limit,
+                    table_styles,
+                    create_style_report,
                 };
             }
             ActionBarAction::Paste => {
@@ -258,6 +270,8 @@ pub fn render_frequencies_dialog(
                     order,
                     multiple_vars_mode,
                     suppress_tables_limit,
+                    table_styles,
+                    create_style_report,
                 };
             }
             ActionBarAction::Reset => {

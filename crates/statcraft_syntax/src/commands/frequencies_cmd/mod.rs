@@ -114,6 +114,25 @@ impl EngineCommand for FrequenciesCommand {
                             "default": false
                         }
                     }
+                },
+                "table_styles": {
+                    "type": "array",
+                    "description": "Optional list of table style rules for conditional formatting",
+                    "items": {
+                        "type": "object",
+                        "properties": {
+                            "table_target": { "type": "string" },
+                            "value_target": { "type": "string" },
+                            "dimension": { "type": "string", "enum": ["columns", "rows", "both"] },
+                            "condition": { "type": "string" },
+                            "format": { "type": "object" }
+                        }
+                    }
+                },
+                "create_style_report": {
+                    "type": "boolean",
+                    "description": "Whether to generate a styled report table",
+                    "default": false
                 }
             }
         })
