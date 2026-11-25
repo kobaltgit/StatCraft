@@ -151,16 +151,14 @@ Beyond isolated unit testing, StatCraft enforces mathematical and architectural 
 * **Verdict:** **100% Mathematical Equivalence to SPSS Canon.**
 
 #### 1.3. `CROSSTABS` (IBM Algorithms pp. 221–226)
-* **Implementation:** [`crates/statcraft_algo/src/crosstabs.rs`](../crates/statcraft_algo/src/crosstabs.rs)
-* **Golden Oracle Tests:** `crosstabs_tests::tests::test_crosstabs_2x2_golden_oracle`, `crosstabs_tests::tests::test_fisher_exact_2x2_standard`
+* **Implementation:** [`crates/statcraft_algo/src/crosstabs/`](../crates/statcraft_algo/src/crosstabs/mod.rs) (`types.rs`, `measures.rs`, `exact.rs`, `ztest.rs`, `mantel_haenszel.rs`)
+* **Golden Oracle Tests:** `crosstabs::tests::test_crosstabs_2x2_golden_oracle_and_residuals`, `crosstabs::tests::test_fisher_exact_2x2_standard`, `crosstabs::tests::test_ordinal_nominal_and_correlations_oracle`, `crosstabs::tests::test_exact_mc_and_ztest_and_options`, `crosstabs::tests::test_noninteger_weights_modes`, `crosstabs::tests::test_cmh_stratified_2x2xk_oracle`
 * **Mathematical Formula Verification:**
-  * Expected counts: $E_{ij} = \frac{R_i \cdot C_j}{W}$, Raw residuals: $Res_{ij} = O_{ij} - E_{ij}$;
-  * Pearson's Chi-Square: $\chi^2 = \sum \frac{(O_{ij} - E_{ij})^2}{E_{ij}}, \quad df = (R-1)(C-1)$;
-  * Likelihood Ratio: $G^2 = 2 \sum O_{ij} \ln\left(\frac{O_{ij}}{E_{ij}}\right)$ (terms with $O_{ij}=0$ evaluated strictly to 0);
-  * Yates Continuity Corrected ($2 \times 2$):
-    $$\chi^2_{Yates} = \frac{W \cdot \left(\max(0, |O_{11}O_{22} - O_{12}O_{21}| - 0.5 W)\right)^2}{R_1 R_2 C_1 C_2}, \quad df = 1$$
-  * Fisher's Exact Test: Two-sided $p$-value computed via log-gamma $\ln \Gamma(x)$ to prevent integer factorial overflow;
-  * Measures of Association: $\Phi$ coefficient, Cramér's $V$, Pearson Contingency Coefficient.
+  * Expected counts: $E_{ij} = \frac{R_i \cdot C_j}{W}$; Residuals: Unstandardized ($O_{ij} - E_{ij}$), Standardized ($(O_{ij} - E_{ij})/\sqrt{E_{ij}}$), Adjusted Standardized ($r_{ij}/\sqrt{(1-R_i/N)(1-C_j/N)}$);
+  * Pearson's Chi-Square, Likelihood Ratio ($G^2$), Yates Continuity Correction ($2 \times 2$), Linear-by-Linear Association ($(N-1)r^2$, $df=1$), Fisher's Exact Test ($2 \times 2$), Monte Carlo Patefield ($r \times c$ with binomial CI), Bounded Exact ($r \times c$ with time budget);
+  * Measures of Association: $\Phi$, Cramér's $V$, Contingency Coefficient $C$, Goodman & Kruskal's $\lambda$, Uncertainty Coefficient $U$, $\gamma$, Somers' $d$, Kendall's $\tau_b$ & $\tau_c$, $\eta$, Pearson's $r$, Spearman's $\rho$, Cohen's $\kappa$, Risk Estimate (OR/RR with 95% Wald CI), McNemar/McNemar-Bowker;
+  * Stratified $2 \times 2 \times K$ Analysis: Cochran's, Mantel-Haenszel, Breslow-Day, Tarone's homogeneity, and Common Odds Ratio (Robins-Breslow-Greenland SE & 95% CI);
+  * Column Proportions $z$-test (pairwise with optional Bonferroni adjustment) and 5 `NonIntegerWeights` modes (`RoundCell`, `TruncateCell`, `RoundCase`, `TruncateCase`, `NoAdjust`).
 * **Verdict:** **100% Mathematical Equivalence to SPSS Canon.**
 
 #### 1.4. `MEANS` (IBM Algorithms pp. 662–665)

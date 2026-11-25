@@ -1,3 +1,4 @@
+pub mod crosstabs;
 pub mod frequencies;
 pub mod ttest;
 
@@ -17,7 +18,7 @@ pub fn map_stat_command(
         "DESCRIPTIVES" => map_descriptives(cmd, dataset),
         "FREQUENCIES" => map_frequencies(cmd, dataset),
         "EXAMINE" | "EXPLORE" => map_explore(cmd, dataset),
-        "CROSSTABS" => map_crosstabs(cmd, dataset),
+        "CROSSTABS" => crosstabs::map_crosstabs(cmd, dataset),
         "T-TEST" => map_ttest(cmd, dataset),
         "ONEWAY" => map_oneway(cmd, dataset),
         "CORRELATIONS" => map_correlations(cmd, dataset),
@@ -103,50 +104,6 @@ fn map_descriptives(
     Ok(Some((
         "stat.descriptives",
         json!({ "vars": vars, "options": opts }),
-    )))
-}
-
-fn map_crosstabs(
-    cmd: &ParsedCommand,
-    dataset: Option<&DataSet>,
-) -> Result<Option<(&'static str, Value)>, SyntaxError> {
-    let raw_tokens = cmd
-        .subcommand_tokens("TABLES")
-        .or_else(|| cmd.subcommand_tokens("POSITIONAL"))
-        .unwrap_or(&[]);
-
-    let by_pos = raw_tokens
-        .iter()
-        .position(|t| t.eq_ignore_ascii_case("BY"))
-        .ok_or_else(|| SyntaxError::InvalidSubcommand {
-            line: cmd.line_num,
-            command: cmd.name.clone(),
-            subcommand: "TABLES".to_string(),
-            reason: "CROSSTABS requires 'row_vars BY col_vars'".to_string(),
-        })?;
-
-    let row_tokens = &raw_tokens[..by_pos];
-    let col_tokens = &raw_tokens[by_pos + 1..];
-
-    let rows = SyntaxParser::expand_variables(row_tokens, dataset)?;
-    let cols = SyntaxParser::expand_variables(col_tokens, dataset)?;
-
-    let chisq = cmd.has_token("STATISTICS", "CHISQ");
-    let phi = cmd.has_token("STATISTICS", "PHI") || cmd.has_token("STATISTICS", "CC");
-
-    Ok(Some((
-        "stat.crosstabs",
-        json!({
-            "rows": rows,
-            "cols": cols,
-            "chisq": chisq,
-            "phi_cramer": phi,
-            "expected": true,
-            "row_pct": true,
-            "col_pct": true,
-            "total_pct": true,
-            "residuals": true
-        }),
     )))
 }
 

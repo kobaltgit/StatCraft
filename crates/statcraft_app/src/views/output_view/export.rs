@@ -56,6 +56,13 @@ pub fn procedures_to_report_document(procedures: &[OutputProcedure]) -> ReportDo
                         section.add_item(ReportItem::Table(table));
                     }
                 }
+                OutputItemKind::Crosstabs(results) => {
+                    for res in results {
+                        for table in super::tables_crosstabs::crosstabs_to_report_tables(res) {
+                            section.add_item(ReportItem::Table(table));
+                        }
+                    }
+                }
                 _ => {
                     if let Some(tsv) = extract_item_tsv(&item.kind) {
                         let lines: Vec<&str> = tsv.lines().collect();

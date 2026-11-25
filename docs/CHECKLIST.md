@@ -1501,6 +1501,37 @@
     - [x] Векторные графики (`egui_plot`): Boxplots (`Factor levels together` / `Dependents together`), Stem-and-Leaf, Histogram, Normal Q-Q & Detrended Q-Q, Spread-vs-Level;
     - [x] Фильтрация вывода по `DisplayMode`, экспорт в TSV/HTML/TXT и 100% прохождение `cargo run -p xtask -j 1 -- ci`.
 
+## 83. Таблицы сопряжённости (Crosstabs) — Этап 1: Ядро алгоритмов, слои и паритет синтаксиса SPSS (`specs/029-crosstabs-core-and-syntax`)
+- [x] **L2 `statcraft_algo::crosstabs/` (декомпозиция в модули $\le 500$ строк):**
+  - [x] `types.rs`: `RowOrder`, `ExactMode`, `NonIntegerWeights`, `DirectionalMeasure`, `RiskEstimate`, `CmhResult`, `CrosstabLayerKey`, расширенные `CrosstabOptions`, `CrosstabCell`, `CrosstabResult`;
+  - [x] `mod.rs`: агрегация матрицы с 5 режимами дробных весов (`RoundCell`, `TruncateCell`, `RoundCase`, `TruncateCase`, `NoAdjust`), `RowOrder::Descending`, `hide_small_counts`, 3 типа остатков (Unstandardized, Standardized, Adjusted Standardized), `Linear-by-Linear Association`;
+  - [x] `measures.rs`: `Contingency Coefficient`, `Lambda`, `Uncertainty Coefficient`, `Gamma`, `Somers' d`, `Kendall's tau-b / tau-c`, `Eta`, корреляции Пирсона $r$ и Спирмена $\rho$, `Kappa`, `Risk` (OR/RR с 95% ДИ), `McNemar` / `McNemar-Bowker`;
+  - [x] `exact.rs`: `fisher_exact_2x2`, Монте-Карло Пейтфилда `monte_carlo_rxc` с биномиальным ДИ и ограниченный по времени точный тест `exact_rxc`;
+  - [x] `ztest.rs`: попарный $z$-тест пропорций столбцов с опциональной поправкой Бонферрони и присвоением буквенных групп (`a, b, c...`);
+  - [x] `mantel_haenszel.rs`: стратифицированный анализ $2 \times 2 \times K$ (`compute_cmh`: Кохран, Мантель–Хензель, Бреслоу–Дэй, Тароне, общее отношение шансов с 95% ДИ);
+  - [x] `tests.rs`: 7 Golden Oracle тестов ($\le 10^{-6}$).
+- [x] **L5 `statcraft_syntax`:**
+  - [x] `CrosstabsCommand`: поддержка `layers` (`Vec<Vec<String>>`), стратифицированного CMH в `execute()`, полная генерация `to_sps_with_layers()` (`/TABLES`, `/FORMAT`, `/NOTABLES`, `/STATISTICS`, `/CELLS`, `/METHOD`, `/COUNT`, `/BARCHART`);
+  - [x] `syntax_parser::mappers::stats::crosstabs`: парсинг цепочек `BY` для слоев и всех ключевых слов `CROSSTABS` с round-trip тестами.
+
+## 84. Таблицы сопряжённости (Crosstabs) — Этап 2: Паритет диалоговых окон (`specs/030-crosstabs-dialog-parity`)
+- [x] **L6 `statcraft_app::dialogs::crosstabs_dialog/` (декомпозиция $\le 500$ строк на файл):**
+  - [x] `state.rs` и `mod.rs`: главный диалог на базе `DialogKit` (`Row(s)`, `Column(s)`, пагинация слоёв `Слой 1 из N` с кнопками `Предыдущее`/`Следующее` и чекбоксом `Показать переменные слоев в слоях таблицы`, нижние чекбоксы `Вывести кластеризованные столбчатые диаграммы` и `Не выводить таблицы`, 6 кнопок `SubdialogSidebar`);
+  - [x] `subdialogs_exact_format.rs`: поддиалог `Точные критерии` (`Только асимптотически`, `Монте-Карло` с уровнем доверия и числом выборок, `Точные` с ограничением времени) и `Формат` (`По возрастанию` / `По убыванию`);
+  - [x] `subdialogs_stats.rs`: поддиалог `Статистики` (`Хи-квадрат`, `Корреляции`, `Номинальные`, `Номин./интерв.`, `Порядковые`, `Каппа`, `Риск`, `Макнемара`, `Статистики Кокрена и Мантеля-Хенцеля` + общее отношение шансов);
+  - [x] `subdialogs_cells.rs`: поддиалог `Вывод в ячейках` (`Количества` + `Скрывать малые количества`, `z-критерий` + Бонферрони, `Проценты`, 3 вида остатков, `Создать таблицу стилей APA`, 5 режимов `Нецелочисленные веса`);
+  - [x] Интеграция `table_style_dialog` (`Стиль...`), `bootstrap_dialog` (`Бутстреп...`) и `app_dialogs_stats.rs` (`layers`, все `CrosstabOptions`, `to_sps_with_layers`);
+  - [x] Полная двуязычная локализация (`locales/en.ftl`, `locales/ru.ftl`) и прохождение `file-guard`, `design-guard`, `dialog_invariants`, `statcraft_i18n`.
+
+## 85. Таблицы сопряжённости (Crosstabs) — Этап 3: Таблицы вывода, кластеризованные графики, стиль и бутстреп (`specs/031-crosstabs-output-and-charts`)
+- [x] **L6 `statcraft_app::views::output_view::tables_crosstabs/` (декомпозиция $\le 500$ строк на файл):**
+  - [x] `mod.rs`: `add_crosstabs_styled`, диспетчер `render_crosstabs_item`, подавление матрицы при `suppress_tables` (`/NOTABLES`), интеграция `TableStyleRule` и `BootstrapOptions`;
+  - [x] `matrix.rs`: `Case Processing Summary`, многослойные таблицы (`layer_keys`), `hide_small_counts` (`<N`), 3 вида остатков (`Unstandardized`, `Standardized`, `Adjusted`), подстрочные буквы $z$-критерия (`a, b, c...`) со сноской, режим `apa_style`;
+  - [x] `stats_tables.rs`: `Chi-Square Tests` (включая `Monte Carlo Sig.` и ДИ), `Directional Measures`, `Symmetric Measures`, `Risk Estimate`, `McNemar Test`, `Tests of Homogeneity` (Breslow-Day / Tarone) и `Tests of Conditional Independence` (Cochran / Mantel-Haenszel + Common OR);
+  - [x] `charts.rs`: векторные кластеризованные столбчатые диаграммы (`display_clustered_bar_charts`) с группировкой по строкам, цветовой палитрой по столбцам и фасетированием по слоям;
+  - [x] `export.rs` и `output_view/export.rs`: полный экспорт всех таблиц `Crosstabs` в TSV, HTML и TXT через `crosstabs_to_tsv` и `crosstabs_to_report_tables`;
+  - [x] Регрессионные тесты в `crates/statcraft_app/tests/output_viewer_invariants/crosstabs.rs`.
+
 
 ## 20. Планы будущих релизов (Backlog / Planned Features)
 - [ ] Мультимониторный режим рабочего пространства (Multi-Monitor Viewports & Pop-out Tabs):

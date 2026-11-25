@@ -224,19 +224,23 @@ pub fn sample_crosstabs() -> CrosstabResult {
             cells: vec![
                 CrosstabCell {
                     observed: 40,
+                    observed_f64: 40.0,
                     expected: Some(30.0),
                     row_pct: Some(80.0),
                     col_pct: Some(66.7),
                     total_pct: Some(40.0),
                     residual: Some(10.0),
+                    ..Default::default()
                 },
                 CrosstabCell {
                     observed: 10,
+                    observed_f64: 10.0,
                     expected: Some(20.0),
                     row_pct: Some(20.0),
                     col_pct: Some(25.0),
                     total_pct: Some(10.0),
                     residual: Some(-10.0),
+                    ..Default::default()
                 },
             ],
             row_total: 50,
@@ -250,14 +254,17 @@ pub fn sample_crosstabs() -> CrosstabResult {
             value: 8.333,
             df: Some(1),
             asymp_sig: Some(0.004),
-            exact_sig: None,
+            ..Default::default()
         }],
         association_measures: vec![AssociationMeasure {
             name: "Phi".to_string(),
+            category: "Nominal by Nominal".to_string(),
             value: 0.289,
             approx_sig: Some(0.004),
+            ..Default::default()
         }],
         options: CrosstabOptions::default(),
+        ..Default::default()
     }
 }
 

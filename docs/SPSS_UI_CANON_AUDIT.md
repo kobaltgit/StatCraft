@@ -217,3 +217,13 @@ Phase 3 concludes the comprehensive audit of StatCraft, evaluating the user-faci
   - `cargo clippy -p statcraft_app -j 1 -- -D warnings`: 0 warnings PASSED
   - `cargo fmt --check`: PASSED
 * **Overall Phase 3 Verdict:** **FULL SPSS CANONICAL COMPLIANCE ACHIEVED**.
+
+
+---
+
+### Stage 2 Update: Crosstabs Dialog & Subdialogs UI Parity (`specs/030-crosstabs-dialog-parity`)
+* **Implementation:** `crates/statcraft_app/src/dialogs/crosstabs_dialog/` (`mod.rs`, `state.rs`, `subdialogs_exact_format.rs`, `subdialogs_stats.rs`, `subdialogs_cells.rs`), `app_dialogs_stats.rs`
+* **Audited Invariants:**
+  * Main dialog uses `DialogShell::standard`, `VariablePicker`, `TransferButton`, `GroupBox` (`Layer 1 of N` with `Previous`/`Next` and `Display layer variables in table layers`), `Display clustered bar charts`, `Suppress tables`, 6-button `SubdialogSidebar`, and `DialogActionBar`.
+  * All 6 subdialogs (`Exact...`, `Statistics...`, `Cells...`, `Format...`, `Style...`, `Bootstrap...`) use `DialogKit` (`DialogShell`, `GroupBox`, `SubdialogActionBar`) with transactional `Cancel` rollback.
+  * Verified with `file-guard`, `design-guard`, `dialog_invariants`, and `statcraft_i18n` (`-j 1`).

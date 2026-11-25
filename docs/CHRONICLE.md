@@ -4226,3 +4226,55 @@
 4. **Верификация и DoD:**
    * Обновлены `docs/CHECKLIST.md`, `docs/parity-checklist.md`, `docs/SPSS_ALGORITHMS_AUDIT*.md` и `specs/026..028/tasks.md`.
    * 100% прохождение полного Quality Gate `cargo run -p xtask -j 1 -- ci` (включая `fmt`, `clippy -- -D warnings`, `file-guard`, `design-guard`, `layers`, все тесты воркспейса, `undo_reversibility` 41/41 и `sync-site --check`).
+
+
+---
+
+### Фаза 123: Ядро алгоритмов, слои и синтаксический паритет для «Таблиц сопряжённости» (Feature 029 — Stage 1)
+*Время: 25 ноября 2026, 11:36 (~15 минут)*
+
+Завершён Этап 1 (L2/L5) приведения процедуры **«Таблицы сопряжённости» (`CROSSTABS`)** к полному паритету с IBM SPSS Statistics:
+1. **Декомпозиция и алгоритмическое ядро L2 (`crates/statcraft_algo/src/crosstabs/`):**
+   * `types.rs`: добавлены `RowOrder`, `ExactMode`, `NonIntegerWeights`, `DirectionalMeasure`, `RiskEstimate`, `CmhResult`, `CrosstabLayerKey` и расширенные структуры `CrosstabOptions`, `CrosstabCell`, `CrosstabResult`;
+   * `mod.rs`: 5 режимов дробных весов (`RoundCell`, `TruncateCell`, `RoundCase`, `TruncateCase`, `NoAdjust`), порядок строк `Ascending`/`Descending`, подавление малых частот `hide_small_counts`, 3 вида остатков (Unstandardized, Standardized, Adjusted Standardized) и критерий `Linear-by-Linear Association`;
+   * `measures.rs`: `Contingency Coefficient`, `Lambda`, `Uncertainty Coefficient`, `Gamma`, `Somers' d`, `Kendall's tau-b / tau-c`, `Eta`, корреляции Пирсона $r$ и Спирмена $\rho$, `Kappa`, `Risk` (OR/RR с 95% ДИ) и `McNemar` / `McNemar-Bowker`;
+   * `exact.rs`, `ztest.rs`, `mantel_haenszel.rs`: сэмплер Монте-Карло Пейтфилда $r \times c$, ограниченный точный критерий $r \times c$, попарный $z$-тест пропорций столбцов (с поправкой Бонферрони) и стратифицированный $2 \times 2 \times K$ анализ Кохрана / Мантеля–Хензеля / Бреслоу–Дэя / Тароне;
+   * `tests.rs`: 7 Golden Oracle тестов ($\le 10^{-6}$).
+2. **Синтаксис и оркестрация слоев L5 (`crates/statcraft_syntax/`):**
+   * `crosstabs_cmd.rs` и `mappers/stats/crosstabs.rs`: поддержка многослойных таблиц (`layers`), стратифицированного CMH и полный round-trip синтаксиса `CROSSTABS` (`/TABLES`, `/FORMAT`, `/NOTABLES`, `/STATISTICS`, `/CELLS`, `/METHOD`, `/COUNT`, `/BARCHART`).
+3. **Документация и DoD:**
+   * Обновлены `docs/SPSS_ALGORITHMS_AUDIT*.md`, `docs/SPSS_SYNTAX_PARSER_AUDIT*.md`, `docs/parity-checklist.md`, `docs/FEATURES*.md`, `docs/CHECKLIST.md` и `specs/029-crosstabs-core-and-syntax/tasks.md`.
+
+---
+
+### Фаза 124: Паритет диалоговых окон «Таблиц сопряжённости» (Feature 030 — Stage 2)
+*Время: 25 ноября 2026, 12:52 (~10 минут)*
+
+Завершён Этап 2 приведения диалога **«Таблицы сопряжённости» (`Crosstabs`)** к полному паритету с интерфейсом IBM SPSS Statistics:
+1. **Декомпозиция `crates/statcraft_app/src/dialogs/crosstabs_dialog/` (файлы $\le 500$ строк):**
+   * `state.rs` и `mod.rs`: добавлена пагинация слоёв `Слой 1 из N` (`Предыдущее` / `Следующее`), чекбокс `Показать переменные слоев в слоях таблицы`, нижние опции `Вывести кластеризованные столбчатые диаграммы` и `Не выводить таблицы`, а также 6-кнопочная боковая панель `SubdialogSidebar`;
+   * `subdialogs_exact_format.rs`: поддиалоги `Точные критерии` (`Только асимптотически`, `Монте-Карло`, `Точные` с числовыми буферами) и `Формат` (`По возрастанию` / `По убыванию`);
+   * `subdialogs_stats.rs`: поддиалог `Статистики` (`Хи-квадрат`, `Корреляции`, `Номинальные`, `Номин./интерв.`, `Порядковые`, `Каппа`, `Риск`, `Макнемара`, `Статистики Кокрена и Мантеля-Хенцеля`);
+   * `subdialogs_cells.rs`: поддиалог `Вывод в ячейках` (`Количества` + `Скрывать малые количества`, `z-критерий` + Бонферрони, `Проценты`, 3 вида остатков, `Создать таблицу стилей APA`, 5 режимов нецелочисленных весов).
+2. **Интеграция и локализация:**
+   * Подключены переиспользуемые `table_style_dialog` (`Стиль...`) и `bootstrap_dialog` (`Бутстреп...`), обновлена передача `layers`, `CrosstabOptions`, `table_styles` и `bootstrap` в `app_dialogs_stats.rs`;
+   * Добавлены все ключи перевода `dialog-crosstabs-*` в `locales/en.ftl` и `locales/ru.ftl`.
+3. **Верификация и DoD:**
+   * Пройдены `file-guard`, `design-guard`, `dialog_invariants` (52/52), `statcraft_i18n` (14/14 + 4/4), `parity`, `fmt --check` и `clippy -- -D warnings`.
+   * Обновлены `docs/SPSS_UI_CANON_AUDIT*.md`, `docs/FEATURES*.md`, `docs/CHECKLIST.md` и `specs/030-crosstabs-dialog-parity/tasks.md`.
+
+---
+
+### Фаза 125: Таблицы вывода, кластеризованные графики, стиль и бутстреп для «Таблиц сопряжённости» (Feature 031 — Stage 3)
+*Время: 25 ноября 2026, 13:10 (~15 минут)*
+
+Завершён Этап 3 приведения вывода **«Таблиц сопряжённости» (`Crosstabs`)** к полному паритету с IBM SPSS Statistics:
+1. **Декомпозиция `crates/statcraft_app/src/views/output_view/tables_crosstabs/` (файлы $\le 500$ строк):**
+   * `mod.rs`: диспетчер `render_crosstabs_item`, метод `add_crosstabs_styled`, поддержка `/NOTABLES` (`suppress_tables`), интеграция правил `TableStyleRule` (с отчётом аудита стилей) и таблицы спецификаций `BootstrapOptions`;
+   * `matrix.rs`: `Case Processing Summary` с отображением слоёв (`layer_keys`), многослойная матрица сопряжённости, скрытие малых частот (`hide_small_counts`), 3 вида остатков (`Unstandardized`, `Standardized`, `Adjusted`), подстрочные буквы $z$-критерия (`a, b, c...`) со сноской и компактный режим `apa_style`;
+   * `stats_tables.rs`: таблицы `Chi-Square Tests` (включая `Monte Carlo Sig.` и ДИ), `Directional Measures`, `Symmetric Measures`, `Risk Estimate`, `McNemar Test`, `Tests of Homogeneity` (Breslow-Day / Tarone) и `Tests of Conditional Independence` (Cochran / Mantel-Haenszel + Common OR);
+   * `charts.rs`: векторные кластеризованные столбчатые диаграммы (`display_clustered_bar_charts`) с группировкой по строкам, легендой столбцов и фасетированием по слоям;
+   * `export.rs` и `output_view/export.rs`: расширены `crosstabs_to_tsv` и `crosstabs_to_report_tables` для экспорта всех таблиц в TSV, HTML и TXT.
+2. **Верификация и DoD:**
+   * Добавлен тест `test_crosstabs_stage3_layered_stats_charts_and_export` в `crates/statcraft_app/tests/output_viewer_invariants/crosstabs.rs`;
+   * Обновлены `docs/CHECKLIST.md`, `specs/031-crosstabs-output-and-charts/tasks.md` и хроника.

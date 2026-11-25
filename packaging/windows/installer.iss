@@ -1,6 +1,6 @@
 #define MyAppName "StatCraft"
 #ifndef MyAppVersion
-#define MyAppVersion "0.4.7"
+#define MyAppVersion "0.4.8"
 #endif
 #define MyAppPublisher "StatCraft Contributors"
 #define MyAppURL "https://github.com/kobaltgit/StatCraft"

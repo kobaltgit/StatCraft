@@ -174,11 +174,11 @@ All statistical algorithms in StatCraft are implemented in **100% pure Safe Rust
   * Quartiles ($Q_1, Q_2, Q_3$) and custom percentiles computed via the canonical HAVERAGE interpolation standard ($r = p(N+1)$).
   * Vector-first distribution charts: Bar charts, Pie charts, and Histograms with optional Gaussian normal curve overlay.
 * **Crosstabs (`Crosstabs`):**
-  * Two-way $R \times C$ contingency tables.
-  * Observed counts, expected counts, unstandardized residuals, row percentages, column percentages, and total percentages.
-  * Pearson Chi-Square ($\chi^2$), Likelihood Ratio ($G^2$).
-  * Yates continuity correction and two-tailed Fisher's exact test for $2 \times 2$ tables.
-  * Symmetric association measures: Phi ($\phi$) and Cramér's $V$.
+  * DialogKit UI with `Row(s)`, `Column(s)`, `Layer 1 of N` (`Previous`/`Next`), `Display clustered bar charts`, `Suppress tables`, and 6 subdialogs (`Exact...`, `Statistics...`, `Cells...`, `Format...`, `Style...`, `Bootstrap...`).
+  * Multi-layer $R \times C$ contingency tables (`layers` via `BY` chaining), ascending/descending row order (`AVALUE`/`DVALUE`), table suppression (`NOTABLES`), and clustered bar chart flags.
+  * Observed counts, expected counts, small-count suppression, column proportions $z$-test (with optional Bonferroni adjustment), row/column/total percentages, and 3 residual types (unstandardized, standardized, adjusted standardized).
+  * Pearson Chi-Square ($\chi^2$), Likelihood Ratio ($G^2$), Linear-by-Linear Association, Yates continuity correction & Fisher's exact ($2 \times 2$), Monte Carlo Patefield $r \times c$, and bounded Exact $r \times c$.
+  * Full association suite: Phi ($\phi$), Cramér's $V$, Contingency Coefficient $C$, $\lambda$, Uncertainty Coefficient $U$, $\gamma$, Somers' $d$, Kendall's $\tau_b$ & $\tau_c$, $\eta$, Pearson's $r$, Spearman's $\rho$, Cohen's $\kappa$, Risk Estimate (OR/RR with 95% CI), McNemar/Bowker, and stratified $2 \times 2 \times K$ Cochran's & Mantel-Haenszel / Breslow-Day / Tarone's tests.
 
 ### 4.2. Mean Comparisons & Analysis of Variance (Compare Means)
 *Note: All procedures below (`Means`, `One-Sample T Test`, `Independent-Samples T Test`, `Paired-Samples T Test`, and `One-Way ANOVA`) support the reusable `Bootstrap` subdialog (`Percentile` / `BCa`, `Simple` / `Stratified`, `MT19937` seed) with `Bootstrap Specifications` and CI/Bias/SE tables in Output Viewer & TSV export.*

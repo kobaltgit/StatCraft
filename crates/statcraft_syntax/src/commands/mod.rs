@@ -10,6 +10,7 @@ pub mod correlations_cmd;
 pub mod count_values_cmd;
 pub mod cox_regression_cmd;
 pub mod crosstabs_cmd;
+mod crosstabs_sps;
 pub mod curvefit_cmd;
 pub mod dataset;
 pub mod dataset_cmds;

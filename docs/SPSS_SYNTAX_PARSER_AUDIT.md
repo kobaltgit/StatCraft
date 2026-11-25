@@ -51,7 +51,7 @@ The entire implementation adheres strictly to the ArtCraft ecosystem standards:
 * Translates parsed commands into strongly-typed JSON parameters for `CommandBus`:
   1. `DESCRIPTIVES /VARIABLES=vars [/STATISTICS=[DEFAULT] [MEAN] [STDDEV] [VARIANCE] [MIN] [MAX] [RANGE] [SUM] [SEMEAN] [SKEWNESS] [KURTOSIS] [ALL]] [/SAVE] [/MISSING={VARIABLE|LISTWISE}] [/SORT={MEAN|NAME} [(A)|(D)]]` $\to$ `"stat.descriptives"`
   2. `FREQUENCIES /VARIABLES=vars [/FORMAT={TABLE|NOTABLE} {AVALUE|DVALUE|AFREQ|DFREQ} {COMPARE|VARIABLE} [LIMIT(n)]] [/STATISTICS=[DEFAULT] [MEAN] [SEMEAN] [MEDIAN] [MODE] [SUM] [STDDEV] [VARIANCE] [RANGE] [MINIMUM] [MAXIMUM] [SKEWNESS] [KURTOSIS] [ALL] [NONE]] [/PERCENTILES=values] [/NTILES=n] [/BARCHART {FREQ|PERCENT}] [/PIECHART {FREQ|PERCENT}] [/HISTOGRAM [NORMAL]] [/ORDER={ANALYSIS|VARIABLE}]` $\to$ `"stat.frequencies"`
-  3. `CROSSTABS /TABLES=row BY col /STATISTICS=CHISQ` $\to$ `"stat.crosstabs"`
+  3. `CROSSTABS /TABLES=rows BY cols [BY layers...] [/FORMAT={AVALUE|DVALUE} [TABLES|NOTABLES]] [/NOTABLES] [/BARCHART] [/STATISTICS=...] [/CELLS=...] [/METHOD={EXACT|MC}] [/COUNT=...]` $\to$ `"stat.crosstabs"`
   4. `T-TEST GROUPS=var(1 2) /VARIABLES=vars` $\to$ `"stat.ttest.indep"`
   5. `T-TEST PAIRS=v1 WITH v2 (PAIRED)` $\to$ `"stat.ttest.paired"`
   6. `T-TEST /TESTVAL=val /VARIABLES=vars` $\to$ `"stat.ttest.onesample"`

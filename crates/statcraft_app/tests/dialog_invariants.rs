@@ -499,10 +499,15 @@ fn test_headless_render_crosstabs_dialog() {
         is_open: true,
         row_vars: vec!["gender".to_string()],
         col_vars: vec!["educ".to_string()],
-        show_cells: true,
+        layers: vec![vec!["jobcat".to_string()]],
+        show_exact: true,
         show_stats: true,
+        show_cells: true,
+        show_format: true,
         ..Default::default()
     };
+    state.table_style.is_open = true;
+    state.bootstrap.is_open = true;
 
     let _ = ctx.run(Default::default(), |ctx| {
         let action = render_crosstabs_dialog(ctx, Some(&ds), &mut state);
@@ -512,6 +517,13 @@ fn test_headless_render_crosstabs_dialog() {
     assert!(state.is_open);
     assert_eq!(state.row_vars.len(), 1);
     assert_eq!(state.col_vars.len(), 1);
+    assert_eq!(state.layers.len(), 1);
+    state.next_layer();
+    assert_eq!(state.layers.len(), 2);
+    assert_eq!(state.current_layer_idx, 1);
+    state.prev_layer();
+    assert_eq!(state.layers.len(), 1);
+    assert_eq!(state.current_layer_idx, 0);
 }
 
 #[test]

@@ -14,9 +14,6 @@ pub mod correlations_types;
 pub mod count_values;
 pub mod cox;
 pub mod crosstabs;
-#[cfg(test)]
-mod crosstabs_tests;
-pub mod crosstabs_types;
 pub mod curvefit;
 pub mod date_time;
 pub mod descriptives;
@@ -107,10 +104,11 @@ pub use cox::{
     CoxRegressionOptions, CoxRegressionResult, CoxVariableInEquation, OmnibusTestsResult,
     TieMethod,
 };
-pub use crosstabs::{chi_square_sf, compute_crosstabs, fisher_exact_2x2};
-pub use crosstabs_types::{
-    AssociationMeasure, ChiSquareTestRow, CrosstabCategory, CrosstabCell, CrosstabOptions,
-    CrosstabResult, CrosstabRow, RawCrosstabItem,
+pub use crosstabs::{
+    chi_square_sf, compute_cmh, compute_crosstabs, exact_rxc, fisher_exact_2x2, monte_carlo_rxc,
+    AssociationMeasure, ChiSquareTestRow, CmhResult, CrosstabCategory, CrosstabCell,
+    CrosstabLayerKey, CrosstabOptions, CrosstabResult, CrosstabRow, DirectionalMeasure, ExactMode,
+    NonIntegerWeights, RawCrosstabItem, RiskEstimate, RowOrder,
 };
 pub use curvefit::{
     compute_curve_fit, CurveFitOptions, CurveFitResult, CurveModelSummaryRow, CurveModelType,

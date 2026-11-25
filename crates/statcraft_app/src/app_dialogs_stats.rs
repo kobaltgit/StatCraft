@@ -330,19 +330,43 @@ impl StatCraftApp {
             CrosstabsDialogAction::Run {
                 rows,
                 cols,
+                layers,
                 options,
+                table_styles,
+                create_style_report,
+                bootstrap,
             } => {
-                let params = json!({
-                    "rows": rows,
-                    "cols": cols,
-                    "expected": options.expected,
-                    "row_pct": options.row_pct,
-                    "col_pct": options.col_pct,
-                    "total_pct": options.total_pct,
-                    "residuals": options.residuals,
-                    "chisq": options.chisq,
-                    "phi_cramer": options.phi_cramer,
+                let mut params_map = serde_json::to_value(&options)
+                    .ok()
+                    .and_then(|v| v.as_object().cloned())
+                    .unwrap_or_default();
+                params_map.insert("rows".to_string(), json!(rows));
+                params_map.insert("cols".to_string(), json!(cols));
+                if !layers.is_empty() {
+                    params_map.insert("layers".to_string(), json!(layers));
+                }
+                let style_rules = table_styles.as_ref().and_then(|val| {
+                    serde_json::from_value::<Vec<statcraft_reporting::styling::TableStyleRule>>(
+                        val.clone(),
+                    )
+                    .ok()
                 });
+                if let Some(ts) = table_styles {
+                    params_map.insert("table_styles".to_string(), ts);
+                }
+                if create_style_report {
+                    params_map.insert("create_style_report".to_string(), json!(true));
+                }
+                let boot_opts = bootstrap.as_ref().and_then(|v| {
+                    serde_json::from_value::<statcraft_algo::BootstrapOptions>(v.clone()).ok()
+                });
+                if let Some(b) = bootstrap {
+                    params_map.insert("bootstrap".to_string(), b);
+                }
+                let sps_log = statcraft_syntax::commands::CrosstabsCommand::to_sps_with_layers(
+                    &rows, &cols, &layers, &options,
+                );
+                let params = serde_json::Value::Object(params_map);
                 match self
                     .command_bus
                     .execute("stat.crosstabs", &mut self.dataset, params)
@@ -353,7 +377,14 @@ impl StatCraftApp {
                         >(result_value)
                         {
                             let count = results.len();
-                            self.output_view_state.add_crosstabs(results, options);
+                            self.output_view_state.add_crosstabs_styled(
+                                results,
+                                options,
+                                Some(sps_log),
+                                style_rules.as_deref(),
+                                create_style_report,
+                                boot_opts.as_ref(),
+                            );
                             self.status_message = StatusMessage::CrosstabsExecuted { count };
                         }
                     }
@@ -365,10 +396,15 @@ impl StatCraftApp {
             CrosstabsDialogAction::Paste {
                 rows,
                 cols,
+                layers,
                 options,
+                table_styles: _,
+                create_style_report: _,
+                bootstrap: _,
             } => {
-                let sps =
-                    statcraft_syntax::commands::CrosstabsCommand::to_sps(&rows, &cols, &options);
+                let sps = statcraft_syntax::commands::CrosstabsCommand::to_sps_with_layers(
+                    &rows, &cols, &layers, &options,
+                );
                 self.output_view_state.add_entry(t!("output-log"), sps);
             }
             CrosstabsDialogAction::None => {}

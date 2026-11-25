@@ -151,16 +151,14 @@
 * **Вердикт:** **100% математическая эквивалентность канону.**
 
 #### 1.3. `CROSSTABS` (IBM Algorithms стр. 221–226)
-* **Реализация:** [`crates/statcraft_algo/src/crosstabs.rs`](../crates/statcraft_algo/src/crosstabs.rs)
-* **Тесты:** `crosstabs_tests::tests::test_crosstabs_2x2_golden_oracle`, `crosstabs_tests::tests::test_fisher_exact_2x2_standard`
+* **Реализация:** [`crates/statcraft_algo/src/crosstabs/`](../crates/statcraft_algo/src/crosstabs/mod.rs) (`types.rs`, `measures.rs`, `exact.rs`, `ztest.rs`, `mantel_haenszel.rs`)
+* **Тесты:** `crosstabs::tests::test_crosstabs_2x2_golden_oracle_and_residuals`, `crosstabs::tests::test_fisher_exact_2x2_standard`, `crosstabs::tests::test_ordinal_nominal_and_correlations_oracle`, `crosstabs::tests::test_exact_mc_and_ztest_and_options`, `crosstabs::tests::test_noninteger_weights_modes`, `crosstabs::tests::test_cmh_stratified_2x2xk_oracle`
 * **Сопоставление формул:**
-  * Ожидаемые частоты: $E_{ij} = \frac{R_i \cdot C_j}{W}$, остатки: $Res_{ij} = O_{ij} - E_{ij}$;
-  * Критерий Пирсона: $\chi^2 = \sum \frac{(O_{ij} - E_{ij})^2}{E_{ij}}, \quad df = (R-1)(C-1)$;
-  * Отношение правдоподобия (Likelihood Ratio): $G^2 = 2 \sum O_{ij} \ln\left(\frac{O_{ij}}{E_{ij}}\right)$;
-  * Поправка Йейтса на непрерывность ($2 \times 2$):
-    $$\chi^2_{Yates} = \frac{W \cdot \left(\max(0, |O_{11}O_{22} - O_{12}O_{21}| - 0.5 W)\right)^2}{R_1 R_2 C_1 C_2}, \quad df = 1$$
-  * Точный критерий Фишера: двусторонний расчет через $\ln \Gamma(x)$ с защитой от переполнения факториалов;
-  * Меры связи: Коэффициент $\Phi$, $V$ Крамера, коэффициент сопряженности Пирсона.
+  * Ожидаемые частоты: $E_{ij} = \frac{R_i \cdot C_j}{W}$; остатки: нестандартизованные ($O_{ij} - E_{ij}$), стандартизованные ($(O_{ij} - E_{ij})/\sqrt{E_{ij}}$), скорректированные стандартизованные;
+  * Критерий Пирсона $\chi^2$, отношение правдоподобия $G^2$, поправка Йейтса ($2 \times 2$), линейно-линейная связь ($(N-1)r^2$, $df=1$), точный критерий Фишера ($2 \times 2$), Монте-Карло Пейтфилда ($r \times c$ с ДИ) и ограниченный точный критерий ($r \times c$);
+  * Меры связи: $\Phi$, $V$ Крамера, коэффициент сопряженности $C$, $\lambda$ Гудмана–Краскала, коэффициент неопределенности $U$, $\gamma$, $d$ Сомерса, $\tau_b$ и $\tau_c$ Кендалла, $\eta$, корреляции Пирсона $r$ и Спирмена $\rho$, $\kappa$ Коэна, оценка риска (OR/RR с 95% ДИ), критерий МакНемара / МакНемара–Боукера;
+  * Стратифицированный анализ $2 \times 2 \times K$: критерии Кохрана, Мантеля–Хензеля, Бреслоу–Дэя, Тароне и общее отношение шансов (с 95% ДИ);
+  * z-тест пропорций столбцов (с поправкой Бонферрони) и 5 режимов дробных весов (`NonIntegerWeights`).
 * **Вердикт:** **100% математическая эквивалентность канону.**
 
 #### 1.4. `MEANS` (IBM Algorithms стр. 662–665)

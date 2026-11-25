@@ -20,6 +20,8 @@ use statcraft_app::views::output_view::{
     OutputNotes, OutputProcedure, OutputViewerState, SelectedTarget,
 };
 
+#[path = "output_viewer_invariants/crosstabs.rs"]
+mod crosstabs;
 #[path = "output_viewer_invariants/fixtures.rs"]
 mod fixtures;
 use fixtures::*;

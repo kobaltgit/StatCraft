@@ -217,3 +217,13 @@
   - `cargo clippy -p statcraft_app -j 1 -- -D warnings`: 0 предупреждений УСПЕШНО
   - `cargo fmt --check`: УСПЕШНО
 * **Вердикт по Этапу 3:** **ПОЛНОЕ СООТВЕТСТВИЕ КАНОНУ ИНТЕРФЕЙСА IBM SPSS STATISTICS И РЕГЛАМЕНТУ ARTCRAFT ПОДТВЕРЖДЕНО**.
+
+
+---
+
+### Обновление Этапа 2: Паритет диалоговых окон «Таблиц сопряжённости» (`specs/030-crosstabs-dialog-parity`)
+* **Файлы реализации:** `crates/statcraft_app/src/dialogs/crosstabs_dialog/` (`mod.rs`, `state.rs`, `subdialogs_exact_format.rs`, `subdialogs_stats.rs`, `subdialogs_cells.rs`), `app_dialogs_stats.rs`
+* **Проверенные инварианты:**
+  * Главный диалог построен на `DialogShell::standard`, `VariablePicker`, `TransferButton`, `GroupBox` (`Слой 1 из N` с кнопками `Предыдущее`/`Следующее` и чекбоксом `Показать переменные слоев в слоях таблицы`), `Вывести кластеризованные столбчатые диаграммы`, `Не выводить таблицы`, 6-кнопочной `SubdialogSidebar` и `DialogActionBar`.
+  * Все 6 поддиалогов (`Точные...`, `Статистики...`, `Ячейки...`, `Формат...`, `Стиль...`, `Бутстреп...`) построены на `DialogKit` (`DialogShell`, `GroupBox`, `SubdialogActionBar`) с транзакционным откатом при `Отмена`.
+  * Проверено через `file-guard`, `design-guard`, `dialog_invariants` и `statcraft_i18n` (`-j 1`).

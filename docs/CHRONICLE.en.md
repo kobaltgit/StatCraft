@@ -4534,3 +4534,55 @@ Completed Stage 1 (L2/L5) and Stage 3 (L6/L4) bringing **Explore (`EXAMINE` / `E
 4. **Verification & DoD:**
    * Updated `docs/CHECKLIST.md`, `docs/parity-checklist.md`, `docs/SPSS_ALGORITHMS_AUDIT*.md`, and `specs/026..028/tasks.md`.
    * 100% pass on `cargo run -p xtask -j 1 -- ci` (including `fmt`, `clippy -- -D warnings`, `file-guard`, `design-guard`, `layers`, all workspace tests, `undo_reversibility` 41/41, and `sync-site --check`).
+
+
+---
+
+### Phase 123: Crosstabs Core Algorithms, Layers & SPSS Syntax Parity (Feature 029 — Stage 1)
+*Time: November 25, 2026, 11:36 (~15 minutes)*
+
+Completed Stage 1 (L2/L5) bringing **Crosstabs (`CROSSTABS`)** to full mathematical and syntax parity with IBM SPSS Statistics:
+1. **Modular Algorithmic Core L2 (`crates/statcraft_algo/src/crosstabs/`):**
+   * `types.rs`: added `RowOrder`, `ExactMode`, `NonIntegerWeights`, `DirectionalMeasure`, `RiskEstimate`, `CmhResult`, `CrosstabLayerKey`, and extended `CrosstabOptions`, `CrosstabCell`, `CrosstabResult`;
+   * `mod.rs`: 5 non-integer weight modes (`RoundCell`, `TruncateCell`, `RoundCase`, `TruncateCase`, `NoAdjust`), `Ascending`/`Descending` row order, `hide_small_counts`, 3 residual types (Unstandardized, Standardized, Adjusted Standardized), and `Linear-by-Linear Association`;
+   * `measures.rs`: `Contingency Coefficient`, `Lambda`, `Uncertainty Coefficient`, `Gamma`, `Somers' d`, `Kendall's tau-b / tau-c`, `Eta`, Pearson's $r$ & Spearman's $\rho$, Cohen's `Kappa`, `Risk` (OR/RR with 95% CI), and `McNemar` / `McNemar-Bowker`;
+   * `exact.rs`, `ztest.rs`, `mantel_haenszel.rs`: Patefield Monte Carlo $r \times c$ sampler, time-bounded Exact $r \times c$, pairwise column proportions $z$-test (with Bonferroni adjustment), and stratified $2 \times 2 \times K$ Cochran / Mantel-Haenszel / Breslow-Day / Tarone analysis;
+   * `tests.rs`: 7 Golden Oracle unit tests ($\le 10^{-6}$).
+2. **Syntax & Layer Orchestration L5 (`crates/statcraft_syntax/`):**
+   * `crosstabs_cmd.rs` and `mappers/stats/crosstabs.rs`: added multi-layer (`layers`) execution with stratified CMH and full `CROSSTABS` `.sps` round-trip (`/TABLES`, `/FORMAT`, `/NOTABLES`, `/STATISTICS`, `/CELLS`, `/METHOD`, `/COUNT`, `/BARCHART`).
+3. **Documentation & DoD:**
+   * Updated `docs/SPSS_ALGORITHMS_AUDIT*.md`, `docs/SPSS_SYNTAX_PARSER_AUDIT*.md`, `docs/parity-checklist.md`, `docs/FEATURES*.md`, `docs/CHECKLIST.md`, and `specs/029-crosstabs-core-and-syntax/tasks.md`.
+
+---
+
+### Phase 124: Crosstabs Dialog & Subdialogs UI Parity (Feature 030 — Stage 2)
+*Time: November 25, 2026, 12:52 (~10 minutes)*
+
+Completed Stage 2 bringing the **Crosstabs** dialog and all 6 subdialogs to full UI parity with IBM SPSS Statistics:
+1. **Modular Decomposition (`crates/statcraft_app/src/dialogs/crosstabs_dialog/`, all files $\le 500$ lines):**
+   * `state.rs` & `mod.rs`: added `Layer 1 of N` pagination (`Previous` / `Next`), `Display layer variables in table layers`, bottom checkboxes (`Display clustered bar charts`, `Suppress tables`), and the 6-button `SubdialogSidebar`;
+   * `subdialogs_exact_format.rs`: `Exact Tests` (`Asymptotic only`, `Monte Carlo`, `Exact` with numeric inputs) and `Table Format` (`Ascending` / `Descending` row order);
+   * `subdialogs_stats.rs`: `Statistics` (`Chi-square`, `Correlations`, `Nominal`, `Nominal by Interval`, `Ordinal`, `Kappa`, `Risk`, `McNemar`, `Cochran's and Mantel-Haenszel statistics`);
+   * `subdialogs_cells.rs`: `Cell Display` (`Counts` + `Hide small counts`, `z-test` + Bonferroni, `Percentages`, 3 residual types, `Create APA style table`, 5 `Noninteger Weights` options).
+2. **Integration & Localization:**
+   * Wired reusable `table_style_dialog` (`Style...`) and `bootstrap_dialog` (`Bootstrap...`), and updated `app_dialogs_stats.rs` to forward `layers`, all `CrosstabOptions`, `table_styles`, and `bootstrap`;
+   * Added all `dialog-crosstabs-*` Fluent keys to `locales/en.ftl` and `locales/ru.ftl`.
+3. **Verification & DoD:**
+   * Passed `file-guard`, `design-guard`, `dialog_invariants` (52/52), `statcraft_i18n` (14/14 + 4/4), `parity`, `fmt --check`, and `clippy -- -D warnings`.
+   * Updated `docs/SPSS_UI_CANON_AUDIT*.md`, `docs/FEATURES*.md`, `docs/CHECKLIST.md`, and `specs/030-crosstabs-dialog-parity/tasks.md`.
+
+---
+
+### Phase 125: Crosstabs Output Tables, Clustered Bar Charts, Style & Bootstrap (Feature 031 — Stage 3)
+*Time: November 25, 2026, 13:10 (~15 minutes)*
+
+Completed Stage 3 bringing **Crosstabs** Output Viewer rendering, charts, conditional styling, and export to full parity with IBM SPSS Statistics:
+1. **Modular Decomposition (`crates/statcraft_app/src/views/output_view/tables_crosstabs/`, all files $\le 500$ lines):**
+   * `mod.rs`: `render_crosstabs_item` dispatcher, `add_crosstabs_styled`, `/NOTABLES` (`suppress_tables`) handling, `TableStyleRule` conditional formatting (with style audit report), and `BootstrapOptions` specifications table;
+   * `matrix.rs`: `Case Processing Summary` with layer banners (`layer_keys`), multi-layer contingency tables, `hide_small_counts` (`<N`), 3 residual types (`Unstandardized`, `Standardized`, `Adjusted`), column proportion $z$-test subscript letters (`a, b, c...`) with footnote, and `apa_style` compact layout;
+   * `stats_tables.rs`: `Chi-Square Tests` (including `Monte Carlo Sig.` and CIs), `Directional Measures`, `Symmetric Measures`, `Risk Estimate`, `McNemar Test`, `Tests of Homogeneity` (Breslow-Day / Tarone), and `Tests of Conditional Independence` (Cochran / Mantel-Haenszel + Common OR);
+   * `charts.rs`: vector Clustered Bar Charts (`display_clustered_bar_charts`) grouped by row category, colored by column category, and faceted per layer;
+   * `export.rs` & `output_view/export.rs`: updated `crosstabs_to_tsv` and `crosstabs_to_report_tables` for TSV, HTML, and TXT export.
+2. **Verification & DoD:**
+   * Added `test_crosstabs_stage3_layered_stats_charts_and_export` in `crates/statcraft_app/tests/output_viewer_invariants/crosstabs.rs`;
+   * Updated `docs/CHECKLIST.md`, `specs/031-crosstabs-output-and-charts/tasks.md`, and the chronicles.

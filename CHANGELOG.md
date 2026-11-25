@@ -7,6 +7,26 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [0.4.8] - 2026-11-25
+
+### Added
+- **Crosstabs (`CROSSTABS`) Full SPSS Parity (Features 029–031):**
+  - Decomposed `statcraft_algo::crosstabs` into modular files (`types.rs`, `mod.rs`, `measures.rs`, `ordinal_corr.rs`, `exact.rs`, `ztest.rs`, `mantel_haenszel.rs`, `tests.rs`).
+  - Added multi-layer tables (`layers` / `Layer 1 of N`), `RowOrder` (`Ascending` / `Descending`), `suppress_tables` (`/NOTABLES`), and `display_clustered_bar_charts` (`/BARCHART`).
+  - Implemented `ExactMode`: `AsymptoticOnly`, `MonteCarlo` (Patefield $r \times c$ sampler with confidence interval), and bounded `Exact` with configurable time limit.
+  - Added full statistical suite: Pearson/Spearman `Correlations`, Nominal (`Contingency Coefficient`, `Phi & Cramér's V`, `Lambda`, `Uncertainty Coefficient`), Ordinal (`Gamma`, `Somers' d`, `Kendall's tau-b`, `Kendall's tau-c`), Nominal-by-Interval (`Eta`), `Cohen's Kappa`, `Risk` (Odds Ratio & Cohort Relative Risk with 95% CI), `McNemar`, and stratified `Cochran's & Mantel-Haenszel` ($2 \times 2 \times K$ with Breslow-Day & Tarone's homogeneity tests).
+  - Added cell display options: `hide_small_counts`, column proportions `z-test` with Bonferroni adjustment and APA subscript letters (`a, b, c...`), 3 residual types (`Unstandardized`, `Standardized`, `Adjusted Standardized`), `apa_style`, and 5 `NonIntegerWeights` modes.
+  - Upgraded `CrosstabsDialog` (`crosstabs_dialog/`) with `Layer 1 of N` pagination, 6 sidebar subdialogs (`Exact...`, `Statistics...`, `Cells...`, `Format...`, `Style...`, `Bootstrap...`), and full Fluent `en.ftl`/`ru.ftl` localization.
+  - Upgraded Output Viewer (`tables_crosstabs/`) with layered matrices, all new statistical tables, `egui_plot` Clustered Bar Charts, `TableStyle` & `Bootstrap` integration, and TSV/HTML/TXT export.
+- **Explore (`EXAMINE`) Full SPSS Parity (Features 026–028):**
+  - Added M-estimators (Huber, Tukey biweight, Hampel, Andrews), HAVERAGE Percentiles & Tukey's Hinges, `Label Cases by`, `Missing=Report`, and Spread-vs-Level with 4-row Levene test.
+  - Upgraded `ExploreDialog` (`explore_dialog/`) with `Label Cases by`, `Display` (`Both` / `Statistics` / `Plots`), `Bootstrap...` integration, and full `EXAMINE` `.sps` round-trip.
+  - Added `egui_plot` Boxplots, Stem-and-Leaf, Histograms, Q-Q plots, and Spread-vs-Level plots in Output Viewer (`tables_explore/`).
+- **Descriptives (`DESCRIPTIVES`) Full SPSS Parity (Features 023–025):**
+  - Added standardized `Z*` variable saving (`SAVE Z*`), full `DESCRIPTIVES` statistics/sorting options, `Options...` subdialog, and Output Viewer / TSV/HTML/TXT export.
+
+---
+
 ## [0.4.7] - 2026-11-25
 
 ### Added
