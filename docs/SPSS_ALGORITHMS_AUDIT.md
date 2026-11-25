@@ -116,6 +116,7 @@ Beyond isolated unit testing, StatCraft enforces mathematical and architectural 
     $$g_2 = \frac{W-1}{(W-2)(W-3)} \left[ (W+1) \frac{m_4}{m_2^2} - 3(W-1) \right]$$
     Standard error: $SE(g_2) = 2 \cdot SE(g_1) \cdot \sqrt{\frac{W^2 - 1}{(W-3)(W+5)}}$. Suppressed if $W \le 3$ or $s^2 = 0$.
   * **Bootstrap Resampling (`statcraft_algo::bootstrap`):** `Mt19937` (`Simple` / `Stratified`), `Percentile` and `BCa` intervals (`Bias`, `Std. Error`, `CI`) for moments; verified in `bootstrap_golden_oracle::golden_oracle_univariate_mean_and_std_dev`.
+  * **Standardized Z-Scores (`/SAVE`), Options Filtering, Display Order & Listwise Missing:** `compute_standardized_values()` ($Z_i = (X_i - \bar{X}) / s$ with $ddof=1$, weighted mean/SD, and `sd == 0` guard; Golden Oracle verified against `scipy.stats.zscore(..., ddof=1)` in `descriptives::tests::test_golden_oracle_zscores_scipy`), `apply_options_filter()`, `sort_descriptives_results()` (`VariableList`, `Alphabetic`, `AlphabeticDesc`, `AscendingMeans`, `DescendingMeans`), and `DescriptivesMissingMode::Listwise` (`listwise_n`).
 * **Verdict:** **100% Mathematical Equivalence to SPSS Canon.**
 
 #### 1.2. `FREQUENCIES` (IBM Algorithms pp. 446–448)

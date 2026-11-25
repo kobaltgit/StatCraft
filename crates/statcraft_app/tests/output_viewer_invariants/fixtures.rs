@@ -24,6 +24,8 @@ pub fn sample_descriptives() -> DescriptivesResult {
         kurtosis: Some(-0.2),
         se_kurtosis: Some(0.48),
         bootstrap: None,
+        listwise_n: None,
+        applied_options: None,
     }
 }
 

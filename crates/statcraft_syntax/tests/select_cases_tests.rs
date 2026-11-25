@@ -74,7 +74,7 @@ fn test_select_cases_delete_unselected_and_undo() {
 fn test_descriptives_respects_filter() {
     let mut ds = Some(create_test_dataset());
     let select_cmd = SelectCasesCommand::new();
-    let desc_cmd = DescriptivesCommand;
+    let desc_cmd = DescriptivesCommand::new();
 
     // Descriptives before filter
     let desc_params = json!({

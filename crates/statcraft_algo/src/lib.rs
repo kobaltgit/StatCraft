@@ -120,8 +120,10 @@ pub use date_time::{
     DateUnit,
 };
 pub use descriptives::{
-    compute_descriptives, compute_descriptives_bootstrap, compute_descriptives_weighted,
-    DescriptivesBootstrap, DescriptivesOptions, DescriptivesResult,
+    apply_options_filter, compute_descriptives, compute_descriptives_bootstrap,
+    compute_descriptives_weighted, compute_standardized_values, sort_descriptives_results,
+    DescriptivesBootstrap, DescriptivesMissingMode, DescriptivesOptions, DescriptivesResult,
+    DescriptivesSortOrder,
 };
 pub use dummies::{generate_dummies_for_column, DummySpec, GeneratedDummyColumn};
 pub use explore::*;

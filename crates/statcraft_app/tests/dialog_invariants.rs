@@ -452,6 +452,43 @@ fn test_descriptives_reset_defaults() {
     assert!(state.options.std_dev);
     assert!(state.options.min);
     assert!(state.options.max);
+    assert!(!state.options.sum);
+    assert!(!state.options.save_standardized);
+}
+
+#[test]
+fn test_headless_render_descriptives_dialog_and_options() {
+    let ds = create_test_dataset();
+    let ctx = egui::Context::default();
+    let mut state = DescriptivesDialogState {
+        is_open: true,
+        selected_vars: vec!["salary".to_string()],
+        show_options: true,
+        ..Default::default()
+    };
+    state.options.sum = true;
+    state.options.save_standardized = true;
+    state.options.sort = statcraft_algo::DescriptivesSortOrder::DescendingMeans;
+
+    let _ = ctx.run(Default::default(), |ctx| {
+        let action = render_descriptives_dialog(ctx, Some(&ds), &mut state);
+        assert!(matches!(action, DescriptivesDialogAction::None));
+    });
+
+    assert!(state.is_open);
+    assert!(state.show_options);
+    assert!(state.options.sum);
+    assert!(state.options.save_standardized);
+
+    state.reset();
+    assert!(state.selected_vars.is_empty());
+    assert!(!state.show_options);
+    assert!(!state.options.save_standardized);
+    assert!(!state.options.sum);
+    assert_eq!(
+        state.options.sort,
+        statcraft_algo::DescriptivesSortOrder::VariableList
+    );
 }
 
 #[test]

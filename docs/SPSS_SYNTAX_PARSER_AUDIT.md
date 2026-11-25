@@ -49,7 +49,7 @@ The entire implementation adheres strictly to the ArtCraft ecosystem standards:
 ### 2.3. `SyntaxDispatcher` (`crates/statcraft_syntax/src/syntax_parser/dispatcher.rs`)
 * Decoupled command mappers organized in modular subpackages (`mappers/stats/`, `mappers/data.rs`, `mappers/advanced_regression.rs`, `mappers/glm.rs`, `mappers/pkg3.rs`, `mappers/variables.rs`).
 * Translates parsed commands into strongly-typed JSON parameters for `CommandBus`:
-  1. `DESCRIPTIVES /VARIABLES=vars /STATISTICS=MEAN STDDEV MIN MAX...` $\to$ `"stat.descriptives"`
+  1. `DESCRIPTIVES /VARIABLES=vars [/STATISTICS=[DEFAULT] [MEAN] [STDDEV] [VARIANCE] [MIN] [MAX] [RANGE] [SUM] [SEMEAN] [SKEWNESS] [KURTOSIS] [ALL]] [/SAVE] [/MISSING={VARIABLE|LISTWISE}] [/SORT={MEAN|NAME} [(A)|(D)]]` $\to$ `"stat.descriptives"`
   2. `FREQUENCIES /VARIABLES=vars [/FORMAT={TABLE|NOTABLE} {AVALUE|DVALUE|AFREQ|DFREQ} {COMPARE|VARIABLE} [LIMIT(n)]] [/STATISTICS=[DEFAULT] [MEAN] [SEMEAN] [MEDIAN] [MODE] [SUM] [STDDEV] [VARIANCE] [RANGE] [MINIMUM] [MAXIMUM] [SKEWNESS] [KURTOSIS] [ALL] [NONE]] [/PERCENTILES=values] [/NTILES=n] [/BARCHART {FREQ|PERCENT}] [/PIECHART {FREQ|PERCENT}] [/HISTOGRAM [NORMAL]] [/ORDER={ANALYSIS|VARIABLE}]` $\to$ `"stat.frequencies"`
   3. `CROSSTABS /TABLES=row BY col /STATISTICS=CHISQ` $\to$ `"stat.crosstabs"`
   4. `T-TEST GROUPS=var(1 2) /VARIABLES=vars` $\to$ `"stat.ttest.indep"`

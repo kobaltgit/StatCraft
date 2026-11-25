@@ -164,6 +164,8 @@ fn test_exhaustive_enum_payloads_render_without_panics() {
                 se_kurtosis: None,
                 se_mean: None,
                 bootstrap: None,
+                listwise_n: None,
+                applied_options: None,
             }]),
         },
         // Frequencies with empty categories

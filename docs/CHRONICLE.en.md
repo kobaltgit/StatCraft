@@ -4432,6 +4432,63 @@ Scaled the reusable bootstrap engine (Stage 1) and `BootstrapDialog` (Stage 2) a
    * Updated parity matrix (`cargo run -p xtask -j 1 -- parity`);
    * Full Quality Gate `cargo run -p xtask -j 1 -- ci` passing 100%.
 
+---
+
+### Phase 118: Descriptives Core, Z-Scores (/SAVE), Sorting (/SORT), and SPSS Syntax (Feature 023 — Stage 1)
+*Time: November 25, 2026, 06:50 (~15 minutes)*
+
+Closed the core parity gaps for `DESCRIPTIVES` against IBM SPSS Statistics across layers L2 (`statcraft_algo`) and L5 (`statcraft_syntax`):
+1. **Algorithmic Core (`statcraft_algo::descriptives`):**
+   * Added `DescriptivesSortOrder` (`VariableList`, `Alphabetic`, `AlphabeticDesc`, `AscendingMeans`, `DescendingMeans`), `DescriptivesMissingMode` (`Variable`, `Listwise`), and `listwise_n` / `applied_options` fields on `DescriptivesResult`.
+   * Implemented `apply_options_filter()`, `sort_descriptives_results()`, and `compute_standardized_values()` (weighted Z-scores with `ddof = 1` and `sd == 0` guard).
+   * Extracted unit tests into `descriptives_tests.rs` to stay under the 500-line file-size limit, and added a Golden Oracle test against `scipy.stats.zscore(..., ddof=1)`.
+2. **Command Bus & SPSS Syntax Parser (`statcraft_syntax`):**
+   * Updated `DescriptivesCommand` to apply `DescriptivesOptions`, compute `listwise_n` and filter rows under `MISSING=LISTWISE`, sort results prior to option filtering, and create reversible `Z<var>` (or collision-safe `ZSC001+`) columns on `/SAVE` with full `undo()` support.
+   * Added `to_sps_full()` and expanded `map_descriptives()` to parse `SUM`, `ALL`, `/SAVE`, `/MISSING=LISTWISE|VARIABLE`, and `/SORT=MEAN|NAME [(A)|(D)]`.
+3. **Quality Control & Definition of Done:**
+   * Passed `statcraft_algo` (214 unit + integration tests), `statcraft_syntax` (144 unit + integration tests), `file-guard`, `layers`, and `parity`.
 
 
 
+
+
+---
+
+### Phase 119: Canonical Descriptives Dialog and Options Subdialog UI (Feature 024 — Stage 2)
+*Time: November 25, 2026, 07:03 (~10 minutes)*
+
+Brought **Descriptives (`DescriptivesDialog`)** and **Descriptives: Options** into full visual and functional parity with IBM SPSS Statistics using `DialogKit` and `Fluent` localization:
+1. **Decomposition & Main Dialog Enhancements (`crates/statcraft_app/src/dialogs/descriptives_dialog/`):**
+   * Decomposed the monolithic `descriptives_dialog.rs` into `mod.rs`, `state.rs`, and `options.rs` to stay well under the 500-line `File Size Guard` limit.
+   * Added the `Save standardized values as variables` checkbox (`dialog-desc-save-standardized`, `options.save_standardized`) beneath the variable lists.
+   * Activated `[ Style... ]` (`dialog-btn-style`) in `SubdialogSidebar`, wired to `TableStyleState` and `render_table_style_dialog`.
+2. **Canonical `Descriptives: Options` Layout (`options.rs`):**
+   * Top row: `Mean` and `Sum`;
+   * `GroupBox` **Dispersion** (2 columns): `Std. deviation`, `Variance`, `Range`, `Minimum`, `Maximum`, `S.E. mean`;
+   * `GroupBox` **Distribution**: `Kurtosis`, `Skewness`;
+   * `GroupBox` **Display Order**: 4 radio buttons (`Variable list`, `Alphabetic`, `Ascending means`, `Descending means`).
+3. **End-to-End Syntax Dispatch (`app_dialogs_stats.rs`):**
+   * Wired `options` and `table_styles` through `DescriptivesDialogAction::Run` and `Paste`, using `DescriptivesCommand::to_sps_full()` for accurate `.sps` syntax emission.
+4. **Quality Control & Definition of Done:**
+   * Added `test_headless_render_descriptives_dialog_and_options` in `dialog_invariants.rs` (52/52 passing);
+   * Passed `design-guard`, `file-guard`, `parity`, and the full Quality Gate `cargo run -p xtask -j 1 -- ci`.
+
+
+---
+
+### Phase 120: Descriptives Output Viewer, Conditional Styles, and Reporting (Feature 025 — Stage 3)
+*Time: November 25, 2026, 07:26 (~12 minutes)*
+
+Completed the third and final stage bringing **Descriptives** to full parity with IBM SPSS Statistics across L6 (`statcraft_app`) and L4 (`statcraft_reporting`):
+1. **Dynamic Pivot Table (`crates/statcraft_app/src/views/output_view/tables_descriptives/`):**
+   * Decomposed the module into `mod.rs` and `style_report.rs` to comply with the 500-line `File Size Guard`.
+   * GUI, TSV, and `ReportTable` columns are now built dynamically from selected statistics (`applied_options` or `Some(...)` fallback): `Variable`, `N`, `Range`, `Minimum`, `Maximum`, `Sum`, `Mean`, `S.E. Mean`, `Std. Deviation`, `Variance`, `Skewness`, `SE Skewness`, `Kurtosis`, `SE Kurtosis`.
+   * Added the `Valid N (listwise)` summary row using exact `listwise_n` to both the GUI table and `ReportTable`.
+   * Added localization keys `output-col-range`, `output-col-sum`, `output-col-se-mean`, `output-col-se-skew`, `output-col-se-kurt`, and `output-valid-n-listwise` in `locales/en.ftl` and `locales/ru.ftl`.
+2. **Exact `.sps` Log, Conditional Styles & Reporting (`builder.rs`, `export.rs`, `app_dialogs_stats.rs`, `syntax_runner.rs`):**
+   * Added `OutputViewerState::add_descriptives_with_log(results, sps_log, table_styles, create_style_report)` while keeping `add_descriptives` backward-compatible.
+   * Added `TableStyleRule` conditional formatting support for `Descriptives` with optional style audit report generation (`create_style_report`).
+   * Updated `export.rs` to convert `OutputItemKind::DescriptivesTable` via `descriptives_to_report_table()`, keeping GUI, `TSV`, `HTML`, and `TXT` exports 100% synchronized.
+3. **Quality Control & Definition of Done:**
+   * Added `test_descriptives_dynamic_columns_listwise_n_and_reporting` (`output_viewer_descriptives_invariants.rs`) and `test_descriptives_with_table_style_rule_and_report` (`table_style_e2e_test.rs`).
+   * Passed `cargo run -p xtask -j 1 -- ci`, `parity`, and `sync-site`.

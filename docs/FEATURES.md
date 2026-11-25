@@ -161,6 +161,9 @@ All statistical algorithms in StatCraft are implemented in **100% pure Safe Rust
 ### 4.1. Descriptive Statistics & Cross-Tabulations
 * **Descriptives (`Descriptives`):**
   * Spicer (1972) recurrence moments: Valid $N$, Sum, Mean, Std. Error of Mean, Variance, Std. Deviation, Range, Minimum, Maximum, Skewness (with SE), and Bliss sample excess Kurtosis (with SE).
+  * Canonical SPSS DialogKit UI: `Save standardized values as variables` checkbox, `Style...` (`TableStyleState`) and `Bootstrap...` sidebar buttons, and the grouped `Descriptives: Options` subdialog (`Mean`, `Sum`, `Dispersion`, `Distribution`, and `Display Order`).
+  * Standardized Z-scores (`/SAVE`, creating `Z<var>` or collision-safe `ZSC001+` with full `Undo` support), display sorting (`/SORT=MEAN|NAME (A)|(D)`), `MISSING=LISTWISE` with exact `listwise_n`, and full SPSS syntax round-trip (`SUM`, `ALL`, `SAVE`, `MISSING`, `SORT`).
+  * Dynamic Output Viewer & Reporting (`TSV`, `HTML`, `TXT`): renders strictly the selected statistics (`N`, `Range`, `Minimum`, `Maximum`, `Sum`, `Mean`, `S.E. Mean`, `Std. Deviation`, `Variance`, `Skewness`, `SE Skewness`, `Kurtosis`, `SE Kurtosis`), `Valid N (listwise)` summary row, and conditional `TableStyleRule` formatting with optional style audit report.
   * Reusable `Bootstrap` subdialog (`Percentile` / `BCa`, `Simple` / `Stratified`, `MT19937` seed) with `Bias`, `Std. Error`, and confidence intervals in Output Viewer & TSV export.
 * **Frequencies (`Frequencies`):**
   * Authentic SPSS frequency tables: Counts, Percent, Valid Percent (excluding missings), Cumulative Percent.

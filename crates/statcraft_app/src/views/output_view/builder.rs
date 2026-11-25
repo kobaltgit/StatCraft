@@ -43,7 +43,7 @@ impl OutputViewerState {
         self.scroll_to_target = self.selected_target;
     }
 
-    fn push_standard_procedure(
+    pub(super) fn push_standard_procedure(
         &mut self,
         proc_title_key: &'static str,
         log: String,
@@ -88,21 +88,31 @@ impl OutputViewerState {
     }
 
     pub fn add_descriptives(&mut self, results: Vec<DescriptivesResult>) {
-        let var_names: Vec<&str> = results.iter().map(|r| r.variable.as_str()).collect();
-        let sps_log = format!(
-            "DESCRIPTIVES VARIABLES={}\n  /STATISTICS=MEAN STDDEV MIN MAX.",
-            var_names.join(" ")
-        );
-        let notes = self.make_notes(
-            results.first().map(|r| r.n_valid).unwrap_or(0),
-            results.len(),
-        );
-        self.push_standard_procedure(
-            "output-descriptives-title",
+        let var_names: Vec<String> = results.iter().map(|r| r.variable.clone()).collect();
+        let sps_log = if let Some(opts) = results.iter().find_map(|r| r.applied_options.as_ref()) {
+            let boot = results
+                .iter()
+                .find_map(|r| r.bootstrap.as_ref().map(|b| &b.options));
+            statcraft_syntax::commands::DescriptivesCommand::to_sps_full(&var_names, opts, boot)
+        } else {
+            statcraft_syntax::commands::DescriptivesCommand::to_sps(&var_names)
+        };
+        self.add_descriptives_with_log(results, sps_log, None, false);
+    }
+
+    pub fn add_descriptives_with_log(
+        &mut self,
+        results: Vec<DescriptivesResult>,
+        sps_log: String,
+        table_styles: Option<&[statcraft_reporting::styling::TableStyleRule]>,
+        create_style_report: bool,
+    ) {
+        super::tables_descriptives::build_descriptives_procedure(
+            self,
+            results,
             sps_log,
-            notes,
-            "output-descriptives-table",
-            OutputItemKind::DescriptivesTable(results),
+            table_styles,
+            create_style_report,
         );
     }
 

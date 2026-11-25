@@ -20,17 +20,38 @@ impl StatCraftApp {
             DescriptivesDialogAction::Run {
                 vars,
                 options,
+                table_styles,
+                create_style_report,
                 bootstrap,
             } => {
                 let mut params = json!({
                     "vars": vars,
                     "options": options
                 });
+                let style_rules = table_styles.as_ref().and_then(|val| {
+                    serde_json::from_value::<Vec<statcraft_reporting::styling::TableStyleRule>>(
+                        val.clone(),
+                    )
+                    .ok()
+                });
+                if let Some(ts) = table_styles {
+                    if let Some(obj) = params.as_object_mut() {
+                        obj.insert("table_styles".to_string(), ts);
+                    }
+                }
+                let boot_opts = bootstrap.as_ref().and_then(|v| {
+                    serde_json::from_value::<statcraft_algo::BootstrapOptions>(v.clone()).ok()
+                });
                 if let Some(boot) = bootstrap {
                     if let Some(obj) = params.as_object_mut() {
                         obj.insert("bootstrap".to_string(), boot);
                     }
                 }
+                let sps_log = statcraft_syntax::commands::DescriptivesCommand::to_sps_full(
+                    &vars,
+                    &options,
+                    boot_opts.as_ref(),
+                );
                 match self
                     .command_bus
                     .execute("stat.descriptives", &mut self.dataset, params)
@@ -41,7 +62,12 @@ impl StatCraftApp {
                         >(result_value)
                         {
                             let count = results.len();
-                            self.output_view_state.add_descriptives(results);
+                            self.output_view_state.add_descriptives_with_log(
+                                results,
+                                sps_log,
+                                style_rules.as_deref(),
+                                create_style_report,
+                            );
                             self.status_message = StatusMessage::DescriptivesExecuted { count };
                         }
                     }
@@ -50,12 +76,17 @@ impl StatCraftApp {
                     }
                 }
             }
-            DescriptivesDialogAction::Paste { vars, bootstrap } => {
+            DescriptivesDialogAction::Paste {
+                vars,
+                options,
+                bootstrap,
+            } => {
                 let boot_opts = bootstrap.and_then(|v| {
                     serde_json::from_value::<statcraft_algo::BootstrapOptions>(v).ok()
                 });
-                let sps = statcraft_syntax::commands::DescriptivesCommand::to_sps_with_bootstrap(
+                let sps = statcraft_syntax::commands::DescriptivesCommand::to_sps_full(
                     &vars,
+                    &options,
                     boot_opts.as_ref(),
                 );
                 self.output_view_state.add_entry(t!("output-log"), sps);

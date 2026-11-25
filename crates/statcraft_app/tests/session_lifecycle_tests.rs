@@ -363,6 +363,8 @@ fn test_save_and_load_full_project_with_output_and_syntax() {
                         kurtosis: None,
                         se_kurtosis: None,
                         bootstrap: None,
+                        listwise_n: None,
+                        applied_options: None,
                     },
                 ]),
             }],

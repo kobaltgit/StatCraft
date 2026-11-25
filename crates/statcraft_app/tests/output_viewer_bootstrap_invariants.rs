@@ -73,7 +73,7 @@ fn test_stage3_procedures_bootstrap_output_and_tsv() {
     let mut state = OutputViewerState::new();
 
     // 1. Descriptives
-    let desc_val = DescriptivesCommand
+    let desc_val = DescriptivesCommand::new()
         .execute(&mut ds, json!({ "vars": ["x"], "bootstrap": boot_json() }))
         .expect("descriptives");
     let desc_res: Vec<DescriptivesResult> = serde_json::from_value(desc_val).unwrap();

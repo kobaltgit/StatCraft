@@ -52,7 +52,12 @@ pub fn run_syntax_batch(
             }
             "DESCRIPTIVES" => {
                 if let Ok(results) = serde_json::from_value::<Vec<DescriptivesResult>>(res_val) {
-                    output_view.add_descriptives(results);
+                    output_view.add_descriptives_with_log(
+                        results,
+                        block.raw_text.trim().to_string(),
+                        None,
+                        false,
+                    );
                 }
             }
             "FREQUENCIES" => {

@@ -116,6 +116,7 @@
     $$g_2 = \frac{W-1}{(W-2)(W-3)} \left[ (W+1) \frac{m_4}{m_2^2} - 3(W-1) \right]$$
     Стандартная ошибка: $SE(g_2) = 2 \cdot SE(g_1) \cdot \sqrt{\frac{W^2 - 1}{(W-3)(W+5)}}$. Подавляется при $W \le 3$ или $s^2 = 0$.
   * **Бутстреп-ресэмплинг (`statcraft_algo::bootstrap`):** `Mt19937` (`Simple` / `Stratified`), интервалы `Percentile` и `BCa` (`Bias`, `Std. Error`, `CI`) для моментов; проверено в `bootstrap_golden_oracle::golden_oracle_univariate_mean_and_std_dev`.
+  * **Стандартизованные Z-оценки (`/SAVE`), фильтрация опций, сортировка и Listwise-пропуски:** `compute_standardized_values()` ($Z_i = (X_i - \bar{X}) / s$ с $ddof=1$, поддержкой весов и защитой от `sd == 0`; Golden Oracle сверен с `scipy.stats.zscore(..., ddof=1)` в `descriptives::tests::test_golden_oracle_zscores_scipy`), `apply_options_filter()`, `sort_descriptives_results()` (`VariableList`, `Alphabetic`, `AlphabeticDesc`, `AscendingMeans`, `DescendingMeans`) и `DescriptivesMissingMode::Listwise` (`listwise_n`).
 * **Вердикт:** **100% математическая эквивалентность канону.**
 
 #### 1.2. `FREQUENCIES` (IBM Algorithms стр. 446–448)

@@ -44,6 +44,10 @@ pub fn procedures_to_report_document(procedures: &[OutputProcedure]) -> ReportDo
                     ];
                     section.add_item(ReportItem::Table(table));
                 }
+                OutputItemKind::DescriptivesTable(results) => {
+                    let table = super::tables_descriptives::descriptives_to_report_table(results);
+                    section.add_item(ReportItem::Table(table));
+                }
                 OutputItemKind::ReportTable(table) => {
                     section.add_item(ReportItem::Table(table.clone()));
                 }

@@ -49,17 +49,55 @@ fn map_descriptives(
     }
 
     let has_stats = cmd.has_subcommand("STATISTICS");
+    let is_all = cmd.has_token("STATISTICS", "ALL");
     let is_default = !has_stats || cmd.has_token("STATISTICS", "DEFAULT");
+    let save_standardized = cmd.has_subcommand("SAVE");
+    let missing = if cmd.has_token("MISSING", "LISTWISE") {
+        "Listwise"
+    } else {
+        "Variable"
+    };
+
+    let sort = if let Some(sort_tokens) = cmd.subcommand_tokens("SORT") {
+        let has_mean = sort_tokens.iter().any(|t| t.eq_ignore_ascii_case("MEAN"));
+        let has_name = sort_tokens.iter().any(|t| t.eq_ignore_ascii_case("NAME"));
+        let is_desc = sort_tokens.iter().any(|t| {
+            let u = t.to_ascii_uppercase();
+            u == "(D)" || u == "D" || u == "DESC" || u == "DESCENDING"
+        });
+        if has_mean {
+            if is_desc {
+                "DescendingMeans"
+            } else {
+                "AscendingMeans"
+            }
+        } else if has_name {
+            if is_desc {
+                "AlphabeticDesc"
+            } else {
+                "Alphabetic"
+            }
+        } else {
+            "VariableList"
+        }
+    } else {
+        "VariableList"
+    };
+
     let opts = json!({
-        "mean": is_default || cmd.has_token("STATISTICS", "MEAN"),
-        "std_dev": is_default || cmd.has_token("STATISTICS", "STDDEV"),
-        "min": is_default || cmd.has_token("STATISTICS", "MIN"),
-        "max": is_default || cmd.has_token("STATISTICS", "MAX"),
-        "variance": cmd.has_token("STATISTICS", "VARIANCE"),
-        "range": cmd.has_token("STATISTICS", "RANGE"),
-        "se_mean": cmd.has_token("STATISTICS", "SEMEAN"),
-        "skewness": cmd.has_token("STATISTICS", "SKEWNESS"),
-        "kurtosis": cmd.has_token("STATISTICS", "KURTOSIS")
+        "mean": is_all || is_default || cmd.has_token("STATISTICS", "MEAN"),
+        "std_dev": is_all || is_default || cmd.has_token("STATISTICS", "STDDEV"),
+        "min": is_all || is_default || cmd.has_token("STATISTICS", "MIN"),
+        "max": is_all || is_default || cmd.has_token("STATISTICS", "MAX"),
+        "variance": is_all || cmd.has_token("STATISTICS", "VARIANCE"),
+        "range": is_all || cmd.has_token("STATISTICS", "RANGE"),
+        "sum": is_all || cmd.has_token("STATISTICS", "SUM"),
+        "se_mean": is_all || cmd.has_token("STATISTICS", "SEMEAN"),
+        "skewness": is_all || cmd.has_token("STATISTICS", "SKEWNESS"),
+        "kurtosis": is_all || cmd.has_token("STATISTICS", "KURTOSIS"),
+        "save_standardized": save_standardized,
+        "sort": sort,
+        "missing": missing
     });
 
     Ok(Some((

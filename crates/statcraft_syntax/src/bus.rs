@@ -64,7 +64,7 @@ impl CommandBus {
         bus.register(Box::new(SetMeasureCommand::default()));
         bus.register(Box::new(CellEditCommand));
         bus.register(Box::new(BatchReplaceCommand::default()));
-        bus.register(Box::new(DescriptivesCommand));
+        bus.register(Box::new(DescriptivesCommand::new()));
         bus.register(Box::new(ExploreCommand));
         bus.register(Box::new(FrequenciesCommand));
         bus.register(Box::new(OneSampleTTestCommand));

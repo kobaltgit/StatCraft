@@ -44,6 +44,9 @@
 - [x] L5 `statcraft_syntax`: типизированная команда `stat.descriptives` и генерация синтаксиса `DESCRIPTIVES VARIABLES=...`
 - [x] L6 `statcraft_app`: компактный центрированный диалог выбора переменных `DescriptivesDialog`
 - [x] L6 `statcraft_app`: отображение сводных таблиц (Pivot Table) на всю высоту `Output Viewer`
+- [x] L2/L5 `statcraft_algo` & `statcraft_syntax` (023 — Этап 1): фильтрация `DescriptivesOptions`, сохранение Z-оценок (`/SAVE` с `Z<var>`/`ZSC001` и `Undo`), сортировка `/SORT` (`VariableList`, `Alphabetic`, `AlphabeticDesc`, `AscendingMeans`, `DescendingMeans`), режим `/MISSING=LISTWISE` (`listwise_n`), расширение `to_sps_full` и маппера `map_descriptives` (`SUM`, `ALL`, `SAVE`, `MISSING`, `SORT`)
+- [x] L6 `statcraft_app` (024 — Этап 2): декомпозиция `descriptives_dialog/{mod.rs, state.rs, options.rs}`, чекбокс «Сохранить стандартизованные значения в переменных» (`save_standardized`), кнопка `[ Стиль... ]` (`TableStyleState`), каноническая SPSS-компоновка поддиалога `Descriptives: Options` (`Mean`, `Sum`, `GroupBox` Разброс/Распределение/Порядок вывода) и полная генерация `.sps` через `to_sps_full` в `Paste` и `Run`
+- [x] L6/L4 `statcraft_app` & `statcraft_reporting` (025 — Этап 3): динамические колонки `Descriptives` в Output Viewer и TSV/HTML/TXT (`Range`, `Sum`, `S.E. Mean`, `SE Skewness`, `SE Kurtosis`), строка `Valid N (listwise)` с точным `listwise_n`, точный `.sps` лог (`add_descriptives_with_log`), поддержка `TableStyleRule` и сводного отчета стилей (`tables_descriptives/{mod.rs, style_report.rs}`)
 
 ## 8. Этап 3: Частотный анализ и словарь метаданных (Frequencies & Metadata)
 - [x] L2 `statcraft_algo`: расширенная процедура `compute_frequencies_detailed` с поддержкой меток значений и кодов пропусков

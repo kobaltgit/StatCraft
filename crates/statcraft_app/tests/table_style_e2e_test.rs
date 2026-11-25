@@ -231,3 +231,78 @@ fn test_headless_egui_render_with_styled_table() {
     assert_eq!(state.procedures.len(), 1);
     assert_eq!(state.procedures[0].items.len(), 4);
 }
+
+#[test]
+fn test_descriptives_with_table_style_rule_and_report() {
+    let _ = statcraft_i18n::init_i18n();
+    statcraft_i18n::set_language("en");
+
+    let mut state = OutputViewerState::new();
+    let res = statcraft_algo::DescriptivesResult {
+        variable: "salary".to_string(),
+        n_valid: 100,
+        n_missing: 0,
+        mean: Some(50000.0),
+        se_mean: Some(1200.0),
+        std_dev: Some(12000.0),
+        variance: None,
+        min: Some(25000.0),
+        max: Some(85000.0),
+        range: Some(60000.0),
+        sum: Some(5000000.0),
+        skewness: None,
+        se_skewness: None,
+        kurtosis: None,
+        se_kurtosis: None,
+        bootstrap: None,
+        listwise_n: Some(100),
+        applied_options: Some(statcraft_algo::DescriptivesOptions {
+            mean: true,
+            se_mean: true,
+            std_dev: true,
+            min: true,
+            max: true,
+            range: true,
+            sum: true,
+            ..Default::default()
+        }),
+    };
+
+    let rule = TableStyleRule {
+        table_target: TableTarget::AllEligible,
+        value_target: TargetValue::Label("Mean".to_string()),
+        dimension: DimensionTarget::Columns,
+        condition: CellCondition::GreaterThan(10000.0),
+        format: CellStyleFormat {
+            bold: true,
+            italic: false,
+            bg_color: Some([220, 245, 220]),
+            text_color: None,
+            reset_defaults: false,
+            ..Default::default()
+        },
+    };
+
+    let sps_log =
+        "DESCRIPTIVES VARIABLES=salary\n  /STATISTICS=MEAN SEMEAN STDDEV MIN MAX RANGE SUM."
+            .to_string();
+    state.add_descriptives_with_log(vec![res], sps_log, Some(&[rule]), true);
+
+    assert_eq!(state.procedures.len(), 1);
+    let proc = &state.procedures[0];
+    assert_eq!(proc.items.len(), 4); // Log, Notes, ReportTable, StyleReport
+
+    match &proc.items[2].kind {
+        OutputItemKind::ReportTable(table) => {
+            let mean_idx = table.headers.iter().position(|h| h == "Mean").unwrap();
+            let style = table.cell_styles.get(&(0, mean_idx));
+            assert!(style.is_some(), "Mean cell should be styled");
+            assert!(style.unwrap().bold);
+        }
+        _ => panic!("Expected ReportTable item"),
+    }
+
+    let html = export_output_to_html(&state);
+    assert!(html.contains("background-color: rgb(220, 245, 220);"));
+    assert!(html.contains("Valid N (listwise)"));
+}

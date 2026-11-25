@@ -4125,5 +4125,62 @@
    * Обновлена матрица паритета (`cargo run -p xtask -j 1 -- parity`);
    * Полный Quality Gate `cargo run -p xtask -j 1 -- ci` пройден на 100%.
 
+---
+
+### Фаза 118: Ядро Descriptives, Z-оценки (/SAVE), сортировка (/SORT) и синтаксис SPSS (Feature 023 — Stage 1)
+*Время: 25 ноября 2026, 06:50 (~15 минут)*
+
+Устранены ключевые расхождения процедуры `DESCRIPTIVES` между движком StatCraft и каноном IBM SPSS Statistics на уровнях L2 (`statcraft_algo`) и L5 (`statcraft_syntax`):
+1. **Математическое ядро (`statcraft_algo::descriptives`):**
+   * Добавлены перечисления `DescriptivesSortOrder` (`VariableList`, `Alphabetic`, `AlphabeticDesc`, `AscendingMeans`, `DescendingMeans`) и `DescriptivesMissingMode` (`Variable`, `Listwise`), а также поля `listwise_n` и `applied_options` в `DescriptivesResult`.
+   * Реализованы `apply_options_filter()` (обнуление неотмеченных статистик), `sort_descriptives_results()` и `compute_standardized_values()` (взвешенные Z-оценки с `ddof = 1` и защитой от нулевого стандартного отклонения).
+   * Юнит-тесты вынесены в `descriptives_tests.rs` для соблюдения лимита 500 строк; добавлен Golden Oracle тест Z-оценок против `scipy.stats.zscore(..., ddof=1)`.
+2. **Командная шина и парсер SPSS (`statcraft_syntax`):**
+   * `DescriptivesCommand` теперь поддерживает фильтрацию опций, `MISSING=LISTWISE` с вычислением `listwise_n`, сортировку результатов до фильтрации, а также `/SAVE` с созданием `Z<var>` (или `ZSC001+` при коллизии) и обратимым удалением через `undo()`.
+   * Добавлен `to_sps_full()` и расширен `map_descriptives()` для полного round-trip разбора `SUM`, `ALL`, `/SAVE`, `/MISSING=LISTWISE|VARIABLE` и `/SORT=MEAN|NAME [(A)|(D)]`.
+3. **Контроль качества (DoD):**
+   * Пройдены тесты `statcraft_algo` (214 unit + integration), `statcraft_syntax` (144 unit + integration), `file-guard`, `layers` и `parity`.
 
 
+
+
+---
+
+### Фаза 119: Канонический UI диалога Descriptives и поддиалога Options (Feature 024 — Stage 2)
+*Время: 25 ноября 2026, 07:03 (~10 минут)*
+
+Диалог **«Описательные статистики» (`DescriptivesDialog`)** и его поддиалог **«Описательные: Параметры» (`Descriptives: Options`)** приведены в полное визуальное и функциональное соответствие с эталоном IBM SPSS Statistics на базе `DialogKit` и системы локализации `Fluent`:
+1. **Декомпозиция и новый функционал главного диалога (`crates/statcraft_app/src/dialogs/descriptives_dialog/`):**
+   * Монолитный `descriptives_dialog.rs` декомпозирован на `mod.rs`, `state.rs` и `options.rs` для строгого соблюдения `File Size Guard <= 500`.
+   * Под панелями выбора переменных добавлен чекбокс «Сохранить стандартизованные значения в переменных» (`dialog-desc-save-standardized`, `options.save_standardized`).
+   * В `SubdialogSidebar` активирована кнопка `[ Стиль... ]` (`dialog-btn-style`) с подключением `TableStyleState` и `render_table_style_dialog`.
+2. **Каноническая верстка `Descriptives: Options` (`options.rs`):**
+   * Верхний ряд: `Среднее` (`Mean`) и `Сумма` (`Sum`);
+   * `GroupBox` **Разброс** (`Dispersion`, 2 колонки): `Стд. отклонение`, `Дисперсия`, `Размах`, `Минимум`, `Максимум`, `Станд. ошибка среднего`;
+   * `GroupBox` **Распределение** (`Distribution`): `Эксцесс`, `Асимметрия`;
+   * `GroupBox` **Порядок вывода** (`Display Order`): 4 радио-переключателя (`Как в списке переменных`, `Алфавитный`, `По возрастанию среднего`, `По убыванию среднего`).
+3. **Сквозная генерация синтаксиса (`app_dialogs_stats.rs`):**
+   * В `DescriptivesDialogAction::Paste` и `Run` передаются полные `options` и `table_styles`; `Paste` формирует точный `.sps` синтаксис через `DescriptivesCommand::to_sps_full()`.
+4. **Контроль качества (DoD):**
+   * Добавлен тест `test_headless_render_descriptives_dialog_and_options` в `dialog_invariants.rs` (52/52 теста пройдено);
+   * Пройдены `design-guard`, `file-guard`, `parity` и полный Quality Gate `cargo run -p xtask -j 1 -- ci`.
+
+
+---
+
+### Фаза 120: Output Viewer, условные стили и экспорт для Descriptives (Feature 025 — Stage 3)
+*Время: 25 ноября 2026, 07:26 (~12 минут)*
+
+Завершен третий и финальный этап приведения процедуры **Descriptives** к полному паритету с IBM SPSS Statistics на уровнях L6 (`statcraft_app`) и L4 (`statcraft_reporting`):
+1. **Динамическая сводная таблица (`crates/statcraft_app/src/views/output_view/tables_descriptives/`):**
+   * Модуль декомпозирован на `mod.rs` и `style_report.rs` для соблюдения лимита `File Size Guard <= 500`.
+   * Колонки таблицы в GUI, TSV и `ReportTable` строятся динамически строго по выбранным статистикам (`applied_options` или `Some(...)`): `Variable`, `N`, `Range`, `Minimum`, `Maximum`, `Sum`, `Mean`, `S.E. Mean`, `Std. Deviation`, `Variance`, `Skewness`, `SE Skewness`, `Kurtosis`, `SE Kurtosis`.
+   * В GUI-таблицу и `ReportTable` добавлена итоговая строка `Valid N (listwise)` с точным значением `listwise_n`.
+   * Добавлены ключи локализации `output-col-range`, `output-col-sum`, `output-col-se-mean`, `output-col-se-skew`, `output-col-se-kurt`, `output-valid-n-listwise` в `locales/en.ftl` и `locales/ru.ftl`.
+2. **Точный `.sps` лог, условные стили и экспорт (`builder.rs`, `export.rs`, `app_dialogs_stats.rs`, `syntax_runner.rs`):**
+   * Добавлен метод `OutputViewerState::add_descriptives_with_log(results, sps_log, table_styles, create_style_report)` с сохранением обратной совместимости `add_descriptives`.
+   * Реализована поддержка `TableStyleRule` для таблиц `Descriptives` с генерацией сводного отчета стилей (`create_style_report`).
+   * `export.rs` конвертирует `OutputItemKind::DescriptivesTable` через `descriptives_to_report_table()`, обеспечивая 100% синхронизацию GUI, `TSV`, `HTML` и `TXT` отчетов.
+3. **Контроль качества (DoD):**
+   * Добавлены инвариантные тесты `test_descriptives_dynamic_columns_listwise_n_and_reporting` (`output_viewer_descriptives_invariants.rs`) и `test_descriptives_with_table_style_rule_and_report` (`table_style_e2e_test.rs`).
+   * Пройдены `cargo run -p xtask -j 1 -- ci`, `parity` и `sync-site`.

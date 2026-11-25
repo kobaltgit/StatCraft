@@ -65,7 +65,7 @@ The audit validated 41 engine commands across 5 functional categories against a 
 | `data.split_file` | Sampling & Management | Subgroup Config Assignment | $\text{DataSet}_0 \equiv \text{Undo}(\text{Execute}(\text{DataSet}_0))$ | **PASS** |
 | `data.weight_cases` | Sampling & Management | Frequency Weight Variable | $\text{DataSet}_0 \equiv \text{Undo}(\text{Execute}(\text{DataSet}_0))$ | **PASS** |
 | `transform.random_seed`| Sampling & Management | PRNG Global Seed Override | $\text{DataSet}_0 \equiv \text{Undo}(\text{Execute}(\text{DataSet}_0))$ | **PASS** |
-| `stat.descriptives` | Analytical (Read-Only) | No DataSet State Mutation | $\text{DataSet}_0 \equiv \text{Undo}(\text{Execute}(\text{DataSet}_0))$ | **PASS** |
+| `stat.descriptives` | Analytical / Conditional Mutation (`/SAVE`) | Optional Z-score columns (`Z<var>` / `ZSC001`) removed on `Undo` | $\text{DataSet}_0 \equiv \text{Undo}(\text{Execute}(\text{DataSet}_0))$ | **PASS** |
 | `stat.frequencies` | Analytical (Read-Only) | No DataSet State Mutation | $\text{DataSet}_0 \equiv \text{Undo}(\text{Execute}(\text{DataSet}_0))$ | **PASS** |
 | `stat.means` | Analytical (Read-Only) | No DataSet State Mutation | $\text{DataSet}_0 \equiv \text{Undo}(\text{Execute}(\text{DataSet}_0))$ | **PASS** |
 | `stat.ttest.onesample` | Analytical (Read-Only) | No DataSet State Mutation | $\text{DataSet}_0 \equiv \text{Undo}(\text{Execute}(\text{DataSet}_0))$ | **PASS** |

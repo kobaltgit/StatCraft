@@ -1,50 +1,16 @@
+pub mod options;
+pub mod state;
+
+pub use options::render_descriptives_options_subdialog;
+pub use state::{DescriptivesDialogAction, DescriptivesDialogState};
+
 use super::common::{
     format_var_display, render_variable_list_panel, ActionBarAction, DialogActionBar, DialogShell,
-    GroupBox, ListEvent, SubdialogAction, SubdialogActionBar, SubdialogSidebar, TransferButton,
-    VariableListItem,
+    ListEvent, SubdialogSidebar, TransferButton, VariableListItem,
 };
 use egui::vec2;
-use statcraft_algo::DescriptivesOptions;
 use statcraft_core::DataSet;
 use statcraft_i18n::t;
-
-#[derive(Debug, Clone)]
-pub struct DescriptivesDialogState {
-    pub is_open: bool,
-    pub source_selected: Option<usize>,
-    pub target_selected: Option<usize>,
-    pub selected_vars: Vec<String>,
-    pub options: DescriptivesOptions,
-    pub show_options: bool,
-    pub bootstrap: crate::dialogs::bootstrap_dialog::BootstrapDialogState,
-}
-
-impl Default for DescriptivesDialogState {
-    fn default() -> Self {
-        Self {
-            is_open: false,
-            source_selected: None,
-            target_selected: None,
-            selected_vars: Vec::new(),
-            options: DescriptivesOptions::spps_default(),
-            show_options: false,
-            bootstrap: crate::dialogs::bootstrap_dialog::BootstrapDialogState::default(),
-        }
-    }
-}
-
-pub enum DescriptivesDialogAction {
-    Run {
-        vars: Vec<String>,
-        options: DescriptivesOptions,
-        bootstrap: Option<serde_json::Value>,
-    },
-    Paste {
-        vars: Vec<String>,
-        bootstrap: Option<serde_json::Value>,
-    },
-    None,
-}
 
 pub fn render_descriptives_dialog(
     ctx: &egui::Context,
@@ -79,40 +45,13 @@ pub fn render_descriptives_dialog(
         })
         .collect();
 
-    // 1. Render Subdialog (Options) if open
+    // 1. Render Subdialogs if open
     if state.show_options {
-        let mut sub_open = true;
-        DialogShell::subdialog(t!("dialog-desc-options-title")).show(ctx, &mut sub_open, |ui| {
-            GroupBox::new(t!("dialog-stats-options")).show(ui, |ui| {
-                ui.columns(3, |columns| {
-                    columns[0].checkbox(&mut state.options.mean, t!("stat-mean"));
-                    columns[0].checkbox(&mut state.options.std_dev, t!("stat-std-dev"));
-                    columns[0].checkbox(&mut state.options.variance, t!("stat-variance"));
-
-                    columns[1].checkbox(&mut state.options.min, t!("stat-min"));
-                    columns[1].checkbox(&mut state.options.max, t!("stat-max"));
-                    columns[1].checkbox(&mut state.options.range, t!("stat-range"));
-
-                    columns[2].checkbox(&mut state.options.se_mean, t!("stat-se-mean"));
-                    columns[2].checkbox(&mut state.options.skewness, t!("stat-skewness"));
-                    columns[2].checkbox(&mut state.options.kurtosis, t!("stat-kurtosis"));
-                });
-            });
-
-            let sub_action = SubdialogActionBar::new(true).show(ui);
-            match sub_action {
-                SubdialogAction::Continue | SubdialogAction::Cancel => {
-                    state.show_options = false;
-                }
-                SubdialogAction::Help | SubdialogAction::None => {}
-            }
-        });
-
-        if !sub_open {
-            state.show_options = false;
-        }
+        render_descriptives_options_subdialog(ctx, state);
     }
-
+    if state.table_style.is_open {
+        crate::dialogs::table_style_dialog::render_table_style_dialog(ctx, &mut state.table_style);
+    }
     if state.bootstrap.is_open {
         crate::dialogs::bootstrap_dialog::render_bootstrap_dialog(
             ctx,
@@ -126,7 +65,7 @@ pub fn render_descriptives_dialog(
     DialogShell::standard(t!("dialog-descriptives-title")).show(ctx, &mut main_open, |ui| {
         // Main 3-column + sidebar layout
         ui.horizontal(|ui| {
-            // Left Panel: Available Variables (200x260)
+            // Left Panel: Available Variables (200x240)
             let source_items: Vec<VariableListItem> = available_vars
                 .iter()
                 .enumerate()
@@ -141,7 +80,7 @@ pub fn render_descriptives_dialog(
             let source_ev = render_variable_list_panel(
                 ui,
                 t!("dialog-variables-source"),
-                vec2(200.0, 260.0),
+                vec2(200.0, 240.0),
                 "desc_source_vars",
                 &source_items,
             );
@@ -161,10 +100,12 @@ pub fn render_descriptives_dialog(
             }
 
             // Transfer Button Column
-            let can_move_right = state.source_selected.is_some()
-                && state.source_selected.unwrap() < available_vars.len();
-            let can_move_left = state.target_selected.is_some()
-                && state.target_selected.unwrap() < state.selected_vars.len();
+            let can_move_right = state
+                .source_selected
+                .is_some_and(|idx| idx < available_vars.len());
+            let can_move_left = state
+                .target_selected
+                .is_some_and(|idx| idx < state.selected_vars.len());
 
             let transfer_btn = if state.target_selected.is_some() {
                 TransferButton::to_source(can_move_left)
@@ -173,17 +114,15 @@ pub fn render_descriptives_dialog(
             };
 
             ui.allocate_ui_with_layout(
-                vec2(36.0, 260.0),
+                vec2(36.0, 240.0),
                 egui::Layout::top_down(egui::Align::Center),
                 |ui| {
-                    ui.add_space(80.0);
+                    ui.add_space(75.0);
                     if transfer_btn.show(ui).clicked() {
-                        if state.target_selected.is_some() {
-                            if let Some(idx) = state.target_selected {
-                                if idx < state.selected_vars.len() {
-                                    state.selected_vars.remove(idx);
-                                    state.target_selected = None;
-                                }
+                        if let Some(idx) = state.target_selected {
+                            if idx < state.selected_vars.len() {
+                                state.selected_vars.remove(idx);
+                                state.target_selected = None;
                             }
                         } else if let Some(idx) = state.source_selected {
                             if let Some((_, name, _, _)) = available_vars.get(idx) {
@@ -195,22 +134,17 @@ pub fn render_descriptives_dialog(
                 },
             );
 
-            // Center Panel: Target Variables (200x260)
+            // Center Panel: Target Variables (200x240)
             let target_items: Vec<VariableListItem> = state
                 .selected_vars
                 .iter()
                 .enumerate()
                 .map(|(idx, name)| {
-                    let measure = ds
-                        .dictionary
-                        .find_by_name(name)
+                    let meta = ds.dictionary.find_by_name(name);
+                    let measure = meta
                         .map(|m| m.measure)
                         .unwrap_or(statcraft_core::Measure::Scale);
-                    let label = ds
-                        .dictionary
-                        .find_by_name(name)
-                        .map(|m| m.label.as_str())
-                        .unwrap_or("");
+                    let label = meta.map(|m| m.label.as_str()).unwrap_or("");
                     VariableListItem {
                         name,
                         display_text: format_var_display(name, label),
@@ -223,7 +157,7 @@ pub fn render_descriptives_dialog(
             let target_ev = render_variable_list_panel(
                 ui,
                 t!("dialog-variables-target"),
-                vec2(200.0, 260.0),
+                vec2(200.0, 240.0),
                 "desc_target_vars",
                 &target_items,
             );
@@ -244,12 +178,17 @@ pub fn render_descriptives_dialog(
 
             // Right Column: Subdialog Sidebar
             ui.allocate_ui_with_layout(
-                vec2(94.0, 260.0),
+                vec2(94.0, 240.0),
                 egui::Layout::top_down(egui::Align::Min),
                 |ui| {
                     ui.add_space(18.0);
                     if SubdialogSidebar::button(ui, t!("dialog-btn-options"), true).clicked() {
                         state.show_options = true;
+                    }
+                    if SubdialogSidebar::button(ui, t!("dialog-btn-style"), true).clicked() {
+                        state.table_style.backup = Some(state.table_style.rules.clone());
+                        state.table_style.backup_report = state.table_style.create_style_report;
+                        state.table_style.is_open = true;
                     }
                     if SubdialogSidebar::button(ui, t!("dialog-btn-bootstrap"), true).clicked() {
                         state.bootstrap.open();
@@ -258,9 +197,17 @@ pub fn render_descriptives_dialog(
             );
         });
 
+        ui.add_space(8.0);
+        ui.checkbox(
+            &mut state.options.save_standardized,
+            t!("dialog-desc-save-standardized"),
+        );
+
         // Bottom Action Bar
         let can_run = !state.selected_vars.is_empty();
         let bar_action = DialogActionBar::new(can_run).show(ui);
+        let table_styles = state.table_style.rules_to_json();
+        let create_style_report = state.table_style.create_style_report;
         let bootstrap = state.bootstrap.to_json();
 
         match bar_action {
@@ -269,6 +216,8 @@ pub fn render_descriptives_dialog(
                 action = DescriptivesDialogAction::Run {
                     vars: state.selected_vars.clone(),
                     options: state.options.clone(),
+                    table_styles,
+                    create_style_report,
                     bootstrap,
                 };
             }
@@ -276,15 +225,12 @@ pub fn render_descriptives_dialog(
                 close_dialog = true;
                 action = DescriptivesDialogAction::Paste {
                     vars: state.selected_vars.clone(),
+                    options: state.options.clone(),
                     bootstrap,
                 };
             }
             ActionBarAction::Reset => {
-                state.selected_vars.clear();
-                state.source_selected = None;
-                state.target_selected = None;
-                state.options = DescriptivesOptions::spps_default();
-                state.bootstrap.reset();
+                state.reset();
             }
             ActionBarAction::Cancel => {
                 close_dialog = true;

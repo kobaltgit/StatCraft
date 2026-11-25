@@ -65,7 +65,7 @@ $$\text{DataSet}_0' \xrightarrow{\text{Redo}(C)} \text{DataSet}_1' \equiv \text{
 | `data.split_file` | Выборка и управление | Конфигурация расщепления файла | $\text{DataSet}_0 \equiv \text{Undo}(\text{Execute}(\text{DataSet}_0))$ | **PASS** |
 | `data.weight_cases` | Выборка и управление | Весовая переменная частот | $\text{DataSet}_0 \equiv \text{Undo}(\text{Execute}(\text{DataSet}_0))$ | **PASS** |
 | `transform.random_seed`| Выборка и управление | Переопределение зерна ГСЧ | $\text{DataSet}_0 \equiv \text{Undo}(\text{Execute}(\text{DataSet}_0))$ | **PASS** |
-| `stat.descriptives` | Аналитические (чтение) | Чтение без мутаций датасета | $\text{DataSet}_0 \equiv \text{Undo}(\text{Execute}(\text{DataSet}_0))$ | **PASS** |
+| `stat.descriptives` | Аналитические / Условная мутация (`/SAVE`) | Созданные Z-переменные (`Z<var>` / `ZSC001`) удаляются при `Undo` | $\text{DataSet}_0 \equiv \text{Undo}(\text{Execute}(\text{DataSet}_0))$ | **PASS** |
 | `stat.frequencies` | Аналитические (чтение) | Чтение без мутаций датасета | $\text{DataSet}_0 \equiv \text{Undo}(\text{Execute}(\text{DataSet}_0))$ | **PASS** |
 | `stat.means` | Аналитические (чтение) | Чтение без мутаций датасета | $\text{DataSet}_0 \equiv \text{Undo}(\text{Execute}(\text{DataSet}_0))$ | **PASS** |
 | `stat.ttest.onesample` | Аналитические (чтение) | Чтение без мутаций датасета | $\text{DataSet}_0 \equiv \text{Undo}(\text{Execute}(\text{DataSet}_0))$ | **PASS** |

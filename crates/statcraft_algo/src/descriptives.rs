@@ -17,6 +17,23 @@ pub struct DescriptivesBootstrap {
     pub kurtosis: Option<BootstrapSummary>,
 }
 
+#[derive(Debug, Clone, Copy, Serialize, Deserialize, PartialEq, Eq, Default)]
+pub enum DescriptivesSortOrder {
+    #[default]
+    VariableList,
+    Alphabetic,
+    AlphabeticDesc,
+    AscendingMeans,
+    DescendingMeans,
+}
+
+#[derive(Debug, Clone, Copy, Serialize, Deserialize, PartialEq, Eq, Default)]
+pub enum DescriptivesMissingMode {
+    #[default]
+    Variable,
+    Listwise,
+}
+
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
 pub struct DescriptivesResult {
     pub variable: String,
@@ -36,20 +53,40 @@ pub struct DescriptivesResult {
     pub se_kurtosis: Option<f64>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub bootstrap: Option<DescriptivesBootstrap>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub listwise_n: Option<usize>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub applied_options: Option<DescriptivesOptions>,
 }
 
-#[derive(Debug, Clone, Serialize, Deserialize, Default)]
+#[derive(Debug, Clone, Serialize, Deserialize, Default, PartialEq, Eq)]
 pub struct DescriptivesOptions {
+    #[serde(default)]
     pub mean: bool,
+    #[serde(default)]
     pub se_mean: bool,
+    #[serde(default)]
     pub std_dev: bool,
+    #[serde(default)]
     pub variance: bool,
+    #[serde(default)]
     pub min: bool,
+    #[serde(default)]
     pub max: bool,
+    #[serde(default)]
     pub range: bool,
+    #[serde(default)]
     pub sum: bool,
+    #[serde(default)]
     pub skewness: bool,
+    #[serde(default)]
     pub kurtosis: bool,
+    #[serde(default)]
+    pub save_standardized: bool,
+    #[serde(default)]
+    pub sort: DescriptivesSortOrder,
+    #[serde(default)]
+    pub missing: DescriptivesMissingMode,
 }
 
 impl DescriptivesOptions {
@@ -65,6 +102,9 @@ impl DescriptivesOptions {
             sum: true,
             skewness: true,
             kurtosis: true,
+            save_standardized: false,
+            sort: DescriptivesSortOrder::VariableList,
+            missing: DescriptivesMissingMode::Variable,
         }
     }
 
@@ -80,6 +120,9 @@ impl DescriptivesOptions {
             sum: false,
             skewness: false,
             kurtosis: false,
+            save_standardized: false,
+            sort: DescriptivesSortOrder::VariableList,
+            missing: DescriptivesMissingMode::Variable,
         }
     }
 }
@@ -138,6 +181,8 @@ pub fn compute_descriptives_weighted(
             kurtosis: None,
             se_kurtosis: None,
             bootstrap: None,
+            listwise_n: None,
+            applied_options: None,
         };
     }
 
@@ -265,165 +310,117 @@ pub fn compute_descriptives_weighted(
         kurtosis,
         se_kurtosis,
         bootstrap: None,
+        listwise_n: None,
+        applied_options: None,
     }
+}
+
+/// Applies `DescriptivesOptions` to a computed `DescriptivesResult`, clearing
+/// optional statistics that were not requested and recording `applied_options`.
+pub fn apply_options_filter(res: &mut DescriptivesResult, options: &DescriptivesOptions) {
+    res.applied_options = Some(options.clone());
+    if !options.mean {
+        res.mean = None;
+    }
+    if !options.se_mean {
+        res.se_mean = None;
+    }
+    if !options.std_dev {
+        res.std_dev = None;
+    }
+    if !options.variance {
+        res.variance = None;
+    }
+    if !options.min {
+        res.min = None;
+    }
+    if !options.max {
+        res.max = None;
+    }
+    if !options.range {
+        res.range = None;
+    }
+    if !options.sum {
+        res.sum = None;
+    }
+    if !options.skewness {
+        res.skewness = None;
+        res.se_skewness = None;
+    }
+    if !options.kurtosis {
+        res.kurtosis = None;
+        res.se_kurtosis = None;
+    }
+}
+
+fn cmp_opt_f64(a: Option<f64>, b: Option<f64>, descending: bool) -> std::cmp::Ordering {
+    use std::cmp::Ordering;
+    match (a.filter(|v| v.is_finite()), b.filter(|v| v.is_finite())) {
+        (Some(x), Some(y)) => {
+            let ord = x.partial_cmp(&y).unwrap_or(Ordering::Equal);
+            if descending {
+                ord.reverse()
+            } else {
+                ord
+            }
+        }
+        (Some(_), None) => Ordering::Less,
+        (None, Some(_)) => Ordering::Greater,
+        (None, None) => Ordering::Equal,
+    }
+}
+
+/// Sorts descriptive results according to the requested SPSS display order.
+pub fn sort_descriptives_results(results: &mut [DescriptivesResult], order: DescriptivesSortOrder) {
+    match order {
+        DescriptivesSortOrder::VariableList => {}
+        DescriptivesSortOrder::Alphabetic => {
+            results.sort_by(|a, b| {
+                a.variable
+                    .to_lowercase()
+                    .cmp(&b.variable.to_lowercase())
+                    .then_with(|| a.variable.cmp(&b.variable))
+            });
+        }
+        DescriptivesSortOrder::AlphabeticDesc => {
+            results.sort_by(|a, b| {
+                b.variable
+                    .to_lowercase()
+                    .cmp(&a.variable.to_lowercase())
+                    .then_with(|| b.variable.cmp(&a.variable))
+            });
+        }
+        DescriptivesSortOrder::AscendingMeans => {
+            results.sort_by(|a, b| cmp_opt_f64(a.mean, b.mean, false));
+        }
+        DescriptivesSortOrder::DescendingMeans => {
+            results.sort_by(|a, b| cmp_opt_f64(a.mean, b.mean, true));
+        }
+    }
+}
+
+/// Computes standardized Z-scores `(x - mean) / std_dev` using weighted sample
+/// mean and standard deviation (`ddof = 1`).
+/// Returns `None` for missing/non-finite entries or for the whole vector when
+/// `std_dev` is unavailable or zero.
+pub fn compute_standardized_values(values: &[Option<f64>], weights: &[f64]) -> Vec<Option<f64>> {
+    let stats = compute_descriptives_weighted("", values, weights);
+    let (Some(mean), Some(sd)) = (stats.mean, stats.std_dev) else {
+        return vec![None; values.len()];
+    };
+    if !mean.is_finite() || !sd.is_finite() || sd == 0.0 {
+        return vec![None; values.len()];
+    }
+
+    values
+        .iter()
+        .map(|v| match v {
+            Some(x) if x.is_finite() => Some((x - mean) / sd),
+            _ => None,
+        })
+        .collect()
 }
 
 #[cfg(test)]
-mod tests {
-    use super::*;
-
-    /// Golden Oracle Test: Reference values verified against Python SciPy stats
-    /// sample: [12.0, 15.0, 18.0, 20.0, 22.0, 25.0, 28.0, 30.0, 35.0, 40.0]
-    /// scipy.stats.describe:
-    ///   n = 10
-    ///   mean = 24.5
-    ///   variance (ddof=1) = 78.5
-    ///   std_dev = sqrt(78.5) = 8.860022573334675
-    ///   skewness (bias=False) = 0.4449836340332851
-    ///   kurtosis (fisher=True, bias=False) = -0.7303030364969248
-    #[test]
-    fn test_golden_oracle_descriptives_scipy() {
-        let sample = vec![
-            Some(12.0),
-            Some(15.0),
-            Some(18.0),
-            Some(20.0),
-            Some(22.0),
-            Some(25.0),
-            Some(28.0),
-            Some(30.0),
-            Some(35.0),
-            Some(40.0),
-        ];
-
-        let result = compute_descriptives("age", &sample);
-
-        assert_eq!(result.variable, "age");
-        assert_eq!(result.n_valid, 10);
-        assert_eq!(result.n_missing, 0);
-
-        let epsilon = 1e-6;
-
-        let mean = result.mean.unwrap();
-        assert!((mean - 24.5).abs() < epsilon, "mean error: {}", mean);
-
-        let sum = result.sum.unwrap();
-        assert!((sum - 245.0).abs() < epsilon, "sum error: {}", sum);
-
-        let min = result.min.unwrap();
-        assert_eq!(min, 12.0);
-
-        let max = result.max.unwrap();
-        assert_eq!(max, 40.0);
-
-        let range = result.range.unwrap();
-        assert_eq!(range, 28.0);
-
-        let var = result.variance.unwrap();
-        let expected_var = 708.5 / 9.0;
-        assert!((var - expected_var).abs() < epsilon, "var error: {}", var);
-
-        let std_dev = result.std_dev.unwrap();
-        let expected_std = (708.5 / 9.0_f64).sqrt();
-        assert!(
-            (std_dev - expected_std).abs() < epsilon,
-            "std_dev error: {}",
-            std_dev
-        );
-
-        let se_mean = result.se_mean.unwrap();
-        let expected_se = expected_std / (10.0_f64).sqrt();
-        assert!(
-            (se_mean - expected_se).abs() < epsilon,
-            "se_mean error: {}",
-            se_mean
-        );
-
-        let skew = result.skewness.unwrap();
-        assert!(
-            (skew - 0.3776125768606358).abs() < epsilon,
-            "skew error: {}",
-            skew
-        );
-
-        let kurt = result.kurtosis.unwrap();
-        assert!(
-            (kurt - (-0.6155351644011618)).abs() < epsilon,
-            "kurt error: {}",
-            kurt
-        );
-    }
-
-    #[test]
-    fn test_descriptives_empty_sample() {
-        let empty: Vec<Option<f64>> = vec![];
-        let result = compute_descriptives("empty", &empty);
-        assert_eq!(result.n_valid, 0);
-        assert_eq!(result.n_missing, 0);
-        assert_eq!(result.mean, None);
-        assert_eq!(result.variance, None);
-    }
-
-    #[test]
-    fn test_descriptives_all_missing_and_nans() {
-        let sample = vec![None, Some(f64::NAN), Some(f64::INFINITY), None];
-        let result = compute_descriptives("missing_var", &sample);
-        assert_eq!(result.n_valid, 0);
-        assert_eq!(result.n_missing, 4);
-        assert_eq!(result.mean, None);
-    }
-
-    #[test]
-    fn test_descriptives_single_element() {
-        let sample = vec![Some(42.0)];
-        let result = compute_descriptives("single", &sample);
-        assert_eq!(result.n_valid, 1);
-        assert_eq!(result.mean, Some(42.0));
-        assert_eq!(result.min, Some(42.0));
-        assert_eq!(result.max, Some(42.0));
-        assert_eq!(result.variance, None); // N < 2
-        assert_eq!(result.skewness, None); // N < 3
-    }
-
-    #[test]
-    fn test_descriptives_weighted() {
-        // [10.0, 20.0] with weights [1.0, 3.0]
-        // Equivalent sample: [10.0, 20.0, 20.0, 20.0]
-        // mean = (10 + 60) / 4 = 17.5
-        // variance = ((10-17.5)^2 + 3*(20-17.5)^2) / 3 = (56.25 + 18.75) / 3 = 75 / 3 = 25.0
-        let values = vec![Some(10.0), Some(20.0), Some(999.0), None];
-        let weights = vec![1.0, 3.0, 0.0, 2.0]; // 999.0 has weight 0.0 (skipped), None has weight 2.0 (missing)
-
-        let result = compute_descriptives_weighted("score", &values, &weights);
-
-        assert_eq!(result.variable, "score");
-        assert_eq!(result.n_valid, 4);
-        assert_eq!(result.n_missing, 2);
-
-        let epsilon = 1e-6;
-        let mean = result.mean.expect("Mean should be present");
-        assert!((mean - 17.5).abs() < epsilon, "mean error: {}", mean);
-
-        let var = result.variance.expect("Variance should be present");
-        assert!((var - 25.0).abs() < epsilon, "variance error: {}", var);
-
-        let std_dev = result.std_dev.expect("Std dev should be present");
-        assert!(
-            (std_dev - 5.0).abs() < epsilon,
-            "std_dev error: {}",
-            std_dev
-        );
-
-        let se_mean = result.se_mean.expect("SE mean should be present");
-        assert!(
-            (se_mean - 2.5).abs() < epsilon,
-            "se_mean error: {}",
-            se_mean
-        );
-
-        assert_eq!(result.min, Some(10.0));
-        assert_eq!(result.max, Some(20.0));
-        assert_eq!(result.range, Some(10.0));
-        assert_eq!(result.sum, Some(70.0));
-    }
-}
+#[path = "descriptives_tests.rs"]
+mod tests;
