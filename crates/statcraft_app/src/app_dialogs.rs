@@ -602,6 +602,112 @@ impl StatCraftApp {
             LinearRegressionDialogAction::None => {}
         }
 
+        // 12b. Theil-Sen Regression Dialog
+        let ts_action = crate::dialogs::render_theil_sen_dialog(
+            ctx,
+            self.dataset.as_ref(),
+            &mut self.theil_sen_dialog_state,
+        );
+        match ts_action {
+            crate::dialogs::TheilSenDialogAction::Run {
+                dependent_var,
+                independent_var,
+                ci,
+                mann_kendall,
+                include_scatter_plot,
+                include_residual_plot,
+                save_predicted,
+                save_residuals,
+                table_styles,
+                bootstrap,
+            } => {
+                let mut params = json!({
+                    "dependent_var": dependent_var,
+                    "independent_var": independent_var,
+                    "ci": ci,
+                    "mann_kendall": mann_kendall,
+                    "include_scatter_plot": include_scatter_plot,
+                    "include_residual_plot": include_residual_plot,
+                    "save_predicted": save_predicted,
+                    "save_residuals": save_residuals,
+                });
+                if let Some(boot) = bootstrap {
+                    if let Some(obj) = params.as_object_mut() {
+                        obj.insert("bootstrap".to_string(), boot);
+                    }
+                }
+                match self.command_bus.execute(
+                    "stat.regression.theil_sen",
+                    &mut self.dataset,
+                    params,
+                ) {
+                    Ok(result_value) => {
+                        if let Ok(result) =
+                            serde_json::from_value::<statcraft_algo::TheilSenResult>(result_value)
+                        {
+                            let dep_var = result.dep_var.clone();
+                            let dep_label =
+                                crate::views::output_view::tables_common::resolve_var_label(
+                                    self.dataset.as_ref(),
+                                    &result.dep_var,
+                                );
+                            let indep_label =
+                                crate::views::output_view::tables_common::resolve_var_label(
+                                    self.dataset.as_ref(),
+                                    &result.indep_var,
+                                );
+                            self.output_view_state.add_theil_sen(
+                                result,
+                                dep_label,
+                                indep_label,
+                                include_scatter_plot,
+                                include_residual_plot,
+                                table_styles,
+                            );
+                            self.status_message = StatusMessage::RegressionExecuted {
+                                dep_var,
+                                indep_count: 1,
+                            };
+                        }
+                    }
+                    Err(e) => {
+                        self.status_message = StatusMessage::Error(e.to_string());
+                    }
+                }
+            }
+            crate::dialogs::TheilSenDialogAction::Paste {
+                dependent_var,
+                independent_var,
+                ci,
+                mann_kendall,
+                include_scatter_plot,
+                include_residual_plot,
+                save_predicted,
+                save_residuals,
+                bootstrap,
+            } => {
+                let boot_opts = bootstrap.and_then(|v| {
+                    serde_json::from_value::<statcraft_algo::BootstrapOptions>(v).ok()
+                });
+                let sps = statcraft_syntax::commands::TheilSenCommand::to_sps_with_bootstrap(
+                    &dependent_var,
+                    &independent_var,
+                    ci,
+                    mann_kendall,
+                    include_scatter_plot,
+                    include_residual_plot,
+                    save_predicted,
+                    save_residuals,
+                    boot_opts.as_ref(),
+                );
+                self.output_view_state.add_entry(t!("output-log"), sps);
+            }
+            crate::dialogs::TheilSenDialogAction::None => {}
+        }
+
+        // 12c. Orthogonal / Deming Regression Dialog
+        self.handle_deming_regression_dialog(ctx);
+
         // 13. Scale Reliability Dialog
         let rel_action = render_reliability_dialog(
             ctx,

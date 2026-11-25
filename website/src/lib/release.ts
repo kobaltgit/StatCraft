@@ -23,7 +23,7 @@ export interface ReleaseData {
 }
 
 export const GITHUB_REPO = 'kobaltgit/StatCraft';
-export const DEFAULT_VERSION = '0.4.8';
+export const DEFAULT_VERSION = '0.4.9';
 export const DEFAULT_TAG = `v${DEFAULT_VERSION}`;
 
 /**
@@ -112,6 +112,16 @@ export function buildStandardAssets(tagName: string): ReleaseAsset[] {
       recommended: true,
     },
     {
+      name: 'statcraft-linux-x64.AppImage',
+      downloadUrl: getAssetDownloadUrl(tagName, 'statcraft-linux-x64.AppImage'),
+      os: 'linux',
+      kind: 'portable',
+      arch: 'x64',
+      labelEn: 'Linux Universal (.AppImage)',
+      labelRu: 'Linux Универсальный (.AppImage)',
+      badge: '.AppImage',
+    },
+    {
       name: 'statcraft-linux-x64.tar.gz',
       downloadUrl: getAssetDownloadUrl(tagName, 'statcraft-linux-x64.tar.gz'),
       os: 'linux',
@@ -127,7 +137,7 @@ export function buildStandardAssets(tagName: string): ReleaseAsset[] {
 export const FALLBACK_RELEASE: ReleaseData = {
   tagName: DEFAULT_TAG,
   version: DEFAULT_VERSION,
-  publishedAt: '2026-11-20T21:45:00Z',
+  publishedAt: '2026-11-25T20:25:00Z',
   htmlUrl: `https://github.com/${GITHUB_REPO}/releases/tag/${DEFAULT_TAG}`,
   assets: buildStandardAssets(DEFAULT_TAG),
 };

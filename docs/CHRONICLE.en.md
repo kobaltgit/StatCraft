@@ -4586,3 +4586,47 @@ Completed Stage 3 bringing **Crosstabs** Output Viewer rendering, charts, condit
 2. **Verification & DoD:**
    * Added `test_crosstabs_stage3_layered_stats_charts_and_export` in `crates/statcraft_app/tests/output_viewer_invariants/crosstabs.rs`;
    * Updated `docs/CHECKLIST.md`, `specs/031-crosstabs-output-and-charts/tasks.md`, and the chronicles.
+
+
+---
+
+### Phase 126: Theil–Sen Robust Linear Regression (Feature 032 — `THEIL SEN`)
+*Time: November 25, 2026, 21:08 (~35 minutes)*
+
+Implemented non-parametric robust simple linear regression **Theil–Sen Estimator** (Sen, 1968) per `specs/032-theil-sen-regression`:
+1. **L2 Mathematical Engine (`crates/statcraft_algo/src/theil_sen/`):**
+   * `types.rs`, `engine.rs`, `mod.rs`, `tests.rs` (all files $\le 500$ lines, 100% Safe Rust with zero `unwrap`/`expect`/`panic!`);
+   * Pairwise missing-value exclusion, median pairwise slope $\hat{m}$ and intercept $\hat{b} = \text{median}(y_i - \hat{m} x_i)$, Sen (1968) tie-corrected confidence interval, Mann–Kendall trend test ($\tau_b, Z, p$), MAD of residuals, and `MAX_EXACT_PAIRS_N = 5000` memory guard;
+   * Non-parametric bootstrap `compute_theil_sen_bootstrap` and Golden Oracle tests (`<= 1e-6`).
+2. **L5 Command Bus & Syntax (`crates/statcraft_syntax/`):**
+   * Implemented `TheilSenCommand` (`stat.regression.theil_sen`) in `commands/theil_sen_cmd.rs` with `PRE_n`/`RES_n` dataset saving and full `undo` support;
+   * Added two-word `THEIL SEN` parsing in `parser.rs` and `mappers/stats/theil_sen.rs`.
+3. **L6 UI, Output & Localization (`crates/statcraft_app/`, `locales/`):**
+   * Built `TheilSenDialog` (`dialogs/theil_sen_dialog/`) using `DialogKit` with a 5-button `SubdialogSidebar` (`Options...`, `Plots...`, `Save...`, `Style...`, `Bootstrap...`) and menu entry `Analyze → Regression → Theil-Sen...`;
+   * Implemented *Model Summary*, *Parameter Estimates*, *Bootstrap* table, vector plots (Scatter + Trend Line, Residuals vs. Fitted), and TSV/HTML/TXT export in `views/output_view/tables_theil_sen.rs`;
+   * Added complete Fluent keys in `locales/en.ftl` and `locales/ru.ftl`.
+4. **Verification & DoD:**
+   * Passed `theil_sen` tests in `statcraft_algo` (4/4) and `statcraft_syntax` (2/2), `statcraft_i18n` (14/14 + 4/4), `dialog_invariants` (52/52), `output_viewer_invariants` (12/12), `xtask layers`, `file-guard`, `design-guard`, `fmt --check`, and `clippy -- -D warnings`.
+   * Updated `docs/FEATURES*.md`, `docs/parity-checklist.md`, `docs/SPSS_ALGORITHMS_AUDIT*.md`, `docs/SPSS_UI_CANON_AUDIT*.md`, `docs/CHECKLIST.md`, `website/src/lib/audit-data.ts`, and both chronicles.
+
+
+---
+
+### Phase 127: Orthogonal / Deming Regression (Feature 033 — `ORTHOGONAL REGRESSION`)
+*Time: November 25, 2026, 21:30 (~25 minutes)*
+
+Implemented errors-in-variables **Orthogonal / Deming Regression** (Total Least Squares at $\lambda = 1.0$ and general Deming regression for arbitrary $\lambda > 0$) per `specs/033-orthogonal-deming-regression`:
+1. **L2 Mathematical Engine (`crates/statcraft_algo/src/deming_regression/`):**
+   * `types.rs`, `engine.rs`, `mod.rs`, `tests.rs` (all files $\le 500$ lines, 100% Safe Rust with zero `unwrap`/`expect`/`panic!`);
+   * Closed-form Deming estimator via sample moments $(s_{xx}, s_{yy}, s_{xy})$ with degenerate-case guards ($s_{xy} = 0$, $N < 3$, $\lambda \le 0$);
+   * Leave-One-Out **Jackknife** for `slope_se`, `intercept_se`, and $t$-confidence intervals ($df = N - 2$), orthogonal residual SD, Pearson $r$, `compute_deming_regression_bootstrap`, and Golden Oracle tests (`<= 1e-6`).
+2. **L5 Command Bus & Syntax (`crates/statcraft_syntax/`):**
+   * Implemented `DemingRegressionCommand` (`stat.regression.orthogonal`) in `commands/deming_regression_cmd.rs` with `PRE_n`/`RES_n` dataset saving and full `undo` support;
+   * Added two-word `ORTHOGONAL REGRESSION` parsing in `parser.rs` and `mappers/stats/deming_regression.rs`.
+3. **L6 UI, Output & Localization (`crates/statcraft_app/`, `locales/`):**
+   * Built `DemingRegressionDialog` (`dialogs/deming_regression_dialog/`) using `DialogKit` with a 5-button `SubdialogSidebar` (`Options...`, `Plots...`, `Save...`, `Style...`, `Bootstrap...`), handler in `app_dialogs_deming.rs`, and menu entry `Analyze → Regression → Orthogonal / Deming...`;
+   * Implemented *Model Summary*, *Parameter Estimates (Jackknife SE)*, *Bootstrap* table, vector plots (Scatter + Deming Line + dashed $Y = X$ identity line, Orth. Residuals vs. Fitted), and TSV/HTML/TXT export in `views/output_view/tables_deming_regression/{mod.rs, plots.rs}`;
+   * Added complete Fluent keys in `locales/en.ftl` and `locales/ru.ftl`.
+4. **Verification & DoD:**
+   * Passed `deming_regression` tests in `statcraft_algo` (4/4) and `statcraft_syntax` (2/2), `dialog_invariants` (52/52), `output_viewer_invariants` (12/12), `xtask layers`, `file-guard`, `design-guard`, `fmt --check`, and `clippy -- -D warnings`.
+   * Updated `docs/FEATURES*.md`, `docs/parity-checklist.md`, `docs/SPSS_ALGORITHMS_AUDIT*.md`, `docs/SPSS_UI_CANON_AUDIT*.md`, `docs/CHECKLIST.md`, `website/src/lib/audit-data.ts`, and both chronicles.

@@ -96,6 +96,8 @@ Beyond isolated unit testing, StatCraft enforces mathematical and architectural 
 | **Block 18** | Clustering, Reports & Survival Analysis (`QUICK CLUSTER`, `CODEBOOK`, `SUMMARIZE`, `KM`, `SURVIVAL`) | `cluster_kmeans.rs`, `codebook_core.rs`, `summarize_core.rs`, `survival_km.rs`, `survival_lifetables.rs` | **100% Verified** | $\le 10^{-6}$ |
 | **Block 19** | Multinomial Logistic Regression (`NOMREG`) | `multinomial_logistic/` (`engine.rs`, `diagnostics.rs`, `mod.rs`, `types.rs`) | **100% Verified** | $\le 10^{-6}$ |
 | **Block 20** | Cox Proportional Hazards Regression (`COXREG`) | `cox/` (`baseline.rs`, `engine.rs`, `mod.rs`, `types.rs`) | **100% Verified** | $\le 10^{-6}$ |
+| **Block 21** | Theil–Sen Robust Linear Regression (`THEIL SEN`) | `theil_sen/` (`engine.rs`, `types.rs`, `mod.rs`) | **100% Verified** | $\le 10^{-6}$ (Sen 1968 & SciPy) |
+| **Block 22** | Orthogonal / Deming Regression (`ORTHOGONAL REGRESSION`) | `deming_regression/` (`engine.rs`, `types.rs`, `mod.rs`) | **100% Verified** | $\le 10^{-6}$ (Deming & `scipy.odr`) |
 
 ---
 
@@ -1055,6 +1057,30 @@ Beyond isolated unit testing, StatCraft enforces mathematical and architectural 
     - Baseline survival $\hat{S}_{0s}(t) = \exp(-\hat{H}_{0s}(t))$ and survival at covariate means $\hat{S}(t \mid \bar{x}) = [\hat{S}_{0s}(t)]^{\exp(\hat{\beta}^T \bar{x})}$;
     - Vector Step Function Plot in Output Viewer.
 * **Verdict:** **100% Mathematical Equivalence to SPSS Canon & Lifelines ($\le 10^{-6}$).**
+
+---
+
+### Block 21: Theil–Sen Robust Linear Regression (Feature 032 — THEIL SEN)
+
+#### 21.1. `THEIL SEN` (Sen 1968 Estimator & Mann–Kendall Trend Test)
+* **Implementation:** [`crates/statcraft_algo/src/theil_sen/`](../crates/statcraft_algo/src/theil_sen/engine.rs)
+* **Golden Oracle Tests:** `theil_sen::tests::{test_theil_sen_exact_linear_with_outlier, test_theil_sen_golden_oracle_with_ties_and_missing, test_theil_sen_error_cases, test_theil_sen_bootstrap}`
+* **Mathematical Formula Verification:**
+  * **Median Slope & Intercept:** Pairwise slopes $m_{ij} = (y_j - y_i)/(x_j - x_i)$ for $|x_j - x_i| > \varepsilon$, $\hat{m} = \text{median}(m_{ij})$, $\hat{b} = \text{median}(y_i - \hat{m} x_i)$, bounded by `MAX_EXACT_PAIRS_N = 5000`.
+  * **Sen (1968) Tie-Corrected CI & Mann–Kendall:** Exact tie-adjusted variance $\text{Var}(S)$ across $X$ and $Y$ tie groups, Kendall's $\tau_b$, $Z = S / \sqrt{\text{Var}(S)}$, two-sided $p$-value, MAD of residuals, and non-parametric bootstrap.
+* **Verdict:** **100% Mathematical Equivalence to Sen (1968) & SciPy ($\le 10^{-6}$).**
+
+---
+
+### Block 22: Orthogonal / Deming Regression (Feature 033 — ORTHOGONAL REGRESSION)
+
+#### 22.1. `ORTHOGONAL REGRESSION` (Total Least Squares & General Deming with Jackknife SE)
+* **Implementation:** [`crates/statcraft_algo/src/deming_regression/`](../crates/statcraft_algo/src/deming_regression/engine.rs)
+* **Golden Oracle Tests:** `deming_regression::tests::{test_deming_exact_linear, test_deming_golden_oracle_lambda_1_and_custom, test_deming_edge_cases, test_deming_bootstrap}`
+* **Mathematical Formula Verification:**
+  * **Deming Slope & Intercept:** $\hat{\beta}_1 = \frac{(s_{yy} - \lambda s_{xx}) + \sqrt{(s_{yy} - \lambda s_{xx})^2 + 4\lambda s_{xy}^2}}{2 s_{xy}}$ (with degenerate $s_{xy} = 0$ and $s_{xx} = s_{yy} = 0$ guards), $\hat{\beta}_0 = \bar{y} - \hat{\beta}_1 \bar{x}$, for any $\lambda = \sigma_y^2 / \sigma_x^2 > 0$.
+  * **Leave-One-Out Jackknife SE & $t$-CI:** $\text{SE}_{\text{JK}} = \sqrt{\frac{n-1}{n}\sum_{i=1}^n (\hat{\theta}_{(-i)} - \bar{\theta}_{\text{JK}})^2}$, two-sided $t$-intervals with $df = n - 2$, orthogonal residual SD, and non-parametric bootstrap.
+* **Verdict:** **100% Mathematical Equivalence to Deming Closed-Form & `scipy.odr` ($\le 10^{-6}$).**
 
 ---
 

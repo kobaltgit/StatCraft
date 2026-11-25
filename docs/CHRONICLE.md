@@ -4278,3 +4278,47 @@
 2. **Верификация и DoD:**
    * Добавлен тест `test_crosstabs_stage3_layered_stats_charts_and_export` в `crates/statcraft_app/tests/output_viewer_invariants/crosstabs.rs`;
    * Обновлены `docs/CHECKLIST.md`, `specs/031-crosstabs-output-and-charts/tasks.md` и хроника.
+
+
+---
+
+### Фаза 126: Робастная регрессия Тейла — Сена (Feature 032 — `THEIL SEN`)
+*Время: 25 ноября 2026, 21:08 (~35 минут)*
+
+Реализована непараметрическая робастная простая линейная регрессия **Theil–Sen Estimator** (оценка Тейла — Сена, Sen 1968) по спецификации `specs/032-theil-sen-regression`:
+1. **Вычислительное ядро L2 (`crates/statcraft_algo/src/theil_sen/`):**
+   * `types.rs`, `engine.rs`, `mod.rs`, `tests.rs` (все файлы $\le 500$ строк, 100% Safe Rust без `unwrap`/`expect`/`panic!`);
+   * Попарное исключение пропусков, расчёт медианы парных наклонов $\hat{m}$ и свободного члена $\hat{b} = \text{median}(y_i - \hat{m} x_i)$, доверительный интервал Sen (1968) с поправкой на связки, тест Манна — Кендалла ($\tau_b, Z, p$), MAD остатков и защита памяти `MAX_EXACT_PAIRS_N = 5000`;
+   * Непараметрический бутстреп `compute_theil_sen_bootstrap` и Golden Oracle тесты (`<= 1e-6`).
+2. **Командная шина и синтаксис L5 (`crates/statcraft_syntax/`):**
+   * Реализована команда `TheilSenCommand` (`stat.regression.theil_sen`) в `commands/theil_sen_cmd.rs` с сохранением предсказанных значений (`PRE_n`) и остатков (`RES_n`) в `DataSet` с полной поддержкой `undo`;
+   * Добавлен парсинг двухсловной команды `THEIL SEN` в `parser.rs` и `mappers/stats/theil_sen.rs`.
+3. **Интерфейс, вывод и локализация L6 (`crates/statcraft_app/`, `locales/`):**
+   * Создан диалог `TheilSenDialog` (`dialogs/theil_sen_dialog/`) на `DialogKit` с 5-кнопочной панелью `SubdialogSidebar` (`Параметры...`, `Графики...`, `Сохранить...`, `Стиль...`, `Бутстреп...`) и пункт меню `Анализ → Регрессия → Регрессия Тейла — Сена...`;
+   * В `views/output_view/tables_theil_sen.rs` реализованы таблицы *Model Summary*, *Parameter Estimates*, таблица *Bootstrap*, векторные графики (Scatter + Trend Line, Residuals vs. Fitted) и экспорт в TSV / HTML / TXT;
+   * Добавлены синхронные ключи локализации в `locales/en.ftl` и `locales/ru.ftl`.
+4. **Верификация и документация (DoD):**
+   * Пройдены тесты `theil_sen` в `statcraft_algo` (4/4) и `statcraft_syntax` (2/2), `statcraft_i18n` (14/14 + 4/4), `dialog_invariants` (52/52), `output_viewer_invariants` (12/12), `xtask layers`, `file-guard`, `design-guard`, `fmt --check` и `clippy -- -D warnings`.
+   * Обновлены `docs/FEATURES*.md`, `docs/parity-checklist.md`, `docs/SPSS_ALGORITHMS_AUDIT*.md`, `docs/SPSS_UI_CANON_AUDIT*.md`, `docs/CHECKLIST.md`, `website/src/lib/audit-data.ts` и хроника.
+
+
+---
+
+### Фаза 127: Ортогональная регрессия и регрессия Деминга (Feature 033 — `ORTHOGONAL REGRESSION`)
+*Время: 25 ноября 2026, 21:30 (~25 минут)*
+
+Реализована регрессия с ошибками в обеих переменных **Orthogonal / Deming Regression** (Total Least Squares при $\lambda = 1.0$ и общая регрессия Деминга при произвольном $\lambda > 0$) по спецификации `specs/033-orthogonal-deming-regression`:
+1. **Вычислительное ядро L2 (`crates/statcraft_algo/src/deming_regression/`):**
+   * `types.rs`, `engine.rs`, `mod.rs`, `tests.rs` (все файлы $\le 500$ строк, 100% Safe Rust без `unwrap`/`expect`/`panic!`);
+   * Аналитическая формула Деминга через выборочные моменты $(s_{xx}, s_{yy}, s_{xy})$ с обработкой вырожденных случаев ($s_{xy} = 0$, $N < 3$, $\lambda \le 0$);
+   * Leave-One-Out **Jackknife** для `slope_se`, `intercept_se` и $t$-доверительных интервалов ($df = N - 2$), СКО ортогональных остатков, корреляция Пирсона $r$, бутстреп-обёртка `compute_deming_regression_bootstrap` и Golden Oracle тесты (`<= 1e-6`).
+2. **Командная шина и синтаксис L5 (`crates/statcraft_syntax/`):**
+   * Реализована команда `DemingRegressionCommand` (`stat.regression.orthogonal`) в `commands/deming_regression_cmd.rs` с сохранением `PRE_n`/`RES_n` в `DataSet` с полной поддержкой `undo`;
+   * Добавлен парсинг двухсловной команды `ORTHOGONAL REGRESSION` в `parser.rs` и `mappers/stats/deming_regression.rs`.
+3. **Интерфейс, вывод и локализация L6 (`crates/statcraft_app/`, `locales/`):**
+   * Создан диалог `DemingRegressionDialog` (`dialogs/deming_regression_dialog/`) на `DialogKit` с 5-кнопочной панелью `SubdialogSidebar` (`Параметры...`, `Графики...`, `Сохранить...`, `Стиль...`, `Бутстреп...`), обработчиком в `app_dialogs_deming.rs` и пунктом меню `Анализ → Регрессия → Ортогональная / Деминга...`;
+   * В `views/output_view/tables_deming_regression/{mod.rs, plots.rs}` реализованы таблицы *Model Summary*, *Parameter Estimates (Jackknife SE)*, *Bootstrap*, векторные графики (Scatter + линия Деминга + пунктирная диагональ $Y = X$, Orth. Residuals vs. Fitted) и экспорт в TSV / HTML / TXT;
+   * Добавлены синхронные ключи локализации в `locales/en.ftl` и `locales/ru.ftl`.
+4. **Верификация и документация (DoD):**
+   * Пройдены тесты `deming_regression` в `statcraft_algo` (4/4) и `statcraft_syntax` (2/2), `dialog_invariants` (52/52), `output_viewer_invariants` (12/12), `xtask layers`, `file-guard`, `design-guard`, `fmt --check` и `clippy -- -D warnings`.
+   * Обновлены `docs/FEATURES*.md`, `docs/parity-checklist.md`, `docs/SPSS_ALGORITHMS_AUDIT*.md`, `docs/SPSS_UI_CANON_AUDIT*.md`, `docs/CHECKLIST.md`, `website/src/lib/audit-data.ts` и хроника.

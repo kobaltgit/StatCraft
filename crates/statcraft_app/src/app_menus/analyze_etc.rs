@@ -217,6 +217,26 @@ impl StatCraftApp {
                             self.curvefit_dialog_state.is_open = true;
                             ui.close_menu();
                         }
+                        if render_menu_item(
+                            ui,
+                            t!("menu-analyze-regression-theil-sen"),
+                            requires_dataset_status,
+                        )
+                        .clicked()
+                        {
+                            self.theil_sen_dialog_state.is_open = true;
+                            ui.close_menu();
+                        }
+                        if render_menu_item(
+                            ui,
+                            t!("menu-analyze-regression-orthogonal"),
+                            requires_dataset_status,
+                        )
+                        .clicked()
+                        {
+                            self.deming_regression_dialog_state.is_open = true;
+                            ui.close_menu();
+                        }
                     });
                     ui.menu_button(t!("menu-analyze-nonparametric"), |ui| {
                         if render_menu_item(

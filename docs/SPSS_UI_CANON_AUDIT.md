@@ -227,3 +227,23 @@ Phase 3 concludes the comprehensive audit of StatCraft, evaluating the user-faci
   * Main dialog uses `DialogShell::standard`, `VariablePicker`, `TransferButton`, `GroupBox` (`Layer 1 of N` with `Previous`/`Next` and `Display layer variables in table layers`), `Display clustered bar charts`, `Suppress tables`, 6-button `SubdialogSidebar`, and `DialogActionBar`.
   * All 6 subdialogs (`Exact...`, `Statistics...`, `Cells...`, `Format...`, `Style...`, `Bootstrap...`) use `DialogKit` (`DialogShell`, `GroupBox`, `SubdialogActionBar`) with transactional `Cancel` rollback.
   * Verified with `file-guard`, `design-guard`, `dialog_invariants`, and `statcraft_i18n` (`-j 1`).
+
+
+---
+
+### Feature 032 Update: Theil–Sen Regression Dialog (`specs/032-theil-sen-regression`)
+* **Implementation:** `crates/statcraft_app/src/dialogs/theil_sen_dialog/` (`mod.rs`, `state.rs`, `subdialogs.rs`), `app_dialogs.rs`
+* **Audited Invariants:**
+  * Main dialog uses `DialogShell::standard`, `render_variable_list_panel`, `TransferButton`, single-variable `Dependent`/`Independent` target boxes, 5-button `SubdialogSidebar` (`Options...`, `Plots...`, `Save...`, `Style...`, `Bootstrap...`), and `DialogActionBar`.
+  * Subdialogs (`Options`, `Plots`, `Save`) and reusable `table_style_dialog` / `bootstrap_dialog` use `DialogKit` (`DialogShell::subdialog`, `GroupBox`, `SubdialogActionBar`) with zero hardcoded strings.
+  * Verified with `file-guard`, `design-guard`, `dialog_invariants` (52/52), `output_viewer_invariants` (12/12), and `statcraft_i18n` (14/14 + 4/4).
+
+
+---
+
+### Feature 033 Update: Orthogonal / Deming Regression Dialog (`specs/033-orthogonal-deming-regression`)
+* **Implementation:** `crates/statcraft_app/src/dialogs/deming_regression_dialog/` (`mod.rs`, `state.rs`, `subdialogs.rs`), `app_dialogs_deming.rs`
+* **Audited Invariants:**
+  * Main dialog uses `DialogShell::standard`, `render_variable_list_panel`, `TransferButton`, single-variable `Dependent`/`Independent` target boxes, 5-button `SubdialogSidebar` (`Options...`, `Plots...`, `Save...`, `Style...`, `Bootstrap...`), and `DialogActionBar`.
+  * Subdialogs (`Options` with Orthogonal $\lambda=1.0$ / Custom $\lambda$ radio toggle, `Plots` with $Y=X$ identity line toggle, `Save`) and reusable `table_style_dialog` / `bootstrap_dialog` use `DialogKit` (`DialogShell::subdialog`, `GroupBox`, `SubdialogActionBar`) with zero hardcoded strings.
+  * Verified with `file-guard`, `design-guard`, `dialog_invariants` (52/52), `output_viewer_invariants` (12/12), `fmt --check`, and `clippy -- -D warnings`.

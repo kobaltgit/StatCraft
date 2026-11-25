@@ -12,6 +12,7 @@ pub mod tables_correlations;
 pub mod tables_cox;
 pub mod tables_crosstabs;
 pub mod tables_curvefit;
+pub mod tables_deming_regression;
 pub mod tables_descriptives;
 pub mod tables_explore;
 pub mod tables_factor;
@@ -31,6 +32,7 @@ pub mod tables_regression;
 pub mod tables_reliability;
 pub mod tables_reports;
 pub mod tables_survival;
+pub mod tables_theil_sen;
 pub mod tables_ttest_indep;
 pub mod tables_ttest_onesample;
 pub mod tables_ttest_paired;
@@ -53,6 +55,9 @@ pub use tables_correlations::{correlations_to_tsv, render_spss_correlations_tabl
 pub use tables_cox::{cox_to_tsv, render_spss_cox_regression};
 pub use tables_crosstabs::{crosstabs_to_tsv, render_crosstabs_item};
 pub use tables_curvefit::{curvefit_to_tsv, render_spss_curvefit_tables};
+pub use tables_deming_regression::{
+    deming_regression_to_tsv, render_spss_deming_regression, DemingRegressionOutputItem,
+};
 pub use tables_descriptives::{descriptives_to_tsv, render_spss_descriptives_pivot_table};
 pub use tables_explore::{explore_to_tsv, render_spss_explore_pivot_tables};
 pub use tables_factor::{factor_to_tsv, render_spss_factor};
@@ -80,6 +85,7 @@ pub use tables_reports::{
 pub use tables_survival::{
     lifetables_to_tsv, render_spss_lifetables, render_spss_survival_tables, survival_to_tsv,
 };
+pub use tables_theil_sen::{render_spss_theil_sen, theil_sen_to_tsv, TheilSenOutputItem};
 pub use tables_ttest_indep::{indep_ttest_to_tsv, render_spss_indep_ttest_tables};
 pub use tables_ttest_onesample::{onesample_ttest_to_tsv, render_spss_onesample_ttest_tables};
 pub use tables_ttest_paired::{paired_ttest_to_tsv, render_spss_paired_ttest_tables};
@@ -106,6 +112,8 @@ pub fn extract_item_tsv(kind: &OutputItemKind) -> Option<String> {
         } => Some(kruskal_wallis_to_tsv(results, grouping_var)),
         OutputItemKind::TwoRelatedSamples(results) => Some(related_samples_to_tsv(results)),
         OutputItemKind::LinearRegression(res) => Some(regression_to_tsv(res)),
+        OutputItemKind::TheilSen(item) => Some(theil_sen_to_tsv(item)),
+        OutputItemKind::DemingRegression(item) => Some(deming_regression_to_tsv(item)),
         OutputItemKind::PartialCorrelations(res) => Some(partial_corr_to_tsv(res)),
         OutputItemKind::LogisticRegression(res) => Some(logistic_to_tsv(res)),
         OutputItemKind::MultinomialLogistic(res) => Some(multinomial_logistic_to_tsv(res)),

@@ -1,4 +1,4 @@
-# StatCraft v0.4.8
+# StatCraft v0.4.9
 
 [English](#english) | [Русский](#русский)
 
@@ -7,26 +7,34 @@
 <a name="english"></a>
 ## English
 
-StatCraft v0.4.8 delivers full IBM SPSS Statistics parity for **Descriptives** (**Features 023–025**), **Explore** (**Features 026–028**), and **Crosstabs** (**Features 029–031**) — spanning clean-room statistical algorithms, `.sps` syntax round-trip, `DialogKit` subdialogs, `TableStyle` & `Bootstrap` integration, and `egui_plot` charts.
+StatCraft v0.4.9 adds two new robust/errors-in-variables regression procedures requested by the community (GitHub Issue #4), **Linux AppImage** packaging, and important Output Viewer & i18n polish.
 
-### 📊 Crosstabs (`CROSSTABS`) Full Parity (Features 029–031)
-* **Multi-Layer Tables & Format:** `Layer 1 of N` pagination (`BY` layer chaining), `Display layer variables in table layers`, `Row order` (`Ascending` / `Descending`), `Suppress tables` (`/NOTABLES`), and `Display clustered bar charts` (`/BARCHART`).
-* **Exact & Monte Carlo Tests:** `Asymptotic only`, `Monte Carlo` (Patefield $r \times c$ sampler with confidence interval), and bounded `Exact` with configurable time limit.
-* **Complete Statistics Suite:** `Chi-square` (including `Linear-by-Linear Association`), `Correlations` (Pearson's $r$, Spearman's $\rho$), Nominal (`Contingency Coefficient`, `Phi & Cramér's V`, `Lambda`, `Uncertainty Coefficient`), Ordinal (`Gamma`, `Somers' d`, `Kendall's tau-b/c`), `Eta`, `Kappa`, `Risk` (OR & Cohort RR with 95% CI), `McNemar`, and stratified `Cochran's & Mantel-Haenszel` ($2 \times 2 \times K$).
-* **Cells, Style & Bootstrap:** `Hide small counts`, column proportion `z-test` with Bonferroni adjustment and subscript letters (`a, b, c...`), 3 residual types (`Unstandardized`, `Standardized`, `Adjusted`), `APA style`, 5 `Noninteger Weights` modes, `TableStyle`, `Bootstrap`, and `egui_plot` Clustered Bar Charts.
+### 📈 New Regression Procedures (Features 032–033)
+* **Theil–Sen Robust Linear Regression (`THEIL SEN`):**
+  * Non-parametric outlier-resistant simple linear regression (~29.3% breakdown point) with Sen (1968) tie-corrected confidence intervals, Mann–Kendall trend test ($\tau_b, Z, p$), MAD of residuals, and `MAX_EXACT_PAIRS_N = 5000` safety guard.
+  * Full `DialogKit` UI with 5 applicable subdialogs (`Options...`, `Plots...`, `Save...`, `Style...`, `Bootstrap...`), `PRE_n`/`RES_n` dataset saving with `Undo`, vector scatter & residual plots, and `.sps` syntax round-trip.
+* **Orthogonal / Deming Regression (`ORTHOGONAL REGRESSION`):**
+  * Closed-form errors-in-variables regression supporting **Orthogonal (Total Least Squares, $\lambda = 1.0$)** and general **Deming Regression** ($\lambda = \sigma_y^2 / \sigma_x^2 > 0$).
+  * Leave-One-Out **Jackknife** standard errors and Student-$t$ confidence intervals ($df = N - 2$), orthogonal residual SD, Pearson's $r$, `PRE_n`/`RES_n` saving with `Undo`, scatter plot with clipped $Y = X$ identity line, `Bootstrap`, and `.sps` syntax round-trip.
 
-### 🔍 Explore (`EXAMINE`) & Descriptives (`DESCRIPTIVES`) Parity (Features 023–028)
-* **Explore (`EXAMINE`):** M-estimators (Huber, Tukey, Hampel, Andrews), HAVERAGE Percentiles & Tukey's Hinges, `Label Cases by`, `Missing=Report`, 4-row Levene Spread-vs-Level test, `Bootstrap...`, and `egui_plot` Boxplots / Stem-and-Leaf / Histograms / Q-Q / Spread-vs-Level plots.
-* **Descriptives (`DESCRIPTIVES`):** Standardized `Z*` score saving, full `Options...` subdialog, and Output Viewer / TSV/HTML/TXT export.
+### 🐧 Linux AppImage & Output Viewer Polish
+* **Linux AppImage:** Added `statcraft-linux-x64.AppImage` to the automated release pipeline alongside `.deb` and `.tar.gz`.
+* **Output Viewer & i18n:**
+  * Localized the `Notes` metadata table (`Output Created`, `Active Dataset`, `N of Active Cases`, `N of Variables`, `Session`).
+  * Display human-readable variable `Label`s in regression tables and plot axes when defined.
+  * Fixed $Y = X$ identity line scaling in Deming scatter plots, added axis padding & Y-axis numeric ticks, normalized `-0.0000` formatting, and auto-sized table columns to fit long variable labels.
 
-### 📋 Full Changelog for v0.4.8
+### 📋 Full Changelog for v0.4.9
 ```markdown
-## [0.4.8] - 2026-11-25
+## [0.4.9] - 2026-11-25
 
 ### Added
-- **Crosstabs (Features 029–031):** Multi-layer tables, Exact/Monte Carlo (Patefield), full Nominal/Ordinal/Eta/Kappa/Risk/McNemar/CMH statistics, z-test + Bonferroni, 3 residual types, 5 non-integer weight modes, 6 subdialogs (incl. Style & Bootstrap), Clustered Bar Charts, and full CROSSTABS .sps round-trip.
-- **Explore (Features 026–028):** M-estimators, HAVERAGE Percentiles & Tukey's Hinges, Label Cases by, Missing=Report, 4-row Levene Spread-vs-Level, Bootstrap integration, and egui_plot charts.
-- **Descriptives (Features 023–025):** Z-score variable saving, Options subdialog parity, and Output Viewer / export parity.
+- **Theil–Sen Estimator (Feature 032):** Robust simple linear regression, Mann-Kendall trend test, Bootstrap, PRE/RES saving, scatter/residual plots, and THEIL SEN .sps syntax.
+- **Orthogonal / Deming Regression (Feature 033):** Closed-form Deming (lambda = 1.0 & custom lambda > 0), Jackknife SE & t-CI, Bootstrap, PRE/RES saving, scatter plot with Y=X line, and ORTHOGONAL REGRESSION .sps syntax.
+- **Linux AppImage:** Automated `statcraft-linux-x64.AppImage` build in GitHub Releases.
+
+### Fixed
+- **Output Viewer & i18n:** Translated hardcoded Notes labels, fixed Deming Y=X plot scaling, added axis padding & Y-ticks, eliminated `-0.0000`, auto-fitted table column widths, and rendered variable Labels.
 ```
 
 ---
@@ -34,21 +42,26 @@ StatCraft v0.4.8 delivers full IBM SPSS Statistics parity for **Descriptives** (
 <a name="русский"></a>
 ## Русский
 
-Релиз StatCraft v0.4.8 обеспечивает полный паритет с IBM SPSS Statistics для процедур **Описательные статистики (Descriptives)** (**Features 023–025**), **Исследовать (Explore)** (**Features 026–028**) и **Таблицы сопряжённости (Crosstabs)** (**Features 029–031**) — от чистых математических алгоритмов и синтаксиса `.sps` до диалогов `DialogKit`, стилей таблиц, бутстрепа и векторных графиков `egui_plot`.
+Релиз StatCraft v0.4.9 добавляет две новые регрессионные процедуры по запросу сообщества (GitHub Issue #4), сборку **Linux AppImage**, а также важные улучшения Output Viewer и локализации.
 
-### 📊 Таблицы сопряжённости (`CROSSTABS`) — полный паритет (Features 029–031)
-* **Многослойные таблицы и формат:** пагинация `Слой 1 из N` (`BY`-слои), `Показать переменные слоёв в слоях таблицы`, `Порядок строк` (`По возрастанию` / `По убыванию`), `Не выводить таблицы` (`/NOTABLES`) и `Кластеризованные столбчатые диаграммы` (`/BARCHART`).
-* **Точные критерии и Монте-Карло:** `Только асимптотически`, `Монте-Карло` (алгоритм Патефилда $r \times c$ с доверительным интервалом) и `Точные` с ограничением времени расчёта.
-* **Полный набор статистик:** `Хи-квадрат` (вкл. линейно-линейную связь), `Корреляции` (Пирсон, Спирмен), номинальные (`Коэфф. сопряжённости`, `Фи и V Крамера`, `Лямбда`, `Коэфф. неопределённости`), порядковые (`Гамма`, `d Сомерса`, `Тау-b/c Кендалла`), `Эта`, `Каппа`, `Риск` (OR/RR с 95% ДИ), `Макнемара`, а также `Кокрена и Мантеля-Хенцеля` ($2 \times 2 \times K$ с тестами Бреслоу-Дея и Тароне).
-* **Ячейки, Стиль и Бутстреп:** скрытие малых частот, `z-критерий` сравнения долей с поправкой Бонферрони и подстрочными буквами (`a, b, c...`), 3 вида остатков, стиль `APA`, 5 режимов нецелочисленных весов, интеграция `TableStyle` и `Bootstrap`, кластеризованные диаграммы `egui_plot`.
+### 📈 Новые регрессионные процедуры (Features 032–033)
+* **Робастная регрессия Тейла — Сена (`THEIL SEN`):**
+  * Непараметрическая, устойчивая к выбросам простая линейная регрессия (точка срыва ~29.3%) с ДИ по методу Sen (1968) с поправкой на связки, критерием тренда Манна — Кендалла ($\tau_b, Z, p$), MAD остатков и защитой `MAX_EXACT_PAIRS_N = 5000`.
+  * Интерфейс на `DialogKit` с 5 применимыми поддиалогами (`Параметры...`, `Графики...`, `Сохранить...`, `Стиль...`, `Бутстреп...`), сохранение `PRE_n`/`RES_n` в датасет с `Undo`, векторные графики и полный `.sps` round-trip.
+* **Ортогональная регрессия и регрессия Деминга (`ORTHOGONAL REGRESSION`):**
+  * Аналитическая регрессия с ошибками в обеих переменных для **ортогональной регрессии (Total Least Squares, $\lambda = 1.0$)** и общей **регрессии Деминга** ($\lambda = \sigma_y^2 / \sigma_x^2 > 0$).
+  * Стандартные ошибки методом **Jackknife** и $t$-доверительные интервалы ($df = N - 2$), СКО ортогональных остатков, $r$ Пирсона, сохранение `PRE_n`/`RES_n` с `Undo`, график рассеяния с линией $Y = X$, `Бутстреп...` и `.sps` round-trip.
 
-### 🔍 Исследовать (`EXAMINE`) и Описательные (`DESCRIPTIVES`) (Features 023–028)
-* **Исследовать (`EXAMINE`):** M-оценки (Хубера, Тьюки, Хампеля, Эндрюса), процентили `HAVERAGE` и петли Тьюки, маркировка наблюдений (`Label Cases by`), `Missing=Report`, 4-строчный тест Левена Spread-vs-Level, `Бутстреп...` и графики `egui_plot` (ящичковые, стебель-листья, гистограммы, Q-Q, разброс-уровень).
-* **Описательные (`DESCRIPTIVES`):** сохранение стандартизованных `Z*`-оценок, поддиалог `Параметры...` и экспорт TSV/HTML/TXT.
+### 🐧 Linux AppImage и исправления Output Viewer
+* **Linux AppImage:** в пайплайн авторелизов добавлен универсальный пакет `statcraft-linux-x64.AppImage` в дополнение к `.deb` и `.tar.gz`.
+* **Output Viewer и локализация:**
+  * Локализована таблица `Примечания` (`Вывод создан`, `Активный массив данных`, `Число активных наблюдений`, `Число переменных`, `Сессия`).
+  * В таблицах и на осях графиков новых регрессий отображаются человекочитаемые метки переменных (`Label`).
+  * Исправлено масштабирование оси Y при включённой линии $Y = X$ в Deming, добавлены отступы и числовые деления оси Y, убран `-0.0000`, настроена автоширина колонок под длинные названия.
 
 ---
 
 ### 📦 Дистрибутивы релиза (Artifacts)
 * **Windows (x64):** Автономный инсталлятор (`statcraft-windows-x64-installer.exe`) + Портативный архив (`statcraft-windows-x64.zip`).
-* **Linux (x64):** Пакет Debian (`statcraft_0.4.8_amd64.deb`) + Портативный TAR.GZ (`statcraft-linux-x64.tar.gz`).
+* **Linux (x64):** AppImage (`statcraft-linux-x64.AppImage`) + Пакет Debian (`statcraft-linux-x64.deb`) + Портативный TAR.GZ (`statcraft-linux-x64.tar.gz`).
 * **macOS (Apple Silicon & Intel):** Подписанный DMG-образ (`statcraft-macos-arm64.dmg`, `statcraft-macos-x64.dmg`).

@@ -227,3 +227,23 @@
   * Главный диалог построен на `DialogShell::standard`, `VariablePicker`, `TransferButton`, `GroupBox` (`Слой 1 из N` с кнопками `Предыдущее`/`Следующее` и чекбоксом `Показать переменные слоев в слоях таблицы`), `Вывести кластеризованные столбчатые диаграммы`, `Не выводить таблицы`, 6-кнопочной `SubdialogSidebar` и `DialogActionBar`.
   * Все 6 поддиалогов (`Точные...`, `Статистики...`, `Ячейки...`, `Формат...`, `Стиль...`, `Бутстреп...`) построены на `DialogKit` (`DialogShell`, `GroupBox`, `SubdialogActionBar`) с транзакционным откатом при `Отмена`.
   * Проверено через `file-guard`, `design-guard`, `dialog_invariants` и `statcraft_i18n` (`-j 1`).
+
+
+---
+
+### Обновление Feature 032: Диалог регрессии Тейла — Сена (`specs/032-theil-sen-regression`)
+* **Файлы реализации:** `crates/statcraft_app/src/dialogs/theil_sen_dialog/` (`mod.rs`, `state.rs`, `subdialogs.rs`), `app_dialogs.rs`
+* **Проверенные инварианты:**
+  * Главный диалог построен на `DialogShell::standard`, `render_variable_list_panel`, `TransferButton`, одиночных полях `Dependent`/`Independent`, 5-кнопочной боковой панели `SubdialogSidebar` (`Параметры...`, `Графики...`, `Сохранить...`, `Стиль...`, `Бутстреп...`) и `DialogActionBar`.
+  * Поддиалоги (`Options`, `Plots`, `Save`) и переиспользуемые `table_style_dialog` / `bootstrap_dialog` построены на `DialogKit` (`DialogShell::subdialog`, `GroupBox`, `SubdialogActionBar`) с нулевым хардкодом строк.
+  * Проверено через `file-guard`, `design-guard`, `dialog_invariants` (52/52), `output_viewer_invariants` (12/12) и `statcraft_i18n` (14/14 + 4/4).
+
+
+---
+
+### Обновление Feature 033: Диалог ортогональной регрессии / Деминга (`specs/033-orthogonal-deming-regression`)
+* **Файлы реализации:** `crates/statcraft_app/src/dialogs/deming_regression_dialog/` (`mod.rs`, `state.rs`, `subdialogs.rs`), `app_dialogs_deming.rs`
+* **Проверенные инварианты:**
+  * Главный диалог построен на `DialogShell::standard`, `render_variable_list_panel`, `TransferButton`, одиночных полях `Dependent`/`Independent`, 5-кнопочной боковой панели `SubdialogSidebar` (`Параметры...`, `Графики...`, `Сохранить...`, `Стиль...`, `Бутстреп...`) и `DialogActionBar`.
+  * Поддиалоги (`Options` с переключателем Orthogonal $\lambda=1.0$ / Custom $\lambda$, `Plots` с диагональю $Y=X$, `Save`) и переиспользуемые `table_style_dialog` / `bootstrap_dialog` построены на `DialogKit` (`DialogShell::subdialog`, `GroupBox`, `SubdialogActionBar`) с нулевым хардкодом строк.
+  * Проверено через `file-guard`, `design-guard`, `dialog_invariants` (52/52), `output_viewer_invariants` (12/12), `fmt --check` и `clippy -- -D warnings`.

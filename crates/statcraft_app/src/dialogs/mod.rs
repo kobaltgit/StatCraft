@@ -14,6 +14,7 @@ pub mod cox_regression_dialog;
 pub mod crosstabs_dialog;
 pub mod curvefit_dialog;
 pub mod date_time_dialog;
+pub mod deming_regression_dialog;
 pub mod descriptives_dialog;
 pub mod dummy_dialog;
 pub mod explore_dialog;
@@ -55,6 +56,7 @@ pub mod summarize_dialog;
 pub mod survival_km_dialog;
 pub mod survival_lifetables_dialog;
 pub mod table_style_dialog;
+pub mod theil_sen_dialog;
 pub mod time_series_dialog;
 pub mod transpose_dialog;
 pub mod ttest_indep_define_groups;
@@ -101,6 +103,9 @@ pub use crosstabs_dialog::{
 pub use curvefit_dialog::{render_curvefit_dialog, CurveFitDialogAction, CurveFitDialogState};
 pub use date_time_dialog::{
     render_date_time_dialog, DateTimeDialogAction, DateTimeDialogState, DateTimeDialogTask,
+};
+pub use deming_regression_dialog::{
+    render_deming_regression_dialog, DemingRegressionDialogAction, DemingRegressionDialogState,
 };
 pub use descriptives_dialog::{
     render_descriptives_dialog, DescriptivesDialogAction, DescriptivesDialogState,
@@ -210,6 +215,7 @@ pub use survival_lifetables_dialog::{
     render_survival_lifetables_dialog, LifeTablesDialogAction, LifeTablesDialogState,
 };
 pub use table_style_dialog::{render_table_style_dialog, TableStyleState};
+pub use theil_sen_dialog::{render_theil_sen_dialog, TheilSenDialogAction, TheilSenDialogState};
 pub use time_series_dialog::{
     render_time_series_dialog, TimeSeriesDialogAction, TimeSeriesDialogState, TimeSeriesFnType,
     TimeSeriesItem,

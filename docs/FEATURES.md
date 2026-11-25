@@ -260,6 +260,14 @@ All statistical algorithms in StatCraft are implemented in **100% pure Safe Rust
 * **Curve Estimation (`Curve Estimation` / `CURVEFIT`):**
   * Simultaneous fitting and comparison of 11 regression models: Linear, Logarithmic, Inverse, Quadratic, Cubic, Power, Compound, S-curve, Logistic, Growth, and Exponential.
   * Comprehensive *Model Summary & Parameter Estimates* table comparing $R^2$, $F$, degrees of freedom, significance, constant $b_0$, and regression parameters $b_1, b_2, b_3$.
+* **Theil–Sen Robust Linear Regression (`Theil-Sen` / `THEIL SEN`):**
+  * Non-parametric simple linear regression (Sen 1968) resistant to outliers (breakdown point $\approx 29.3\%$), bounded by `MAX_EXACT_PAIRS_N = 5000`.
+  * Computes median pairwise slope, median intercept $\text{median}(y_i - \hat{m} x_i)$, Sen (1968) tie-corrected confidence interval, MAD of residuals, and optional Mann–Kendall trend test ($\tau_b$, $Z$, 2-tailed $p$-value).
+  * Reusable `Bootstrap` and `Style` subdialogs, `Save...` (`PRE_n` predicted values and `RES_n` residuals with full Undo), vector scatter + trend line and Residuals vs. Fitted plots.
+* **Orthogonal / Deming Regression (`Orthogonal / Deming` / `ORTHOGONAL REGRESSION`):**
+  * Errors-in-variables linear regression accounting for measurement error in both $X$ and $Y$: Orthogonal (Total Least Squares, $\lambda = 1.0$) and general Deming regression for any variance ratio $\lambda = \sigma_y^2 / \sigma_x^2 > 0$.
+  * Closed-form Deming estimator, Leave-One-Out **Jackknife** standard errors and $t$-confidence intervals ($df = N - 2$), orthogonal residual SD, and Pearson $r$.
+  * Reusable `Bootstrap` and `Style` subdialogs, `Save...` (`PRE_n` predicted values and `RES_n` orthogonal residuals with full Undo), vector scatter plot with Deming line and dashed $Y = X$ identity line, and Orthogonal Residuals vs. Fitted plot.
 
 ### 4.6. Scale Reliability Analysis (Scale)
 * **Reliability Analysis (`Reliability Analysis`):**

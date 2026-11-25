@@ -36,15 +36,33 @@ pub fn render_notes_block(
     let label_w = 160.0_f32;
     let val_w = 260.0_f32;
 
-    let rows: [(&str, String); 4] = [
-        ("Output Created", notes.timestamp.clone()),
-        ("Active Dataset", notes.dataset_name.clone()),
-        ("N of Active Cases", notes.active_cases.to_string()),
-        ("N of Variables", notes.active_vars.to_string()),
+    let display_ts = if notes.timestamp == "Session" {
+        t!("output-notes-session")
+    } else {
+        notes.timestamp.clone()
+    };
+
+    let rows: [(String, String, bool); 4] = [
+        (t!("output-notes-label-created"), display_ts, false),
+        (
+            t!("output-notes-label-dataset"),
+            notes.dataset_name.clone(),
+            true,
+        ),
+        (
+            t!("output-notes-label-cases"),
+            notes.active_cases.to_string(),
+            false,
+        ),
+        (
+            t!("output-notes-label-vars"),
+            notes.active_vars.to_string(),
+            false,
+        ),
     ];
 
     ui.vertical(|ui| {
-        for (label, val) in &rows {
+        for (label, val, is_dataset) in &rows {
             ui.horizontal(|ui| {
                 ui.spacing_mut().item_spacing = vec2(0.0, 0.0);
 
@@ -55,7 +73,7 @@ pub fn render_notes_block(
                 ui.painter().text(
                     pos2(r1.min.x + 6.0, r1.center().y),
                     Align2::LEFT_CENTER,
-                    *label,
+                    label.as_str(),
                     FontId::proportional(11.0),
                     Tokens::text_muted(),
                 );
@@ -65,7 +83,7 @@ pub fn render_notes_block(
                 ui.painter()
                     .rect_stroke(r2, 0.0_f32, Stroke::new(1.0_f32, Tokens::border()));
 
-                if *label == "Active Dataset" {
+                if *is_dataset {
                     let ds_color = workspace
                         .and_then(|ws| ws.session_color_by_name(val))
                         .and_then(|hex| crate::theme::hex_to_color32(&hex))

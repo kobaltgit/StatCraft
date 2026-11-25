@@ -16,6 +16,7 @@ pub mod cox;
 pub mod crosstabs;
 pub mod curvefit;
 pub mod date_time;
+pub mod deming_regression;
 pub mod descriptives;
 pub mod dummies;
 pub mod explore;
@@ -65,6 +66,7 @@ pub mod split_groups;
 pub mod summarize_core;
 pub mod survival_km;
 pub mod survival_lifetables;
+pub mod theil_sen;
 pub mod time_series;
 pub mod ttest_indep;
 pub mod ttest_onesample;
@@ -116,6 +118,10 @@ pub use curvefit::{
 pub use date_time::{
     compute_date_operation, format_date_output, parse_date_value, DatePart, DateTimeOperation,
     DateUnit,
+};
+pub use deming_regression::{
+    compute_deming_regression, compute_deming_regression_bootstrap, DemingBootstrap, DemingPoint,
+    DemingRegressionOptions, DemingRegressionResult,
 };
 pub use descriptives::{
     apply_options_filter, compute_descriptives, compute_descriptives_bootstrap,
@@ -206,6 +212,10 @@ pub use split_groups::extract_split_groups;
 pub use summarize_core::*;
 pub use survival_km::*;
 pub use survival_lifetables::*;
+pub use theil_sen::{
+    compute_theil_sen, compute_theil_sen_bootstrap, TheilSenBootstrap, TheilSenOptions,
+    TheilSenPoint, TheilSenResult, MAX_EXACT_PAIRS_N,
+};
 pub use time_series::{compute_time_series_transform, TimeSeriesFunction};
 pub use ttest_indep::{
     compute_indep_ttest, compute_indep_ttest_bootstrap, compute_indep_ttest_from_slices,

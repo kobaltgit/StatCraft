@@ -110,6 +110,51 @@ pub fn run_syntax_batch(
                     output_view.add_linear_regression(result);
                 }
             }
+            "THEIL SEN" => {
+                if let Ok(result) =
+                    serde_json::from_value::<statcraft_algo::TheilSenResult>(res_val)
+                {
+                    let dep_label = crate::views::output_view::tables_common::resolve_var_label(
+                        dataset.as_ref(),
+                        &result.dep_var,
+                    );
+                    let indep_label = crate::views::output_view::tables_common::resolve_var_label(
+                        dataset.as_ref(),
+                        &result.indep_var,
+                    );
+                    output_view.add_theil_sen(
+                        result,
+                        dep_label,
+                        indep_label,
+                        true,
+                        false,
+                        Vec::new(),
+                    );
+                }
+            }
+            "ORTHOGONAL REGRESSION" => {
+                if let Ok(result) =
+                    serde_json::from_value::<statcraft_algo::DemingRegressionResult>(res_val)
+                {
+                    let dep_label = crate::views::output_view::tables_common::resolve_var_label(
+                        dataset.as_ref(),
+                        &result.dep_var,
+                    );
+                    let indep_label = crate::views::output_view::tables_common::resolve_var_label(
+                        dataset.as_ref(),
+                        &result.indep_var,
+                    );
+                    output_view.add_deming_regression(
+                        result,
+                        dep_label,
+                        indep_label,
+                        true,
+                        true,
+                        false,
+                        Vec::new(),
+                    );
+                }
+            }
             "RELIABILITY" => {
                 if let Ok(result) = serde_json::from_value::<ReliabilityResult>(res_val) {
                     let raw_vars = parsed.subcommand_tokens("VARIABLES").unwrap_or(&[]);

@@ -1,5 +1,7 @@
 pub mod crosstabs;
+pub mod deming_regression;
 pub mod frequencies;
+pub mod theil_sen;
 pub mod ttest;
 
 pub use frequencies::map_frequencies;
@@ -23,6 +25,8 @@ pub fn map_stat_command(
         "ONEWAY" => map_oneway(cmd, dataset),
         "CORRELATIONS" => map_correlations(cmd, dataset),
         "REGRESSION" => map_regression(cmd, dataset),
+        "THEIL SEN" => theil_sen::map_theil_sen(cmd, dataset),
+        "ORTHOGONAL REGRESSION" => deming_regression::map_deming_regression(cmd, dataset),
         "RELIABILITY" => map_reliability(cmd, dataset),
         "FACTOR" => map_factor(cmd, dataset),
         "MEANS" => map_means(cmd, dataset),

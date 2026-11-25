@@ -7,9 +7,9 @@ on:
   workflow_dispatch:
     inputs:
       tag:
-        description: 'Release Tag (e.g. v0.4.8)'
+        description: 'Release Tag (e.g. v0.4.9)'
         required: false
-        default: 'v0.4.8'
+        default: 'v0.4.9'
 
 permissions:
   contents: write
@@ -81,7 +81,7 @@ jobs:
       - name: Build StatCraft in Release Mode
         run: cargo build --package statcraft_app --release -j 1
 
-      - name: Package Linux Artifacts (Portable & .deb Installer)
+      - name: Package Linux Artifacts (Portable, .deb & AppImage)
         run: |
           # 1. Portable TAR.GZ
           mkdir -p staging
@@ -115,6 +115,38 @@ jobs:
 
           dpkg-deb --build "$DEB_DIR" dist/statcraft-linux-x64.deb
 
+          # 3. AppImage Package
+          APP_DIR=AppDir
+          mkdir -p "$APP_DIR/usr/bin"
+          mkdir -p "$APP_DIR/usr/share/statcraft"
+          mkdir -p "$APP_DIR/usr/share/applications"
+          mkdir -p "$APP_DIR/usr/share/icons/hicolor/scalable/apps"
+          mkdir -p "$APP_DIR/usr/share/icons/hicolor/256x256/apps"
+
+          cp target/release/statcraft_app "$APP_DIR/usr/bin/statcraft_app"
+          chmod +x "$APP_DIR/usr/bin/statcraft_app"
+          cp -r locales "$APP_DIR/usr/bin/locales"
+          cp -r locales "$APP_DIR/usr/share/statcraft/"
+          cp README.md README.ru.md LICENSE-MIT "$APP_DIR/usr/share/statcraft/"
+
+          cp packaging/linux/statcraft.desktop "$APP_DIR/statcraft.desktop"
+          cp packaging/linux/statcraft.desktop "$APP_DIR/usr/share/applications/"
+          cp assets/icon-256.png "$APP_DIR/statcraft.png"
+          cp assets/icon-256.png "$APP_DIR/.DirIcon"
+          cp assets/icon.svg "$APP_DIR/usr/share/icons/hicolor/scalable/apps/statcraft.svg"
+          cp assets/icon-256.png "$APP_DIR/usr/share/icons/hicolor/256x256/apps/statcraft.png"
+
+          cat << 'EOF' > "$APP_DIR/AppRun"
+          #!/bin/sh
+          HERE="$(dirname "$(readlink -f "${0}")")"
+          exec "${HERE}/usr/bin/statcraft_app" "$@"
+          EOF
+          chmod +x "$APP_DIR/AppRun"
+
+          curl -fsSL -o appimagetool-x86_64.AppImage "https://github.com/AppImage/appimagetool/releases/download/continuous/appimagetool-x86_64.AppImage"
+          chmod +x appimagetool-x86_64.AppImage
+          APPIMAGE_EXTRACT_AND_RUN=1 ARCH=x86_64 ./appimagetool-x86_64.AppImage "$APP_DIR" dist/statcraft-linux-x64.AppImage
+
       - name: Upload Linux Artifacts
         uses: actions/upload-artifact@v4
         with:
@@ -122,6 +154,7 @@ jobs:
           path: |
             dist/statcraft-linux-x64.tar.gz
             dist/statcraft-linux-x64.deb
+            dist/statcraft-linux-x64.AppImage
           if-no-files-found: error
 
   build-macos-arm64:

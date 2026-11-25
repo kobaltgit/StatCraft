@@ -96,6 +96,8 @@
 | **Блок 18** | Кластерный анализ, отчёты и анализ выживаемости (`QUICK CLUSTER`, `CODEBOOK`, `SUMMARIZE`, `KM`, `SURVIVAL`) | `cluster_kmeans.rs`, `codebook_core.rs`, `summarize_core.rs`, `survival_km.rs`, `survival_lifetables.rs` | **100% Верифицировано** | $\le 10^{-6}$ |
 | **Блок 19** | Мультиномиальная логистическая регрессия (`NOMREG`) | `multinomial_logistic/` (`engine.rs`, `diagnostics.rs`, `mod.rs`, `types.rs`) | **100% Верифицировано** | $\le 10^{-6}$ |
 | **Блок 20** | Регрессия пропорциональных рисков Кокса (`COXREG`) | `cox/` (`baseline.rs`, `engine.rs`, `mod.rs`, `types.rs`) | **100% Верифицировано** | $\le 10^{-6}$ |
+| **Блок 21** | Робастная регрессия Тейла — Сена (`THEIL SEN`) | `theil_sen/` (`engine.rs`, `types.rs`, `mod.rs`) | **100% Верифицировано** | $\le 10^{-6}$ (Sen 1968 и SciPy) |
+| **Блок 22** | Ортогональная регрессия и Деминга (`ORTHOGONAL REGRESSION`) | `deming_regression/` (`engine.rs`, `types.rs`, `mod.rs`) | **100% Верифицировано** | $\le 10^{-6}$ (Deming и `scipy.odr`) |
 
 ---
 
@@ -1063,6 +1065,30 @@
     - Базовая выживаемость $\hat{S}_{0s}(t) = \exp(-\hat{H}_{0s}(t))$ и функция выживаемости при средних значениях ковариат $\hat{S}(t \mid \bar{x}) = [\hat{S}_{0s}(t)]^{\exp(\hat{\beta}^T \bar{x})}$;
     - Векторный ступенчатый график функции выживаемости в Output Viewer.
 * **Вердикт:** **100% математическая эквивалентность канону SPSS и верификация против Lifelines ($\le 10^{-6}$).**
+
+---
+
+### Блок 21: Робастная регрессия Тейла — Сена (Feature 032 — `THEIL SEN`)
+
+#### 21.1. `THEIL SEN` (Оценка Тейла — Сена, Sen 1968 и критерий Манна — Кендалла)
+* **Реализация:** [`crates/statcraft_algo/src/theil_sen/`](../crates/statcraft_algo/src/theil_sen/engine.rs)
+* **Тесты Golden Oracle:** `theil_sen::tests::{test_theil_sen_exact_linear_with_outlier, test_theil_sen_golden_oracle_with_ties_and_missing, test_theil_sen_error_cases, test_theil_sen_bootstrap}`
+* **Верификация математических формул:**
+  * **Медианный наклон и свободный член:** парные наклоны $m_{ij} = (y_j - y_i)/(x_j - x_i)$ при $|x_j - x_i| > \varepsilon$, $\hat{m} = \text{median}(m_{ij})$, $\hat{b} = \text{median}(y_i - \hat{m} x_i)$, ограничение памяти `MAX_EXACT_PAIRS_N = 5000`.
+  * **ДИ Sen (1968) с поправкой на связки и критерий Манна — Кендалла:** точная дисперсия $\text{Var}(S)$ с учётом связок в $X$ и $Y$, $\tau_b$ Кендалла, $Z = S / \sqrt{\text{Var}(S)}$, двустороннее $p$-value, MAD остатков и непараметрический бутстреп.
+* **Вердикт:** **100% математическая эквивалентность Sen (1968) и SciPy ($\le 10^{-6}$).**
+
+---
+
+### Блок 22: Ортогональная регрессия и регрессия Деминга (Feature 033 — `ORTHOGONAL REGRESSION`)
+
+#### 22.1. `ORTHOGONAL REGRESSION` (Total Least Squares и общий Деминг с Jackknife SE)
+* **Реализация:** [`crates/statcraft_algo/src/deming_regression/`](../crates/statcraft_algo/src/deming_regression/engine.rs)
+* **Тесты Golden Oracle:** `deming_regression::tests::{test_deming_exact_linear, test_deming_golden_oracle_lambda_1_and_custom, test_deming_edge_cases, test_deming_bootstrap}`
+* **Верификация математических формул:**
+  * **Наклон и свободный член Деминга:** $\hat{\beta}_1 = \frac{(s_{yy} - \lambda s_{xx}) + \sqrt{(s_{yy} - \lambda s_{xx})^2 + 4\lambda s_{xy}^2}}{2 s_{xy}}$ (с обработкой вырожденного случая $s_{xy} = 0$ и $s_{xx} = s_{yy} = 0$), $\hat{\beta}_0 = \bar{y} - \hat{\beta}_1 \bar{x}$ для произвольного $\lambda = \sigma_y^2 / \sigma_x^2 > 0$.
+  * **Leave-One-Out Jackknife SE и $t$-ДИ:** $\text{SE}_{\text{JK}} = \sqrt{\frac{n-1}{n}\sum_{i=1}^n (\hat{\theta}_{(-i)} - \bar{\theta}_{\text{JK}})^2}$, двусторонние $t$-интервалы ($df = n - 2$), СКО ортогональных остатков и непараметрический бутстреп.
+* **Вердикт:** **100% математическая эквивалентность аналитическому Демингу и `scipy.odr` ($\le 10^{-6}$).**
 
 ---
 

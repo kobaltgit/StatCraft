@@ -1532,6 +1532,26 @@
   - [x] `export.rs` и `output_view/export.rs`: полный экспорт всех таблиц `Crosstabs` в TSV, HTML и TXT через `crosstabs_to_tsv` и `crosstabs_to_report_tables`;
   - [x] Регрессионные тесты в `crates/statcraft_app/tests/output_viewer_invariants/crosstabs.rs`.
 
+## 86. Оценка Тейла — Сена (Theil–Sen Estimator, `specs/032-theil-sen-regression`)
+- [x] **L2 `statcraft_algo::theil_sen/` (`mod.rs`, `types.rs`, `engine.rs`, `tests.rs` $\le 500$ строк):**
+  - [x] Попарное исключение пропусков, медианный наклон, медианный свободный член $\text{median}(y_i - \hat{m} x_i)$, ДИ Sen (1968) с поправкой на связки, критерий Манна — Кендалла ($\tau_b, Z, p$), MAD остатков и защита `MAX_EXACT_PAIRS_N = 5000`;
+  - [x] Непараметрический бутстреп `compute_theil_sen_bootstrap` и Golden Oracle тесты (`<= 1e-6`).
+- [x] **L5 `statcraft_syntax` (`theil_sen_cmd.rs`, `syntax_parser/mappers/stats/theil_sen.rs`):**
+  - [x] Команда `TheilSenCommand` (`stat.regression.theil_sen`), сохранение `PRE_n`/`RES_n` с полной отменой `undo`, парсинг `THEIL SEN` `.sps` round-trip.
+- [x] **L6 `statcraft_app` и `locales/`:**
+  - [x] Диалог `TheilSenDialog` на `DialogKit` с `SubdialogSidebar` (`Options...`, `Plots...`, `Save...`, `Style...`, `Bootstrap...`) и пункт меню `Analyze → Regression → Theil-Sen...`;
+  - [x] Вывод таблиц, векторных графиков (Scatter + Trend Line, Residuals vs. Fitted), экспорт TSV/HTML/TXT и ключи в `locales/en.ftl` / `locales/ru.ftl`.
+
+## 87. Ортогональная регрессия и регрессия Деминга (Orthogonal / Deming Regression, `specs/033-orthogonal-deming-regression`)
+- [x] **L2 `statcraft_algo::deming_regression/` (`mod.rs`, `types.rs`, `engine.rs`, `tests.rs` $\le 500$ строк):**
+  - [x] Аналитическая формула Деминга для произвольного $\lambda = \sigma_y^2 / \sigma_x^2 > 0$ ($\lambda = 1.0$ — ортогональная регрессия), обработка $s_{xy} = 0$ и вырожденных входов без паник;
+  - [x] Leave-One-Out **Jackknife** для `slope_se`, `intercept_se`, $t$-ДИ ($df = N - 2$), `orthogonal_residual_sd`, `pearson_r`, бутстреп `compute_deming_regression_bootstrap` и Golden Oracle тесты (`<= 1e-6`).
+- [x] **L5 `statcraft_syntax` (`deming_regression_cmd.rs`, `syntax_parser/mappers/stats/deming_regression.rs`):**
+  - [x] Команда `DemingRegressionCommand` (`stat.regression.orthogonal`), сохранение `PRE_n`/`RES_n` с полной отменой `undo`, парсинг `ORTHOGONAL REGRESSION` `.sps` round-trip.
+- [x] **L6 `statcraft_app` и `locales/`:**
+  - [x] Диалог `DemingRegressionDialog` на `DialogKit` с `SubdialogSidebar` (`Options...`, `Plots...`, `Save...`, `Style...`, `Bootstrap...`), пункт меню `Analyze → Regression → Orthogonal / Deming...` и обработчик в `app_dialogs_deming.rs`;
+  - [x] Вывод таблиц, векторных графиков (Scatter + Deming Line + пунктир $Y = X$, Orth. Residuals vs. Fitted) в `tables_deming_regression/`, экспорт TSV/HTML/TXT и ключи в `locales/en.ftl` / `locales/ru.ftl`.
+
 
 ## 20. Планы будущих релизов (Backlog / Planned Features)
 - [ ] Мультимониторный режим рабочего пространства (Multi-Monitor Viewports & Pop-out Tabs):
