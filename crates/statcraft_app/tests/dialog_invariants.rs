@@ -1,16 +1,17 @@
 use statcraft_app::dialogs::common::{DialogSize, SubdialogSidebar};
 use statcraft_app::dialogs::{
-    render_anova_oneway_dialog, render_auto_recode_dialog, render_compute_dialog,
-    render_correlations_dialog, render_crosstabs_dialog, render_descriptives_dialog,
-    render_frequencies_dialog, render_kruskal_wallis_dialog, render_missing_values_dialog,
-    render_nonparam_related_dialog, render_nonparam_twosample_dialog, render_recode_dialog,
-    render_select_cases_dialog, render_sort_cases_dialog, render_split_file_dialog,
-    render_ttest_indep_dialog, render_ttest_onesample_dialog, render_ttest_paired_dialog,
-    render_value_labels_dialog, render_variable_type_dialog, AutoRecodeDialogAction,
-    AutoRecodeDialogState, AutoRecodePair, ComputeDialogAction, ComputeDialogState,
-    CorrelationsDialogAction, CorrelationsDialogState, CrosstabsDialogAction, CrosstabsDialogState,
-    DescriptivesDialogAction, DescriptivesDialogState, DialogCasesAction, DialogSelectMode,
-    FrequenciesChartType, FrequenciesChartValue, FrequenciesDialogAction, FrequenciesDialogState,
+    render_anova_oneway_dialog, render_auto_recode_dialog, render_bootstrap_dialog,
+    render_compute_dialog, render_correlations_dialog, render_crosstabs_dialog,
+    render_descriptives_dialog, render_frequencies_dialog, render_kruskal_wallis_dialog,
+    render_missing_values_dialog, render_nonparam_related_dialog, render_nonparam_twosample_dialog,
+    render_recode_dialog, render_select_cases_dialog, render_sort_cases_dialog,
+    render_split_file_dialog, render_ttest_indep_dialog, render_ttest_onesample_dialog,
+    render_ttest_paired_dialog, render_value_labels_dialog, render_variable_type_dialog,
+    AutoRecodeDialogAction, AutoRecodeDialogState, AutoRecodePair, BootstrapDialogState,
+    BootstrapSamplingUi, ComputeDialogAction, ComputeDialogState, CorrelationsDialogAction,
+    CorrelationsDialogState, CrosstabsDialogAction, CrosstabsDialogState, DescriptivesDialogAction,
+    DescriptivesDialogState, DialogCasesAction, DialogSelectMode, FrequenciesChartType,
+    FrequenciesChartValue, FrequenciesDialogAction, FrequenciesDialogState,
     IndependentSamplesTTestDialogAction, IndependentSamplesTTestDialogState,
     KruskalWallisDialogAction, KruskalWallisDialogState, MissingValuesDialogAction,
     MissingValuesDialogState, NonparamRelatedDialogAction, NonparamRelatedDialogState,
@@ -284,6 +285,7 @@ fn test_frequencies_format_subdialog_commit_and_action_run() {
         suppress_tables_limit,
         table_styles: state.table_style.rules_to_json(),
         create_style_report: state.table_style.create_style_report,
+        bootstrap: state.bootstrap.to_json(),
     };
 
     match action {
@@ -726,4 +728,63 @@ fn test_headless_render_split_file_dialog() {
     assert!(state.is_open);
     assert_eq!(state.selected_vars, vec!["gender".to_string()]);
     assert_eq!(state.mode, SplitFileMode::CompareGroups);
+}
+
+#[test]
+fn test_bootstrap_dialog_state_and_headless_render() {
+    let ds = create_test_dataset();
+    let ctx = egui::Context::default();
+    let mut state = BootstrapDialogState::default();
+
+    // Open saves backup
+    state.open();
+    assert!(state.is_open);
+    assert!(state.can_continue());
+
+    // Modify and test validation
+    state.enabled = true;
+    state.samples_input = "1".to_string();
+    assert!(!state.can_continue(), "samples < 2 should fail validation");
+
+    state.samples_input = "500".to_string();
+    state.ci_level_input = "105".to_string();
+    assert!(
+        !state.can_continue(),
+        "ci_level >= 100 should fail validation"
+    );
+
+    state.ci_level_input = "95".to_string();
+    state.sampling_method = BootstrapSamplingUi::Stratified;
+    assert!(
+        !state.can_continue(),
+        "Stratified without strata_vars should fail validation"
+    );
+
+    state.strata_vars.push("gender".to_string());
+    assert!(state.can_continue());
+
+    // Headless render with open dialog
+    let _ = ctx.run(Default::default(), |ctx| {
+        render_bootstrap_dialog(ctx, Some(&ds), &mut state);
+    });
+    assert!(state.is_open);
+
+    // Cancel restores backup (enabled=false, Simple, empty strata)
+    state.cancel();
+    assert!(!state.is_open);
+    assert!(!state.enabled);
+    assert_eq!(state.sampling_method, BootstrapSamplingUi::Simple);
+    assert!(state.strata_vars.is_empty());
+
+    // Open again, enable, commit
+    state.open();
+    state.enabled = true;
+    state.samples_input = "200".to_string();
+    state.use_seed = true;
+    state.seed_input = "42".to_string();
+    assert!(state.can_continue());
+    state.commit();
+    assert!(!state.is_open);
+    assert!(state.enabled);
+    assert!(state.to_json().is_some());
 }

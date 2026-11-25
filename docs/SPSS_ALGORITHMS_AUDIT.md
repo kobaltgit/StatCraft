@@ -115,6 +115,7 @@ Beyond isolated unit testing, StatCraft enforces mathematical and architectural 
   * **Kurtosis:** Bliss (1967) Fisher excess kurtosis:
     $$g_2 = \frac{W-1}{(W-2)(W-3)} \left[ (W+1) \frac{m_4}{m_2^2} - 3(W-1) \right]$$
     Standard error: $SE(g_2) = 2 \cdot SE(g_1) \cdot \sqrt{\frac{W^2 - 1}{(W-3)(W+5)}}$. Suppressed if $W \le 3$ or $s^2 = 0$.
+  * **Bootstrap Resampling (`statcraft_algo::bootstrap`):** `Mt19937` (`Simple` / `Stratified`), `Percentile` and `BCa` intervals (`Bias`, `Std. Error`, `CI`) for moments; verified in `bootstrap_golden_oracle::golden_oracle_univariate_mean_and_std_dev`.
 * **Verdict:** **100% Mathematical Equivalence to SPSS Canon.**
 
 #### 1.2. `FREQUENCIES` (IBM Algorithms pp. 446–448)
@@ -144,7 +145,8 @@ Beyond isolated unit testing, StatCraft enforces mathematical and architectural 
   * **L6 Output Viewer & Reporting:** Modular presentation in `crates/statcraft_app/src/views/output_view/tables_frequencies/`:
     * Frequency table suppression notice (`freq_table.rs`): when $N_{categories} > n$, displays an authentic italic notification in `Tokens::text_muted()` (*"The frequency table for variable [NAME] is not displayed because the number of categories exceeds the specified limit."*), preserving summary statistics and charts;
     * Multi-variable organization (`mod.rs` & `builder.rs`): `Compare` (single unified summary table, sequential frequency tables, separate charts node) vs `Variable` (autonomous consecutive blocks per variable: personal statistics $\to$ frequency table $\to$ inline chart);
-    * Verified via `output_viewer_frequencies_invariants.rs` (8/8 tests passing).
+    * Bootstrap resampling (`frequencies/bootstrap.rs`, `bootstrap_tables.rs`): `Mt19937` resampling (`Simple` / `Stratified`), `Percentile` and `BCa` intervals (`Bias`, `Std. Error`, `CI Lower/Upper`) for statistics and category percents, `SET MTINDEX` + `BOOTSTRAP` SPSS syntax emission, and `Bootstrap Specifications` / bootstrap tables in Output Viewer & TSV export;
+    * Verified via `output_viewer_frequencies_invariants.rs` (9/9 tests passing) and `dialog_invariants.rs` (51/51 tests passing).
 * **Verdict:** **100% Mathematical Equivalence to SPSS Canon.**
 
 #### 1.3. `CROSSTABS` (IBM Algorithms pp. 221–226)
@@ -168,11 +170,13 @@ Beyond isolated unit testing, StatCraft enforces mathematical and architectural 
     $$SS_{Between} = \sum W_j (\bar{Y}_j - \bar{Y})^2, \; df = k - 1; \quad SS_{Within} = \sum (W_j - 1) s_j^2, \; df = N - k$$
     $$F = \frac{MS_{Between}}{MS_{Within}}, \quad p = I_{\frac{df_2}{df_1 F + df_2}}\left(\frac{df_2}{2}, \frac{df_1}{2}\right)$$
   * Measures of Association: $\eta^2 = \frac{SS_{Between}}{SS_{Total}}, \quad \eta = \sqrt{\eta^2}$.
+  * **Bootstrap Resampling:** `Percentile` and `BCa` intervals (`Simple` / `Stratified`) for subgroup `Mean`, `Std. Dev`, and `Median`.
 * **Verdict:** **100% Mathematical Equivalence to SPSS Canon.**
 
 ---
 
 ### Block 2: Mean Comparisons (T-Tests & One-Way ANOVA)
+*All Block 2 procedures (`One-Sample T-Test`, `Independent-Samples T-Test`, `Paired-Samples T-Test`, and `One-Way ANOVA`) support `Mt19937` Bootstrap resampling (`Percentile` & `BCa`, `Simple` & `Stratified`), verified in `bootstrap_golden_oracle::golden_oracle_independent_mean_diff` and `bootstrap_procedures_smoke.rs`.*
 
 #### 2.1. `ONE-SAMPLE T-TEST` (IBM Algorithms pp. 1061–1062)
 * **Implementation:** [`crates/statcraft_algo/src/ttest_onesample.rs`](../crates/statcraft_algo/src/ttest_onesample.rs)
@@ -228,6 +232,7 @@ Beyond isolated unit testing, StatCraft enforces mathematical and architectural 
   * **Kendall $\tau_b$:** Rank correlation with complete tie handling (Kendall, 1955):
     $$\tau_b = \frac{P - Q}{\sqrt{(n_0 - T_X)(n_0 - T_Y)}}, \quad n_0 = \frac{n(n-1)}{2}, \quad T = \sum \frac{t_i(t_i-1)}{2}$$
     Variance formulation incorporates all three tie correction components ($v_0, v_1, v_2$) with asymptotic two-tailed $Z = S / \sqrt{Var(S)}$.
+  * **Bootstrap Resampling:** `Percentile` and `BCa` intervals for Pearson $r$, Spearman $\rho$, and Kendall $\tau_b$, verified in `bootstrap_golden_oracle::golden_oracle_pearson_correlation`.
 * **Verdict:** **100% Mathematical Equivalence to SPSS Canon.**
 
 #### 3.2. `REGRESSION LINEAR` (IBM Algorithms pp. 920–925)
@@ -240,6 +245,7 @@ Beyond isolated unit testing, StatCraft enforces mathematical and architectural 
   * Model ANOVA $F$-test: $F = \frac{MS_{Model}}{MS_{Resid}}, \; df_1 = p, \; df_2 = N - k$.
   * Standardized Beta coefficients: $\beta_j^* = b_j \cdot \frac{s_{X_j}}{s_Y}$.
   * Multicollinearity diagnostics: Tolerance $Tol_j = 1 - R_j^2$ and Variance Inflation Factor $VIF_j = \frac{1}{Tol_j}$.
+  * **Bootstrap Resampling:** Case and stratified resampling (`Percentile` & `BCa`) for unstandardized coefficients $B$, verified in `bootstrap_golden_oracle::golden_oracle_linear_regression_coefficients`.
 * **Verdict:** **100% Mathematical Equivalence to SPSS Canon.**
 
 #### 3.3. `FACTOR ANALYSIS / PCA` (IBM Algorithms pp. 428–442)

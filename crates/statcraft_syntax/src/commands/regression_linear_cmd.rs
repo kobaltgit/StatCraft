@@ -1,6 +1,12 @@
+use crate::bootstrap::{
+    bootstrap_param_schema, bootstrap_to_sps, extract_strata_keys, parse_bootstrap_options,
+};
 use crate::command::{CommandError, EngineCommand};
 use serde_json::{json, Value};
-use statcraft_algo::{compute_linear_regression, LinearRegressionOptions, LinearRegressionResult};
+use statcraft_algo::{
+    compute_linear_regression, compute_linear_regression_bootstrap, BootstrapOptions,
+    LinearRegressionOptions, LinearRegressionResult,
+};
 use statcraft_core::DataSet;
 
 pub struct LinearRegressionCommand;
@@ -12,6 +18,21 @@ impl LinearRegressionCommand {
             dep_var,
             indep_vars.join(" ")
         )
+    }
+
+    pub fn to_sps_with_bootstrap(
+        dep_var: &str,
+        indep_vars: &[String],
+        bootstrap: Option<&BootstrapOptions>,
+    ) -> String {
+        let base = Self::to_sps(dep_var, indep_vars);
+        if let Some(boot) = bootstrap {
+            let sps = bootstrap_to_sps(boot);
+            if !sps.is_empty() {
+                return format!("{sps}\n{base}");
+            }
+        }
+        base
     }
 }
 
@@ -51,7 +72,8 @@ impl EngineCommand for LinearRegressionCommand {
                     "type": "boolean",
                     "default": true,
                     "description": "Calculate collinearity statistics (Tolerance and VIF)"
-                }
+                },
+                "bootstrap": bootstrap_param_schema()
             }
         })
     }
@@ -123,8 +145,10 @@ impl EngineCommand for LinearRegressionCommand {
             collinearity,
         };
 
+        let boot_options = parse_bootstrap_options(&params, self.id())?;
         // Extract active rows considering Select Cases and Missing Data
         let active_rows = ds.active_row_indices();
+        let strata_keys = extract_strata_keys(ds, &active_rows, boot_options.as_ref(), self.id())?;
         let mut dep_vals = Vec::with_capacity(active_rows.len());
         let mut indep_vals: Vec<Vec<Option<f64>>> =
             vec![Vec::with_capacity(active_rows.len()); indep_vars.len()];
@@ -142,7 +166,7 @@ impl EngineCommand for LinearRegressionCommand {
             weights.push(ds.row_weight(r));
         }
 
-        let result: LinearRegressionResult = compute_linear_regression(
+        let mut result: LinearRegressionResult = compute_linear_regression(
             dep_var,
             &dep_vals,
             &indep_vars,
@@ -151,6 +175,22 @@ impl EngineCommand for LinearRegressionCommand {
             &options,
         )
         .map_err(|e| CommandError::ExecutionFailed(e.to_string()))?;
+
+        if let Some(ref boot) = boot_options {
+            let boot_res = compute_linear_regression_bootstrap(
+                dep_var,
+                &dep_vals,
+                &indep_vars,
+                &indep_vals,
+                &weights,
+                &options,
+                &result,
+                strata_keys.as_deref(),
+                boot,
+            )
+            .map_err(|e| CommandError::ExecutionFailed(e.to_string()))?;
+            result.bootstrap = Some(boot_res);
+        }
 
         serde_json::to_value(&result).map_err(|e| CommandError::ExecutionFailed(e.to_string()))
     }

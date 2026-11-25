@@ -115,6 +115,7 @@
   * **Эксцесс (Kurtosis):** выборочный эксцесс Фишера (Fisher excess kurtosis) по Блиссу:
     $$g_2 = \frac{W-1}{(W-2)(W-3)} \left[ (W+1) \frac{m_4}{m_2^2} - 3(W-1) \right]$$
     Стандартная ошибка: $SE(g_2) = 2 \cdot SE(g_1) \cdot \sqrt{\frac{W^2 - 1}{(W-3)(W+5)}}$. Подавляется при $W \le 3$ или $s^2 = 0$.
+  * **Бутстреп-ресэмплинг (`statcraft_algo::bootstrap`):** `Mt19937` (`Simple` / `Stratified`), интервалы `Percentile` и `BCa` (`Bias`, `Std. Error`, `CI`) для моментов; проверено в `bootstrap_golden_oracle::golden_oracle_univariate_mean_and_std_dev`.
 * **Вердикт:** **100% математическая эквивалентность канону.**
 
 #### 1.2. `FREQUENCIES` (IBM Algorithms стр. 446–448)
@@ -144,7 +145,8 @@
   * **L6 Представление вывода в Output Viewer:** модульный рендеринг в `crates/statcraft_app/src/views/output_view/tables_frequencies/`:
     * Индикация подавления таблиц (`freq_table.rs`): при $N_{categories} > n$ рендерится блок-уведомление курсивом цвета `Tokens::text_muted()` (*«Таблица частот для переменной [NAME] не выводится, так как число категорий превышает заданный лимит.»*), при этом дескриптивные статистики и графики продолжают полноценно отображаться;
     * Организация вывода нескольких переменных (`mod.rs` и `builder.rs`): `Compare` (единая сводная таблица статистик, последовательные таблицы частот, отдельный узел графиков) vs `Variable` (автономные блоки по каждой переменной: персональная статистика $\to$ таблица частот $\to$ диаграмма);
-    * Проверено через `output_viewer_frequencies_invariants.rs` (8/8 тестов успешно).
+    * Бутстреп-ресэмплинг (`frequencies/bootstrap.rs`, `bootstrap_tables.rs`): ресэмплинг на `Mt19937` (`Simple` / `Stratified`), интервалы `Percentile` и `BCa` (`Bias`, `Std. Error`, `CI Lower/Upper`) для статистик и процентов категорий, генерация синтаксиса `SET MTINDEX` + `BOOTSTRAP`, таблицы `Bootstrap Specifications` и бутстреп-таблицы в Output Viewer с экспортом в TSV;
+    * Проверено через `output_viewer_frequencies_invariants.rs` (9/9 тестов успешно) и `dialog_invariants.rs` (51/51 тест успешно).
 * **Вердикт:** **100% математическая эквивалентность канону.**
 
 #### 1.3. `CROSSTABS` (IBM Algorithms стр. 221–226)
@@ -168,11 +170,13 @@
     $$SS_{Between} = \sum W_j (\bar{Y}_j - \bar{Y})^2, \; df = k - 1; \quad SS_{Within} = \sum (W_j - 1) s_j^2, \; df = N - k$$
     $$F = \frac{MS_{Between}}{MS_{Within}}, \quad p = I_{\frac{df_2}{df_1 F + df_2}}\left(\frac{df_2}{2}, \frac{df_1}{2}\right)$$
   * Меры ассоциации: $\eta^2 = \frac{SS_{Between}}{SS_{Total}}, \quad \eta = \sqrt{\eta^2}$.
+  * **Бутстреп-ресэмплинг:** интервалы `Percentile` и `BCa` (`Simple` / `Stratified`) для групповых `Mean`, `Std. Dev` и `Median`.
 * **Вердикт:** **100% математическая эквивалентность канону.**
 
 ---
 
 ### Блок 2: Сравнение средних (t-тесты и One-Way ANOVA)
+*Все процедуры Блока 2 (`One-Sample T-Test`, `Independent-Samples T-Test`, `Paired-Samples T-Test`, `One-Way ANOVA`) поддерживают бутстреп-ресэмплинг на `Mt19937` (`Percentile` и `BCa`, `Simple` и `Stratified`), проверено в `bootstrap_golden_oracle::golden_oracle_independent_mean_diff` и `bootstrap_procedures_smoke.rs`.*
 
 #### 2.1. `ONE-SAMPLE T-TEST` (IBM Algorithms стр. 1061–1062)
 * **Реализация:** [`crates/statcraft_algo/src/ttest_onesample.rs`](../crates/statcraft_algo/src/ttest_onesample.rs)
@@ -228,6 +232,7 @@
   * **Kendall $\tau_b$:** ранговый коэффициент со связями (Kendall, 1955):
     $$\tau_b = \frac{P - Q}{\sqrt{(n_0 - T_X)(n_0 - T_Y)}}, \quad n_0 = \frac{n(n-1)}{2}, \quad T = \sum \frac{t_i(t_i-1)}{2}$$
     Оценка дисперсии со всеми тремя компонентами поправок на связи ($v_0, v_1, v_2$) и двусторонней асимптотической значимостью $Z = S / \sqrt{Var(S)}$.
+  * **Бутстреп-ресэмплинг:** интервалы `Percentile` и `BCa` для Пирсона $r$, Спирмена $\rho$ и Кендалла $\tau_b$, проверено в `bootstrap_golden_oracle::golden_oracle_pearson_correlation`.
 * **Вердикт:** **100% математическая эквивалентность канону.**
 
 #### 3.2. `REGRESSION LINEAR` (IBM Algorithms стр. 920–925)
@@ -240,6 +245,7 @@
   * $F$-критерий модели: $F = \frac{MS_{Model}}{MS_{Resid}}, \; df_1 = p, \; df_2 = N - k$.
   * Стандартизованные коэффициенты Beta: $\beta_j^* = b_j \cdot \frac{s_{X_j}}{s_Y}$.
   * Статистики мультиколлинеарности: толерантность $Tol_j = 1 - R_j^2$ и коэффициент инфляции дисперсии $VIF_j = \frac{1}{Tol_j}$.
+  * **Бутстреп-ресэмплинг:** case- и стратифицированный ресэмплинг (`Percentile` и `BCa`) для нестандартизованных коэффициентов $B$, проверено в `bootstrap_golden_oracle::golden_oracle_linear_regression_coefficients`.
 * **Вердикт:** **100% математическая эквивалентность канону.**
 
 #### 3.3. `FACTOR ANALYSIS / PCA` (IBM Algorithms стр. 428–442)

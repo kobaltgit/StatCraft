@@ -59,6 +59,7 @@ fn sample_rich_frequencies() -> Vec<FrequencyResult> {
             chart: None,
             table_suppressed: false,
             multiple_vars_mode: MultipleVarsMode::Compare,
+            bootstrap: None,
         },
         FrequencyResult {
             variable: "educ".to_string(),
@@ -88,6 +89,7 @@ fn sample_rich_frequencies() -> Vec<FrequencyResult> {
             chart: None,
             table_suppressed: false,
             multiple_vars_mode: MultipleVarsMode::Compare,
+            bootstrap: None,
         },
         FrequencyResult {
             variable: "gender".to_string(),
@@ -117,6 +119,7 @@ fn sample_rich_frequencies() -> Vec<FrequencyResult> {
             chart: None,
             table_suppressed: false,
             multiple_vars_mode: MultipleVarsMode::Compare,
+            bootstrap: None,
         },
     ]
 }
@@ -348,6 +351,7 @@ fn test_frequencies_with_variable_labels_rendering_and_tsv() {
         chart: None,
         table_suppressed: false,
         multiple_vars_mode: MultipleVarsMode::Compare,
+        bootstrap: None,
     }];
 
     let tsv = frequencies_to_tsv(&results);
@@ -594,6 +598,7 @@ fn test_frequencies_builder_with_charts_adds_chart_item() {
         }),
         table_suppressed: false,
         multiple_vars_mode: MultipleVarsMode::Compare,
+        bootstrap: None,
     }];
 
     let mut state = OutputViewerState::new();
@@ -670,6 +675,7 @@ fn test_frequencies_limit_suppression_renders_note_and_preserves_statistics() {
         }),
         table_suppressed: true,
         multiple_vars_mode: MultipleVarsMode::Compare,
+        bootstrap: None,
     }];
 
     let tsv = frequencies_to_tsv(&results);
@@ -747,6 +753,7 @@ fn test_frequencies_multivars_compare_and_variable_modes() {
                 }),
                 table_suppressed: false,
                 multiple_vars_mode: mode,
+                bootstrap: None,
             },
             FrequencyResult {
                 variable: "varB".to_string(),
@@ -793,6 +800,7 @@ fn test_frequencies_multivars_compare_and_variable_modes() {
                 }),
                 table_suppressed: false,
                 multiple_vars_mode: mode,
+                bootstrap: None,
             },
         ]
     };
@@ -847,6 +855,69 @@ fn test_frequencies_multivars_compare_and_variable_modes() {
     let _ = ctx.run(egui::RawInput::default(), |ui_ctx| {
         egui::CentralPanel::default().show(ui_ctx, |ui| {
             render_output_view(ui, &mut var_state);
+        });
+    });
+}
+
+#[test]
+fn test_frequencies_with_bootstrap_rendering_and_tsv() {
+    let _ = statcraft_i18n::init_i18n();
+    statcraft_i18n::set_language("en");
+
+    let csv = "score,grp\n10,1\n20,1\n30,1\n40,2\n50,2\n60,2\n";
+    let table =
+        statcraft_io::load_csv_from_reader(csv.as_bytes(), statcraft_io::CsvOptions::default())
+            .expect("parse csv");
+    let ds = statcraft_core::DataSet::from_raw_table(table).expect("create dataset");
+
+    let params = serde_json::json!({
+        "vars": ["score"],
+        "display_tables": true,
+        "statistics": { "mean": true, "std_dev": true },
+        "bootstrap": {
+            "enabled": true,
+            "samples": 50,
+            "seed": 12345,
+            "ci_level": 95.0,
+            "ci_method": "percentile",
+            "sampling_method": { "method": "stratified", "strata_vars": ["grp"] }
+        }
+    });
+
+    let sps = statcraft_syntax::commands::FrequenciesCommand::to_sps_from_params(&params);
+    assert!(sps.contains("SET MTINDEX=12345."));
+    assert!(sps.contains("BOOTSTRAP"));
+    assert!(sps.contains("/SAMPLING METHOD=STRATIFIED(STRATA=grp)"));
+    assert!(sps.contains("FREQUENCIES VARIABLES=score"));
+
+    let mut ds_opt = Some(ds);
+    let val = statcraft_syntax::EngineCommand::execute(
+        &statcraft_syntax::commands::FrequenciesCommand,
+        &mut ds_opt,
+        params,
+    )
+    .expect("frequencies with bootstrap should succeed");
+    let results: Vec<FrequencyResult> =
+        serde_json::from_value(val).expect("deserialize FrequencyResult");
+    assert_eq!(results.len(), 1);
+    let boot = results[0].bootstrap.as_ref().expect("bootstrap present");
+    assert!(boot.stats.mean.is_some());
+    assert!(boot.stats.std_dev.is_some());
+    assert!(!boot.category_percents.is_empty());
+
+    let tsv = frequencies_to_tsv(&results);
+    assert!(tsv.contains("Bootstrap Specifications"));
+    assert!(tsv.contains("Stratified (grp)"));
+    assert!(tsv.contains("Statistics (Bootstrap)"));
+    assert!(tsv.contains("95% CI Lower"));
+
+    let ctx = egui::Context::default();
+    let mut state = OutputViewerState::new();
+    state.add_frequencies_with_log(results, sps);
+
+    let _ = ctx.run(egui::RawInput::default(), |ui_ctx| {
+        egui::CentralPanel::default().show(ui_ctx, |ui| {
+            render_output_view(ui, &mut state);
         });
     });
 }

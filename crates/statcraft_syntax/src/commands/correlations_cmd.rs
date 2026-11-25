@@ -1,7 +1,11 @@
+use crate::bootstrap::{
+    bootstrap_param_schema, bootstrap_to_sps, extract_strata_keys, parse_bootstrap_options,
+};
 use crate::command::{CommandError, EngineCommand};
 use serde_json::{json, Value};
 use statcraft_algo::{
-    compute_bivariate_correlations, BivariateCorrelationsOptions, MissingHandling, SignificanceTest,
+    compute_bivariate_correlations, compute_bivariate_correlations_bootstrap,
+    BivariateCorrelationsOptions, BootstrapOptions, MissingHandling, SignificanceTest,
 };
 use statcraft_core::DataSet;
 
@@ -41,7 +45,8 @@ impl EngineCommand for CorrelationsCommand {
                     "type": "string",
                     "enum": ["pairwise", "listwise"],
                     "default": "pairwise"
-                }
+                },
+                "bootstrap": bootstrap_param_schema()
             }
         })
     }
@@ -130,7 +135,9 @@ impl EngineCommand for CorrelationsCommand {
             missing,
         };
 
+        let boot_options = parse_bootstrap_options(&params, self.id())?;
         let active_rows = ds.active_row_indices();
+        let strata_keys = extract_strata_keys(ds, &active_rows, boot_options.as_ref(), self.id())?;
         let mut var_data: Vec<(&str, Vec<Option<f64>>)> = Vec::with_capacity(var_names.len());
 
         for var_name in &var_names {
@@ -155,8 +162,19 @@ impl EngineCommand for CorrelationsCommand {
             .map(|(name, vals)| (*name, vals.as_slice()))
             .collect();
 
-        let result = compute_bivariate_correlations(&input, &options)
+        let mut result = compute_bivariate_correlations(&input, &options)
             .map_err(|e| CommandError::ExecutionFailed(e.to_string()))?;
+
+        if let Some(ref boot) = boot_options {
+            let boot_res = compute_bivariate_correlations_bootstrap(
+                &input,
+                &options,
+                strata_keys.as_deref(),
+                boot,
+            )
+            .map_err(|e| CommandError::ExecutionFailed(e.to_string()))?;
+            result.bootstrap = Some(boot_res);
+        }
 
         serde_json::to_value(&result).map_err(|e| CommandError::ExecutionFailed(e.to_string()))
     }
@@ -235,6 +253,21 @@ impl CorrelationsCommand {
 
     pub fn to_sps_syntax(&self, vars: &[String], options: &BivariateCorrelationsOptions) -> String {
         Self::to_sps(vars, options)
+    }
+
+    pub fn to_sps_with_bootstrap(
+        vars: &[String],
+        options: &BivariateCorrelationsOptions,
+        bootstrap: Option<&BootstrapOptions>,
+    ) -> String {
+        let base = Self::to_sps(vars, options);
+        if let Some(boot) = bootstrap {
+            let sps = bootstrap_to_sps(boot);
+            if !sps.is_empty() {
+                return format!("{sps}\n{base}");
+            }
+        }
+        base
     }
 }
 

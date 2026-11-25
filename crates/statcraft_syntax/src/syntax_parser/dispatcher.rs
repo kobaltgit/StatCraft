@@ -1,3 +1,4 @@
+use crate::bootstrap::{parse_bootstrap_command, parse_set_mtindex};
 use crate::bus::CommandBus;
 use crate::syntax_parser::error::SyntaxError;
 use crate::syntax_parser::lexer::SyntaxLexer;
@@ -7,22 +8,20 @@ use crate::syntax_parser::mappers::{
 };
 use crate::syntax_parser::parser::{ParsedCommand, SyntaxParser};
 use serde_json::{json, Value};
+use statcraft_algo::BootstrapOptions;
 use statcraft_core::DataSet;
 
 pub struct SyntaxDispatcher;
 
 impl SyntaxDispatcher {
-    /// Maps and dispatches a single parsed command to the CommandBus.
-    pub fn dispatch(
+    /// Resolves a parsed command into `(command_id, params)` without executing it.
+    fn resolve_command(
         cmd: &ParsedCommand,
-        dataset: &mut Option<DataSet>,
-        bus: &mut CommandBus,
-    ) -> Result<Value, SyntaxError> {
-        let (cmd_id, params) = if cmd.name == "RUN COMMAND"
-            || cmd.name == "CALL"
-            || cmd.name == "RUN"
-        {
-            parse_run_command_directive(cmd)?
+        dataset: &Option<DataSet>,
+        bus: &CommandBus,
+    ) -> Result<(String, Value), SyntaxError> {
+        if cmd.name == "RUN COMMAND" || cmd.name == "CALL" || cmd.name == "RUN" {
+            parse_run_command_directive(cmd)
         } else {
             let mapped = if let Some(pair) = map_stat_command(cmd, dataset.as_ref())? {
                 Some(pair)
@@ -41,27 +40,56 @@ impl SyntaxDispatcher {
             };
 
             match mapped {
-                Some((id, params)) => (id.to_string(), params),
+                Some((id, params)) => Ok((id.to_string(), params)),
                 None => {
-                    // Check if command is registered in bus by syntax keyword
                     if let Some(reg_cmd) = bus.find_by_syntax_keyword(&cmd.name) {
-                        (reg_cmd.id().to_string(), json!({}))
+                        Ok((reg_cmd.id().to_string(), json!({})))
                     } else {
                         let suggestion =
                             crate::syntax_parser::mappers::help::find_closest_command(&cmd.name);
-                        return Err(SyntaxError::UnknownCommand {
+                        Err(SyntaxError::UnknownCommand {
                             line: cmd.line_num,
                             command: cmd.name.clone(),
                             suggestion: suggestion.to_string(),
-                        });
+                        })
                     }
                 }
             }
-        };
+        }
+    }
+
+    /// Maps and dispatches a single parsed command to the CommandBus.
+    pub fn dispatch(
+        cmd: &ParsedCommand,
+        dataset: &mut Option<DataSet>,
+        bus: &mut CommandBus,
+    ) -> Result<Value, SyntaxError> {
+        Self::dispatch_with_bootstrap(cmd, dataset, bus, None)
+    }
+
+    fn dispatch_with_bootstrap(
+        cmd: &ParsedCommand,
+        dataset: &mut Option<DataSet>,
+        bus: &mut CommandBus,
+        pending_bootstrap: Option<BootstrapOptions>,
+    ) -> Result<Value, SyntaxError> {
+        let (cmd_id, mut params) = Self::resolve_command(cmd, dataset, bus)?;
 
         // Handle no-ops like comments and EXECUTE
         if cmd_id == "data.execute_noop" || cmd_id == "util.comment" {
             return Ok(json!({ "status": "ok", "command_id": cmd_id }));
+        }
+
+        if let Some(boot_opts) = pending_bootstrap {
+            if let Some(obj) = params.as_object_mut() {
+                let boot_val =
+                    serde_json::to_value(&boot_opts).map_err(|e| SyntaxError::ExecutionFailed {
+                        line: cmd.line_num,
+                        command: cmd.name.clone(),
+                        reason: format!("Failed to serialize bootstrap options: {e}"),
+                    })?;
+                obj.insert("bootstrap".to_string(), boot_val);
+            }
         }
 
         // Execute via CommandBus
@@ -83,6 +111,8 @@ impl SyntaxDispatcher {
     ) -> Result<Vec<(ParsedCommand, Value)>, SyntaxError> {
         let blocks = SyntaxLexer::split_commands(sps_script)?;
         let mut executed = Vec::with_capacity(blocks.len());
+        let mut pending_mtindex: Option<u64> = None;
+        let mut pending_bootstrap: Option<BootstrapOptions> = None;
 
         for block in &blocks {
             if block.is_comment {
@@ -97,7 +127,39 @@ impl SyntaxDispatcher {
             }
 
             let parsed = SyntaxParser::parse_command(block)?;
-            let result = Self::dispatch(&parsed, dataset, bus)?;
+
+            if let Some(seed_opt) = parse_set_mtindex(&parsed)? {
+                pending_mtindex = seed_opt;
+                executed.push((
+                    parsed,
+                    json!({ "status": "ok", "command_id": "util.set_mtindex", "mtindex": seed_opt }),
+                ));
+                continue;
+            }
+
+            if parsed.name.eq_ignore_ascii_case("BOOTSTRAP") {
+                let mut boot_opts = parse_bootstrap_command(&parsed)?;
+                if boot_opts.seed.is_none() {
+                    boot_opts.seed = pending_mtindex.take();
+                } else {
+                    pending_mtindex = None;
+                }
+                let boot_json =
+                    serde_json::to_value(&boot_opts).map_err(|e| SyntaxError::ExecutionFailed {
+                        line: parsed.line_num,
+                        command: parsed.name.clone(),
+                        reason: format!("Failed to serialize bootstrap options: {e}"),
+                    })?;
+                pending_bootstrap = Some(boot_opts);
+                executed.push((
+                    parsed,
+                    json!({ "status": "pending", "command_id": "util.bootstrap", "bootstrap": boot_json }),
+                ));
+                continue;
+            }
+
+            let result =
+                Self::dispatch_with_bootstrap(&parsed, dataset, bus, pending_bootstrap.take())?;
             executed.push((parsed, result));
         }
 

@@ -3,6 +3,7 @@ pub mod anova_oneway_dialog;
 pub mod auto_recode_dialog;
 pub mod binning_cutpoints_dialog;
 pub mod binning_dialog;
+pub mod bootstrap_dialog;
 pub mod codebook_dialog;
 pub mod common;
 pub mod compute_dialog;
@@ -76,6 +77,7 @@ pub use binning_dialog::{
     render_visual_binning_dialog, CutpointMethod, VisualBinningDialogAction,
     VisualBinningDialogState,
 };
+pub use bootstrap_dialog::{render_bootstrap_dialog, BootstrapDialogState, BootstrapSamplingUi};
 pub use codebook_dialog::{render_codebook_dialog, CodebookDialogAction, CodebookDialogState};
 pub use common::*;
 pub use compute_dialog::{

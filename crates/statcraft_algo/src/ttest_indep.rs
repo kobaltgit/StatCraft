@@ -1,5 +1,18 @@
+pub use crate::bootstrap::compute_indep_ttest_bootstrap;
+use crate::bootstrap::{BootstrapOptions, BootstrapSummary};
 use crate::ttest_onesample::{student_t_inv_cdf, student_t_sf_2tailed};
 use serde::{Deserialize, Serialize};
+
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+pub struct IndepTTestBootstrap {
+    pub options: BootstrapOptions,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub group1_mean: Option<BootstrapSummary>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub group2_mean: Option<BootstrapSummary>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub mean_diff: Option<BootstrapSummary>,
+}
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct IndepTTestOptions {
@@ -56,6 +69,8 @@ pub struct IndepTTestResult {
     pub equal_variances_assumed: TTestTwoGroupDetails,
     pub equal_variances_not_assumed: TTestTwoGroupDetails,
     pub ci_level: f64,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub bootstrap: Option<IndepTTestBootstrap>,
 }
 
 fn matches_group(val_str: &str, target_str: &str) -> bool {
@@ -232,6 +247,7 @@ pub fn compute_indep_ttest_from_slices(
                 ci_upper: None,
             },
             ci_level: ci,
+            bootstrap: None,
         };
     }
 
@@ -329,6 +345,7 @@ pub fn compute_indep_ttest_from_slices(
         equal_variances_assumed,
         equal_variances_not_assumed,
         ci_level: ci,
+        bootstrap: None,
     }
 }
 

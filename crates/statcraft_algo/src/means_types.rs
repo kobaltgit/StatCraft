@@ -1,4 +1,23 @@
+use crate::bootstrap::{BootstrapOptions, BootstrapSummary};
 use serde::{Deserialize, Serialize};
+
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+pub struct MeansBootstrapGroup {
+    pub group_label: String,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub mean: Option<BootstrapSummary>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub std_dev: Option<BootstrapSummary>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub median: Option<BootstrapSummary>,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+pub struct MeansBootstrap {
+    pub options: BootstrapOptions,
+    pub groups: Vec<MeansBootstrapGroup>,
+    pub total: MeansBootstrapGroup,
+}
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
 pub struct MeansCellStats {
@@ -58,6 +77,8 @@ pub struct MeansTableResult {
     pub total: MeansCellStats,
     pub anova: Option<MeansAnovaTable>,
     pub association: Option<MeansAssociationMeasures>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub bootstrap: Option<MeansBootstrap>,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]

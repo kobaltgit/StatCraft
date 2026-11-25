@@ -30,12 +30,18 @@ impl StatCraftApp {
                 vars,
                 test_value,
                 ci,
+                bootstrap,
             } => {
-                let params = json!({
+                let mut params = json!({
                     "vars": vars,
                     "test_value": test_value,
                     "ci": ci,
                 });
+                if let Some(boot) = bootstrap {
+                    if let Some(obj) = params.as_object_mut() {
+                        obj.insert("bootstrap".to_string(), boot);
+                    }
+                }
                 match self
                     .command_bus
                     .execute("stat.ttest.onesample", &mut self.dataset, params)
@@ -60,9 +66,16 @@ impl StatCraftApp {
                 vars,
                 test_value,
                 ci,
+                bootstrap,
             } => {
-                let sps = statcraft_syntax::commands::OneSampleTTestCommand::to_sps(
-                    &vars, test_value, ci,
+                let boot_opts = bootstrap.and_then(|v| {
+                    serde_json::from_value::<statcraft_algo::BootstrapOptions>(v).ok()
+                });
+                let sps = statcraft_syntax::commands::OneSampleTTestCommand::to_sps_with_bootstrap(
+                    &vars,
+                    test_value,
+                    ci,
+                    boot_opts.as_ref(),
                 );
                 self.output_view_state.add_entry(t!("output-log"), sps);
             }
@@ -83,14 +96,20 @@ impl StatCraftApp {
                 group1,
                 group2,
                 ci,
+                bootstrap,
             } => {
-                let params = json!({
+                let mut params = json!({
                     "vars": vars,
                     "grouping_var": grouping_var,
                     "group1": group1,
                     "group2": group2,
                     "ci": ci,
                 });
+                if let Some(boot) = bootstrap {
+                    if let Some(obj) = params.as_object_mut() {
+                        obj.insert("bootstrap".to_string(), boot);
+                    }
+                }
                 match self
                     .command_bus
                     .execute("stat.ttest.indep", &mut self.dataset, params)
@@ -122,14 +141,20 @@ impl StatCraftApp {
                 group1,
                 group2,
                 ci,
+                bootstrap,
             } => {
-                let sps = statcraft_syntax::commands::IndependentSamplesTTestCommand::to_sps(
-                    &vars,
-                    &grouping_var,
-                    &group1,
-                    &group2,
-                    ci,
-                );
+                let boot_opts = bootstrap.and_then(|v| {
+                    serde_json::from_value::<statcraft_algo::BootstrapOptions>(v).ok()
+                });
+                let sps =
+                    statcraft_syntax::commands::IndependentSamplesTTestCommand::to_sps_with_bootstrap(
+                        &vars,
+                        &grouping_var,
+                        &group1,
+                        &group2,
+                        ci,
+                        boot_opts.as_ref(),
+                    );
                 self.output_view_state.add_entry(t!("output-log"), sps);
             }
             IndependentSamplesTTestDialogAction::None => {}
@@ -143,11 +168,20 @@ impl StatCraftApp {
         );
 
         match paired_action {
-            PairedSamplesTTestDialogAction::Run { pairs, ci } => {
-                let params = json!({
+            PairedSamplesTTestDialogAction::Run {
+                pairs,
+                ci,
+                bootstrap,
+            } => {
+                let mut params = json!({
                     "pairs": pairs,
                     "ci": ci,
                 });
+                if let Some(boot) = bootstrap {
+                    if let Some(obj) = params.as_object_mut() {
+                        obj.insert("bootstrap".to_string(), boot);
+                    }
+                }
                 match self
                     .command_bus
                     .execute("stat.ttest.paired", &mut self.dataset, params)
@@ -167,8 +201,20 @@ impl StatCraftApp {
                     }
                 }
             }
-            PairedSamplesTTestDialogAction::Paste { pairs, ci } => {
-                let sps = statcraft_syntax::commands::PairedSamplesTTestCommand::to_sps(&pairs, ci);
+            PairedSamplesTTestDialogAction::Paste {
+                pairs,
+                ci,
+                bootstrap,
+            } => {
+                let boot_opts = bootstrap.and_then(|v| {
+                    serde_json::from_value::<statcraft_algo::BootstrapOptions>(v).ok()
+                });
+                let sps =
+                    statcraft_syntax::commands::PairedSamplesTTestCommand::to_sps_with_bootstrap(
+                        &pairs,
+                        ci,
+                        boot_opts.as_ref(),
+                    );
                 self.output_view_state.add_entry(t!("output-log"), sps);
             }
             PairedSamplesTTestDialogAction::None => {}
@@ -188,14 +234,20 @@ impl StatCraftApp {
                 descriptives,
                 homogeneity,
                 ci,
+                bootstrap,
             } => {
-                let params = json!({
+                let mut params = json!({
                     "dependent_vars": dependent_vars,
                     "factor_var": factor_var,
                     "descriptives": descriptives,
                     "homogeneity": homogeneity,
                     "ci": ci,
                 });
+                if let Some(boot) = bootstrap {
+                    if let Some(obj) = params.as_object_mut() {
+                        obj.insert("bootstrap".to_string(), boot);
+                    }
+                }
                 match self
                     .command_bus
                     .execute("stat.anova.oneway", &mut self.dataset, params)
@@ -220,13 +272,18 @@ impl StatCraftApp {
                 factor_var,
                 descriptives,
                 homogeneity,
+                bootstrap,
                 ..
             } => {
-                let sps = statcraft_syntax::commands::OneWayAnovaCommand::to_sps(
+                let boot_opts = bootstrap.and_then(|v| {
+                    serde_json::from_value::<statcraft_algo::BootstrapOptions>(v).ok()
+                });
+                let sps = statcraft_syntax::commands::OneWayAnovaCommand::to_sps_with_bootstrap(
                     &dependent_vars,
                     &factor_var,
                     descriptives,
                     homogeneity,
+                    boot_opts.as_ref(),
                 );
                 self.output_view_state.add_entry(t!("output-log"), sps);
             }
@@ -241,8 +298,12 @@ impl StatCraftApp {
         );
 
         match corr_action {
-            CorrelationsDialogAction::Run { vars, options } => {
-                let params = json!({
+            CorrelationsDialogAction::Run {
+                vars,
+                options,
+                bootstrap,
+            } => {
+                let mut params = json!({
                     "vars": vars,
                     "pearson": options.pearson,
                     "spearman": options.spearman,
@@ -256,6 +317,11 @@ impl StatCraftApp {
                         _ => "pairwise",
                     },
                 });
+                if let Some(boot) = bootstrap {
+                    if let Some(obj) = params.as_object_mut() {
+                        obj.insert("bootstrap".to_string(), boot);
+                    }
+                }
                 match self
                     .command_bus
                     .execute("stat.correlations", &mut self.dataset, params)
@@ -275,8 +341,19 @@ impl StatCraftApp {
                     }
                 }
             }
-            CorrelationsDialogAction::Paste { vars, options } => {
-                let sps = statcraft_syntax::commands::CorrelationsCommand::to_sps(&vars, &options);
+            CorrelationsDialogAction::Paste {
+                vars,
+                options,
+                bootstrap,
+            } => {
+                let boot_opts = bootstrap.and_then(|v| {
+                    serde_json::from_value::<statcraft_algo::BootstrapOptions>(v).ok()
+                });
+                let sps = statcraft_syntax::commands::CorrelationsCommand::to_sps_with_bootstrap(
+                    &vars,
+                    &options,
+                    boot_opts.as_ref(),
+                );
                 self.output_view_state.add_entry(t!("output-log"), sps);
             }
             CorrelationsDialogAction::None => {}
@@ -469,13 +546,19 @@ impl StatCraftApp {
                 independent_vars,
                 ci,
                 collinearity,
+                bootstrap,
             } => {
-                let params = json!({
+                let mut params = json!({
                     "dependent_var": dependent_var,
                     "independent_vars": independent_vars,
                     "ci": ci,
                     "collinearity": collinearity,
                 });
+                if let Some(boot) = bootstrap {
+                    if let Some(obj) = params.as_object_mut() {
+                        obj.insert("bootstrap".to_string(), boot);
+                    }
+                }
                 match self
                     .command_bus
                     .execute("stat.regression.linear", &mut self.dataset, params)
@@ -502,12 +585,18 @@ impl StatCraftApp {
             LinearRegressionDialogAction::Paste {
                 dependent_var,
                 independent_vars,
+                bootstrap,
                 ..
             } => {
-                let sps = statcraft_syntax::commands::LinearRegressionCommand::to_sps(
-                    &dependent_var,
-                    &independent_vars,
-                );
+                let boot_opts = bootstrap.and_then(|v| {
+                    serde_json::from_value::<statcraft_algo::BootstrapOptions>(v).ok()
+                });
+                let sps =
+                    statcraft_syntax::commands::LinearRegressionCommand::to_sps_with_bootstrap(
+                        &dependent_var,
+                        &independent_vars,
+                        boot_opts.as_ref(),
+                    );
                 self.output_view_state.add_entry(t!("output-log"), sps);
             }
             LinearRegressionDialogAction::None => {}
@@ -638,8 +727,9 @@ impl StatCraftApp {
                 dependent_vars,
                 factor_vars,
                 options,
+                bootstrap,
             } => {
-                let params = json!({
+                let mut params = json!({
                     "dependent_vars": dependent_vars,
                     "factor_vars": factor_vars,
                     "cell_mean": options.cell_mean,
@@ -651,6 +741,11 @@ impl StatCraftApp {
                     "cell_max": options.cell_max,
                     "anova": options.anova,
                 });
+                if let Some(boot) = bootstrap {
+                    if let Some(obj) = params.as_object_mut() {
+                        obj.insert("bootstrap".to_string(), boot);
+                    }
+                }
                 match self
                     .command_bus
                     .execute("stat.means", &mut self.dataset, params)
@@ -684,11 +779,16 @@ impl StatCraftApp {
                 dependent_vars,
                 factor_vars,
                 options,
+                bootstrap,
             } => {
-                let sps = statcraft_syntax::commands::MeansCommand::to_sps(
+                let boot_opts = bootstrap.and_then(|v| {
+                    serde_json::from_value::<statcraft_algo::BootstrapOptions>(v).ok()
+                });
+                let sps = statcraft_syntax::commands::MeansCommand::to_sps_with_bootstrap(
                     &dependent_vars,
                     &factor_vars,
                     &options,
+                    boot_opts.as_ref(),
                 );
                 self.output_view_state.add_entry(t!("output-log"), sps);
             }

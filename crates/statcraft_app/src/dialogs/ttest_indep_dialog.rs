@@ -22,6 +22,7 @@ pub struct IndependentSamplesTTestDialogState {
     pub temp_group1: String,
     pub temp_group2: String,
     pub show_options: bool,
+    pub bootstrap: crate::dialogs::bootstrap_dialog::BootstrapDialogState,
 }
 
 impl Default for IndependentSamplesTTestDialogState {
@@ -39,6 +40,7 @@ impl Default for IndependentSamplesTTestDialogState {
             temp_group1: "1".to_string(),
             temp_group2: "2".to_string(),
             show_options: false,
+            bootstrap: crate::dialogs::bootstrap_dialog::BootstrapDialogState::default(),
         }
     }
 }
@@ -50,6 +52,7 @@ pub enum IndependentSamplesTTestDialogAction {
         group1: String,
         group2: String,
         ci: f64,
+        bootstrap: Option<serde_json::Value>,
     },
     Paste {
         vars: Vec<String>,
@@ -57,6 +60,7 @@ pub enum IndependentSamplesTTestDialogAction {
         group1: String,
         group2: String,
         ci: f64,
+        bootstrap: Option<serde_json::Value>,
     },
     None,
 }
@@ -311,14 +315,26 @@ pub fn render_ttest_indep_dialog(
                     if SubdialogSidebar::button(ui, t!("dialog-btn-options"), true).clicked() {
                         state.show_options = true;
                     }
+                    if SubdialogSidebar::button(ui, t!("dialog-btn-bootstrap"), true).clicked() {
+                        state.bootstrap.open();
+                    }
                 },
             );
         });
+
+        if state.bootstrap.is_open {
+            crate::dialogs::bootstrap_dialog::render_bootstrap_dialog(
+                ctx,
+                Some(ds),
+                &mut state.bootstrap,
+            );
+        }
 
         // Bottom Action Bar
         let can_run = !state.selected_vars.is_empty() && state.grouping_var.is_some();
         let parsed_ci_pct = state.ci_level_str.trim().parse::<f64>().unwrap_or(95.0);
         let ci_ratio = (parsed_ci_pct / 100.0).clamp(0.50, 0.999);
+        let bootstrap = state.bootstrap.to_json();
 
         let bar_action = DialogActionBar::new(can_run).show(ui);
 
@@ -332,6 +348,7 @@ pub fn render_ttest_indep_dialog(
                         group1: state.group1_val.clone(),
                         group2: state.group2_val.clone(),
                         ci: ci_ratio,
+                        bootstrap,
                     };
                 }
             }
@@ -344,6 +361,7 @@ pub fn render_ttest_indep_dialog(
                         group1: state.group1_val.clone(),
                         group2: state.group2_val.clone(),
                         ci: ci_ratio,
+                        bootstrap,
                     };
                 }
             }
@@ -355,6 +373,7 @@ pub fn render_ttest_indep_dialog(
                 state.group1_val = "1".to_string();
                 state.group2_val = "2".to_string();
                 state.ci_level_str = "95".to_string();
+                state.bootstrap.reset();
             }
             ActionBarAction::Cancel => {
                 close_dialog = true;

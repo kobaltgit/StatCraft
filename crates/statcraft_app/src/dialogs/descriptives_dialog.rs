@@ -16,6 +16,7 @@ pub struct DescriptivesDialogState {
     pub selected_vars: Vec<String>,
     pub options: DescriptivesOptions,
     pub show_options: bool,
+    pub bootstrap: crate::dialogs::bootstrap_dialog::BootstrapDialogState,
 }
 
 impl Default for DescriptivesDialogState {
@@ -27,6 +28,7 @@ impl Default for DescriptivesDialogState {
             selected_vars: Vec::new(),
             options: DescriptivesOptions::spps_default(),
             show_options: false,
+            bootstrap: crate::dialogs::bootstrap_dialog::BootstrapDialogState::default(),
         }
     }
 }
@@ -35,9 +37,11 @@ pub enum DescriptivesDialogAction {
     Run {
         vars: Vec<String>,
         options: DescriptivesOptions,
+        bootstrap: Option<serde_json::Value>,
     },
     Paste {
         vars: Vec<String>,
+        bootstrap: Option<serde_json::Value>,
     },
     None,
 }
@@ -107,6 +111,14 @@ pub fn render_descriptives_dialog(
         if !sub_open {
             state.show_options = false;
         }
+    }
+
+    if state.bootstrap.is_open {
+        crate::dialogs::bootstrap_dialog::render_bootstrap_dialog(
+            ctx,
+            Some(ds),
+            &mut state.bootstrap,
+        );
     }
 
     // 2. Render Main Dialog
@@ -239,6 +251,9 @@ pub fn render_descriptives_dialog(
                     if SubdialogSidebar::button(ui, t!("dialog-btn-options"), true).clicked() {
                         state.show_options = true;
                     }
+                    if SubdialogSidebar::button(ui, t!("dialog-btn-bootstrap"), true).clicked() {
+                        state.bootstrap.open();
+                    }
                 },
             );
         });
@@ -246,6 +261,7 @@ pub fn render_descriptives_dialog(
         // Bottom Action Bar
         let can_run = !state.selected_vars.is_empty();
         let bar_action = DialogActionBar::new(can_run).show(ui);
+        let bootstrap = state.bootstrap.to_json();
 
         match bar_action {
             ActionBarAction::Ok => {
@@ -253,12 +269,14 @@ pub fn render_descriptives_dialog(
                 action = DescriptivesDialogAction::Run {
                     vars: state.selected_vars.clone(),
                     options: state.options.clone(),
+                    bootstrap,
                 };
             }
             ActionBarAction::Paste => {
                 close_dialog = true;
                 action = DescriptivesDialogAction::Paste {
                     vars: state.selected_vars.clone(),
+                    bootstrap,
                 };
             }
             ActionBarAction::Reset => {
@@ -266,6 +284,7 @@ pub fn render_descriptives_dialog(
                 state.source_selected = None;
                 state.target_selected = None;
                 state.options = DescriptivesOptions::spps_default();
+                state.bootstrap.reset();
             }
             ActionBarAction::Cancel => {
                 close_dialog = true;

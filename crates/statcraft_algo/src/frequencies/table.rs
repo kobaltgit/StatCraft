@@ -1,3 +1,4 @@
+use super::bootstrap::FrequenciesBootstrapResult;
 use super::charts::FrequencyChartResult;
 use super::options::{
     CategoryOrder, FrequenciesFormatOptions, FrequenciesStatisticsOptions, MultipleVarsMode,
@@ -46,6 +47,9 @@ pub struct FrequencyResult {
     /// Mode of organizing output for multiple variables (SPSS /FORMAT=COMPARE | VARIABLE)
     #[serde(default)]
     pub multiple_vars_mode: MultipleVarsMode,
+    /// Optional bootstrap results for statistics and category percents
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub bootstrap: Option<FrequenciesBootstrapResult>,
 }
 
 impl FrequencyResult {
@@ -240,6 +244,7 @@ pub fn compute_frequencies_full(
         chart: None,
         table_suppressed: false,
         multiple_vars_mode: MultipleVarsMode::Compare,
+        bootstrap: None,
     }
 }
 

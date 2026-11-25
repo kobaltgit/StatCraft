@@ -16,16 +16,19 @@ pub struct CorrelationsDialogState {
     pub selected_vars: Vec<String>,
     pub options: BivariateCorrelationsOptions,
     pub show_options: bool,
+    pub bootstrap: crate::dialogs::bootstrap_dialog::BootstrapDialogState,
 }
 
 pub enum CorrelationsDialogAction {
     Run {
         vars: Vec<String>,
         options: BivariateCorrelationsOptions,
+        bootstrap: Option<serde_json::Value>,
     },
     Paste {
         vars: Vec<String>,
         options: BivariateCorrelationsOptions,
+        bootstrap: Option<serde_json::Value>,
     },
     None,
 }
@@ -243,9 +246,20 @@ pub fn render_correlations_dialog(
                     {
                         state.show_options = true;
                     }
+                    if SubdialogSidebar::button(ui, t!("dialog-btn-bootstrap"), true).clicked() {
+                        state.bootstrap.open();
+                    }
                 },
             );
         });
+
+        if state.bootstrap.is_open {
+            crate::dialogs::bootstrap_dialog::render_bootstrap_dialog(
+                ctx,
+                Some(ds),
+                &mut state.bootstrap,
+            );
+        }
 
         ui.add_space(8.0);
 
@@ -306,6 +320,7 @@ pub fn render_correlations_dialog(
             state.options.pearson || state.options.kendall || state.options.spearman;
         let can_run = state.selected_vars.len() >= 2 && at_least_one_coeff;
         let bar_action = DialogActionBar::new(can_run).show(ui);
+        let bootstrap = state.bootstrap.to_json();
 
         match bar_action {
             ActionBarAction::Ok => {
@@ -313,6 +328,7 @@ pub fn render_correlations_dialog(
                 action = CorrelationsDialogAction::Run {
                     vars: state.selected_vars.clone(),
                     options: state.options.clone(),
+                    bootstrap,
                 };
             }
             ActionBarAction::Paste => {
@@ -320,6 +336,7 @@ pub fn render_correlations_dialog(
                 action = CorrelationsDialogAction::Paste {
                     vars: state.selected_vars.clone(),
                     options: state.options.clone(),
+                    bootstrap,
                 };
             }
             ActionBarAction::Reset => {
@@ -327,6 +344,7 @@ pub fn render_correlations_dialog(
                 state.source_selected = None;
                 state.target_selected = None;
                 state.options = BivariateCorrelationsOptions::default();
+                state.bootstrap.reset();
             }
             ActionBarAction::Cancel => {
                 close_dialog = true;

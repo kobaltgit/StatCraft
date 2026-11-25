@@ -46,6 +46,13 @@ pub fn render_frequencies_dialog(
     if state.table_style.is_open {
         crate::dialogs::table_style_dialog::render_table_style_dialog(ctx, &mut state.table_style);
     }
+    if state.bootstrap.is_open {
+        crate::dialogs::bootstrap_dialog::render_bootstrap_dialog(
+            ctx,
+            Some(ds),
+            &mut state.bootstrap,
+        );
+    }
 
     let mut action = FrequenciesDialogAction::None;
     let mut close_dialog = false;
@@ -206,7 +213,9 @@ pub fn render_frequencies_dialog(
                         state.table_style.backup_report = state.table_style.create_style_report;
                         state.table_style.is_open = true;
                     }
-                    let _ = SubdialogSidebar::button(ui, t!("dialog-btn-bootstrap"), false);
+                    if SubdialogSidebar::button(ui, t!("dialog-btn-bootstrap"), true).clicked() {
+                        state.bootstrap.open();
+                    }
                 },
             );
         });
@@ -238,6 +247,7 @@ pub fn render_frequencies_dialog(
 
         let table_styles = state.table_style.rules_to_json();
         let create_style_report = state.table_style.create_style_report;
+        let bootstrap = state.bootstrap.to_json();
 
         match bar_action {
             ActionBarAction::Ok => {
@@ -255,6 +265,7 @@ pub fn render_frequencies_dialog(
                     suppress_tables_limit,
                     table_styles,
                     create_style_report,
+                    bootstrap,
                 };
             }
             ActionBarAction::Paste => {
@@ -272,6 +283,7 @@ pub fn render_frequencies_dialog(
                     suppress_tables_limit,
                     table_styles,
                     create_style_report,
+                    bootstrap,
                 };
             }
             ActionBarAction::Reset => {

@@ -19,6 +19,7 @@ pub struct LinearRegressionDialogState {
     pub ci_level_str: String,
     pub collinearity: bool,
     pub show_statistics: bool,
+    pub bootstrap: crate::dialogs::bootstrap_dialog::BootstrapDialogState,
 }
 
 impl Default for LinearRegressionDialogState {
@@ -33,6 +34,7 @@ impl Default for LinearRegressionDialogState {
             ci_level_str: "95".to_string(),
             collinearity: true,
             show_statistics: false,
+            bootstrap: crate::dialogs::bootstrap_dialog::BootstrapDialogState::default(),
         }
     }
 }
@@ -43,12 +45,14 @@ pub enum LinearRegressionDialogAction {
         independent_vars: Vec<String>,
         ci: f64,
         collinearity: bool,
+        bootstrap: Option<serde_json::Value>,
     },
     Paste {
         dependent_var: String,
         independent_vars: Vec<String>,
         ci: f64,
         collinearity: bool,
+        bootstrap: Option<serde_json::Value>,
     },
     None,
 }
@@ -333,9 +337,20 @@ pub fn render_linear_regression_dialog(
                     {
                         state.show_statistics = true;
                     }
+                    if SubdialogSidebar::button(ui, t!("dialog-btn-bootstrap"), true).clicked() {
+                        state.bootstrap.open();
+                    }
                 },
             );
         });
+
+        if state.bootstrap.is_open {
+            crate::dialogs::bootstrap_dialog::render_bootstrap_dialog(
+                ctx,
+                Some(ds),
+                &mut state.bootstrap,
+            );
+        }
 
         ui.add_space(10.0);
 
@@ -347,6 +362,7 @@ pub fn render_linear_regression_dialog(
             .map(|p| p / 100.0)
             .unwrap_or(0.95)
             .clamp(0.5, 0.9999);
+        let bootstrap = state.bootstrap.to_json();
 
         match bar_action {
             ActionBarAction::Ok => {
@@ -356,6 +372,7 @@ pub fn render_linear_regression_dialog(
                         independent_vars: state.indep_vars.clone(),
                         ci: parsed_ci,
                         collinearity: state.collinearity,
+                        bootstrap,
                     };
                     close_dialog = true;
                 }
@@ -367,6 +384,7 @@ pub fn render_linear_regression_dialog(
                         independent_vars: state.indep_vars.clone(),
                         ci: parsed_ci,
                         collinearity: state.collinearity,
+                        bootstrap,
                     };
                     close_dialog = true;
                 }

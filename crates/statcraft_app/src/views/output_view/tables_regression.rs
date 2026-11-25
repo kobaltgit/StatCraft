@@ -2,7 +2,9 @@
     OutputItem, OutputItemKind, OutputNotes, OutputProcedure, OutputViewerState, SelectedTarget,
 };
 use super::tables_common::{
-    adjust_widths, format_opt, format_sig, render_data_row, render_header_row,
+    adjust_widths, bootstrap_column_headers, bootstrap_specs_to_tsv, bootstrap_table_to_tsv,
+    format_bootstrap_cells, format_opt, format_sig, render_bootstrap_specifications_table,
+    render_bootstrap_table, render_data_row, render_header_row,
 };
 use crate::theme::Tokens;
 use egui::{Align2, ScrollArea, Ui};
@@ -68,6 +70,11 @@ impl OutputViewerState {
 
 pub fn render_spss_linear_regression(ui: &mut Ui, res: &LinearRegressionResult) {
     ui.vertical(|ui| {
+        if let Some(ref boot) = res.bootstrap {
+            render_bootstrap_specifications_table(ui, &boot.options);
+            ui.add_space(14.0);
+        }
+
         // Table 1: Variables Entered/Removed
         render_variables_entered_table(ui, res);
         ui.add_space(14.0);
@@ -82,8 +89,52 @@ pub fn render_spss_linear_regression(ui: &mut Ui, res: &LinearRegressionResult) 
 
         // Table 4: Coefficients
         render_coefficients_table(ui, res);
-        ui.add_space(16.0);
+        ui.add_space(14.0);
+
+        // Table 5: Bootstrap for Coefficients
+        if let Some((headers, rows)) = build_regression_bootstrap_rows(res) {
+            let title = format!(
+                "{} ({})",
+                t!("output-regression-coeffs-title"),
+                t!("output-bootstrap-group-header")
+            );
+            render_bootstrap_table(ui, &title, "reg_boot_table", &headers, &rows, 1);
+            ui.add_space(16.0);
+        }
     });
+}
+
+fn build_regression_bootstrap_rows(
+    res: &LinearRegressionResult,
+) -> Option<(Vec<String>, Vec<Vec<String>>)> {
+    let boot = res.bootstrap.as_ref()?;
+    let mut rows = Vec::new();
+    for c in &boot.coefficients {
+        if let Some(ref s) = c.b {
+            let cells = format_bootstrap_cells(s, 4);
+            rows.push(vec![
+                c.var_name.clone(),
+                format!("{:.4}", s.estimate),
+                cells[0].clone(),
+                cells[1].clone(),
+                cells[2].clone(),
+                cells[3].clone(),
+            ]);
+        }
+    }
+    if rows.is_empty() {
+        return None;
+    }
+    let boot_cols = bootstrap_column_headers(boot.options.ci_level);
+    let headers = vec![
+        t!("output-col-model"),
+        t!("output-regression-col-b"),
+        boot_cols[0].clone(),
+        boot_cols[1].clone(),
+        boot_cols[2].clone(),
+        boot_cols[3].clone(),
+    ];
+    Some((headers, rows))
 }
 
 fn render_variables_entered_table(ui: &mut Ui, res: &LinearRegressionResult) {
@@ -417,6 +468,21 @@ pub fn regression_to_tsv(res: &LinearRegressionResult) -> String {
             c.ci_lower,
             c.ci_upper
         ));
+    }
+
+    if let Some((headers, rows)) = build_regression_bootstrap_rows(res) {
+        out.push('\n');
+        if let Some(ref boot) = res.bootstrap {
+            out.push_str(&bootstrap_specs_to_tsv(&boot.options));
+            out.push_str("\n\n");
+        }
+        let title = format!(
+            "{} ({})",
+            t!("output-regression-coeffs-title"),
+            t!("output-bootstrap-group-header")
+        );
+        out.push_str(&bootstrap_table_to_tsv(&title, &headers, &rows));
+        out.push('\n');
     }
 
     out

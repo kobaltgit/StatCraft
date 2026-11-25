@@ -36,6 +36,7 @@ fn make_sample_freq_result() -> FrequencyResult {
         chart: None,
         table_suppressed: false,
         multiple_vars_mode: Default::default(),
+        bootstrap: None,
     }
 }
 

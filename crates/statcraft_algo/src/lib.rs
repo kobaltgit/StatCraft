@@ -4,6 +4,7 @@ pub mod adp;
 pub mod anova_oneway;
 pub mod auto_recode;
 pub mod binning;
+pub mod bootstrap;
 pub mod cluster_kmeans;
 pub mod codebook_core;
 pub mod correlations;
@@ -75,8 +76,9 @@ pub mod variable_sort;
 
 pub use adp::*;
 pub use anova_oneway::{
-    compute_oneway_anova, compute_oneway_anova_from_slices, f_distribution_sf, AlgoError,
-    AnovaGroupDescriptives, AnovaHomogeneityTest, AnovaTableRow, OneWayAnovaOptions,
+    compute_oneway_anova, compute_oneway_anova_bootstrap, compute_oneway_anova_from_slices,
+    f_distribution_sf, AlgoError, AnovaGroupDescriptives, AnovaHomogeneityTest, AnovaTableRow,
+    OneWayAnovaBootstrap, OneWayAnovaBootstrapGroup, OneWayAnovaBootstrapPair, OneWayAnovaOptions,
     OneWayAnovaResult,
 };
 pub use auto_recode::{compute_auto_recode, AutoRecodeOrder, AutoRecodeResult};
@@ -85,12 +87,18 @@ pub use binning::{
     generate_equal_percentile_cutpoints, generate_equal_width_cutpoints, generate_stddev_cutpoints,
     BinningResult, Cutpoint,
 };
+pub use bootstrap::{
+    compute_bca_ci, compute_percentile_ci, normal_cdf, run_bootstrap, run_bootstrap_scalar,
+    summarize_bootstrap, BootstrapCi, BootstrapCiMethod, BootstrapError, BootstrapOptions,
+    BootstrapSamplingMethod, BootstrapSummary, SamplingPlan, StratifiedPlan,
+};
 pub use cluster_kmeans::*;
 pub use codebook_core::*;
 pub use correlations::{
-    compute_bivariate_correlations, BivariateCorrelationsOptions, BivariateCorrelationsResult,
-    CorrelationCell, CorrelationMatrixResult, CorrelationType, MissingHandling, SignificanceFlag,
-    SignificanceTest, VarDescriptives, VariableInput,
+    compute_bivariate_correlations, compute_bivariate_correlations_bootstrap,
+    BivariateCorrelationsOptions, BivariateCorrelationsResult, CorrelationBootstrapPair,
+    CorrelationCell, CorrelationMatrixResult, CorrelationType, CorrelationsBootstrap,
+    MissingHandling, SignificanceFlag, SignificanceTest, VarDescriptives, VariableInput,
 };
 pub use count_values::{compute_count_across_columns, ValueCriterion};
 pub use cox::{
@@ -112,7 +120,8 @@ pub use date_time::{
     DateUnit,
 };
 pub use descriptives::{
-    compute_descriptives, compute_descriptives_weighted, DescriptivesOptions, DescriptivesResult,
+    compute_descriptives, compute_descriptives_bootstrap, compute_descriptives_weighted,
+    DescriptivesBootstrap, DescriptivesOptions, DescriptivesResult,
 };
 pub use dummies::{generate_dummies_for_column, DummySpec, GeneratedDummyColumn};
 pub use explore::*;
@@ -124,12 +133,13 @@ pub use factor_types::{
 };
 pub use frequencies::{
     apply_format_options, calculate_nice_step, compute_bar_chart, compute_custom_percentiles,
-    compute_frequencies, compute_frequencies_detailed, compute_frequencies_full,
-    compute_frequencies_statistics, compute_frequency_chart, compute_grouped_percentile,
-    compute_histogram, compute_ntiles, compute_percentile, compute_percentiles_with_options,
-    compute_pie_chart, compute_quartiles, compute_statistics_from_slice,
-    recalculate_cumulative_percents, sort_categories, BarCategoryData, CategoryOrder, ChartType,
-    ChartValueMode, FrequenciesFormatOptions, FrequenciesStatisticsOptions,
+    compute_frequencies, compute_frequencies_bootstrap, compute_frequencies_detailed,
+    compute_frequencies_full, compute_frequencies_statistics, compute_frequency_chart,
+    compute_grouped_percentile, compute_histogram, compute_ntiles, compute_percentile,
+    compute_percentiles_with_options, compute_pie_chart, compute_quartiles,
+    compute_statistics_from_slice, recalculate_cumulative_percents, sort_categories,
+    BarCategoryData, CategoryOrder, ChartType, ChartValueMode, FrequenciesBootstrapResult,
+    FrequenciesBootstrapStats, FrequenciesFormatOptions, FrequenciesStatisticsOptions,
     FrequenciesStatisticsResult, FrequencyCategory, FrequencyChartResult, FrequencyChartSpec,
     FrequencyInputItem, FrequencyResult, FrequencyTable, HistogramBinData, HistogramSummary,
     MultipleVarsMode, PercentileValue, PercentilesOptions,
@@ -143,10 +153,11 @@ pub use logistic::{
     HosmerLemeshowResult, LogisticCoefficientRow, LogisticModelSummary, LogisticRegressionOptions,
     LogisticRegressionResult, OmnibusTestsRow,
 };
-pub use means::compute_means_breakdown;
+pub use means::{compute_means_bootstrap, compute_means_breakdown};
 pub use means_types::{
-    MeansAnovaRow, MeansAnovaTable, MeansAssociationMeasures, MeansCaseProcessingSummary,
-    MeansCellStats, MeansOptions, MeansProcedureResult, MeansTableResult,
+    MeansAnovaRow, MeansAnovaTable, MeansAssociationMeasures, MeansBootstrap, MeansBootstrapGroup,
+    MeansCaseProcessingSummary, MeansCellStats, MeansOptions, MeansProcedureResult,
+    MeansTableResult,
 };
 pub use multinomial_logistic::{
     compute_multinomial_logistic, CaseProcessingCategory, GoodnessOfFit, LikelihoodRatioTestRow,
@@ -174,10 +185,12 @@ pub use partial_corr::{
 pub use programmability::*;
 pub use rank_cases::{compute_ranks, inv_normal_cdf, RankDirection, RankType, TiesHandling};
 pub use recode::{apply_recode, NewValueSpec, OldValueRule, RecodeMapping, RecodePlan};
-pub use regression::{compute_linear_regression, invert_matrix};
+pub use regression::{
+    compute_linear_regression, compute_linear_regression_bootstrap, invert_matrix,
+};
 pub use regression_types::{
-    LinearRegressionOptions, LinearRegressionResult, RegressionAnova, RegressionAnovaRow,
-    RegressionCoefficient,
+    LinearRegressionBootstrap, LinearRegressionOptions, LinearRegressionResult, RegressionAnova,
+    RegressionAnovaRow, RegressionBootstrapCoeff, RegressionCoefficient,
 };
 pub use reliability::compute_reliability;
 pub use reliability_types::{
@@ -195,12 +208,17 @@ pub use survival_km::*;
 pub use survival_lifetables::*;
 pub use time_series::{compute_time_series_transform, TimeSeriesFunction};
 pub use ttest_indep::{
-    compute_indep_ttest, compute_indep_ttest_from_slices, GroupStats, IndepTTestOptions,
-    IndepTTestResult, LeveneResult, TTestTwoGroupDetails,
+    compute_indep_ttest, compute_indep_ttest_bootstrap, compute_indep_ttest_from_slices,
+    GroupStats, IndepTTestBootstrap, IndepTTestOptions, IndepTTestResult, LeveneResult,
+    TTestTwoGroupDetails,
 };
-pub use ttest_onesample::{compute_onesample_ttest, OneSampleTTestOptions, OneSampleTTestResult};
+pub use ttest_onesample::{
+    compute_onesample_ttest, compute_onesample_ttest_bootstrap, OneSampleTTestBootstrap,
+    OneSampleTTestOptions, OneSampleTTestResult,
+};
 pub use ttest_paired::{
-    compute_paired_ttest, compute_paired_ttest_from_slices, PairedCorrelation, PairedDataInput,
-    PairedDifferences, PairedSliceInput, PairedTTestResult, PairedVarStats,
+    compute_paired_ttest, compute_paired_ttest_bootstrap, compute_paired_ttest_from_slices,
+    PairedCorrelation, PairedDataInput, PairedDifferences, PairedSliceInput, PairedTTestBootstrap,
+    PairedTTestResult, PairedVarStats,
 };
 pub use variable_sort::{compute_variable_sort_permutation, VariableSortAttribute};

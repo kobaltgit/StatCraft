@@ -4066,4 +4066,64 @@
    * 100% чистый прогон `cargo run -p xtask -j 1 -- ci` (10/10 шлюзов, `file-guard`, `design-guard`, clippy с `-D warnings`, fmt);
    * Релизный бинарник `statcraft_app.exe` успешно пересобран.
 
+---
+
+### Фаза 115: Ядро бутстреп-ресэмплинга, MT19937 и синтаксис `BOOTSTRAP` (Feature 020 — Stage 1)
+*Время: 24 ноября 2026, 23:57 (~15 минут)*
+
+Реализовано независимое от UI математическое и синтаксическое ядро бутстреп-ресэмплинга на уровнях L1, L2 и L5 в строгом соответствии с Clean-room подходом (Efron & Tibshirani, 1993; открытая спецификация синтаксиса `BOOTSTRAP`) и конституцией StatCraft:
+1. **Детерминированный ГПСЧ `Mt19937` в L1 (`statcraft_core::rng`):**
+   * Реализован 32-битный генератор Mersenne Twister (`Mt19937`) на 100% safe Rust без `unsafe`, `unwrap` и `panic!`.
+   * Поддержаны фиксированный `seed`, `from_optional_seed()` с фоллбэком на `get_effective_random_seed()`, а также равномерная выборка индекса `gen_range_usize` без modulo bias (rejection sampling).
+   * Покрыт тестами сверки первых 10 значений со стандартным тестовым вектором `MT19937` (`seed = 5489`).
+2. **Движок бутстрепа в L2 (`statcraft_algo::bootstrap`):**
+   * `options.rs`: `BootstrapOptions` (`enabled`, `samples=1000`, `seed`, `ci_level=95.0`, `ci_method: Percentile | Bca`, `sampling_method: Simple | Stratified { strata_vars }`) с валидацией параметров.
+   * `resampler.rs`: `SamplingPlan` и `StratifiedPlan` для простого и стратифицированного ресэмплинга с возвращением (с сохранением точных размеров $n_h$ каждого слоя).
+   * `ci.rs`: высокоточная `normal_cdf` (аппроксимация Коди), `compute_percentile_ci`, `compute_bca_ci` (с оценкой смещения $z_0$, jackknife-ускорением $\hat{a}$ и безопасной деградацией при вырожденном знаменателе) и `summarize_bootstrap` (`Bias`, `Std. Error`, `CI`).
+   * `engine.rs`: обобщённый API `run_bootstrap` и `run_bootstrap_scalar`.
+3. **Синтаксис `BOOTSTRAP` и `SET MTINDEX` в L5 (`statcraft_syntax`):**
+   * Реализованы `bootstrap_param_schema()`, `bootstrap_to_sps()`, `parse_set_mtindex()` и `parse_bootstrap_command()` в `crates/statcraft_syntax/src/bootstrap.rs`.
+   * В `SyntaxDispatcher::execute_batch` добавлен одноразовый модификатор `pending_bootstrap`, автоматически передающий `params["bootstrap"]` в следующую за `BOOTSTRAP` команду и очищающийся после её выполнения.
+4. **Контроль качества (DoD):**
+   * Пройдены все тесты `statcraft_core`, `statcraft_algo` (`bootstrap_tests.rs`) и `statcraft_syntax` (`bootstrap_syntax_tests.rs`) с `-j 1`;
+   * Пройдены `cargo fmt --check`, `cargo clippy -p statcraft_core -p statcraft_algo -p statcraft_syntax -j 1 -- -D warnings`, `xtask file-guard` (518 файлов) и `xtask layers`.
+
+---
+
+### Фаза 116: Диалог «Бутстреп» и сквозная интеграция с «Частотами» (Feature 021 — Stage 2)
+*Время: 25 ноября 2026, 00:26 (~30 минут)*
+
+Реализован переиспользуемый модальный поддиалог **«Бутстреп»** (`BootstrapDialog`) и выполнена сквозная интеграция бутстреп-ресэмплинга с процедурой **«Частоты»** (`Frequencies`) на уровнях L2, L5 и L6:
+1. **Переиспользуемый UI-модуль (`crates/statcraft_app/src/dialogs/bootstrap_dialog/`):**
+   * `state.rs`: `BootstrapDialogState` с полями `enabled`, `samples_input` (`"1000"`), `use_seed`, `seed_input` (`"2000000"`), `ci_level_input` (`"95"`), `ci_method` (`Percentile` / `Bca`), `sampling_method` (`Simple` / `Stratified`), `strata_vars`, валидацией `can_continue()` и транзакционным `backup`/`restore`.
+   * `mod.rs`: вёрстка через `DialogKit` (`DialogShell`, `GroupBox` «Доверительные интервалы» и «Выборка», `VariablePicker` + `TransferButton` для переменных слоёв, `SubdialogActionBar`).
+   * Полная локализация Fluent в `locales/en.ftl` и `locales/ru.ftl` (0% хардкода строк).
+2. **Интеграция с `Frequencies` в L2 и L5:**
+   * `statcraft_algo::frequencies::bootstrap`: реализованы `FrequenciesBootstrapResult` и `compute_frequencies_bootstrap()` для вычисления `Bias`, `Std. Error` и `Percentile`/`BCa` интервалов для активных описательных статистик и процентов категорий.
+   * `statcraft_syntax::commands::frequencies_cmd`: добавлена схема `bootstrap`, поддержка стратифицированной выборки (`build_strata_keys` в `options.rs`) и генерация `SET MTINDEX=...` + `BOOTSTRAP ... .` перед `FREQUENCIES` в `sps.rs`.
+3. **Output Viewer и UI-интеграция в L6:**
+   * В `frequencies_dialog` активирована кнопка `[ Бутстреп... ]`, подключена передача `bootstrap` в `Run` и `Paste` (`app_dialogs_stats.rs`).
+   * В `tables_frequencies/bootstrap_tables.rs` реализованы таблица `Bootstrap Specifications`, бутстреп-таблицы для статистик и частот, а также их экспорт в TSV.
+4. **Контроль качества (DoD):**
+   * Пройдены `dialog_invariants` (51/51) и `output_viewer_frequencies_invariants` (9/9);
+   * Полный Quality Gate `cargo run -p xtask -j 1 -- ci` (fmt, clippy, layers, file-guard, design-guard, i18n-lint, undo-redo matrix, sync-site, все тесты воркспейса) пройден на 100% без ошибок.
+
+---
+
+### Фаза 117: Масштабирование бутстрепа на статистические процедуры и Golden Oracle (Feature 022 — Stage 3)
+*Время: 25 ноября 2026, 00:42 (~15 минут)*
+
+Переиспользуемый движок бутстрепа (Stage 1) и модальный диалог `BootstrapDialog` (Stage 2) масштабированы на основные параметрические и корреляционно-регрессионные процедуры StatCraft:
+1. **Единый слой вывода (`tables_common.rs`):**
+   * Вынесены общие компоненты рендеринга и TSV-экспорта (`render_bootstrap_specifications_table`, `bootstrap_specs_to_tsv`, `bootstrap_column_headers`, `format_bootstrap_cells`, `render_bootstrap_table`, `bootstrap_table_to_tsv`).
+2. **Сквозная интеграция (L2 + L5 + L6):**
+   * Подключены `Descriptives`, `Means`, `One-Sample T-Test`, `Independent-Samples T-Test`, `Paired-Samples T-Test`, `One-Way ANOVA`, `Bivariate Correlations` (Pearson, Spearman, Kendall) и `Linear Regression` (OLS).
+   * В `statcraft_algo::bootstrap::resampler` добавлен конструктор `SamplingPlan::from_options()`, а в `statcraft_syntax::bootstrap` — общие хелперы `parse_bootstrap_options()` и `extract_strata_keys()`.
+3. **Golden Oracle (`crates/statcraft_algo/tests/bootstrap_golden_oracle.rs`):**
+   * Реализован эталонный набор тестов для `Percentile` и `BCa` (одномерное среднее и стандартное отклонение, разность средних двух независимых выборок, корреляция Пирсона, коэффициенты OLS-регрессии) с точностью $\le 10^{-6}$ относительно формул `scipy.stats.bootstrap`.
+4. **Контроль качества (DoD):**
+   * Обновлена матрица паритета (`cargo run -p xtask -j 1 -- parity`);
+   * Полный Quality Gate `cargo run -p xtask -j 1 -- ci` пройден на 100%.
+
+
 

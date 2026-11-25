@@ -1,5 +1,5 @@
 use serde_json::Value;
-use statcraft_algo::{sort_categories, CategoryOrder, FrequencyCategory};
+use statcraft_algo::{sort_categories, BootstrapOptions, CategoryOrder, FrequencyCategory};
 
 pub fn apply_order(categories: &mut [FrequencyCategory], order: &str) {
     sort_categories(categories, CategoryOrder::from_str_loose(order));
@@ -168,13 +168,24 @@ pub fn to_sps_from_params(params: &Value) -> String {
 
     let freqs_sps = lines.join("\n");
 
+    let mut out_parts = Vec::new();
+    if let Some(boot_val) = params.get("bootstrap") {
+        if let Ok(boot_opts) = serde_json::from_value::<BootstrapOptions>(boot_val.clone()) {
+            let boot_sps = crate::bootstrap::bootstrap_to_sps(&boot_opts);
+            if !boot_sps.is_empty() {
+                out_parts.push(boot_sps);
+            }
+        }
+    }
+    out_parts.push(freqs_sps);
+
     if let Some(styles_arr) = params.get("table_styles").and_then(|v| v.as_array()) {
         if let Some(modify_cmd) = format_output_modify(styles_arr) {
-            return format!("{}\n\n{}", freqs_sps, modify_cmd);
+            out_parts.push(modify_cmd);
         }
     }
 
-    freqs_sps
+    out_parts.join("\n\n")
 }
 
 pub fn format_output_modify(styles: &[Value]) -> Option<String> {

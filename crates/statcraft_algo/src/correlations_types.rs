@@ -1,4 +1,20 @@
+use crate::bootstrap::{BootstrapOptions, BootstrapSummary};
 use serde::{Deserialize, Serialize};
+
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+pub struct CorrelationBootstrapPair {
+    pub corr_type: CorrelationType,
+    pub var1: String,
+    pub var2: String,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub r: Option<BootstrapSummary>,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+pub struct CorrelationsBootstrap {
+    pub options: BootstrapOptions,
+    pub pairs: Vec<CorrelationBootstrapPair>,
+}
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
 pub enum CorrelationType {
@@ -96,6 +112,8 @@ pub struct BivariateCorrelationsResult {
     pub descriptives: Option<Vec<VarDescriptives>>,
     pub matrices: Vec<CorrelationMatrixResult>,
     pub options: BivariateCorrelationsOptions,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub bootstrap: Option<CorrelationsBootstrap>,
 }
 
 pub type VariableInput<'a> = (&'a str, &'a [Option<f64>]);

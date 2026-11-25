@@ -1,5 +1,7 @@
 ﻿use super::tables_common::{
-    adjust_widths, format_opt, format_sig, render_data_row, render_header_row,
+    adjust_widths, bootstrap_column_headers, bootstrap_specs_to_tsv, bootstrap_table_to_tsv,
+    format_bootstrap_cells, format_opt, format_sig, render_bootstrap_specifications_table,
+    render_bootstrap_table, render_data_row, render_header_row,
 };
 use crate::theme::Tokens;
 use egui::{Align2, ScrollArea, Ui};
@@ -17,6 +19,13 @@ pub fn render_spss_onesample_ttest_tables(
     }
 
     ui.vertical(|ui| {
+        if let Some(opts) = results
+            .iter()
+            .find_map(|r| r.bootstrap.as_ref().map(|b| &b.options))
+        {
+            render_bootstrap_specifications_table(ui, opts);
+            ui.add_space(14.0_f32);
+        }
         // Table 1: One-Sample Statistics
         ui.strong(t!("output-ttest-stats-title"));
         ui.add_space(4.0_f32);
@@ -106,11 +115,75 @@ pub fn render_spss_onesample_ttest_tables(
             });
 
         ui.add_space(16.0_f32);
+
+        if let Some((headers, rows)) = build_onesample_bootstrap_rows(results) {
+            let title = format!(
+                "{} ({})",
+                t!("output-ttest-test-title", value = test_value),
+                t!("output-bootstrap-group-header")
+            );
+            render_bootstrap_table(ui, &title, "onesample_boot_table", &headers, &rows, 2);
+            ui.add_space(16.0_f32);
+        }
     });
+}
+
+fn build_onesample_bootstrap_rows(
+    results: &[OneSampleTTestResult],
+) -> Option<(Vec<String>, Vec<Vec<String>>)> {
+    let mut rows = Vec::new();
+    let mut ci_level = 95.0;
+
+    for r in results {
+        let Some(ref boot) = r.bootstrap else {
+            continue;
+        };
+        ci_level = boot.options.ci_level;
+        for (stat_name, sum_opt) in [
+            (t!("output-col-mean"), &boot.mean),
+            (t!("output-col-mean-diff"), &boot.mean_diff),
+        ] {
+            if let Some(s) = sum_opt {
+                let cells = format_bootstrap_cells(s, 4);
+                rows.push(vec![
+                    r.variable.clone(),
+                    stat_name,
+                    format!("{:.4}", s.estimate),
+                    cells[0].clone(),
+                    cells[1].clone(),
+                    cells[2].clone(),
+                    cells[3].clone(),
+                ]);
+            }
+        }
+    }
+
+    if rows.is_empty() {
+        return None;
+    }
+
+    let boot_cols = bootstrap_column_headers(ci_level);
+    let headers = vec![
+        t!("output-col-variable"),
+        t!("output-bootstrap-col-statistic"),
+        t!("output-km-col-estimate"),
+        boot_cols[0].clone(),
+        boot_cols[1].clone(),
+        boot_cols[2].clone(),
+        boot_cols[3].clone(),
+    ];
+    Some((headers, rows))
 }
 
 pub fn onesample_ttest_to_tsv(results: &[OneSampleTTestResult]) -> String {
     let mut out = String::new();
+    if let Some(opts) = results
+        .iter()
+        .find_map(|r| r.bootstrap.as_ref().map(|b| &b.options))
+    {
+        out.push_str(&bootstrap_specs_to_tsv(opts));
+        out.push_str("\n\n");
+    }
 
     // Table 1: One-Sample Statistics
     out.push_str("One-Sample Statistics\n");
@@ -142,6 +215,16 @@ pub fn onesample_ttest_to_tsv(results: &[OneSampleTTestResult]) -> String {
             format_opt(r.ci_lower),
             format_opt(r.ci_upper)
         ));
+    }
+
+    if let Some((headers, rows)) = build_onesample_bootstrap_rows(results) {
+        out.push('\n');
+        out.push_str(&bootstrap_table_to_tsv(
+            &format!("One-Sample Test ({})", t!("output-bootstrap-group-header")),
+            &headers,
+            &rows,
+        ));
+        out.push('\n');
     }
 
     out

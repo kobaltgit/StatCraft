@@ -163,6 +163,7 @@ fn test_exhaustive_enum_payloads_render_without_panics() {
                 kurtosis: None,
                 se_kurtosis: None,
                 se_mean: None,
+                bootstrap: None,
             }]),
         },
         // Frequencies with empty categories
@@ -181,6 +182,7 @@ fn test_exhaustive_enum_payloads_render_without_panics() {
                 chart: None,
                 table_suppressed: false,
                 multiple_vars_mode: statcraft_algo::MultipleVarsMode::Compare,
+                bootstrap: None,
             }]),
         },
         // One-Sample T-Test with 0 df and None stats
@@ -204,6 +206,7 @@ fn test_exhaustive_enum_payloads_render_without_panics() {
                     ci_level: 0.95,
                     ci_lower: None,
                     ci_upper: None,
+                    bootstrap: None,
                 }],
                 test_value: 0.0,
                 ci: 0.95,
@@ -262,6 +265,7 @@ fn test_exhaustive_enum_payloads_render_without_panics() {
                         sig_2tailed: None,
                     },
                     confidence_level: 0.95,
+                    bootstrap: None,
                 }],
                 pairs: vec![("v1".to_string(), "v2".to_string())],
                 ci: 0.95,
@@ -809,6 +813,7 @@ fn test_output_viewer_linear_regression_item_and_tsv() {
             },
         ],
         options: LinearRegressionOptions::default(),
+        bootstrap: None,
     };
 
     state.add_linear_regression(sample_reg.clone());

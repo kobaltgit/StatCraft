@@ -19,6 +19,7 @@ pub struct PairedSamplesTTestDialogState {
     pub pair_selected: Option<usize>,
     pub ci_level_str: String,
     pub show_options: bool,
+    pub bootstrap: crate::dialogs::bootstrap_dialog::BootstrapDialogState,
 }
 
 impl Default for PairedSamplesTTestDialogState {
@@ -33,6 +34,7 @@ impl Default for PairedSamplesTTestDialogState {
             pair_selected: None,
             ci_level_str: "95".to_string(),
             show_options: false,
+            bootstrap: crate::dialogs::bootstrap_dialog::BootstrapDialogState::default(),
         }
     }
 }
@@ -41,10 +43,12 @@ pub enum PairedSamplesTTestDialogAction {
     Run {
         pairs: Vec<(String, String)>,
         ci: f64,
+        bootstrap: Option<serde_json::Value>,
     },
     Paste {
         pairs: Vec<(String, String)>,
         ci: f64,
+        bootstrap: Option<serde_json::Value>,
     },
     None,
 }
@@ -304,14 +308,26 @@ pub fn render_ttest_paired_dialog(
                     if SubdialogSidebar::button(ui, t!("dialog-btn-options"), true).clicked() {
                         state.show_options = true;
                     }
+                    if SubdialogSidebar::button(ui, t!("dialog-btn-bootstrap"), true).clicked() {
+                        state.bootstrap.open();
+                    }
                 },
             );
         });
+
+        if state.bootstrap.is_open {
+            crate::dialogs::bootstrap_dialog::render_bootstrap_dialog(
+                ctx,
+                Some(ds),
+                &mut state.bootstrap,
+            );
+        }
 
         // Bottom Action Bar
         let has_pairs = !state.paired_vars.is_empty();
         let parsed_ci_pct = state.ci_level_str.trim().parse::<f64>().unwrap_or(95.0);
         let ci_ratio = (parsed_ci_pct / 100.0).clamp(0.01, 0.9999);
+        let bootstrap = state.bootstrap.to_json();
 
         let bar_action = DialogActionBar::new(has_pairs).show(ui);
 
@@ -321,6 +337,7 @@ pub fn render_ttest_paired_dialog(
                 action = PairedSamplesTTestDialogAction::Run {
                     pairs: state.paired_vars.clone(),
                     ci: ci_ratio,
+                    bootstrap,
                 };
             }
             ActionBarAction::Paste => {
@@ -328,6 +345,7 @@ pub fn render_ttest_paired_dialog(
                 action = PairedSamplesTTestDialogAction::Paste {
                     pairs: state.paired_vars.clone(),
                     ci: ci_ratio,
+                    bootstrap,
                 };
             }
             ActionBarAction::Reset => {
@@ -338,6 +356,7 @@ pub fn render_ttest_paired_dialog(
                 state.paired_vars.clear();
                 state.pair_selected = None;
                 state.ci_level_str = "95".to_string();
+                state.bootstrap.reset();
             }
             ActionBarAction::Cancel => {
                 close_dialog = true;

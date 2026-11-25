@@ -1,4 +1,21 @@
+pub use crate::bootstrap::compute_descriptives_bootstrap;
+use crate::bootstrap::{BootstrapOptions, BootstrapSummary};
 use serde::{Deserialize, Serialize};
+
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+pub struct DescriptivesBootstrap {
+    pub options: BootstrapOptions,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub mean: Option<BootstrapSummary>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub std_dev: Option<BootstrapSummary>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub variance: Option<BootstrapSummary>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub skewness: Option<BootstrapSummary>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub kurtosis: Option<BootstrapSummary>,
+}
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
 pub struct DescriptivesResult {
@@ -17,6 +34,8 @@ pub struct DescriptivesResult {
     pub se_skewness: Option<f64>,
     pub kurtosis: Option<f64>,
     pub se_kurtosis: Option<f64>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub bootstrap: Option<DescriptivesBootstrap>,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, Default)]
@@ -118,6 +137,7 @@ pub fn compute_descriptives_weighted(
             se_skewness: None,
             kurtosis: None,
             se_kurtosis: None,
+            bootstrap: None,
         };
     }
 
@@ -244,6 +264,7 @@ pub fn compute_descriptives_weighted(
         se_skewness,
         kurtosis,
         se_kurtosis,
+        bootstrap: None,
     }
 }
 

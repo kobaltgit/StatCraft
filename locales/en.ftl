@@ -2077,4 +2077,38 @@ dialog-table-style-fmt-italic = Italic
 dialog-table-style-fmt-underline = Underline
 dialog-table-style-fmt-reset = Reset
 
+# Bootstrap Subdialog & Output
+dialog-bootstrap-title = Bootstrap
+dialog-bootstrap-perform = Perform bootstrapping
+dialog-bootstrap-samples = Number of samples:
+dialog-bootstrap-set-seed = Set seed for Mersenne Twister
+dialog-bootstrap-seed-value = Seed:
+dialog-bootstrap-ci-group = Confidence Intervals
+dialog-bootstrap-ci-level = Level (%):
+dialog-bootstrap-ci-percentile = Percentile
+dialog-bootstrap-ci-bca = Bias corrected accelerated (BCa)
+dialog-bootstrap-sampling-group = Sampling
+dialog-bootstrap-sampling-simple = Simple
+dialog-bootstrap-sampling-stratified = Stratified
+dialog-bootstrap-strata-vars = Strata Variables:
+
+output-bootstrap-specs-title = Bootstrap Specifications
+output-bootstrap-spec-sampling = Sampling Method
+output-bootstrap-spec-samples = Number of Samples
+output-bootstrap-spec-ci-level = Confidence Interval Level
+output-bootstrap-spec-ci-type = Confidence Interval Type
+output-bootstrap-spec-seed = Seed
+output-bootstrap-sampling-simple = Simple
+output-bootstrap-sampling-stratified = Stratified ({ $vars })
+output-bootstrap-ci-percentile = Percentile
+output-bootstrap-ci-bca = Bias corrected accelerated (BCa)
+output-bootstrap-seed-random = Random
+output-bootstrap-group-header = Bootstrap
+output-bootstrap-col-bias = Bias
+output-bootstrap-col-se = Std. Error
+output-bootstrap-col-ci-lower = { $level }% CI Lower
+output-bootstrap-col-ci-upper = { $level }% CI Upper
+output-bootstrap-col-statistic = Statistic
+
+
 

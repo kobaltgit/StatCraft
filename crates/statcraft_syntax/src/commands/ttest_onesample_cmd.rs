@@ -1,6 +1,12 @@
+use crate::bootstrap::{
+    bootstrap_param_schema, bootstrap_to_sps, extract_strata_keys, parse_bootstrap_options,
+};
 use crate::command::{CommandError, EngineCommand};
 use serde_json::{json, Value};
-use statcraft_algo::{compute_onesample_ttest, OneSampleTTestOptions, OneSampleTTestResult};
+use statcraft_algo::{
+    compute_onesample_ttest, compute_onesample_ttest_bootstrap, BootstrapOptions,
+    OneSampleTTestOptions, OneSampleTTestResult,
+};
 use statcraft_core::DataSet;
 
 pub struct OneSampleTTestCommand;
@@ -37,7 +43,8 @@ impl EngineCommand for OneSampleTTestCommand {
                     "type": "number",
                     "default": 0.95,
                     "description": "Confidence interval level (e.g. 0.95 for 95%)"
-                }
+                },
+                "bootstrap": bootstrap_param_schema()
             }
         })
     }
@@ -83,8 +90,10 @@ impl EngineCommand for OneSampleTTestCommand {
             confidence_level: ci,
         };
 
+        let boot_options = parse_bootstrap_options(&params, self.id())?;
         let mut results: Vec<OneSampleTTestResult> = Vec::new();
         let active_rows = ds.active_row_indices();
+        let strata_keys = extract_strata_keys(ds, &active_rows, boot_options.as_ref(), self.id())?;
 
         for var_name in &var_names {
             let col_idx =
@@ -101,7 +110,18 @@ impl EngineCommand for OneSampleTTestCommand {
                 values.push(val);
             }
 
-            let res = compute_onesample_ttest(var_name, &values, &options);
+            let mut res = compute_onesample_ttest(var_name, &values, &options);
+            if let Some(ref boot) = boot_options {
+                let boot_res = compute_onesample_ttest_bootstrap(
+                    var_name,
+                    &values,
+                    &options,
+                    strata_keys.as_deref(),
+                    boot,
+                )
+                .map_err(|e| CommandError::ExecutionFailed(e.to_string()))?;
+                res.bootstrap = Some(boot_res);
+            }
             results.push(res);
         }
 
@@ -121,6 +141,22 @@ impl OneSampleTTestCommand {
             ci,
             vars.join(" ")
         )
+    }
+
+    pub fn to_sps_with_bootstrap(
+        vars: &[String],
+        test_value: f64,
+        ci: f64,
+        bootstrap: Option<&BootstrapOptions>,
+    ) -> String {
+        let base = Self::to_sps(vars, test_value, ci);
+        if let Some(boot) = bootstrap {
+            let sps = bootstrap_to_sps(boot);
+            if !sps.is_empty() {
+                return format!("{sps}\n{base}");
+            }
+        }
+        base
     }
 }
 

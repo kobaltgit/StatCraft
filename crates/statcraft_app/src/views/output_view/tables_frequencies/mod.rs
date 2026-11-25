@@ -1,9 +1,15 @@
+pub mod bootstrap_tables;
 pub mod freq_chart_bar_pie;
 pub mod freq_chart_histogram;
 pub mod freq_table;
 pub mod stats_summary_table;
 pub mod style_report;
 
+pub use bootstrap_tables::{
+    bootstrap_freq_to_tsv, bootstrap_specs_to_tsv, bootstrap_stats_to_tsv,
+    render_bootstrap_freq_table, render_bootstrap_specifications_table,
+    render_bootstrap_stats_table,
+};
 pub use freq_chart_bar_pie::*;
 pub use freq_chart_histogram::*;
 pub use freq_table::render_single_frequency_table;
@@ -23,29 +29,61 @@ pub fn render_spss_frequencies_tables(ui: &mut Ui, results: &[FrequencyResult]) 
         .map(|r| r.multiple_vars_mode)
         .unwrap_or(MultipleVarsMode::Compare);
 
+    let boot_opts = results
+        .iter()
+        .find_map(|r| r.bootstrap.as_ref().map(|b| &b.options));
+
     match mode {
         MultipleVarsMode::Compare => {
             ui.vertical(|ui| {
+                if let Some(opts) = boot_opts {
+                    render_bootstrap_specifications_table(ui, opts);
+                    ui.add_space(16.0_f32);
+                }
+
                 render_stats_summary_table(ui, results);
                 ui.add_space(16.0_f32);
+
+                if boot_opts.is_some() {
+                    render_bootstrap_stats_table(ui, results);
+                    ui.add_space(16.0_f32);
+                }
 
                 for res in results {
                     if !res.categories.is_empty() || res.table_suppressed {
                         render_single_frequency_table(ui, res);
                         ui.add_space(16.0_f32);
+                        render_bootstrap_freq_table(ui, res);
+                        if res.bootstrap.is_some() {
+                            ui.add_space(16.0_f32);
+                        }
                     }
                 }
             });
         }
         MultipleVarsMode::Variable => {
             ui.vertical(|ui| {
+                if let Some(opts) = boot_opts {
+                    render_bootstrap_specifications_table(ui, opts);
+                    ui.add_space(16.0_f32);
+                }
+
                 for res in results {
                     render_stats_summary_table(ui, std::slice::from_ref(res));
                     ui.add_space(16.0_f32);
 
+                    if res.bootstrap.is_some() {
+                        render_bootstrap_stats_table(ui, std::slice::from_ref(res));
+                        ui.add_space(16.0_f32);
+                    }
+
                     if !res.categories.is_empty() || res.table_suppressed {
                         render_single_frequency_table(ui, res);
                         ui.add_space(16.0_f32);
+                        render_bootstrap_freq_table(ui, res);
+                        if res.bootstrap.is_some() {
+                            ui.add_space(16.0_f32);
+                        }
                     }
 
                     if let Some(ref chart) = res.chart {
@@ -93,17 +131,36 @@ pub fn frequencies_to_tsv(results: &[FrequencyResult]) -> String {
         .map(|r| r.multiple_vars_mode)
         .unwrap_or(MultipleVarsMode::Compare);
 
+    let boot_opts = results
+        .iter()
+        .find_map(|r| r.bootstrap.as_ref().map(|b| &b.options));
+    if let Some(opts) = boot_opts {
+        out.push_str(&bootstrap_specs_to_tsv(opts));
+        out.push('\n');
+    }
+
     match mode {
         MultipleVarsMode::Compare => {
             let stats_tsv = stats_summary_table::stats_summary_to_tsv(results);
             out.push_str(&stats_tsv);
             out.push('\n');
 
+            let boot_stats_tsv = bootstrap_stats_to_tsv(results);
+            if !boot_stats_tsv.is_empty() {
+                out.push_str(&boot_stats_tsv);
+                out.push('\n');
+            }
+
             for res in results {
                 if !res.categories.is_empty() || res.table_suppressed {
                     let table_tsv = freq_table::frequency_table_to_tsv(res);
                     out.push_str(&table_tsv);
                     out.push('\n');
+                    let boot_freq_tsv = bootstrap_freq_to_tsv(res);
+                    if !boot_freq_tsv.is_empty() {
+                        out.push_str(&boot_freq_tsv);
+                        out.push('\n');
+                    }
                 }
             }
         }
@@ -114,10 +171,21 @@ pub fn frequencies_to_tsv(results: &[FrequencyResult]) -> String {
                 out.push_str(&stats_tsv);
                 out.push('\n');
 
+                let boot_stats_tsv = bootstrap_stats_to_tsv(std::slice::from_ref(res));
+                if !boot_stats_tsv.is_empty() {
+                    out.push_str(&boot_stats_tsv);
+                    out.push('\n');
+                }
+
                 if !res.categories.is_empty() || res.table_suppressed {
                     let table_tsv = freq_table::frequency_table_to_tsv(res);
                     out.push_str(&table_tsv);
                     out.push('\n');
+                    let boot_freq_tsv = bootstrap_freq_to_tsv(res);
+                    if !boot_freq_tsv.is_empty() {
+                        out.push_str(&boot_freq_tsv);
+                        out.push('\n');
+                    }
                 }
 
                 if let Some(ref chart) = res.chart {

@@ -17,11 +17,20 @@ impl StatCraftApp {
         );
 
         match desc_action {
-            DescriptivesDialogAction::Run { vars, options } => {
-                let params = json!({
+            DescriptivesDialogAction::Run {
+                vars,
+                options,
+                bootstrap,
+            } => {
+                let mut params = json!({
                     "vars": vars,
                     "options": options
                 });
+                if let Some(boot) = bootstrap {
+                    if let Some(obj) = params.as_object_mut() {
+                        obj.insert("bootstrap".to_string(), boot);
+                    }
+                }
                 match self
                     .command_bus
                     .execute("stat.descriptives", &mut self.dataset, params)
@@ -41,8 +50,14 @@ impl StatCraftApp {
                     }
                 }
             }
-            DescriptivesDialogAction::Paste { vars } => {
-                let sps = statcraft_syntax::commands::DescriptivesCommand::to_sps(&vars);
+            DescriptivesDialogAction::Paste { vars, bootstrap } => {
+                let boot_opts = bootstrap.and_then(|v| {
+                    serde_json::from_value::<statcraft_algo::BootstrapOptions>(v).ok()
+                });
+                let sps = statcraft_syntax::commands::DescriptivesCommand::to_sps_with_bootstrap(
+                    &vars,
+                    boot_opts.as_ref(),
+                );
                 self.output_view_state.add_entry(t!("output-log"), sps);
             }
             DescriptivesDialogAction::None => {}
@@ -69,6 +84,7 @@ impl StatCraftApp {
                 suppress_tables_limit,
                 table_styles,
                 create_style_report,
+                bootstrap,
             } => {
                 let mut params_map = serde_json::Map::new();
                 params_map.insert("vars".to_string(), json!(vars));
@@ -105,6 +121,9 @@ impl StatCraftApp {
                 }
                 if create_style_report {
                     params_map.insert("create_style_report".to_string(), json!(true));
+                }
+                if let Some(b) = bootstrap {
+                    params_map.insert("bootstrap".to_string(), b);
                 }
                 let params = serde_json::Value::Object(params_map);
                 let sps_log =
@@ -148,6 +167,7 @@ impl StatCraftApp {
                 suppress_tables_limit,
                 table_styles,
                 create_style_report,
+                bootstrap,
             } => {
                 let mut params_map = serde_json::Map::new();
                 params_map.insert("vars".to_string(), json!(vars));
@@ -178,6 +198,9 @@ impl StatCraftApp {
                 }
                 if create_style_report {
                     params_map.insert("create_style_report".to_string(), json!(true));
+                }
+                if let Some(b) = bootstrap {
+                    params_map.insert("bootstrap".to_string(), b);
                 }
                 let params = serde_json::Value::Object(params_map);
                 let sps =

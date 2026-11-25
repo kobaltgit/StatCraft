@@ -161,9 +161,10 @@ All statistical algorithms in StatCraft are implemented in **100% pure Safe Rust
 ### 4.1. Descriptive Statistics & Cross-Tabulations
 * **Descriptives (`Descriptives`):**
   * Spicer (1972) recurrence moments: Valid $N$, Sum, Mean, Std. Error of Mean, Variance, Std. Deviation, Range, Minimum, Maximum, Skewness (with SE), and Bliss sample excess Kurtosis (with SE).
+  * Reusable `Bootstrap` subdialog (`Percentile` / `BCa`, `Simple` / `Stratified`, `MT19937` seed) with `Bias`, `Std. Error`, and confidence intervals in Output Viewer & TSV export.
 * **Frequencies (`Frequencies`):**
   * Authentic SPSS frequency tables: Counts, Percent, Valid Percent (excluding missings), Cumulative Percent.
-  * DialogKit modal subdialogs: Statistics, Charts, and Format (ordering, variable grouping, suppression threshold with dependent validation).
+  * DialogKit modal subdialogs: Statistics, Charts, Format (ordering, variable grouping, suppression threshold with dependent validation), Style, and Bootstrap (`Percentile` / `BCa`, `Simple` / `Stratified`, `MT19937` seed).
   * Category sorting: ascending/descending values (`AVALUE`/`DVALUE`) or frequencies (`AFREQ`/`DFREQ`) with dynamic cumulative percent recalculation.
   * Table suppression threshold (`LIMIT(n)`): automatically suppresses categorical tables when category count exceeds threshold $n$, displaying an authentic italic notice in the Output Viewer while preserving statistics and charts.
   * Multi-variable output layout: `COMPARE` (single unified summary table across all variables, sequential frequency tables, dedicated outline Charts node) vs `VARIABLE` (autonomous consecutive blocks per variable: personal statistics, frequency table, inline chart).
@@ -177,6 +178,7 @@ All statistical algorithms in StatCraft are implemented in **100% pure Safe Rust
   * Symmetric association measures: Phi ($\phi$) and Cramér's $V$.
 
 ### 4.2. Mean Comparisons & Analysis of Variance (Compare Means)
+*Note: All procedures below (`Means`, `One-Sample T Test`, `Independent-Samples T Test`, `Paired-Samples T Test`, and `One-Way ANOVA`) support the reusable `Bootstrap` subdialog (`Percentile` / `BCa`, `Simple` / `Stratified`, `MT19937` seed) with `Bootstrap Specifications` and CI/Bias/SE tables in Output Viewer & TSV export.*
 * **Means Breakdown (`Means Breakdown`):**
   * Subgroup descriptive breakdown (Mean, $N$, Variance, Median, Min, Max) across categorical factors.
   * One-way ANOVA table (Between Groups, Within Groups, Total Sum of Squares, $df$, Mean Squares, $F$-statistic, significance).
@@ -205,6 +207,7 @@ All statistical algorithms in StatCraft are implemented in **100% pure Safe Rust
   * One-tailed and two-tailed significance levels.
   * Automatic significance flagging (`*` for $p < 0.05$, `**` for $p < 0.01$).
   * Cross-product deviations and covariances, pairwise and listwise missing exclusion modes.
+  * Reusable `Bootstrap` subdialog (`Percentile` / `BCa`, `Simple` / `Stratified`, `MT19937` seed) for correlation coefficients.
 * **Partial Correlations (`Partial Correlations` / `PARTIAL CORR`):**
   * Linear relationship evaluation between variables while controlling for one or more continuous covariates.
   * First-order and higher-order partial correlation matrix computed via matrix inversion of the sub-covariance matrix.
@@ -228,6 +231,7 @@ All statistical algorithms in StatCraft are implemented in **100% pure Safe Rust
   * *Model Summary* table: Multiple correlation $R$, $R^2$, Adjusted $R^2$, Std. Error of the Estimate.
   * *ANOVA* table: Regression and residual sums of squares, mean squares, Fisher's $F$, significance.
   * *Coefficients* table: Unstandardized coefficients $B$ and standard errors, standardized coefficients $\beta$, $t$-statistics, significance levels, and 95% confidence intervals.
+  * Reusable `Bootstrap` subdialog (`Percentile` / `BCa`, `Simple` / `Stratified`, `MT19937` seed) for regression coefficients $B$.
   * Collinearity diagnostics: Tolerance and Variance Inflation Factor (VIF).
 * **Binary Logistic Regression (`Binary Logistic Regression` / `LOGISTIC REGRESSION`):**
   * Maximum Likelihood Estimation (MLE) via Iteratively Reweighted Least Squares (IRLS).

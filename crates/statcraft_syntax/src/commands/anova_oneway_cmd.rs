@@ -1,6 +1,12 @@
+use crate::bootstrap::{
+    bootstrap_param_schema, bootstrap_to_sps, extract_strata_keys, parse_bootstrap_options,
+};
 use crate::command::{CommandError, EngineCommand};
 use serde_json::{json, Value};
-use statcraft_algo::{compute_oneway_anova, OneWayAnovaOptions, OneWayAnovaResult};
+use statcraft_algo::{
+    compute_oneway_anova, compute_oneway_anova_bootstrap, BootstrapOptions, OneWayAnovaOptions,
+    OneWayAnovaResult,
+};
 use statcraft_core::DataSet;
 
 pub struct OneWayAnovaCommand;
@@ -46,7 +52,8 @@ impl EngineCommand for OneWayAnovaCommand {
                     "type": "number",
                     "default": 0.95,
                     "description": "Confidence level for descriptives mean CI"
-                }
+                },
+                "bootstrap": bootstrap_param_schema()
             }
         })
     }
@@ -115,7 +122,9 @@ impl EngineCommand for OneWayAnovaCommand {
             confidence_level: ci,
         };
 
+        let boot_options = parse_bootstrap_options(&params, self.id())?;
         let active_rows = ds.active_row_indices();
+        let strata_keys = extract_strata_keys(ds, &active_rows, boot_options.as_ref(), self.id())?;
         let mut factor_values: Vec<Option<String>> = Vec::with_capacity(active_rows.len());
         for &r in &active_rows {
             let cell = ds.get_cell_display(r, factor_col_idx, false);
@@ -144,9 +153,23 @@ impl EngineCommand for OneWayAnovaCommand {
                 dep_values.push(val);
             }
 
-            let res =
+            let mut res =
                 compute_oneway_anova(dep_name, factor_var, &dep_values, &factor_values, &options)
                     .map_err(|e| CommandError::ExecutionFailed(e.to_string()))?;
+            if let Some(ref boot) = boot_options {
+                let boot_res = compute_oneway_anova_bootstrap(
+                    dep_name,
+                    factor_var,
+                    &dep_values,
+                    &factor_values,
+                    &options,
+                    &res,
+                    strata_keys.as_deref(),
+                    boot,
+                )
+                .map_err(|e| CommandError::ExecutionFailed(e.to_string()))?;
+                res.bootstrap = Some(boot_res);
+            }
             results.push(res);
         }
 
@@ -183,6 +206,22 @@ impl OneWayAnovaCommand {
             factor_var,
             stat_clause
         )
+    }
+    pub fn to_sps_with_bootstrap(
+        dependent_vars: &[String],
+        factor_var: &str,
+        descriptives: bool,
+        homogeneity: bool,
+        bootstrap: Option<&BootstrapOptions>,
+    ) -> String {
+        let base = Self::to_sps(dependent_vars, factor_var, descriptives, homogeneity);
+        if let Some(boot) = bootstrap {
+            let sps = bootstrap_to_sps(boot);
+            if !sps.is_empty() {
+                return format!("{sps}\n{base}");
+            }
+        }
+        base
     }
 }
 

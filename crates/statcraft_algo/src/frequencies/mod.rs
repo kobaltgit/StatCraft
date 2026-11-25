@@ -1,8 +1,13 @@
+pub mod bootstrap;
 pub mod charts;
 pub mod options;
 pub mod percentiles;
 pub mod stats;
 pub mod table;
+
+pub use bootstrap::{
+    compute_frequencies_bootstrap, FrequenciesBootstrapResult, FrequenciesBootstrapStats,
+};
 
 pub use charts::{
     calculate_nice_step, compute_bar_chart, compute_frequency_chart, compute_histogram,

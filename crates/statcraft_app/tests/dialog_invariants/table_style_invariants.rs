@@ -194,6 +194,7 @@ fn test_frequencies_dialog_style_subdialog_integration() {
         suppress_tables_limit: None,
         table_styles: rules_json,
         create_style_report: state.table_style.create_style_report,
+        bootstrap: None,
     };
 
     match action {

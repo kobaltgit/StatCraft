@@ -1,4 +1,16 @@
+use crate::bootstrap::{
+    run_bootstrap_scalar, BootstrapError, BootstrapOptions, BootstrapSummary, SamplingPlan,
+};
 use serde::{Deserialize, Serialize};
+
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+pub struct OneSampleTTestBootstrap {
+    pub options: BootstrapOptions,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub mean: Option<BootstrapSummary>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub mean_diff: Option<BootstrapSummary>,
+}
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct OneSampleTTestOptions {
@@ -31,6 +43,8 @@ pub struct OneSampleTTestResult {
     pub ci_level: f64,
     pub ci_lower: Option<f64>,
     pub ci_upper: Option<f64>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub bootstrap: Option<OneSampleTTestBootstrap>,
 }
 
 /// Natural logarithm of the Gamma function via Lanczos approximation (g=7, n=9).
@@ -322,6 +336,7 @@ pub fn compute_onesample_ttest(
             ci_level,
             ci_lower: None,
             ci_upper: None,
+            bootstrap: None,
         };
     }
 
@@ -345,6 +360,7 @@ pub fn compute_onesample_ttest(
             ci_level,
             ci_lower: None,
             ci_upper: None,
+            bootstrap: None,
         };
     }
 
@@ -376,6 +392,7 @@ pub fn compute_onesample_ttest(
             ci_level,
             ci_lower: lower,
             ci_upper: upper,
+            bootstrap: None,
         };
     }
 
@@ -404,7 +421,37 @@ pub fn compute_onesample_ttest(
         ci_level,
         ci_lower: Some(ci_lower),
         ci_upper: Some(ci_upper),
+        bootstrap: None,
     }
+}
+
+pub fn compute_onesample_ttest_bootstrap(
+    var_name: &str,
+    values: &[Option<f64>],
+    options: &OneSampleTTestOptions,
+    strata_keys: Option<&[String]>,
+    boot_options: &BootstrapOptions,
+) -> Result<OneSampleTTestBootstrap, BootstrapError> {
+    let plan = SamplingPlan::from_options(values.len(), strata_keys, boot_options)?;
+    let eval =
+        |indices: &[usize], extract: fn(&OneSampleTTestResult) -> Option<f64>| -> Option<f64> {
+            let sub: Vec<Option<f64>> = indices
+                .iter()
+                .filter_map(|&i| values.get(i).copied())
+                .collect();
+            let res = compute_onesample_ttest(var_name, &sub, options);
+            extract(&res)
+        };
+
+    let mean = run_bootstrap_scalar(&plan, boot_options, |idx| eval(idx, |r| r.mean)).ok();
+    let mean_diff =
+        run_bootstrap_scalar(&plan, boot_options, |idx| eval(idx, |r| r.mean_diff)).ok();
+
+    Ok(OneSampleTTestBootstrap {
+        options: boot_options.clone(),
+        mean,
+        mean_diff,
+    })
 }
 
 #[cfg(test)]

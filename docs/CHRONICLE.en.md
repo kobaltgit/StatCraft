@@ -4373,5 +4373,65 @@ Following typography auditing and the resolution of `BUG-019` in the "Table Styl
    * 100% clean Quality Gate execution via `cargo run -p xtask -j 1 -- ci` (10/10 gates, `file-guard`, `design-guard`, clippy with `-D warnings`, fmt);
    * Release binary `statcraft_app.exe` successfully rebuilt.
 
+---
+
+### Phase 115: Bootstrap Resampling Core, MT19937, and `BOOTSTRAP` Syntax (Feature 020 — Stage 1)
+*Time: November 24, 2026, 23:57 (~15 minutes)*
+
+Implemented the UI-independent mathematical and syntactic core for bootstrap resampling across layers L1, L2, and L5 in strict accordance with Clean-room methodology (Efron & Tibshirani, 1993; open `BOOTSTRAP` syntax specification) and the StatCraft Constitution:
+1. **Deterministic PRNG `Mt19937` in L1 (`statcraft_core::rng`):**
+   * Implemented the 32-bit Mersenne Twister (`Mt19937`) in 100% safe Rust with zero `unsafe`, `unwrap`, or `panic!`.
+   * Added fixed `seed` initialization, `from_optional_seed()` falling back to `get_effective_random_seed()`, and unbiased `gen_range_usize` via rejection sampling.
+   * Verified against the standard `MT19937` test vector (`seed = 5489`) for the first 10 outputs.
+2. **Bootstrap Engine in L2 (`statcraft_algo::bootstrap`):**
+   * `options.rs`: `BootstrapOptions` (`enabled`, `samples=1000`, `seed`, `ci_level=95.0`, `ci_method: Percentile | Bca`, `sampling_method: Simple | Stratified { strata_vars }`) with full parameter validation.
+   * `resampler.rs`: `SamplingPlan` and `StratifiedPlan` supporting simple and stratified resampling with replacement (preserving exact stratum sizes $n_h$).
+   * `ci.rs`: high-precision `normal_cdf` (Cody rational approximation), `compute_percentile_ci`, `compute_bca_ci` (bias-correction $z_0$, jackknife acceleration $\hat{a}$, and safe fallback on zero denominator), and `summarize_bootstrap` (`Bias`, `Std. Error`, `CI`).
+   * `engine.rs`: generic `run_bootstrap` and `run_bootstrap_scalar` APIs.
+3. **`BOOTSTRAP` and `SET MTINDEX` Syntax in L5 (`statcraft_syntax`):**
+   * Added `bootstrap_param_schema()`, `bootstrap_to_sps()`, `parse_set_mtindex()`, and `parse_bootstrap_command()` in `crates/statcraft_syntax/src/bootstrap.rs`.
+   * Added a one-shot `pending_bootstrap` modifier in `SyntaxDispatcher::execute_batch`, automatically injecting `params["bootstrap"]` into the immediately following command and clearing it afterwards.
+4. **Quality Control & Definition of Done:**
+   * All tests in `statcraft_core`, `statcraft_algo` (`bootstrap_tests.rs`), and `statcraft_syntax` (`bootstrap_syntax_tests.rs`) passing with `-j 1`;
+   * `cargo fmt --check`, `cargo clippy -p statcraft_core -p statcraft_algo -p statcraft_syntax -j 1 -- -D warnings`, `xtask file-guard` (518 files), and `xtask layers` passing cleanly.
+
+---
+
+### Phase 116: Bootstrap Subdialog and End-to-End Frequencies Integration (Feature 021 — Stage 2)
+*Time: November 25, 2026, 00:26 (~30 minutes)*
+
+Implemented the reusable **Bootstrap** modal subdialog (`BootstrapDialog`) and completed end-to-end bootstrap integration with the **Frequencies** procedure across layers L2, L5, and L6:
+1. **Reusable UI Module (`crates/statcraft_app/src/dialogs/bootstrap_dialog/`):**
+   * `state.rs`: `BootstrapDialogState` with `enabled`, `samples_input` (`"1000"`), `use_seed`, `seed_input` (`"2000000"`), `ci_level_input` (`"95"`), `ci_method` (`Percentile` / `Bca`), `sampling_method` (`Simple` / `Stratified`), `strata_vars`, `can_continue()` validation, and transactional `backup`/`restore`.
+   * `mod.rs`: built strictly with `DialogKit` (`DialogShell`, `GroupBox` for Confidence Intervals and Sampling, `VariablePicker` + `TransferButton` for strata variables, `SubdialogActionBar`).
+   * Full Fluent localization in `locales/en.ftl` and `locales/ru.ftl` (zero hardcoded strings).
+2. **Frequencies Integration in L2 and L5:**
+   * `statcraft_algo::frequencies::bootstrap`: implemented `FrequenciesBootstrapResult` and `compute_frequencies_bootstrap()` computing `Bias`, `Std. Error`, and `Percentile`/`BCa` intervals for active descriptive statistics and category percents.
+   * `statcraft_syntax::commands::frequencies_cmd`: added `bootstrap` schema, stratified key extraction (`build_strata_keys` in `options.rs`), and `SET MTINDEX=...` + `BOOTSTRAP ... .` emission prior to `FREQUENCIES` in `sps.rs`.
+3. **Output Viewer and UI Integration in L6:**
+   * Enabled the `[ Bootstrap... ]` button in `frequencies_dialog` and wired `bootstrap` parameters into `Run` and `Paste` (`app_dialogs_stats.rs`).
+   * Added `tables_frequencies/bootstrap_tables.rs` rendering `Bootstrap Specifications`, bootstrap statistics/frequency tables, and TSV export.
+4. **Quality Control & Definition of Done:**
+   * `dialog_invariants` (51/51) and `output_viewer_frequencies_invariants` (9/9) passing;
+   * Full Quality Gate `cargo run -p xtask -j 1 -- ci` (fmt, clippy, layers, file-guard, design-guard, i18n-lint, undo-redo matrix, sync-site, full workspace tests) passing 100%.
+
+---
+
+### Phase 117: Bootstrap Expansion to Core Procedures and Golden Oracle (Feature 022 — Stage 3)
+*Time: November 25, 2026, 00:42 (~15 minutes)*
+
+Scaled the reusable bootstrap engine (Stage 1) and `BootstrapDialog` (Stage 2) across StatCraft's core parametric, correlation, and regression procedures:
+1. **Unified Output Layer (`tables_common.rs`):**
+   * Extracted shared rendering and TSV export helpers (`render_bootstrap_specifications_table`, `bootstrap_specs_to_tsv`, `bootstrap_column_headers`, `format_bootstrap_cells`, `render_bootstrap_table`, `bootstrap_table_to_tsv`).
+2. **End-to-End Integration (L2 + L5 + L6):**
+   * Connected `Descriptives`, `Means`, `One-Sample T-Test`, `Independent-Samples T-Test`, `Paired-Samples T-Test`, `One-Way ANOVA`, `Bivariate Correlations` (Pearson, Spearman, Kendall), and `Linear Regression` (OLS).
+   * Added `SamplingPlan::from_options()` in `statcraft_algo::bootstrap::resampler` and shared `parse_bootstrap_options()` / `extract_strata_keys()` helpers in `statcraft_syntax::bootstrap`.
+3. **Golden Oracle (`crates/statcraft_algo/tests/bootstrap_golden_oracle.rs`):**
+   * Added reference tests verifying `Percentile` and `BCa` intervals (univariate mean & std. deviation, independent two-sample mean difference, Pearson correlation, and OLS regression coefficients) against `scipy.stats.bootstrap` formulas within $\le 10^{-6}$.
+4. **Quality Control & Definition of Done:**
+   * Updated parity matrix (`cargo run -p xtask -j 1 -- parity`);
+   * Full Quality Gate `cargo run -p xtask -j 1 -- ci` passing 100%.
+
+
 
 

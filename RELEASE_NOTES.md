@@ -1,4 +1,4 @@
-# StatCraft v0.4.6
+# StatCraft v0.4.7
 
 [English](#english) | [Русский](#русский)
 
@@ -7,57 +7,37 @@
 <a name="english"></a>
 ## English
 
-StatCraft v0.4.6 brings 100% canon parity with IBM SPSS Statistics for pivot table conditional formatting and table styling (**Feature 019 / OUTPUT MODIFY**). It introduces the complete `TableStyleDialog` suite, a high-performance declarative styling engine, a 30-color SPSS matrix palette, 34 data format masks, and robust multi-attribute typography rendering in the Output Viewer.
+StatCraft v0.4.7 introduces full **Bootstrap Resampling** parity with IBM SPSS Statistics (**Features 020–022**): a clean-room `Mt19937` Mersenne Twister engine, `Simple` and `Stratified` resampling, `Percentile` and `BCa` confidence intervals, a reusable `BootstrapDialog` across 9 statistical procedures, `SET MTINDEX` / `BOOTSTRAP` SPSS syntax support, and Golden Oracle verification against `scipy.stats.bootstrap` ($\le 10^{-6}$).
 
-### 🎨 Table Style & Conditional Formatting Suite (Feature 019)
-* **Canonical Modal DialogKit Suite (`table_style_dialog/`):**
-  * **Main Dialog:** 5 in-cell ComboBox columns (*Table, Value, Dimension, Condition, Format*), interactive condition and format summaries, rule cloning (`[ Duplicate ]`), rule reordering (`[ Move Up ]`, `[ Move Down ]`), and transactional rollback on cancellation.
-  * **Condition Subdialog:** Value selection, 12 predicate operators, modulus comparison (`[ ] Absolute value`), lower/upper range limits, and Top/Bottom N inputs.
-  * **Format Subdialog:**
-    * Centered live sample preview box displaying `123` reflecting styles, fonts, and colors in real-time.
-    * Typography toolbar with active selection toggles: `[ B ]`, `[ I ]`, `[ U ]`.
-    * Authentic 5x6 SPSS Color Matrix Palette (`color_palette.rs`) featuring White, Black, No Color (diagonal red slash), 30 canonical SPSS color shades, and custom RGB color picker.
-    * 34 Cell Format Masks (`format_masks.rs`): comprehensive formatting for numbers, scientific notation, percentages, quarters, weeks, timestamps, and localized month/day names.
-    * Scope selection (*Only cells, Entire column, Entire row*), decimal places spinner, and cell value replacement input.
-* **SPSS Syntax & CommandBus Integration:**
-  * Canonical SPSS `OUTPUT MODIFY` syntax generation on *Paste*:
-    ```sps
-    OUTPUT MODIFY
-      /SELECT TABLES
-      /IF SUBTYPES=['Frequencies']
-      /TABLECELLS SELECT=[DIMENSION=COLUMNS] CONDITION=GE(100.0)
-       STYLE=[BACKGROUND=RGB(204, 255, 204) FONTSTYLE=BOLD].
-    ```
-  * Reversible execution with transactional delta logging.
+### 🎲 Bootstrap Resampling Suite (Features 020–022)
+* **Core Engine (`statcraft_core::rng` & `statcraft_algo::bootstrap`):**
+  * 100% Safe Rust 32-bit Mersenne Twister (`Mt19937`) with optional fixed seed (`1..=2,000,000,000`, default `2,000,000`).
+  * `Simple` and `Stratified` (preserving exact stratum sizes $n_h$) resampling with replacement.
+  * `Bias`, `Std. Error`, `Percentile`, and `BCa` (Bias-Corrected and Accelerated with jackknife acceleration $\hat{a}$) confidence intervals.
+* **Reusable `BootstrapDialog` (`DialogKit` + Fluent i18n):**
+  * Modal subdialog (`[ Perform bootstrapping ]`, `Number of samples`, `Set seed for Mersenne Twister`, `Confidence Intervals` level & `Percentile`/`BCa` selector, `Sampling` `Simple`/`Stratified` + `Strata Variables` picker) with transactional `backup`/`commit`/`cancel`.
+* **9 Integrated Statistical Procedures & Output Viewer:**
+  * `Frequencies`, `Descriptives`, `Means`, `One-Sample T-Test`, `Independent-Samples T-Test`, `Paired-Samples T-Test`, `One-Way ANOVA`, `Bivariate Correlations` (Pearson, Spearman, Kendall), and `Linear Regression` (OLS).
+  * Unified `Bootstrap Specifications` table, `Bias` / `Std. Error` / `CI Lower` / `CI Upper` tables, and TSV export in Output Viewer.
+* **SPSS Syntax & Golden Oracle:**
+  * `SET MTINDEX=...` and `BOOTSTRAP /SAMPLING ... /CRITERIA ...` generation and one-shot `SyntaxDispatcher::execute_batch` support.
+  * Verified against `scipy.stats.bootstrap` (`bootstrap_golden_oracle.rs`) within $\le 10^{-6}$.
 
-### 📋 Full Changelog for v0.4.6
+### 📋 Full Changelog for v0.4.7
 ```markdown
-## [0.4.6] - 2026-11-24
+## [0.4.7] - 2026-11-25
 
 ### Added
-- **Table Style & Conditional Formatting Parity (Feature 019 / IBM SPSS OUTPUT MODIFY):**
-  - Typed conditional formatting engine in `statcraft_reporting::styling`.
-  - 12 value predicate conditions: All, Equal, NotEqual, LessThan, LessOrEqual, GreaterThan, GreaterOrEqual, Between, NotBetween, TopN, BottomN, SysMis.
-  - Dimension and value targeting across table subtypes, columns, rows, and label tokens.
-  - 3-way application scope: Only Cells, Entire Column, Entire Row.
-  - String value replacement for matching cells.
-- **Authentic IBM SPSS Table Style Dialog Suite (DialogKit):**
-  - Main Dialog TableStyleDialog with 5 in-cell ComboBox columns and rule ordering.
-  - Condition Subdialog with [ ] Absolute Value modulus comparisons.
-  - Format Subdialog with live Preview box, B/I/U toolbar, 30-color SPSS matrix palette, 34 format masks, and custom RGB picker.
-- **Output Viewer Styled Table Rendering & Reporting:**
-  - Vector rendering in Output Viewer with cell background fills and faux bold typography synthesis (`BUG-019`).
-  - Auxiliary "Conditional Styles Report" audit table.
-  - Canonical SPSS OUTPUT MODIFY syntax generation.
-  - HTML report export with inline CSS attributes.
-- **Zero-Hardcode Fluent Localization:**
-  - 44+ semantic translation keys in locales/ru.ftl and locales/en.ftl.
-
-### Fixed
-- **Architectural Decomposition of App Dialog Coordinator (BUG-018):**
-  - Decomposed app_dialogs.rs into app_dialogs_stats.rs (284 lines) to maintain < 1000 lines limit.
-- **Typography Rendering in Output Viewer & Format Preview (BUG-019):**
-  - Resolved egui italic and bold conflict via LayoutJob overstrike synthesis.
+- **Bootstrap Resampling Core & Mersenne Twister PRNG (Feature 020 — Stage 1):**
+  - 100% Safe Rust Mt19937 PRNG in `statcraft_core::rng` with unbiased index sampling.
+  - Reusable `statcraft_algo::bootstrap` engine (`Simple` & `Stratified`, `Percentile` & `BCa` CI with jackknife acceleration).
+  - `SET MTINDEX` / `BOOTSTRAP` SPSS syntax emitter and one-shot `pending_bootstrap` batch modifier in `statcraft_syntax`.
+- **Reusable Bootstrap Dialog & Frequencies Integration (Feature 021 — Stage 2):**
+  - `BootstrapDialog` (`DialogKit`, transactional backup/restore, Fluent `en.ftl`/`ru.ftl`).
+  - End-to-end `Frequencies` bootstrap computation, `BOOTSTRAP` + `FREQUENCIES` syntax, and Output Viewer / TSV export.
+- **Multi-Procedure Bootstrap Expansion & Golden Oracle (Feature 022 — Stage 3):**
+  - Expanded bootstrap across `Descriptives`, `Means`, `One-Sample T-Test`, `Independent-Samples T-Test`, `Paired-Samples T-Test`, `One-Way ANOVA`, `Bivariate Correlations`, and `Linear Regression`.
+  - Added `bootstrap_golden_oracle.rs` ($\le 10^{-6}$ vs SciPy) and `output_viewer_bootstrap_invariants.rs`.
 ```
 
 ---
@@ -65,32 +45,25 @@ StatCraft v0.4.6 brings 100% canon parity with IBM SPSS Statistics for pivot tab
 <a name="русский"></a>
 ## Русский
 
-Релиз StatCraft v0.4.6 обеспечивает 100% паритет с IBM SPSS Statistics в области условного форматирования и стилизации сводных таблиц (**Feature 019 / OUTPUT MODIFY**). Добавлен полный комплекс диалогов `TableStyleDialog`, декларативный движок стилей, каноническая палитра SPSS из 30 оттенков, 34 маски форматов ячеек и надежный рендеринг типографики в Output Viewer.
+Релиз StatCraft v0.4.7 добавляет полноценный **Бутстреп-ресэмплинг (Bootstrap)** с паритетом IBM SPSS Statistics (**Features 020–022**): чистый генератор Вихрь Мерсенна `Mt19937`, простую и стратифицированную выборку, доверительные интервалы `Percentile` и `BCa`, переиспользуемый диалог `BootstrapDialog` в 9 статистических процедурах, синтаксис `SET MTINDEX` / `BOOTSTRAP` и верификацию Golden Oracle против `scipy.stats.bootstrap` ($\le 10^{-6}$).
 
-### 🎨 Комплекс диалогов «Стиль таблицы» (Feature 019)
-* **Аутентичный комплекс диалогов DialogKit (`table_style_dialog/`):**
-  * **Главное окно:** 5 колонок с выпадающими списками прямо в ячейках (*Таблица, Значение, измерение, Условие, Формат*), сводки правил, дублирование (`[ Дублировать ]`), изменение порядка (`[ Вверх ]`, `[ Вниз ]`) и транзакционный откат по кнопке Отмена.
-  * **Поддиалог «Условие»:** выбор значений, 12 операторов сравнения, сравнение по модулю (`[ ] Абсолютное значение`), границы диапазона и ввод Top/Bottom N.
-  * **Поддиалог «Формат»:**
-    * Центрированный блок предпросмотра с тестовым числом `123`, на лету отражающим выбранный стиль.
-    * Тулбар шрифтов с подсветкой активного состояния: `[ B ]`, `[ I ]`, `[ U ]`.
-    * Каноническая палитра цветов SPSS 5x6 (`color_palette.rs`): Белый, Черный, Без цвета (красная диагональная черта), 30 оттенков SPSS и кастомный RGB-пикер.
-    * 34 маски форматов данных (`format_masks.rs`): числа, экспоненты, проценты, даты, время, дни недели и месяцы.
-    * Область применения (*Только ячейки, Весь столбец, Вся строка*), счетчик десятичных знаков и поле замены значения.
-* **Генерация синтаксиса SPSS и командная шина:**
-  * Генерация канонического синтаксиса `OUTPUT MODIFY` при нажатии *Вставить*:
-    ```sps
-    OUTPUT MODIFY
-      /SELECT TABLES
-      /IF SUBTYPES=['Frequencies']
-      /TABLECELLS SELECT=[DIMENSION=COLUMNS] CONDITION=GE(100.0)
-       STYLE=[BACKGROUND=RGB(204, 255, 204) FONTSTYLE=BOLD].
-    ```
-  * Обратимое выполнение с сохранением матрицы Undo/Redo.
+### 🎲 Подсистема бутстреп-ресэмплинга (Features 020–022)
+* **Математическое ядро (`statcraft_core::rng` и `statcraft_algo::bootstrap`):**
+  * 32-битный генератор `Mt19937` на 100% Safe Rust с опциональным начальным значением (`1..=2 000 000 000`, по умолчанию `2 000 000`).
+  * Простая (`Simple`) и расслоенная (`Stratified` с сохранением размеров слоёв $n_h$) выборка с возвращением.
+  * Расчёт `Bias`, `Std. Error`, а также доверительных интервалов `Percentile` и `BCa` (с коррекцией смещения $z_0$ и jackknife-ускорением $\hat{a}$).
+* **Переиспользуемый поддиалог `BootstrapDialog` (`DialogKit` + Fluent i18n):**
+  * Все элементы канонического окна SPSS (`Выполнить бутстреп`, `Количество выборок`, `Задать начальное значение для генератора вихрь Мерсенна`, `Доверительные интервалы` `Процентиль`/`BCa`, `Выборка` `Простая`/`Расслоенная` + `Переменные слоёв`) с транзакционным откатом при отмене.
+* **Интеграция с 9 процедурами и Output Viewer:**
+  * `Frequencies`, `Descriptives`, `Means`, `One-Sample T-Test`, `Independent-Samples T-Test`, `Paired-Samples T-Test`, `One-Way ANOVA`, `Bivariate Correlations` (Pearson, Spearman, Kendall) и `Linear Regression` (OLS).
+  * Единая таблица `Bootstrap Specifications`, таблицы `Bias` / `Std. Error` / `CI Lower` / `CI Upper` и экспорт в TSV.
+* **Синтаксис SPSS и Golden Oracle:**
+  * Генерация `SET MTINDEX=...` + `BOOTSTRAP ...` и поддержка одноразового модификатора в `SyntaxDispatcher::execute_batch`.
+  * Эталонная сверка с `scipy.stats.bootstrap` (`bootstrap_golden_oracle.rs`) с точностью $\le 10^{-6}$.
 
 ---
 
 ### 📦 Дистрибутивы релиза (Artifacts)
 * **Windows (x64):** Автономный инсталлятор (`statcraft-windows-x64-setup.exe`) + Портативный архив (`statcraft-windows-x64.zip`).
-* **Linux (x64):** Пакет Debian (`statcraft_0.4.6_amd64.deb`) + Портативный TAR.GZ (`statcraft-linux-x64.tar.gz`).
+* **Linux (x64):** Пакет Debian (`statcraft_0.4.7_amd64.deb`) + Портативный TAR.GZ (`statcraft-linux-x64.tar.gz`).
 * **macOS (Apple Silicon & Intel):** Подписанный DMG-образ (`statcraft-macos.dmg`).

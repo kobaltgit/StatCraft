@@ -1,9 +1,12 @@
-﻿use super::model::{
+use super::model::{
     OutputItem, OutputItemKind, OutputNotes, OutputProcedure, OutputViewerState, SelectedTarget,
 };
 use super::tables_common::{
-    adjust_widths, format_opt, format_sig, render_data_row, render_header_row,
+    adjust_widths, bootstrap_column_headers, format_bootstrap_cells, format_opt, format_sig,
+    render_bootstrap_specifications_table, render_bootstrap_table, render_data_row,
+    render_header_row,
 };
+pub use super::tables_means_tsv::means_to_tsv;
 use crate::theme::Tokens;
 use egui::{Align2, ScrollArea, Ui};
 use statcraft_algo::{MeansOptions, MeansProcedureResult, MeansTableResult};
@@ -81,12 +84,39 @@ pub fn render_spss_means(ui: &mut Ui, res: &MeansProcedureResult) {
     }
 
     ui.vertical(|ui| {
+        if let Some(opts) = res
+            .tables
+            .iter()
+            .find_map(|t| t.bootstrap.as_ref().map(|b| &b.options))
+        {
+            render_bootstrap_specifications_table(ui, opts);
+            ui.add_space(14.0_f32);
+        }
+
         for (idx, table) in res.tables.iter().enumerate() {
             render_means_case_summary(ui, table, idx);
             ui.add_space(14.0_f32);
 
             render_means_report_table(ui, table, idx);
             ui.add_space(14.0_f32);
+
+            if let Some((headers, rows)) = build_means_bootstrap_rows(table) {
+                let title = format!(
+                    "{} ({} - {})",
+                    t!("output-means-report-title"),
+                    table.dep_var,
+                    t!("output-bootstrap-group-header")
+                );
+                render_bootstrap_table(
+                    ui,
+                    &title,
+                    &format!("means_boot_{}", idx),
+                    &headers,
+                    &rows,
+                    2,
+                );
+                ui.add_space(14.0_f32);
+            }
 
             if let Some(ref anova) = table.anova {
                 render_means_anova_table(ui, table, anova, idx);
@@ -347,98 +377,48 @@ fn render_means_measures_of_association(
         });
 }
 
-pub fn means_to_tsv(res: &MeansProcedureResult) -> String {
-    let mut lines = Vec::new();
+pub(super) fn build_means_bootstrap_rows(
+    table: &MeansTableResult,
+) -> Option<(Vec<String>, Vec<Vec<String>>)> {
+    let boot = table.bootstrap.as_ref()?;
+    let mut rows = Vec::new();
+    let groups_iter = boot.groups.iter().chain(std::iter::once(&boot.total));
 
-    for table in &res.tables {
-        // Summary
-        lines.push(format!(
-            "Case Processing Summary ({} * {})",
-            table.dep_var, table.factor_var
-        ));
-        lines.push(
-            "Pair\tIncluded N\tIncluded %\tExcluded N\tExcluded %\tTotal N\tTotal %".to_string(),
-        );
-        lines.push(format!(
-            "{} * {}\t{}\t{:.1}%\t{}\t{:.1}%\t{}\t{:.1}%",
-            table.dep_var,
-            table.factor_var,
-            table.summary.included_n,
-            table.summary.included_percent,
-            table.summary.excluded_n,
-            table.summary.excluded_percent,
-            table.summary.total_n,
-            table.summary.total_percent
-        ));
-        lines.push(String::new());
-
-        // Report
-        lines.push(format!("Report ({})", table.dep_var));
-        lines.push(format!(
-            "{}\tMean\tN\tStd. Deviation\tMedian",
-            table.factor_var
-        ));
-        for cell in &table.cells {
-            lines.push(format!(
-                "{}\t{}\t{}\t{}\t{}",
-                cell.group_label,
-                format_opt(cell.mean),
-                cell.count,
-                format_opt(cell.std_dev),
-                format_opt(cell.median)
-            ));
-        }
-        lines.push(format!(
-            "Total\t{}\t{}\t{}\t{}",
-            format_opt(table.total.mean),
-            table.total.count,
-            format_opt(table.total.std_dev),
-            format_opt(table.total.median)
-        ));
-        lines.push(String::new());
-
-        // ANOVA
-        if let Some(ref anova) = table.anova {
-            lines.push(format!(
-                "ANOVA Table ({} * {})",
-                table.dep_var, table.factor_var
-            ));
-            lines.push("Source\tSum of Squares\tdf\tMean Square\tF\tSig.".to_string());
-            lines.push(format!(
-                "Between Groups\t{:.3}\t{}\t{}\t{}\t{}",
-                anova.between_groups.sum_of_squares,
-                anova.between_groups.df,
-                format_opt(anova.between_groups.mean_square),
-                format_opt(anova.between_groups.f_stat),
-                format_sig(anova.between_groups.p_value)
-            ));
-            lines.push(format!(
-                "Within Groups\t{:.3}\t{}\t{}\t\t",
-                anova.within_groups.sum_of_squares,
-                anova.within_groups.df,
-                format_opt(anova.within_groups.mean_square)
-            ));
-            lines.push(format!(
-                "Total\t{:.3}\t{}\t\t\t",
-                anova.total.sum_of_squares, anova.total.df
-            ));
-            lines.push(String::new());
-        }
-
-        // Association
-        if let Some(ref assoc) = table.association {
-            lines.push(format!(
-                "Measures of Association ({} * {})",
-                table.dep_var, table.factor_var
-            ));
-            lines.push("Pair\tEta\tEta Squared".to_string());
-            lines.push(format!(
-                "{} * {}\t{:.3}\t{:.3}",
-                table.dep_var, table.factor_var, assoc.eta, assoc.eta_squared
-            ));
-            lines.push(String::new());
+    for grp in groups_iter {
+        let candidates = [
+            (t!("output-col-mean"), &grp.mean),
+            (t!("output-col-std"), &grp.std_dev),
+            (t!("output-stats-row-median"), &grp.median),
+        ];
+        for (stat_name, sum_opt) in candidates {
+            if let Some(s) = sum_opt {
+                let cells = format_bootstrap_cells(s, 4);
+                rows.push(vec![
+                    grp.group_label.clone(),
+                    stat_name,
+                    format!("{:.4}", s.estimate),
+                    cells[0].clone(),
+                    cells[1].clone(),
+                    cells[2].clone(),
+                    cells[3].clone(),
+                ]);
+            }
         }
     }
 
-    lines.join("\n")
+    if rows.is_empty() {
+        return None;
+    }
+
+    let boot_cols = bootstrap_column_headers(boot.options.ci_level);
+    let headers = vec![
+        table.factor_var.clone(),
+        t!("output-bootstrap-col-statistic"),
+        t!("output-km-col-estimate"),
+        boot_cols[0].clone(),
+        boot_cols[1].clone(),
+        boot_cols[2].clone(),
+        boot_cols[3].clone(),
+    ];
+    Some((headers, rows))
 }

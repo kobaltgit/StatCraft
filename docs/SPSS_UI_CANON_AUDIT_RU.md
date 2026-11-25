@@ -147,12 +147,13 @@
      - Поддиалог оформления `TableStyleFormatDialog` ($420 \times 420$ px): типографика (Жирный, Курсив), переключатели и палитра токенов дизайн-системы для цвета текста и заливки фона ячеек, живой интерактивный предпросмотр ячейки-образца `SamplePreviewBox`.
      - Транзакционность: полная поддержка снимков `backup` / `cancel` / `confirm` с сохранением исходного состояния при отмене как в поддиалогах, так и в главном диалоге стилей.
      - Интеграция в `FrequenciesDialog`: активация кнопки `[ Стиль... ]` (`dialog-btn-style`), сериализация правил в JSON и сквозная передача в действие выполнения и генерации синтаксиса.
+     - Переиспользуемый поддиалог «Бутстреп» `BootstrapDialog` (`crates/statcraft_app/src/dialogs/bootstrap_dialog/`, $440 \times 480$ px): построен на `DialogShell`, `GroupBox` (*Доверительные интервалы*, *Выборка*), `VariablePicker` + `TransferButton` для переменных слоёв (активны только при *Расслоенной* выборке), `SubdialogActionBar`, с транзакционным `backup`/`commit`/`cancel` и активированной кнопкой `[ Бутстреп... ]` (`dialog-btn-bootstrap`) в 9 диалогах процедур (`FrequenciesDialog`, `DescriptivesDialog`, `MeansDialog`, `TTestOneSampleDialog`, `TTestIndepDialog`, `TTestPairedDialog`, `AnovaOnewayDialog`, `CorrelationsDialog`, `RegressionDialog`).
   4. **Архитектурная декомпозиция координатора диалогов (Регламент 12.1 и 12.2 Anti-Goodhart):**
      - При интеграции `table_styles` объем координатора `crates/statcraft_app/src/app_dialogs.rs` достиг 994 строк (вплотную к пределу 1000 строк).
      - В строгом соответствии с Правилом 12.2 («Разделяй, а не урезай») проведена архитектурная декомпозиция: канонический блок описательных статистик SPSS (*Descriptives, Frequencies, Explore, Crosstabs*) вынесен в изолированный координатор `crates/statcraft_app/src/app_dialogs_stats.rs` (284 строки).
      - Объем `app_dialogs.rs` сокращен до **723 строк** (запас 277 строк до лимита) без малейшего сокращения логики или функционала, 100% модулей удовлетворяют `xtask file-guard`.
   5. **Идемпотентность кнопки Reset:** Нажатие `[ Reset ]` гарантированно возвращает все списки и флаги в исходное состояние во всех диалогах.
-  6. **Автоматический набор тестов:** Пройдено через `cargo test -p statcraft_app --test dialog_invariants -j 1` (**49/49 успешно**, включая 6 тестов `table_style_invariants.rs`: рендеринг, манипуляции с правилами, отмена, поддиалог условий, поддиалог формата, интеграция с частотами).
+  6. **Автоматический набор тестов:** Пройдено через `cargo test -p statcraft_app --test dialog_invariants -j 1` (**51/51 успешно**, включая `table_style_invariants.rs` и `test_bootstrap_dialog_state_and_headless_render`).
 
 ---
 

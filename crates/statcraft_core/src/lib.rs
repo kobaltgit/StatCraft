@@ -13,7 +13,7 @@ pub use csv_export::export_dataset_to_csv;
 pub use dataset::{merge, CellCoord, CellEdit, DataSet, DeltaBuffer};
 pub use rng::{
     clear_global_random_seed, get_effective_random_seed, get_global_random_seed,
-    set_global_random_seed,
+    set_global_random_seed, Mt19937,
 };
 pub use split::{SplitFileConfig, SplitFileMode, SplitKeyValue, SplitSubgroup};
 pub use statcraft_io::{

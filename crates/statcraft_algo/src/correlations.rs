@@ -1,4 +1,5 @@
 use crate::anova_oneway::AlgoError;
+pub use crate::bootstrap::compute_bivariate_correlations_bootstrap;
 use crate::correlations_types::*;
 use crate::crosstabs::regularized_incomplete_gamma_q;
 use crate::ttest_onesample::student_t_sf_2tailed;
@@ -180,6 +181,7 @@ pub fn compute_bivariate_correlations(
         descriptives,
         matrices,
         options: options.clone(),
+        bootstrap: None,
     })
 }
 

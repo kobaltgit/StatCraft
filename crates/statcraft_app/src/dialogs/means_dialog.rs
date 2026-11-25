@@ -18,6 +18,7 @@ pub struct MeansDialogState {
     pub selected_factors: Vec<String>,
     pub options: MeansOptions,
     pub show_options: bool,
+    pub bootstrap: crate::dialogs::bootstrap_dialog::BootstrapDialogState,
 }
 
 pub enum MeansDialogAction {
@@ -25,11 +26,13 @@ pub enum MeansDialogAction {
         dependent_vars: Vec<String>,
         factor_vars: Vec<String>,
         options: MeansOptions,
+        bootstrap: Option<serde_json::Value>,
     },
     Paste {
         dependent_vars: Vec<String>,
         factor_vars: Vec<String>,
         options: MeansOptions,
+        bootstrap: Option<serde_json::Value>,
     },
     None,
 }
@@ -53,6 +56,14 @@ pub fn render_means_dialog(
 
     let mut action = MeansDialogAction::None;
     let mut close_dialog = false;
+
+    if state.bootstrap.is_open {
+        crate::dialogs::bootstrap_dialog::render_bootstrap_dialog(
+            ctx,
+            Some(ds),
+            &mut state.bootstrap,
+        );
+    }
 
     // Available variables (excluding already selected in deps or factors)
     let available_vars: Vec<(usize, String, String, statcraft_core::Measure)> = (0..ds.col_count())
@@ -324,6 +335,9 @@ pub fn render_means_dialog(
                     if SubdialogSidebar::button(ui, t!("dialog-btn-options"), true).clicked() {
                         state.show_options = true;
                     }
+                    if SubdialogSidebar::button(ui, t!("dialog-btn-bootstrap"), true).clicked() {
+                        state.bootstrap.open();
+                    }
                 },
             );
         });
@@ -331,6 +345,7 @@ pub fn render_means_dialog(
         // Bottom Action Bar
         let can_run = !state.selected_deps.is_empty() && !state.selected_factors.is_empty();
         let bar_action = DialogActionBar::new(can_run).show(ui);
+        let bootstrap = state.bootstrap.to_json();
 
         match bar_action {
             ActionBarAction::Ok => {
@@ -339,6 +354,7 @@ pub fn render_means_dialog(
                     dependent_vars: state.selected_deps.clone(),
                     factor_vars: state.selected_factors.clone(),
                     options: state.options.clone(),
+                    bootstrap,
                 };
             }
             ActionBarAction::Paste => {
@@ -347,6 +363,7 @@ pub fn render_means_dialog(
                     dependent_vars: state.selected_deps.clone(),
                     factor_vars: state.selected_factors.clone(),
                     options: state.options.clone(),
+                    bootstrap,
                 };
             }
             ActionBarAction::Reset => {

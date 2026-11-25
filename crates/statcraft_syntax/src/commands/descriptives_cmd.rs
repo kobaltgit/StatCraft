@@ -1,6 +1,12 @@
+use crate::bootstrap::{
+    bootstrap_param_schema, bootstrap_to_sps, extract_strata_keys, parse_bootstrap_options,
+};
 use crate::command::{CommandError, EngineCommand};
 use serde_json::{json, Value};
-use statcraft_algo::{compute_descriptives_weighted, DescriptivesResult};
+use statcraft_algo::{
+    compute_descriptives_bootstrap, compute_descriptives_weighted, BootstrapOptions,
+    DescriptivesOptions, DescriptivesResult,
+};
 use statcraft_core::DataSet;
 
 pub struct DescriptivesCommand;
@@ -41,7 +47,8 @@ impl EngineCommand for DescriptivesCommand {
                         "skewness": { "type": "boolean" },
                         "kurtosis": { "type": "boolean" }
                     }
-                }
+                },
+                "bootstrap": bootstrap_param_schema()
             }
         })
     }
@@ -75,8 +82,14 @@ impl EngineCommand for DescriptivesCommand {
             });
         }
 
+        let desc_options: Option<DescriptivesOptions> = params
+            .get("options")
+            .and_then(|v| serde_json::from_value::<DescriptivesOptions>(v.clone()).ok());
+        let boot_options = parse_bootstrap_options(&params, self.id())?;
+
         let mut results: Vec<DescriptivesResult> = Vec::new();
         let active_rows = ds.active_row_indices();
+        let strata_keys = extract_strata_keys(ds, &active_rows, boot_options.as_ref(), self.id())?;
 
         for var_name in &var_names {
             let col_idx =
@@ -96,7 +109,19 @@ impl EngineCommand for DescriptivesCommand {
                 weights.push(ds.row_weight(r));
             }
 
-            let res = compute_descriptives_weighted(var_name, &values, &weights);
+            let mut res = compute_descriptives_weighted(var_name, &values, &weights);
+            if let Some(ref boot) = boot_options {
+                let boot_res = compute_descriptives_bootstrap(
+                    var_name,
+                    &values,
+                    &weights,
+                    strata_keys.as_deref(),
+                    desc_options.as_ref(),
+                    boot,
+                )
+                .map_err(|e| CommandError::ExecutionFailed(e.to_string()))?;
+                res.bootstrap = Some(boot_res);
+            }
             results.push(res);
         }
 
@@ -115,6 +140,17 @@ impl DescriptivesCommand {
             "DESCRIPTIVES VARIABLES={}\n  /STATISTICS=MEAN STDDEV MIN MAX.",
             vars.join(" ")
         )
+    }
+
+    pub fn to_sps_with_bootstrap(vars: &[String], bootstrap: Option<&BootstrapOptions>) -> String {
+        let base = Self::to_sps(vars);
+        if let Some(boot) = bootstrap {
+            let sps = bootstrap_to_sps(boot);
+            if !sps.is_empty() {
+                return format!("{sps}\n{base}");
+            }
+        }
+        base
     }
 }
 

@@ -147,12 +147,13 @@ Phase 3 concludes the comprehensive audit of StatCraft, evaluating the user-faci
      - Format subdialog `TableStyleFormatDialog` ($420 \times 420$ px): typography (Bold, Italic), token palette swatches for text and background colors, interactive live preview sample box `SamplePreviewBox`.
      - Transactionality: complete transactional snapshot mechanisms (`backup` / `cancel` / `confirm`) guaranteeing rollbacks on cancel across all subdialogs and the main dialog.
      - Integration in `FrequenciesDialog`: activated `[ Style... ]` (`dialog-btn-style`) sidebar button, rule JSON serialization, and pipeline action dispatch.
+     - Reusable Bootstrap subdialog `BootstrapDialog` (`crates/statcraft_app/src/dialogs/bootstrap_dialog/`, $440 \times 480$ px): built with `DialogShell`, `GroupBox` (*Confidence Intervals*, *Sampling*), `VariablePicker` + `TransferButton` for strata variables (enabled only under *Stratified*), `SubdialogActionBar`, transactional `backup`/`commit`/`cancel`, and activated `[ Bootstrap... ]` (`dialog-btn-bootstrap`) across 9 procedure dialogs (`FrequenciesDialog`, `DescriptivesDialog`, `MeansDialog`, `TTestOneSampleDialog`, `TTestIndepDialog`, `TTestPairedDialog`, `AnovaOnewayDialog`, `CorrelationsDialog`, `RegressionDialog`).
   4. **Coordinator Architectural Decomposition (Rules 12.1 & 12.2 Anti-Goodhart):**
      - Upon integrating `table_styles`, `crates/statcraft_app/src/app_dialogs.rs` reached 994 lines (approaching the 1000-line ceiling).
      - In strict adherence to Rule 12.2 ("Decompose, Never Cut"), an architectural decomposition was conducted: the canonical SPSS Descriptive Statistics group (*Descriptives, Frequencies, Explore, Crosstabs*) was extracted into `crates/statcraft_app/src/app_dialogs_stats.rs` (284 lines).
      - `app_dialogs.rs` was reduced to **723 lines** (277 lines headroom) with 100% feature and logic retention, fully satisfying `xtask file-guard`.
   5. **Reset Idempotence:** Clicking `[ Reset ]` restores all parameters and lists to exact defaults across all dialogs.
-  6. **Automated Suite:** Verified via `cargo test -p statcraft_app --test dialog_invariants -j 1` (**49/49 passing**, including 6 tests in `table_style_invariants.rs`: rendering, rule manipulation, cancellation rollback, condition subdialog, format subdialog, frequencies integration).
+  6. **Automated Suite:** Verified via `cargo test -p statcraft_app --test dialog_invariants -j 1` (**51/51 passing**, including `table_style_invariants.rs` and `test_bootstrap_dialog_state_and_headless_render`).
 
 ---
 

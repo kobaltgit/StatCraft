@@ -1,7 +1,11 @@
+use crate::bootstrap::{
+    bootstrap_param_schema, bootstrap_to_sps, extract_strata_keys, parse_bootstrap_options,
+};
 use crate::command::{CommandError, EngineCommand};
 use serde_json::{json, Value};
 use statcraft_algo::{
-    compute_means_breakdown, MeansOptions, MeansProcedureResult, MeansTableResult,
+    compute_means_bootstrap, compute_means_breakdown, BootstrapOptions, MeansOptions,
+    MeansProcedureResult, MeansTableResult,
 };
 use statcraft_core::DataSet;
 
@@ -52,6 +56,22 @@ impl MeansCommand {
 
         lines.join("\n")
     }
+
+    pub fn to_sps_with_bootstrap(
+        dependent_vars: &[String],
+        factor_vars: &[String],
+        options: &MeansOptions,
+        bootstrap: Option<&BootstrapOptions>,
+    ) -> String {
+        let base = Self::to_sps(dependent_vars, factor_vars, options);
+        if let Some(boot) = bootstrap {
+            let sps = bootstrap_to_sps(boot);
+            if !sps.is_empty() {
+                return format!("{sps}\n{base}");
+            }
+        }
+        base
+    }
 }
 
 impl EngineCommand for MeansCommand {
@@ -89,7 +109,8 @@ impl EngineCommand for MeansCommand {
                 "cell_median": { "type": "boolean", "default": true },
                 "cell_min": { "type": "boolean", "default": false },
                 "cell_max": { "type": "boolean", "default": false },
-                "anova": { "type": "boolean", "default": true }
+                "anova": { "type": "boolean", "default": true },
+                "bootstrap": bootstrap_param_schema()
             }
         })
     }
@@ -175,7 +196,9 @@ impl EngineCommand for MeansCommand {
                 .unwrap_or(true),
         };
 
+        let boot_options = parse_bootstrap_options(&params, self.id())?;
         let active_rows = ds.active_row_indices();
+        let strata_keys = extract_strata_keys(ds, &active_rows, boot_options.as_ref(), self.id())?;
         let mut weights = Vec::with_capacity(active_rows.len());
         for &r in &active_rows {
             weights.push(ds.row_weight(r));
@@ -224,7 +247,24 @@ impl EngineCommand for MeansCommand {
                     Some(&weights),
                     &options,
                 ) {
-                    Ok(table) => tables.push(table),
+                    Ok(mut table) => {
+                        if let Some(ref boot) = boot_options {
+                            let boot_res = compute_means_bootstrap(
+                                dep_var,
+                                factor_var,
+                                &dep_values,
+                                &factor_values,
+                                Some(&weights),
+                                &options,
+                                &table,
+                                strata_keys.as_deref(),
+                                boot,
+                            )
+                            .map_err(|e| CommandError::ExecutionFailed(e.to_string()))?;
+                            table.bootstrap = Some(boot_res);
+                        }
+                        tables.push(table);
+                    }
                     Err(e) => {
                         return Err(CommandError::ExecutionFailed(format!(
                             "Failed computing means for '{}' BY '{}': {}",

@@ -16,6 +16,7 @@ pub struct OneSampleTTestDialogState {
     pub test_value_str: String,
     pub ci_level_str: String,
     pub show_options: bool,
+    pub bootstrap: crate::dialogs::bootstrap_dialog::BootstrapDialogState,
 }
 
 impl Default for OneSampleTTestDialogState {
@@ -28,6 +29,7 @@ impl Default for OneSampleTTestDialogState {
             test_value_str: "0".to_string(),
             ci_level_str: "95".to_string(),
             show_options: false,
+            bootstrap: crate::dialogs::bootstrap_dialog::BootstrapDialogState::default(),
         }
     }
 }
@@ -37,11 +39,13 @@ pub enum OneSampleTTestDialogAction {
         vars: Vec<String>,
         test_value: f64,
         ci: f64,
+        bootstrap: Option<serde_json::Value>,
     },
     Paste {
         vars: Vec<String>,
         test_value: f64,
         ci: f64,
+        bootstrap: Option<serde_json::Value>,
     },
     None,
 }
@@ -248,14 +252,26 @@ pub fn render_ttest_onesample_dialog(
                     if SubdialogSidebar::button(ui, t!("dialog-btn-options"), true).clicked() {
                         state.show_options = true;
                     }
+                    if SubdialogSidebar::button(ui, t!("dialog-btn-bootstrap"), true).clicked() {
+                        state.bootstrap.open();
+                    }
                 },
             );
         });
+
+        if state.bootstrap.is_open {
+            crate::dialogs::bootstrap_dialog::render_bootstrap_dialog(
+                ctx,
+                Some(ds),
+                &mut state.bootstrap,
+            );
+        }
 
         // Parse values
         let parsed_test_val = state.test_value_str.trim().parse::<f64>().unwrap_or(0.0);
         let parsed_ci_pct = state.ci_level_str.trim().parse::<f64>().unwrap_or(95.0);
         let ci_ratio = (parsed_ci_pct / 100.0).clamp(0.50, 0.999);
+        let bootstrap = state.bootstrap.to_json();
 
         // Bottom Action Bar
         let can_run = !state.selected_vars.is_empty();
@@ -268,6 +284,7 @@ pub fn render_ttest_onesample_dialog(
                     vars: state.selected_vars.clone(),
                     test_value: parsed_test_val,
                     ci: ci_ratio,
+                    bootstrap,
                 };
             }
             ActionBarAction::Paste => {
@@ -276,6 +293,7 @@ pub fn render_ttest_onesample_dialog(
                     vars: state.selected_vars.clone(),
                     test_value: parsed_test_val,
                     ci: ci_ratio,
+                    bootstrap,
                 };
             }
             ActionBarAction::Reset => {
@@ -284,6 +302,7 @@ pub fn render_ttest_onesample_dialog(
                 state.target_selected = None;
                 state.test_value_str = "0".to_string();
                 state.ci_level_str = "95".to_string();
+                state.bootstrap.reset();
             }
             ActionBarAction::Cancel => {
                 close_dialog = true;

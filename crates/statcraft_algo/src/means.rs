@@ -302,5 +302,139 @@ pub fn compute_means_breakdown(
         total: total_cell,
         anova,
         association,
+        bootstrap: None,
+    })
+}
+
+#[allow(clippy::too_many_arguments)]
+pub fn compute_means_bootstrap(
+    dep_name: &str,
+    factor_name: &str,
+    dep_values: &[Option<f64>],
+    factor_values: &[Option<String>],
+    weights: Option<&[f64]>,
+    options: &MeansOptions,
+    base_table: &MeansTableResult,
+    strata_keys: Option<&[String]>,
+    boot_options: &crate::bootstrap::BootstrapOptions,
+) -> Result<crate::means_types::MeansBootstrap, crate::bootstrap::BootstrapError> {
+    use crate::bootstrap::{run_bootstrap_scalar, SamplingPlan};
+    use crate::means_types::{MeansBootstrap, MeansBootstrapGroup};
+
+    let plan = match &boot_options.sampling_method {
+        crate::bootstrap::BootstrapSamplingMethod::Simple => {
+            SamplingPlan::simple(dep_values.len())?
+        }
+        crate::bootstrap::BootstrapSamplingMethod::Stratified { .. } => {
+            let keys = strata_keys.ok_or(crate::bootstrap::BootstrapError::EmptyStrataVariables)?;
+            if keys.len() != dep_values.len() {
+                return Err(crate::bootstrap::BootstrapError::StrataLengthMismatch {
+                    expected: dep_values.len(),
+                    actual: keys.len(),
+                });
+            }
+            SamplingPlan::stratified(keys)?
+        }
+    };
+
+    let eval_cell = |indices: &[usize],
+                     group_label: Option<&str>,
+                     extract: fn(&crate::means_types::MeansCellStats) -> Option<f64>|
+     -> Option<f64> {
+        let mut sub_dep = Vec::with_capacity(indices.len());
+        let mut sub_fac = Vec::with_capacity(indices.len());
+        let mut sub_w = weights.map(|_| Vec::with_capacity(indices.len()));
+        for &i in indices {
+            if i < dep_values.len() && i < factor_values.len() {
+                sub_dep.push(dep_values[i]);
+                sub_fac.push(factor_values[i].clone());
+                if let (Some(w_in), Some(ref mut w_out)) = (weights, &mut sub_w) {
+                    w_out.push(w_in.get(i).copied().unwrap_or(1.0));
+                }
+            }
+        }
+        let tbl = compute_means_breakdown(
+            dep_name,
+            factor_name,
+            &sub_dep,
+            &sub_fac,
+            sub_w.as_deref(),
+            options,
+        )
+        .ok()?;
+        match group_label {
+            Some(lbl) => tbl
+                .cells
+                .iter()
+                .find(|c| c.group_label == lbl)
+                .and_then(extract),
+            None => extract(&tbl.total),
+        }
+    };
+
+    let mut groups = Vec::with_capacity(base_table.cells.len());
+    for cell in &base_table.cells {
+        let lbl = cell.group_label.as_str();
+        let mean = if options.cell_mean {
+            run_bootstrap_scalar(&plan, boot_options, |idx| {
+                eval_cell(idx, Some(lbl), |c| c.mean)
+            })
+            .ok()
+        } else {
+            None
+        };
+        let std_dev = if options.cell_stddev {
+            run_bootstrap_scalar(&plan, boot_options, |idx| {
+                eval_cell(idx, Some(lbl), |c| c.std_dev)
+            })
+            .ok()
+        } else {
+            None
+        };
+        let median = if options.cell_median {
+            run_bootstrap_scalar(&plan, boot_options, |idx| {
+                eval_cell(idx, Some(lbl), |c| c.median)
+            })
+            .ok()
+        } else {
+            None
+        };
+        groups.push(MeansBootstrapGroup {
+            group_label: cell.group_label.clone(),
+            mean,
+            std_dev,
+            median,
+        });
+    }
+
+    let total = MeansBootstrapGroup {
+        group_label: "Total".to_string(),
+        mean: if options.cell_mean {
+            run_bootstrap_scalar(&plan, boot_options, |idx| eval_cell(idx, None, |c| c.mean)).ok()
+        } else {
+            None
+        },
+        std_dev: if options.cell_stddev {
+            run_bootstrap_scalar(&plan, boot_options, |idx| {
+                eval_cell(idx, None, |c| c.std_dev)
+            })
+            .ok()
+        } else {
+            None
+        },
+        median: if options.cell_median {
+            run_bootstrap_scalar(&plan, boot_options, |idx| {
+                eval_cell(idx, None, |c| c.median)
+            })
+            .ok()
+        } else {
+            None
+        },
+    };
+
+    Ok(MeansBootstrap {
+        options: boot_options.clone(),
+        groups,
+        total,
     })
 }

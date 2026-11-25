@@ -7,6 +7,25 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [0.4.7] - 2026-11-25
+
+### Added
+- **Bootstrap Resampling Core & Mersenne Twister PRNG (Feature 020 — Stage 1):**
+  - Implemented deterministic 100% Safe Rust 32-bit Mersenne Twister (`Mt19937`) in `statcraft_core::rng` with unbiased rejection sampling (`gen_range_usize`) and `from_optional_seed()` fallback.
+  - Implemented reusable bootstrap engine in `statcraft_algo::bootstrap` (`options.rs`, `resampler.rs`, `ci.rs`, `engine.rs`) supporting `Simple` and `Stratified` (preserving exact stratum sizes $n_h$) resampling with replacement.
+  - Implemented `Bias`, `Std. Error`, `Percentile` CI, and `BCa` CI (bias correction $z_0$, jackknife acceleration $\hat{a}$ with safe zero-denominator fallback, and Cody rational `normal_cdf`).
+  - Added SPSS `SET MTINDEX=...` and `BOOTSTRAP /SAMPLING ... /CRITERIA ...` syntax generation and one-shot `pending_bootstrap` batch modifier in `statcraft_syntax::bootstrap` and `SyntaxDispatcher::execute_batch`.
+- **Reusable Bootstrap Dialog & Frequencies Integration (Feature 021 — Stage 2):**
+  - Built reusable `BootstrapDialog` (`crates/statcraft_app/src/dialogs/bootstrap_dialog/`) using `DialogKit` (`DialogShell`, `GroupBox`, `VariablePicker`, `TransferButton`, `SubdialogActionBar`) with transactional `backup`/`commit`/`cancel` and validation.
+  - Added full Fluent localization in `locales/en.ftl` and `locales/ru.ftl` (zero hardcoded UI strings).
+  - Enabled `[ Bootstrap... ]` in `FrequenciesDialog`, wired `compute_frequencies_bootstrap` (`statcraft_algo::frequencies::bootstrap`), and added `Bootstrap Specifications` + bootstrap statistics/frequency tables with TSV export in Output Viewer (`tables_frequencies/bootstrap_tables.rs`).
+- **Multi-Procedure Bootstrap Expansion & Golden Oracle (Feature 022 — Stage 3):**
+  - Extracted shared Output Viewer bootstrap rendering and TSV helpers in `crates/statcraft_app/src/views/output_view/tables_bootstrap.rs`.
+  - Connected `BootstrapDialog`, `statcraft_algo`, `statcraft_syntax` (`to_sps_with_bootstrap`), and Output Viewer across 8 additional procedures: `Descriptives`, `Means`, `One-Sample T-Test`, `Independent-Samples T-Test`, `Paired-Samples T-Test`, `One-Way ANOVA`, `Bivariate Correlations` (Pearson, Spearman, Kendall), and `Linear Regression` (OLS).
+  - Added Golden Oracle verification (`crates/statcraft_algo/tests/bootstrap_golden_oracle.rs`) matching `scipy.stats.bootstrap` (`Percentile` and `BCa`) within $\le 10^{-6}$, plus end-to-end Output Viewer & TSV tests in `crates/statcraft_app/tests/output_viewer_bootstrap_invariants.rs`.
+
+---
+
 ## [0.4.6] - 2026-11-24
 
 ### Added

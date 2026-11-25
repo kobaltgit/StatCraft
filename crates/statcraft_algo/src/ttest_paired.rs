@@ -1,5 +1,20 @@
+pub use crate::bootstrap::compute_paired_ttest_bootstrap;
+use crate::bootstrap::{BootstrapOptions, BootstrapSummary};
 use crate::ttest_onesample::{student_t_inv_cdf, student_t_sf_2tailed};
 use serde::{Deserialize, Serialize};
+
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+pub struct PairedTTestBootstrap {
+    pub options: BootstrapOptions,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub var1_mean: Option<BootstrapSummary>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub var2_mean: Option<BootstrapSummary>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub mean_diff: Option<BootstrapSummary>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub correlation: Option<BootstrapSummary>,
+}
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
 pub struct PairedVarStats {
@@ -39,6 +54,8 @@ pub struct PairedTTestResult {
     pub correlation: PairedCorrelation,
     pub differences: PairedDifferences,
     pub confidence_level: f64,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub bootstrap: Option<PairedTTestBootstrap>,
 }
 
 pub type PairedDataInput<'a> = (&'a str, &'a [Option<f64>], &'a str, &'a [Option<f64>]);
@@ -119,7 +136,7 @@ pub fn compute_paired_ttest_from_slices(
     results
 }
 
-fn compute_single_pair(
+pub(crate) fn compute_single_pair(
     pair_num: usize,
     var1_name: &str,
     x: &[f64],
@@ -144,6 +161,7 @@ fn compute_single_pair(
         correlation,
         differences,
         confidence_level,
+        bootstrap: None,
     }
 }
 

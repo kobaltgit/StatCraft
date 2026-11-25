@@ -353,6 +353,76 @@ pub fn compute_linear_regression(
         anova,
         coefficients,
         options: options.clone(),
+        bootstrap: None,
+    })
+}
+
+#[allow(clippy::too_many_arguments)]
+pub fn compute_linear_regression_bootstrap(
+    dep_name: &str,
+    dep_vals: &[Option<f64>],
+    indep_names: &[String],
+    indep_vals: &[Vec<Option<f64>>],
+    weights: &[f64],
+    options: &LinearRegressionOptions,
+    base_res: &LinearRegressionResult,
+    strata_keys: Option<&[String]>,
+    boot_options: &crate::bootstrap::BootstrapOptions,
+) -> Result<crate::regression_types::LinearRegressionBootstrap, crate::bootstrap::BootstrapError> {
+    use crate::bootstrap::{run_bootstrap_scalar, SamplingPlan};
+    use crate::regression_types::{LinearRegressionBootstrap, RegressionBootstrapCoeff};
+
+    let n = dep_vals.len();
+    let plan = SamplingPlan::from_options(n, strata_keys, boot_options)?;
+    let boot_reg_opts = LinearRegressionOptions {
+        ci_level: options.ci_level,
+        collinearity: false,
+    };
+
+    let mut coefficients = Vec::with_capacity(base_res.coefficients.len());
+    for (c_idx, coeff) in base_res.coefficients.iter().enumerate() {
+        let b_summary = run_bootstrap_scalar(&plan, boot_options, |indices| {
+            let mut sub_y = Vec::with_capacity(indices.len());
+            let mut sub_x: Vec<Vec<Option<f64>>> =
+                vec![Vec::with_capacity(indices.len()); indep_vals.len()];
+            let mut sub_w = if weights.is_empty() {
+                Vec::new()
+            } else {
+                Vec::with_capacity(indices.len())
+            };
+            for &idx in indices {
+                if idx < n {
+                    sub_y.push(dep_vals[idx]);
+                    for (p, col) in indep_vals.iter().enumerate() {
+                        sub_x[p].push(col[idx]);
+                    }
+                    if !weights.is_empty() {
+                        sub_w.push(weights.get(idx).copied().unwrap_or(1.0));
+                    }
+                }
+            }
+            let res = compute_linear_regression(
+                dep_name,
+                &sub_y,
+                indep_names,
+                &sub_x,
+                &sub_w,
+                &boot_reg_opts,
+            )
+            .ok()?;
+            res.coefficients.get(c_idx).map(|c| c.b)
+        })
+        .ok();
+
+        coefficients.push(RegressionBootstrapCoeff {
+            var_name: coeff.var_name.clone(),
+            b: b_summary,
+        });
+    }
+
+    Ok(LinearRegressionBootstrap {
+        options: boot_options.clone(),
+        coefficients,
     })
 }
 

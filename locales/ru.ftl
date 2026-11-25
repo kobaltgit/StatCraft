@@ -2077,4 +2077,38 @@ dialog-table-style-fmt-italic = Курсив
 dialog-table-style-fmt-underline = Подчеркнутый
 dialog-table-style-fmt-reset = Сброс
 
+# Поддиалог и вывод Бутстрепа
+dialog-bootstrap-title = Бутстреп
+dialog-bootstrap-perform = Выполнить бутстреп
+dialog-bootstrap-samples = Количество выборок:
+dialog-bootstrap-set-seed = Задать начальное значение для генератора вихрь Мерсенна
+dialog-bootstrap-seed-value = Значение:
+dialog-bootstrap-ci-group = Доверительные интервалы
+dialog-bootstrap-ci-level = Уровень (%):
+dialog-bootstrap-ci-percentile = Процентиль
+dialog-bootstrap-ci-bca = С коррекцией смещения и ускорением (BCa)
+dialog-bootstrap-sampling-group = Выборка
+dialog-bootstrap-sampling-simple = Простая
+dialog-bootstrap-sampling-stratified = Расслоенная
+dialog-bootstrap-strata-vars = Переменные слоев:
+
+output-bootstrap-specs-title = Спецификации бутстрепа
+output-bootstrap-spec-sampling = Метод выборки
+output-bootstrap-spec-samples = Количество выборок
+output-bootstrap-spec-ci-level = Уровень доверительного интервала
+output-bootstrap-spec-ci-type = Тип доверительного интервала
+output-bootstrap-spec-seed = Начальное значение
+output-bootstrap-sampling-simple = Простая
+output-bootstrap-sampling-stratified = Расслоенная ({ $vars })
+output-bootstrap-ci-percentile = Процентиль
+output-bootstrap-ci-bca = BCa
+output-bootstrap-seed-random = Случайное
+output-bootstrap-group-header = Бутстреп
+output-bootstrap-col-bias = Смещение
+output-bootstrap-col-se = Станд. ошибка
+output-bootstrap-col-ci-lower = { $level }% ДИ нижн.
+output-bootstrap-col-ci-upper = { $level }% ДИ верхн.
+output-bootstrap-col-statistic = Статистика
+
+
 

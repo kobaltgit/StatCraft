@@ -1,5 +1,5 @@
 Package: statcraft
-Version: 0.4.6
+Version: 0.4.7
 Section: math
 Priority: optional
 Architecture: amd64

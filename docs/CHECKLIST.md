@@ -1445,6 +1445,41 @@
   - [x] 100% прохождение `cargo fmt --check` и `cargo clippy --workspace -j 1 -- -D warnings`;
   - [x] 100% прохождение полного Quality Gate `cargo run -p xtask -j 1 -- ci`.
 
+## 82. Ядро бутстрепа, MT19937 и синтаксис `BOOTSTRAP` (Feature 020 — Stage 1)
+- [x] L1 `statcraft_core::rng`:
+  - [x] Реализован 100% Safe Rust генератор `Mt19937` (32-битный Mersenne Twister, период $2^{19937}-1$) без `unsafe` и `unwrap`;
+  - [x] Поддержана инициализация фиксированным `seed` и `from_optional_seed()` с фоллбэком на `get_effective_random_seed()`;
+  - [x] Реализована равномерная выборка индекса `gen_range_usize` без modulo bias (rejection sampling);
+  - [x] Юнит-тесты сверки первых 10 значений со стандартным вектором `MT19937` (`seed = 5489`), детерминизма и границ.
+- [x] L2 `statcraft_algo::bootstrap`:
+  - [x] `options.rs`: `BootstrapOptions`, `BootstrapCiMethod` (`Percentile`, `Bca`), `BootstrapSamplingMethod` (`Simple`, `Stratified { strata_vars }`) и `validate()`;
+  - [x] `resampler.rs`: `StratifiedPlan` и `SamplingPlan` (простой и стратифицированный ресэмплинг с возвращением, сохраняющий размеры слоев $n_h$);
+  - [x] `ci.rs`: высокоточная `normal_cdf` (аппроксимация Коди), `compute_percentile_ci`, `compute_bca_ci` (с $z_0$, jackknife-ускорением $\hat{a}$ и защитой от нулевого знаменателя), `summarize_bootstrap` (`Bias`, `Std. Error`, `CI`);
+  - [x] `engine.rs` и `mod.rs`: универсальный API `run_bootstrap` и `run_bootstrap_scalar`;
+  - [x] Интеграционные тесты и эталонная сверка `Percentile` / `BCa` в `crates/statcraft_algo/tests/bootstrap_tests.rs`.
+- [x] L5 `statcraft_syntax::bootstrap`:
+  - [x] `bootstrap_param_schema()` для переиспользования в `EngineCommand::specs()`;
+  - [x] `bootstrap_to_sps()` для генерации `SET MTINDEX=...` + `BOOTSTRAP /SAMPLING ... /CRITERIA ... /MISSING USERMISSING=EXCLUDE.`;
+  - [x] Парсер `parse_set_mtindex()` и `parse_bootstrap_command()`, одноразовый модификатор `pending_bootstrap` в `SyntaxDispatcher::execute_batch`;
+  - [x] Интеграционные round-trip и batch-тесты в `crates/statcraft_syntax/tests/bootstrap_syntax_tests.rs`.
+- [x] Верификация Этапа 1 (DoD):
+  - [x] `cargo fmt --check` и `cargo clippy -p statcraft_core -p statcraft_algo -p statcraft_syntax -j 1 -- -D warnings` без замечаний;
+  - [x] `cargo test -p statcraft_core -p statcraft_algo -p statcraft_syntax -j 1` — 100% зелёные;
+  - [x] `cargo run -p xtask -j 1 -- file-guard` (518 файлов) и `layers` — без замечаний.
+- [x] **Этап 2 (Feature 021): Переиспользуемый диалог «Бутстреп» и сквозная интеграция с «Частотами» (`Frequencies`)**:
+  - [x] Переиспользуемый UI-модуль `crates/statcraft_app/src/dialogs/bootstrap_dialog/` (`state.rs`, `mod.rs`) на базе `DialogKit` (`DialogShell`, `GroupBox`, `VariablePicker`, `TransferButton`, `SubdialogActionBar`) с транзакционным `backup`/`restore` и валидацией `can_continue`;
+  - [x] Полная Fluent-локализация в `locales/en.ftl` и `locales/ru.ftl` (0% хардкода строк);
+  - [x] Интеграция в `frequencies_dialog` (активирована кнопка `[ Бутстреп... ]`, передача параметров в `Run`/`Paste`);
+  - [x] Расширение `statcraft_algo::frequencies::bootstrap` (`compute_frequencies_bootstrap`, `FrequenciesBootstrapResult`, `Bias`, `Std. Error`, `Percentile`/`BCa` для статистик и процентов категорий);
+  - [x] Обновление `FrequenciesCommand` (`statcraft_syntax::commands::frequencies_cmd`) и генерация `SET MTINDEX` + `BOOTSTRAP` перед `FREQUENCIES` в `sps.rs`;
+  - [x] Output Viewer (`tables_frequencies/bootstrap_tables.rs`): таблица `Bootstrap Specifications`, бутстреп-таблицы для статистик и частот, TSV-экспорт;
+  - [x] Верификация: `dialog_invariants` (51/51), `output_viewer_frequencies_invariants` (9/9) и полный `cargo run -p xtask -j 1 -- ci` (100% OK).
+- [x] **Этап 3 (Feature 022): Расширение бутстрепа на статистические процедуры и Golden Oracle**:
+  - [x] Унификация общих компонентов рендеринга и TSV-экспорта (`Bootstrap Specifications`, `bootstrap_column_headers`, `format_bootstrap_cells`, `render_bootstrap_table`, `bootstrap_table_to_tsv`) в `crates/statcraft_app/src/views/output_view/tables_common.rs`;
+  - [x] Подключение `BootstrapDialog` и бутстреп-вычислений на уровнях L2, L5 и L6 к `Descriptives`, `Means`, `T-Test` (One-Sample, Independent, Paired), `One-Way ANOVA`, `Correlations` (Pearson, Spearman, Kendall) и `Linear Regression` (OLS);
+  - [x] Эталонный пакет тестов `crates/statcraft_algo/tests/bootstrap_golden_oracle.rs` со сверкой `Percentile` и `BCa` против `scipy.stats.bootstrap` ($\le 10^{-6}$);
+  - [x] Верификация `cargo run -p xtask -j 1 -- parity` и полный Quality Gate `cargo run -p xtask -j 1 -- ci`.
+
 
 ## 20. Планы будущих релизов (Backlog / Planned Features)
 - [ ] Мультимониторный режим рабочего пространства (Multi-Monitor Viewports & Pop-out Tabs):

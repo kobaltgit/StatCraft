@@ -23,6 +23,7 @@ pub fn sample_descriptives() -> DescriptivesResult {
         se_skewness: Some(0.24),
         kurtosis: Some(-0.2),
         se_kurtosis: Some(0.48),
+        bootstrap: None,
     }
 }
 
@@ -55,6 +56,7 @@ pub fn sample_frequencies() -> FrequencyResult {
         chart: None,
         table_suppressed: false,
         multiple_vars_mode: statcraft_algo::MultipleVarsMode::Compare,
+        bootstrap: None,
     }
 }
 
@@ -74,6 +76,7 @@ pub fn sample_onesample() -> OneSampleTTestResult {
         ci_level: 0.95,
         ci_lower: Some(2618.0),
         ci_upper: Some(7382.0),
+        bootstrap: None,
     }
 }
 
@@ -120,6 +123,7 @@ pub fn sample_indep() -> IndepTTestResult {
             ci_upper: Some(8667.0),
         },
         ci_level: 0.95,
+        bootstrap: None,
     }
 }
 
@@ -158,6 +162,7 @@ pub fn sample_paired() -> PairedTTestResult {
             sig_2tailed: Some(0.0001),
         },
         confidence_level: 0.95,
+        bootstrap: None,
     }
 }
 
@@ -189,6 +194,7 @@ pub fn sample_anova() -> OneWayAnovaResult {
         descriptives: vec![],
         total_descriptives: None,
         homogeneity: None,
+        bootstrap: None,
     }
 }
 
@@ -393,6 +399,7 @@ pub fn sample_means() -> statcraft_algo::MeansProcedureResult {
                 eta: 0.946,
                 eta_squared: 0.895,
             }),
+            bootstrap: None,
         }],
     }
 }

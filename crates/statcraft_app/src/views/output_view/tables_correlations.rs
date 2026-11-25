@@ -2,7 +2,9 @@
     OutputItem, OutputItemKind, OutputNotes, OutputProcedure, OutputViewerState, SelectedTarget,
 };
 use super::tables_common::{
-    adjust_widths, format_opt, format_sig, render_data_row, render_header_row,
+    adjust_widths, bootstrap_column_headers, bootstrap_specs_to_tsv, bootstrap_table_to_tsv,
+    format_bootstrap_cells, format_opt, format_sig, render_bootstrap_specifications_table,
+    render_bootstrap_table, render_data_row, render_header_row,
 };
 use crate::theme::Tokens;
 use egui::{Align2, ScrollArea, Ui};
@@ -77,6 +79,11 @@ impl OutputViewerState {
 
 pub fn render_spss_correlations_tables(ui: &mut Ui, res: &BivariateCorrelationsResult) {
     ui.vertical(|ui| {
+        if let Some(ref boot) = res.bootstrap {
+            render_bootstrap_specifications_table(ui, &boot.options);
+            ui.add_space(14.0_f32);
+        }
+
         // 1. Descriptives Table (if present)
         if let Some(ref desc_list) = res.descriptives {
             render_descriptives_table(ui, desc_list);
@@ -88,7 +95,58 @@ pub fn render_spss_correlations_tables(ui: &mut Ui, res: &BivariateCorrelationsR
             render_single_matrix(ui, m_idx, matrix, &res.options);
             ui.add_space(16.0_f32);
         }
+
+        // 3. Bootstrap for Correlations
+        if let Some((headers, rows)) = build_correlations_bootstrap_rows(res) {
+            let title = format!(
+                "{} ({})",
+                t!("output-correlations-title"),
+                t!("output-bootstrap-group-header")
+            );
+            render_bootstrap_table(ui, &title, "corr_boot_table", &headers, &rows, 2);
+            ui.add_space(16.0_f32);
+        }
     });
+}
+
+fn build_correlations_bootstrap_rows(
+    res: &BivariateCorrelationsResult,
+) -> Option<(Vec<String>, Vec<Vec<String>>)> {
+    let boot = res.bootstrap.as_ref()?;
+    let mut rows = Vec::new();
+    for p in &boot.pairs {
+        if let Some(ref s) = p.r {
+            let method_name = match p.corr_type {
+                CorrelationType::Pearson => "Pearson",
+                CorrelationType::Spearman => "Spearman",
+                CorrelationType::KendallTauB => "Kendall's tau_b",
+            };
+            let cells = format_bootstrap_cells(s, 3);
+            rows.push(vec![
+                method_name.to_string(),
+                format!("{} & {}", p.var1, p.var2),
+                format!("{:.3}", s.estimate),
+                cells[0].clone(),
+                cells[1].clone(),
+                cells[2].clone(),
+                cells[3].clone(),
+            ]);
+        }
+    }
+    if rows.is_empty() {
+        return None;
+    }
+    let boot_cols = bootstrap_column_headers(boot.options.ci_level);
+    let headers = vec![
+        t!("output-bootstrap-col-statistic"),
+        t!("output-col-variable"),
+        t!("output-km-col-estimate"),
+        boot_cols[0].clone(),
+        boot_cols[1].clone(),
+        boot_cols[2].clone(),
+        boot_cols[3].clone(),
+    ];
+    Some((headers, rows))
 }
 
 fn render_descriptives_table(ui: &mut Ui, desc_list: &[VarDescriptives]) {
@@ -277,6 +335,10 @@ fn format_cell_r(cell: &CorrelationCell) -> String {
 
 pub fn correlations_to_tsv(res: &BivariateCorrelationsResult) -> String {
     let mut out = String::new();
+    if let Some(ref boot) = res.bootstrap {
+        out.push_str(&bootstrap_specs_to_tsv(&boot.options));
+        out.push_str("\n\n");
+    }
 
     // 1. Descriptives
     if let Some(ref desc_list) = res.descriptives {
@@ -341,6 +403,16 @@ pub fn correlations_to_tsv(res: &BivariateCorrelationsResult) -> String {
             }
             out.push('\n');
         }
+        out.push('\n');
+    }
+
+    if let Some((headers, rows)) = build_correlations_bootstrap_rows(res) {
+        let title = format!(
+            "{} ({})",
+            t!("output-correlations-title"),
+            t!("output-bootstrap-group-header")
+        );
+        out.push_str(&bootstrap_table_to_tsv(&title, &headers, &rows));
         out.push('\n');
     }
 

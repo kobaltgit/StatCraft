@@ -1,14 +1,17 @@
+pub mod options;
 pub mod sps;
 #[cfg(test)]
 mod tests;
 
+use options::{build_strata_keys, parse_options};
+pub use options::{parse_charts_options, ChartCommandOptions};
+
 use crate::command::{CommandError, EngineCommand};
-use serde::{Deserialize, Serialize};
 use serde_json::{json, Value};
 use statcraft_algo::{
-    compute_frequencies_full, compute_frequency_chart, CategoryOrder, ChartType, ChartValueMode,
-    FrequenciesFormatOptions, FrequenciesStatisticsOptions, FrequencyChartSpec, FrequencyInputItem,
-    FrequencyResult, MultipleVarsMode,
+    compute_frequencies_bootstrap, compute_frequencies_full, compute_frequency_chart,
+    BootstrapOptions, BootstrapSamplingMethod, CategoryOrder, FrequenciesFormatOptions,
+    FrequencyInputItem, FrequencyResult, MultipleVarsMode,
 };
 use statcraft_core::DataSet;
 use statcraft_io::RawValue;
@@ -133,7 +136,8 @@ impl EngineCommand for FrequenciesCommand {
                     "type": "boolean",
                     "description": "Whether to generate a styled report table",
                     "default": false
-                }
+                },
+                "bootstrap": crate::bootstrap::bootstrap_param_schema()
             }
         })
     }
@@ -194,8 +198,30 @@ impl EngineCommand for FrequenciesCommand {
             suppress_tables_limit,
         };
 
+        let bootstrap_options: Option<BootstrapOptions> = params
+            .get("bootstrap")
+            .and_then(|v| serde_json::from_value::<BootstrapOptions>(v.clone()).ok())
+            .filter(|b| b.enabled);
+
+        if let Some(ref boot) = bootstrap_options {
+            boot.validate().map_err(|e| CommandError::InvalidParams {
+                id: "stat.frequencies",
+                reason: e.to_string(),
+            })?;
+        }
+
         let mut results: Vec<FrequencyResult> = Vec::new();
         let active_rows = ds.active_row_indices();
+
+        let strata_keys: Option<Vec<String>> = match &bootstrap_options {
+            Some(boot) => match &boot.sampling_method {
+                BootstrapSamplingMethod::Stratified { strata_vars } => {
+                    Some(build_strata_keys(ds, &active_rows, strata_vars)?)
+                }
+                BootstrapSamplingMethod::Simple => None,
+            },
+            None => None,
+        };
 
         for var_name in &var_names {
             let col_idx =
@@ -261,6 +287,17 @@ impl EngineCommand for FrequenciesCommand {
                 Some(var_meta.label.clone())
             };
 
+            if let Some(ref boot) = bootstrap_options {
+                let boot_res = compute_frequencies_bootstrap(
+                    &items,
+                    strata_keys.as_deref(),
+                    stats_options.as_ref(),
+                    boot,
+                )
+                .map_err(|e| CommandError::ExecutionFailed(e.to_string()))?;
+                res.bootstrap = Some(boot_res);
+            }
+
             // Apply category ordering
             statcraft_algo::sort_categories(&mut res.categories, format_options.order);
 
@@ -304,121 +341,6 @@ impl EngineCommand for FrequenciesCommand {
         // Read-only statistical procedure
         Ok(())
     }
-}
-
-fn parse_options(params: &Value) -> Option<FrequenciesStatisticsOptions> {
-    let stats_val = params.get("statistics");
-    let pcts_val = params.get("percentiles");
-    let group_midpoints = params
-        .get("group_midpoints")
-        .and_then(|v| v.as_bool())
-        .unwrap_or(false);
-
-    if stats_val.is_none() && pcts_val.is_none() && !group_midpoints {
-        return None;
-    }
-
-    let mut opts = FrequenciesStatisticsOptions {
-        group_midpoints,
-        ..Default::default()
-    };
-
-    if let Some(s) = stats_val {
-        let b = |k| s.get(k).and_then(|v| v.as_bool()).unwrap_or(false);
-        opts.mean = b("mean");
-        opts.se_mean = b("se_mean");
-        opts.median = b("median");
-        opts.mode = b("mode");
-        opts.sum = b("sum");
-        opts.std_dev = b("std_dev");
-        opts.variance = b("variance");
-        opts.range = b("range");
-        opts.min = b("min");
-        opts.max = b("max");
-        opts.skewness = b("skewness");
-        opts.kurtosis = b("kurtosis");
-    }
-
-    if let Some(p) = pcts_val {
-        opts.percentiles.quartiles = p
-            .get("quartiles")
-            .and_then(|v| v.as_bool())
-            .unwrap_or(false);
-        opts.percentiles.ntiles = p.get("ntiles").and_then(|v| v.as_u64()).map(|n| n as usize);
-        opts.percentiles.custom = p
-            .get("custom")
-            .and_then(|v| v.as_array())
-            .map(|arr| {
-                arr.iter()
-                    .filter_map(|x| x.as_f64())
-                    .filter(|&v| (0.0..=100.0).contains(&v))
-                    .collect()
-            })
-            .unwrap_or_default();
-    }
-
-    Some(opts)
-}
-
-#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
-pub struct ChartCommandOptions {
-    pub chart_type: String, // "none" | "bar" | "pie" | "histogram"
-    pub values: String,     // "frequencies" | "percentages"
-    pub normal_curve: bool,
-}
-
-impl ChartCommandOptions {
-    pub fn to_spec(&self) -> FrequencyChartSpec {
-        let chart_type = match self.chart_type.to_ascii_lowercase().as_str() {
-            "bar" => ChartType::Bar,
-            "pie" => ChartType::Pie,
-            "histogram" => ChartType::Histogram,
-            _ => ChartType::None,
-        };
-        let value_mode = match self.values.to_ascii_lowercase().as_str() {
-            "percentages" | "percent" => ChartValueMode::Percentages,
-            _ => ChartValueMode::Frequencies,
-        };
-        FrequencyChartSpec {
-            chart_type,
-            value_mode,
-            normal_curve: self.normal_curve,
-        }
-    }
-}
-
-impl Default for ChartCommandOptions {
-    fn default() -> Self {
-        Self {
-            chart_type: "none".to_string(),
-            values: "frequencies".to_string(),
-            normal_curve: false,
-        }
-    }
-}
-
-pub fn parse_charts_options(params: &Value) -> Option<ChartCommandOptions> {
-    params.get("charts").and_then(|c| {
-        let chart_type = c
-            .get("chart_type")
-            .and_then(|v| v.as_str())
-            .unwrap_or("none");
-        if chart_type == "none" {
-            return None;
-        }
-        Some(ChartCommandOptions {
-            chart_type: chart_type.to_string(),
-            values: c
-                .get("values")
-                .and_then(|v| v.as_str())
-                .unwrap_or("frequencies")
-                .to_string(),
-            normal_curve: c
-                .get("normal_curve")
-                .and_then(|v| v.as_bool())
-                .unwrap_or(false),
-        })
-    })
 }
 
 impl FrequenciesCommand {

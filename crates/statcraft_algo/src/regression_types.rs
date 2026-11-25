@@ -1,4 +1,18 @@
+use crate::bootstrap::{BootstrapOptions, BootstrapSummary};
 use serde::{Deserialize, Serialize};
+
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+pub struct RegressionBootstrapCoeff {
+    pub var_name: String,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub b: Option<BootstrapSummary>,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+pub struct LinearRegressionBootstrap {
+    pub options: BootstrapOptions,
+    pub coefficients: Vec<RegressionBootstrapCoeff>,
+}
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
 pub struct LinearRegressionOptions {
@@ -59,4 +73,6 @@ pub struct LinearRegressionResult {
     pub anova: RegressionAnova,
     pub coefficients: Vec<RegressionCoefficient>,
     pub options: LinearRegressionOptions,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub bootstrap: Option<LinearRegressionBootstrap>,
 }

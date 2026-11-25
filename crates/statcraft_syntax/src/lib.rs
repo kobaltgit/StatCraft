@@ -1,10 +1,14 @@
 #![allow(clippy::needless_range_loop)]
 
+pub mod bootstrap;
 pub mod bus;
 pub mod command;
 pub mod commands;
 pub mod syntax_parser;
 
+pub use bootstrap::{
+    bootstrap_param_schema, bootstrap_to_sps, parse_bootstrap_command, parse_set_mtindex,
+};
 pub use bus::{CommandBus, CommandHistoryEntry};
 pub use command::{CommandError, EngineCommand};
 pub use commands::{

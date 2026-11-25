@@ -1,3 +1,8 @@
+pub use super::tables_bootstrap::{
+    bootstrap_column_headers, bootstrap_specs_to_tsv, bootstrap_table_to_tsv,
+    format_bootstrap_cells, format_ci_level, render_bootstrap_specifications_table,
+    render_bootstrap_table,
+};
 use crate::theme::Tokens;
 use egui::{pos2, vec2, Align2, Color32, FontId, Sense, Stroke, Ui};
 

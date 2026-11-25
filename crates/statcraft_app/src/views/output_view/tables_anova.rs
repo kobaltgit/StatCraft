@@ -1,3 +1,7 @@
+use super::tables_common::{
+    bootstrap_column_headers, bootstrap_specs_to_tsv, bootstrap_table_to_tsv,
+    format_bootstrap_cells, render_bootstrap_specifications_table, render_bootstrap_table,
+};
 use crate::theme::Tokens;
 use egui::{pos2, vec2, Align2, FontId, ScrollArea, Sense, Stroke, Ui};
 use statcraft_algo::{AnovaGroupDescriptives, OneWayAnovaResult};
@@ -9,7 +13,15 @@ pub fn render_spss_oneway_anova_tables(ui: &mut Ui, results: &[OneWayAnovaResult
     }
 
     ui.vertical(|ui| {
-        for res in results {
+        if let Some(opts) = results
+            .iter()
+            .find_map(|r| r.bootstrap.as_ref().map(|b| &b.options))
+        {
+            render_bootstrap_specifications_table(ui, opts);
+            ui.add_space(14.0_f32);
+        }
+
+        for (idx, res) in results.iter().enumerate() {
             // 1. Descriptives Table
             if !res.descriptives.is_empty() {
                 render_anova_descriptives_table(ui, res, ci);
@@ -24,7 +36,26 @@ pub fn render_spss_oneway_anova_tables(ui: &mut Ui, results: &[OneWayAnovaResult
 
             // 3. ANOVA Table
             render_anova_summary_table(ui, res);
-            ui.add_space(16.0_f32);
+            ui.add_space(14.0_f32);
+
+            // 4. Bootstrap Tables (Descriptives + Pairwise Mean Differences)
+            if let Some((headers, rows)) = build_anova_bootstrap_rows(res) {
+                let title = format!(
+                    "{} ({} - {})",
+                    t!("output-anova-descriptives-title"),
+                    res.dep_var,
+                    t!("output-bootstrap-group-header")
+                );
+                render_bootstrap_table(
+                    ui,
+                    &title,
+                    &format!("anova_boot_{}", idx),
+                    &headers,
+                    &rows,
+                    2,
+                );
+                ui.add_space(16.0_f32);
+            }
         }
     });
 }
@@ -335,9 +366,83 @@ fn format_sig(val: Option<f64>) -> String {
     }
 }
 
+fn build_anova_bootstrap_rows(res: &OneWayAnovaResult) -> Option<(Vec<String>, Vec<Vec<String>>)> {
+    let boot = res.bootstrap.as_ref()?;
+    let mut rows = Vec::new();
+
+    for grp in &boot.groups {
+        for (stat_name, sum_opt) in [
+            (t!("output-col-mean"), &grp.mean),
+            (t!("output-col-std"), &grp.std_dev),
+        ] {
+            if let Some(s) = sum_opt {
+                let cells = format_bootstrap_cells(s, 4);
+                rows.push(vec![
+                    grp.group_label.clone(),
+                    stat_name,
+                    format!("{:.4}", s.estimate),
+                    cells[0].clone(),
+                    cells[1].clone(),
+                    cells[2].clone(),
+                    cells[3].clone(),
+                ]);
+            }
+        }
+    }
+    if let Some(ref tot) = boot.total_mean {
+        let cells = format_bootstrap_cells(tot, 4);
+        rows.push(vec![
+            "Total".to_string(),
+            t!("output-col-mean"),
+            format!("{:.4}", tot.estimate),
+            cells[0].clone(),
+            cells[1].clone(),
+            cells[2].clone(),
+            cells[3].clone(),
+        ]);
+    }
+    for pair in &boot.pairwise_diffs {
+        if let Some(ref s) = pair.mean_diff {
+            let cells = format_bootstrap_cells(s, 4);
+            rows.push(vec![
+                format!("{} - {}", pair.group1, pair.group2),
+                t!("output-col-mean-diff"),
+                format!("{:.4}", s.estimate),
+                cells[0].clone(),
+                cells[1].clone(),
+                cells[2].clone(),
+                cells[3].clone(),
+            ]);
+        }
+    }
+
+    if rows.is_empty() {
+        return None;
+    }
+
+    let boot_cols = bootstrap_column_headers(boot.options.ci_level);
+    let headers = vec![
+        res.factor_var.clone(),
+        t!("output-bootstrap-col-statistic"),
+        t!("output-km-col-estimate"),
+        boot_cols[0].clone(),
+        boot_cols[1].clone(),
+        boot_cols[2].clone(),
+        boot_cols[3].clone(),
+    ];
+    Some((headers, rows))
+}
+
 pub fn anova_to_tsv(results: &[OneWayAnovaResult]) -> String {
-    let mut out =
-        String::from("Dependent Variable\tSource\tSum of Squares\tdf\tMean Square\tF\tSig.\n");
+    let mut out = String::new();
+    if let Some(opts) = results
+        .iter()
+        .find_map(|r| r.bootstrap.as_ref().map(|b| &b.options))
+    {
+        out.push_str(&bootstrap_specs_to_tsv(opts));
+        out.push_str("\n\n");
+    }
+    out.push_str("Dependent Variable\tSource\tSum of Squares\tdf\tMean Square\tF\tSig.\n");
     for r in results {
         let b = &r.between_groups;
         out.push_str(&format!(
@@ -364,6 +469,17 @@ pub fn anova_to_tsv(results: &[OneWayAnovaResult]) -> String {
             "{}\tTotal\t{:.4}\t{}\t-\t-\t-\n\n",
             r.dep_var, t.sum_of_squares, t.df
         ));
+
+        if let Some((headers, rows)) = build_anova_bootstrap_rows(r) {
+            let title = format!(
+                "{} ({} - {})",
+                t!("output-anova-descriptives-title"),
+                r.dep_var,
+                t!("output-bootstrap-group-header")
+            );
+            out.push_str(&bootstrap_table_to_tsv(&title, &headers, &rows));
+            out.push_str("\n\n");
+        }
     }
     out
 }

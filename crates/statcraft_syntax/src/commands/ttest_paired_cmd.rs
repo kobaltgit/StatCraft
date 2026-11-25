@@ -1,6 +1,12 @@
+use crate::bootstrap::{
+    bootstrap_param_schema, bootstrap_to_sps, extract_strata_keys, parse_bootstrap_options,
+};
 use crate::command::{CommandError, EngineCommand};
 use serde_json::{json, Value};
-use statcraft_algo::{compute_paired_ttest, PairedDataInput, PairedTTestResult};
+use statcraft_algo::{
+    compute_paired_ttest, compute_paired_ttest_bootstrap, BootstrapOptions, PairedDataInput,
+    PairedTTestResult,
+};
 use statcraft_core::DataSet;
 
 pub struct PairedSamplesTTestCommand;
@@ -37,7 +43,8 @@ impl EngineCommand for PairedSamplesTTestCommand {
                     "type": "number",
                     "default": 0.95,
                     "description": "Confidence interval level (e.g. 0.95 for 95%)"
-                }
+                },
+                "bootstrap": bootstrap_param_schema()
             }
         })
     }
@@ -87,8 +94,10 @@ impl EngineCommand for PairedSamplesTTestCommand {
         }
 
         let ci = params.get("ci").and_then(|v| v.as_f64()).unwrap_or(0.95);
+        let boot_options = parse_bootstrap_options(&params, self.id())?;
 
         let active_rows = ds.active_row_indices();
+        let strata_keys = extract_strata_keys(ds, &active_rows, boot_options.as_ref(), self.id())?;
         let mut col_data_cache: std::collections::HashMap<String, Vec<Option<f64>>> =
             std::collections::HashMap::new();
 
@@ -122,7 +131,27 @@ impl EngineCommand for PairedSamplesTTestCommand {
             algo_pairs.push((v1.as_str(), data1, v2.as_str(), data2));
         }
 
-        let results: Vec<PairedTTestResult> = compute_paired_ttest(&algo_pairs, ci);
+        let mut results: Vec<PairedTTestResult> = compute_paired_ttest(&algo_pairs, ci);
+        if let Some(ref boot) = boot_options {
+            for (idx, (v1, v2)) in parsed_pairs.iter().enumerate() {
+                let data1 = col_data_cache.get(v1).map(|v| v.as_slice()).unwrap_or(&[]);
+                let data2 = col_data_cache.get(v2).map(|v| v.as_slice()).unwrap_or(&[]);
+                let boot_res = compute_paired_ttest_bootstrap(
+                    idx + 1,
+                    v1,
+                    data1,
+                    v2,
+                    data2,
+                    ci,
+                    strata_keys.as_deref(),
+                    boot,
+                )
+                .map_err(|e| CommandError::ExecutionFailed(e.to_string()))?;
+                if let Some(r) = results.get_mut(idx) {
+                    r.bootstrap = Some(boot_res);
+                }
+            }
+        }
 
         serde_json::to_value(&results).map_err(|e| CommandError::ExecutionFailed(e.to_string()))
     }
@@ -143,6 +172,21 @@ impl PairedSamplesTTestCommand {
             pairs_strs.join(" "),
             ci
         )
+    }
+
+    pub fn to_sps_with_bootstrap(
+        pairs: &[(String, String)],
+        ci: f64,
+        bootstrap: Option<&BootstrapOptions>,
+    ) -> String {
+        let base = Self::to_sps(pairs, ci);
+        if let Some(boot) = bootstrap {
+            let sps = bootstrap_to_sps(boot);
+            if !sps.is_empty() {
+                return format!("{sps}\n{base}");
+            }
+        }
+        base
     }
 }
 
