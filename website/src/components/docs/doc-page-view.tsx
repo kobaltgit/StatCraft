@@ -64,7 +64,7 @@ export function DocPageView({ section, lang = 'en' }: DocPageViewProps) {
         </div>
 
         {/* Render Markdown Content with KaTeX */}
-        <MarkdownRenderer content={content} />
+        <MarkdownRenderer content={content} toc={section.toc} />
 
         {/* Optional SPSS Syntax Block */}
         {section.syntaxExample && (

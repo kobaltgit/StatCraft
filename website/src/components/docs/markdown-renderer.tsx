@@ -4,11 +4,22 @@ import { MathView } from '../math-view';
 interface MarkdownRendererProps {
   content: string;
   className?: string;
+  toc?: { id: string }[];
 }
 
-export function MarkdownRenderer({ content, className = '' }: MarkdownRendererProps) {
+export function slugifyHeading(title: string): string {
+  return title
+    .toLowerCase()
+    .replace(/[^\p{L}\p{N}\s-]/gu, '')
+    .trim()
+    .replace(/\s+/g, '-')
+    .replace(/-+/g, '-');
+}
+
+export function MarkdownRenderer({ content, className = '', toc }: MarkdownRendererProps) {
   // First, extract display math blocks $$...$$ to avoid splitting them
   const rawSections = content.split(/(\$\$[\s\S]*?\$\$)/g);
+  let h3Index = 0;
 
   const elements: React.ReactNode[] = [];
 
@@ -95,10 +106,8 @@ export function MarkdownRenderer({ content, className = '' }: MarkdownRendererPr
         flushParagraph();
         flushList();
         const title = lineTrim.replace(/^###\s+/, '').trim();
-        const slugId = title
-          .toLowerCase()
-          .replace(/[^\w\s-]/g, '')
-          .replace(/\s+/g, '-');
+        const slugId = toc?.[h3Index]?.id || slugifyHeading(title);
+        h3Index += 1;
 
         elements.push(
           <h3

@@ -3,6 +3,7 @@
 import React, { useState } from 'react';
 import { DocSection } from '@/lib/docs-data';
 import { ModalReportIssue } from '../modal-report-issue';
+import { slugifyHeading } from './markdown-renderer';
 import { List, Flag, ExternalLink } from 'lucide-react';
 
 interface DocsTocProps {
@@ -40,17 +41,23 @@ export function DocsToc({ section, lang = 'en', className = '' }: DocsTocProps) 
           <nav className="space-y-2 border-l border-line pl-3">
             {section.toc.map((item) => {
               const title = lang === 'ru' ? item.titleRu : item.titleEn;
-              // anchor slug matches heading slug in markdown-renderer
-              const slug = item.titleEn
-                .toLowerCase()
-                .replace(/[^\w\s-]/g, '')
-                .replace(/\s+/g, '-');
+              const targetId = item.id || slugifyHeading(title);
 
               return (
                 <a
                   key={item.id}
-                  href={`#${slug}`}
-                  className="block text-xs text-text-muted hover:text-white transition-colors leading-relaxed"
+                  href={`#${targetId}`}
+                  onClick={(e) => {
+                    const el =
+                      document.getElementById(targetId) ||
+                      document.getElementById(slugifyHeading(title));
+                    if (el) {
+                      e.preventDefault();
+                      el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                      window.history.replaceState(null, '', `#${el.id}`);
+                    }
+                  }}
+                  className="block text-xs text-text-muted hover:text-white transition-colors leading-relaxed cursor-pointer"
                 >
                   {title}
                 </a>
