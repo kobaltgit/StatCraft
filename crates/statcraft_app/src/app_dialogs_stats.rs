@@ -249,21 +249,56 @@ impl StatCraftApp {
             ExploreDialogAction::Run {
                 dependent_vars,
                 factor_vars,
+                label_var,
                 compute_descriptives,
+                compute_m_estimators,
+                compute_percentiles,
                 compute_normality,
                 compute_extremes,
+                spread_level_mode,
+                spread_level_power,
+                display_mode,
+                boxplot_mode,
+                plot_stem_leaf,
+                plot_histogram,
                 confidence_level,
                 missing,
+                bootstrap,
             } => {
-                let params = json!({
-                    "dependent_vars": dependent_vars,
-                    "factor_vars": factor_vars,
-                    "compute_descriptives": compute_descriptives,
-                    "compute_normality": compute_normality,
-                    "compute_extremes": compute_extremes,
-                    "confidence_level": confidence_level,
-                    "missing": missing,
-                });
+                let mut params_map = serde_json::Map::new();
+                params_map.insert("dependent_vars".to_string(), json!(dependent_vars));
+                params_map.insert("factor_vars".to_string(), json!(factor_vars));
+                if let Some(lbl) = label_var {
+                    params_map.insert("label_var".to_string(), json!(lbl));
+                }
+                params_map.insert(
+                    "compute_descriptives".to_string(),
+                    json!(compute_descriptives),
+                );
+                params_map.insert(
+                    "compute_m_estimators".to_string(),
+                    json!(compute_m_estimators),
+                );
+                params_map.insert(
+                    "compute_percentiles".to_string(),
+                    json!(compute_percentiles),
+                );
+                params_map.insert("compute_normality".to_string(), json!(compute_normality));
+                params_map.insert("compute_extremes".to_string(), json!(compute_extremes));
+                params_map.insert("spread_level_mode".to_string(), json!(spread_level_mode));
+                if let Some(p) = spread_level_power {
+                    params_map.insert("spread_level_power".to_string(), json!(p));
+                }
+                params_map.insert("display_mode".to_string(), json!(display_mode));
+                params_map.insert("boxplot_mode".to_string(), json!(boxplot_mode));
+                params_map.insert("plot_stem_leaf".to_string(), json!(plot_stem_leaf));
+                params_map.insert("plot_histogram".to_string(), json!(plot_histogram));
+                params_map.insert("confidence_level".to_string(), json!(confidence_level));
+                params_map.insert("missing".to_string(), json!(missing));
+                if let Some(b) = bootstrap {
+                    params_map.insert("bootstrap".to_string(), b);
+                }
+                let params = serde_json::Value::Object(params_map);
                 match self
                     .command_bus
                     .execute("stat.explore", &mut self.dataset, params)
@@ -280,14 +315,8 @@ impl StatCraftApp {
                     }
                 }
             }
-            ExploreDialogAction::Paste {
-                dependent_vars,
-                factor_vars,
-            } => {
-                let sps = statcraft_syntax::commands::ExploreCommand::to_sps(
-                    &dependent_vars,
-                    &factor_vars,
-                );
+            ExploreDialogAction::Paste { options } => {
+                let sps = statcraft_syntax::commands::ExploreCommand::to_sps_full(&options);
                 self.output_view_state.add_entry(t!("output-log"), sps);
             }
             ExploreDialogAction::None => {}

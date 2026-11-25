@@ -1,16 +1,30 @@
+pub mod bootstrap;
 pub mod descriptives;
 pub mod extremes;
+mod helpers;
+pub mod m_estimators;
 pub mod normality_ks;
 pub mod normality_sw;
+pub mod percentiles;
+pub mod plots_data;
+pub mod spread_level;
 
+pub use bootstrap::*;
 pub use descriptives::*;
 pub use extremes::*;
+use helpers::{
+    build_group_result, extract_factor_value, extract_label_value, extract_numeric_value,
+};
+pub use m_estimators::*;
 pub use normality_ks::*;
 pub use normality_sw::*;
+pub use percentiles::*;
+pub use plots_data::*;
+pub use spread_level::*;
 
 use crate::AlgoError;
 use serde::{Deserialize, Serialize};
-use statcraft_core::{DataSet, RawValue};
+use statcraft_core::DataSet;
 use std::collections::BTreeMap;
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Default, Serialize, Deserialize)]
@@ -18,17 +32,38 @@ pub enum ExploreMissingHandling {
     #[default]
     Listwise,
     Pairwise,
+    Report,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct ExploreOptions {
     pub dependent_vars: Vec<String>,
     pub factor_vars: Vec<String>,
+    #[serde(default)]
+    pub label_var: Option<String>,
     pub compute_descriptives: bool,
+    #[serde(default)]
+    pub compute_m_estimators: bool,
+    #[serde(default)]
+    pub compute_percentiles: bool,
     pub compute_normality: bool,
     pub compute_extremes: bool,
+    #[serde(default)]
+    pub spread_level_mode: SpreadLevelMode,
+    #[serde(default)]
+    pub display_mode: ExploreOutputDisplay,
+    #[serde(default)]
+    pub boxplot_mode: ExploreBoxplotDisplay,
+    #[serde(default = "default_true")]
+    pub plot_stem_leaf: bool,
+    #[serde(default)]
+    pub plot_histogram: bool,
     pub confidence_level: f64,
     pub missing: ExploreMissingHandling,
+}
+
+fn default_true() -> bool {
+    true
 }
 
 impl Default for ExploreOptions {
@@ -36,9 +71,17 @@ impl Default for ExploreOptions {
         Self {
             dependent_vars: Vec::new(),
             factor_vars: Vec::new(),
+            label_var: None,
             compute_descriptives: true,
+            compute_m_estimators: false,
+            compute_percentiles: false,
             compute_normality: true,
             compute_extremes: true,
+            spread_level_mode: SpreadLevelMode::None,
+            display_mode: ExploreOutputDisplay::Both,
+            boxplot_mode: ExploreBoxplotDisplay::FactorLevelsTogether,
+            plot_stem_leaf: true,
+            plot_histogram: false,
             confidence_level: 0.95,
             missing: ExploreMissingHandling::Listwise,
         }
@@ -70,8 +113,14 @@ pub struct ExploreGroupResult {
     pub factor_level: Option<String>,
     pub case_processing: ExploreCaseProcessing,
     pub descriptives: Option<ExploreDescriptives>,
+    #[serde(default)]
+    pub m_estimators: Option<MEstimatorsResult>,
+    #[serde(default)]
+    pub percentiles: Option<ExplorePercentilesResult>,
     pub normality: Option<NormalityTestsResult>,
     pub extremes: Option<ExtremeValuesResult>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub plot_data: Option<ExploreGroupPlotData>,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
@@ -79,120 +128,25 @@ pub struct ExploreVariableResult {
     pub variable: String,
     pub factor_var: Option<String>,
     pub groups: Vec<ExploreGroupResult>,
+    #[serde(default)]
+    pub levene_test: Option<ExploreLeveneResult>,
+    #[serde(default)]
+    pub spread_level: Option<SpreadLevelResult>,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
 pub struct ExploreResult {
     pub variables: Vec<ExploreVariableResult>,
-}
-
-fn extract_numeric_value(dataset: &DataSet, row: usize, col_idx: usize) -> Option<f64> {
-    let raw = dataset.get_cell(row, col_idx)?;
-    if let Some(meta) = dataset.dictionary.get(col_idx) {
-        if meta.missing.is_missing(raw) {
-            return None;
-        }
-    }
-    match raw {
-        RawValue::Number(n) if n.is_finite() => Some(*n),
-        RawValue::Text(s) => s.trim().parse::<f64>().ok().filter(|x| x.is_finite()),
-        _ => None,
-    }
-}
-
-fn extract_factor_value(dataset: &DataSet, row: usize, col_idx: usize) -> Option<String> {
-    let raw = dataset.get_cell(row, col_idx)?;
-    if let Some(meta) = dataset.dictionary.get(col_idx) {
-        if meta.missing.is_missing(raw) {
-            return None;
-        }
-    }
-    match raw {
-        RawValue::Text(s) => {
-            let trimmed = s.trim();
-            if trimmed.is_empty() || trimmed == "." || trimmed == "NA" {
-                None
-            } else {
-                Some(trimmed.to_string())
-            }
-        }
-        RawValue::Number(n) if n.is_finite() => Some(format!("{n}")),
-        _ => None,
-    }
-}
-
-fn build_group_result(
-    var_name: &str,
-    factor_level: Option<String>,
-    indexed_vals: &[(usize, f64)],
-    n_missing: usize,
-    options: &ExploreOptions,
-) -> ExploreGroupResult {
-    let n_valid = indexed_vals.len();
-    let n_total = n_valid + n_missing;
-    let (pct_valid, pct_missing, pct_total) = if n_total > 0 {
-        (
-            (n_valid as f64 / n_total as f64) * 100.0,
-            (n_missing as f64 / n_total as f64) * 100.0,
-            100.0,
-        )
-    } else {
-        (0.0, 0.0, 0.0)
-    };
-
-    let case_processing = ExploreCaseProcessing {
-        variable: var_name.to_string(),
-        factor_level: factor_level.clone(),
-        n_valid,
-        pct_valid,
-        n_missing,
-        pct_missing,
-        n_total,
-        pct_total,
-    };
-
-    let vals: Vec<f64> = indexed_vals.iter().map(|&(_, v)| v).collect();
-
-    let descriptives = if options.compute_descriptives {
-        Some(compute_explore_descriptives(
-            &vals,
-            n_missing,
-            options.confidence_level,
-        ))
-    } else {
-        None
-    };
-
-    let normality = if options.compute_normality {
-        let ks = compute_lilliefors_ks(&vals).ok();
-        let sw = compute_shapiro_wilk(&vals).ok();
-        Some(NormalityTestsResult {
-            variable: var_name.to_string(),
-            factor_level: factor_level.clone(),
-            kolmogorov_smirnov: ks,
-            shapiro_wilk: sw,
-        })
-    } else {
-        None
-    };
-
-    let extremes = if options.compute_extremes {
-        Some(compute_extreme_values(
-            var_name,
-            factor_level.clone(),
-            indexed_vals,
-        ))
-    } else {
-        None
-    };
-
-    ExploreGroupResult {
-        factor_level,
-        case_processing,
-        descriptives,
-        normality,
-        extremes,
-    }
+    #[serde(default)]
+    pub display_mode: ExploreOutputDisplay,
+    #[serde(default)]
+    pub boxplot_mode: ExploreBoxplotDisplay,
+    #[serde(default)]
+    pub plot_stem_leaf: bool,
+    #[serde(default)]
+    pub plot_histogram: bool,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub bootstrap: Option<ExploreBootstrap>,
 }
 
 /// Executes the Explore (EXAMINE) procedure on a DataSet.
@@ -223,6 +177,22 @@ pub fn compute_explore(
             ))
         })?;
         Some((factor_var.clone(), idx))
+    } else {
+        None
+    };
+
+    let label_col = if let Some(ref l_var) = options.label_var {
+        let trimmed = l_var.trim();
+        if trimmed.is_empty() {
+            None
+        } else {
+            let idx = data.dictionary.find_index(trimmed).ok_or_else(|| {
+                AlgoError::InvalidInput(format!(
+                    "Label variable '{trimmed}' not found in dictionary"
+                ))
+            })?;
+            Some(idx)
+        }
     } else {
         None
     };
@@ -258,7 +228,8 @@ pub fn compute_explore(
 
         if let Some((ref f_name, f_col)) = factor_info {
             // Group by factor level
-            let mut group_cases: BTreeMap<String, Vec<(usize, f64)>> = BTreeMap::new();
+            let mut group_cases: BTreeMap<String, Vec<(usize, f64, Option<String>)>> =
+                BTreeMap::new();
             let mut group_missing: BTreeMap<String, usize> = BTreeMap::new();
 
             for (row_pos, &r) in active_rows.iter().enumerate() {
@@ -269,7 +240,14 @@ pub fn compute_explore(
                     true
                 };
 
-                let factor_opt = extract_factor_value(data, r, f_col);
+                let factor_opt = match extract_factor_value(data, r, f_col) {
+                    Some(lvl) => Some(lvl),
+                    None if options.missing == ExploreMissingHandling::Report => {
+                        Some("(Missing)".to_string())
+                    }
+                    None => None,
+                };
+
                 if let Some(f_level) = factor_opt {
                     group_cases.entry(f_level.clone()).or_default();
                     group_missing.entry(f_level.clone()).or_default();
@@ -282,8 +260,9 @@ pub fn compute_explore(
 
                     match val_opt {
                         Some(v) => {
+                            let label = label_col.and_then(|lc| extract_label_value(data, r, lc));
                             if let Some(list) = group_cases.get_mut(&f_level) {
-                                list.push((case_num, v));
+                                list.push((case_num, v, label));
                             }
                         }
                         None => {
@@ -295,8 +274,15 @@ pub fn compute_explore(
                 }
             }
 
+            let mut raw_groups_for_levene: Vec<(String, Vec<f64>)> =
+                Vec::with_capacity(group_cases.len());
+
             for (f_level, cases) in group_cases {
                 let n_miss = group_missing.get(&f_level).copied().unwrap_or(0);
+                let vals_only: Vec<f64> = cases.iter().map(|&(_, v, _)| v).collect();
+                if !vals_only.is_empty() {
+                    raw_groups_for_levene.push((f_level.clone(), vals_only));
+                }
                 groups.push(build_group_result(
                     dep_name,
                     Some(f_level),
@@ -306,10 +292,27 @@ pub fn compute_explore(
                 ));
             }
 
+            let (levene_test, spread_level) = if options.spread_level_mode != SpreadLevelMode::None
+            {
+                (
+                    compute_explore_levene(dep_name, f_name, &raw_groups_for_levene),
+                    compute_spread_level(
+                        dep_name,
+                        f_name,
+                        &raw_groups_for_levene,
+                        options.spread_level_mode,
+                    ),
+                )
+            } else {
+                (None, None)
+            };
+
             var_results.push(ExploreVariableResult {
                 variable: dep_name.clone(),
                 factor_var: Some(f_name.clone()),
                 groups,
+                levene_test,
+                spread_level,
             });
         } else {
             // Overall group (no factor)
@@ -331,7 +334,10 @@ pub fn compute_explore(
                 };
 
                 match val_opt {
-                    Some(v) => cases.push((case_num, v)),
+                    Some(v) => {
+                        let label = label_col.and_then(|lc| extract_label_value(data, r, lc));
+                        cases.push((case_num, v, label));
+                    }
                     None => n_miss += 1,
                 }
             }
@@ -342,76 +348,21 @@ pub fn compute_explore(
                 variable: dep_name.clone(),
                 factor_var: None,
                 groups,
+                levene_test: None,
+                spread_level: None,
             });
         }
     }
 
     Ok(ExploreResult {
         variables: var_results,
+        display_mode: options.display_mode,
+        boxplot_mode: options.boxplot_mode,
+        plot_stem_leaf: options.plot_stem_leaf,
+        plot_histogram: options.plot_histogram,
+        bootstrap: None,
     })
 }
 
 #[cfg(test)]
-mod tests {
-    use super::*;
-
-    #[test]
-    fn test_compute_explore_single_var() {
-        let mut ds = DataSet::blank(10, 1).unwrap();
-        for r in 0..10 {
-            ds.table.columns[0].values[r] = RawValue::Number((r + 1) as f64 * 10.0);
-        }
-
-        let options = ExploreOptions {
-            dependent_vars: vec!["VAR00001".to_string()],
-            ..Default::default()
-        };
-
-        let res = compute_explore(&ds, &options).unwrap();
-        assert_eq!(res.variables.len(), 1);
-        let var_res = &res.variables[0];
-        assert_eq!(var_res.groups.len(), 1);
-
-        let group = &var_res.groups[0];
-        assert_eq!(group.case_processing.n_valid, 10);
-        assert_eq!(group.case_processing.n_missing, 0);
-
-        let desc = group.descriptives.as_ref().unwrap();
-        assert_eq!(desc.mean, Some(55.0));
-
-        let norm = group.normality.as_ref().unwrap();
-        assert!(norm.kolmogorov_smirnov.is_some());
-        assert!(norm.shapiro_wilk.is_some());
-
-        let extremes = group.extremes.as_ref().unwrap();
-        assert_eq!(extremes.lowest.len(), 5);
-        assert_eq!(extremes.highest.len(), 5);
-    }
-
-    #[test]
-    fn test_compute_explore_with_factor() {
-        let mut ds = DataSet::blank(6, 2).unwrap();
-        // Col 0: values [10, 20, 30, 40, 50, 60]
-        // Col 1: factor ["A", "A", "A", "B", "B", "B"]
-        for r in 0..6 {
-            ds.table.columns[0].values[r] = RawValue::Number((r + 1) as f64 * 10.0);
-            let grp = if r < 3 { "A" } else { "B" };
-            ds.table.columns[1].values[r] = RawValue::Text(grp.to_string());
-        }
-
-        let options = ExploreOptions {
-            dependent_vars: vec!["VAR00001".to_string()],
-            factor_vars: vec!["VAR00002".to_string()],
-            ..Default::default()
-        };
-
-        let res = compute_explore(&ds, &options).unwrap();
-        assert_eq!(res.variables.len(), 1);
-        let groups = &res.variables[0].groups;
-        assert_eq!(groups.len(), 2);
-        assert_eq!(groups[0].factor_level.as_deref(), Some("A"));
-        assert_eq!(groups[0].case_processing.n_valid, 3);
-        assert_eq!(groups[1].factor_level.as_deref(), Some("B"));
-        assert_eq!(groups[1].case_processing.n_valid, 3);
-    }
-}
+mod tests;

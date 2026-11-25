@@ -51,6 +51,11 @@ pub fn procedures_to_report_document(procedures: &[OutputProcedure]) -> ReportDo
                 OutputItemKind::ReportTable(table) => {
                     section.add_item(ReportItem::Table(table.clone()));
                 }
+                OutputItemKind::Explore(res) => {
+                    for table in super::tables_explore::explore_to_report_tables(res) {
+                        section.add_item(ReportItem::Table(table));
+                    }
+                }
                 _ => {
                     if let Some(tsv) = extract_item_tsv(&item.kind) {
                         let lines: Vec<&str> = tsv.lines().collect();

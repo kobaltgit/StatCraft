@@ -90,7 +90,7 @@
 | **Блок 12** | Управление датасетом и подвыборки (`SELECT CASES`, `SORT CASES`, `WEIGHT BY`, `SPLIT FILE`, словарь метаданных) | `select_cases_cmd.rs`, `sort_cases.rs`, `weight_cases_cmd.rs`, `split_groups.rs`, `variable.rs` | **100% Верифицировано** | Каноническая семантика SPSS |
 | **Блок 13** | Подсистема ввода-вывода кодеков (`SPSS .sav/.zsav`, `EXCEL .xlsx/.xls/.ods`, `CSV`, контейнер `.stc`) | `spss_loader/`, `excel_loader.rs`, `csv_loader.rs`, `csv_writer.rs`, `stc_codec.rs` | **100% Верифицировано** | Record Types 1,2,3/4,7 & RFC 4180 |
 | **Блок 14** | Сводные таблицы и форматирование отчетов (`PIVOT TABLES`, экспортеры HTML, TSV, TXT) | `statcraft_reporting` (`model.rs`, `html_export.rs`, `tsv_export.rs`, `txt_export.rs`) | **100% Верифицировано** | Двухъярусные шапки и .000 |
-| **Блок 15** | Разведочный анализ данных и критерии нормальности (`EXAMINE`, `EXPLORE`) | `explore/` (`descriptives.rs`, `normality_sw.rs`, `normality_ks.rs`, `extremes.rs`, `mod.rs`) | **100% Верифицировано** | $\le 10^{-6}$ (SciPy и канон IBM) |
+| **Блок 15** | Разведочный анализ данных и критерии нормальности (`EXAMINE`, `EXPLORE`) | `explore/` (`descriptives.rs`, `m_estimators.rs`, `percentiles.rs`, `spread_level.rs`, `normality_sw.rs`, `normality_ks.rs`, `extremes.rs`, `mod.rs`) | **100% Верифицировано** | $\le 10^{-6}$ (SciPy и канон IBM) |
 | **Блок 16** | Продвинутая регрессия и частные корреляции (`PARTIAL CORR`, `LOGISTIC REGRESSION`, `CURVEFIT`) | `partial_corr/`, `logistic/`, `curvefit/` | **100% Верифицировано** | $\le 10^{-6}$ |
 | **Блок 17** | Общая линейная модель (`UNIANOVA`, `GLM MULTIVARIATE`, `GLM REPEATED`) | `glm/` (`design_matrix.rs`, `type3_ss.rs`, `univariate.rs`, `multivariate.rs`, `repeated.rs`, `eigen.rs`) | **100% Верифицировано** | $\le 10^{-6}$ |
 | **Блок 18** | Кластерный анализ, отчёты и анализ выживаемости (`QUICK CLUSTER`, `CODEBOOK`, `SUMMARIZE`, `KM`, `SURVIVAL`) | `cluster_kmeans.rs`, `codebook_core.rs`, `summarize_core.rs`, `survival_km.rs`, `survival_lifetables.rs` | **100% Верифицировано** | $\le 10^{-6}$ |
@@ -810,6 +810,16 @@
   3. **Tests of Normality:** Параллельное сопоставление критериев Колмогорова-Смирнова (с поправкой Лиллиефорса) и Шапиро-Уилка со статистиками, степенями свободы df и уровнями значимости Sig.;
   4. **Таблица Extreme Values:** Подтаблицы наибольших (Highest 1–5) и наименьших (Lowest 1–5) значений с номерами наблюдений Case Number.
 * **Вердикт:** **100% соответствие структуре вывода SPSS и точности экспорта в TSV.**
+
+#### 15.6. Робастные М-оценки, процентили (HAVERAGE / Tukey's Hinges), разброс по уровням и 4-строчный критерий Ливиня (Spec-Kit 026, Этап 1)
+* **Реализация:** [`crates/statcraft_algo/src/explore/m_estimators.rs`](../crates/statcraft_algo/src/explore/m_estimators.rs), [`crates/statcraft_algo/src/explore/percentiles.rs`](../crates/statcraft_algo/src/explore/percentiles.rs), [`crates/statcraft_algo/src/explore/spread_level.rs`](../crates/statcraft_algo/src/explore/spread_level.rs), [`crates/statcraft_syntax/src/commands/explore_cmd.rs`](../crates/statcraft_syntax/src/commands/explore_cmd.rs)
+* **Тесты «Золотого оракула»:** `explore::m_estimators::tests::test_m_estimators_golden_oracle`, `explore::percentiles::tests::test_tukey_hinges_odd_and_even`, `explore::spread_level::tests::test_levene_4_rows_golden_oracle`, `explore::spread_level::tests::test_spread_level_power_estimation`, `explore::tests::test_compute_explore_full_options_labels_and_report_missing`, `commands::explore_cmd::tests::test_explore_to_sps_full_roundtrip`
+* **Алгоритмы:**
+  * **M-оценки положения (one-step по ненормированному MAD):** Хубера ($c = 1.339$), Тьюки Biweight ($c = 4.685$), Хампеля ($a = 1.7, b = 3.4, c = 8.5$) и Эндрюса ($c = 1.34\pi$) с защитой от $MAD = 0$ без паник.
+  * **Процентили и петли Тьюки:** `5, 10, 25, 50, 75, 90, 95` по методу `HAVERAGE` и $Q_1, Q_2, Q_3$ (*Tukey's Hinges*).
+  * **4-строчный критерий Ливиня и Spread-vs-Level:** на базе среднего, медианы, медианы с поправкой ст.св. (Уэлча–Саттертуэйта) и 5% урезанного среднего; оценка степени $p = 1 - \text{slope}$ по регрессии $\ln(\text{IQR}_g)$ на $\ln(\text{Median}_g)$ и степенные преобразования.
+  * **Идентификатор наблюдения (`/ID`) и `MISSING=REPORT`:** вывод `case_label` в `ExtremeValueItem`, выделение пропусков фактора в группу `(Missing)` и полный round-trip `.sps` в `ExploreCommand::to_sps_full` и `syntax_parser`.
+* **Вердикт:** **100% математическое и синтаксическое соответствие канону IBM SPSS `EXAMINE`.**
 
 ---
 

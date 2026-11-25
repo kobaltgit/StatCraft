@@ -90,7 +90,7 @@ Beyond isolated unit testing, StatCraft enforces mathematical and architectural 
 | **Block 12** | Data Management & Subsets (`SELECT CASES`, `SORT CASES`, `WEIGHT BY`, `SPLIT FILE`, Dictionary) | `select_cases_cmd.rs`, `sort_cases.rs`, `weight_cases_cmd.rs`, `split_groups.rs`, `variable.rs` | **100% Verified** | Canonical SPSS Semantics |
 | **Block 13** | Input/Output Codecs (`SPSS .sav/.zsav`, `EXCEL .xlsx/.xls/.ods`, `CSV`, `.stc` Container) | `spss_loader/`, `excel_loader.rs`, `csv_loader.rs`, `csv_writer.rs`, `stc_codec.rs` | **100% Verified** | Record Types 1,2,3/4,7 & RFC 4180 |
 | **Block 14** | Pivot Tables & Output Formatting (`PIVOT TABLES`, HTML, TSV, TXT Exporters) | `statcraft_reporting` (`model.rs`, `html_export.rs`, `tsv_export.rs`, `txt_export.rs`) | **100% Verified** | Two-tier Header & Zero-suppression |
-| **Block 15** | Exploratory Data Analysis & Normality Tests (`EXAMINE`, `EXPLORE`) | `explore/` (`descriptives.rs`, `normality_sw.rs`, `normality_ks.rs`, `extremes.rs`, `mod.rs`) | **100% Verified** | $\le 10^{-6}$ (SciPy & IBM Canon) |
+| **Block 15** | Exploratory Data Analysis & Normality Tests (`EXAMINE`, `EXPLORE`) | `explore/` (`descriptives.rs`, `m_estimators.rs`, `percentiles.rs`, `spread_level.rs`, `normality_sw.rs`, `normality_ks.rs`, `extremes.rs`, `mod.rs`) | **100% Verified** | $\le 10^{-6}$ (SciPy & IBM Canon) |
 | **Block 16** | Advanced Regression & Partial Correlations (`PARTIAL CORR`, `LOGISTIC REGRESSION`, `CURVEFIT`) | `partial_corr/`, `logistic/`, `curvefit/` | **100% Verified** | $\le 10^{-6}$ |
 | **Block 17** | General Linear Model (`UNIANOVA`, `GLM MULTIVARIATE`, `GLM REPEATED`) | `glm/` (`design_matrix.rs`, `type3_ss.rs`, `univariate.rs`, `multivariate.rs`, `repeated.rs`, `eigen.rs`) | **100% Verified** | $\le 10^{-6}$ |
 | **Block 18** | Clustering, Reports & Survival Analysis (`QUICK CLUSTER`, `CODEBOOK`, `SUMMARIZE`, `KM`, `SURVIVAL`) | `cluster_kmeans.rs`, `codebook_core.rs`, `summarize_core.rs`, `survival_km.rs`, `survival_lifetables.rs` | **100% Verified** | $\le 10^{-6}$ |
@@ -810,6 +810,16 @@ Beyond isolated unit testing, StatCraft enforces mathematical and architectural 
   3. **Tests of Normality:** Side-by-side Kolmogorov-Smirnov (Lilliefors) and Shapiro-Wilk tables with Statistic, df, and Sig.;
   4. **Extreme Values Table:** Highest (1–5) and Lowest (1–5) sub-tables displaying Case Number and Value.
 * **Verdict:** **100% SPSS Layout and TSV Export Fidelity.**
+
+#### 15.6. M-Estimators, Percentiles (HAVERAGE / Tukey's Hinges), Spread-vs-Level & 4-Row Levene Test (Spec-Kit 026, Stage 1)
+* **Implementation:** [`crates/statcraft_algo/src/explore/m_estimators.rs`](../crates/statcraft_algo/src/explore/m_estimators.rs), [`crates/statcraft_algo/src/explore/percentiles.rs`](../crates/statcraft_algo/src/explore/percentiles.rs), [`crates/statcraft_algo/src/explore/spread_level.rs`](../crates/statcraft_algo/src/explore/spread_level.rs), [`crates/statcraft_syntax/src/commands/explore_cmd.rs`](../crates/statcraft_syntax/src/commands/explore_cmd.rs)
+* **Golden Oracle Tests:** `explore::m_estimators::tests::test_m_estimators_golden_oracle`, `explore::percentiles::tests::test_tukey_hinges_odd_and_even`, `explore::spread_level::tests::test_levene_4_rows_golden_oracle`, `explore::spread_level::tests::test_spread_level_power_estimation`, `explore::tests::test_compute_explore_full_options_labels_and_report_missing`, `commands::explore_cmd::tests::test_explore_to_sps_full_roundtrip`
+* **Algorithms:**
+  * **M-Estimators (one-step with unscaled MAD):** Huber ($c = 1.339$), Tukey's Biweight ($c = 4.685$), Hampel ($a = 1.7, b = 3.4, c = 8.5$), and Andrews' Wave ($c = 1.34\pi$) with zero-MAD safety.
+  * **Percentiles & Tukey's Hinges:** `5, 10, 25, 50, 75, 90, 95` via `HAVERAGE` alongside Tukey's Hinges ($Q_1, Q_2, Q_3$).
+  * **4-Row Levene Test & Spread-vs-Level:** Based on Mean, Median, Median with Welch-Satterthwaite adjusted df, and 5% Trimmed Mean; power estimation $p = 1 - \text{slope}$ from $\ln(\text{IQR}_g)$ vs $\ln(\text{Median}_g)$ OLS regression and power transformations.
+  * **Case Labeling (`/ID`) & `MISSING=REPORT`:** `case_label` in `ExtremeValueItem`, explicit `(Missing)` factor group, and full `.sps` round-trip in `ExploreCommand::to_sps_full` and `syntax_parser`.
+* **Verdict:** **100% Mathematical and Syntactic Equivalence to IBM SPSS `EXAMINE` Canon.**
 
 ---
 

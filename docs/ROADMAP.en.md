@@ -247,9 +247,13 @@ The comprehensive mathematical feature engineering, data imputation, and matrix 
 The complete inventory of applied statistical procedures organized by canonical thematic submenus:
 * **Descriptive Statistics ▶:**
   * **Frequencies...:** frequency distributions, percentages, valid percentages, cumulative percentages, custom percentiles, quartiles ($Q_1, Q_2, Q_3$);
-  * **Descriptives...:** mean, standard error, variance, standard deviation, minimum, maximum, range, skewness $G_1$, kurtosis $G_2$;
+  * **Descriptives...:** mean, standard error, variance, standard deviation, minimum, maximum, range, skewness $G_1$, kurtosis $G_2$, standardized Z-scores;
   * **Explore...:** exploratory data analysis (EDA), Boxplots, stem-and-leaf plots, Kolmogorov-Smirnov (with Lilliefors significance correction) and Shapiro-Wilk normality tests;
   * **Crosstabs...:** two-way contingency tables, Pearson Chi-Square ($\chi^2$), Fisher's Exact Test, Yates' continuity correction, association coefficients (Cramér's $V$, $\phi$, contingency coefficient);
+  * **TURF Analysis `[Planned]`:** combinatorial Total Unduplicated Reach and Frequency (`SPSSINC TURF`) evaluating $C(n, k)$ item bundles up to `MAXCOMB`, computing reach counts/percentages and ranking optimal assortments;
+  * **Ratio... `[Planned]`:** descriptive statistics for ratios of two scale variables (`RATIO STATISTICS num WITH denom [BY group]`): Median, Mean, Weighted Mean (`WGTMEAN`), `CIN`, `AAD`, `COD`, `COV`, `PRD`, `PRB`, concentration indices (`BCOC`, `WCOC`);
+  * **P-P Plots... `[Planned]`:** Probability-Probability plots (`PPLOT /TYPE=P-P`) across 13 theoretical distributions (including Detrended P-P, Blom/Rankit/Tukey/Van der Waerden rank fractions, tie handling, and `/LN`, `/STANDARDIZE` transforms);
+  * **Q-Q Plots... `[Planned]`:** Quantile-Quantile plots (`PPLOT /TYPE=Q-Q`) comparing empirical quantiles against 13 theoretical distributions (including Detrended Q-Q and differencing transforms);
 * **Compare Means ▶:**
   * **One-Sample T Test...:** test sample mean against an external hypothesized parameter $\mu_0$;
   * **Independent-Samples T Test...:** two-group mean difference testing, Levene's test for equality of variances (reporting Student's $t$ and Welch's $t$);
@@ -468,6 +472,7 @@ Statistical pedagogy, transparent algorithmic specifications, and onboard sample
 * **Audit & Summaries:**
   * Variable Codebook (*CODEBOOK*) and Case Summaries (*SUMMARIZE*).
 * **Planned in Future Releases:**
+  * Full Descriptive Statistics submenu parity: **Ratio (`RATIO STATISTICS`)**, **P-P & Q-Q Plots (`PPLOT /TYPE=P-P|Q-Q`)**, **TURF Analysis (`SPSSINC TURF`)**, plus menu item ordering and Russian localization alignment (`Frequencies` → `Descriptives` → `Explore` → `Crosstabs`);
   * Multi-Monitor Workspace Mode: detaching document tabs into external native OS viewports (`show_viewport_immediate`) for multi-display setups while keeping in-window docking overlays intact;
   * Time Series & Forecasting (ARIMA / SARIMA);
   * Linear Mixed Models (LMM / HLM);

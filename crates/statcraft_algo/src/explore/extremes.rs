@@ -5,6 +5,8 @@ pub struct ExtremeValueItem {
     pub order: usize,       // 1 to 5
     pub case_number: usize, // 1-based original row index
     pub value: f64,
+    #[serde(default)]
+    pub case_label: Option<String>,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
@@ -21,6 +23,19 @@ pub fn compute_extreme_values(
     var_name: &str,
     factor_level: Option<String>,
     indexed_values: &[(usize, f64)],
+) -> ExtremeValuesResult {
+    let with_labels: Vec<(usize, f64, Option<String>)> = indexed_values
+        .iter()
+        .map(|&(idx, val)| (idx, val, None))
+        .collect();
+    compute_extreme_values_with_labels(var_name, factor_level, &with_labels)
+}
+
+/// Computes the 5 lowest and 5 highest extreme values with optional case labels.
+pub fn compute_extreme_values_with_labels(
+    var_name: &str,
+    factor_level: Option<String>,
+    indexed_values: &[(usize, f64, Option<String>)],
 ) -> ExtremeValuesResult {
     if indexed_values.is_empty() {
         return ExtremeValuesResult {
@@ -43,22 +58,24 @@ pub fn compute_extreme_values(
 
     // 5 Lowest cases (in ascending order, order 1 is lowest)
     let mut lowest = Vec::with_capacity(take);
-    for (k, &(case_num, val)) in sorted.iter().take(take).enumerate() {
+    for (k, (case_num, val, label)) in sorted.iter().take(take).enumerate() {
         lowest.push(ExtremeValueItem {
             order: k + 1,
-            case_number: case_num,
-            value: val,
+            case_number: *case_num,
+            value: *val,
+            case_label: label.clone(),
         });
     }
 
     // 5 Highest cases (in descending order, order 1 is highest)
     let mut highest = Vec::with_capacity(take);
     for k in 0..take {
-        let (case_num, val) = sorted[n - 1 - k];
+        let (case_num, val, label) = &sorted[n - 1 - k];
         highest.push(ExtremeValueItem {
             order: k + 1,
-            case_number: case_num,
-            value: val,
+            case_number: *case_num,
+            value: *val,
+            case_label: label.clone(),
         });
     }
 

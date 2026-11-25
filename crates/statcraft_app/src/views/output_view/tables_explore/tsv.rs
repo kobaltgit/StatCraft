@@ -1,140 +1,78 @@
-use super::tables::fmt_opt;
-use statcraft_algo::ExploreResult;
+pub use super::report_tables::explore_to_report_tables;
+use crate::views::output_view::tables_bootstrap::{
+    bootstrap_column_headers, bootstrap_specs_to_tsv, bootstrap_table_to_tsv,
+    format_bootstrap_cells,
+};
+use statcraft_algo::{ExploreOutputDisplay, ExploreResult};
 
 pub fn explore_to_tsv(res: &ExploreResult) -> String {
-    let mut out = String::new();
-    out.push_str("Explore / EXAMINE Summary\n");
+    let mut out = String::from("Explore / EXAMINE Summary\n");
+    let show_stats = res.display_mode != ExploreOutputDisplay::Plots;
 
-    // Case Processing
-    out.push_str("Case Processing Summary\n");
-    out.push_str("Variable\tValid N\tValid %\tMissing N\tMissing %\tTotal N\tTotal %\n");
-    for var in &res.variables {
-        for g in &var.groups {
-            let name = match &g.factor_level {
-                Some(f) => format!("{} ({})", var.variable, f),
-                None => var.variable.clone(),
-            };
-            let cp = &g.case_processing;
-            out.push_str(&format!(
-                "{}\t{}\t{:.1}%\t{}\t{:.1}%\t{}\t{:.1}%\n",
-                name,
-                cp.n_valid,
-                cp.pct_valid,
-                cp.n_missing,
-                cp.pct_missing,
-                cp.n_total,
-                cp.pct_total
-            ));
+    for table in explore_to_report_tables(res) {
+        out.push_str(&table.title);
+        out.push('\n');
+        out.push_str(&table.headers.join("\t"));
+        out.push('\n');
+        for row in &table.rows {
+            out.push_str(&row.join("\t"));
+            out.push('\n');
         }
+        for note in &table.footnotes {
+            out.push_str(note);
+            out.push('\n');
+        }
+        out.push('\n');
     }
-    out.push('\n');
 
-    // Descriptives
-    out.push_str("Descriptives\n");
-    out.push_str("Variable\tStatistic\tValue\tStd. Error\n");
-    for var in &res.variables {
-        for g in &var.groups {
-            if let Some(d) = &g.descriptives {
+    if show_stats {
+        if let Some(ref boot) = res.bootstrap {
+            out.push_str(&bootstrap_specs_to_tsv(&boot.options));
+            let b_cols = bootstrap_column_headers(boot.options.ci_level);
+            let headers = vec![
+                "Variable".to_string(),
+                "Statistic".to_string(),
+                b_cols[0].clone(),
+                b_cols[1].clone(),
+                b_cols[2].clone(),
+                b_cols[3].clone(),
+            ];
+            let mut rows = Vec::new();
+            for g in &boot.groups {
                 let name = match &g.factor_level {
-                    Some(f) => format!("{} ({})", var.variable, f),
-                    None => var.variable.clone(),
+                    Some(f) => format!("{} ({})", g.variable, f),
+                    None => g.variable.clone(),
                 };
-                let rows = [
-                    ("Mean", fmt_opt(d.mean), fmt_opt(d.mean_se)),
-                    (
-                        "95% CI Lower Bound",
-                        fmt_opt(d.mean_ci_lower),
-                        String::new(),
-                    ),
-                    (
-                        "95% CI Upper Bound",
-                        fmt_opt(d.mean_ci_upper),
-                        String::new(),
-                    ),
-                    (
-                        "5% Trimmed Mean",
-                        fmt_opt(d.trimmed_mean_5pct),
-                        String::new(),
-                    ),
-                    ("Median", fmt_opt(d.median), String::new()),
-                    ("Variance", fmt_opt(d.variance), String::new()),
-                    ("Std. Deviation", fmt_opt(d.std_dev), String::new()),
-                    ("Minimum", fmt_opt(d.min), String::new()),
-                    ("Maximum", fmt_opt(d.max), String::new()),
-                    ("Range", fmt_opt(d.range), String::new()),
-                    ("Interquartile Range", fmt_opt(d.iqr), String::new()),
-                    ("Skewness", fmt_opt(d.skewness), fmt_opt(d.skewness_se)),
-                    ("Kurtosis", fmt_opt(d.kurtosis), fmt_opt(d.kurtosis_se)),
-                ];
-                for (stat, val, se) in rows {
-                    out.push_str(&format!("{}\t{}\t{}\t{}\n", name, stat, val, se));
+                for (lbl, opt) in [
+                    ("Mean", &g.mean),
+                    ("5% Trimmed Mean", &g.trimmed_mean_5pct),
+                    ("Median", &g.median),
+                    ("Variance", &g.variance),
+                    ("Std. Deviation", &g.std_dev),
+                    ("Interquartile Range", &g.iqr),
+                ] {
+                    if let Some(s) = opt {
+                        let c = format_bootstrap_cells(s, 4);
+                        rows.push(vec![
+                            name.clone(),
+                            lbl.to_string(),
+                            c[0].clone(),
+                            c[1].clone(),
+                            c[2].clone(),
+                            c[3].clone(),
+                        ]);
+                    }
                 }
             }
-        }
-    }
-    out.push('\n');
-
-    // Normality
-    out.push_str("Tests of Normality\n");
-    out.push_str("Variable\tKS Statistic\tKS df\tKS Sig\tSW Statistic\tSW df\tSW Sig\n");
-    for var in &res.variables {
-        for g in &var.groups {
-            if let Some(n) = &g.normality {
-                let name = match &g.factor_level {
-                    Some(f) => format!("{} ({})", var.variable, f),
-                    None => var.variable.clone(),
-                };
-                let (ks_stat, ks_df, ks_sig) = match &n.kolmogorov_smirnov {
-                    Some(k) => (
-                        format!("{:.3}", k.statistic),
-                        k.df.to_string(),
-                        format!("{:.3}", k.sig),
-                    ),
-                    None => (".".to_string(), ".".to_string(), ".".to_string()),
-                };
-                let (sw_stat, sw_df, sw_sig) = match &n.shapiro_wilk {
-                    Some(s) => (
-                        format!("{:.3}", s.statistic),
-                        s.df.to_string(),
-                        format!("{:.3}", s.sig),
-                    ),
-                    None => (".".to_string(), ".".to_string(), ".".to_string()),
-                };
-                out.push_str(&format!(
-                    "{}\t{}\t{}\t{}\t{}\t{}\t{}\n",
-                    name, ks_stat, ks_df, ks_sig, sw_stat, sw_df, sw_sig
+            if !rows.is_empty() {
+                out.push_str(&bootstrap_table_to_tsv(
+                    "Bootstrap for Descriptives",
+                    &headers,
+                    &rows,
                 ));
             }
         }
     }
-    out.push_str("a. Lilliefors Significance Correction\n\n");
-
-    // Extreme Values
-    out.push_str("Extreme Values\n");
-    out.push_str("Variable\tOrder\tCase Number\tValue\n");
-    for var in &res.variables {
-        for g in &var.groups {
-            if let Some(ext) = &g.extremes {
-                let name = match &g.factor_level {
-                    Some(f) => format!("{} ({})", var.variable, f),
-                    None => var.variable.clone(),
-                };
-                for item in &ext.highest {
-                    out.push_str(&format!(
-                        "{}\tHighest {}\t{}\t{:.4}\n",
-                        name, item.order, item.case_number, item.value
-                    ));
-                }
-                for item in &ext.lowest {
-                    out.push_str(&format!(
-                        "{}\tLowest {}\t{}\t{:.4}\n",
-                        name, item.order, item.case_number, item.value
-                    ));
-                }
-            }
-        }
-    }
-
     out
 }
 
@@ -162,10 +100,20 @@ mod tests {
                         pct_total: 100.0,
                     },
                     descriptives: None,
+                    m_estimators: None,
+                    percentiles: None,
                     normality: None,
                     extremes: None,
+                    plot_data: None,
                 }],
+                levene_test: None,
+                spread_level: None,
             }],
+            display_mode: ExploreOutputDisplay::Both,
+            boxplot_mode: statcraft_algo::ExploreBoxplotDisplay::FactorLevelsTogether,
+            plot_stem_leaf: true,
+            plot_histogram: false,
+            bootstrap: None,
         };
 
         let tsv = explore_to_tsv(&res);

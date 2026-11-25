@@ -1,7 +1,10 @@
 use egui::Context;
 use statcraft_algo::{compute_explore, ExploreMissingHandling, ExploreOptions};
 use statcraft_app::dialogs::common::DialogSize;
-use statcraft_app::dialogs::{render_explore_dialog, ExploreDialogAction, ExploreDialogState};
+use statcraft_app::dialogs::{
+    render_explore_dialog, ExploreBoxplotMode, ExploreDialogAction, ExploreDialogState,
+    ExploreDisplayMode, ExploreMissingMode, ExploreSpreadLevelMode,
+};
 use statcraft_app::views::output_view::{
     explore_to_tsv, render_output_view, OutputItemKind, OutputViewerState,
 };
@@ -46,10 +49,18 @@ fn test_explore_dialog_state_defaults() {
     assert!(!state.is_open);
     assert!(state.selected_deps.is_empty());
     assert!(state.selected_factors.is_empty());
+    assert!(state.label_var.is_none());
+    assert_eq!(state.display_mode, ExploreDisplayMode::Both);
     assert!(state.compute_normality);
     assert!(state.compute_descriptives);
     assert!(state.compute_extremes);
-    assert!(state.missing_listwise);
+    assert!(!state.compute_m_estimators);
+    assert!(!state.compute_percentiles);
+    assert_eq!(state.boxplot_mode, ExploreBoxplotMode::FactorLevelsTogether);
+    assert!(state.plot_stem_leaf);
+    assert!(!state.plot_histogram);
+    assert_eq!(state.spread_level_mode, ExploreSpreadLevelMode::None);
+    assert_eq!(state.missing_mode, ExploreMissingMode::Listwise);
     assert_eq!(state.ci_level_str, "95");
 }
 
@@ -67,9 +78,14 @@ fn test_explore_dialog_renders_without_panics() {
         assert!(matches!(action, ExploreDialogAction::None));
     });
 
-    // Test transferring variables
+    // Test transferring variables and opening all subdialogs
     state.selected_deps.push("salary".to_string());
     state.selected_factors.push("gender".to_string());
+    state.label_var = Some("educ".to_string());
+    state.show_statistics = true;
+    state.show_plots = true;
+    state.show_options = true;
+    state.bootstrap.is_open = true;
 
     let _ = ctx.run(Default::default(), |ctx| {
         let action = render_explore_dialog(ctx, Some(&ds), &mut state);
@@ -90,6 +106,7 @@ fn test_explore_output_viewer_invariants() {
         compute_extremes: true,
         confidence_level: 0.95,
         missing: ExploreMissingHandling::Listwise,
+        ..Default::default()
     };
 
     let result = compute_explore(&ds, &opts).expect("Explore calculation should succeed");
@@ -116,6 +133,70 @@ fn test_explore_output_viewer_invariants() {
     assert!(tsv.contains("Lilliefors"));
 
     // Verify OutputViewer UI rendering without panics
+    let ctx = Context::default();
+    let _ = ctx.run(Default::default(), |ctx| {
+        egui::CentralPanel::default().show(ctx, |ui| {
+            render_output_view(ui, &mut state);
+        });
+    });
+}
+
+#[test]
+fn test_explore_stage3_tables_plots_bootstrap_and_exports() {
+    use statcraft_algo::{
+        compute_explore_bootstrap, BootstrapOptions, ExploreBoxplotDisplay, ExploreOutputDisplay,
+        SpreadLevelMode,
+    };
+    use statcraft_app::views::output_view::export::{export_output_to_html, export_output_to_txt};
+
+    let ds = create_test_dataset();
+    let opts = ExploreOptions {
+        dependent_vars: vec!["salary".to_string()],
+        factor_vars: vec!["gender".to_string()],
+        label_var: Some("educ".to_string()),
+        compute_descriptives: true,
+        compute_m_estimators: true,
+        compute_percentiles: true,
+        compute_normality: true,
+        compute_extremes: true,
+        spread_level_mode: SpreadLevelMode::PowerEstimation,
+        display_mode: ExploreOutputDisplay::Both,
+        boxplot_mode: ExploreBoxplotDisplay::FactorLevelsTogether,
+        plot_stem_leaf: true,
+        plot_histogram: true,
+        confidence_level: 0.95,
+        missing: ExploreMissingHandling::Listwise,
+    };
+
+    let mut result = compute_explore(&ds, &opts).expect("Explore calculation should succeed");
+    let boot_opts = BootstrapOptions {
+        enabled: true,
+        samples: 25,
+        seed: Some(7),
+        ..Default::default()
+    };
+    let boot =
+        compute_explore_bootstrap(&ds, &opts, None, &boot_opts).expect("Bootstrap should succeed");
+    result.bootstrap = Some(boot);
+
+    let tsv = explore_to_tsv(&result);
+    assert!(tsv.contains("M-Estimators"));
+    assert!(tsv.contains("Percentiles"));
+    assert!(tsv.contains("Test of Homogeneity of Variance"));
+    assert!(tsv.contains("Case Label"));
+    assert!(tsv.contains("Bootstrap for Descriptives"));
+
+    let mut state = OutputViewerState::new();
+    state.add_explore(result);
+
+    let html = export_output_to_html(&state);
+    assert!(html.contains("M-Estimators"));
+    assert!(html.contains("Test of Homogeneity of Variance"));
+
+    let txt = export_output_to_txt(&state);
+    assert!(txt.contains("Percentiles"));
+    assert!(txt.contains("Bootstrap for Descriptives"));
+
     let ctx = Context::default();
     let _ = ctx.run(Default::default(), |ctx| {
         egui::CentralPanel::default().show(ctx, |ui| {

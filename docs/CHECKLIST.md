@@ -688,9 +688,10 @@
   - [x] Отрисовка 4 аутентичных сводных таблиц SPSS Pivot Tables: Case Processing Summary, Descriptives, Tests of Normality, Extreme Values
   - [x] Поддержка экспорта в TSV (`explore_to_tsv`)
   - [x] Интеграция в `OutputViewerState::add_explore`, `extract_item_tsv` и `syntax_runner`
-- [x] UI диалог `ExploreDialog` (`crates/statcraft_app/src/dialogs/explore_dialog.rs`):
-  - [x] Строгое соответствие канону `DialogKit`: `DialogShell::standard(560, 430)`, `VariablePicker`, кнопки переноса `TransferButton`, поддиалоги `SubdialogSidebar` (Statistics, Plots, Options), нижняя панель `DialogActionBar`
-  - [x] Интеграция в координатор диалогов `app_dialogs.rs` и главное окно `app.rs`
+- [x] UI диалог `ExploreDialog` (`crates/statcraft_app/src/dialogs/explore_dialog/` — декомпозиция `mod.rs`, `state.rs`, `statistics.rs`, `plots.rs`, `options.rs`, Spec-Kit 027 Этап 2):
+  - [x] Строгое соответствие канону `DialogKit`: `DialogShell::standard(560, 430)`, `VariablePicker`, слот `Метить наблюдения значениями:` (`Label Cases by`), блок `Вывести` (`Строки и столбцы` / `Статистика` / `Графики`), кнопки переноса `TransferButton`, поддиалоги `SubdialogSidebar` (`Статистика...`, `Графики...`, `Параметры...`, `Бутстреп...`), нижняя панель `DialogActionBar`
+  - [x] Полный паритет поддиалогов: `Statistics` (`М-оценки`, `Процентили`, `Выбросы`, ДИ %), `Plots` (Boxplots, `Ствол-лист`, `Гистограмма`, критерии нормальности, `Spread-vs-Level` + выбор степени преобразования), `Options` (3 радиокнопки пропусков, включая `Помещать в отчет`)
+  - [x] Интеграция в координатор диалогов `app_dialogs_stats.rs` (передача всех параметров в `stat.explore` и `ExploreCommand::to_sps_full` при `Paste`) и главное окно `app.rs`
 - [x] Главное меню:
   - [x] Активация пункта «Анализ -> Описательные статистики -> Исследовать...» (`menu-analyze-explore`) в `app_menus/analyze_etc.rs`
 - [x] Локализация:
@@ -1482,6 +1483,23 @@
   - [x] Подключение `BootstrapDialog` и бутстреп-вычислений на уровнях L2, L5 и L6 к `Descriptives`, `Means`, `T-Test` (One-Sample, Independent, Paired), `One-Way ANOVA`, `Correlations` (Pearson, Spearman, Kendall) и `Linear Regression` (OLS);
   - [x] Эталонный пакет тестов `crates/statcraft_algo/tests/bootstrap_golden_oracle.rs` со сверкой `Percentile` и `BCa` против `scipy.stats.bootstrap` ($\le 10^{-6}$);
   - [x] Верификация `cargo run -p xtask -j 1 -- parity` и полный Quality Gate `cargo run -p xtask -j 1 -- ci`.
+- [x] **Паритет процедуры «Исследовать» (`Explore` / `EXAMINE`, Features 026–028)**:
+  - [x] **Этап 1 (Feature 026 — Ядро L2 и синтаксис L5):**
+    - [x] `m_estimators.rs`: M-оценки Хубера ($c = 1.339$), Тьюки Biweight ($c = 4.685$), Хампеля ($a = 1.7, b = 3.4, c = 8.5$) и Эндрюса ($c = 1.34\pi$) с Golden Oracle тестами;
+    - [x] `percentiles.rs`: процентили `5, 10, 25, 50, 75, 90, 95` (`HAVERAGE`) и петли Тьюки (*Tukey's Hinges* $Q_1, Q_2, Q_3$);
+    - [x] `spread_level.rs`: 4-строчный критерий Ливиня (*Based on Mean*, *Median*, *Median with adjusted df*, *Trimmed Mean*), оценка степени $p = 1 - \text{slope}$ и степенные преобразования;
+    - [x] `label_var` (`/ID`) в `ExtremeValuesResult` и режим `ExploreMissingHandling::Report` (`MISSING=REPORT`);
+    - [x] `ExploreCommand::to_sps_full()` и расширенный парсер `EXAMINE`/`EXPLORE` в `syntax_parser`.
+  - [x] **Этап 2 (Feature 027 — Декомпозиция и UI диалога «Исследовать»):**
+    - [x] Декомпозиция `explore_dialog.rs` в модульный пакет `explore_dialog/` (`state.rs`, `statistics.rs`, `plots.rs`, `options.rs`, `mod.rs`) с лимитом $\le 500$ строк;
+    - [x] Главное окно: слот `Метить наблюдения значениями:`, блок `Вывести` (`Строки и столбцы` / `Статистика` / `Графики`), кнопка `Бутстреп...` (`BootstrapDialogState`);
+    - [x] Поддиалоги `Статистики` (`М-оценки`, `Процентили`), `Графики` (`Ящичные диаграммы`, `Ствол-лист`, `Гистограмма`, `Нормальность`, `Разброс по уровням с критерием Ливиня`), `Параметры` (`Помещать в отчет`);
+    - [x] Полная локализация в `locales/ru.ftl` и `locales/en.ftl`, прохождение `design-guard`, `dialog_invariants` и `i18n_lint_test`.
+  - [x] **Этап 3 (Feature 028 — Output Viewer, графики, отчётность и Бутстреп):**
+    - [x] Декомпозиция `tables_explore/` (`tables_summary.rs`, `tables_advanced.rs`, `plots.rs`, `plots_scatter.rs`, `report_tables.rs`, `tsv.rs`);
+    - [x] Вывод таблиц `M-Estimators`, `Percentiles`, `Test of Homogeneity of Variance`, `Case Label` в `Extreme Values` и `Bootstrap`;
+    - [x] Векторные графики (`egui_plot`): Boxplots (`Factor levels together` / `Dependents together`), Stem-and-Leaf, Histogram, Normal Q-Q & Detrended Q-Q, Spread-vs-Level;
+    - [x] Фильтрация вывода по `DisplayMode`, экспорт в TSV/HTML/TXT и 100% прохождение `cargo run -p xtask -j 1 -- ci`.
 
 
 ## 20. Планы будущих релизов (Backlog / Planned Features)

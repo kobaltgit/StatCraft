@@ -4492,3 +4492,45 @@ Completed the third and final stage bringing **Descriptives** to full parity wit
 3. **Quality Control & Definition of Done:**
    * Added `test_descriptives_dynamic_columns_listwise_n_and_reporting` (`output_viewer_descriptives_invariants.rs`) and `test_descriptives_with_table_style_rule_and_report` (`table_style_e2e_test.rs`).
    * Passed `cargo run -p xtask -j 1 -- ci`, `parity`, and `sync-site`.
+
+
+---
+
+### Phase 121: Explore Dialog Decomposition and 100% SPSS Parity (Feature 027 — Stage 2)
+*Time: November 25, 2026, 10:07 (~12 minutes)*
+
+Brought the **Explore (`ExploreDialog`)** main window and its subdialogs into full functional and visual parity with IBM SPSS Statistics using `DialogKit` and `Fluent` localization:
+1. **Architectural Decomposition (`crates/statcraft_app/src/dialogs/explore_dialog/`):**
+   * Decomposed the monolithic `explore_dialog.rs` (476 lines) into a modular package: `state.rs`, `statistics.rs`, `plots.rs`, `options.rs`, and `mod.rs`, keeping every file well below the 500-line `File Size Guard` limit.
+2. **Main Window and Subdialog Parity:**
+   * **Main Dialog (`mod.rs`):** Added the `Label Cases by:` single-variable slot, the `Display` group (`Both` / `Statistics` / `Plots`), the `Plots...` button ellipsis, and the `Bootstrap...` button wired to `BootstrapDialogState` and `render_bootstrap_dialog`.
+   * **Statistics (`statistics.rs`):** Added `M-estimators` and `Percentiles` checkboxes alongside `Descriptives` (+ CI %) and `Outliers / Extreme Values`.
+   * **Plots (`plots.rs`):** Implemented all 4 canonical control groups: *Boxplots* (`Factor levels together` / `Dependents together` / `None`), *Descriptive* (`Stem-and-leaf`, `Histogram`), *Normality plots with tests*, and *Spread-vs-Level with Levene Test* (`None` / `Power estimation` / `Transformed` with power selector / `Untransformed`).
+   * **Options (`options.rs`):** Added the 3rd missing-values radio button (`Report values`).
+3. **Localization & End-to-End Wiring:**
+   * Added all new localization keys synchronously to `locales/ru.ftl` and `locales/en.ftl` with zero hardcoded strings in Rust.
+   * Updated `app_dialogs_stats.rs` to forward all new parameters to `stat.explore` and emit full `.sps` syntax via `ExploreCommand::to_sps_full()` on `Paste`.
+4. **Quality Control & Definition of Done:**
+   * Updated invariant tests in `crates/statcraft_app/tests/explore_invariants.rs` covering all new defaults and subdialogs.
+   * Passed `design-guard`, `file-guard`, `dialog_invariants` (52/52), `explore_invariants` (3/3), and `i18n_lint_test` (4/4).
+
+---
+
+### Phase 122: Explore Core Algorithms, Output Viewer, Vector Plots, and Bootstrap (Features 026 & 028 — Stages 1 & 3)
+*Time: November 25, 2026, 10:50 (~20 minutes)*
+
+Completed Stage 1 (L2/L5) and Stage 3 (L6/L4) bringing **Explore (`EXAMINE` / `EXPLORE`)** to full parity with IBM SPSS Statistics:
+1. **Algorithmic Core L2 (`crates/statcraft_algo/src/explore/`):**
+   * `m_estimators.rs`: robust location M-estimators (Huber $c=1.339$, Tukey Biweight $c=4.685$, Hampel $a=1.7,b=3.4,c=8.5$, Andrews' Wave $c=1.34\pi$) with zero-MAD safety;
+   * `percentiles.rs`: percentiles `5, 10, 25, 50, 75, 90, 95` (`HAVERAGE`) and Tukey's Hinges ($Q_1, Q_2, Q_3$);
+   * `spread_level.rs`: 4-row Levene homogeneity of variance test (*Based on Mean*, *Median*, *Median with adjusted df*, *Trimmed Mean*) and power estimation $p = 1 - \text{slope}$;
+   * `bootstrap.rs`, `plots_data.rs`, `helpers.rs`, `tests.rs`: Explore bootstrap resampling, vector plot data preparation, `label_var` (`/ID`), and `ExploreMissingHandling::Report`.
+2. **Syntax Layer L5 (`crates/statcraft_syntax/`):**
+   * `explore_cmd.rs` and `explore_cmd_tests.rs`: extended `specs()`, added `to_sps_full()` (`/ID`, `/STATISTICS`, `/PLOT`, `/COMPARE`, `/MISSING`, `/CINTERVAL`, `BOOTSTRAP`), and expanded the `EXAMINE`/`EXPLORE` parser.
+3. **Output Viewer, Plots & Export L6/L4 (`crates/statcraft_app/src/views/output_view/tables_explore/`):**
+   * Decomposed into `tables_summary.rs`, `tables_advanced.rs`, `plots.rs`, `plots_scatter.rs`, `report_tables.rs`, and `tsv.rs` ($\le 500$ lines each);
+   * Added `M-Estimators`, `Percentiles`, `Test of Homogeneity of Variance`, `Bootstrap` tables, and `Case Label` column in `Extreme Values`;
+   * Implemented `egui_plot` vector charts (Boxplots, Stem-and-Leaf, Histogram, Normal Q-Q & Detrended Q-Q, Spread-vs-Level) respecting `Display` mode (`Both` / `Statistics` / `Plots`), plus TSV, HTML, and TXT export.
+4. **Verification & DoD:**
+   * Updated `docs/CHECKLIST.md`, `docs/parity-checklist.md`, `docs/SPSS_ALGORITHMS_AUDIT*.md`, and `specs/026..028/tasks.md`.
+   * 100% pass on `cargo run -p xtask -j 1 -- ci` (including `fmt`, `clippy -- -D warnings`, `file-guard`, `design-guard`, `layers`, all workspace tests, `undo_reversibility` 41/41, and `sync-site --check`).

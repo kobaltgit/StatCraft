@@ -311,6 +311,75 @@ fn map_means(
     )))
 }
 
+fn parse_explore_cinterval(cmd: &ParsedCommand) -> f64 {
+    if let Some(tokens) = cmd.subcommand_tokens("CINTERVAL") {
+        for tok in tokens {
+            let clean = tok.trim_matches(|c| c == '(' || c == ')' || c == '=');
+            if let Ok(val) = clean.parse::<f64>() {
+                if val.is_finite() && val > 0.0 {
+                    return if val > 1.0 { val / 100.0 } else { val };
+                }
+            }
+        }
+    }
+    parse_ci_from_criteria(cmd)
+}
+
+fn parse_explore_spread_level(cmd: &ParsedCommand) -> (&'static str, Option<f64>) {
+    if cmd.has_token("PLOT", "NONE") {
+        return ("none", None);
+    }
+    if cmd.has_token("PLOT", "ALL") {
+        return ("power_estimation", None);
+    }
+    let Some(tokens) = cmd.subcommand_tokens("PLOT") else {
+        return ("none", None);
+    };
+    let mut found_sl = false;
+    for tok in tokens {
+        let upper = tok.to_ascii_uppercase();
+        if upper == "SPREADLEVEL" {
+            found_sl = true;
+            continue;
+        }
+        if upper.starts_with("SPREADLEVEL(") {
+            let inner = upper
+                .trim_start_matches("SPREADLEVEL(")
+                .trim_end_matches(')');
+            if inner == "LN" || inner == "0" {
+                return ("natural_log", Some(0.0));
+            }
+            if let Ok(p) = inner.parse::<f64>() {
+                return if p.abs() < 1e-12 {
+                    ("natural_log", Some(0.0))
+                } else {
+                    ("power", Some(p))
+                };
+            }
+            return ("power_estimation", None);
+        }
+        if found_sl {
+            let clean = tok.trim_matches(|c| c == '(' || c == ')');
+            if clean.eq_ignore_ascii_case("LN") {
+                return ("natural_log", Some(0.0));
+            }
+            if let Ok(p) = clean.parse::<f64>() {
+                return if p.abs() < 1e-12 {
+                    ("natural_log", Some(0.0))
+                } else {
+                    ("power", Some(p))
+                };
+            }
+            return ("power_estimation", None);
+        }
+    }
+    if found_sl {
+        ("power_estimation", None)
+    } else {
+        ("none", None)
+    }
+}
+
 fn map_explore(
     cmd: &ParsedCommand,
     dataset: Option<&DataSet>,
@@ -336,40 +405,67 @@ fn map_explore(
     }
 
     let factor_vars = SyntaxParser::expand_variables(factor_tokens, dataset)?;
-    let normality = cmd.has_token("PLOT", "NPPLOT") || cmd.has_token("PLOT", "ALL");
+    let label_var = cmd
+        .subcommand_tokens("ID")
+        .and_then(|t| t.iter().find(|s| *s != "="))
+        .cloned();
 
-    let (desc, ext) = if cmd.has_subcommand("STATISTICS") {
+    let normality = !cmd.has_token("PLOT", "NONE")
+        && (cmd.has_token("PLOT", "NPPLOT") || cmd.has_token("PLOT", "ALL"));
+    let (spread_level_mode, spread_level_power) = parse_explore_spread_level(cmd);
+
+    let (desc, ext, mest, pct) = if cmd.has_subcommand("STATISTICS") {
         if cmd.has_token("STATISTICS", "NONE") {
-            (false, false)
+            (false, false, false, false)
         } else {
             let all = cmd.has_token("STATISTICS", "ALL");
+            let has_ext =
+                cmd.has_token("STATISTICS", "EXTREME") || cmd.has_token("STATISTICS", "EXTREMES");
+            let has_mest = cmd.has_token("STATISTICS", "MESTIMATORS");
+            let has_pct = cmd.has_token("STATISTICS", "PERCENTILES");
+            let has_desc =
+                cmd.has_token("STATISTICS", "DESCRIPTIVES") || (!has_ext && !has_mest && !has_pct);
             (
-                all || cmd.has_token("STATISTICS", "DESCRIPTIVES")
-                    || !cmd.has_token("STATISTICS", "EXTREME"),
-                all || cmd.has_token("STATISTICS", "EXTREME")
-                    || cmd.has_token("STATISTICS", "EXTREMES"),
+                all || has_desc,
+                all || has_ext,
+                all || has_mest,
+                all || has_pct,
             )
         }
     } else {
-        (true, true)
+        (true, true, false, false)
     };
 
     let missing = if cmd.has_token("MISSING", "PAIRWISE") {
         "pairwise"
+    } else if cmd.has_token("MISSING", "REPORT") {
+        "report"
     } else {
         "listwise"
     };
 
-    let ci = parse_ci_from_criteria(cmd);
+    let ci = parse_explore_cinterval(cmd);
 
-    Ok(Some((
-        "stat.explore",
-        json!({
-            "dependent_vars": dep_vars, "factor_vars": factor_vars,
-            "compute_descriptives": desc, "compute_normality": normality,
-            "compute_extremes": ext, "confidence_level": ci, "missing": missing,
-        }),
-    )))
+    let mut payload = json!({
+        "dependent_vars": dep_vars,
+        "factor_vars": factor_vars,
+        "compute_descriptives": desc,
+        "compute_m_estimators": mest,
+        "compute_percentiles": pct,
+        "compute_normality": normality,
+        "compute_extremes": ext,
+        "spread_level_mode": spread_level_mode,
+        "confidence_level": ci,
+        "missing": missing,
+    });
+    if let Some(lv) = label_var {
+        payload["label_var"] = json!(lv);
+    }
+    if let Some(p) = spread_level_power {
+        payload["spread_level_power"] = json!(p);
+    }
+
+    Ok(Some(("stat.explore", payload)))
 }
 
 #[cfg(test)]

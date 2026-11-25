@@ -106,7 +106,10 @@ pub use descriptives_dialog::{
     render_descriptives_dialog, DescriptivesDialogAction, DescriptivesDialogState,
 };
 pub use dummy_dialog::{render_dummy_dialog, DummyDialogAction, DummyDialogState};
-pub use explore_dialog::{render_explore_dialog, ExploreDialogAction, ExploreDialogState};
+pub use explore_dialog::{
+    render_explore_dialog, ExploreBoxplotMode, ExploreDialogAction, ExploreDialogState,
+    ExploreDisplayMode, ExploreMissingMode, ExploreSpreadLevelMode, ExploreSpreadPower,
+};
 pub use factor_dialog::{render_factor_dialog, FactorDialogAction, FactorDialogState};
 pub use find_replace_dialog::{
     render_find_replace_dialog, FindReplaceAction, FindReplaceDialogState, FindReplaceMode,

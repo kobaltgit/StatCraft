@@ -4184,3 +4184,45 @@
 3. **Контроль качества (DoD):**
    * Добавлены инвариантные тесты `test_descriptives_dynamic_columns_listwise_n_and_reporting` (`output_viewer_descriptives_invariants.rs`) и `test_descriptives_with_table_style_rule_and_report` (`table_style_e2e_test.rs`).
    * Пройдены `cargo run -p xtask -j 1 -- ci`, `parity` и `sync-site`.
+
+
+---
+
+### Фаза 121: Декомпозиция и 100% паритет диалога «Исследовать» (Feature 027 — Stage 2)
+*Время: 25 ноября 2026, 10:07 (~12 минут)*
+
+Главное диалоговое окно **«Исследовать» (`ExploreDialog`)** и его поддиалоги приведены в полное функциональное и визуальное соответствие с эталоном IBM SPSS Statistics на базе `DialogKit` и системы локализации `Fluent`:
+1. **Архитектурная декомпозиция (`crates/statcraft_app/src/dialogs/explore_dialog/`):**
+   * Монолитный файл `explore_dialog.rs` (476 строк) разделён на модульный пакет: `state.rs`, `statistics.rs`, `plots.rs`, `options.rs` и `mod.rs` с соблюдением жёсткого лимита `File Size Guard <= 500`.
+2. **Паритет главного окна и поддиалогов:**
+   * **Главное окно (`mod.rs`):** добавлены слот «Метить наблюдения значениями:» (`Label Cases by`), блок `Вывести` (`Строки и столбцы` / `Статистика` / `Графики`), кнопка `Графики...` с многоточием и кнопка `Бутстреп...` с интеграцией `BootstrapDialogState` и `render_bootstrap_dialog`.
+   * **Статистики (`statistics.rs`):** добавлены чекбоксы `М-оценки` (`M-estimators`) и `Процентили` (`Percentiles`) в дополнение к `Описательным статистикам` (+ ДИ %) и `Выбросам`.
+   * **Графики (`plots.rs`):** реализованы все 4 канонические группы контролов: *Ящичные диаграммы с усами* (`Уровни фактора вместе` / `Зависимые вместе` / `Нет`), *Описательные* (`Ствол-лист`, `Гистограмма`), *Графики и критерии нормальности*, а также *Разброс по уровням с критерием Ливиня* (`Нет` / `Оценка статистической мощности` / `Преобразование` с выбором степени / `Без преобразования`).
+   * **Параметры (`options.rs`):** добавлена 3-я радиокнопка `Помещать в отчет` (`Report values`).
+3. **Локализация и сквозное связывание:**
+   * Все новые ключи добавлены синхронно в `locales/ru.ftl` и `locales/en.ftl` без хардкода строк в Rust.
+   * В `app_dialogs_stats.rs` обеспечена передача всех новых параметров в `stat.explore` и генерация полного синтаксиса через `ExploreCommand::to_sps_full()` при нажатии `Paste`.
+4. **Контроль качества (DoD):**
+   * Обновлены инвариантные тесты в `crates/statcraft_app/tests/explore_invariants.rs` (проверены все поддиалоги и состояния по умолчанию).
+   * Успешно пройдены `design-guard`, `file-guard`, `dialog_invariants` (52/52), `explore_invariants` (3/3) и `i18n_lint_test` (4/4).
+
+---
+
+### Фаза 122: Ядро алгоритмов, Output Viewer, графики и Бутстреп для «Исследовать» (Features 026 & 028 — Stages 1 & 3)
+*Время: 25 ноября 2026, 10:50 (~20 минут)*
+
+Завершены Этап 1 (L2/L5) и Этап 3 (L6/L4) приведения процедуры **«Исследовать» (`EXAMINE` / `EXPLORE`)** к полному паритету с IBM SPSS Statistics:
+1. **Математическое ядро L2 (`crates/statcraft_algo/src/explore/`):**
+   * `m_estimators.rs`: робастные M-оценки положения (Huber $c=1.339$, Tukey Biweight $c=4.685$, Hampel $a=1.7,b=3.4,c=8.5$, Andrews' Wave $c=1.34\pi$) с защитой от $MAD = 0$;
+   * `percentiles.rs`: процентили `5, 10, 25, 50, 75, 90, 95` (`HAVERAGE`) и петли Тьюки (*Tukey's Hinges* $Q_1, Q_2, Q_3$);
+   * `spread_level.rs`: 4-строчный критерий Ливиня (*Based on Mean*, *Median*, *Median with adjusted df*, *Trimmed Mean*) и оценка степени преобразования $p = 1 - \text{slope}$;
+   * `bootstrap.rs`, `plots_data.rs`, `helpers.rs`, `tests.rs`: вычисление бутстреп-оценок для `Explore`, подготовка данных для векторных графиков, поддержка `label_var` (`/ID`) и `ExploreMissingHandling::Report`.
+2. **Синтаксис L5 (`crates/statcraft_syntax/`):**
+   * `explore_cmd.rs` и `explore_cmd_tests.rs`: расширена JSON-схема `specs()`, добавлен `to_sps_full()` (`/ID`, `/STATISTICS`, `/PLOT`, `/COMPARE`, `/MISSING`, `/CINTERVAL`, `BOOTSTRAP`) и расширен парсер `EXAMINE`/`EXPLORE`.
+3. **Output Viewer, графики и экспорт L6/L4 (`crates/statcraft_app/src/views/output_view/tables_explore/`):**
+   * Модуль декомпозирован на `tables_summary.rs`, `tables_advanced.rs`, `plots.rs`, `plots_scatter.rs`, `report_tables.rs`, `tsv.rs` ($\le 500$ строк каждый);
+   * Добавлены таблицы `M-Estimators`, `Percentiles`, `Test of Homogeneity of Variance`, `Bootstrap` и колонка `Case Label` в `Extreme Values`;
+   * Реализованы векторные графики через `egui_plot`: Boxplots (*Factor levels together* / *Dependents together*), Stem-and-Leaf, Histogram, Normal Q-Q & Detrended Q-Q и Spread-vs-Level с учётом режима `Display` (`Both` / `Statistics` / `Plots`), а также экспорт в TSV, HTML и TXT.
+4. **Верификация и DoD:**
+   * Обновлены `docs/CHECKLIST.md`, `docs/parity-checklist.md`, `docs/SPSS_ALGORITHMS_AUDIT*.md` и `specs/026..028/tasks.md`.
+   * 100% прохождение полного Quality Gate `cargo run -p xtask -j 1 -- ci` (включая `fmt`, `clippy -- -D warnings`, `file-guard`, `design-guard`, `layers`, все тесты воркспейса, `undo_reversibility` 41/41 и `sync-site --check`).
