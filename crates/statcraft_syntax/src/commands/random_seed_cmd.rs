@@ -147,6 +147,9 @@ impl EngineCommand for RandomSeedCommand {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use std::sync::Mutex;
+
+    static TEST_SEED_LOCK: Mutex<()> = Mutex::new(());
 
     #[test]
     fn test_random_seed_to_sps() {
@@ -160,6 +163,7 @@ mod tests {
 
     #[test]
     fn test_random_seed_execute_and_undo() {
+        let _guard = TEST_SEED_LOCK.lock().unwrap_or_else(|e| e.into_inner());
         let cmd = RandomSeedCommand::new();
         let mut ds = None;
 
@@ -194,6 +198,8 @@ mod tests {
 
     #[test]
     fn test_random_seed_validation() {
+        let _guard = TEST_SEED_LOCK.lock().unwrap_or_else(|e| e.into_inner());
+        statcraft_core::clear_global_random_seed();
         let cmd = RandomSeedCommand::new();
         let mut ds = None;
 
