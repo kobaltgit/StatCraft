@@ -37,7 +37,7 @@
 > [!NOTE]
 > 🔬 **Academic Notice:** StatCraft is an independent open-science software project. It is not affiliated with or certified by IBM SPSS Statistics. Do not use for clinical diagnostic decisions or legal compliance without independent statistical replication.
 
-**StatCraft** is an experimental alternative for statistical data analysis built in **100% pure Safe Rust**. Developed as an open-science computational project, it combines a clean-room mathematical engine on Apache Arrow and Polars with native Model Context Protocol (MCP) integration for AI-assisted empirical research.
+**StatCraft** is an experimental alternative for statistical data analysis built in **100% pure Safe Rust**. Developed as an open-science computational project, it combines a clean-room mathematical engine written in pure Safe Rust with native Model Context Protocol (MCP) integration for AI-assisted empirical research.
 
 We do not claim StatCraft is a ready-made commercial replacement. It is an open-science computational experiment. We invite researchers, statisticians, and developers to explore the calculations, test edge cases against legacy suites (SPSS, R, Stata), and help make scientific computing transparent, verifiable, and reproducible.
 
@@ -56,7 +56,7 @@ Statistical software must never crash mid-calculation or produce silent numerica
 * **Zero-Panic Contract (100% Safe Rust):** All non-test code strictly forbids `unwrap()`, `expect()`, `panic!()`, and `unsafe`. Potential errors (singular matrices, division by zero, insufficient sample size) are propagated through typed `Result<T, StatError>` rather than application crashes.
 * **Clean-Room Implementation:** Developed without proprietary IBM SPSS code or assets. Algorithms are derived from published academic papers, ISO standards, and GNU PSPP specifications, independently verified against a SciPy Golden Oracle ($\Delta < 10^{-6}$).
 * **Commands, Not Handlers:** Every analytical procedure and user interaction is an atomic engine command (`EngineCommand`). All commands support non-destructive Undo/Redo, serialize to standard SPSS syntax (`.sps`), and can be scripted headlessly.
-* **Arrow Columnar Memory:** Datasets live in contiguous Apache Arrow arrays. Numerical transformations and filtering execute via SIMD-accelerated Polars engines with zero garbage collection pauses.
+* **Safe Rust Columnar Architecture:** Datasets and variable dictionaries live in typed in-memory columnar structures with a transactional `DeltaBuffer` for instant Undo/Redo and zero garbage collection pauses.
 * **Canonical SPSS-Style Output Viewer:** Hierarchical navigation outline tree paired with authentic multi-level pivot tables. Results copy to clipboard as structured TSV that pastes into Microsoft Excel cleanly without distorted columns or unwanted date conversions.
 * **Vector-First UI:** Rendered with native `egui` via `ui.painter()` and vector SVG icons. Strict zero-emoji and zero-unsupported Unicode symbol policy eliminates tofu squares (`□`) across all platforms.
 * **Zero-Hardcode i18n:** 100% of user-facing strings are decoupled into Project Fluent catalogs (`locales/en.ftl`, `locales/ru.ftl`) with real-time runtime language switching.
@@ -148,7 +148,7 @@ The connected AI agent:
 We do not claim StatCraft is a complete commercial replacement. It is an open-science computational experiment. We welcome domain expertise, empirical datasets, and rigorous scrutiny to make scientific computing transparent and reproducible:
 
 * **For Statisticians & Researchers:** Challenge our numbers. Run your empirical datasets through StatCraft and compare results against SPSS, R, or Stata. Found a discrepancy ($\Delta > 10^{-6}$)? Report it directly on **[statcraft-mu.vercel.app](https://statcraft-mu.vercel.app/)** or open an issue on GitHub.
-* **For Systems Engineers:** Help build safe, high-performance computational foundations in Safe Rust (optimizing linear algebra via `faer` and `statrs` without `unsafe`, contributing new procedures, and expanding the MCP toolset).
+* **For Systems Engineers:** Help build safe, high-performance computational foundations in Safe Rust (optimizing linear algebra routines without `unsafe`, contributing new procedures, and expanding the MCP toolset).
 
 ---
 

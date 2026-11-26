@@ -1,0 +1,41 @@
+From: Local user <user@capsuleos.local>
+To: CapsuleCraft Vault <vault@capsuleos.local>
+Subject: 📦 StatCraft (Overview) | 📦 StatCraft (Overview)
+Date: Thu, 26 Nov 2026 14:24:16 +0000
+Message-ID: <capsule-native-accc8-1795703056463744200-690@vault.local>
+X-Capsule-Status: Active
+MIME-Version: 1.0
+Content-Type: multipart/mixed; boundary="BOUNDARY_ROOT_1AMQM9FKX6"
+
+--BOUNDARY_ROOT_1AMQM9FKX6
+Content-Type: multipart/alternative; boundary="BOUNDARY_PAYLOAD_QS5TVHKZGC"
+
+--BOUNDARY_PAYLOAD_QS5TVHKZGC
+Content-Type: application/json; name="canvas_state.json"
+Content-Disposition: inline; filename="canvas_state.json"
+
+{
+  "version": "1.0",
+  "generator": "CapsuleCraft Native egui prototype (Zero-DB Pure-MIME)",
+  "messageId": "<capsule-native-accc8-1795703056463744200-690@vault.local>",
+  "subject": "📦 StatCraft (Overview) | 📦 StatCraft (Overview)",
+  "tags": [],
+  "blocks": [
+    {
+      "data": {
+        "text": ""
+      },
+      "id": "blk_native_paragraph_1795703056463783600",
+      "type": "paragraph"
+    }
+  ]
+}
+
+--BOUNDARY_PAYLOAD_QS5TVHKZGC
+Content-Type: text/html; charset="utf-8"
+Content-Disposition: inline
+
+<!doctype html><html><head><meta charset="utf-8"><meta name="generator" content="CapsuleCraft Native"></head><body style="font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;max-width:720px;margin:32px auto;line-height:1.55;color:#23201c;background:#faf8f4;"><h1>📦 StatCraft (Overview) | 📦 StatCraft (Overview)</h1><p></p><hr><p style="color:#8a8175;font-size:12px">Exported from CapsuleCraft Native · &lt;capsule-native-accc8-1795703056463744200-690@vault.local&gt;</p></body></html>
+
+--BOUNDARY_PAYLOAD_QS5TVHKZGC--
+--BOUNDARY_ROOT_1AMQM9FKX6--

@@ -1,0 +1,77 @@
+From: CapsuleCraft Code Ingest <system@capsulecraft.local>
+To: Vault <vault@capsuleos.local>
+Subject: 📄 StatCraft / crates/statcraft_app/src/dialogs/turf_dialog/state.rs
+Date: Thu, 26 Nov 2026 14:22:01 +0000
+Message-ID: <module-crates_statcraft_app_src_dialogs_turf_dialog_state_rs@capsuleos.local>
+In-Reply-To: <subsystem-statcraft-crates_statcraft_app@capsuleos.local>
+X-Capsule-Page-Parent: <subsystem-statcraft-crates_statcraft_app@capsuleos.local>
+References: <project-index-statcraft@capsuleos.local> <subsystem-statcraft-crates_statcraft_app@capsuleos.local>
+X-Capsule-Tags: project, statcraft, module
+X-Capsule-Status: Active
+MIME-Version: 1.0
+Content-Type: multipart/mixed; boundary="BOUNDARY_ROOT_K130EJGGSN"
+
+--BOUNDARY_ROOT_K130EJGGSN
+Content-Type: multipart/alternative; boundary="BOUNDARY_PAYLOAD_ABBJ11GJSZ"
+
+--BOUNDARY_PAYLOAD_ABBJ11GJSZ
+Content-Type: application/json; name="canvas_state.json"
+Content-Disposition: inline; filename="canvas_state.json"
+
+{
+  "version": "1.0",
+  "generator": "CapsuleCraft Native egui prototype (Zero-DB Pure-MIME)",
+  "messageId": "<module-crates_statcraft_app_src_dialogs_turf_dialog_state_rs@capsuleos.local>",
+  "subject": "📄 StatCraft / crates/statcraft_app/src/dialogs/turf_dialog/state.rs",
+  "tags": [
+    "project",
+    "statcraft",
+    "module"
+  ],
+  "blocks": [
+    {
+      "data": {
+        "level": 1,
+        "text": "📄 state.rs"
+      },
+      "id": "blk_native_heading_1795702921324408800",
+      "managed_by": "project_parser",
+      "type": "heading"
+    },
+    {
+      "data": {
+        "text": "Path: `crates/statcraft_app/src/dialogs/turf_dialog/state.rs` · 285 lines of code\nBelongs to project: [[📦 StatCraft (Overview) | 📦 StatCraft (Overview)]]"
+      },
+      "id": "blk_native_paragraph_1795702921324410400",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    },
+    {
+      "data": {
+        "level": 2,
+        "text": "Public Interface"
+      },
+      "id": "blk_native_heading_1795702921324411000",
+      "managed_by": "project_parser",
+      "type": "heading"
+    },
+    {
+      "data": {
+        "code": "pub struct TurfDialogState\npub enum TurfDialogAction\npub fn open_weights(&mut self)\npub fn close_weights(&mut self, accept: bool)\npub fn open_advanced(&mut self)\npub fn close_advanced(&mut self, accept: bool)\npub fn reset(&mut self)\npub fn build_options(&self) -> Result<TurfOptions, String>\npub fn can_execute(&self) -> bool",
+        "language": "rust"
+      },
+      "id": "blk_native_code_1795702921324411700",
+      "managed_by": "project_parser",
+      "type": "code"
+    }
+  ]
+}
+
+--BOUNDARY_PAYLOAD_ABBJ11GJSZ
+Content-Type: text/html; charset="utf-8"
+Content-Disposition: inline
+
+<!doctype html><html><head><meta charset="utf-8"><meta name="generator" content="CapsuleCraft Native"></head><body style="font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;max-width:720px;margin:32px auto;line-height:1.55;color:#23201c;background:#faf8f4;"><h1>📄 StatCraft / crates/statcraft_app/src/dialogs/turf_dialog/state.rs</h1><h1>📄 state.rs</h1><p>Path: `crates/statcraft_app/src/dialogs/turf_dialog/state.rs` · 285 lines of code<br>Belongs to project: [[📦 StatCraft (Overview) | 📦 StatCraft (Overview)]]</p><h2>Public Interface</h2><p><em>[code block — open in CapsuleCraft web for its canvas]</em></p><hr><p style="color:#8a8175;font-size:12px">Exported from CapsuleCraft Native · &lt;module-crates_statcraft_app_src_dialogs_turf_dialog_state_rs@capsuleos.local&gt;</p></body></html>
+
+--BOUNDARY_PAYLOAD_ABBJ11GJSZ--
+--BOUNDARY_ROOT_K130EJGGSN--

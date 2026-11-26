@@ -12,7 +12,7 @@ export function ArchitectureGuarantee({ lang = 'en' }: ArchitectureGuaranteeProp
   const t = {
     en: {
       eyebrow: '04 / ARCHITECTURAL INTEGRITY',
-      title: 'Built on 100% Safe Rust & Apache Arrow',
+      title: 'Built on 100% Safe Rust & Clean-Room Architecture',
       lead: 'Statistical software must never crash mid-calculation or produce silent NaN errors. StatCraft enforces strict memory safety, strict layered dependencies, and a zero-panic contract.',
       layerHeading: 'Layered Hierarchy (L0 → L6)',
       layerDesc: 'Enforced at compile-time by cargo xtask layers. No cyclic dependencies, no UI logic leaking into math.',
@@ -20,14 +20,14 @@ export function ArchitectureGuarantee({ lang = 'en' }: ArchitectureGuaranteeProp
       pillar1Desc: 'All non-test code strictly forbids unwrap(), expect(), panic!(), and unsafe. Every potential error (singular matrix, division by zero, insufficient sample size) is propagated as typed Result<T, StatError>.',
       pillar2Title: 'Clean-Room Implementation',
       pillar2Desc: 'Developed without a single line of proprietary IBM SPSS code or assets. Algorithms are derived strictly from published academic papers, ISO standards, and GNU PSPP open-source specifications.',
-      pillar3Title: 'Arrow Columnar Memory',
-      pillar3Desc: 'Datasets live in contiguous Apache Arrow arrays. Numerical transformations and filtering execute via SIMD-accelerated Polars engines with zero GC pauses.',
+      pillar3Title: 'Safe Columnar Architecture',
+      pillar3Desc: 'Datasets live in typed columnar structures with a transactional DeltaBuffer. Numerical transformations execute with zero GC pauses and zero crashes.',
       pillar4Title: 'Vector-First Design System',
       pillar4Desc: 'Native desktop GUI built in egui/eframe. Custom DialogKit with strict Design Guard checks, sub-millisecond render cycles, and 0 Unicode tofu glyphs.',
     },
     ru: {
       eyebrow: '04 / НАДЕЖНОСТЬ АРХИТЕКТУРЫ',
-      title: 'Фундамент: 100% безопасный Rust и Apache Arrow',
+      title: 'Фундамент: 100% безопасный Rust и Clean-Room архитектура',
       lead: 'Статистический пакет не имеет права аварийно падать посреди расчета или замалчивать ошибки NaN. StatCraft следует строгим контрактам надежности памяти и разделения слоев.',
       layerHeading: 'Слоистая архитектура (L0 → L6)',
       layerDesc: 'Проверяется утилитой cargo xtask layers при компиляции. Нулевая циклическая связанность, полная изоляция математики от UI.',
@@ -35,8 +35,8 @@ export function ArchitectureGuarantee({ lang = 'en' }: ArchitectureGuaranteeProp
       pillar1Desc: 'В коде строго запрещены unwrap(), expect(), panic!() и unsafe. Любые нештатные ситуации (вырожденная матрица, деление на ноль, малая выборка) возвращаются типизированными Result<T, StatError>.',
       pillar2Title: 'Принцип чистой комнаты (Clean-Room)',
       pillar2Desc: 'Разработка ведется без заимствования проприетарного кода IBM SPSS. Все алгоритмы воспроизводятся исключительно по открытым научным статьям и спецификациям GNU PSPP.',
-      pillar3Title: 'Колоночная память Apache Arrow',
-      pillar3Desc: 'Массивы данных хранятся в непрерывных блоках памяти Apache Arrow. Векторные преобразования и фильтрация выполняются движком Polars с поддержкой SIMD без пауз сборщика мусора.',
+      pillar3Title: 'Колоночная архитектура памяти',
+      pillar3Desc: 'Массивы данных организованы в типизированные колонки с транзакционным буфером правок (DeltaBuffer). Преобразования и расчеты выполняются без пауз сборщика мусора и без аварийных паник.',
       pillar4Title: 'Векторная дизайн-система',
       pillar4Desc: 'Нативный интерфейс на egui/eframe. Компонентный DialogKit со статическим линтером Design Guard, субмиллисекундным откликом и защитой от битых глифов Unicode.',
     },
@@ -47,9 +47,9 @@ export function ArchitectureGuarantee({ lang = 'en' }: ArchitectureGuaranteeProp
     { code: 'L5', name: 'statcraft_syntax', desc: 'CommandBus, .sps parser & command history', color: 'text-amber' },
     { code: 'L4', name: 'statcraft_reporting', desc: 'Pivot Tables model, export (PDF, DOCX, LaTeX)', color: 'text-yellow-400' },
     { code: 'L3', name: 'statcraft_charts', desc: 'Vector charts (egui_plot, brushing & linking)', color: 'text-emerald' },
-    { code: 'L2', name: 'statcraft_algo', desc: 'Numerical tests, linear algebra (statrs, faer)', color: 'text-blue-400' },
-    { code: 'L1', name: 'statcraft_core', desc: 'Apache Arrow / Polars DataSet & VariableDictionary', color: 'text-indigo-400' },
-    { code: 'L0', name: 'statcraft_io', desc: 'Codecs: .stc Parquet, SPSS .sav, CSV, Excel', color: 'text-purple-400' },
+    { code: 'L2', name: 'statcraft_algo', desc: 'Numerical tests, linear algebra in pure Safe Rust', color: 'text-blue-400' },
+    { code: 'L1', name: 'statcraft_core', desc: 'Clean-room DataSet, DeltaBuffer & VariableDictionary', color: 'text-indigo-400' },
+    { code: 'L0', name: 'statcraft_io', desc: 'Codecs: .stc Container, SPSS .sav, CSV, Excel', color: 'text-purple-400' },
   ];
 
   return (

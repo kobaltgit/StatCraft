@@ -132,7 +132,7 @@ Upgrading the File menu from a primitive CSV loader into an all-inclusive resear
 
 #### A. Unified Workspace Project Container (`.stc` — StatCraft Project)
 In classic SPSS, datasets (`.sav`), output logs (`.spv`), and scripts (`.sps`) are fragmented across disconnected files, often severing the link between reports and specific data versions.
-* **The `.stc` Project Format:** A native, open format built on Apache Parquet and structured JSON metadata, packaging into a single hermetic container:
+* **The `.stc` Project Format:** A native, open format built on compressed JSON metadata and columnar tables, packaging into a single hermetic container:
   1. The complete tabular dataset (`DataSet`);
   2. The full variable dictionary with rich metadata (`VariableDictionary`: types, measurement scales, `ValueLabels`, user and system missing values `MissingValues`, alignment, column widths, decimal precision);
   3. The entire `Output Viewer` workbook (all generated procedures, pivot tables, frequency distributions, `Notes` blocks, and syntax execution history);
@@ -319,7 +319,7 @@ The open scientific ecosystem bridge integrating external community packages, cu
 * **Install Local Extension (.scpl)...:** Offline package installer for StatCraft Plugin archives (`.scpl`) adhering to the *Zero-Core Hardcoding* canon;
 * **Custom Dialog Builder...:** Graphical form designer enabling analysts without low-level Rust experience to construct bespoke dialog modals rendered natively on `egui` and mapped to syntax/Python pipelines;
 * **AI & Model Context Protocol (MCP) Hub...:** Operational console monitoring the internal MCP server, exposing tools for autonomous orchestration by external AI agents (Antigravity, Claude, local LLMs);
-* **Scripting Runtime Bridge (Python & R Bridge via `statcraft_bridge`)...:** IPC socket management (18492) and runtime environment path binding for executing custom statistical scripts with safe Arrow memory sharing.
+* **Scripting Runtime Bridge (Python & R Bridge via `statcraft_bridge`)...:** IPC socket management (18492) and runtime environment path binding for executing custom statistical scripts with safe IPC memory sharing.
 
 ### 4.14. "Window" Menu Architecture — Docking Management & Layout Presets
 
@@ -447,7 +447,7 @@ Statistical pedagogy, transparent algorithmic specifications, and onboard sample
   * Full preservation of metadata: variable labels, value labels, measure scales, missing values (`SYSMIS`);
   * Support for compressed `.zsav`.
 * **StatCraft Native Project Codec `.stc`:**
-  * High-performance columnar storage based on Apache Parquet and JSON metadata.
+  * High-performance container format based on compressed JSON and columnar metadata.
 * **Document Export:**
   * Export Output Viewer books into TSV (100% Excel compatible), HTML, and plain text. PDF/LaTeX planned for upcoming releases.
 

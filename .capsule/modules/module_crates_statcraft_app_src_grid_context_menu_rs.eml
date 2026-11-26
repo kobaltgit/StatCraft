@@ -1,0 +1,94 @@
+From: CapsuleCraft Code Ingest <system@capsulecraft.local>
+To: Vault <vault@capsuleos.local>
+Subject: 📄 StatCraft / crates/statcraft_app/src/grid/context_menu.rs
+Date: Thu, 26 Nov 2026 14:22:01 +0000
+Message-ID: <module-crates_statcraft_app_src_grid_context_menu_rs@capsuleos.local>
+In-Reply-To: <subsystem-statcraft-crates_statcraft_app@capsuleos.local>
+X-Capsule-Page-Parent: <subsystem-statcraft-crates_statcraft_app@capsuleos.local>
+References: <project-index-statcraft@capsuleos.local> <subsystem-statcraft-crates_statcraft_app@capsuleos.local>
+X-Capsule-Tags: project, statcraft, module
+X-Capsule-Status: Active
+MIME-Version: 1.0
+Content-Type: multipart/mixed; boundary="BOUNDARY_ROOT_L5OOOLFSMT"
+
+--BOUNDARY_ROOT_L5OOOLFSMT
+Content-Type: multipart/alternative; boundary="BOUNDARY_PAYLOAD_1L99CRFVCF"
+
+--BOUNDARY_PAYLOAD_1L99CRFVCF
+Content-Type: application/json; name="canvas_state.json"
+Content-Disposition: inline; filename="canvas_state.json"
+
+{
+  "version": "1.0",
+  "generator": "CapsuleCraft Native egui prototype (Zero-DB Pure-MIME)",
+  "messageId": "<module-crates_statcraft_app_src_grid_context_menu_rs@capsuleos.local>",
+  "subject": "📄 StatCraft / crates/statcraft_app/src/grid/context_menu.rs",
+  "tags": [
+    "project",
+    "statcraft",
+    "module"
+  ],
+  "blocks": [
+    {
+      "data": {
+        "level": 1,
+        "text": "📄 context_menu.rs"
+      },
+      "id": "blk_native_heading_1795702921326044500",
+      "managed_by": "project_parser",
+      "type": "heading"
+    },
+    {
+      "data": {
+        "text": "Path: `crates/statcraft_app/src/grid/context_menu.rs` · 296 lines of code\nBelongs to project: [[📦 StatCraft (Overview) | 📦 StatCraft (Overview)]]"
+      },
+      "id": "blk_native_paragraph_1795702921326046200",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    },
+    {
+      "data": {
+        "level": 2,
+        "text": "Public Interface"
+      },
+      "id": "blk_native_heading_1795702921326046900",
+      "managed_by": "project_parser",
+      "type": "heading"
+    },
+    {
+      "data": {
+        "code": "pub enum ContextMenuTarget\npub struct GridContextMenuState\npub fn open(&mut self, row: usize, col: usize, pos: Pos2)\npub fn open_cell_range(&mut self, range: CellRange, active_cell: (usize, usize), pos: Pos2)\npub fn open_row_header(&mut self, target_row: usize, selected_rows: Vec<usize>, pos: Pos2)\npub fn open_col_header(&mut self, target_col: usize, selected_cols: Vec<usize>, pos: Pos2)\npub fn close(&mut self)\npub fn is_open(&self) -> bool\npub enum ContextMenuAction\npub fn render_context_menu( ui: &mut Ui, state: &mut GridContextMenuState, _ds: &DataSet, filter_state: &GridFilterState, ) -> Option<ContextMenuAction>",
+        "language": "rust"
+      },
+      "id": "blk_native_code_1795702921326047700",
+      "managed_by": "project_parser",
+      "type": "code"
+    },
+    {
+      "data": {
+        "level": 2,
+        "text": "Internal Dependencies"
+      },
+      "id": "blk_native_heading_1795702921326048500",
+      "managed_by": "project_parser",
+      "type": "heading"
+    },
+    {
+      "data": {
+        "text": "- `super::filter_menu::GridFilterState`\n- `super::selection::CellRange`\n- `crate::theme::Tokens`\n- `super::*`\n"
+      },
+      "id": "blk_native_paragraph_1795702921326050100",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    }
+  ]
+}
+
+--BOUNDARY_PAYLOAD_1L99CRFVCF
+Content-Type: text/html; charset="utf-8"
+Content-Disposition: inline
+
+<!doctype html><html><head><meta charset="utf-8"><meta name="generator" content="CapsuleCraft Native"></head><body style="font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;max-width:720px;margin:32px auto;line-height:1.55;color:#23201c;background:#faf8f4;"><h1>📄 StatCraft / crates/statcraft_app/src/grid/context_menu.rs</h1><h1>📄 context_menu.rs</h1><p>Path: `crates/statcraft_app/src/grid/context_menu.rs` · 296 lines of code<br>Belongs to project: [[📦 StatCraft (Overview) | 📦 StatCraft (Overview)]]</p><h2>Public Interface</h2><p><em>[code block — open in CapsuleCraft web for its canvas]</em></p><h2>Internal Dependencies</h2><p>- `super::filter_menu::GridFilterState`<br>- `super::selection::CellRange`<br>- `crate::theme::Tokens`<br>- `super::*`<br></p><hr><p style="color:#8a8175;font-size:12px">Exported from CapsuleCraft Native · &lt;module-crates_statcraft_app_src_grid_context_menu_rs@capsuleos.local&gt;</p></body></html>
+
+--BOUNDARY_PAYLOAD_1L99CRFVCF--
+--BOUNDARY_ROOT_L5OOOLFSMT--

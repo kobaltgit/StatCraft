@@ -2656,7 +2656,7 @@ Completed the comprehensive, line-by-line Clean-Room audit of all remaining Stat
    * **M-16 (`spss_loader/`):** confirmed decoding of Record Types 1 ($FL2/$FL3), 2 (variables), 3/4 (ValueLabels), 7 (subtypes 3, 4, 11, 13, 20 UTF-8), bytecode compression, and zsav ZLIB block decompression without panics;
    * **M-17 (`excel_loader.rs`):** automatic type inference and SPSS header sanitization (prefix `V_`, `_`, `VAR00001` fallback);
    * **M-18 (`csv_loader.rs`, `csv_writer.rs`):** strict RFC 4180 compliance and lossless round-trip;
-   * **M-19 (`stc_codec.rs`):** 100% preservation of `VariableDictionary` attributes alongside Apache Parquet chunks.
+   * **M-19 (`stc_codec.rs`):** 100% preservation of `VariableDictionary` attributes alongside compressed `.stc` container payload.
 
 4. **Block 14: Pivot Tables & Reporting (M-20):**
    * **M-20 (`statcraft_reporting`):** `PivotTable` model with two-tier super-headers, leading zero suppression `.000` for probability metrics, and TSV/HTML/TXT export fidelity matching SPSS styles.
@@ -3507,7 +3507,7 @@ Finalized stabilization of the modernized Data View tabular grid, prepared and p
 
 Delivered a full-fledged Multinomial Logistic Regression (**`NOMREG`**) procedure in strict accordance with the Spec-Kit architectural framework, IBM SPSS Statistics 24 canon, and Craft Anything Clean-Room principles:
 1. **L2 Computational Engine (`statcraft_algo::multinomial_logistic`):**
-   * **Newton-Raphson Numerical Optimizer (Fisher Scoring):** high-performance matrix operations via `faer`, numerically stable `log-sum-exp` formulation preventing floating-point overflow, backtracking line search, and Ridge Hessian damping ($\lambda = 10^{-6}$) under ill-conditioning or quasi-complete separation (enforcing the `Never Crash` rule);
+   * **Newton-Raphson Numerical Optimizer (Fisher Scoring):** high-performance matrix operations in pure Safe Rust, numerically stable `log-sum-exp` formulation preventing floating-point overflow, backtracking line search, and Ridge Hessian damping ($\lambda = 10^{-6}$) under ill-conditioning or quasi-complete separation (enforcing the `Never Crash` rule);
    * **Model Diagnostics & Inference:** Likelihood Ratio Tests (LRT) for individual predictor effects, subpopulation grouping for Pearson and Deviance goodness-of-fit $\chi^2$ tests, pseudo $R^2$ statistics (Cox & Snell, Nagelkerke, McFadden), parameter covariance matrix, Wald statistics, and Odds Ratios $\text{Exp}(B)$ with 95% confidence intervals;
    * **Classification Matrix:** observed vs. predicted category assignments and percentage of cases correctly classified;
    * **Categorical Factors:** discrete predictor support with automated dummy indicator contrast coding and reference category selection (defaulting to the last category).
@@ -3836,7 +3836,7 @@ Architected and deployed the official web platform and high-usability Wiki/Docum
 2. **Architectural Drafting Aesthetic (Blueprint Style):**
    * Adapted PhotoCraft Companion's drafting visual identity to StatCraft's theme tokens (`crates/statcraft_app/src/theme.rs`): dark graphite backgrounds `#14161a` / `#0c0d10`, hairline rules, `.tick` crosshairs, sticky `.hud-label` eyebrows, and measure scale accents (Scale `#4696e6`, Ordinal `#e6a028`, Nominal `#46be78`).
 3. **Interactive Landing Page Modules:**
-   * `Hero`: academic manifesto, v0.4.3 build status, 4 architectural guarantee chips (20/20 SciPy Oracle blocks, 0 panics, Apache Arrow, socket 18492);
+   * `Hero`: academic manifesto, v0.4.3 build status, 4 architectural guarantee chips (20/20 SciPy Oracle blocks, 0 panics, Safe Rust, socket 18492);
    * `OracleBenchmark`: searchable and filterable 20-block verification matrix with live KaTeX mathematical formula rendering, IBM algorithm references, and inline discrepancy report triggers;
    * `AgentLab`: interactive terminal demonstrating Model Context Protocol (MCP) and local JSON-RPC socket 18492 integration with AI assistants (Claude, Antigravity, local LLMs);
    * `ArchitectureGuarantee`: L0–L6 layered hierarchy blueprint and comparative advantages of 100% Safe Rust over legacy C++ codebases;

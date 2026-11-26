@@ -1,7 +1,7 @@
 From: CapsuleCraft Code Ingest <system@capsulecraft.local>
 To: Vault <vault@capsuleos.local>
 Subject: 📁 StatCraft / crates/statcraft_reporting
-Date: Wed, 11 Nov 2026 23:19:42 +0000
+Date: Thu, 26 Nov 2026 14:24:32 +0000
 Message-ID: <subsystem-statcraft-crates_statcraft_reporting@capsuleos.local>
 In-Reply-To: <project-index-statcraft@capsuleos.local>
 X-Capsule-Page-Parent: <project-index-statcraft@capsuleos.local>
@@ -34,16 +34,16 @@ Content-Disposition: inline; filename="canvas_state.json"
         "level": 1,
         "text": "📁 Subsystem: crates/statcraft_reporting"
       },
-      "id": "blk_native_heading_1794439182845242000",
+      "id": "blk_native_heading_1795703072849839000",
       "managed_by": "project_parser",
       "type": "heading"
     },
     {
       "data": {
         "icon": "folder",
-        "text": "Part of [[📦 StatCraft (Overview) | 📦 StatCraft (Overview)]]\nContains 5 source module(s)."
+        "text": "Part of [[📦 StatCraft (Overview) | 📦 StatCraft (Overview)]]\nContains 7 source module(s)."
       },
-      "id": "blk_native_callout_1794439182845243800",
+      "id": "blk_native_callout_1795703072849840600",
       "managed_by": "project_parser",
       "type": "callout"
     },
@@ -52,15 +52,15 @@ Content-Disposition: inline; filename="canvas_state.json"
         "level": 2,
         "text": "Modules in this Subsystem"
       },
-      "id": "blk_native_heading_1794439182845244500",
+      "id": "blk_native_heading_1795703072849841200",
       "managed_by": "project_parser",
       "type": "heading"
     },
     {
       "data": {
-        "text": "- [[📄 StatCraft / crates/statcraft_reporting/src/html_export.rs]] (`crates/statcraft_reporting/src/html_export.rs`)\n- [[📄 StatCraft / crates/statcraft_reporting/src/lib.rs]] (`crates/statcraft_reporting/src/lib.rs`) — *Reporting module for StatCraft (Pivot tables, export).*\n- [[📄 StatCraft / crates/statcraft_reporting/src/model.rs]] (`crates/statcraft_reporting/src/model.rs`)\n- [[📄 StatCraft / crates/statcraft_reporting/src/tsv_export.rs]] (`crates/statcraft_reporting/src/tsv_export.rs`)\n- [[📄 StatCraft / crates/statcraft_reporting/src/txt_export.rs]] (`crates/statcraft_reporting/src/txt_export.rs`)\n"
+        "text": "- [[📄 StatCraft / crates/statcraft_reporting/src/html_export.rs]] (`crates/statcraft_reporting/src/html_export.rs`)\n- [[📄 StatCraft / crates/statcraft_reporting/src/lib.rs]] (`crates/statcraft_reporting/src/lib.rs`) — *Reporting module for StatCraft (Pivot tables, export).*\n- [[📄 StatCraft / crates/statcraft_reporting/src/model.rs]] (`crates/statcraft_reporting/src/model.rs`)\n- [[📄 StatCraft / crates/statcraft_reporting/src/styling.rs]] (`crates/statcraft_reporting/src/styling.rs`)\n- [[📄 StatCraft / crates/statcraft_reporting/src/tsv_export.rs]] (`crates/statcraft_reporting/src/tsv_export.rs`)\n- [[📄 StatCraft / crates/statcraft_reporting/src/txt_export.rs]] (`crates/statcraft_reporting/src/txt_export.rs`)\n- [[📄 StatCraft / crates/statcraft_reporting/tests/styling_tests.rs]] (`crates/statcraft_reporting/tests/styling_tests.rs`)\n"
       },
-      "id": "blk_native_paragraph_1794439182845249500",
+      "id": "blk_native_paragraph_1795703072849846400",
       "managed_by": "project_parser",
       "type": "paragraph"
     }
@@ -71,7 +71,7 @@ Content-Disposition: inline; filename="canvas_state.json"
 Content-Type: text/html; charset="utf-8"
 Content-Disposition: inline
 
-<!doctype html><html><head><meta charset="utf-8"><meta name="generator" content="CapsuleCraft Native"></head><body style="font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;max-width:720px;margin:32px auto;line-height:1.55;color:#23201c;background:#faf8f4;"><h1>📁 StatCraft / crates/statcraft_reporting</h1><h1>📁 Subsystem: crates/statcraft_reporting</h1><p><em>[callout block — open in CapsuleCraft web for its canvas]</em></p><h2>Modules in this Subsystem</h2><p>- [[📄 StatCraft / crates/statcraft_reporting/src/html_export.rs]] (`crates/statcraft_reporting/src/html_export.rs`)<br>- [[📄 StatCraft / crates/statcraft_reporting/src/lib.rs]] (`crates/statcraft_reporting/src/lib.rs`) — *Reporting module for StatCraft (Pivot tables, export).*<br>- [[📄 StatCraft / crates/statcraft_reporting/src/model.rs]] (`crates/statcraft_reporting/src/model.rs`)<br>- [[📄 StatCraft / crates/statcraft_reporting/src/tsv_export.rs]] (`crates/statcraft_reporting/src/tsv_export.rs`)<br>- [[📄 StatCraft / crates/statcraft_reporting/src/txt_export.rs]] (`crates/statcraft_reporting/src/txt_export.rs`)<br></p><hr><p style="color:#8a8175;font-size:12px">Exported from CapsuleCraft Native · &lt;subsystem-statcraft-crates_statcraft_reporting@capsuleos.local&gt;</p></body></html>
+<!doctype html><html><head><meta charset="utf-8"><meta name="generator" content="CapsuleCraft Native"></head><body style="font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;max-width:720px;margin:32px auto;line-height:1.55;color:#23201c;background:#faf8f4;"><h1>📁 StatCraft / crates/statcraft_reporting</h1><h1>📁 Subsystem: crates/statcraft_reporting</h1><p><em>[callout block — open in CapsuleCraft web for its canvas]</em></p><h2>Modules in this Subsystem</h2><p>- [[📄 StatCraft / crates/statcraft_reporting/src/html_export.rs]] (`crates/statcraft_reporting/src/html_export.rs`)<br>- [[📄 StatCraft / crates/statcraft_reporting/src/lib.rs]] (`crates/statcraft_reporting/src/lib.rs`) — *Reporting module for StatCraft (Pivot tables, export).*<br>- [[📄 StatCraft / crates/statcraft_reporting/src/model.rs]] (`crates/statcraft_reporting/src/model.rs`)<br>- [[📄 StatCraft / crates/statcraft_reporting/src/styling.rs]] (`crates/statcraft_reporting/src/styling.rs`)<br>- [[📄 StatCraft / crates/statcraft_reporting/src/tsv_export.rs]] (`crates/statcraft_reporting/src/tsv_export.rs`)<br>- [[📄 StatCraft / crates/statcraft_reporting/src/txt_export.rs]] (`crates/statcraft_reporting/src/txt_export.rs`)<br>- [[📄 StatCraft / crates/statcraft_reporting/tests/styling_tests.rs]] (`crates/statcraft_reporting/tests/styling_tests.rs`)<br></p><hr><p style="color:#8a8175;font-size:12px">Exported from CapsuleCraft Native · &lt;subsystem-statcraft-crates_statcraft_reporting@capsuleos.local&gt;</p></body></html>
 
 --BOUNDARY_PAYLOAD_1QWBWWJF9S--
 --BOUNDARY_ROOT_1ANDWELF7J--

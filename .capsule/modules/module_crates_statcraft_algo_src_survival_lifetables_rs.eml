@@ -1,0 +1,103 @@
+From: CapsuleCraft Code Ingest <system@capsulecraft.local>
+To: Vault <vault@capsuleos.local>
+Subject: 📄 StatCraft / crates/statcraft_algo/src/survival_lifetables.rs
+Date: Thu, 26 Nov 2026 14:22:01 +0000
+Message-ID: <module-crates_statcraft_algo_src_survival_lifetables_rs@capsuleos.local>
+In-Reply-To: <subsystem-statcraft-crates_statcraft_algo@capsuleos.local>
+X-Capsule-Page-Parent: <subsystem-statcraft-crates_statcraft_algo@capsuleos.local>
+References: <project-index-statcraft@capsuleos.local> <subsystem-statcraft-crates_statcraft_algo@capsuleos.local>
+X-Capsule-Tags: project, statcraft, module
+X-Capsule-Status: Active
+MIME-Version: 1.0
+Content-Type: multipart/mixed; boundary="BOUNDARY_ROOT_N2I1O0G1TU"
+
+--BOUNDARY_ROOT_N2I1O0G1TU
+Content-Type: multipart/alternative; boundary="BOUNDARY_PAYLOAD_FER2LUG4NH"
+
+--BOUNDARY_PAYLOAD_FER2LUG4NH
+Content-Type: application/json; name="canvas_state.json"
+Content-Disposition: inline; filename="canvas_state.json"
+
+{
+  "version": "1.0",
+  "generator": "CapsuleCraft Native egui prototype (Zero-DB Pure-MIME)",
+  "messageId": "<module-crates_statcraft_algo_src_survival_lifetables_rs@capsuleos.local>",
+  "subject": "📄 StatCraft / crates/statcraft_algo/src/survival_lifetables.rs",
+  "tags": [
+    "project",
+    "statcraft",
+    "module"
+  ],
+  "blocks": [
+    {
+      "data": {
+        "level": 1,
+        "text": "📄 survival_lifetables.rs"
+      },
+      "id": "blk_native_heading_1795702921284582500",
+      "managed_by": "project_parser",
+      "type": "heading"
+    },
+    {
+      "data": {
+        "text": "Path: `crates/statcraft_algo/src/survival_lifetables.rs` · 234 lines of code\nBelongs to project: [[📦 StatCraft (Overview) | 📦 StatCraft (Overview)]]"
+      },
+      "id": "blk_native_paragraph_1795702921284584200",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    },
+    {
+      "data": {
+        "icon": "info",
+        "text": "Actuarial Life Tables procedure (SURVIVAL / stat.survival.lifetables).\nComputes interval-based mortality rates, cumulative survival, probability density,\nand hazard rate per IBM SPSS Statistics 24 Algorithms Guide."
+      },
+      "id": "blk_native_callout_1795702921284584700",
+      "managed_by": "project_parser",
+      "type": "callout"
+    },
+    {
+      "data": {
+        "level": 2,
+        "text": "Public Interface"
+      },
+      "id": "blk_native_heading_1795702921284585300",
+      "managed_by": "project_parser",
+      "type": "heading"
+    },
+    {
+      "data": {
+        "code": "pub struct LifeTableOptions\npub struct LifeTableRow\npub struct LifeTableResult\npub struct LifeTableCase\npub fn compute_life_table( cases: &[LifeTableCase], time_var: &str, status_var: &str, options: &LifeTableOptions, ) -> Result<LifeTableResult, AlgoError>",
+        "language": "rust"
+      },
+      "id": "blk_native_code_1795702921284585900",
+      "managed_by": "project_parser",
+      "type": "code"
+    },
+    {
+      "data": {
+        "level": 2,
+        "text": "Internal Dependencies"
+      },
+      "id": "blk_native_heading_1795702921284586700",
+      "managed_by": "project_parser",
+      "type": "heading"
+    },
+    {
+      "data": {
+        "text": "- `crate::anova_oneway::AlgoError`\n- `super::*`\n"
+      },
+      "id": "blk_native_paragraph_1795702921284587800",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    }
+  ]
+}
+
+--BOUNDARY_PAYLOAD_FER2LUG4NH
+Content-Type: text/html; charset="utf-8"
+Content-Disposition: inline
+
+<!doctype html><html><head><meta charset="utf-8"><meta name="generator" content="CapsuleCraft Native"></head><body style="font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;max-width:720px;margin:32px auto;line-height:1.55;color:#23201c;background:#faf8f4;"><h1>📄 StatCraft / crates/statcraft_algo/src/survival_lifetables.rs</h1><h1>📄 survival_lifetables.rs</h1><p>Path: `crates/statcraft_algo/src/survival_lifetables.rs` · 234 lines of code<br>Belongs to project: [[📦 StatCraft (Overview) | 📦 StatCraft (Overview)]]</p><p><em>[callout block — open in CapsuleCraft web for its canvas]</em></p><h2>Public Interface</h2><p><em>[code block — open in CapsuleCraft web for its canvas]</em></p><h2>Internal Dependencies</h2><p>- `crate::anova_oneway::AlgoError`<br>- `super::*`<br></p><hr><p style="color:#8a8175;font-size:12px">Exported from CapsuleCraft Native · &lt;module-crates_statcraft_algo_src_survival_lifetables_rs@capsuleos.local&gt;</p></body></html>
+
+--BOUNDARY_PAYLOAD_FER2LUG4NH--
+--BOUNDARY_ROOT_N2I1O0G1TU--

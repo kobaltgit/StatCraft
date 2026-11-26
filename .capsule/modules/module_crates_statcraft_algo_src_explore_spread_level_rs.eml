@@ -1,0 +1,94 @@
+From: CapsuleCraft Code Ingest <system@capsulecraft.local>
+To: Vault <vault@capsuleos.local>
+Subject: 📄 StatCraft / crates/statcraft_algo/src/explore/spread_level.rs
+Date: Thu, 26 Nov 2026 14:22:01 +0000
+Message-ID: <module-crates_statcraft_algo_src_explore_spread_level_rs@capsuleos.local>
+In-Reply-To: <subsystem-statcraft-crates_statcraft_algo@capsuleos.local>
+X-Capsule-Page-Parent: <subsystem-statcraft-crates_statcraft_algo@capsuleos.local>
+References: <project-index-statcraft@capsuleos.local> <subsystem-statcraft-crates_statcraft_algo@capsuleos.local>
+X-Capsule-Tags: project, statcraft, module
+X-Capsule-Status: Active
+MIME-Version: 1.0
+Content-Type: multipart/mixed; boundary="BOUNDARY_ROOT_KICKXPG4P9"
+
+--BOUNDARY_ROOT_KICKXPG4P9
+Content-Type: multipart/alternative; boundary="BOUNDARY_PAYLOAD_12OWUXVG7K"
+
+--BOUNDARY_PAYLOAD_12OWUXVG7K
+Content-Type: application/json; name="canvas_state.json"
+Content-Disposition: inline; filename="canvas_state.json"
+
+{
+  "version": "1.0",
+  "generator": "CapsuleCraft Native egui prototype (Zero-DB Pure-MIME)",
+  "messageId": "<module-crates_statcraft_algo_src_explore_spread_level_rs@capsuleos.local>",
+  "subject": "📄 StatCraft / crates/statcraft_algo/src/explore/spread_level.rs",
+  "tags": [
+    "project",
+    "statcraft",
+    "module"
+  ],
+  "blocks": [
+    {
+      "data": {
+        "level": 1,
+        "text": "📄 spread_level.rs"
+      },
+      "id": "blk_native_heading_1795702921270127000",
+      "managed_by": "project_parser",
+      "type": "heading"
+    },
+    {
+      "data": {
+        "text": "Path: `crates/statcraft_algo/src/explore/spread_level.rs` · 379 lines of code\nBelongs to project: [[📦 StatCraft (Overview) | 📦 StatCraft (Overview)]]"
+      },
+      "id": "blk_native_paragraph_1795702921270129900",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    },
+    {
+      "data": {
+        "level": 2,
+        "text": "Public Interface"
+      },
+      "id": "blk_native_heading_1795702921270130900",
+      "managed_by": "project_parser",
+      "type": "heading"
+    },
+    {
+      "data": {
+        "code": "pub enum LeveneBasis\npub struct LeveneTestRow\npub struct ExploreLeveneResult\npub enum SpreadLevelMode\npub struct SpreadLevelGroupRow\npub struct SpreadLevelResult\npub fn compute_explore_levene( variable: &str, factor_var: &str, groups: &[(String, Vec<f64>)], ) -> Option<ExploreLeveneResult>\npub fn compute_spread_level( variable: &str, factor_var: &str, groups: &[(String, Vec<f64>)], mode: SpreadLevelMode, ) -> Option<SpreadLevelResult>",
+        "language": "rust"
+      },
+      "id": "blk_native_code_1795702921270132500",
+      "managed_by": "project_parser",
+      "type": "code"
+    },
+    {
+      "data": {
+        "level": 2,
+        "text": "Internal Dependencies"
+      },
+      "id": "blk_native_heading_1795702921270133700",
+      "managed_by": "project_parser",
+      "type": "heading"
+    },
+    {
+      "data": {
+        "text": "- `crate::anova_oneway::f_distribution_sf`\n- `crate::explore::descriptives::compute_5pct_trimmed_mean`\n- `crate::frequencies::compute_percentile`\n- `super::*`\n"
+      },
+      "id": "blk_native_paragraph_1795702921270136300",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    }
+  ]
+}
+
+--BOUNDARY_PAYLOAD_12OWUXVG7K
+Content-Type: text/html; charset="utf-8"
+Content-Disposition: inline
+
+<!doctype html><html><head><meta charset="utf-8"><meta name="generator" content="CapsuleCraft Native"></head><body style="font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;max-width:720px;margin:32px auto;line-height:1.55;color:#23201c;background:#faf8f4;"><h1>📄 StatCraft / crates/statcraft_algo/src/explore/spread_level.rs</h1><h1>📄 spread_level.rs</h1><p>Path: `crates/statcraft_algo/src/explore/spread_level.rs` · 379 lines of code<br>Belongs to project: [[📦 StatCraft (Overview) | 📦 StatCraft (Overview)]]</p><h2>Public Interface</h2><p><em>[code block — open in CapsuleCraft web for its canvas]</em></p><h2>Internal Dependencies</h2><p>- `crate::anova_oneway::f_distribution_sf`<br>- `crate::explore::descriptives::compute_5pct_trimmed_mean`<br>- `crate::frequencies::compute_percentile`<br>- `super::*`<br></p><hr><p style="color:#8a8175;font-size:12px">Exported from CapsuleCraft Native · &lt;module-crates_statcraft_algo_src_explore_spread_level_rs@capsuleos.local&gt;</p></body></html>
+
+--BOUNDARY_PAYLOAD_12OWUXVG7K--
+--BOUNDARY_ROOT_KICKXPG4P9--

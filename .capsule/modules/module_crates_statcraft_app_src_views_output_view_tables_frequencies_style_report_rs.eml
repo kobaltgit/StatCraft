@@ -1,0 +1,94 @@
+From: CapsuleCraft Code Ingest <system@capsulecraft.local>
+To: Vault <vault@capsuleos.local>
+Subject: 📄 StatCraft / crates/statcraft_app/src/views/output_view/tables_frequencies/style_report.rs
+Date: Thu, 26 Nov 2026 14:22:01 +0000
+Message-ID: <module-crates_statcraft_app_src_views_output_view_tables_frequencies_style_report_rs@capsuleos.local>
+In-Reply-To: <subsystem-statcraft-crates_statcraft_app@capsuleos.local>
+X-Capsule-Page-Parent: <subsystem-statcraft-crates_statcraft_app@capsuleos.local>
+References: <project-index-statcraft@capsuleos.local> <subsystem-statcraft-crates_statcraft_app@capsuleos.local>
+X-Capsule-Tags: project, statcraft, module
+X-Capsule-Status: Active
+MIME-Version: 1.0
+Content-Type: multipart/mixed; boundary="BOUNDARY_ROOT_EU802XILXZ"
+
+--BOUNDARY_ROOT_EU802XILXZ
+Content-Type: multipart/alternative; boundary="BOUNDARY_PAYLOAD_1EH0CM7IPU"
+
+--BOUNDARY_PAYLOAD_1EH0CM7IPU
+Content-Type: application/json; name="canvas_state.json"
+Content-Disposition: inline; filename="canvas_state.json"
+
+{
+  "version": "1.0",
+  "generator": "CapsuleCraft Native egui prototype (Zero-DB Pure-MIME)",
+  "messageId": "<module-crates_statcraft_app_src_views_output_view_tables_frequencies_style_report_rs@capsuleos.local>",
+  "subject": "📄 StatCraft / crates/statcraft_app/src/views/output_view/tables_frequencies/style_report.rs",
+  "tags": [
+    "project",
+    "statcraft",
+    "module"
+  ],
+  "blocks": [
+    {
+      "data": {
+        "level": 1,
+        "text": "📄 style_report.rs"
+      },
+      "id": "blk_native_heading_1795702921349320600",
+      "managed_by": "project_parser",
+      "type": "heading"
+    },
+    {
+      "data": {
+        "text": "Path: `crates/statcraft_app/src/views/output_view/tables_frequencies/style_report.rs` · 239 lines of code\nBelongs to project: [[📦 StatCraft (Overview) | 📦 StatCraft (Overview)]]"
+      },
+      "id": "blk_native_paragraph_1795702921349322200",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    },
+    {
+      "data": {
+        "level": 2,
+        "text": "Public Interface"
+      },
+      "id": "blk_native_heading_1795702921349322900",
+      "managed_by": "project_parser",
+      "type": "heading"
+    },
+    {
+      "data": {
+        "code": "pub fn frequency_result_to_report_table(res: &FrequencyResult) -> ReportTable\npub fn build_frequencies_styled_tables( results: &[FrequencyResult], rules: Option<&[TableStyleRule]>, create_style_report: bool, ) -> (Vec<ReportTable>, Option<ReportTable>)\npub fn build_frequencies_procedure( state: &mut crate::views::output_view::model::OutputViewerState, results: Vec<FrequencyResult>, sps_log: String, table_styles: Option<&[TableStyleRule]>, create_style_report: bool, )",
+        "language": "rust"
+      },
+      "id": "blk_native_code_1795702921349323700",
+      "managed_by": "project_parser",
+      "type": "code"
+    },
+    {
+      "data": {
+        "level": 2,
+        "text": "Internal Dependencies"
+      },
+      "id": "blk_native_heading_1795702921349324400",
+      "managed_by": "project_parser",
+      "type": "heading"
+    },
+    {
+      "data": {
+        "text": "- `crate::dialogs::table_style_dialog::{format_condition_summary, format_style_summary}`\n- `crate::views::output_view::model::{`\n"
+      },
+      "id": "blk_native_paragraph_1795702921349325600",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    }
+  ]
+}
+
+--BOUNDARY_PAYLOAD_1EH0CM7IPU
+Content-Type: text/html; charset="utf-8"
+Content-Disposition: inline
+
+<!doctype html><html><head><meta charset="utf-8"><meta name="generator" content="CapsuleCraft Native"></head><body style="font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;max-width:720px;margin:32px auto;line-height:1.55;color:#23201c;background:#faf8f4;"><h1>📄 StatCraft / crates/statcraft_app/src/views/output_view/tables_frequencies/style_report.rs</h1><h1>📄 style_report.rs</h1><p>Path: `crates/statcraft_app/src/views/output_view/tables_frequencies/style_report.rs` · 239 lines of code<br>Belongs to project: [[📦 StatCraft (Overview) | 📦 StatCraft (Overview)]]</p><h2>Public Interface</h2><p><em>[code block — open in CapsuleCraft web for its canvas]</em></p><h2>Internal Dependencies</h2><p>- `crate::dialogs::table_style_dialog::{format_condition_summary, format_style_summary}`<br>- `crate::views::output_view::model::{`<br></p><hr><p style="color:#8a8175;font-size:12px">Exported from CapsuleCraft Native · &lt;module-crates_statcraft_app_src_views_output_view_tables_frequencies_style_report_rs@capsuleos.local&gt;</p></body></html>
+
+--BOUNDARY_PAYLOAD_1EH0CM7IPU--
+--BOUNDARY_ROOT_EU802XILXZ--

@@ -1,0 +1,94 @@
+From: CapsuleCraft Code Ingest <system@capsulecraft.local>
+To: Vault <vault@capsuleos.local>
+Subject: 📄 StatCraft / crates/statcraft_algo/src/bootstrap/procedures.rs
+Date: Thu, 26 Nov 2026 14:22:01 +0000
+Message-ID: <module-crates_statcraft_algo_src_bootstrap_procedures_rs@capsuleos.local>
+In-Reply-To: <subsystem-statcraft-crates_statcraft_algo@capsuleos.local>
+X-Capsule-Page-Parent: <subsystem-statcraft-crates_statcraft_algo@capsuleos.local>
+References: <project-index-statcraft@capsuleos.local> <subsystem-statcraft-crates_statcraft_algo@capsuleos.local>
+X-Capsule-Tags: project, statcraft, module
+X-Capsule-Status: Active
+MIME-Version: 1.0
+Content-Type: multipart/mixed; boundary="BOUNDARY_ROOT_1H9CS25G4U"
+
+--BOUNDARY_ROOT_1H9CS25G4U
+Content-Type: multipart/alternative; boundary="BOUNDARY_PAYLOAD_FC9DLFG7PM"
+
+--BOUNDARY_PAYLOAD_FC9DLFG7PM
+Content-Type: application/json; name="canvas_state.json"
+Content-Disposition: inline; filename="canvas_state.json"
+
+{
+  "version": "1.0",
+  "generator": "CapsuleCraft Native egui prototype (Zero-DB Pure-MIME)",
+  "messageId": "<module-crates_statcraft_algo_src_bootstrap_procedures_rs@capsuleos.local>",
+  "subject": "📄 StatCraft / crates/statcraft_algo/src/bootstrap/procedures.rs",
+  "tags": [
+    "project",
+    "statcraft",
+    "module"
+  ],
+  "blocks": [
+    {
+      "data": {
+        "level": 1,
+        "text": "📄 procedures.rs"
+      },
+      "id": "blk_native_heading_1795702921257399500",
+      "managed_by": "project_parser",
+      "type": "heading"
+    },
+    {
+      "data": {
+        "text": "Path: `crates/statcraft_algo/src/bootstrap/procedures.rs` · 377 lines of code\nBelongs to project: [[📦 StatCraft (Overview) | 📦 StatCraft (Overview)]]"
+      },
+      "id": "blk_native_paragraph_1795702921257401200",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    },
+    {
+      "data": {
+        "level": 2,
+        "text": "Public Interface"
+      },
+      "id": "blk_native_heading_1795702921257401800",
+      "managed_by": "project_parser",
+      "type": "heading"
+    },
+    {
+      "data": {
+        "code": "pub struct OneWayAnovaBootstrapGroup\npub struct OneWayAnovaBootstrapPair\npub struct OneWayAnovaBootstrap\npub fn compute_descriptives_bootstrap( var_name: &str, values: &[Option<f64>], weights: &[f64], strata_keys: Option<&[String]>, options: Option<&DescriptivesOptions>, boot_options: &BootstrapOptions, ) -> Result<DescriptivesBootstrap, BootstrapError>\npub fn compute_indep_ttest_bootstrap( var_name: &str, grouping_name: &str, var_values: &[Option<f64>], group_values: &[Option<String>], options: &IndepTTestOptions, strata_keys: Option<&[String]>, boot_options: &BootstrapOptions,\npub fn compute_paired_ttest_bootstrap( pair_num: usize, var1_name: &str, var1_vals: &[Option<f64>], var2_name: &str, var2_vals: &[Option<f64>], confidence_level: f64, strata_keys: Option<&[String]>,\npub fn compute_oneway_anova_bootstrap( dep_name: &str, factor_name: &str, dep_values: &[Option<f64>], factor_values: &[Option<String>], options: &OneWayAnovaOptions, base_res: &OneWayAnovaResult, strata_keys: Option<&[String]>,\npub fn compute_bivariate_correlations_bootstrap( variables: &[VariableInput<'_>], options: &BivariateCorrelationsOptions, strata_keys: Option<&[String]>, boot_options: &BootstrapOptions, ) -> Result<CorrelationsBootstrap, BootstrapError>",
+        "language": "rust"
+      },
+      "id": "blk_native_code_1795702921257402800",
+      "managed_by": "project_parser",
+      "type": "code"
+    },
+    {
+      "data": {
+        "level": 2,
+        "text": "Internal Dependencies"
+      },
+      "id": "blk_native_heading_1795702921257403500",
+      "managed_by": "project_parser",
+      "type": "heading"
+    },
+    {
+      "data": {
+        "text": "- `super::{`\n- `crate::anova_oneway::{compute_oneway_anova, OneWayAnovaOptions, OneWayAnovaResult}`\n- `crate::correlations::{compute_bivariate_correlations, VariableInput}`\n- `crate::correlations_types::{`\n- `crate::descriptives::{`\n- `crate::ttest_indep::{`\n- `crate::ttest_paired::{compute_single_pair, PairedTTestBootstrap, PairedTTestResult}`\n"
+      },
+      "id": "blk_native_paragraph_1795702921257405700",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    }
+  ]
+}
+
+--BOUNDARY_PAYLOAD_FC9DLFG7PM
+Content-Type: text/html; charset="utf-8"
+Content-Disposition: inline
+
+<!doctype html><html><head><meta charset="utf-8"><meta name="generator" content="CapsuleCraft Native"></head><body style="font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;max-width:720px;margin:32px auto;line-height:1.55;color:#23201c;background:#faf8f4;"><h1>📄 StatCraft / crates/statcraft_algo/src/bootstrap/procedures.rs</h1><h1>📄 procedures.rs</h1><p>Path: `crates/statcraft_algo/src/bootstrap/procedures.rs` · 377 lines of code<br>Belongs to project: [[📦 StatCraft (Overview) | 📦 StatCraft (Overview)]]</p><h2>Public Interface</h2><p><em>[code block — open in CapsuleCraft web for its canvas]</em></p><h2>Internal Dependencies</h2><p>- `super::{`<br>- `crate::anova_oneway::{compute_oneway_anova, OneWayAnovaOptions, OneWayAnovaResult}`<br>- `crate::correlations::{compute_bivariate_correlations, VariableInput}`<br>- `crate::correlations_types::{`<br>- `crate::descriptives::{`<br>- `crate::ttest_indep::{`<br>- `crate::ttest_paired::{compute_single_pair, PairedTTestBootstrap, PairedTTestResult}`<br></p><hr><p style="color:#8a8175;font-size:12px">Exported from CapsuleCraft Native · &lt;module-crates_statcraft_algo_src_bootstrap_procedures_rs@capsuleos.local&gt;</p></body></html>
+
+--BOUNDARY_PAYLOAD_FC9DLFG7PM--
+--BOUNDARY_ROOT_1H9CS25G4U--

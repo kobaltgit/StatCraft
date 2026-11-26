@@ -221,15 +221,15 @@ Unlike generic chatbots where analytical results remain trapped in the chat side
     category: "getting-started",
     categoryTitleEn: "Getting Started",
     categoryTitleRu: "Начало работы",
-    titleEn: "100% Safe Rust & Arrow Engine",
-    titleRu: "100% Safe Rust и движок Arrow",
+    titleEn: "100% Safe Rust & Columnar Engine",
+    titleRu: "100% Safe Rust и колоночный движок",
     descriptionEn: "Memory safety guarantees, layered crate boundaries, and zero-panic error handling.",
     descriptionRu: "Гарантии безопасности памяти, строгая иерархия слоев и отказ от аварийных паник.",
     oracleStatus: "Compile-Time Enforced (cargo xtask layers)",
     spssPage: "Crates: statcraft_core, statcraft_algo",
     toc: [
       { id: "zero-panic", titleEn: "1. The Zero-Panic Contract", titleRu: "1. Контракт нулевых паник" },
-      { id: "arrow-polars", titleEn: "2. Apache Arrow Memory Model", titleRu: "2. Модель памяти Apache Arrow" },
+      { id: "columnar-memory", titleEn: "2. Columnar In-Memory Architecture", titleRu: "2. Колоночная модель памяти" },
       { id: "layered-crates", titleEn: "3. Layer Hierarchy (L0–L6)", titleRu: "3. Иерархия слоев (L0–L6)" },
     ],
     contentEn: `### 1. The Zero-Panic Contract
@@ -237,11 +237,11 @@ StatCraft strictly bans the following constructs in production code:
 \`unwrap()\`, \`expect(...)\`, \`panic!(...)\`, \`unreachable!(...)\`, \`todo!()\`, and \`unsafe\`.
 All potential failures—such as singular covariance matrices, zero variances, or division by zero—are captured as typed \`Result<T, StatError>\` variants and presented gracefully in the user interface.
 
-### 2. Apache Arrow Memory Model
-Instead of allocating separate heap structures for individual data cells, StatCraft represents variables as continuous, contiguous Apache Arrow arrays:
-* **SIMD Vectorization**: Vector operations run across CPU registers without pointer chasing;
-* **Polars Acceleration**: Fast multi-threaded group-by, filtering, and aggregation;
-* **Zero GC**: Deterministic memory deallocation without garbage collector stutter.
+### 2. Columnar In-Memory Architecture
+StatCraft structures datasets as typed columns paired with metadata dictionaries and transactional edit buffers:
+* **Typed Column Vectors**: Variables are represented as typed vectors (\`RawColumn\`), separating numeric and text payloads;
+* **Transactional DeltaBuffer**: Edits are staged in a non-destructive undo/redo stack without mutating raw data unpredictably;
+* **Zero GC**: Deterministic memory deallocation with zero runtime pauses.
 
 ### 3. Layer Hierarchy (L0–L6)
 The repository enforces a strict unidirectional dependency hierarchy checked via \`cargo xtask layers\`:
@@ -257,11 +257,11 @@ The repository enforces a strict unidirectional dependency hierarchy checked via
 \`unwrap()\`, \`expect(...)\`, \`panic!(...)\`, \`unreachable!(...)\`, \`todo!()\` и блоки \`unsafe\`.
 Все потенциальные ошибки — вырожденные матрицы, деление на ноль или нулевая дисперсия — передаются в виде типизированных \`Result<T, StatError>\` и выводятся пользователю без падения программы.
 
-### 2. Модель памяти Apache Arrow
-Вместо выделения памяти под каждую ячейку таблицы StatCraft хранит столбцы в виде непрерывных массивов Apache Arrow:
-* **SIMD-векторизация**: Математические операции задействуют регистры процессора напрямую;
-* **Движок Polars**: Быстрые многопоточные группировки и фильтрации;
-* **Без GC**: Предсказуемое освобождение ресурсов без пауз сборщика мусора.
+### 2. Колоночная модель памяти
+StatCraft организует датасет в виде типизированных колонок, словаря переменных и транзакционного буфера правок:
+* **Типизированные колонки**: Переменные хранятся в изолированных векторах (\`RawColumn\`), разделяя числовые и текстовые типы данных;
+* **Транзакционный DeltaBuffer**: Все изменения фиксируются в неразрушающем стеке Undo/Redo без непредсказуемой перезаписи базовых данных;
+* **Без GC**: Детерминированное освобождение ресурсов на Rust без пауз сборщика мусора.
 
 ### 3. Иерархия слоев (L0–L6)
 В проекте действует строгая слоистая архитектура, проверяемая утилитой \`cargo xtask layers\`:

@@ -360,7 +360,7 @@ export const AUDIT_BLOCKS: AuditBlock[] = [
     number: 13,
     titleEn: "I/O Codecs Subsystem",
     titleRu: "Подсистема кодеков ввода-вывода",
-    procedures: ["SPSS .sav/.zsav", "EXCEL .xlsx/.xls/.ods", "CSV", "PARQUET .stc"],
+    procedures: ["SPSS .sav/.zsav", "EXCEL .xlsx/.xls/.ods", "CSV", "STC CONTAINER .stc"],
     referencePage: "Record Types 1,2,3/4,7 & RFC 4180",
     implementationFiles: ["spss_loader/", "excel_loader.rs", "csv_loader.rs", "csv_writer.rs", "stc_codec.rs"],
     status: "verified",
@@ -373,8 +373,8 @@ export const AUDIT_BLOCKS: AuditBlock[] = [
         descriptionRu: "Нативный парсер байткода и потоковая декомпрессия ZLIB-блоков (.zsav)",
       },
       {
-        name: "Snappy/Zstd Apache Parquet .stc",
-        latex: "Container = JSON(VariableDictionary) + Parquet(Columns)",
+        name: "Compressed StatCraft Container .stc",
+        latex: "Container = \\text{Gzip}(JSON(\\text{VariableDictionary}, \\text{Table}, \\text{Session}))",
         descriptionEn: "High-speed columnar storage container with full session and metadata persistence",
         descriptionRu: "Высокоскоростной контейнер колоночного хранения со всеми метаданными сессии",
       },
@@ -531,7 +531,7 @@ export const AUDIT_BLOCKS: AuditBlock[] = [
       {
         name: "Generalized Logit Model",
         latex: "\\pi_{ij} = \\frac{\\exp(\\beta_j^T x_i)}{1 + \\sum_{k=1}^{J-1} \\exp(\\beta_k^T x_i)}, \\quad \\pi_{iJ} = \\frac{1}{1 + \\sum_{k=1}^{J-1} \\exp(\\beta_k^T x_i)}",
-        descriptionEn: "Newton-Raphson / Fisher Scoring on faer with Ridge Hessian damping lambda = 1e-6",
+        descriptionEn: "Newton-Raphson / Fisher Scoring in pure Safe Rust with Ridge Hessian damping lambda = 1e-6",
         descriptionRu: "Обобщенные логиты с базовой категорией и Ридж-регуляризацией Never Crash",
       },
     ],

@@ -1,0 +1,76 @@
+From: CapsuleCraft Code Ingest <system@capsulecraft.local>
+To: Vault <vault@capsuleos.local>
+Subject: 📄 StatCraft / crates/statcraft_algo/src/explore/helpers.rs
+Date: Thu, 26 Nov 2026 14:22:01 +0000
+Message-ID: <module-crates_statcraft_algo_src_explore_helpers_rs@capsuleos.local>
+In-Reply-To: <subsystem-statcraft-crates_statcraft_algo@capsuleos.local>
+X-Capsule-Page-Parent: <subsystem-statcraft-crates_statcraft_algo@capsuleos.local>
+References: <project-index-statcraft@capsuleos.local> <subsystem-statcraft-crates_statcraft_algo@capsuleos.local>
+X-Capsule-Tags: project, statcraft, module
+X-Capsule-Status: Active
+MIME-Version: 1.0
+Content-Type: multipart/mixed; boundary="BOUNDARY_ROOT_7VZVYFFPLO"
+
+--BOUNDARY_ROOT_7VZVYFFPLO
+Content-Type: multipart/alternative; boundary="BOUNDARY_PAYLOAD_1J7DBSHFS9"
+
+--BOUNDARY_PAYLOAD_1J7DBSHFS9
+Content-Type: application/json; name="canvas_state.json"
+Content-Disposition: inline; filename="canvas_state.json"
+
+{
+  "version": "1.0",
+  "generator": "CapsuleCraft Native egui prototype (Zero-DB Pure-MIME)",
+  "messageId": "<module-crates_statcraft_algo_src_explore_helpers_rs@capsuleos.local>",
+  "subject": "📄 StatCraft / crates/statcraft_algo/src/explore/helpers.rs",
+  "tags": [
+    "project",
+    "statcraft",
+    "module"
+  ],
+  "blocks": [
+    {
+      "data": {
+        "level": 1,
+        "text": "📄 helpers.rs"
+      },
+      "id": "blk_native_heading_1795702921267611000",
+      "managed_by": "project_parser",
+      "type": "heading"
+    },
+    {
+      "data": {
+        "text": "Path: `crates/statcraft_algo/src/explore/helpers.rs` · 171 lines of code\nBelongs to project: [[📦 StatCraft (Overview) | 📦 StatCraft (Overview)]]"
+      },
+      "id": "blk_native_paragraph_1795702921267613000",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    },
+    {
+      "data": {
+        "level": 2,
+        "text": "Internal Dependencies"
+      },
+      "id": "blk_native_heading_1795702921267613700",
+      "managed_by": "project_parser",
+      "type": "heading"
+    },
+    {
+      "data": {
+        "text": "- `super::descriptives::compute_explore_descriptives`\n- `super::extremes::compute_extreme_values_with_labels`\n- `super::m_estimators::compute_m_estimators`\n- `super::normality_ks::compute_lilliefors_ks`\n- `super::normality_sw::compute_shapiro_wilk`\n- `super::percentiles::compute_explore_percentiles`\n- `super::plots_data::{compute_group_plot_data, ExploreBoxplotDisplay, ExploreOutputDisplay}`\n- `super::{ExploreCaseProcessing, ExploreGroupResult, ExploreOptions, NormalityTestsResult}`\n"
+      },
+      "id": "blk_native_paragraph_1795702921267616700",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    }
+  ]
+}
+
+--BOUNDARY_PAYLOAD_1J7DBSHFS9
+Content-Type: text/html; charset="utf-8"
+Content-Disposition: inline
+
+<!doctype html><html><head><meta charset="utf-8"><meta name="generator" content="CapsuleCraft Native"></head><body style="font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;max-width:720px;margin:32px auto;line-height:1.55;color:#23201c;background:#faf8f4;"><h1>📄 StatCraft / crates/statcraft_algo/src/explore/helpers.rs</h1><h1>📄 helpers.rs</h1><p>Path: `crates/statcraft_algo/src/explore/helpers.rs` · 171 lines of code<br>Belongs to project: [[📦 StatCraft (Overview) | 📦 StatCraft (Overview)]]</p><h2>Internal Dependencies</h2><p>- `super::descriptives::compute_explore_descriptives`<br>- `super::extremes::compute_extreme_values_with_labels`<br>- `super::m_estimators::compute_m_estimators`<br>- `super::normality_ks::compute_lilliefors_ks`<br>- `super::normality_sw::compute_shapiro_wilk`<br>- `super::percentiles::compute_explore_percentiles`<br>- `super::plots_data::{compute_group_plot_data, ExploreBoxplotDisplay, ExploreOutputDisplay}`<br>- `super::{ExploreCaseProcessing, ExploreGroupResult, ExploreOptions, NormalityTestsResult}`<br></p><hr><p style="color:#8a8175;font-size:12px">Exported from CapsuleCraft Native · &lt;module-crates_statcraft_algo_src_explore_helpers_rs@capsuleos.local&gt;</p></body></html>
+
+--BOUNDARY_PAYLOAD_1J7DBSHFS9--
+--BOUNDARY_ROOT_7VZVYFFPLO--

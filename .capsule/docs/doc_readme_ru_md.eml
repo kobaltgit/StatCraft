@@ -1,7 +1,7 @@
 From: CapsuleCraft Code Ingest <system@capsulecraft.local>
 To: Vault <vault@capsuleos.local>
 Subject: 📚 StatCraft / README.ru
-Date: Wed, 11 Nov 2026 13:48:23 +0000
+Date: Thu, 26 Nov 2026 14:22:01 +0000
 Message-ID: <doc-statcraft-readme_ru_md@capsuleos.local>
 In-Reply-To: <project-index-statcraft@capsuleos.local>
 X-Capsule-Page-Parent: <project-index-statcraft@capsuleos.local>
@@ -9,12 +9,12 @@ References: <project-index-statcraft@capsuleos.local>
 X-Capsule-Tags: project, statcraft, docs
 X-Capsule-Status: Active
 MIME-Version: 1.0
-Content-Type: multipart/mixed; boundary="BOUNDARY_ROOT_8FC7SWDNFI"
+Content-Type: multipart/mixed; boundary="BOUNDARY_ROOT_13UUTEADNF"
 
---BOUNDARY_ROOT_8FC7SWDNFI
-Content-Type: multipart/alternative; boundary="BOUNDARY_PAYLOAD_1SINRTUDP0"
+--BOUNDARY_ROOT_13UUTEADNF
+Content-Type: multipart/alternative; boundary="BOUNDARY_PAYLOAD_1PYJZPSDP0"
 
---BOUNDARY_PAYLOAD_1SINRTUDP0
+--BOUNDARY_PAYLOAD_1PYJZPSDP0
 Content-Type: application/json; name="canvas_state.json"
 Content-Disposition: inline; filename="canvas_state.json"
 
@@ -34,7 +34,7 @@ Content-Disposition: inline; filename="canvas_state.json"
         "icon": "book",
         "text": "Documentation file: `README.ru.md`\nBelongs to project: [[📦 StatCraft (Overview) | 📦 StatCraft (Overview)]]"
       },
-      "id": "blk_native_callout_1794404903804512400",
+      "id": "blk_native_callout_1795702921471496800",
       "managed_by": "project_parser",
       "type": "callout"
     },
@@ -42,23 +42,31 @@ Content-Disposition: inline; filename="canvas_state.json"
       "data": {
         "text": "<p align=\"center\">\n  <img src=\"assets/banner.svg\" alt=\"Баннер StatCraft\" width=\"100%\" />\n</p>"
       },
-      "id": "blk_native_paragraph_1794404903804440800",
+      "id": "blk_native_paragraph_1795702921471421600",
       "managed_by": "project_parser",
       "type": "paragraph"
     },
     {
       "data": {
-        "text": "<div align=\"center\">\n  <p>\n    <a href=\"README.md\">English</a> |\n    <a href=\"README.ru.md\"><strong>Русский</strong></a>\n  </p>"
+        "text": "<div align=\"center\">\n  <h3>\n    <a href=\"https://statcraft-mu.vercel.app/\">🌐 https://statcraft-mu.vercel.app/</a>\n  </h3>\n  <p>\n    <strong>Официальный сайт, веб-документация и готовые бинарные сборки</strong>\n  </p>"
       },
-      "id": "blk_native_paragraph_1794404903804443700",
+      "id": "blk_native_paragraph_1795702921471424400",
       "managed_by": "project_parser",
       "type": "paragraph"
     },
     {
       "data": {
-        "text": "<p>\n    <a href=\"https://www.rust-lang.org/\"><img src=\"https://img.shields.io/badge/Rust-1.80%2B-orange?logo=rust\" alt=\"Rust 1.80+\" /></a>\n    <a href=\"LICENSE-MIT\"><img src=\"https://img.shields.io/badge/Лицензия-MIT%20OR%20Apache--2.0-blue.svg\" alt=\"Лицензия: MIT OR Apache-2.0\" /></a>\n    <img src=\"https://img.shields.io/badge/Платформа-Windows%20%7C%20Linux%20%7C%20macOS-lightgrey.svg\" alt=\"Платформа: Windows | Linux | macOS\" />\n    <img src=\"https://img.shields.io/badge/Архитектура-100%25%20Safe%20Rust-brightgreen.svg\" alt=\"100% Safe Rust\" />\n    <img src=\"https://img.shields.io/badge/Тесты-Пройдены%20(90%2B)-success.svg\" alt=\"Тесты: 90+ пройдены\" />\n    <img src=\"https://img.shields.io/badge/Локализация-EN%20%7C%20RU-informational.svg\" alt=\"Локализация: EN | RU\" />\n    <a href=\"#4-сетевой-мост-statcraft-bridge--ии-агенты-model-context-protocol--code-mode\"><img src=\"https://img.shields.io/badge/MCP-Live%20GUI%20Bridge%20%26%20Code%20Mode-6366F1?logo=anthropic&logoColor=white\" alt=\"MCP: Live GUI Bridge & Code Mode\" /></a>\n    <a href=\"https://remade.wiki/projects/statcraft/\"><img src=\"https://remade.wiki/badges/listed-on-remade-classic.svg\" alt=\"Listed on Remade\" /></a>\n    <a href=\"https://app.lava.top/kobaltgit\"><img src=\"https://img.shields.io/badge/Поддержать-Lava.top-FF5C35?logo=githubsponsors&logoColor=white\" alt=\"Поддержать: Lava.top\" /></a>\n  </p>\n</div>"
+        "text": "<p>\n    <a href=\"README.md\">English</a> |\n    <a href=\"README.ru.md\"><strong>Русский</strong></a>\n  </p>"
       },
-      "id": "blk_native_paragraph_1794404903804447600",
+      "id": "blk_native_paragraph_1795702921471425900",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    },
+    {
+      "data": {
+        "text": "<p>\n    <a href=\"https://statcraft-mu.vercel.app/\"><img src=\"https://img.shields.io/badge/Сайт-statcraft--mu.vercel.app-007ACC?logo=vercel&logoColor=white\" alt=\"Сайт: statcraft-mu.vercel.app\" /></a>\n    <a href=\"https://www.rust-lang.org/\"><img src=\"https://img.shields.io/badge/Rust-1.80%2B-orange?logo=rust\" alt=\"Rust 1.80+\" /></a>\n    <a href=\"LICENSE-MIT\"><img src=\"https://img.shields.io/badge/Лицензия-MIT%20OR%20Apache--2.0-blue.svg\" alt=\"Лицензия: MIT OR Apache-2.0\" /></a>\n    <img src=\"https://img.shields.io/badge/Платформа-Windows%20%7C%20Linux%20%7C%20macOS-lightgrey.svg\" alt=\"Платформа: Windows | Linux | macOS\" />\n    <img src=\"https://img.shields.io/badge/Архитектура-100%25%20Safe%20Rust-brightgreen.svg\" alt=\"100% Safe Rust\" />\n    <img src=\"https://img.shields.io/badge/Тесты-770%2B%20Пройдены-success.svg\" alt=\"Тесты: 770+ пройдены\" />\n    <img src=\"https://img.shields.io/badge/Оракул-SciPy%20(Δ%20%3C%2010⁻⁶)-blueviolet.svg\" alt=\"Оракул: SciPy (Δ < 10⁻⁶)\" />\n    <img src=\"https://img.shields.io/badge/Локализация-EN%20%7C%20RU-informational.svg\" alt=\"Локализация: EN | RU\" />\n    <a href=\"#4-сетевой-мост-statcraft-bridge--ии-агенты-model-context-protocol--code-mode\"><img src=\"https://img.shields.io/badge/MCP-Live%20Bridge%20%26%20Code%20Mode-6366F1?logo=anthropic&logoColor=white\" alt=\"MCP: Live Bridge & Code Mode\" /></a>\n    <a href=\"https://remade.wiki/projects/statcraft/\"><img src=\"https://remade.wiki/badges/listed-on-remade-classic.svg\" alt=\"Listed on Remade\" /></a>\n    <a href=\"https://app.lava.top/kobaltgit\"><img src=\"https://img.shields.io/badge/Поддержать-Lava.top-FF5C35?logo=githubsponsors&logoColor=white\" alt=\"Поддержать: Lava.top\" /></a>\n  </p>\n</div>"
+      },
+      "id": "blk_native_paragraph_1795702921471428200",
       "managed_by": "project_parser",
       "type": "paragraph"
     },
@@ -66,7 +74,7 @@ Content-Disposition: inline; filename="canvas_state.json"
       "data": {
         "text": "---"
       },
-      "id": "blk_native_paragraph_1794404903804448700",
+      "id": "blk_native_paragraph_1795702921471429100",
       "managed_by": "project_parser",
       "type": "paragraph"
     },
@@ -75,23 +83,41 @@ Content-Disposition: inline; filename="canvas_state.json"
         "level": 2,
         "text": "Обзор"
       },
-      "id": "blk_native_heading_1794404903804449300",
+      "id": "blk_native_heading_1795702921471429900",
       "managed_by": "project_parser",
       "type": "heading"
     },
     {
       "data": {
-        "text": "**StatCraft** — это свободный современный статистический пакет с открытым исходным кодом, полностью разработанный на **100% чистом Safe Rust**. Созданный по принципу «чистой комнаты» (clean-room) как бескомпромиссная альтернатива проприетарному пакету IBM SPSS Statistics, StatCraft сочетает академическую строгость расчётов, мгновенный запуск и абсолютную устойчивость к сбоям."
+        "icon": "info",
+        "text": "[!NOTE]"
       },
-      "id": "blk_native_paragraph_1794404903804450700",
+      "id": "blk_native_callout_1795702921471430700",
+      "managed_by": "project_parser",
+      "type": "callout"
+    },
+    {
+      "data": {
+        "icon": "info",
+        "text": "🔬 **Уведомление об исследовательской природе проекта:** StatCraft — независимый проект открытой науки. Программа не аффилирована с IBM SPSS Statistics. Не предназначена для клинических медицинских диагнозов и судебной экспертизы без независимого воспроизведения расчетов."
+      },
+      "id": "blk_native_callout_1795702921471431500",
+      "managed_by": "project_parser",
+      "type": "callout"
+    },
+    {
+      "data": {
+        "text": "**StatCraft** — экспериментальная альтернатива классическим статистическим пакетам на **100% безопасном Rust**. Это независимый проект открытой науки, объединяющий чистую математическую реализацию на базе Apache Arrow и Polars со встроенным протоколом Model Context Protocol (MCP) для совместных исследований с ИИ."
+      },
+      "id": "blk_native_paragraph_1795702921471432800",
       "managed_by": "project_parser",
       "type": "paragraph"
     },
     {
       "data": {
-        "text": "Пакет предназначен для социологов, психологов, медиков, маркетологов, студентов и преподавателей университетов, предоставляя удобный графический интерфейс наряду с детерминированным аналитическим движком на базе синтаксиса команд."
+        "text": "Мы не заявляем, что StatCraft — это готовая замена коммерческим пакетам. Это открытый вычислительный эксперимент. Мы приглашаем исследователей, статистиков и разработчиков изучать расчёты, проверять граничные случаи в сравнении с существующими пакетами (SPSS, R, Stata) и помогать делать научные вычисления прозрачными, проверяемыми и воспроизводимыми."
       },
-      "id": "blk_native_paragraph_1794404903804451700",
+      "id": "blk_native_paragraph_1795702921471433800",
       "managed_by": "project_parser",
       "type": "paragraph"
     },
@@ -99,7 +125,7 @@ Content-Disposition: inline; filename="canvas_state.json"
       "data": {
         "text": "<p align=\"center\">\n  <img src=\"assets/screenshot.png\" alt=\"Интерфейс StatCraft\" width=\"100%\" />\n  <br>\n  <em>Рабочее пространство StatCraft: Редактор переменных (Variable View), протокол синтаксиса и канонический Output Viewer со сводными таблицами (Pivot Tables) в стиле SPSS.</em>\n</p>"
       },
-      "id": "blk_native_paragraph_1794404903804452700",
+      "id": "blk_native_paragraph_1795702921471434900",
       "managed_by": "project_parser",
       "type": "paragraph"
     },
@@ -107,24 +133,32 @@ Content-Disposition: inline; filename="canvas_state.json"
       "data": {
         "text": "---"
       },
-      "id": "blk_native_paragraph_1794404903804453400",
+      "id": "blk_native_paragraph_1795702921471435600",
       "managed_by": "project_parser",
       "type": "paragraph"
     },
     {
       "data": {
         "level": 2,
-        "text": "Ключевые принципы разработки"
+        "text": "Ключевые принципы и надежность архитектуры"
       },
-      "id": "blk_native_heading_1794404903804454100",
+      "id": "blk_native_heading_1795702921471436200",
       "managed_by": "project_parser",
       "type": "heading"
     },
     {
       "data": {
-        "text": "* **100% Safe Rust и гарантия «Never Crash»:** Полный отказ от `unsafe`, `panic!`, `unwrap()` и `expect()`. Любые поврежденные данные, пустые выборки или деление на ноль возвращают типизированную ошибку `Result<T, E>`, не приводя к падению программы.\n* **Команды вместо обработчиков (Commands, Not Handlers):** Любое действие пользователя или математическая процедура — это типизированная команда движка (`EngineCommand`). Все команды поддерживают неразрушающую историю (Undo/Redo), сериализуются в стандартный синтаксис SPSS (`.sps`) и могут выполняться в пакетном режиме.\n* **Agent-Ready & MCP-мост (Code Mode):** Встроенный сетевой сокет IPC (порт 18493) и Model Context Protocol (MCP) сервер (флаг `--mcp`). Позволяют подключать внешних ИИ-агентов (Antigravity, Claude, ChatGPT, Ollama), выполнять расчеты, исследовать переменные и передавать результаты в Output Viewer «на лету».\n* **Канонический Output Viewer в стиле SPSS:** Иерархическое дерево навигации совмещено с аутентичными сводными таблицами (Pivot Tables). Результаты копируются в буфер обмена в один клик в формате структурированного TSV, который вставляется в Microsoft Excel чисто и без склеивания колонок и искажения дат.\n* **Векторный интерфейс (Vector-First UI):** Чистая векторная отрисовка через `egui` (`ui.painter()`) и векторные SVG-иконки. Полный запрет на эмодзи и нестандартные Unicode-символы исключает появление уродливых квадратов «тофу» (`□`) на любых операционных системах.\n* **Нулевой хардкод строк (Zero-Hardcode i18n):** 100% текстовых строк вынесены в каталоги Project Fluent (`locales/ru.ftl`, `locales/en.ftl`) с поддержкой переключения языка «на лету» без перезапуска.\n* **Resource Guard:** Ограничение потоков компиляции (`-j 1`, `codegen-units = 1`) для защиты рабочей станции от зависания и перегрузки CPU/RAM."
+        "text": "Статистический пакет не имеет права аварийно падать посреди расчета или замалчивать ошибки NaN. StatCraft следует строгим контрактам надежности памяти и разделения слоев:"
       },
-      "id": "blk_native_paragraph_1794404903804456900",
+      "id": "blk_native_paragraph_1795702921471437000",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    },
+    {
+      "data": {
+        "text": "* **Контракт нулевых паник (100% Safe Rust):** В коде строго запрещены `unwrap()`, `expect()`, `panic!()` и `unsafe`. Любые нештатные ситуации (вырожденная матрица, деление на ноль, малая выборка) возвращаются типизированными `Result<T, StatError>`.\n* **Принцип чистой комнаты (Clean-Room):** Разработка ведется без заимствования проприетарного кода или ассетов IBM SPSS. Все алгоритмы воспроизводятся исключительно по открытым научным статьям, стандартам ISO и спецификациям GNU PSPP с верификацией против «Золотого оракула» SciPy ($\\Delta < 10^{-6}$).\n* **Команды вместо обработчиков (Commands, Not Handlers):** Любое действие пользователя или математическая процедура — это типизированная команда движка (`EngineCommand`). Все команды поддерживают неразрушающую историю (Undo/Redo), сериализуются в стандартный синтаксис SPSS (`.sps`) и могут выполняться пакетно.\n* **Колоночная память Apache Arrow:** Массивы данных хранятся в непрерывных блоках памяти Apache Arrow. Векторные преобразования и фильтрация выполняются движком Polars с поддержкой SIMD без пауз сборщика мусора.\n* **Канонический Output Viewer в стиле SPSS:** Иерархическое дерево навигации совмещено с аутентичными многоуровневыми сводными таблицами (Pivot Tables). Результаты копируются в буфер обмена в один клик в формате структурированного TSV, который вставляется в Microsoft Excel чисто и без склеивания колонок и искажения дат.\n* **Векторный интерфейс (Vector-First UI):** Чистая векторная отрисовка через `egui` (`ui.painter()`) и векторные SVG-иконки. Полный запрет на эмодзи и нестандартные Unicode-символы исключает появление уродливых квадратов «тофу» (`□`) на любых операционных системах.\n* **Нулевой хардкод строк (Zero-Hardcode i18n):** 100% текстовых строк вынесены в каталоги Project Fluent (`locales/ru.ftl`, `locales/en.ftl`) с поддержкой переключения языка «на лету» без перезапуска.\n* **Resource Guard:** Ограничение потоков компиляции (`-j 1`, `codegen-units = 1`) для защиты рабочей станции от зависания и перегрузки CPU/RAM."
+      },
+      "id": "blk_native_paragraph_1795702921471439800",
       "managed_by": "project_parser",
       "type": "paragraph"
     },
@@ -132,7 +166,7 @@ Content-Disposition: inline; filename="canvas_state.json"
       "data": {
         "text": "---"
       },
-      "id": "blk_native_paragraph_1794404903804457800",
+      "id": "blk_native_paragraph_1795702921471440900",
       "managed_by": "project_parser",
       "type": "paragraph"
     },
@@ -141,7 +175,7 @@ Content-Disposition: inline; filename="canvas_state.json"
         "level": 2,
         "text": "Основной функционал"
       },
-      "id": "blk_native_heading_1794404903804458300",
+      "id": "blk_native_heading_1795702921471441400",
       "managed_by": "project_parser",
       "type": "heading"
     },
@@ -150,7 +184,7 @@ Content-Disposition: inline; filename="canvas_state.json"
         "icon": "info",
         "text": "[!TIP]"
       },
-      "id": "blk_native_callout_1794404903804459000",
+      "id": "blk_native_callout_1795702921471442200",
       "managed_by": "project_parser",
       "type": "callout"
     },
@@ -159,7 +193,7 @@ Content-Disposition: inline; filename="canvas_state.json"
         "icon": "info",
         "text": "📖 **Исчерпывающий справочник возможностей:** Полное описание всех доступных аналитических процедур, манипуляций с данными, алгоритмов трансформации и горячих клавиш доступно в документах **[FEATURES_RU.md](docs/FEATURES_RU.md)** (Русский) и **[FEATURES.md](docs/FEATURES.md)** (English)."
       },
-      "id": "blk_native_callout_1794404903804460000",
+      "id": "blk_native_callout_1795702921471442900",
       "managed_by": "project_parser",
       "type": "callout"
     },
@@ -168,15 +202,15 @@ Content-Disposition: inline; filename="canvas_state.json"
         "level": 3,
         "text": "1. Двухрежимное управление данными"
       },
-      "id": "blk_native_heading_1794404903804460800",
+      "id": "blk_native_heading_1795702921471443600",
       "managed_by": "project_parser",
       "type": "heading"
     },
     {
       "data": {
-        "text": "* **Редактор данных (Data View):** Виртуализированная таблица наблюдений и переменных. Поддерживает мгновенное переключение между сырыми числовыми кодами и читаемыми текстовыми метками (`1/A`).\n* **Редактор переменных (Variable View):** Полноценный словарь метаданных, управляющий всеми атрибутами:\n  - **Имя (Name):** Нормализованные идентификаторы переменных.\n  - **Тип (Type):** 9 канонических типов переменных SPSS (Числовой, Запятая, Точка, Научный, Дата, Доллар, Пользовательская валюта, Строка, Ограниченное число).\n  - **Ширина и Дробная часть (Width & Decimals):** Визуальный контроль разрядности и точности с векторными кнопками-спиннерами.\n  - **Метки (Label):** Развернутые описательные названия переменных.\n  - **Значения (Values):** Модальный редактор дискретных меток значений (кодировок).\n  - **Пропущенные значения (Missing):** Настройка дискретных пропусков и непрерывных диапазонов пропущенных значений.\n  - **Выравнивание (Align):** Влево, По центру, Вправо.\n  - **Шкала измерений (Measure):** Номинальная, Порядковая, Количественная шкала с векторными пиктограммами."
+        "text": "* **Редактор данных (Data View — 4-квадрантная 2D-сетка):**\n  - **Пространственная архитектура 4 квадрантов:** Закрепленные заголовки колонок сверху, закрепленные номера строк слева, центральная область данных со скроллингом в 2D. Номера строк не уплывают за край экрана при горизонтальной прокрутке.\n  - **Высокопроизводительная индексация (`LineIndex`):** Префиксные суммы обеспечивают $O(\\log N)$ бинарный поиск ячеек с нулевыми аллокациями памяти на куче для сотен тысяч наблюдений.\n  - **Интерактивный ресайз столбцов и автоподбор (Auto-fit):** Изменение ширины перетаскиванием границы с направляющей линией; двойной клик по разделителю подбирает оптимальную ширину по содержимому; двусторонняя синхронизация со словарем метаданных SPSS (`VariableMetadata.columns`).\n  - **Прямоугольное выделение и эргономика клавиатуры:** Выделение диапазона рамкой мыши, `Shift`-клик/`Shift`-drag, стрелки, Tab/Enter и **Direct Typing** (мгновенный ввод данных в активную ячейку без предварительного клика).\n  - **Прямоугольный буфер обмена TSV/CSV:** Двусторонний обмен (`Ctrl+C` / `Ctrl+V`) с Excel, Google Sheets и LibreOffice с авторасширением строк датасета.\n  - **Серийное автозаполнение (Fill Handle):** Векторный маркер протяжки в углу выделения рассчитывает шаг арифметической прогрессии для чисел и повторение для категорий.\n  - **Колоночный автофильтр:** Интерактивная кнопка в заголовке с векторным шевроном/воронкой открывает выпадающее окно с живым поиском, чекбоксами и обработкой категории «(Пустые)».\n  - **Быстрая сортировка через CommandBus:** Сортировка по возрастанию (A–Z) и убыванию (Z–A) через каноническую команду `data.sort_cases` со 100% обратимым Undo/Redo и выводом в синтаксис SPSS.\n  - **Контекстное меню ячеек:** Правый клик мыши открывает меню («Фильтровать по значению», «Очистить фильтр», «Сортировка», «Копировать/Вставить»).\n  - **Контроль целостности данных:** Автоматическое обнаружение чисел, сохраненных как текст, с зеленым треугольным маркером в углу ячейки и мгновенной конвертацией в число по клику.\n  - **Переключение меток значений (`1/A`):** Кнопка на панели инструментов для мгновенного переключения между кодами и читаемыми текстовыми метками.\n* **Редактор переменных (Variable View):** Полноценный словарь метаданных, управляющий всеми атрибутами:\n  - **Имя (Name):** Нормализованные идентификаторы переменных.\n  - **Тип (Type):** 9 канонических типов переменных SPSS (Числовой, Запятая, Точка, Научный, Дата, Доллар, Пользовательская валюта, Строка, Ограниченное число).\n  - **Ширина и Дробная часть (Width & Decimals):** Визуальный контроль разрядности и точности с векторными кнопками-спиннерами.\n  - **Метки (Label):** Развернутые описательные названия переменных.\n  - **Значения (Values):** Модальный редактор дискретных меток значений (кодировок).\n  - **Пропущенные значения (Missing):** Настройка дискретных пропусков и непрерывных диапазонов пропущенных значений.\n  - **Выравнивание (Align):** Влево, По центру, Вправо.\n  - **Шкала измерений (Measure):** Номинальная, Порядковая, Количественная шкала с векторными пиктограммами."
       },
-      "id": "blk_native_paragraph_1794404903804463400",
+      "id": "blk_native_paragraph_1795702921471447500",
       "managed_by": "project_parser",
       "type": "paragraph"
     },
@@ -185,7 +219,7 @@ Content-Disposition: inline; filename="canvas_state.json"
         "level": 3,
         "text": "2. Статистические процедуры"
       },
-      "id": "blk_native_heading_1794404903804464500",
+      "id": "blk_native_heading_1795702921471449000",
       "managed_by": "project_parser",
       "type": "heading"
     },
@@ -193,7 +227,7 @@ Content-Disposition: inline; filename="canvas_state.json"
       "data": {
         "text": "* **Описательные статистики (Descriptives):** Среднее, Ошибка среднего, Стандартное отклонение, Дисперсия, Минимум, Максимум, Размах, Сумма, Асимметрия, Эксцесс и N валидных наблюдений (по списку).\n* **Частоты (Frequencies):** Таблицы частот, проценты, валидные проценты, накопленные проценты, учет пропущенных значений, квартили и процентили.\n* **Одновыборочный T-критерий (One-Sample T-Test):** t-критерий Стьюдента для заданного проверяемого значения, степени свободы, двусторонняя значимость ($p$-value), разность средних, 95% доверительные интервалы и две отдельные канонические таблицы вывода (Статистика критерия и Одновыборочный критерий).\n* **Т-критерий для независимых выборок (Independent-Samples T-Test):** Сравнение двух групп с автоматическим тестом Ливиня на равенство дисперсий ($F$, $p$), критерием Стьюдента (равенство дисперсий предполагается) и критерием Уэлча (равенство дисперсий не предполагается), а также таблицей «Статистика групп».\n* **Т-критерий для парных выборок (Paired-Samples T-Test):** Сравнение зависимых выборок с формированием таблиц «Статистика парных выборок», «Корреляции парных выборок» (коэффициент Пирсона $r$, $p$) и «Критерий для парных выборок».\n* **Однофакторный дисперсионный анализ (One-Way ANOVA):** Критерий Фишера, межгрупповая и внутригрупповая суммы квадратов, средние квадраты, критерий однородности дисперсий Ливиня и описательные статистики с 95% ДИ."
       },
-      "id": "blk_native_paragraph_1794404903804466600",
+      "id": "blk_native_paragraph_1795702921471450900",
       "managed_by": "project_parser",
       "type": "paragraph"
     },
@@ -202,7 +236,7 @@ Content-Disposition: inline; filename="canvas_state.json"
         "level": 3,
         "text": "3. Модуль вывода (Output Viewer)"
       },
-      "id": "blk_native_heading_1794404903804467500",
+      "id": "blk_native_heading_1795702921471451500",
       "managed_by": "project_parser",
       "type": "heading"
     },
@@ -210,7 +244,7 @@ Content-Disposition: inline; filename="canvas_state.json"
       "data": {
         "text": "* **Иерархическое дерево навигации (Outline):** Левая панель оглавления для мгновенного перехода к нужной процедуре, журналу или таблице.\n* **Сводные таблицы (Pivot Tables):** Аутентичные многоуровневые таблицы SPSS с чередующейся подсветкой строк и выравниванием числовых колонок по правому краю.\n* **Экспорт в TSV одним кликом:** Кнопка `[ Копировать таблицу (TSV) ]` с мгновенной подсветкой и контекстным меню. Таблицы разделены строками заголовков и структурированы специально для вставки в Excel.\n* **Протокол синтаксиса:** Блоки журнала, фиксирующие исполненные команды синтаксиса SPSS (`GET DATA`, `DESCRIPTIVES`, `T-TEST`, `ONEWAY`) с отметками времени."
       },
-      "id": "blk_native_paragraph_1794404903804469000",
+      "id": "blk_native_paragraph_1795702921471452800",
       "managed_by": "project_parser",
       "type": "paragraph"
     },
@@ -219,47 +253,39 @@ Content-Disposition: inline; filename="canvas_state.json"
         "level": 3,
         "text": "4. Сетевой мост StatCraft Bridge & ИИ-агенты (Model Context Protocol / Code Mode)"
       },
-      "id": "blk_native_heading_1794404903804469500",
+      "id": "blk_native_heading_1795702921471453400",
       "managed_by": "project_parser",
       "type": "heading"
     },
     {
       "data": {
-        "text": "StatCraft — первый в мире статистический пакет, поддерживающий стандарт **Model Context Protocol (MCP)** и прямое управление через ИИ-агентов (Antigravity, Claude, ChatGPT, Ollama и любые локальные LLM)."
+        "text": "StatCraft оснащён встроенной поддержкой открытого стандарта **Model Context Protocol (MCP)** и локальным IPC-сокетом (порт 18493) для двусторонней связи с внешними ИИ-ассистентами (Antigravity, Claude, ChatGPT, Ollama и локальными LLM)."
       },
-      "id": "blk_native_paragraph_1794404903804470500",
+      "id": "blk_native_paragraph_1795702921471454600",
       "managed_by": "project_parser",
       "type": "paragraph"
     },
     {
       "data": {
-        "text": "<details>\n<summary><b>🔍 Зачем нужен мост и как делать статистический анализ без знания SPSS? (Нажмите, чтобы развернуть)</b></summary>"
+        "text": "<details>\n<summary><b>🔍 Как устроен мост StatCraft Bridge (Нажмите, чтобы развернуть)</b></summary>"
       },
-      "id": "blk_native_paragraph_1794404903804471400",
+      "id": "blk_native_paragraph_1795702921471455300",
       "managed_by": "project_parser",
       "type": "paragraph"
     },
     {
       "data": {
-        "text": "#### Больше не нужно учить SPSS: анализ данных человеческим языком"
+        "text": "#### Статистический анализ человеческим языком с детерминированным исполнением"
       },
-      "id": "blk_native_paragraph_1794404903804472300",
+      "id": "blk_native_paragraph_1795702921471456000",
       "managed_by": "project_parser",
       "type": "paragraph"
     },
     {
       "data": {
-        "text": "Раньше для проведения статистического анализа требовалось либо глубокое знание сложного программного пакета (SPSS, SAS, Stata), либо знание языков программирования (R, Python). Нужно было разбираться в синтаксисе команд (`DESCRIPTIVES VARIABLES=...`), прокликивать десятки вложенных окон настроек или писать код вручную."
+        "text": "Мост StatCraft Bridge позволяет исследователю подключить любимого ИИ-ассистента напрямую к локальному вычислительному ядру. Вместо ручного составления скриптов или поиска нужных параметров в многоуровневых меню, задачу можно формулировать на естественном языке:"
       },
-      "id": "blk_native_paragraph_1794404903804473200",
-      "managed_by": "project_parser",
-      "type": "paragraph"
-    },
-    {
-      "data": {
-        "text": "**Теперь всё изменилось:** благодаря сетевому мосту **StatCraft Bridge**, вам достаточно иметь рядом любимого ИИ-ассистента и подключить его к StatCraft. Вы формулируете исследовательскую задачу на простом естественном языке:"
-      },
-      "id": "blk_native_paragraph_1794404903804474200",
+      "id": "blk_native_paragraph_1795702921471456800",
       "managed_by": "project_parser",
       "type": "paragraph"
     },
@@ -268,47 +294,47 @@ Content-Disposition: inline; filename="canvas_state.json"
         "icon": "info",
         "text": "*«Посмотри на загруженные данные опроса. Сравни среднюю заработную плату мужчин и женщин, проверь гипотезу через t-критерий Стьюдента, убедись в равенстве дисперсий по критерию Левена и объясни простыми словами, есть ли статистически значимая разница».*"
       },
-      "id": "blk_native_callout_1794404903804474800",
+      "id": "blk_native_callout_1795702921471457400",
       "managed_by": "project_parser",
       "type": "callout"
     },
     {
       "data": {
-        "text": "ИИ-агент сам:\n1. Исследует структуру файла и типы переменных через инструменты моста;\n2. Сформирует и отправит команды ядру StatCraft;\n3. Получит строгие академические результаты расчётов;\n4. Выведет вам понятный вывод с интерпретацией уровней значимости ($p$-value)."
+        "text": "Подключенный ИИ-агент автономно:\n1. Запрашивает метаданные датасета, шкалы измерений и словарь переменных через протокол MCP;\n2. Формирует и передает типизированные команды ядру StatCraft;\n3. Получает математически верифицированные таблицы вывода;\n4. Формирует содержательный научный вывод с интерпретацией уровней значимости ($p$-value) и величины эффекта."
       },
-      "id": "blk_native_paragraph_1794404903804476400",
+      "id": "blk_native_paragraph_1795702921471459000",
       "managed_by": "project_parser",
       "type": "paragraph"
     },
     {
       "data": {
-        "text": "#### В чём ключевые преимущества перед «чистым» ChatGPT или другими нейросетями?"
+        "text": "#### Ключевые архитектурные преимущества:"
       },
-      "id": "blk_native_paragraph_1794404903804477200",
+      "id": "blk_native_paragraph_1795702921471459800",
       "managed_by": "project_parser",
       "type": "paragraph"
     },
     {
       "data": {
-        "text": "1. **100% математическая точность против галлюцинаций LLM:**\n   Языковые модели часто ошибаются («галлюцинируют») при работе с большими массивами чисел, выдавая правдоподобные, но математически неверные значения средних, стандартных отклонений и $p$-value. StatCraft выступает в роли непогрешимого **«калькулятора истины»**: нейросеть формулирует логику анализа, а вычисления выполняет нативный Rust-движок StatCraft со строгой погрешностью $\\le 10^{-6}$ (верифицирован против SciPy).\n2. **Живой интерактивный интерфейс на ваших глазах:**\n   Пока агент рассчитывает статистику, в открытом окне StatCraft в реальном времени появляются канонические сводные таблицы (Pivot Tables), строятся журналы синтаксиса и обновляются данные. Вы видите каждую операцию и можете в любой момент продолжить работу вручную или скопировать таблицы в Excel в один клик.\n3. **Полная конфиденциальность (100% Offline & Local):**\n   Мост работает через локальный сетевой сокет (`127.0.0.1:18493`) исключительно на вашем компьютере. Ваши медицинские, социологические или коммерческие данные не загружаются на сторонние серверы обработки данных.\n4. **Универсальный Code Mode:**\n   Агент не ограничен захардкоженными сценариями. Он может выполнять любой пакетный синтаксис SPSS (`.sps`), сортировать данные, фильтровать наблюдения, перекодировать шкалы, восполнять пропуски и вычислять любые из 16 реализованных процедур."
+        "text": "1. **Детерминированные вычисления против арифметических ошибок LLM:**\n   Большие языковые модели часто ошибаются («галлюцинируют») при агрегации больших числовых массивов или вычислении нелинейных критериев. StatCraft служит **«калькулятором истины»**: нейросеть направляет ход исследования, а расчёты производит нативный Rust-движок с допуском $\\Delta < 10^{-6}$ относительно SciPy.\n2. **Живая синхронизация с интерфейсом на ваших глазах:**\n   По мере выполнения процедур десктопный интерфейс StatCraft обновляется в реальном времени: в Output Viewer формируются канонические сводные таблицы (Pivot Tables), протоколируется синтаксис, а результаты можно скопировать в электронные таблицы в один клик.\n3. **100% конфиденциальность (Offline & Local):**\n   Мост работает через локальный сетевой сокет (`127.0.0.1:18493`). Ваши медицинские, исследовательские или коммерческие данные никогда не покидают пределы рабочей станции.\n4. **Универсальный пакетный Code Mode:**\n   Агент может исполнять синтаксис SPSS (`.sps`), сортировать наблюдения, фильтровать подвыборки, перекодировать шкалы и запускать любые реализованные процедуры."
       },
-      "id": "blk_native_paragraph_1794404903804479000",
+      "id": "blk_native_paragraph_1795702921471461700",
       "managed_by": "project_parser",
       "type": "paragraph"
     },
     {
       "data": {
-        "text": "#### Как подключить ИИ-агента к StatCraft?"
+        "text": "#### Как подключить ИИ-агента"
       },
-      "id": "blk_native_paragraph_1794404903804479900",
+      "id": "blk_native_paragraph_1795702921471462700",
       "managed_by": "project_parser",
       "type": "paragraph"
     },
     {
       "data": {
-        "text": "* **Через GUI:** Откройте меню `Расширения -> Мост MCP / Copilot` (`Extensions -> MCP Bridge / Copilot`) в StatCraft. В окне доступен статус сервера, журнал активности, а также готовые кнопки копирования настроек конфигурации для Antigravity, Claude Desktop или Cursor.\n* **Через консоль (stdio MCP):** Запустите `statcraft.exe --mcp` в конфигурации любого MCP-клиента.\n</details>"
+        "text": "* **Через графический интерфейс:** Откройте меню `Расширения -> Мост MCP / Copilot` (`Extensions -> MCP Bridge / Copilot`) в StatCraft. В окне доступен статус сервера, журнал активности и готовые сниппеты конфигурации для Antigravity, Claude Desktop и Cursor.\n* **Через консоль (stdio MCP):** Укажите команду `statcraft.exe --mcp` в настройках любого MCP-клиента.\n</details>"
       },
-      "id": "blk_native_paragraph_1794404903804480900",
+      "id": "blk_native_paragraph_1795702921471463700",
       "managed_by": "project_parser",
       "type": "paragraph"
     },
@@ -316,7 +342,40 @@ Content-Disposition: inline; filename="canvas_state.json"
       "data": {
         "text": "---"
       },
-      "id": "blk_native_paragraph_1794404903804481700",
+      "id": "blk_native_paragraph_1795702921471464400",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    },
+    {
+      "data": {
+        "level": 2,
+        "text": "🔬 Открытое приглашение исследователям и разработчикам"
+      },
+      "id": "blk_native_heading_1795702921471465000",
+      "managed_by": "project_parser",
+      "type": "heading"
+    },
+    {
+      "data": {
+        "text": "Мы не заявляем, что StatCraft — это готовая коммерческая замена. Это открытый вычислительный эксперимент. Нам нужен ваш исследовательский опыт, ваши датасеты и ваша придирчивость, чтобы сделать научные вычисления прозрачными и воспроизводимыми:"
+      },
+      "id": "blk_native_paragraph_1795702921471465900",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    },
+    {
+      "data": {
+        "text": "* **Для исследователей и статистиков:** Бросьте вызов нашим расчётам. Прогоните ваши рабочие массивы через StatCraft и сравните сводные таблицы с SPSS, R или Stata. Нашли расхождение ($\\Delta > 10^{-6}$)? Отправьте тикет прямо с сайта **[statcraft-mu.vercel.app](https://statcraft-mu.vercel.app/)** или откройте задачу на GitHub.\n* **Для Rust-инженеров и разработчиков:** Помогите строить надежную вычислительную платформу на безопасном системном программировании (оптимизация линейной алгебры на `faer` и `statrs` без `unsafe`, внедрение новых статистических процедур и расширение инструментария MCP)."
+      },
+      "id": "blk_native_paragraph_1795702921471467400",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    },
+    {
+      "data": {
+        "text": "---"
+      },
+      "id": "blk_native_paragraph_1795702921471468100",
       "managed_by": "project_parser",
       "type": "paragraph"
     },
@@ -325,7 +384,7 @@ Content-Disposition: inline; filename="canvas_state.json"
         "level": 2,
         "text": "Архитектура слоев (L0 – L6)"
       },
-      "id": "blk_native_heading_1794404903804482200",
+      "id": "blk_native_heading_1795702921471468600",
       "managed_by": "project_parser",
       "type": "heading"
     },
@@ -333,16 +392,16 @@ Content-Disposition: inline; filename="canvas_state.json"
       "data": {
         "text": "StatCraft строго следует архитектурному канону **ArtCraft Layering Law**. Зависимости между крейтами направлены строго сверху вниз:"
       },
-      "id": "blk_native_paragraph_1794404903804483100",
+      "id": "blk_native_paragraph_1795702921471469300",
       "managed_by": "project_parser",
       "type": "paragraph"
     },
     {
       "data": {
-        "code": "L6: statcraft_app        Графический интерфейс GUI (egui / eframe / DialogKit / Output Viewer)\n └── L5: statcraft_syntax Шина команд CommandBus, парсер синтаксиса .sps, транзакции\n      ├── L4: statcraft_reporting Модель сводных таблиц, экспорт TSV / HTML / Text\n      └── L2: statcraft_algo      Чистая математика (Золотой Оракул против SciPy)\n           └── L1: statcraft_core Датасет в памяти, RawTable, VariableDictionary\n                └── L0: statcraft_io  Кодеки данных (потоковый CSV/TSV, Excel .xlsx/.xls/.ods, SPSS .sav/.zsav)\n\nВспомогательные сквозные модули:\n* statcraft_bridge Сетевой сокет IPC (18493) и Model Context Protocol (MCP) сервер\n* statcraft_i18n   Движок локализации на Fluent без хардкода строк в коде\n* xtask            Инструменты сборщика: file-guard, layers, design-guard, parity, test-corpus",
+        "code": "L6: statcraft_app        Графический интерфейс GUI (egui / eframe / DialogKit / Output Viewer)\n └── L5: statcraft_syntax Шина команд CommandBus, парсер синтаксиса .sps, транзакции\n      ├── L4: statcraft_reporting Модель сводных таблиц, экспорт TSV / HTML / Text\n      └── L2: statcraft_algo      Чистая математика (Золотой Оракул против SciPy)\n           └── L1: statcraft_core Датасет в памяти, RawTable, VariableDictionary\n                └── L0: statcraft_io  Кодеки данных (потоковый CSV/TSV, Excel .xlsx/.xls/.ods, SPSS .sav/.zsav)\n\nВспомогательные сквозные модули:\n* statcraft_bridge Сетевой сокет IPC (18493) и Model Context Protocol (MCP) сервер\n* statcraft_i18n   Движок локализации на Fluent без хардкода строк в коде\n* xtask            Инструменты сборщика: file-guard, layers, design-guard, parity, sync-site",
         "language": "text"
       },
-      "id": "blk_native_code_1794404903804484700",
+      "id": "blk_native_code_1795702921471471200",
       "managed_by": "project_parser",
       "type": "code"
     },
@@ -350,7 +409,7 @@ Content-Disposition: inline; filename="canvas_state.json"
       "data": {
         "text": "---"
       },
-      "id": "blk_native_paragraph_1794404903804485900",
+      "id": "blk_native_paragraph_1795702921471472300",
       "managed_by": "project_parser",
       "type": "paragraph"
     },
@@ -359,7 +418,7 @@ Content-Disposition: inline; filename="canvas_state.json"
         "level": 2,
         "text": "Сборка и запуск"
       },
-      "id": "blk_native_heading_1794404903804486500",
+      "id": "blk_native_heading_1795702921471472900",
       "managed_by": "project_parser",
       "type": "heading"
     },
@@ -368,7 +427,7 @@ Content-Disposition: inline; filename="canvas_state.json"
         "level": 3,
         "text": "Требования"
       },
-      "id": "blk_native_heading_1794404903804487100",
+      "id": "blk_native_heading_1795702921471473400",
       "managed_by": "project_parser",
       "type": "heading"
     },
@@ -376,7 +435,7 @@ Content-Disposition: inline; filename="canvas_state.json"
       "data": {
         "text": "* Установленный компилятор [Rust](https://rustup.rs/) (рекомендуется версия 1.80 или новее)."
       },
-      "id": "blk_native_paragraph_1794404903804487800",
+      "id": "blk_native_paragraph_1795702921471474100",
       "managed_by": "project_parser",
       "type": "paragraph"
     },
@@ -385,7 +444,7 @@ Content-Disposition: inline; filename="canvas_state.json"
         "level": 3,
         "text": "Клонирование и запуск"
       },
-      "id": "blk_native_heading_1794404903804488400",
+      "id": "blk_native_heading_1795702921471474600",
       "managed_by": "project_parser",
       "type": "heading"
     },
@@ -393,7 +452,7 @@ Content-Disposition: inline; filename="canvas_state.json"
       "data": {
         "text": "Склонируйте репозиторий и запустите настольное приложение:"
       },
-      "id": "blk_native_paragraph_1794404903804489100",
+      "id": "blk_native_paragraph_1795702921471475300",
       "managed_by": "project_parser",
       "type": "paragraph"
     },
@@ -402,7 +461,7 @@ Content-Disposition: inline; filename="canvas_state.json"
         "code": "git clone https://github.com/kobaltgit/StatCraft.git\ncd StatCraft\n\n# Запуск StatCraft в релизном режиме с защитой от перегрузки CPU/RAM\ncargo run --package statcraft_app --release -j 1",
         "language": "bash"
       },
-      "id": "blk_native_code_1794404903804489900",
+      "id": "blk_native_code_1795702921471476200",
       "managed_by": "project_parser",
       "type": "code"
     },
@@ -411,7 +470,7 @@ Content-Disposition: inline; filename="canvas_state.json"
         "level": 3,
         "text": "Запуск тестов и линтеров качества"
       },
-      "id": "blk_native_heading_1794404903804490800",
+      "id": "blk_native_heading_1795702921471476900",
       "managed_by": "project_parser",
       "type": "heading"
     },
@@ -419,16 +478,16 @@ Content-Disposition: inline; filename="canvas_state.json"
       "data": {
         "text": "StatCraft соблюдает строгий регламент **Definition of Done (DoD)**. Все тесты и статические линтеры архитектуры обязаны проходить без единого предупреждения:"
       },
-      "id": "blk_native_paragraph_1794404903804491700",
+      "id": "blk_native_paragraph_1795702921471477700",
       "managed_by": "project_parser",
       "type": "paragraph"
     },
     {
       "data": {
-        "code": "# Запуск всех модульных, интеграционных и оракульных тестов\ncargo test --workspace -j 1\n\n# Проверка лимитов размера файлов (защита от раздутия и монолитизации)\ncargo run -p xtask -j 1 -- file-guard\n\n# Проверка слоистой архитектуры (L0 - L6 строгая направленность зависимостей)\ncargo run -p xtask -j 1 -- layers\n\n# Проверка соблюдения дизайн-системы диалоговых окон (DialogKit)\ncargo run -p xtask -j 1 -- design-guard\n\n# Проверка паритета команд SPSS\ncargo run -p xtask -j 1 -- parity",
+        "code": "# Запуск всех модульных, интеграционных и оракульных тестов\ncargo test --workspace -j 1\n\n# Проверка лимитов размера файлов (защита от раздутия и монолитизации)\ncargo run -p xtask -j 1 -- file-guard\n\n# Проверка слоистой архитектуры (L0 - L6 строгая направленность зависимостей)\ncargo run -p xtask -j 1 -- layers\n\n# Проверка соблюдения дизайн-системы диалоговых окон (DialogKit)\ncargo run -p xtask -j 1 -- design-guard\n\n# Проверка паритета команд SPSS\ncargo run -p xtask -j 1 -- parity\n\n# Проверка синхронизации сайта и матрицы аудита\ncargo run -p xtask -j 1 -- sync-site --check",
         "language": "bash"
       },
-      "id": "blk_native_code_1794404903804493100",
+      "id": "blk_native_code_1795702921471479200",
       "managed_by": "project_parser",
       "type": "code"
     },
@@ -436,7 +495,7 @@ Content-Disposition: inline; filename="canvas_state.json"
       "data": {
         "text": "---"
       },
-      "id": "blk_native_paragraph_1794404903804494200",
+      "id": "blk_native_paragraph_1795702921471480600",
       "managed_by": "project_parser",
       "type": "paragraph"
     },
@@ -445,15 +504,15 @@ Content-Disposition: inline; filename="canvas_state.json"
         "level": 2,
         "text": "Структура проекта"
       },
-      "id": "blk_native_heading_1794404903804494800",
+      "id": "blk_native_heading_1795702921471481100",
       "managed_by": "project_parser",
       "type": "heading"
     },
     {
       "data": {
-        "text": "| Крейт / Путь | Назначение |\n|---|---|\n| [`crates/statcraft_app`](crates/statcraft_app) | Графический интерфейс пользователя, докинг, DialogKit, грид данных, Output Viewer |\n| [`crates/statcraft_syntax`](crates/statcraft_syntax) | Шина команд движка, транзакции, undo/redo, сериализатор синтаксиса SPSS |\n| [`crates/statcraft_algo`](crates/statcraft_algo) | Чистые математические алгоритмы (t-тесты, ANOVA, регрессия, корреляции, факторный анализ, непараметрика, частоты) |\n| [`crates/statcraft_core`](crates/statcraft_core) | Структуры в памяти: `DataSet`, `RawTable`, `VariableDictionary`, шкалы измерений, метаданные |\n| [`crates/statcraft_io`](crates/statcraft_io) | Кодеки данных: потоковый CSV/TSV, книги Excel (.xlsx/.xls/.ods) и файлы SPSS (.sav/.zsav) |\n| [`crates/statcraft_i18n`](crates/statcraft_i18n) | Движок интернационализации на базе Project Fluent (`locales/*.ftl`) |\n| [`xtask`](xtask) | Утилиты проверки: `file-guard`, `layers`, `design-guard`, `parity` |\n| [`docs/`](docs) | Архитектурные руководства, гайдлайн дизайна диалогов, дорожная карта, летопись |"
+        "text": "| Крейт / Путь | Назначение |\n|---|---|\n| [`crates/statcraft_app`](crates/statcraft_app) | Графический интерфейс пользователя, докинг, DialogKit, грид данных, Output Viewer |\n| [`crates/statcraft_syntax`](crates/statcraft_syntax) | Шина команд движка, транзакции, undo/redo, сериализатор синтаксиса SPSS |\n| [`crates/statcraft_algo`](crates/statcraft_algo) | Чистые математические алгоритмы (t-тесты, ANOVA, регрессия, корреляции, факторный анализ, непараметрика, частоты) |\n| [`crates/statcraft_core`](crates/statcraft_core) | Структуры в памяти: `DataSet`, `RawTable`, `VariableDictionary`, шкалы измерений, метаданные |\n| [`crates/statcraft_io`](crates/statcraft_io) | Кодеки данных: потоковый CSV/TSV, книги Excel (.xlsx/.xls/.ods) и файлы SPSS (.sav/.zsav) |\n| [`crates/statcraft_reporting`](crates/statcraft_reporting) | Модель сводных таблиц (Pivot Tables), TSV, HTML и текстовый экспорт |\n| [`crates/statcraft_bridge`](crates/statcraft_bridge) | Локальный сокет IPC (порт 18493) и сервер Model Context Protocol (MCP) |\n| [`crates/statcraft_i18n`](crates/statcraft_i18n) | Движок интернационализации на базе Project Fluent (`locales/*.ftl`) |\n| [`website/`](website) | Официальный веб-портал, интерактивная документация, бенчмарки и загрузка релизов ([statcraft-mu.vercel.app](https://statcraft-mu.vercel.app/)) |\n| [`xtask`](xtask) | Утилиты проверки: `file-guard`, `layers`, `design-guard`, `parity`, `sync-site` |\n| [`docs/`](docs) | Архитектурные руководства, гайдлайн дизайна диалогов, дорожная карта, летопись |"
       },
-      "id": "blk_native_paragraph_1794404903804496900",
+      "id": "blk_native_paragraph_1795702921471482900",
       "managed_by": "project_parser",
       "type": "paragraph"
     },
@@ -461,7 +520,7 @@ Content-Disposition: inline; filename="canvas_state.json"
       "data": {
         "text": "---"
       },
-      "id": "blk_native_paragraph_1794404903804497600",
+      "id": "blk_native_paragraph_1795702921471483700",
       "managed_by": "project_parser",
       "type": "paragraph"
     },
@@ -470,15 +529,15 @@ Content-Disposition: inline; filename="canvas_state.json"
         "level": 2,
         "text": "Документация"
       },
-      "id": "blk_native_heading_1794404903804498200",
+      "id": "blk_native_heading_1795702921471484300",
       "managed_by": "project_parser",
       "type": "heading"
     },
     {
       "data": {
-        "text": "* **[Полный справочник возможностей (FEATURES_RU.md)](docs/FEATURES_RU.md)** / **[Feature Guide (EN)](docs/FEATURES.md)** — Исчерпывающий каталог всех реализованных статистических процедур, преобразований данных, формул и интерфейсных инструментов.\n* [Руководство контрибьютора (CONTRIBUTING.md)](CONTRIBUTING.md) — Исчерпывающий регламент разработки, Resource Guard (-j 1), архитектурные слои и Definition of Done.\n* [Чек-лист паритета с SPSS (Parity Checklist)](docs/parity-checklist.md) — Детальное отслеживание соответствия команд и меню SPSS.\n* [Дорожная карта (Roadmap)](docs/ROADMAP.md) — Долгосрочные технические фазы и этапы развития.\n* [Руководство по дизайну окон (Design Guide)](docs/DESIGN_GUIDE.md) — Стандарт компоновки диалоговых окон (`DialogKit`).\n* [Хроника разработки (RU)](docs/CHRONICLE.md) / [Development Chronicle (EN)](docs/CHRONICLE.en.md) — Авторская летопись каждого архитектурного этапа."
+        "text": "* **[Официальный сайт и веб-документация (statcraft-mu.vercel.app)](https://statcraft-mu.vercel.app/)** — Интерактивная веб-документация, матрица бенчмарков «Золотого оракула» против IBM SPSS 24, автоопределение ОС для загрузки готовых бинарников и отправка отчетов о расхождениях.\n* **[Полный справочник возможностей (FEATURES_RU.md)](docs/FEATURES_RU.md)** / **[Feature Guide (EN)](docs/FEATURES.md)** — Исчерпывающий каталог всех реализованных статистических процедур, преобразований данных, формул и интерфейсных инструментов.\n* [Руководство контрибьютора (CONTRIBUTING.md)](CONTRIBUTING.md) — Исчерпывающий регламент разработки, Resource Guard (-j 1), архитектурные слои и Definition of Done.\n* [Чек-лист паритета с SPSS (Parity Checklist)](docs/parity-checklist.md) — Детальное отслеживание соответствия команд и меню SPSS.\n* [Математический аудит алгоритмов SPSS](docs/SPSS_ALGORITHMS_AUDIT_RU.md) — Постраничная Clean-Room верификация против руководства IBM SPSS 24 с помощью [Craft Anything](https://github.com/storytold/craft-anything).\n* [Дорожная карта (Roadmap)](docs/ROADMAP.md) — Долгосрочные технические фазы и этапы развития.\n* [Руководство по дизайну окон (Design Guide)](docs/DESIGN_GUIDE.md) — Стандарт компоновки диалоговых окон (`DialogKit`).\n* [Хроника разработки (RU)](docs/CHRONICLE.md) / [Development Chronicle (EN)](docs/CHRONICLE.en.md) — Авторская летопись каждого архитектурного этапа."
       },
-      "id": "blk_native_paragraph_1794404903804499700",
+      "id": "blk_native_paragraph_1795702921471485800",
       "managed_by": "project_parser",
       "type": "paragraph"
     },
@@ -486,7 +545,7 @@ Content-Disposition: inline; filename="canvas_state.json"
       "data": {
         "text": "---"
       },
-      "id": "blk_native_paragraph_1794404903804500400",
+      "id": "blk_native_paragraph_1795702921471486500",
       "managed_by": "project_parser",
       "type": "paragraph"
     },
@@ -495,23 +554,23 @@ Content-Disposition: inline; filename="canvas_state.json"
         "level": 2,
         "text": "💖 Поддержка и донаты"
       },
-      "id": "blk_native_heading_1794404903804500900",
+      "id": "blk_native_heading_1795702921471487000",
       "managed_by": "project_parser",
       "type": "heading"
     },
     {
       "data": {
-        "text": "**StatCraft** — это амбициозный, математически строгий статистический пакет, создаваемый с нуля на **100% чистом Safe Rust** без использования устаревших C/Fortran-библиотек. Разработка и аналитическая валидация математических алгоритмов (параметрические и непараметрические критерии, ANOVA, тест Ливиня, регрессия, синтаксис SPSS и сводные таблицы) требует колоссальных исследовательских усилий и времени."
+        "text": "**StatCraft** — это независимый проект открытой науки, создаваемый на **100% чистом Safe Rust** без использования устаревших C/Fortran-библиотек. Разработка чистых алгоритмов, верифицируемой матричной алгебры и аутентичных сводных таблиц требует постоянных исследовательских и инженерных усилий."
       },
-      "id": "blk_native_paragraph_1794404903804501900",
+      "id": "blk_native_paragraph_1795702921471488000",
       "managed_by": "project_parser",
       "type": "paragraph"
     },
     {
       "data": {
-        "text": "Если **StatCraft** полезен для вашей научной работы, университетских занятий или практических исследований, и вы хотите поддержать дальнейшее развитие проекта:"
+        "text": "Если **StatCraft** полезен для вашей научной работы, университетских занятий или практических исследований, вы можете поддержать дальнейшее развитие проекта:"
       },
-      "id": "blk_native_paragraph_1794404903804503100",
+      "id": "blk_native_paragraph_1795702921471488700",
       "managed_by": "project_parser",
       "type": "paragraph"
     },
@@ -519,7 +578,7 @@ Content-Disposition: inline; filename="canvas_state.json"
       "data": {
         "text": "<div align=\"center\">"
       },
-      "id": "blk_native_paragraph_1794404903804503800",
+      "id": "blk_native_paragraph_1795702921471489400",
       "managed_by": "project_parser",
       "type": "paragraph"
     },
@@ -527,7 +586,7 @@ Content-Disposition: inline; filename="canvas_state.json"
       "data": {
         "text": "[![Поддержать на Lava.top](https://img.shields.io/badge/Поддержать_проект-Lava.top-FF5C35?style=for-the-badge&logo=heart&logoColor=white)](https://app.lava.top/kobaltgit)"
       },
-      "id": "blk_native_paragraph_1794404903804505700",
+      "id": "blk_native_paragraph_1795702921471490800",
       "managed_by": "project_parser",
       "type": "paragraph"
     },
@@ -535,7 +594,7 @@ Content-Disposition: inline; filename="canvas_state.json"
       "data": {
         "text": "**👉 [https://app.lava.top/kobaltgit](https://app.lava.top/kobaltgit)**"
       },
-      "id": "blk_native_paragraph_1794404903804506500",
+      "id": "blk_native_paragraph_1795702921471491400",
       "managed_by": "project_parser",
       "type": "paragraph"
     },
@@ -543,7 +602,7 @@ Content-Disposition: inline; filename="canvas_state.json"
       "data": {
         "text": "*(Поддерживаются карты банков РФ, СНГ и зарубежные способы оплаты)*"
       },
-      "id": "blk_native_paragraph_1794404903804507100",
+      "id": "blk_native_paragraph_1795702921471492000",
       "managed_by": "project_parser",
       "type": "paragraph"
     },
@@ -551,7 +610,7 @@ Content-Disposition: inline; filename="canvas_state.json"
       "data": {
         "text": "</div>"
       },
-      "id": "blk_native_paragraph_1794404903804507600",
+      "id": "blk_native_paragraph_1795702921471492700",
       "managed_by": "project_parser",
       "type": "paragraph"
     },
@@ -559,7 +618,7 @@ Content-Disposition: inline; filename="canvas_state.json"
       "data": {
         "text": "---"
       },
-      "id": "blk_native_paragraph_1794404903804508200",
+      "id": "blk_native_paragraph_1795702921471493200",
       "managed_by": "project_parser",
       "type": "paragraph"
     },
@@ -568,7 +627,7 @@ Content-Disposition: inline; filename="canvas_state.json"
         "level": 2,
         "text": "Лицензия"
       },
-      "id": "blk_native_heading_1794404903804508700",
+      "id": "blk_native_heading_1795702921471493600",
       "managed_by": "project_parser",
       "type": "heading"
     },
@@ -576,7 +635,7 @@ Content-Disposition: inline; filename="canvas_state.json"
       "data": {
         "text": "Кодовая база проекта распространяется под двойной свободной лицензией:\n* **MIT License** ([LICENSE-MIT](LICENSE-MIT))\n* **Apache License, Version 2.0** ([LICENSE-APACHE](LICENSE-APACHE))"
       },
-      "id": "blk_native_paragraph_1794404903804509600",
+      "id": "blk_native_paragraph_1795702921471494500",
       "managed_by": "project_parser",
       "type": "paragraph"
     },
@@ -584,7 +643,7 @@ Content-Disposition: inline; filename="canvas_state.json"
       "data": {
         "text": "Вы можете выбрать любую из лицензий по вашему усмотрению."
       },
-      "id": "blk_native_paragraph_1794404903804510500",
+      "id": "blk_native_paragraph_1795702921471495100",
       "managed_by": "project_parser",
       "type": "paragraph"
     },
@@ -592,18 +651,18 @@ Content-Disposition: inline; filename="canvas_state.json"
       "data": {
         "text": "Все графические ассеты и логотипы в `assets/` принадлежат проекту **StatCraft** (kobaltGIT)."
       },
-      "id": "blk_native_paragraph_1794404903804511200",
+      "id": "blk_native_paragraph_1795702921471495800",
       "managed_by": "project_parser",
       "type": "paragraph"
     }
   ]
 }
 
---BOUNDARY_PAYLOAD_1SINRTUDP0
+--BOUNDARY_PAYLOAD_1PYJZPSDP0
 Content-Type: text/html; charset="utf-8"
 Content-Disposition: inline
 
-<!doctype html><html><head><meta charset="utf-8"><meta name="generator" content="CapsuleCraft Native"></head><body style="font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;max-width:720px;margin:32px auto;line-height:1.55;color:#23201c;background:#faf8f4;"><h1>📚 StatCraft / README.ru</h1><p><em>[callout block — open in CapsuleCraft web for its canvas]</em></p><p>&lt;p align=&quot;center&quot;&gt;<br>  &lt;img src=&quot;assets/banner.svg&quot; alt=&quot;Баннер StatCraft&quot; width=&quot;100%&quot; /&gt;<br>&lt;/p&gt;</p><p>&lt;div align=&quot;center&quot;&gt;<br>  &lt;p&gt;<br>    &lt;a href=&quot;README.md&quot;&gt;English&lt;/a&gt; |<br>    &lt;a href=&quot;README.ru.md&quot;&gt;&lt;strong&gt;Русский&lt;/strong&gt;&lt;/a&gt;<br>  &lt;/p&gt;</p><p>&lt;p&gt;<br>    &lt;a href=&quot;https://www.rust-lang.org/&quot;&gt;&lt;img src=&quot;https://img.shields.io/badge/Rust-1.80%2B-orange?logo=rust&quot; alt=&quot;Rust 1.80+&quot; /&gt;&lt;/a&gt;<br>    &lt;a href=&quot;LICENSE-MIT&quot;&gt;&lt;img src=&quot;https://img.shields.io/badge/Лицензия-MIT%20OR%20Apache--2.0-blue.svg&quot; alt=&quot;Лицензия: MIT OR Apache-2.0&quot; /&gt;&lt;/a&gt;<br>    &lt;img src=&quot;https://img.shields.io/badge/Платформа-Windows%20%7C%20Linux%20%7C%20macOS-lightgrey.svg&quot; alt=&quot;Платформа: Windows | Linux | macOS&quot; /&gt;<br>    &lt;img src=&quot;https://img.shields.io/badge/Архитектура-100%25%20Safe%20Rust-brightgreen.svg&quot; alt=&quot;100% Safe Rust&quot; /&gt;<br>    &lt;img src=&quot;https://img.shields.io/badge/Тесты-Пройдены%20(90%2B)-success.svg&quot; alt=&quot;Тесты: 90+ пройдены&quot; /&gt;<br>    &lt;img src=&quot;https://img.shields.io/badge/Локализация-EN%20%7C%20RU-informational.svg&quot; alt=&quot;Локализация: EN | RU&quot; /&gt;<br>    &lt;a href=&quot;#4-сетевой-мост-statcraft-bridge--ии-агенты-model-context-protocol--code-mode&quot;&gt;&lt;img src=&quot;https://img.shields.io/badge/MCP-Live%20GUI%20Bridge%20%26%20Code%20Mode-6366F1?logo=anthropic&amp;logoColor=white&quot; alt=&quot;MCP: Live GUI Bridge &amp; Code Mode&quot; /&gt;&lt;/a&gt;<br>    &lt;a href=&quot;https://remade.wiki/projects/statcraft/&quot;&gt;&lt;img src=&quot;https://remade.wiki/badges/listed-on-remade-classic.svg&quot; alt=&quot;Listed on Remade&quot; /&gt;&lt;/a&gt;<br>    &lt;a href=&quot;https://app.lava.top/kobaltgit&quot;&gt;&lt;img src=&quot;https://img.shields.io/badge/Поддержать-Lava.top-FF5C35?logo=githubsponsors&amp;logoColor=white&quot; alt=&quot;Поддержать: Lava.top&quot; /&gt;&lt;/a&gt;<br>  &lt;/p&gt;<br>&lt;/div&gt;</p><p>---</p><h2>Обзор</h2><p>**StatCraft** — это свободный современный статистический пакет с открытым исходным кодом, полностью разработанный на **100% чистом Safe Rust**. Созданный по принципу «чистой комнаты» (clean-room) как бескомпромиссная альтернатива проприетарному пакету IBM SPSS Statistics, StatCraft сочетает академическую строгость расчётов, мгновенный запуск и абсолютную устойчивость к сбоям.</p><p>Пакет предназначен для социологов, психологов, медиков, маркетологов, студентов и преподавателей университетов, предоставляя удобный графический интерфейс наряду с детерминированным аналитическим движком на базе синтаксиса команд.</p><p>&lt;p align=&quot;center&quot;&gt;<br>  &lt;img src=&quot;assets/screenshot.png&quot; alt=&quot;Интерфейс StatCraft&quot; width=&quot;100%&quot; /&gt;<br>  &lt;br&gt;<br>  &lt;em&gt;Рабочее пространство StatCraft: Редактор переменных (Variable View), протокол синтаксиса и канонический Output Viewer со сводными таблицами (Pivot Tables) в стиле SPSS.&lt;/em&gt;<br>&lt;/p&gt;</p><p>---</p><h2>Ключевые принципы разработки</h2><p>* **100% Safe Rust и гарантия «Never Crash»:** Полный отказ от `unsafe`, `panic!`, `unwrap()` и `expect()`. Любые поврежденные данные, пустые выборки или деление на ноль возвращают типизированную ошибку `Result&lt;T, E&gt;`, не приводя к падению программы.<br>* **Команды вместо обработчиков (Commands, Not Handlers):** Любое действие пользователя или математическая процедура — это типизированная команда движка (`EngineCommand`). Все команды поддерживают неразрушающую историю (Undo/Redo), сериализуются в стандартный синтаксис SPSS (`.sps`) и могут выполняться в пакетном режиме.<br>* **Agent-Ready &amp; MCP-мост (Code Mode):** Встроенный сетевой сокет IPC (порт 18493) и Model Context Protocol (MCP) сервер (флаг `--mcp`). Позволяют подключать внешних ИИ-агентов (Antigravity, Claude, ChatGPT, Ollama), выполнять расчеты, исследовать переменные и передавать результаты в Output Viewer «на лету».<br>* **Канонический Output Viewer в стиле SPSS:** Иерархическое дерево навигации совмещено с аутентичными сводными таблицами (Pivot Tables). Результаты копируются в буфер обмена в один клик в формате структурированного TSV, который вставляется в Microsoft Excel чисто и без склеивания колонок и искажения дат.<br>* **Векторный интерфейс (Vector-First UI):** Чистая векторная отрисовка через `egui` (`ui.painter()`) и векторные SVG-иконки. Полный запрет на эмодзи и нестандартные Unicode-символы исключает появление уродливых квадратов «тофу» (`□`) на любых операционных системах.<br>* **Нулевой хардкод строк (Zero-Hardcode i18n):** 100% текстовых строк вынесены в каталоги Project Fluent (`locales/ru.ftl`, `locales/en.ftl`) с поддержкой переключения языка «на лету» без перезапуска.<br>* **Resource Guard:** Ограничение потоков компиляции (`-j 1`, `codegen-units = 1`) для защиты рабочей станции от зависания и перегрузки CPU/RAM.</p><p>---</p><h2>Основной функционал</h2><p><em>[callout block — open in CapsuleCraft web for its canvas]</em></p><p><em>[callout block — open in CapsuleCraft web for its canvas]</em></p><h3>1. Двухрежимное управление данными</h3><p>* **Редактор данных (Data View):** Виртуализированная таблица наблюдений и переменных. Поддерживает мгновенное переключение между сырыми числовыми кодами и читаемыми текстовыми метками (`1/A`).<br>* **Редактор переменных (Variable View):** Полноценный словарь метаданных, управляющий всеми атрибутами:<br>  - **Имя (Name):** Нормализованные идентификаторы переменных.<br>  - **Тип (Type):** 9 канонических типов переменных SPSS (Числовой, Запятая, Точка, Научный, Дата, Доллар, Пользовательская валюта, Строка, Ограниченное число).<br>  - **Ширина и Дробная часть (Width &amp; Decimals):** Визуальный контроль разрядности и точности с векторными кнопками-спиннерами.<br>  - **Метки (Label):** Развернутые описательные названия переменных.<br>  - **Значения (Values):** Модальный редактор дискретных меток значений (кодировок).<br>  - **Пропущенные значения (Missing):** Настройка дискретных пропусков и непрерывных диапазонов пропущенных значений.<br>  - **Выравнивание (Align):** Влево, По центру, Вправо.<br>  - **Шкала измерений (Measure):** Номинальная, Порядковая, Количественная шкала с векторными пиктограммами.</p><h3>2. Статистические процедуры</h3><p>* **Описательные статистики (Descriptives):** Среднее, Ошибка среднего, Стандартное отклонение, Дисперсия, Минимум, Максимум, Размах, Сумма, Асимметрия, Эксцесс и N валидных наблюдений (по списку).<br>* **Частоты (Frequencies):** Таблицы частот, проценты, валидные проценты, накопленные проценты, учет пропущенных значений, квартили и процентили.<br>* **Одновыборочный T-критерий (One-Sample T-Test):** t-критерий Стьюдента для заданного проверяемого значения, степени свободы, двусторонняя значимость ($p$-value), разность средних, 95% доверительные интервалы и две отдельные канонические таблицы вывода (Статистика критерия и Одновыборочный критерий).<br>* **Т-критерий для независимых выборок (Independent-Samples T-Test):** Сравнение двух групп с автоматическим тестом Ливиня на равенство дисперсий ($F$, $p$), критерием Стьюдента (равенство дисперсий предполагается) и критерием Уэлча (равенство дисперсий не предполагается), а также таблицей «Статистика групп».<br>* **Т-критерий для парных выборок (Paired-Samples T-Test):** Сравнение зависимых выборок с формированием таблиц «Статистика парных выборок», «Корреляции парных выборок» (коэффициент Пирсона $r$, $p$) и «Критерий для парных выборок».<br>* **Однофакторный дисперсионный анализ (One-Way ANOVA):** Критерий Фишера, межгрупповая и внутригрупповая суммы квадратов, средние квадраты, критерий однородности дисперсий Ливиня и описательные статистики с 95% ДИ.</p><h3>3. Модуль вывода (Output Viewer)</h3><p>* **Иерархическое дерево навигации (Outline):** Левая панель оглавления для мгновенного перехода к нужной процедуре, журналу или таблице.<br>* **Сводные таблицы (Pivot Tables):** Аутентичные многоуровневые таблицы SPSS с чередующейся подсветкой строк и выравниванием числовых колонок по правому краю.<br>* **Экспорт в TSV одним кликом:** Кнопка `[ Копировать таблицу (TSV) ]` с мгновенной подсветкой и контекстным меню. Таблицы разделены строками заголовков и структурированы специально для вставки в Excel.<br>* **Протокол синтаксиса:** Блоки журнала, фиксирующие исполненные команды синтаксиса SPSS (`GET DATA`, `DESCRIPTIVES`, `T-TEST`, `ONEWAY`) с отметками времени.</p><h3>4. Сетевой мост StatCraft Bridge &amp; ИИ-агенты (Model Context Protocol / Code Mode)</h3><p>StatCraft — первый в мире статистический пакет, поддерживающий стандарт **Model Context Protocol (MCP)** и прямое управление через ИИ-агентов (Antigravity, Claude, ChatGPT, Ollama и любые локальные LLM).</p><p>&lt;details&gt;<br>&lt;summary&gt;&lt;b&gt;🔍 Зачем нужен мост и как делать статистический анализ без знания SPSS? (Нажмите, чтобы развернуть)&lt;/b&gt;&lt;/summary&gt;</p><p>#### Больше не нужно учить SPSS: анализ данных человеческим языком</p><p>Раньше для проведения статистического анализа требовалось либо глубокое знание сложного программного пакета (SPSS, SAS, Stata), либо знание языков программирования (R, Python). Нужно было разбираться в синтаксисе команд (`DESCRIPTIVES VARIABLES=...`), прокликивать десятки вложенных окон настроек или писать код вручную.</p><p>**Теперь всё изменилось:** благодаря сетевому мосту **StatCraft Bridge**, вам достаточно иметь рядом любимого ИИ-ассистента и подключить его к StatCraft. Вы формулируете исследовательскую задачу на простом естественном языке:</p><p><em>[callout block — open in CapsuleCraft web for its canvas]</em></p><p>ИИ-агент сам:<br>1. Исследует структуру файла и типы переменных через инструменты моста;<br>2. Сформирует и отправит команды ядру StatCraft;<br>3. Получит строгие академические результаты расчётов;<br>4. Выведет вам понятный вывод с интерпретацией уровней значимости ($p$-value).</p><p>#### В чём ключевые преимущества перед «чистым» ChatGPT или другими нейросетями?</p><p>1. **100% математическая точность против галлюцинаций LLM:**<br>   Языковые модели часто ошибаются («галлюцинируют») при работе с большими массивами чисел, выдавая правдоподобные, но математически неверные значения средних, стандартных отклонений и $p$-value. StatCraft выступает в роли непогрешимого **«калькулятора истины»**: нейросеть формулирует логику анализа, а вычисления выполняет нативный Rust-движок StatCraft со строгой погрешностью $\le 10^{-6}$ (верифицирован против SciPy).<br>2. **Живой интерактивный интерфейс на ваших глазах:**<br>   Пока агент рассчитывает статистику, в открытом окне StatCraft в реальном времени появляются канонические сводные таблицы (Pivot Tables), строятся журналы синтаксиса и обновляются данные. Вы видите каждую операцию и можете в любой момент продолжить работу вручную или скопировать таблицы в Excel в один клик.<br>3. **Полная конфиденциальность (100% Offline &amp; Local):**<br>   Мост работает через локальный сетевой сокет (`127.0.0.1:18493`) исключительно на вашем компьютере. Ваши медицинские, социологические или коммерческие данные не загружаются на сторонние серверы обработки данных.<br>4. **Универсальный Code Mode:**<br>   Агент не ограничен захардкоженными сценариями. Он может выполнять любой пакетный синтаксис SPSS (`.sps`), сортировать данные, фильтровать наблюдения, перекодировать шкалы, восполнять пропуски и вычислять любые из 16 реализованных процедур.</p><p>#### Как подключить ИИ-агента к StatCraft?</p><p>* **Через GUI:** Откройте меню `Расширения -&gt; Мост MCP / Copilot` (`Extensions -&gt; MCP Bridge / Copilot`) в StatCraft. В окне доступен статус сервера, журнал активности, а также готовые кнопки копирования настроек конфигурации для Antigravity, Claude Desktop или Cursor.<br>* **Через консоль (stdio MCP):** Запустите `statcraft.exe --mcp` в конфигурации любого MCP-клиента.<br>&lt;/details&gt;</p><p>---</p><h2>Архитектура слоев (L0 – L6)</h2><p>StatCraft строго следует архитектурному канону **ArtCraft Layering Law**. Зависимости между крейтами направлены строго сверху вниз:</p><p><em>[code block — open in CapsuleCraft web for its canvas]</em></p><p>---</p><h2>Сборка и запуск</h2><h3>Требования</h3><p>* Установленный компилятор [Rust](https://rustup.rs/) (рекомендуется версия 1.80 или новее).</p><h3>Клонирование и запуск</h3><p>Склонируйте репозиторий и запустите настольное приложение:</p><p><em>[code block — open in CapsuleCraft web for its canvas]</em></p><h3>Запуск тестов и линтеров качества</h3><p>StatCraft соблюдает строгий регламент **Definition of Done (DoD)**. Все тесты и статические линтеры архитектуры обязаны проходить без единого предупреждения:</p><p><em>[code block — open in CapsuleCraft web for its canvas]</em></p><p>---</p><h2>Структура проекта</h2><p>| Крейт / Путь | Назначение |<br>|---|---|<br>| [`crates/statcraft_app`](crates/statcraft_app) | Графический интерфейс пользователя, докинг, DialogKit, грид данных, Output Viewer |<br>| [`crates/statcraft_syntax`](crates/statcraft_syntax) | Шина команд движка, транзакции, undo/redo, сериализатор синтаксиса SPSS |<br>| [`crates/statcraft_algo`](crates/statcraft_algo) | Чистые математические алгоритмы (t-тесты, ANOVA, регрессия, корреляции, факторный анализ, непараметрика, частоты) |<br>| [`crates/statcraft_core`](crates/statcraft_core) | Структуры в памяти: `DataSet`, `RawTable`, `VariableDictionary`, шкалы измерений, метаданные |<br>| [`crates/statcraft_io`](crates/statcraft_io) | Кодеки данных: потоковый CSV/TSV, книги Excel (.xlsx/.xls/.ods) и файлы SPSS (.sav/.zsav) |<br>| [`crates/statcraft_i18n`](crates/statcraft_i18n) | Движок интернационализации на базе Project Fluent (`locales/*.ftl`) |<br>| [`xtask`](xtask) | Утилиты проверки: `file-guard`, `layers`, `design-guard`, `parity` |<br>| [`docs/`](docs) | Архитектурные руководства, гайдлайн дизайна диалогов, дорожная карта, летопись |</p><p>---</p><h2>Документация</h2><p>* **[Полный справочник возможностей (FEATURES_RU.md)](docs/FEATURES_RU.md)** / **[Feature Guide (EN)](docs/FEATURES.md)** — Исчерпывающий каталог всех реализованных статистических процедур, преобразований данных, формул и интерфейсных инструментов.<br>* [Руководство контрибьютора (CONTRIBUTING.md)](CONTRIBUTING.md) — Исчерпывающий регламент разработки, Resource Guard (-j 1), архитектурные слои и Definition of Done.<br>* [Чек-лист паритета с SPSS (Parity Checklist)](docs/parity-checklist.md) — Детальное отслеживание соответствия команд и меню SPSS.<br>* [Дорожная карта (Roadmap)](docs/ROADMAP.md) — Долгосрочные технические фазы и этапы развития.<br>* [Руководство по дизайну окон (Design Guide)](docs/DESIGN_GUIDE.md) — Стандарт компоновки диалоговых окон (`DialogKit`).<br>* [Хроника разработки (RU)](docs/CHRONICLE.md) / [Development Chronicle (EN)](docs/CHRONICLE.en.md) — Авторская летопись каждого архитектурного этапа.</p><p>---</p><h2>💖 Поддержка и донаты</h2><p>**StatCraft** — это амбициозный, математически строгий статистический пакет, создаваемый с нуля на **100% чистом Safe Rust** без использования устаревших C/Fortran-библиотек. Разработка и аналитическая валидация математических алгоритмов (параметрические и непараметрические критерии, ANOVA, тест Ливиня, регрессия, синтаксис SPSS и сводные таблицы) требует колоссальных исследовательских усилий и времени.</p><p>Если **StatCraft** полезен для вашей научной работы, университетских занятий или практических исследований, и вы хотите поддержать дальнейшее развитие проекта:</p><p>&lt;div align=&quot;center&quot;&gt;</p><p>[![Поддержать на Lava.top](https://img.shields.io/badge/Поддержать_проект-Lava.top-FF5C35?style=for-the-badge&amp;logo=heart&amp;logoColor=white)](https://app.lava.top/kobaltgit)</p><p>**👉 [https://app.lava.top/kobaltgit](https://app.lava.top/kobaltgit)**</p><p>*(Поддерживаются карты банков РФ, СНГ и зарубежные способы оплаты)*</p><p>&lt;/div&gt;</p><p>---</p><h2>Лицензия</h2><p>Кодовая база проекта распространяется под двойной свободной лицензией:<br>* **MIT License** ([LICENSE-MIT](LICENSE-MIT))<br>* **Apache License, Version 2.0** ([LICENSE-APACHE](LICENSE-APACHE))</p><p>Вы можете выбрать любую из лицензий по вашему усмотрению.</p><p>Все графические ассеты и логотипы в `assets/` принадлежат проекту **StatCraft** (kobaltGIT).</p><hr><p style="color:#8a8175;font-size:12px">Exported from CapsuleCraft Native · &lt;doc-statcraft-readme_ru_md@capsuleos.local&gt;</p></body></html>
+<!doctype html><html><head><meta charset="utf-8"><meta name="generator" content="CapsuleCraft Native"></head><body style="font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;max-width:720px;margin:32px auto;line-height:1.55;color:#23201c;background:#faf8f4;"><h1>📚 StatCraft / README.ru</h1><p><em>[callout block — open in CapsuleCraft web for its canvas]</em></p><p>&lt;p align=&quot;center&quot;&gt;<br>  &lt;img src=&quot;assets/banner.svg&quot; alt=&quot;Баннер StatCraft&quot; width=&quot;100%&quot; /&gt;<br>&lt;/p&gt;</p><p>&lt;div align=&quot;center&quot;&gt;<br>  &lt;h3&gt;<br>    &lt;a href=&quot;https://statcraft-mu.vercel.app/&quot;&gt;🌐 https://statcraft-mu.vercel.app/&lt;/a&gt;<br>  &lt;/h3&gt;<br>  &lt;p&gt;<br>    &lt;strong&gt;Официальный сайт, веб-документация и готовые бинарные сборки&lt;/strong&gt;<br>  &lt;/p&gt;</p><p>&lt;p&gt;<br>    &lt;a href=&quot;README.md&quot;&gt;English&lt;/a&gt; |<br>    &lt;a href=&quot;README.ru.md&quot;&gt;&lt;strong&gt;Русский&lt;/strong&gt;&lt;/a&gt;<br>  &lt;/p&gt;</p><p>&lt;p&gt;<br>    &lt;a href=&quot;https://statcraft-mu.vercel.app/&quot;&gt;&lt;img src=&quot;https://img.shields.io/badge/Сайт-statcraft--mu.vercel.app-007ACC?logo=vercel&amp;logoColor=white&quot; alt=&quot;Сайт: statcraft-mu.vercel.app&quot; /&gt;&lt;/a&gt;<br>    &lt;a href=&quot;https://www.rust-lang.org/&quot;&gt;&lt;img src=&quot;https://img.shields.io/badge/Rust-1.80%2B-orange?logo=rust&quot; alt=&quot;Rust 1.80+&quot; /&gt;&lt;/a&gt;<br>    &lt;a href=&quot;LICENSE-MIT&quot;&gt;&lt;img src=&quot;https://img.shields.io/badge/Лицензия-MIT%20OR%20Apache--2.0-blue.svg&quot; alt=&quot;Лицензия: MIT OR Apache-2.0&quot; /&gt;&lt;/a&gt;<br>    &lt;img src=&quot;https://img.shields.io/badge/Платформа-Windows%20%7C%20Linux%20%7C%20macOS-lightgrey.svg&quot; alt=&quot;Платформа: Windows | Linux | macOS&quot; /&gt;<br>    &lt;img src=&quot;https://img.shields.io/badge/Архитектура-100%25%20Safe%20Rust-brightgreen.svg&quot; alt=&quot;100% Safe Rust&quot; /&gt;<br>    &lt;img src=&quot;https://img.shields.io/badge/Тесты-770%2B%20Пройдены-success.svg&quot; alt=&quot;Тесты: 770+ пройдены&quot; /&gt;<br>    &lt;img src=&quot;https://img.shields.io/badge/Оракул-SciPy%20(Δ%20%3C%2010⁻⁶)-blueviolet.svg&quot; alt=&quot;Оракул: SciPy (Δ &lt; 10⁻⁶)&quot; /&gt;<br>    &lt;img src=&quot;https://img.shields.io/badge/Локализация-EN%20%7C%20RU-informational.svg&quot; alt=&quot;Локализация: EN | RU&quot; /&gt;<br>    &lt;a href=&quot;#4-сетевой-мост-statcraft-bridge--ии-агенты-model-context-protocol--code-mode&quot;&gt;&lt;img src=&quot;https://img.shields.io/badge/MCP-Live%20Bridge%20%26%20Code%20Mode-6366F1?logo=anthropic&amp;logoColor=white&quot; alt=&quot;MCP: Live Bridge &amp; Code Mode&quot; /&gt;&lt;/a&gt;<br>    &lt;a href=&quot;https://remade.wiki/projects/statcraft/&quot;&gt;&lt;img src=&quot;https://remade.wiki/badges/listed-on-remade-classic.svg&quot; alt=&quot;Listed on Remade&quot; /&gt;&lt;/a&gt;<br>    &lt;a href=&quot;https://app.lava.top/kobaltgit&quot;&gt;&lt;img src=&quot;https://img.shields.io/badge/Поддержать-Lava.top-FF5C35?logo=githubsponsors&amp;logoColor=white&quot; alt=&quot;Поддержать: Lava.top&quot; /&gt;&lt;/a&gt;<br>  &lt;/p&gt;<br>&lt;/div&gt;</p><p>---</p><h2>Обзор</h2><p><em>[callout block — open in CapsuleCraft web for its canvas]</em></p><p><em>[callout block — open in CapsuleCraft web for its canvas]</em></p><p>**StatCraft** — экспериментальная альтернатива классическим статистическим пакетам на **100% безопасном Rust**. Это независимый проект открытой науки, объединяющий чистую математическую реализацию на базе Apache Arrow и Polars со встроенным протоколом Model Context Protocol (MCP) для совместных исследований с ИИ.</p><p>Мы не заявляем, что StatCraft — это готовая замена коммерческим пакетам. Это открытый вычислительный эксперимент. Мы приглашаем исследователей, статистиков и разработчиков изучать расчёты, проверять граничные случаи в сравнении с существующими пакетами (SPSS, R, Stata) и помогать делать научные вычисления прозрачными, проверяемыми и воспроизводимыми.</p><p>&lt;p align=&quot;center&quot;&gt;<br>  &lt;img src=&quot;assets/screenshot.png&quot; alt=&quot;Интерфейс StatCraft&quot; width=&quot;100%&quot; /&gt;<br>  &lt;br&gt;<br>  &lt;em&gt;Рабочее пространство StatCraft: Редактор переменных (Variable View), протокол синтаксиса и канонический Output Viewer со сводными таблицами (Pivot Tables) в стиле SPSS.&lt;/em&gt;<br>&lt;/p&gt;</p><p>---</p><h2>Ключевые принципы и надежность архитектуры</h2><p>Статистический пакет не имеет права аварийно падать посреди расчета или замалчивать ошибки NaN. StatCraft следует строгим контрактам надежности памяти и разделения слоев:</p><p>* **Контракт нулевых паник (100% Safe Rust):** В коде строго запрещены `unwrap()`, `expect()`, `panic!()` и `unsafe`. Любые нештатные ситуации (вырожденная матрица, деление на ноль, малая выборка) возвращаются типизированными `Result&lt;T, StatError&gt;`.<br>* **Принцип чистой комнаты (Clean-Room):** Разработка ведется без заимствования проприетарного кода или ассетов IBM SPSS. Все алгоритмы воспроизводятся исключительно по открытым научным статьям, стандартам ISO и спецификациям GNU PSPP с верификацией против «Золотого оракула» SciPy ($\Delta &lt; 10^{-6}$).<br>* **Команды вместо обработчиков (Commands, Not Handlers):** Любое действие пользователя или математическая процедура — это типизированная команда движка (`EngineCommand`). Все команды поддерживают неразрушающую историю (Undo/Redo), сериализуются в стандартный синтаксис SPSS (`.sps`) и могут выполняться пакетно.<br>* **Колоночная память Apache Arrow:** Массивы данных хранятся в непрерывных блоках памяти Apache Arrow. Векторные преобразования и фильтрация выполняются движком Polars с поддержкой SIMD без пауз сборщика мусора.<br>* **Канонический Output Viewer в стиле SPSS:** Иерархическое дерево навигации совмещено с аутентичными многоуровневыми сводными таблицами (Pivot Tables). Результаты копируются в буфер обмена в один клик в формате структурированного TSV, который вставляется в Microsoft Excel чисто и без склеивания колонок и искажения дат.<br>* **Векторный интерфейс (Vector-First UI):** Чистая векторная отрисовка через `egui` (`ui.painter()`) и векторные SVG-иконки. Полный запрет на эмодзи и нестандартные Unicode-символы исключает появление уродливых квадратов «тофу» (`□`) на любых операционных системах.<br>* **Нулевой хардкод строк (Zero-Hardcode i18n):** 100% текстовых строк вынесены в каталоги Project Fluent (`locales/ru.ftl`, `locales/en.ftl`) с поддержкой переключения языка «на лету» без перезапуска.<br>* **Resource Guard:** Ограничение потоков компиляции (`-j 1`, `codegen-units = 1`) для защиты рабочей станции от зависания и перегрузки CPU/RAM.</p><p>---</p><h2>Основной функционал</h2><p><em>[callout block — open in CapsuleCraft web for its canvas]</em></p><p><em>[callout block — open in CapsuleCraft web for its canvas]</em></p><h3>1. Двухрежимное управление данными</h3><p>* **Редактор данных (Data View — 4-квадрантная 2D-сетка):**<br>  - **Пространственная архитектура 4 квадрантов:** Закрепленные заголовки колонок сверху, закрепленные номера строк слева, центральная область данных со скроллингом в 2D. Номера строк не уплывают за край экрана при горизонтальной прокрутке.<br>  - **Высокопроизводительная индексация (`LineIndex`):** Префиксные суммы обеспечивают $O(\log N)$ бинарный поиск ячеек с нулевыми аллокациями памяти на куче для сотен тысяч наблюдений.<br>  - **Интерактивный ресайз столбцов и автоподбор (Auto-fit):** Изменение ширины перетаскиванием границы с направляющей линией; двойной клик по разделителю подбирает оптимальную ширину по содержимому; двусторонняя синхронизация со словарем метаданных SPSS (`VariableMetadata.columns`).<br>  - **Прямоугольное выделение и эргономика клавиатуры:** Выделение диапазона рамкой мыши, `Shift`-клик/`Shift`-drag, стрелки, Tab/Enter и **Direct Typing** (мгновенный ввод данных в активную ячейку без предварительного клика).<br>  - **Прямоугольный буфер обмена TSV/CSV:** Двусторонний обмен (`Ctrl+C` / `Ctrl+V`) с Excel, Google Sheets и LibreOffice с авторасширением строк датасета.<br>  - **Серийное автозаполнение (Fill Handle):** Векторный маркер протяжки в углу выделения рассчитывает шаг арифметической прогрессии для чисел и повторение для категорий.<br>  - **Колоночный автофильтр:** Интерактивная кнопка в заголовке с векторным шевроном/воронкой открывает выпадающее окно с живым поиском, чекбоксами и обработкой категории «(Пустые)».<br>  - **Быстрая сортировка через CommandBus:** Сортировка по возрастанию (A–Z) и убыванию (Z–A) через каноническую команду `data.sort_cases` со 100% обратимым Undo/Redo и выводом в синтаксис SPSS.<br>  - **Контекстное меню ячеек:** Правый клик мыши открывает меню («Фильтровать по значению», «Очистить фильтр», «Сортировка», «Копировать/Вставить»).<br>  - **Контроль целостности данных:** Автоматическое обнаружение чисел, сохраненных как текст, с зеленым треугольным маркером в углу ячейки и мгновенной конвертацией в число по клику.<br>  - **Переключение меток значений (`1/A`):** Кнопка на панели инструментов для мгновенного переключения между кодами и читаемыми текстовыми метками.<br>* **Редактор переменных (Variable View):** Полноценный словарь метаданных, управляющий всеми атрибутами:<br>  - **Имя (Name):** Нормализованные идентификаторы переменных.<br>  - **Тип (Type):** 9 канонических типов переменных SPSS (Числовой, Запятая, Точка, Научный, Дата, Доллар, Пользовательская валюта, Строка, Ограниченное число).<br>  - **Ширина и Дробная часть (Width &amp; Decimals):** Визуальный контроль разрядности и точности с векторными кнопками-спиннерами.<br>  - **Метки (Label):** Развернутые описательные названия переменных.<br>  - **Значения (Values):** Модальный редактор дискретных меток значений (кодировок).<br>  - **Пропущенные значения (Missing):** Настройка дискретных пропусков и непрерывных диапазонов пропущенных значений.<br>  - **Выравнивание (Align):** Влево, По центру, Вправо.<br>  - **Шкала измерений (Measure):** Номинальная, Порядковая, Количественная шкала с векторными пиктограммами.</p><h3>2. Статистические процедуры</h3><p>* **Описательные статистики (Descriptives):** Среднее, Ошибка среднего, Стандартное отклонение, Дисперсия, Минимум, Максимум, Размах, Сумма, Асимметрия, Эксцесс и N валидных наблюдений (по списку).<br>* **Частоты (Frequencies):** Таблицы частот, проценты, валидные проценты, накопленные проценты, учет пропущенных значений, квартили и процентили.<br>* **Одновыборочный T-критерий (One-Sample T-Test):** t-критерий Стьюдента для заданного проверяемого значения, степени свободы, двусторонняя значимость ($p$-value), разность средних, 95% доверительные интервалы и две отдельные канонические таблицы вывода (Статистика критерия и Одновыборочный критерий).<br>* **Т-критерий для независимых выборок (Independent-Samples T-Test):** Сравнение двух групп с автоматическим тестом Ливиня на равенство дисперсий ($F$, $p$), критерием Стьюдента (равенство дисперсий предполагается) и критерием Уэлча (равенство дисперсий не предполагается), а также таблицей «Статистика групп».<br>* **Т-критерий для парных выборок (Paired-Samples T-Test):** Сравнение зависимых выборок с формированием таблиц «Статистика парных выборок», «Корреляции парных выборок» (коэффициент Пирсона $r$, $p$) и «Критерий для парных выборок».<br>* **Однофакторный дисперсионный анализ (One-Way ANOVA):** Критерий Фишера, межгрупповая и внутригрупповая суммы квадратов, средние квадраты, критерий однородности дисперсий Ливиня и описательные статистики с 95% ДИ.</p><h3>3. Модуль вывода (Output Viewer)</h3><p>* **Иерархическое дерево навигации (Outline):** Левая панель оглавления для мгновенного перехода к нужной процедуре, журналу или таблице.<br>* **Сводные таблицы (Pivot Tables):** Аутентичные многоуровневые таблицы SPSS с чередующейся подсветкой строк и выравниванием числовых колонок по правому краю.<br>* **Экспорт в TSV одним кликом:** Кнопка `[ Копировать таблицу (TSV) ]` с мгновенной подсветкой и контекстным меню. Таблицы разделены строками заголовков и структурированы специально для вставки в Excel.<br>* **Протокол синтаксиса:** Блоки журнала, фиксирующие исполненные команды синтаксиса SPSS (`GET DATA`, `DESCRIPTIVES`, `T-TEST`, `ONEWAY`) с отметками времени.</p><h3>4. Сетевой мост StatCraft Bridge &amp; ИИ-агенты (Model Context Protocol / Code Mode)</h3><p>StatCraft оснащён встроенной поддержкой открытого стандарта **Model Context Protocol (MCP)** и локальным IPC-сокетом (порт 18493) для двусторонней связи с внешними ИИ-ассистентами (Antigravity, Claude, ChatGPT, Ollama и локальными LLM).</p><p>&lt;details&gt;<br>&lt;summary&gt;&lt;b&gt;🔍 Как устроен мост StatCraft Bridge (Нажмите, чтобы развернуть)&lt;/b&gt;&lt;/summary&gt;</p><p>#### Статистический анализ человеческим языком с детерминированным исполнением</p><p>Мост StatCraft Bridge позволяет исследователю подключить любимого ИИ-ассистента напрямую к локальному вычислительному ядру. Вместо ручного составления скриптов или поиска нужных параметров в многоуровневых меню, задачу можно формулировать на естественном языке:</p><p><em>[callout block — open in CapsuleCraft web for its canvas]</em></p><p>Подключенный ИИ-агент автономно:<br>1. Запрашивает метаданные датасета, шкалы измерений и словарь переменных через протокол MCP;<br>2. Формирует и передает типизированные команды ядру StatCraft;<br>3. Получает математически верифицированные таблицы вывода;<br>4. Формирует содержательный научный вывод с интерпретацией уровней значимости ($p$-value) и величины эффекта.</p><p>#### Ключевые архитектурные преимущества:</p><p>1. **Детерминированные вычисления против арифметических ошибок LLM:**<br>   Большие языковые модели часто ошибаются («галлюцинируют») при агрегации больших числовых массивов или вычислении нелинейных критериев. StatCraft служит **«калькулятором истины»**: нейросеть направляет ход исследования, а расчёты производит нативный Rust-движок с допуском $\Delta &lt; 10^{-6}$ относительно SciPy.<br>2. **Живая синхронизация с интерфейсом на ваших глазах:**<br>   По мере выполнения процедур десктопный интерфейс StatCraft обновляется в реальном времени: в Output Viewer формируются канонические сводные таблицы (Pivot Tables), протоколируется синтаксис, а результаты можно скопировать в электронные таблицы в один клик.<br>3. **100% конфиденциальность (Offline &amp; Local):**<br>   Мост работает через локальный сетевой сокет (`127.0.0.1:18493`). Ваши медицинские, исследовательские или коммерческие данные никогда не покидают пределы рабочей станции.<br>4. **Универсальный пакетный Code Mode:**<br>   Агент может исполнять синтаксис SPSS (`.sps`), сортировать наблюдения, фильтровать подвыборки, перекодировать шкалы и запускать любые реализованные процедуры.</p><p>#### Как подключить ИИ-агента</p><p>* **Через графический интерфейс:** Откройте меню `Расширения -&gt; Мост MCP / Copilot` (`Extensions -&gt; MCP Bridge / Copilot`) в StatCraft. В окне доступен статус сервера, журнал активности и готовые сниппеты конфигурации для Antigravity, Claude Desktop и Cursor.<br>* **Через консоль (stdio MCP):** Укажите команду `statcraft.exe --mcp` в настройках любого MCP-клиента.<br>&lt;/details&gt;</p><p>---</p><h2>🔬 Открытое приглашение исследователям и разработчикам</h2><p>Мы не заявляем, что StatCraft — это готовая коммерческая замена. Это открытый вычислительный эксперимент. Нам нужен ваш исследовательский опыт, ваши датасеты и ваша придирчивость, чтобы сделать научные вычисления прозрачными и воспроизводимыми:</p><p>* **Для исследователей и статистиков:** Бросьте вызов нашим расчётам. Прогоните ваши рабочие массивы через StatCraft и сравните сводные таблицы с SPSS, R или Stata. Нашли расхождение ($\Delta &gt; 10^{-6}$)? Отправьте тикет прямо с сайта **[statcraft-mu.vercel.app](https://statcraft-mu.vercel.app/)** или откройте задачу на GitHub.<br>* **Для Rust-инженеров и разработчиков:** Помогите строить надежную вычислительную платформу на безопасном системном программировании (оптимизация линейной алгебры на `faer` и `statrs` без `unsafe`, внедрение новых статистических процедур и расширение инструментария MCP).</p><p>---</p><h2>Архитектура слоев (L0 – L6)</h2><p>StatCraft строго следует архитектурному канону **ArtCraft Layering Law**. Зависимости между крейтами направлены строго сверху вниз:</p><p><em>[code block — open in CapsuleCraft web for its canvas]</em></p><p>---</p><h2>Сборка и запуск</h2><h3>Требования</h3><p>* Установленный компилятор [Rust](https://rustup.rs/) (рекомендуется версия 1.80 или новее).</p><h3>Клонирование и запуск</h3><p>Склонируйте репозиторий и запустите настольное приложение:</p><p><em>[code block — open in CapsuleCraft web for its canvas]</em></p><h3>Запуск тестов и линтеров качества</h3><p>StatCraft соблюдает строгий регламент **Definition of Done (DoD)**. Все тесты и статические линтеры архитектуры обязаны проходить без единого предупреждения:</p><p><em>[code block — open in CapsuleCraft web for its canvas]</em></p><p>---</p><h2>Структура проекта</h2><p>| Крейт / Путь | Назначение |<br>|---|---|<br>| [`crates/statcraft_app`](crates/statcraft_app) | Графический интерфейс пользователя, докинг, DialogKit, грид данных, Output Viewer |<br>| [`crates/statcraft_syntax`](crates/statcraft_syntax) | Шина команд движка, транзакции, undo/redo, сериализатор синтаксиса SPSS |<br>| [`crates/statcraft_algo`](crates/statcraft_algo) | Чистые математические алгоритмы (t-тесты, ANOVA, регрессия, корреляции, факторный анализ, непараметрика, частоты) |<br>| [`crates/statcraft_core`](crates/statcraft_core) | Структуры в памяти: `DataSet`, `RawTable`, `VariableDictionary`, шкалы измерений, метаданные |<br>| [`crates/statcraft_io`](crates/statcraft_io) | Кодеки данных: потоковый CSV/TSV, книги Excel (.xlsx/.xls/.ods) и файлы SPSS (.sav/.zsav) |<br>| [`crates/statcraft_reporting`](crates/statcraft_reporting) | Модель сводных таблиц (Pivot Tables), TSV, HTML и текстовый экспорт |<br>| [`crates/statcraft_bridge`](crates/statcraft_bridge) | Локальный сокет IPC (порт 18493) и сервер Model Context Protocol (MCP) |<br>| [`crates/statcraft_i18n`](crates/statcraft_i18n) | Движок интернационализации на базе Project Fluent (`locales/*.ftl`) |<br>| [`website/`](website) | Официальный веб-портал, интерактивная документация, бенчмарки и загрузка релизов ([statcraft-mu.vercel.app](https://statcraft-mu.vercel.app/)) |<br>| [`xtask`](xtask) | Утилиты проверки: `file-guard`, `layers`, `design-guard`, `parity`, `sync-site` |<br>| [`docs/`](docs) | Архитектурные руководства, гайдлайн дизайна диалогов, дорожная карта, летопись |</p><p>---</p><h2>Документация</h2><p>* **[Официальный сайт и веб-документация (statcraft-mu.vercel.app)](https://statcraft-mu.vercel.app/)** — Интерактивная веб-документация, матрица бенчмарков «Золотого оракула» против IBM SPSS 24, автоопределение ОС для загрузки готовых бинарников и отправка отчетов о расхождениях.<br>* **[Полный справочник возможностей (FEATURES_RU.md)](docs/FEATURES_RU.md)** / **[Feature Guide (EN)](docs/FEATURES.md)** — Исчерпывающий каталог всех реализованных статистических процедур, преобразований данных, формул и интерфейсных инструментов.<br>* [Руководство контрибьютора (CONTRIBUTING.md)](CONTRIBUTING.md) — Исчерпывающий регламент разработки, Resource Guard (-j 1), архитектурные слои и Definition of Done.<br>* [Чек-лист паритета с SPSS (Parity Checklist)](docs/parity-checklist.md) — Детальное отслеживание соответствия команд и меню SPSS.<br>* [Математический аудит алгоритмов SPSS](docs/SPSS_ALGORITHMS_AUDIT_RU.md) — Постраничная Clean-Room верификация против руководства IBM SPSS 24 с помощью [Craft Anything](https://github.com/storytold/craft-anything).<br>* [Дорожная карта (Roadmap)](docs/ROADMAP.md) — Долгосрочные технические фазы и этапы развития.<br>* [Руководство по дизайну окон (Design Guide)](docs/DESIGN_GUIDE.md) — Стандарт компоновки диалоговых окон (`DialogKit`).<br>* [Хроника разработки (RU)](docs/CHRONICLE.md) / [Development Chronicle (EN)](docs/CHRONICLE.en.md) — Авторская летопись каждого архитектурного этапа.</p><p>---</p><h2>💖 Поддержка и донаты</h2><p>**StatCraft** — это независимый проект открытой науки, создаваемый на **100% чистом Safe Rust** без использования устаревших C/Fortran-библиотек. Разработка чистых алгоритмов, верифицируемой матричной алгебры и аутентичных сводных таблиц требует постоянных исследовательских и инженерных усилий.</p><p>Если **StatCraft** полезен для вашей научной работы, университетских занятий или практических исследований, вы можете поддержать дальнейшее развитие проекта:</p><p>&lt;div align=&quot;center&quot;&gt;</p><p>[![Поддержать на Lava.top](https://img.shields.io/badge/Поддержать_проект-Lava.top-FF5C35?style=for-the-badge&amp;logo=heart&amp;logoColor=white)](https://app.lava.top/kobaltgit)</p><p>**👉 [https://app.lava.top/kobaltgit](https://app.lava.top/kobaltgit)**</p><p>*(Поддерживаются карты банков РФ, СНГ и зарубежные способы оплаты)*</p><p>&lt;/div&gt;</p><p>---</p><h2>Лицензия</h2><p>Кодовая база проекта распространяется под двойной свободной лицензией:<br>* **MIT License** ([LICENSE-MIT](LICENSE-MIT))<br>* **Apache License, Version 2.0** ([LICENSE-APACHE](LICENSE-APACHE))</p><p>Вы можете выбрать любую из лицензий по вашему усмотрению.</p><p>Все графические ассеты и логотипы в `assets/` принадлежат проекту **StatCraft** (kobaltGIT).</p><hr><p style="color:#8a8175;font-size:12px">Exported from CapsuleCraft Native · &lt;doc-statcraft-readme_ru_md@capsuleos.local&gt;</p></body></html>
 
---BOUNDARY_PAYLOAD_1SINRTUDP0--
---BOUNDARY_ROOT_8FC7SWDNFI--
+--BOUNDARY_PAYLOAD_1PYJZPSDP0--
+--BOUNDARY_ROOT_13UUTEADNF--

@@ -1,0 +1,739 @@
+From: CapsuleCraft Code Ingest <system@capsulecraft.local>
+To: Vault <vault@capsuleos.local>
+Subject: 📚 StatCraft / Changelog
+Date: Thu, 26 Nov 2026 14:22:01 +0000
+Message-ID: <doc-statcraft-changelog_md@capsuleos.local>
+In-Reply-To: <project-index-statcraft@capsuleos.local>
+X-Capsule-Page-Parent: <project-index-statcraft@capsuleos.local>
+References: <project-index-statcraft@capsuleos.local>
+X-Capsule-Tags: project, statcraft, docs
+X-Capsule-Status: Active
+MIME-Version: 1.0
+Content-Type: multipart/mixed; boundary="BOUNDARY_ROOT_1YXCA2XDNP"
+
+--BOUNDARY_ROOT_1YXCA2XDNP
+Content-Type: multipart/alternative; boundary="BOUNDARY_PAYLOAD_AAJWXRDPAF"
+
+--BOUNDARY_PAYLOAD_AAJWXRDPAF
+Content-Type: application/json; name="canvas_state.json"
+Content-Disposition: inline; filename="canvas_state.json"
+
+{
+  "version": "1.0",
+  "generator": "CapsuleCraft Native egui prototype (Zero-DB Pure-MIME)",
+  "messageId": "<doc-statcraft-changelog_md@capsuleos.local>",
+  "subject": "📚 StatCraft / Changelog",
+  "tags": [
+    "project",
+    "statcraft",
+    "docs"
+  ],
+  "blocks": [
+    {
+      "data": {
+        "icon": "book",
+        "text": "Documentation file: `CHANGELOG.md`\nBelongs to project: [[📦 StatCraft (Overview) | 📦 StatCraft (Overview)]]"
+      },
+      "id": "blk_native_callout_1795702921253053200",
+      "managed_by": "project_parser",
+      "type": "callout"
+    },
+    {
+      "data": {
+        "level": 1,
+        "text": "Changelog"
+      },
+      "id": "blk_native_heading_1795702921252918300",
+      "managed_by": "project_parser",
+      "type": "heading"
+    },
+    {
+      "data": {
+        "text": "All notable changes to the **StatCraft** statistical computing application will be documented in this file."
+      },
+      "id": "blk_native_paragraph_1795702921252928800",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    },
+    {
+      "data": {
+        "text": "The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),\nand this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html)."
+      },
+      "id": "blk_native_paragraph_1795702921252931100",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    },
+    {
+      "data": {
+        "text": "---"
+      },
+      "id": "blk_native_paragraph_1795702921252932700",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    },
+    {
+      "data": {
+        "level": 2,
+        "text": "[0.4.10] - 2026-11-26"
+      },
+      "id": "blk_native_heading_1795702921252933600",
+      "managed_by": "project_parser",
+      "type": "heading"
+    },
+    {
+      "data": {
+        "level": 3,
+        "text": "Added"
+      },
+      "id": "blk_native_heading_1795702921252935100",
+      "managed_by": "project_parser",
+      "type": "heading"
+    },
+    {
+      "data": {
+        "text": "- **TURF Analysis (`SPSSINC TURF`) Full SPSS Parity (Features 034–036):**\n  - Implemented clean-room combinatorial Total Unduplicated Reach and Frequency engine in `statcraft_algo` (`turf.rs`, `turf_types.rs`, `turf_heats.rs`, `turf_tests.rs`) using packed `Vec<u64>` respondent bitsets, `WEIGHT BY` and `filter_$` support, `FORCE`, `MINPERCENT`, `REMOVALCYCLES`, `MAXSETS` checked `u128` operation guard, `IMPORTANCE` weights (`STRICT=YES/NO`), and deterministic Tournament Heats (`HEATSIZE`, `NUMWINNERS`) for large variable sets.\n  - Added `stat.turf` `CommandBus` command (`turf_cmd.rs`) and full `SPSSINC TURF` / `TURF` `.sps` syntax round-trip (`CRITERIA=`, `BESTN=`, `NUMBERTODISPLAY=`, `MINPERCENT=`, `PLOT=`, `REMOVALCYCLES=`, `MAXSETS=`, `/HEATS`, `/IMPORTANCE`).\n  - Added `TurfDialog` with `Importance Weights...` and `Advanced Selection...` subdialogs using `DialogKit` (`DialogSize::Compute`) under **Analyze > Descriptive Statistics > TURF Analysis...**.\n  - Added Output Viewer Pivot Tables (Case & Parameter Summary, Reach and Frequency per cycle/size with variable `Label` resolution), vector Reach & Frequency curves, and TSV/HTML/TXT export.\n- **Global Static i18n Linter (`xtask i18n-guard`):**\n  - Added `xtask/src/i18n_guard.rs` and integrated it into `xtask ci` to enforce zero raw UI strings or unlocalized table headers across all dialogs and views."
+      },
+      "id": "blk_native_paragraph_1795702921252941000",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    },
+    {
+      "data": {
+        "level": 3,
+        "text": "Fixed"
+      },
+      "id": "blk_native_heading_1795702921252942800",
+      "managed_by": "project_parser",
+      "type": "heading"
+    },
+    {
+      "data": {
+        "text": "- **TURF & Output Viewer:** Fixed `frequency_pct` (`% of Responses`) denominator to divide by total positive responses across active variables instead of valid case count, localized all TURF and Explore report table headers (`Parameter | Value`, etc.), and fixed `TurfDialog` right sidebar column width."
+      },
+      "id": "blk_native_paragraph_1795702921252944700",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    },
+    {
+      "data": {
+        "text": "---"
+      },
+      "id": "blk_native_paragraph_1795702921252946500",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    },
+    {
+      "data": {
+        "level": 2,
+        "text": "[0.4.9] - 2026-11-25"
+      },
+      "id": "blk_native_heading_1795702921252947400",
+      "managed_by": "project_parser",
+      "type": "heading"
+    },
+    {
+      "data": {
+        "level": 3,
+        "text": "Added"
+      },
+      "id": "blk_native_heading_1795702921252948100",
+      "managed_by": "project_parser",
+      "type": "heading"
+    },
+    {
+      "data": {
+        "text": "- **Theil–Sen Estimator (Feature 032):** Robust simple linear regression, Mann–Kendall trend test, Bootstrap, PRE/RES saving, scatter/residual plots, and `THEIL SEN` `.sps` syntax.\n- **Orthogonal / Deming Regression (Feature 033):** Closed-form Deming (`lambda = 1.0` & custom `lambda > 0`), Jackknife SE & t-CI, Bootstrap, PRE/RES saving, scatter plot with `Y=X` line, and `ORTHOGONAL REGRESSION` `.sps` syntax.\n- **Linux AppImage:** Automated `statcraft-linux-x64.AppImage` build in GitHub Releases."
+      },
+      "id": "blk_native_paragraph_1795702921252949900",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    },
+    {
+      "data": {
+        "level": 3,
+        "text": "Fixed"
+      },
+      "id": "blk_native_heading_1795702921252950800",
+      "managed_by": "project_parser",
+      "type": "heading"
+    },
+    {
+      "data": {
+        "text": "- **Output Viewer & i18n:** Translated hardcoded Notes labels, fixed Deming `Y=X` plot scaling, added axis padding & Y-ticks, eliminated `-0.0000`, auto-fitted table column widths, and rendered variable `Label`s."
+      },
+      "id": "blk_native_paragraph_1795702921252952300",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    },
+    {
+      "data": {
+        "text": "---"
+      },
+      "id": "blk_native_paragraph_1795702921252953400",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    },
+    {
+      "data": {
+        "level": 2,
+        "text": "[0.4.8] - 2026-11-25"
+      },
+      "id": "blk_native_heading_1795702921252954200",
+      "managed_by": "project_parser",
+      "type": "heading"
+    },
+    {
+      "data": {
+        "level": 3,
+        "text": "Added"
+      },
+      "id": "blk_native_heading_1795702921252955700",
+      "managed_by": "project_parser",
+      "type": "heading"
+    },
+    {
+      "data": {
+        "text": "- **Crosstabs (`CROSSTABS`) Full SPSS Parity (Features 029–031):**\n  - Decomposed `statcraft_algo::crosstabs` into modular files (`types.rs`, `mod.rs`, `measures.rs`, `ordinal_corr.rs`, `exact.rs`, `ztest.rs`, `mantel_haenszel.rs`, `tests.rs`).\n  - Added multi-layer tables (`layers` / `Layer 1 of N`), `RowOrder` (`Ascending` / `Descending`), `suppress_tables` (`/NOTABLES`), and `display_clustered_bar_charts` (`/BARCHART`).\n  - Implemented `ExactMode`: `AsymptoticOnly`, `MonteCarlo` (Patefield $r \\times c$ sampler with confidence interval), and bounded `Exact` with configurable time limit.\n  - Added full statistical suite: Pearson/Spearman `Correlations`, Nominal (`Contingency Coefficient`, `Phi & Cramér's V`, `Lambda`, `Uncertainty Coefficient`), Ordinal (`Gamma`, `Somers' d`, `Kendall's tau-b`, `Kendall's tau-c`), Nominal-by-Interval (`Eta`), `Cohen's Kappa`, `Risk` (Odds Ratio & Cohort Relative Risk with 95% CI), `McNemar`, and stratified `Cochran's & Mantel-Haenszel` ($2 \\times 2 \\times K$ with Breslow-Day & Tarone's homogeneity tests).\n  - Added cell display options: `hide_small_counts`, column proportions `z-test` with Bonferroni adjustment and APA subscript letters (`a, b, c...`), 3 residual types (`Unstandardized`, `Standardized`, `Adjusted Standardized`), `apa_style`, and 5 `NonIntegerWeights` modes.\n  - Upgraded `CrosstabsDialog` (`crosstabs_dialog/`) with `Layer 1 of N` pagination, 6 sidebar subdialogs (`Exact...`, `Statistics...`, `Cells...`, `Format...`, `Style...`, `Bootstrap...`), and full Fluent `en.ftl`/`ru.ftl` localization.\n  - Upgraded Output Viewer (`tables_crosstabs/`) with layered matrices, all new statistical tables, `egui_plot` Clustered Bar Charts, `TableStyle` & `Bootstrap` integration, and TSV/HTML/TXT export.\n- **Explore (`EXAMINE`) Full SPSS Parity (Features 026–028):**\n  - Added M-estimators (Huber, Tukey biweight, Hampel, Andrews), HAVERAGE Percentiles & Tukey's Hinges, `Label Cases by`, `Missing=Report`, and Spread-vs-Level with 4-row Levene test.\n  - Upgraded `ExploreDialog` (`explore_dialog/`) with `Label Cases by`, `Display` (`Both` / `Statistics` / `Plots`), `Bootstrap...` integration, and full `EXAMINE` `.sps` round-trip.\n  - Added `egui_plot` Boxplots, Stem-and-Leaf, Histograms, Q-Q plots, and Spread-vs-Level plots in Output Viewer (`tables_explore/`).\n- **Descriptives (`DESCRIPTIVES`) Full SPSS Parity (Features 023–025):**\n  - Added standardized `Z*` variable saving (`SAVE Z*`), full `DESCRIPTIVES` statistics/sorting options, `Options...` subdialog, and Output Viewer / TSV/HTML/TXT export."
+      },
+      "id": "blk_native_paragraph_1795702921252960900",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    },
+    {
+      "data": {
+        "text": "---"
+      },
+      "id": "blk_native_paragraph_1795702921252962200",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    },
+    {
+      "data": {
+        "level": 2,
+        "text": "[0.4.7] - 2026-11-25"
+      },
+      "id": "blk_native_heading_1795702921252963100",
+      "managed_by": "project_parser",
+      "type": "heading"
+    },
+    {
+      "data": {
+        "level": 3,
+        "text": "Added"
+      },
+      "id": "blk_native_heading_1795702921252964200",
+      "managed_by": "project_parser",
+      "type": "heading"
+    },
+    {
+      "data": {
+        "text": "- **Bootstrap Resampling Core & Mersenne Twister PRNG (Feature 020 — Stage 1):**\n  - Implemented deterministic 100% Safe Rust 32-bit Mersenne Twister (`Mt19937`) in `statcraft_core::rng` with unbiased rejection sampling (`gen_range_usize`) and `from_optional_seed()` fallback.\n  - Implemented reusable bootstrap engine in `statcraft_algo::bootstrap` (`options.rs`, `resampler.rs`, `ci.rs`, `engine.rs`) supporting `Simple` and `Stratified` (preserving exact stratum sizes $n_h$) resampling with replacement.\n  - Implemented `Bias`, `Std. Error`, `Percentile` CI, and `BCa` CI (bias correction $z_0$, jackknife acceleration $\\hat{a}$ with safe zero-denominator fallback, and Cody rational `normal_cdf`).\n  - Added SPSS `SET MTINDEX=...` and `BOOTSTRAP /SAMPLING ... /CRITERIA ...` syntax generation and one-shot `pending_bootstrap` batch modifier in `statcraft_syntax::bootstrap` and `SyntaxDispatcher::execute_batch`.\n- **Reusable Bootstrap Dialog & Frequencies Integration (Feature 021 — Stage 2):**\n  - Built reusable `BootstrapDialog` (`crates/statcraft_app/src/dialogs/bootstrap_dialog/`) using `DialogKit` (`DialogShell`, `GroupBox`, `VariablePicker`, `TransferButton`, `SubdialogActionBar`) with transactional `backup`/`commit`/`cancel` and validation.\n  - Added full Fluent localization in `locales/en.ftl` and `locales/ru.ftl` (zero hardcoded UI strings).\n  - Enabled `[ Bootstrap... ]` in `FrequenciesDialog`, wired `compute_frequencies_bootstrap` (`statcraft_algo::frequencies::bootstrap`), and added `Bootstrap Specifications` + bootstrap statistics/frequency tables with TSV export in Output Viewer (`tables_frequencies/bootstrap_tables.rs`).\n- **Multi-Procedure Bootstrap Expansion & Golden Oracle (Feature 022 — Stage 3):**\n  - Extracted shared Output Viewer bootstrap rendering and TSV helpers in `crates/statcraft_app/src/views/output_view/tables_bootstrap.rs`.\n  - Connected `BootstrapDialog`, `statcraft_algo`, `statcraft_syntax` (`to_sps_with_bootstrap`), and Output Viewer across 8 additional procedures: `Descriptives`, `Means`, `One-Sample T-Test`, `Independent-Samples T-Test`, `Paired-Samples T-Test`, `One-Way ANOVA`, `Bivariate Correlations` (Pearson, Spearman, Kendall), and `Linear Regression` (OLS).\n  - Added Golden Oracle verification (`crates/statcraft_algo/tests/bootstrap_golden_oracle.rs`) matching `scipy.stats.bootstrap` (`Percentile` and `BCa`) within $\\le 10^{-6}$, plus end-to-end Output Viewer & TSV tests in `crates/statcraft_app/tests/output_viewer_bootstrap_invariants.rs`."
+      },
+      "id": "blk_native_paragraph_1795702921252968400",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    },
+    {
+      "data": {
+        "text": "---"
+      },
+      "id": "blk_native_paragraph_1795702921252970000",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    },
+    {
+      "data": {
+        "level": 2,
+        "text": "[0.4.6] - 2026-11-24"
+      },
+      "id": "blk_native_heading_1795702921252971000",
+      "managed_by": "project_parser",
+      "type": "heading"
+    },
+    {
+      "data": {
+        "level": 3,
+        "text": "Added"
+      },
+      "id": "blk_native_heading_1795702921252971900",
+      "managed_by": "project_parser",
+      "type": "heading"
+    },
+    {
+      "data": {
+        "text": "- **Table Style & Conditional Formatting Parity (Feature 019 / IBM SPSS OUTPUT MODIFY):**\n  - Implemented the complete typed conditional formatting engine in `statcraft_reporting::styling` (`CellStyleFormat`, `CellCondition`, `TableStyleRule`, `CellTargetScope`, `ConditionalFormattingEngine`).\n  - Added support for 12 value predicate conditions: `All`, `Equal`, `NotEqual`, `LessThan`, `LessOrEqual`, `GreaterThan`, `GreaterOrEqual`, `Between`, `NotBetween`, `TopN`, `BottomN`, `SysMis`.\n  - Added target dimension selection (`Columns`, `Rows`, `Both`) and value targeting (`AllDataCells`, label filter).\n  - Added 3-way application scope in `format_subdialog.rs`: `Only Cells` (default), `Entire Column`, and `Entire Row`.\n  - Added replacement value substitution (`replace_value`) allowing users to replace matching cell values with custom strings.\n- **Authentic IBM SPSS Table Style Dialog Suite (DialogKit):**\n  - Main Dialog `TableStyleDialog`: 5 in-cell ComboBox columns (*Table, Value, Dimension, Condition, Format*), live rule summary indicators, rule reordering (`[ Move Up ]`, `[ Move Down ]`), rule cloning (`[ Duplicate ]`), and transactional rollback on cancel.\n  - Condition Subdialog `TableStyleConditionSubdialog`: Value targeting, `[ ] Absolute Value` checkbox for modulus magnitude comparisons, lower/upper range bounds, and Top/Bottom N inputs.\n  - Format Subdialog `TableStyleFormatSubdialog`:\n    - Top `Preview` box with live sample text `123` reflecting font style, colors, and borders in real-time.\n    - Typography toolbar with active selection states: `[ B ]`, `[ I ]`, `[ U ]`.\n    - Authentic 5x6 SPSS Color Matrix Palette (`color_palette.rs`) with dedicated swatches for White, Black, No Color (diagonal red slash), 30 canonical SPSS color shades, and custom RGB picker.\n    - Comprehensive 34 cell format masks (`format_masks.rs`): numbers, decimals, scientific notation, percentages, quarters, weeks, timestamps, and named days/months.\n    - Decimals spinner and TableLook defaults reset switch.\n- **Output Viewer Styled Table Rendering & Reporting:**\n  - High-performance vector rendering in Output Viewer (`tables_common.rs`) with cell background fills, custom text colors, and synthetic faux bold (`egui::text::LayoutJob` with overstrike) preserving italic slant and underline simultaneously without font suppression (`BUG-019`).\n  - Implemented auxiliary \"Conditional Styles Report\" audit table summarizing applied targets, conditions, and modified cell tallies.\n  - Added canonical IBM SPSS `OUTPUT MODIFY` syntax generation upon Paste action (`/SELECT TABLES /IF SUBTYPES=['Frequencies'] /TABLECELLS SELECT=[DIMENSION=...] CONDITION=... STYLE=[...]`).\n  - Updated HTML report export to serialize inline CSS styles preserving cell formatting, background colors, and underlines.\n- **Zero-Hardcode Fluent Localization:**\n  - Added 44+ semantic translation keys in `locales/ru.ftl` and `locales/en.ftl` covering all 34 format masks, colors, and dialog labels."
+      },
+      "id": "blk_native_paragraph_1795702921252976700",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    },
+    {
+      "data": {
+        "level": 3,
+        "text": "Fixed"
+      },
+      "id": "blk_native_heading_1795702921252978100",
+      "managed_by": "project_parser",
+      "type": "heading"
+    },
+    {
+      "data": {
+        "text": "- **Architectural Decomposition of App Dialog Coordinator (BUG-018):**\n  - Proactively decomposed `crates/statcraft_app/src/app_dialogs.rs` to prevent exceeding the 1000-line coordinator ceiling (Rule 12.1/12.2), extracting canonical descriptive procedures into `crates/statcraft_app/src/app_dialogs_stats.rs` (284 lines).\n- **Typography Rendering in Output Viewer & Format Preview (BUG-019):**\n  - Resolved `egui` italic and bold conflict where `painter.text` suppressed italics and `RichText::strong` was overridden by custom text colors. Synthesized robust faux bold over slanted `Galley` via `LayoutJob`."
+      },
+      "id": "blk_native_paragraph_1795702921252980200",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    },
+    {
+      "data": {
+        "text": "---"
+      },
+      "id": "blk_native_paragraph_1795702921252981100",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    },
+    {
+      "data": {
+        "level": 2,
+        "text": "[0.4.5] - 2026-11-22"
+      },
+      "id": "blk_native_heading_1795702921252982000",
+      "managed_by": "project_parser",
+      "type": "heading"
+    },
+    {
+      "data": {
+        "level": 3,
+        "text": "Added"
+      },
+      "id": "blk_native_heading_1795702921252982900",
+      "managed_by": "project_parser",
+      "type": "heading"
+    },
+    {
+      "data": {
+        "text": "- **Frequencies: Charts Subdialog & Complete SPSS Parity (Feature 017):**\n  - Implemented authentic canonical SPSS subdialog «Frequencies: Charts» (`Частоты: Диаграммы`) via DialogKit `DialogShell::subdialog(360, 300)` (`crates/statcraft_app/src/dialogs/frequencies_dialog/charts_subdialog.rs`).\n  - Added radio group *Chart Type*: None (default), Bar charts, Pie charts, and Histograms with indented checkbox *Show normal curve on histogram*.\n  - Added radio group *Chart Values*: Frequencies (default) and Percentages with contextual interactivity (authentically enabled only for Bar and Pie charts, disabled when None or Histograms is selected).\n  - Added subdialog state management with cancellation rollback and reset support in `FrequenciesDialogState`.\n  - Added bidirectional SPSS syntax support: serialization to `/BARCHART [FREQ|PERCENT]`, `/PIECHART [FREQ|PERCENT]`, and `/HISTOGRAM [NORMAL]` on Paste, and syntax parser recognition in `statcraft_run_syntax`.\n- **Vector-First Chart Rendering in Output Viewer (`statcraft_app`):**\n  - Implemented 100% pure vector chart rendering using `ui.painter()` (zero emojis, zero non-standard Unicode glyphs) with tokens-aware theme styling:\n    - `freq_chart_bar_pie.rs`: Bar charts with category X-axis, frequency/percentage Y-ticks, hover highlights, value labels, and Pie charts with vector polygon slice fans, adaptive palette, and percentage legend.\n    - `freq_chart_histogram.rs`: Continuous contiguous bins, smooth overlaid Gaussian density curve, and authentic top-right SPSS Statistics Legend Box (`Mean`, `Std. Dev.`, `N`).\n  - Integrated charts into Output Viewer Outline navigation tree with dedicated vector chart icons (`paint_output_chart_icon`).\n  - Added structured tabular and textual fallback summaries for chart items during TSV and HTML export.\n- **Mathematical Histogram Binning & Normal Density Scaling (`statcraft_algo`):**\n  - Implemented pure algorithmic module `crates/statcraft_algo/src/frequencies/charts.rs`:\n    - Adaptive Freedman-Diaconis and Scott bin width calculation with \"nice\" step rounding ($1, 2, 2.5, 5, 10 \\times 10^k$).\n    - Scaled Gaussian density curve overlay matching histogram frequency area: $y = \\frac{N \\cdot h}{\\sigma \\sqrt{2\\pi}} \\exp\\left(-\\frac{(x - \\mu)^2}{2\\sigma^2}\\right)$.\n    - Robust edge-case handling for zero variance ($s = 0$), sample sizes $N < 2$, missing values, and non-numeric variables.\n  - Added Golden Oracle validation suite in `frequencies_charts_oracle_test.rs` matching SciPy reference outputs."
+      },
+      "id": "blk_native_paragraph_1795702921252986100",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    },
+    {
+      "data": {
+        "level": 3,
+        "text": "Fixed"
+      },
+      "id": "blk_native_heading_1795702921252988100",
+      "managed_by": "project_parser",
+      "type": "heading"
+    },
+    {
+      "data": {
+        "text": "- **Frequencies Summary Statistics on Numeric Nominal Variables (Feature 016 Parity):**\n  - Removed artificial suppression of summary statistics and percentiles for numeric variables marked with `Measure::Nominal`, bringing full parity with IBM SPSS Statistics.\n  - Replaced raw technical identifiers with authentic SPSS Variable Labels (`Label [Name]`) in frequency table titles and summary statistics column headers.\n  - Synchronized Output Viewer executed syntax log with exact `/STATISTICS` and `/PERCENTILES` subcommands."
+      },
+      "id": "blk_native_paragraph_1795702921252990000",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    },
+    {
+      "data": {
+        "text": "---"
+      },
+      "id": "blk_native_paragraph_1795702921252991100",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    },
+    {
+      "data": {
+        "level": 2,
+        "text": "[0.4.4] - 2026-11-22"
+      },
+      "id": "blk_native_heading_1795702921252991900",
+      "managed_by": "project_parser",
+      "type": "heading"
+    },
+    {
+      "data": {
+        "level": 3,
+        "text": "Fixed"
+      },
+      "id": "blk_native_heading_1795702921252993000",
+      "managed_by": "project_parser",
+      "type": "heading"
+    },
+    {
+      "data": {
+        "text": "- **Windows 10 Borderless Window Artifacts & Mouse Cursor Offset (BUG-017):**\n  - Integrated safe Win32 API wrapper `winsafe = \"0.0.29\"` in `statcraft_app` (100% Safe Rust without `unsafe` blocks in application code).\n  - Implemented window frame guard `crates/statcraft_app/src/window_frame.rs` following the PhotoCraft canon.\n  - Dynamically strips `WS_CAPTION | WS_BORDER` styles forced by `winit` on Windows 10 and forces frame recalculation (`SWP_FRAMECHANGED`) on every frame, eliminating the 26 px black bar at the top and side border artifacts.\n  - Restored 1:1 mouse hit-test precision across menus, tabs, and controls without vertical offset.\n  - Added `keep_clear_of_the_taskbar` to prevent maximized custom-frame windows from clipping behind or over the Windows taskbar, with support for both standard and auto-hiding taskbars.\n- **Modal Dialog Bloating Protection on Long Variable Labels (BUG-017):**\n  - Added `.max_size(size)` and `.constrain_to(ctx.screen_rect())` to `DialogShell::show`, strictly preventing procedure dialogs from stretching beyond screen boundaries.\n  - Constrained `ScrollArea::vertical().max_width(inner_size.x)` in `variable_picker.rs`.\n  - Added `.truncate()` to selectable list item buttons and attached full variable descriptions via `.on_hover_text(...)` tooltips so long survey questions (70–90+ characters) never push action buttons off-screen."
+      },
+      "id": "blk_native_paragraph_1795702921252994900",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    },
+    {
+      "data": {
+        "level": 3,
+        "text": "Added"
+      },
+      "id": "blk_native_heading_1795702921252995700",
+      "managed_by": "project_parser",
+      "type": "heading"
+    },
+    {
+      "data": {
+        "text": "- **Window Frame Unit Tests (`window_frame.rs`):**\n  - Added 7 unit tests covering borderless style bitmasks, taskbar clamping on all 4 monitor edges, auto-hiding taskbar 1-pixel reservation, and monitor edge detection."
+      },
+      "id": "blk_native_paragraph_1795702921252997100",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    },
+    {
+      "data": {
+        "text": "---"
+      },
+      "id": "blk_native_paragraph_1795702921252998100",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    },
+    {
+      "data": {
+        "level": 2,
+        "text": "[0.4.3] - 2026-11-20"
+      },
+      "id": "blk_native_heading_1795702921252998800",
+      "managed_by": "project_parser",
+      "type": "heading"
+    },
+    {
+      "data": {
+        "level": 3,
+        "text": "Fixed"
+      },
+      "id": "blk_native_heading_1795702921252999800",
+      "managed_by": "project_parser",
+      "type": "heading"
+    },
+    {
+      "data": {
+        "text": "- **Engine Calculation Precision & Full-Precision Cell Access (PR #5 by @jjohare):**\n  - Eliminated inadvertent numerical truncation caused by reading cell values through display formatting (`get_cell_display`). Statistical procedures now compute on full-precision 64-bit IEEE 754 stored values.\n  - Added `DataSet::get_cell_numeric` to `statcraft_core`, directly returning `Option<f64>` without intermediate heap string allocations or decimal precision loss.\n  - Migrated 21 procedure commands in `statcraft_syntax`: DESCRIPTIVES, REGRESSION, CORRELATIONS, PARTIAL CORR, ANOVA (One-Way), GLM (Univariate, Multivariate, Repeated Measures), t-tests (One-Sample, Independent, Paired), Nonparametric tests (Mann-Whitney, Kruskal-Wallis, Related Samples), CURVEFIT, FACTOR, RELIABILITY, LOGISTIC REGRESSION, MULTINOMIAL LOGISTIC, MEANS, and SELECT IF.\n  - Fixed calculations on columns formatted as `Dollar` or `Comma` (e.g. `$1,234.56`), which previously caused float parsing failures.\n  - Preserved display-string matching for categorical factor levels, grouping keys, and value labels.\n- **GUI Dialog Category Level Precision (`statcraft_app`):**\n  - Updated distinct dependent variable level counting in `logistic_regression_dialog.rs` and `multinomial_logistic_dialog/mod.rs` to use `ds.get_cell_numeric`, preventing distinct small-delta numeric categories (e.g., 0.001 vs 0.002) from collapsing under default `F8.2` print formats."
+      },
+      "id": "blk_native_paragraph_1795702921253002700",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    },
+    {
+      "data": {
+        "level": 3,
+        "text": "Added"
+      },
+      "id": "blk_native_heading_1795702921253003800",
+      "managed_by": "project_parser",
+      "type": "heading"
+    },
+    {
+      "data": {
+        "text": "- **High-Precision Regression & Statistical Tests:**\n  - Added `crates/statcraft_syntax/tests/numeric_precision_tests.rs`: verified exact numerical equality to within $10^{-9}$ for mean, minimum, slope, intercept, and Pearson $r$.\n  - Added `crates/statcraft_app/tests/numeric_dialog_precision_tests.rs`: verified distinct category counting and currency format handling."
+      },
+      "id": "blk_native_paragraph_1795702921253005500",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    },
+    {
+      "data": {
+        "text": "---"
+      },
+      "id": "blk_native_paragraph_1795702921253006500",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    },
+    {
+      "data": {
+        "level": 2,
+        "text": "[0.4.2] - 2026-11-19"
+      },
+      "id": "blk_native_heading_1795702921253007200",
+      "managed_by": "project_parser",
+      "type": "heading"
+    },
+    {
+      "data": {
+        "level": 3,
+        "text": "Added"
+      },
+      "id": "blk_native_heading_1795702921253008000",
+      "managed_by": "project_parser",
+      "type": "heading"
+    },
+    {
+      "data": {
+        "text": "- **Dynamic Dataset Colors & Container Persistence (Spec-Kit 015):**\n  - High-performance, collision-aware random contrast color generator on 64-bit SplitMix64 and golden angle distribution ($137.50777^\\circ$, $\\ge 45^\\circ$ angular distance between open tabs).\n  - Cross-pane color identity: DocumentTabStrip active underlines, vector grid icons, Outline Tree procedure chips, and Notes summary tables synchronized via `workspace.session_color_by_name`.\n  - Full `.stc` project container persistence (`pub tab_color: Option<String>`) with 100% backward compatibility with legacy containers."
+      },
+      "id": "blk_native_paragraph_1795702921253009600",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    },
+    {
+      "data": {
+        "level": 3,
+        "text": "Fixed"
+      },
+      "id": "blk_native_heading_1795702921253010300",
+      "managed_by": "project_parser",
+      "type": "heading"
+    },
+    {
+      "data": {
+        "text": "- **Tab Dirty Marker Positioning & Overlap Elimination (BUG-016):**\n  - Removed hardcoded character truncation (`min(12) * 6.5`) that caused asterisk markers to render directly over filename characters on tabs with titles longer than 12 characters.\n  - Added guaranteed right padding reservation (32 px), clean ellipsis truncation via `truncate_at_width`, and vertical centering with `Align2::LEFT_CENTER`.\n- **Titlebar False Dirty Marker & Unicode Compliance (BUG-016):**\n  - Completely removed hardcoded Unicode bullet symbol ` •` (U+2022) from window titlebar in accordance with Vector-First UI rules.\n  - Normalized window title to render strictly `file_name` when clean and `file_name *` when modified.\n  - Refactored `has_unsaved_changes()` to semantically isolate active session state from global checkpoints, eliminating false dirty triggers upon switching between datasets with differing column/row counts.\n  - Fixed CSV/TSV/TXT saving in `save_to_path` to properly clear the session dirty flag via `sess.mark_clean()`."
+      },
+      "id": "blk_native_paragraph_1795702921253012100",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    },
+    {
+      "data": {
+        "text": "---"
+      },
+      "id": "blk_native_paragraph_1795702921253012900",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    },
+    {
+      "data": {
+        "level": 2,
+        "text": "[0.4.1] - 2026-11-19"
+      },
+      "id": "blk_native_heading_1795702921253013800",
+      "managed_by": "project_parser",
+      "type": "heading"
+    },
+    {
+      "data": {
+        "level": 3,
+        "text": "Added"
+      },
+      "id": "blk_native_heading_1795702921253015000",
+      "managed_by": "project_parser",
+      "type": "heading"
+    },
+    {
+      "data": {
+        "text": "- **Multi-File Workspaces & Concurrent Document Sessions (Feature 010):**\n  - Open, edit, and switch between multiple datasets simultaneously in a unified workspace with isolated Undo/Redo histories, filter states, and split-file contexts.\n  - Lossless in-memory compression: `NullBitmask`, `DictionaryEncodedColumn`, and `LosslessCompressedColumn` retaining full `f64` precision.\n  - SPSS syntax commands for datasets: `DATASET NAME`, `DATASET ACTIVATE`, `DATASET CLOSE`, and `DATASET DISPLAY`.\n  - Vector document tab strip (`DocumentTabStrip`) with custom vector dataset icons, unsaved markers, close buttons, mouse wheel scrolling, chevron overflow navigators, and `Ctrl+Tab` / `Ctrl+Shift+Tab` / `Ctrl+W` shortcuts.\n- **Cross-Platform Memory Guard (Feature 011):**\n  - Native physical RAM probing across Windows (`GlobalMemoryStatusEx`), Linux (`/proc/meminfo`), macOS (`sysctl`), and WebAssembly.\n  - Preflight memory safety warnings before opening large files (>250 MB) or batch operations (>10 files) when available RAM is critically low (<500 MB or <15%).\n- **Data Merging: Add Cases & Add Variables (Feature 012):**\n  - Add Cases (`ADD FILES`): vertical concatenation from external files (`.sav`, `.zsav`, `.stc`, `.csv`, `.xlsx`) or active workspace tabs with schema alignment, type reconciliation, `/IN=var` tracking, and `/BY` sorting.\n  - Add Variables (`MATCH FILES`): horizontal merging across datasets (1:1 key merges, 1:N lookup tables `/TABLE`, sequential merges without keys) with collision resolution and `/IN` flags.\n  - Canonical DialogKit interfaces (`AddCasesDialog`, `AddVarsDialog`).\n- **Grid Selection & Interaction Modernization (Spec-Kit 013):**\n  - Preserved multi-cell selection on right-click.\n  - Zero Pollution invariant on phantom rows (`*`): empty input commits never allocate unwanted rows with system-missing values.\n  - Physical case deletion via `Delete` key on full rows, and cell clearing on rectangular selections.\n  - Row and column header context menus (`ContextMenuTarget`).\n  - Click-outside dismissal for popups and context menus without requiring `Escape`."
+      },
+      "id": "blk_native_paragraph_1795702921253018700",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    },
+    {
+      "data": {
+        "level": 3,
+        "text": "Fixed"
+      },
+      "id": "blk_native_heading_1795702921253020100",
+      "managed_by": "project_parser",
+      "type": "heading"
+    },
+    {
+      "data": {
+        "text": "- **SPSS Canon Range Selection & Fill Handle Removal (Spec-Kit 014 / BUG-014):**\n  - Eliminated the corner fill handle click interceptor, converting all grid dragging to strictly safe, read-only range selection (`SelectRange`).\n  - Constrained `apply_auto_fill` strictly to existing dataset rows, completely barring phantom row allocations."
+      },
+      "id": "blk_native_paragraph_1795702921253021900",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    },
+    {
+      "data": {
+        "text": "---"
+      },
+      "id": "blk_native_paragraph_1795702921253022900",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    },
+    {
+      "data": {
+        "level": 2,
+        "text": "[0.4.0] - 2026-11-16"
+      },
+      "id": "blk_native_heading_1795702921253023700",
+      "managed_by": "project_parser",
+      "type": "heading"
+    },
+    {
+      "data": {
+        "level": 3,
+        "text": "Added"
+      },
+      "id": "blk_native_heading_1795702921253024700",
+      "managed_by": "project_parser",
+      "type": "heading"
+    },
+    {
+      "data": {
+        "text": "- **Virtualized 4-Quadrant 2D Grid (Feature 006):**\n  - Dedicated spatial geometry engine `grid/` separating top-left corner, column variable headers (`quad_top_right`), row number headers (`quad_bottom_left`), and central cell grid (`quad_center`).\n  - Prefix-sum spatial line indexer (`LineIndex`) providing $O(\\log N)$ coordinate searches with zero heap allocation in uniform mode.\n  - Interactive column width drag-resizing with dynamic cursor feedback and guideline rendering.\n  - Double-click column Auto-fit calculating optimal width from content.\n  - Two-way column width synchronization with SPSS dictionary metadata (`VariableMetadata.columns`).\n- **Range Selection, Keyboard Navigation & Direct Typing (Feature 007):**\n  - Fluid mouse marquee selection and Shift-click / Shift-drag range expansion.\n  - Complete keyboard navigation (Arrow keys, `Tab`, `Enter`, `Home`, `End`, `Ctrl+Home`, `Ctrl+End`).\n  - Direct Typing: Typing alphanumeric keys immediately begins inline cell editing without prior mouse clicking.\n  - Floating inline cell editor with distinct focus ring and auto-commit on Enter/Tab.\n  - Rectangular TSV/CSV clipboard transfer (`Ctrl+C` / `Ctrl+V`) with automatic dataset row expansion.\n  - Series Auto-Fill (Fill Handle): $6 \\times 6$ px square marker calculating linear regression progressions for numeric series and repetition for categorical data.\n- **Column AutoFilter, Quick Sort & Data Integrity Guards (Feature 008):**\n  - Column header AutoFilter button with vector chevron and active funnel indicators.\n  - Floating filter dropdown with live search, \"Select All\" / \"Clear All\" toggles, unique values checklist, and explicit \"(Blanks)\" handling.\n  - Quick Sort Ascending (A–Z) and Descending (Z–A) via engine command `data.sort_cases` with 100% reversible Undo/Redo and SPSS syntax logging (`SORT CASES BY ...`).\n  - Cell right-click context menu (Filter by selected value, Clear column filter, Sort Ascending/Descending, Copy/Paste).\n  - Visual strikethrough for filtered inactive rows and muted text in cells (SPSS `FILTER BY` parity).\n  - Data integrity inspection: Automated detector `is_number_stored_as_text` with Excel-parity green corner triangle badge and instant click-to-convert to numeric.\n- **Tab Lifecycle Management & Core Tab Retention (Feature 005):**\n  - Non-closeable protection (`is_closeable = false`) for Data View, Variable View, and Output Viewer tabs.\n  - Closeable auxiliary tabs (Syntax Editor) with standard close buttons.\n  - Window menu for fast restoration and tab switching.\n  - Automatic Output Viewer focus when executing SPSS syntax."
+      },
+      "id": "blk_native_paragraph_1795702921253028100",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    },
+    {
+      "data": {
+        "level": 3,
+        "text": "Fixed"
+      },
+      "id": "blk_native_heading_1795702921253029500",
+      "managed_by": "project_parser",
+      "type": "heading"
+    },
+    {
+      "data": {
+        "text": "- Fixed opaque selection background covering cell text by rendering background fill underneath the text layer.\n- Fixed cell double-click race condition to ensure instant editor focus and caret placement.\n- Localized column border hit-testing strictly to header quadrant to prevent accidental drag triggers inside data rows."
+      },
+      "id": "blk_native_paragraph_1795702921253030900",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    },
+    {
+      "data": {
+        "text": "---"
+      },
+      "id": "blk_native_paragraph_1795702921253032400",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    },
+    {
+      "data": {
+        "level": 2,
+        "text": "[0.3.1] - 2026-11-15"
+      },
+      "id": "blk_native_heading_1795702921253033200",
+      "managed_by": "project_parser",
+      "type": "heading"
+    },
+    {
+      "data": {
+        "level": 3,
+        "text": "Added"
+      },
+      "id": "blk_native_heading_1795702921253034200",
+      "managed_by": "project_parser",
+      "type": "heading"
+    },
+    {
+      "data": {
+        "text": "- **Advanced Regression & Partial Correlations (Feature 001):**\n  - Partial correlations (`PARTIAL CORR` / `stat.correlations.partial`) with Schur complement and Student's $t$ $p$-values.\n  - Binary logistic regression (`LOGISTIC REGRESSION` / `stat.regression.logistic`) via IRLS with Newton-Raphson optimizer and Hosmer-Lemeshow test.\n  - Curve estimation (`CURVEFIT` / `stat.regression.curve`) with 6 canonical SPSS curves.\n- **General Linear Model (Feature 002):**\n  - Univariate ANOVA/ANCOVA (`UNIANOVA` / `stat.glm.univariate`) with Type III Sum of Squares.\n  - Multivariate ANOVA (`GLM Multivariate` / `stat.glm.multivariate` — MANOVA) with Wilks' $\\Lambda$, Pillai's, Hotelling-Lawley, and Roy's tests.\n  - Repeated measures ANOVA (`GLM Repeated Measures` / `stat.glm.repeated`) with Mauchly's sphericity test and Greenhouse-Geisser / Huynh-Feldt corrections.\n- **Cluster Analysis, Reports & Survival (Feature 003):**\n  - K-Means cluster analysis (`QUICK CLUSTER` / `stat.cluster.kmeans`) with Maximin initialization and dynamic variable generation (`QCL_1`, `QCL_2`).\n  - Variable codebook (`CODEBOOK` / `stat.reports.codebook`).\n  - Case summaries (`SUMMARIZE` / `stat.reports.summarize`).\n  - Kaplan-Meier survival analysis (`KM` / `stat.survival.km`) with Log-Rank test.\n  - Actuarial life tables (`SURVIVAL` / `stat.survival.lifetables`).\n- **Windows Silent Launch:**\n  - Added `#![windows_subsystem = \"windows\"]` to eliminate black terminal window when launching GUI."
+      },
+      "id": "blk_native_paragraph_1795702921253037200",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    },
+    {
+      "data": {
+        "text": "---"
+      },
+      "id": "blk_native_paragraph_1795702921253038600",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    },
+    {
+      "data": {
+        "level": 2,
+        "text": "[0.3.0] - 2026-11-07"
+      },
+      "id": "blk_native_heading_1795702921253039300",
+      "managed_by": "project_parser",
+      "type": "heading"
+    },
+    {
+      "data": {
+        "level": 3,
+        "text": "Added"
+      },
+      "id": "blk_native_heading_1795702921253040100",
+      "managed_by": "project_parser",
+      "type": "heading"
+    },
+    {
+      "data": {
+        "text": "- Model Context Protocol (MCP) server & local TCP socket bridge (port 18493) for autonomous AI assistants.\n- Universal Theme System (Dark Pro, SPSS Classic Light, System Auto) with lock-free atomic switching.\n- System language autodetection via native OS APIs with fallback to English."
+      },
+      "id": "blk_native_paragraph_1795702921253041600",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    },
+    {
+      "data": {
+        "text": "---"
+      },
+      "id": "blk_native_paragraph_1795702921253042500",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    },
+    {
+      "data": {
+        "level": 2,
+        "text": "[0.2.0] - 2026-10-31"
+      },
+      "id": "blk_native_heading_1795702921253043400",
+      "managed_by": "project_parser",
+      "type": "heading"
+    },
+    {
+      "data": {
+        "level": 3,
+        "text": "Added"
+      },
+      "id": "blk_native_heading_1795702921253044200",
+      "managed_by": "project_parser",
+      "type": "heading"
+    },
+    {
+      "data": {
+        "text": "- Classical statistical procedures: Descriptives, Frequencies, Crosstabs, One-Sample, Independent-Samples, and Paired-Samples T-Tests, One-Way ANOVA.\n- Bivariate Pearson/Spearman correlations, Linear Regression, Non-Parametric tests (Chi-Square, Binomial, Runs, Mann-Whitney U, Wilcoxon, Kruskal-Wallis).\n- Dynamic pivot tables in Output Viewer with multi-tier hierarchies and formatting."
+      },
+      "id": "blk_native_paragraph_1795702921253045800",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    },
+    {
+      "data": {
+        "text": "---"
+      },
+      "id": "blk_native_paragraph_1795702921253046600",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    },
+    {
+      "data": {
+        "level": 2,
+        "text": "[0.1.0] - 2026-10-28"
+      },
+      "id": "blk_native_heading_1795702921253047500",
+      "managed_by": "project_parser",
+      "type": "heading"
+    },
+    {
+      "data": {
+        "level": 3,
+        "text": "Added"
+      },
+      "id": "blk_native_heading_1795702921253048500",
+      "managed_by": "project_parser",
+      "type": "heading"
+    },
+    {
+      "data": {
+        "text": "- Initial workspace scaffolding: L0 I/O (CSV/TSV), L1 Core (`DataSet`, `VariableDictionary`), L5 Syntax, and L6 GUI (`egui_dock`).\n- Bilingual localization engine (`statcraft_i18n`) with Fluent catalogs (`en.ftl`, `ru.ftl`)."
+      },
+      "id": "blk_native_paragraph_1795702921253049700",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    }
+  ]
+}
+
+--BOUNDARY_PAYLOAD_AAJWXRDPAF
+Content-Type: text/html; charset="utf-8"
+Content-Disposition: inline
+
+<!doctype html><html><head><meta charset="utf-8"><meta name="generator" content="CapsuleCraft Native"></head><body style="font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;max-width:720px;margin:32px auto;line-height:1.55;color:#23201c;background:#faf8f4;"><h1>📚 StatCraft / Changelog</h1><p><em>[callout block — open in CapsuleCraft web for its canvas]</em></p><h1>Changelog</h1><p>All notable changes to the **StatCraft** statistical computing application will be documented in this file.</p><p>The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),<br>and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).</p><p>---</p><h2>[0.4.10] - 2026-11-26</h2><h3>Added</h3><p>- **TURF Analysis (`SPSSINC TURF`) Full SPSS Parity (Features 034–036):**<br>  - Implemented clean-room combinatorial Total Unduplicated Reach and Frequency engine in `statcraft_algo` (`turf.rs`, `turf_types.rs`, `turf_heats.rs`, `turf_tests.rs`) using packed `Vec&lt;u64&gt;` respondent bitsets, `WEIGHT BY` and `filter_$` support, `FORCE`, `MINPERCENT`, `REMOVALCYCLES`, `MAXSETS` checked `u128` operation guard, `IMPORTANCE` weights (`STRICT=YES/NO`), and deterministic Tournament Heats (`HEATSIZE`, `NUMWINNERS`) for large variable sets.<br>  - Added `stat.turf` `CommandBus` command (`turf_cmd.rs`) and full `SPSSINC TURF` / `TURF` `.sps` syntax round-trip (`CRITERIA=`, `BESTN=`, `NUMBERTODISPLAY=`, `MINPERCENT=`, `PLOT=`, `REMOVALCYCLES=`, `MAXSETS=`, `/HEATS`, `/IMPORTANCE`).<br>  - Added `TurfDialog` with `Importance Weights...` and `Advanced Selection...` subdialogs using `DialogKit` (`DialogSize::Compute`) under **Analyze &gt; Descriptive Statistics &gt; TURF Analysis...**.<br>  - Added Output Viewer Pivot Tables (Case &amp; Parameter Summary, Reach and Frequency per cycle/size with variable `Label` resolution), vector Reach &amp; Frequency curves, and TSV/HTML/TXT export.<br>- **Global Static i18n Linter (`xtask i18n-guard`):**<br>  - Added `xtask/src/i18n_guard.rs` and integrated it into `xtask ci` to enforce zero raw UI strings or unlocalized table headers across all dialogs and views.</p><h3>Fixed</h3><p>- **TURF &amp; Output Viewer:** Fixed `frequency_pct` (`% of Responses`) denominator to divide by total positive responses across active variables instead of valid case count, localized all TURF and Explore report table headers (`Parameter | Value`, etc.), and fixed `TurfDialog` right sidebar column width.</p><p>---</p><h2>[0.4.9] - 2026-11-25</h2><h3>Added</h3><p>- **Theil–Sen Estimator (Feature 032):** Robust simple linear regression, Mann–Kendall trend test, Bootstrap, PRE/RES saving, scatter/residual plots, and `THEIL SEN` `.sps` syntax.<br>- **Orthogonal / Deming Regression (Feature 033):** Closed-form Deming (`lambda = 1.0` &amp; custom `lambda &gt; 0`), Jackknife SE &amp; t-CI, Bootstrap, PRE/RES saving, scatter plot with `Y=X` line, and `ORTHOGONAL REGRESSION` `.sps` syntax.<br>- **Linux AppImage:** Automated `statcraft-linux-x64.AppImage` build in GitHub Releases.</p><h3>Fixed</h3><p>- **Output Viewer &amp; i18n:** Translated hardcoded Notes labels, fixed Deming `Y=X` plot scaling, added axis padding &amp; Y-ticks, eliminated `-0.0000`, auto-fitted table column widths, and rendered variable `Label`s.</p><p>---</p><h2>[0.4.8] - 2026-11-25</h2><h3>Added</h3><p>- **Crosstabs (`CROSSTABS`) Full SPSS Parity (Features 029–031):**<br>  - Decomposed `statcraft_algo::crosstabs` into modular files (`types.rs`, `mod.rs`, `measures.rs`, `ordinal_corr.rs`, `exact.rs`, `ztest.rs`, `mantel_haenszel.rs`, `tests.rs`).<br>  - Added multi-layer tables (`layers` / `Layer 1 of N`), `RowOrder` (`Ascending` / `Descending`), `suppress_tables` (`/NOTABLES`), and `display_clustered_bar_charts` (`/BARCHART`).<br>  - Implemented `ExactMode`: `AsymptoticOnly`, `MonteCarlo` (Patefield $r \times c$ sampler with confidence interval), and bounded `Exact` with configurable time limit.<br>  - Added full statistical suite: Pearson/Spearman `Correlations`, Nominal (`Contingency Coefficient`, `Phi &amp; Cramér&#39;s V`, `Lambda`, `Uncertainty Coefficient`), Ordinal (`Gamma`, `Somers&#39; d`, `Kendall&#39;s tau-b`, `Kendall&#39;s tau-c`), Nominal-by-Interval (`Eta`), `Cohen&#39;s Kappa`, `Risk` (Odds Ratio &amp; Cohort Relative Risk with 95% CI), `McNemar`, and stratified `Cochran&#39;s &amp; Mantel-Haenszel` ($2 \times 2 \times K$ with Breslow-Day &amp; Tarone&#39;s homogeneity tests).<br>  - Added cell display options: `hide_small_counts`, column proportions `z-test` with Bonferroni adjustment and APA subscript letters (`a, b, c...`), 3 residual types (`Unstandardized`, `Standardized`, `Adjusted Standardized`), `apa_style`, and 5 `NonIntegerWeights` modes.<br>  - Upgraded `CrosstabsDialog` (`crosstabs_dialog/`) with `Layer 1 of N` pagination, 6 sidebar subdialogs (`Exact...`, `Statistics...`, `Cells...`, `Format...`, `Style...`, `Bootstrap...`), and full Fluent `en.ftl`/`ru.ftl` localization.<br>  - Upgraded Output Viewer (`tables_crosstabs/`) with layered matrices, all new statistical tables, `egui_plot` Clustered Bar Charts, `TableStyle` &amp; `Bootstrap` integration, and TSV/HTML/TXT export.<br>- **Explore (`EXAMINE`) Full SPSS Parity (Features 026–028):**<br>  - Added M-estimators (Huber, Tukey biweight, Hampel, Andrews), HAVERAGE Percentiles &amp; Tukey&#39;s Hinges, `Label Cases by`, `Missing=Report`, and Spread-vs-Level with 4-row Levene test.<br>  - Upgraded `ExploreDialog` (`explore_dialog/`) with `Label Cases by`, `Display` (`Both` / `Statistics` / `Plots`), `Bootstrap...` integration, and full `EXAMINE` `.sps` round-trip.<br>  - Added `egui_plot` Boxplots, Stem-and-Leaf, Histograms, Q-Q plots, and Spread-vs-Level plots in Output Viewer (`tables_explore/`).<br>- **Descriptives (`DESCRIPTIVES`) Full SPSS Parity (Features 023–025):**<br>  - Added standardized `Z*` variable saving (`SAVE Z*`), full `DESCRIPTIVES` statistics/sorting options, `Options...` subdialog, and Output Viewer / TSV/HTML/TXT export.</p><p>---</p><h2>[0.4.7] - 2026-11-25</h2><h3>Added</h3><p>- **Bootstrap Resampling Core &amp; Mersenne Twister PRNG (Feature 020 — Stage 1):**<br>  - Implemented deterministic 100% Safe Rust 32-bit Mersenne Twister (`Mt19937`) in `statcraft_core::rng` with unbiased rejection sampling (`gen_range_usize`) and `from_optional_seed()` fallback.<br>  - Implemented reusable bootstrap engine in `statcraft_algo::bootstrap` (`options.rs`, `resampler.rs`, `ci.rs`, `engine.rs`) supporting `Simple` and `Stratified` (preserving exact stratum sizes $n_h$) resampling with replacement.<br>  - Implemented `Bias`, `Std. Error`, `Percentile` CI, and `BCa` CI (bias correction $z_0$, jackknife acceleration $\hat{a}$ with safe zero-denominator fallback, and Cody rational `normal_cdf`).<br>  - Added SPSS `SET MTINDEX=...` and `BOOTSTRAP /SAMPLING ... /CRITERIA ...` syntax generation and one-shot `pending_bootstrap` batch modifier in `statcraft_syntax::bootstrap` and `SyntaxDispatcher::execute_batch`.<br>- **Reusable Bootstrap Dialog &amp; Frequencies Integration (Feature 021 — Stage 2):**<br>  - Built reusable `BootstrapDialog` (`crates/statcraft_app/src/dialogs/bootstrap_dialog/`) using `DialogKit` (`DialogShell`, `GroupBox`, `VariablePicker`, `TransferButton`, `SubdialogActionBar`) with transactional `backup`/`commit`/`cancel` and validation.<br>  - Added full Fluent localization in `locales/en.ftl` and `locales/ru.ftl` (zero hardcoded UI strings).<br>  - Enabled `[ Bootstrap... ]` in `FrequenciesDialog`, wired `compute_frequencies_bootstrap` (`statcraft_algo::frequencies::bootstrap`), and added `Bootstrap Specifications` + bootstrap statistics/frequency tables with TSV export in Output Viewer (`tables_frequencies/bootstrap_tables.rs`).<br>- **Multi-Procedure Bootstrap Expansion &amp; Golden Oracle (Feature 022 — Stage 3):**<br>  - Extracted shared Output Viewer bootstrap rendering and TSV helpers in `crates/statcraft_app/src/views/output_view/tables_bootstrap.rs`.<br>  - Connected `BootstrapDialog`, `statcraft_algo`, `statcraft_syntax` (`to_sps_with_bootstrap`), and Output Viewer across 8 additional procedures: `Descriptives`, `Means`, `One-Sample T-Test`, `Independent-Samples T-Test`, `Paired-Samples T-Test`, `One-Way ANOVA`, `Bivariate Correlations` (Pearson, Spearman, Kendall), and `Linear Regression` (OLS).<br>  - Added Golden Oracle verification (`crates/statcraft_algo/tests/bootstrap_golden_oracle.rs`) matching `scipy.stats.bootstrap` (`Percentile` and `BCa`) within $\le 10^{-6}$, plus end-to-end Output Viewer &amp; TSV tests in `crates/statcraft_app/tests/output_viewer_bootstrap_invariants.rs`.</p><p>---</p><h2>[0.4.6] - 2026-11-24</h2><h3>Added</h3><p>- **Table Style &amp; Conditional Formatting Parity (Feature 019 / IBM SPSS OUTPUT MODIFY):**<br>  - Implemented the complete typed conditional formatting engine in `statcraft_reporting::styling` (`CellStyleFormat`, `CellCondition`, `TableStyleRule`, `CellTargetScope`, `ConditionalFormattingEngine`).<br>  - Added support for 12 value predicate conditions: `All`, `Equal`, `NotEqual`, `LessThan`, `LessOrEqual`, `GreaterThan`, `GreaterOrEqual`, `Between`, `NotBetween`, `TopN`, `BottomN`, `SysMis`.<br>  - Added target dimension selection (`Columns`, `Rows`, `Both`) and value targeting (`AllDataCells`, label filter).<br>  - Added 3-way application scope in `format_subdialog.rs`: `Only Cells` (default), `Entire Column`, and `Entire Row`.<br>  - Added replacement value substitution (`replace_value`) allowing users to replace matching cell values with custom strings.<br>- **Authentic IBM SPSS Table Style Dialog Suite (DialogKit):**<br>  - Main Dialog `TableStyleDialog`: 5 in-cell ComboBox columns (*Table, Value, Dimension, Condition, Format*), live rule summary indicators, rule reordering (`[ Move Up ]`, `[ Move Down ]`), rule cloning (`[ Duplicate ]`), and transactional rollback on cancel.<br>  - Condition Subdialog `TableStyleConditionSubdialog`: Value targeting, `[ ] Absolute Value` checkbox for modulus magnitude comparisons, lower/upper range bounds, and Top/Bottom N inputs.<br>  - Format Subdialog `TableStyleFormatSubdialog`:<br>    - Top `Preview` box with live sample text `123` reflecting font style, colors, and borders in real-time.<br>    - Typography toolbar with active selection states: `[ B ]`, `[ I ]`, `[ U ]`.<br>    - Authentic 5x6 SPSS Color Matrix Palette (`color_palette.rs`) with dedicated swatches for White, Black, No Color (diagonal red slash), 30 canonical SPSS color shades, and custom RGB picker.<br>    - Comprehensive 34 cell format masks (`format_masks.rs`): numbers, decimals, scientific notation, percentages, quarters, weeks, timestamps, and named days/months.<br>    - Decimals spinner and TableLook defaults reset switch.<br>- **Output Viewer Styled Table Rendering &amp; Reporting:**<br>  - High-performance vector rendering in Output Viewer (`tables_common.rs`) with cell background fills, custom text colors, and synthetic faux bold (`egui::text::LayoutJob` with overstrike) preserving italic slant and underline simultaneously without font suppression (`BUG-019`).<br>  - Implemented auxiliary &quot;Conditional Styles Report&quot; audit table summarizing applied targets, conditions, and modified cell tallies.<br>  - Added canonical IBM SPSS `OUTPUT MODIFY` syntax generation upon Paste action (`/SELECT TABLES /IF SUBTYPES=[&#39;Frequencies&#39;] /TABLECELLS SELECT=[DIMENSION=...] CONDITION=... STYLE=[...]`).<br>  - Updated HTML report export to serialize inline CSS styles preserving cell formatting, background colors, and underlines.<br>- **Zero-Hardcode Fluent Localization:**<br>  - Added 44+ semantic translation keys in `locales/ru.ftl` and `locales/en.ftl` covering all 34 format masks, colors, and dialog labels.</p><h3>Fixed</h3><p>- **Architectural Decomposition of App Dialog Coordinator (BUG-018):**<br>  - Proactively decomposed `crates/statcraft_app/src/app_dialogs.rs` to prevent exceeding the 1000-line coordinator ceiling (Rule 12.1/12.2), extracting canonical descriptive procedures into `crates/statcraft_app/src/app_dialogs_stats.rs` (284 lines).<br>- **Typography Rendering in Output Viewer &amp; Format Preview (BUG-019):**<br>  - Resolved `egui` italic and bold conflict where `painter.text` suppressed italics and `RichText::strong` was overridden by custom text colors. Synthesized robust faux bold over slanted `Galley` via `LayoutJob`.</p><p>---</p><h2>[0.4.5] - 2026-11-22</h2><h3>Added</h3><p>- **Frequencies: Charts Subdialog &amp; Complete SPSS Parity (Feature 017):**<br>  - Implemented authentic canonical SPSS subdialog «Frequencies: Charts» (`Частоты: Диаграммы`) via DialogKit `DialogShell::subdialog(360, 300)` (`crates/statcraft_app/src/dialogs/frequencies_dialog/charts_subdialog.rs`).<br>  - Added radio group *Chart Type*: None (default), Bar charts, Pie charts, and Histograms with indented checkbox *Show normal curve on histogram*.<br>  - Added radio group *Chart Values*: Frequencies (default) and Percentages with contextual interactivity (authentically enabled only for Bar and Pie charts, disabled when None or Histograms is selected).<br>  - Added subdialog state management with cancellation rollback and reset support in `FrequenciesDialogState`.<br>  - Added bidirectional SPSS syntax support: serialization to `/BARCHART [FREQ|PERCENT]`, `/PIECHART [FREQ|PERCENT]`, and `/HISTOGRAM [NORMAL]` on Paste, and syntax parser recognition in `statcraft_run_syntax`.<br>- **Vector-First Chart Rendering in Output Viewer (`statcraft_app`):**<br>  - Implemented 100% pure vector chart rendering using `ui.painter()` (zero emojis, zero non-standard Unicode glyphs) with tokens-aware theme styling:<br>    - `freq_chart_bar_pie.rs`: Bar charts with category X-axis, frequency/percentage Y-ticks, hover highlights, value labels, and Pie charts with vector polygon slice fans, adaptive palette, and percentage legend.<br>    - `freq_chart_histogram.rs`: Continuous contiguous bins, smooth overlaid Gaussian density curve, and authentic top-right SPSS Statistics Legend Box (`Mean`, `Std. Dev.`, `N`).<br>  - Integrated charts into Output Viewer Outline navigation tree with dedicated vector chart icons (`paint_output_chart_icon`).<br>  - Added structured tabular and textual fallback summaries for chart items during TSV and HTML export.<br>- **Mathematical Histogram Binning &amp; Normal Density Scaling (`statcraft_algo`):**<br>  - Implemented pure algorithmic module `crates/statcraft_algo/src/frequencies/charts.rs`:<br>    - Adaptive Freedman-Diaconis and Scott bin width calculation with &quot;nice&quot; step rounding ($1, 2, 2.5, 5, 10 \times 10^k$).<br>    - Scaled Gaussian density curve overlay matching histogram frequency area: $y = \frac{N \cdot h}{\sigma \sqrt{2\pi}} \exp\left(-\frac{(x - \mu)^2}{2\sigma^2}\right)$.<br>    - Robust edge-case handling for zero variance ($s = 0$), sample sizes $N &lt; 2$, missing values, and non-numeric variables.<br>  - Added Golden Oracle validation suite in `frequencies_charts_oracle_test.rs` matching SciPy reference outputs.</p><h3>Fixed</h3><p>- **Frequencies Summary Statistics on Numeric Nominal Variables (Feature 016 Parity):**<br>  - Removed artificial suppression of summary statistics and percentiles for numeric variables marked with `Measure::Nominal`, bringing full parity with IBM SPSS Statistics.<br>  - Replaced raw technical identifiers with authentic SPSS Variable Labels (`Label [Name]`) in frequency table titles and summary statistics column headers.<br>  - Synchronized Output Viewer executed syntax log with exact `/STATISTICS` and `/PERCENTILES` subcommands.</p><p>---</p><h2>[0.4.4] - 2026-11-22</h2><h3>Fixed</h3><p>- **Windows 10 Borderless Window Artifacts &amp; Mouse Cursor Offset (BUG-017):**<br>  - Integrated safe Win32 API wrapper `winsafe = &quot;0.0.29&quot;` in `statcraft_app` (100% Safe Rust without `unsafe` blocks in application code).<br>  - Implemented window frame guard `crates/statcraft_app/src/window_frame.rs` following the PhotoCraft canon.<br>  - Dynamically strips `WS_CAPTION | WS_BORDER` styles forced by `winit` on Windows 10 and forces frame recalculation (`SWP_FRAMECHANGED`) on every frame, eliminating the 26 px black bar at the top and side border artifacts.<br>  - Restored 1:1 mouse hit-test precision across menus, tabs, and controls without vertical offset.<br>  - Added `keep_clear_of_the_taskbar` to prevent maximized custom-frame windows from clipping behind or over the Windows taskbar, with support for both standard and auto-hiding taskbars.<br>- **Modal Dialog Bloating Protection on Long Variable Labels (BUG-017):**<br>  - Added `.max_size(size)` and `.constrain_to(ctx.screen_rect())` to `DialogShell::show`, strictly preventing procedure dialogs from stretching beyond screen boundaries.<br>  - Constrained `ScrollArea::vertical().max_width(inner_size.x)` in `variable_picker.rs`.<br>  - Added `.truncate()` to selectable list item buttons and attached full variable descriptions via `.on_hover_text(...)` tooltips so long survey questions (70–90+ characters) never push action buttons off-screen.</p><h3>Added</h3><p>- **Window Frame Unit Tests (`window_frame.rs`):**<br>  - Added 7 unit tests covering borderless style bitmasks, taskbar clamping on all 4 monitor edges, auto-hiding taskbar 1-pixel reservation, and monitor edge detection.</p><p>---</p><h2>[0.4.3] - 2026-11-20</h2><h3>Fixed</h3><p>- **Engine Calculation Precision &amp; Full-Precision Cell Access (PR #5 by @jjohare):**<br>  - Eliminated inadvertent numerical truncation caused by reading cell values through display formatting (`get_cell_display`). Statistical procedures now compute on full-precision 64-bit IEEE 754 stored values.<br>  - Added `DataSet::get_cell_numeric` to `statcraft_core`, directly returning `Option&lt;f64&gt;` without intermediate heap string allocations or decimal precision loss.<br>  - Migrated 21 procedure commands in `statcraft_syntax`: DESCRIPTIVES, REGRESSION, CORRELATIONS, PARTIAL CORR, ANOVA (One-Way), GLM (Univariate, Multivariate, Repeated Measures), t-tests (One-Sample, Independent, Paired), Nonparametric tests (Mann-Whitney, Kruskal-Wallis, Related Samples), CURVEFIT, FACTOR, RELIABILITY, LOGISTIC REGRESSION, MULTINOMIAL LOGISTIC, MEANS, and SELECT IF.<br>  - Fixed calculations on columns formatted as `Dollar` or `Comma` (e.g. `$1,234.56`), which previously caused float parsing failures.<br>  - Preserved display-string matching for categorical factor levels, grouping keys, and value labels.<br>- **GUI Dialog Category Level Precision (`statcraft_app`):**<br>  - Updated distinct dependent variable level counting in `logistic_regression_dialog.rs` and `multinomial_logistic_dialog/mod.rs` to use `ds.get_cell_numeric`, preventing distinct small-delta numeric categories (e.g., 0.001 vs 0.002) from collapsing under default `F8.2` print formats.</p><h3>Added</h3><p>- **High-Precision Regression &amp; Statistical Tests:**<br>  - Added `crates/statcraft_syntax/tests/numeric_precision_tests.rs`: verified exact numerical equality to within $10^{-9}$ for mean, minimum, slope, intercept, and Pearson $r$.<br>  - Added `crates/statcraft_app/tests/numeric_dialog_precision_tests.rs`: verified distinct category counting and currency format handling.</p><p>---</p><h2>[0.4.2] - 2026-11-19</h2><h3>Added</h3><p>- **Dynamic Dataset Colors &amp; Container Persistence (Spec-Kit 015):**<br>  - High-performance, collision-aware random contrast color generator on 64-bit SplitMix64 and golden angle distribution ($137.50777^\circ$, $\ge 45^\circ$ angular distance between open tabs).<br>  - Cross-pane color identity: DocumentTabStrip active underlines, vector grid icons, Outline Tree procedure chips, and Notes summary tables synchronized via `workspace.session_color_by_name`.<br>  - Full `.stc` project container persistence (`pub tab_color: Option&lt;String&gt;`) with 100% backward compatibility with legacy containers.</p><h3>Fixed</h3><p>- **Tab Dirty Marker Positioning &amp; Overlap Elimination (BUG-016):**<br>  - Removed hardcoded character truncation (`min(12) * 6.5`) that caused asterisk markers to render directly over filename characters on tabs with titles longer than 12 characters.<br>  - Added guaranteed right padding reservation (32 px), clean ellipsis truncation via `truncate_at_width`, and vertical centering with `Align2::LEFT_CENTER`.<br>- **Titlebar False Dirty Marker &amp; Unicode Compliance (BUG-016):**<br>  - Completely removed hardcoded Unicode bullet symbol ` •` (U+2022) from window titlebar in accordance with Vector-First UI rules.<br>  - Normalized window title to render strictly `file_name` when clean and `file_name *` when modified.<br>  - Refactored `has_unsaved_changes()` to semantically isolate active session state from global checkpoints, eliminating false dirty triggers upon switching between datasets with differing column/row counts.<br>  - Fixed CSV/TSV/TXT saving in `save_to_path` to properly clear the session dirty flag via `sess.mark_clean()`.</p><p>---</p><h2>[0.4.1] - 2026-11-19</h2><h3>Added</h3><p>- **Multi-File Workspaces &amp; Concurrent Document Sessions (Feature 010):**<br>  - Open, edit, and switch between multiple datasets simultaneously in a unified workspace with isolated Undo/Redo histories, filter states, and split-file contexts.<br>  - Lossless in-memory compression: `NullBitmask`, `DictionaryEncodedColumn`, and `LosslessCompressedColumn` retaining full `f64` precision.<br>  - SPSS syntax commands for datasets: `DATASET NAME`, `DATASET ACTIVATE`, `DATASET CLOSE`, and `DATASET DISPLAY`.<br>  - Vector document tab strip (`DocumentTabStrip`) with custom vector dataset icons, unsaved markers, close buttons, mouse wheel scrolling, chevron overflow navigators, and `Ctrl+Tab` / `Ctrl+Shift+Tab` / `Ctrl+W` shortcuts.<br>- **Cross-Platform Memory Guard (Feature 011):**<br>  - Native physical RAM probing across Windows (`GlobalMemoryStatusEx`), Linux (`/proc/meminfo`), macOS (`sysctl`), and WebAssembly.<br>  - Preflight memory safety warnings before opening large files (&gt;250 MB) or batch operations (&gt;10 files) when available RAM is critically low (&lt;500 MB or &lt;15%).<br>- **Data Merging: Add Cases &amp; Add Variables (Feature 012):**<br>  - Add Cases (`ADD FILES`): vertical concatenation from external files (`.sav`, `.zsav`, `.stc`, `.csv`, `.xlsx`) or active workspace tabs with schema alignment, type reconciliation, `/IN=var` tracking, and `/BY` sorting.<br>  - Add Variables (`MATCH FILES`): horizontal merging across datasets (1:1 key merges, 1:N lookup tables `/TABLE`, sequential merges without keys) with collision resolution and `/IN` flags.<br>  - Canonical DialogKit interfaces (`AddCasesDialog`, `AddVarsDialog`).<br>- **Grid Selection &amp; Interaction Modernization (Spec-Kit 013):**<br>  - Preserved multi-cell selection on right-click.<br>  - Zero Pollution invariant on phantom rows (`*`): empty input commits never allocate unwanted rows with system-missing values.<br>  - Physical case deletion via `Delete` key on full rows, and cell clearing on rectangular selections.<br>  - Row and column header context menus (`ContextMenuTarget`).<br>  - Click-outside dismissal for popups and context menus without requiring `Escape`.</p><h3>Fixed</h3><p>- **SPSS Canon Range Selection &amp; Fill Handle Removal (Spec-Kit 014 / BUG-014):**<br>  - Eliminated the corner fill handle click interceptor, converting all grid dragging to strictly safe, read-only range selection (`SelectRange`).<br>  - Constrained `apply_auto_fill` strictly to existing dataset rows, completely barring phantom row allocations.</p><p>---</p><h2>[0.4.0] - 2026-11-16</h2><h3>Added</h3><p>- **Virtualized 4-Quadrant 2D Grid (Feature 006):**<br>  - Dedicated spatial geometry engine `grid/` separating top-left corner, column variable headers (`quad_top_right`), row number headers (`quad_bottom_left`), and central cell grid (`quad_center`).<br>  - Prefix-sum spatial line indexer (`LineIndex`) providing $O(\log N)$ coordinate searches with zero heap allocation in uniform mode.<br>  - Interactive column width drag-resizing with dynamic cursor feedback and guideline rendering.<br>  - Double-click column Auto-fit calculating optimal width from content.<br>  - Two-way column width synchronization with SPSS dictionary metadata (`VariableMetadata.columns`).<br>- **Range Selection, Keyboard Navigation &amp; Direct Typing (Feature 007):**<br>  - Fluid mouse marquee selection and Shift-click / Shift-drag range expansion.<br>  - Complete keyboard navigation (Arrow keys, `Tab`, `Enter`, `Home`, `End`, `Ctrl+Home`, `Ctrl+End`).<br>  - Direct Typing: Typing alphanumeric keys immediately begins inline cell editing without prior mouse clicking.<br>  - Floating inline cell editor with distinct focus ring and auto-commit on Enter/Tab.<br>  - Rectangular TSV/CSV clipboard transfer (`Ctrl+C` / `Ctrl+V`) with automatic dataset row expansion.<br>  - Series Auto-Fill (Fill Handle): $6 \times 6$ px square marker calculating linear regression progressions for numeric series and repetition for categorical data.<br>- **Column AutoFilter, Quick Sort &amp; Data Integrity Guards (Feature 008):**<br>  - Column header AutoFilter button with vector chevron and active funnel indicators.<br>  - Floating filter dropdown with live search, &quot;Select All&quot; / &quot;Clear All&quot; toggles, unique values checklist, and explicit &quot;(Blanks)&quot; handling.<br>  - Quick Sort Ascending (A–Z) and Descending (Z–A) via engine command `data.sort_cases` with 100% reversible Undo/Redo and SPSS syntax logging (`SORT CASES BY ...`).<br>  - Cell right-click context menu (Filter by selected value, Clear column filter, Sort Ascending/Descending, Copy/Paste).<br>  - Visual strikethrough for filtered inactive rows and muted text in cells (SPSS `FILTER BY` parity).<br>  - Data integrity inspection: Automated detector `is_number_stored_as_text` with Excel-parity green corner triangle badge and instant click-to-convert to numeric.<br>- **Tab Lifecycle Management &amp; Core Tab Retention (Feature 005):**<br>  - Non-closeable protection (`is_closeable = false`) for Data View, Variable View, and Output Viewer tabs.<br>  - Closeable auxiliary tabs (Syntax Editor) with standard close buttons.<br>  - Window menu for fast restoration and tab switching.<br>  - Automatic Output Viewer focus when executing SPSS syntax.</p><h3>Fixed</h3><p>- Fixed opaque selection background covering cell text by rendering background fill underneath the text layer.<br>- Fixed cell double-click race condition to ensure instant editor focus and caret placement.<br>- Localized column border hit-testing strictly to header quadrant to prevent accidental drag triggers inside data rows.</p><p>---</p><h2>[0.3.1] - 2026-11-15</h2><h3>Added</h3><p>- **Advanced Regression &amp; Partial Correlations (Feature 001):**<br>  - Partial correlations (`PARTIAL CORR` / `stat.correlations.partial`) with Schur complement and Student&#39;s $t$ $p$-values.<br>  - Binary logistic regression (`LOGISTIC REGRESSION` / `stat.regression.logistic`) via IRLS with Newton-Raphson optimizer and Hosmer-Lemeshow test.<br>  - Curve estimation (`CURVEFIT` / `stat.regression.curve`) with 6 canonical SPSS curves.<br>- **General Linear Model (Feature 002):**<br>  - Univariate ANOVA/ANCOVA (`UNIANOVA` / `stat.glm.univariate`) with Type III Sum of Squares.<br>  - Multivariate ANOVA (`GLM Multivariate` / `stat.glm.multivariate` — MANOVA) with Wilks&#39; $\Lambda$, Pillai&#39;s, Hotelling-Lawley, and Roy&#39;s tests.<br>  - Repeated measures ANOVA (`GLM Repeated Measures` / `stat.glm.repeated`) with Mauchly&#39;s sphericity test and Greenhouse-Geisser / Huynh-Feldt corrections.<br>- **Cluster Analysis, Reports &amp; Survival (Feature 003):**<br>  - K-Means cluster analysis (`QUICK CLUSTER` / `stat.cluster.kmeans`) with Maximin initialization and dynamic variable generation (`QCL_1`, `QCL_2`).<br>  - Variable codebook (`CODEBOOK` / `stat.reports.codebook`).<br>  - Case summaries (`SUMMARIZE` / `stat.reports.summarize`).<br>  - Kaplan-Meier survival analysis (`KM` / `stat.survival.km`) with Log-Rank test.<br>  - Actuarial life tables (`SURVIVAL` / `stat.survival.lifetables`).<br>- **Windows Silent Launch:**<br>  - Added `#![windows_subsystem = &quot;windows&quot;]` to eliminate black terminal window when launching GUI.</p><p>---</p><h2>[0.3.0] - 2026-11-07</h2><h3>Added</h3><p>- Model Context Protocol (MCP) server &amp; local TCP socket bridge (port 18493) for autonomous AI assistants.<br>- Universal Theme System (Dark Pro, SPSS Classic Light, System Auto) with lock-free atomic switching.<br>- System language autodetection via native OS APIs with fallback to English.</p><p>---</p><h2>[0.2.0] - 2026-10-31</h2><h3>Added</h3><p>- Classical statistical procedures: Descriptives, Frequencies, Crosstabs, One-Sample, Independent-Samples, and Paired-Samples T-Tests, One-Way ANOVA.<br>- Bivariate Pearson/Spearman correlations, Linear Regression, Non-Parametric tests (Chi-Square, Binomial, Runs, Mann-Whitney U, Wilcoxon, Kruskal-Wallis).<br>- Dynamic pivot tables in Output Viewer with multi-tier hierarchies and formatting.</p><p>---</p><h2>[0.1.0] - 2026-10-28</h2><h3>Added</h3><p>- Initial workspace scaffolding: L0 I/O (CSV/TSV), L1 Core (`DataSet`, `VariableDictionary`), L5 Syntax, and L6 GUI (`egui_dock`).<br>- Bilingual localization engine (`statcraft_i18n`) with Fluent catalogs (`en.ftl`, `ru.ftl`).</p><hr><p style="color:#8a8175;font-size:12px">Exported from CapsuleCraft Native · &lt;doc-statcraft-changelog_md@capsuleos.local&gt;</p></body></html>
+
+--BOUNDARY_PAYLOAD_AAJWXRDPAF--
+--BOUNDARY_ROOT_1YXCA2XDNP--

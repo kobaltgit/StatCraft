@@ -1,0 +1,94 @@
+From: CapsuleCraft Code Ingest <system@capsulecraft.local>
+To: Vault <vault@capsuleos.local>
+Subject: 📄 StatCraft / crates/statcraft_app/src/grid/geo.rs
+Date: Thu, 26 Nov 2026 14:22:01 +0000
+Message-ID: <module-crates_statcraft_app_src_grid_geo_rs@capsuleos.local>
+In-Reply-To: <subsystem-statcraft-crates_statcraft_app@capsuleos.local>
+X-Capsule-Page-Parent: <subsystem-statcraft-crates_statcraft_app@capsuleos.local>
+References: <project-index-statcraft@capsuleos.local> <subsystem-statcraft-crates_statcraft_app@capsuleos.local>
+X-Capsule-Tags: project, statcraft, module
+X-Capsule-Status: Active
+MIME-Version: 1.0
+Content-Type: multipart/mixed; boundary="BOUNDARY_ROOT_2SRUFF1PHC"
+
+--BOUNDARY_ROOT_2SRUFF1PHC
+Content-Type: multipart/alternative; boundary="BOUNDARY_PAYLOAD_1M4LZK1F42"
+
+--BOUNDARY_PAYLOAD_1M4LZK1F42
+Content-Type: application/json; name="canvas_state.json"
+Content-Disposition: inline; filename="canvas_state.json"
+
+{
+  "version": "1.0",
+  "generator": "CapsuleCraft Native egui prototype (Zero-DB Pure-MIME)",
+  "messageId": "<module-crates_statcraft_app_src_grid_geo_rs@capsuleos.local>",
+  "subject": "📄 StatCraft / crates/statcraft_app/src/grid/geo.rs",
+  "tags": [
+    "project",
+    "statcraft",
+    "module"
+  ],
+  "blocks": [
+    {
+      "data": {
+        "level": 1,
+        "text": "📄 geo.rs"
+      },
+      "id": "blk_native_heading_1795702921326924100",
+      "managed_by": "project_parser",
+      "type": "heading"
+    },
+    {
+      "data": {
+        "text": "Path: `crates/statcraft_app/src/grid/geo.rs` · 385 lines of code\nBelongs to project: [[📦 StatCraft (Overview) | 📦 StatCraft (Overview)]]"
+      },
+      "id": "blk_native_paragraph_1795702921326925700",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    },
+    {
+      "data": {
+        "level": 2,
+        "text": "Public Interface"
+      },
+      "id": "blk_native_heading_1795702921326926300",
+      "managed_by": "project_parser",
+      "type": "heading"
+    },
+    {
+      "data": {
+        "code": "pub struct Geo\npub fn new( viewport_rect: Rect, header_width: f32, header_height: f32, rows: LineIndex, cols: LineIndex, requested_scroll: Vec2, ) -> Self\npub fn max_scroll(&self) -> Vec2\npub fn visible_cols(&self) -> Range<usize>\npub fn visible_rows(&self) -> Range<usize>\npub fn cell_rect(&self, row: usize, col: usize) -> Option<Rect>\npub fn col_header_rect(&self, col: usize) -> Option<Rect>\npub fn row_header_rect(&self, row: usize) -> Option<Rect>\npub fn cell_at_pos(&self, pos: Pos2) -> Option<(usize, usize)>\npub fn cell_at_pos_clamped(&self, pos: Pos2) -> Option<(usize, usize)>\npub fn col_header_at_pos(&self, pos: Pos2) -> Option<usize>\npub fn row_header_at_pos(&self, pos: Pos2) -> Option<usize>\npub fn col_boundary_near_pos(&self, pos: Pos2, tolerance: f32) -> Option<(usize, f32)>\npub fn scroll_to_cell(&self, row: usize, col: usize) -> Vec2",
+        "language": "rust"
+      },
+      "id": "blk_native_code_1795702921326927300",
+      "managed_by": "project_parser",
+      "type": "code"
+    },
+    {
+      "data": {
+        "level": 2,
+        "text": "Internal Dependencies"
+      },
+      "id": "blk_native_heading_1795702921326928500",
+      "managed_by": "project_parser",
+      "type": "heading"
+    },
+    {
+      "data": {
+        "text": "- `super::line_index::LineIndex`\n- `super::*`\n"
+      },
+      "id": "blk_native_paragraph_1795702921326929600",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    }
+  ]
+}
+
+--BOUNDARY_PAYLOAD_1M4LZK1F42
+Content-Type: text/html; charset="utf-8"
+Content-Disposition: inline
+
+<!doctype html><html><head><meta charset="utf-8"><meta name="generator" content="CapsuleCraft Native"></head><body style="font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;max-width:720px;margin:32px auto;line-height:1.55;color:#23201c;background:#faf8f4;"><h1>📄 StatCraft / crates/statcraft_app/src/grid/geo.rs</h1><h1>📄 geo.rs</h1><p>Path: `crates/statcraft_app/src/grid/geo.rs` · 385 lines of code<br>Belongs to project: [[📦 StatCraft (Overview) | 📦 StatCraft (Overview)]]</p><h2>Public Interface</h2><p><em>[code block — open in CapsuleCraft web for its canvas]</em></p><h2>Internal Dependencies</h2><p>- `super::line_index::LineIndex`<br>- `super::*`<br></p><hr><p style="color:#8a8175;font-size:12px">Exported from CapsuleCraft Native · &lt;module-crates_statcraft_app_src_grid_geo_rs@capsuleos.local&gt;</p></body></html>
+
+--BOUNDARY_PAYLOAD_1M4LZK1F42--
+--BOUNDARY_ROOT_2SRUFF1PHC--

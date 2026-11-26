@@ -1,7 +1,7 @@
 From: CapsuleCraft Code Ingest <system@capsulecraft.local>
 To: Vault <vault@capsuleos.local>
 Subject: 📚 StatCraft / README
-Date: Wed, 11 Nov 2026 13:48:23 +0000
+Date: Thu, 26 Nov 2026 14:22:01 +0000
 Message-ID: <doc-statcraft-readme_md@capsuleos.local>
 In-Reply-To: <project-index-statcraft@capsuleos.local>
 X-Capsule-Page-Parent: <project-index-statcraft@capsuleos.local>
@@ -9,12 +9,12 @@ References: <project-index-statcraft@capsuleos.local>
 X-Capsule-Tags: project, statcraft, docs
 X-Capsule-Status: Active
 MIME-Version: 1.0
-Content-Type: multipart/mixed; boundary="BOUNDARY_ROOT_RD76NLDFB5"
+Content-Type: multipart/mixed; boundary="BOUNDARY_ROOT_P5IS33DFB1"
 
---BOUNDARY_ROOT_RD76NLDFB5
-Content-Type: multipart/alternative; boundary="BOUNDARY_PAYLOAD_1Y7R287DGR"
+--BOUNDARY_ROOT_P5IS33DFB1
+Content-Type: multipart/alternative; boundary="BOUNDARY_PAYLOAD_KDWZLLDGRN"
 
---BOUNDARY_PAYLOAD_1Y7R287DGR
+--BOUNDARY_PAYLOAD_KDWZLLDGRN
 Content-Type: application/json; name="canvas_state.json"
 Content-Disposition: inline; filename="canvas_state.json"
 
@@ -34,7 +34,7 @@ Content-Disposition: inline; filename="canvas_state.json"
         "icon": "book",
         "text": "Documentation file: `README.md`\nBelongs to project: [[📦 StatCraft (Overview) | 📦 StatCraft (Overview)]]"
       },
-      "id": "blk_native_callout_1794404903803247900",
+      "id": "blk_native_callout_1795702921470271300",
       "managed_by": "project_parser",
       "type": "callout"
     },
@@ -42,23 +42,31 @@ Content-Disposition: inline; filename="canvas_state.json"
       "data": {
         "text": "<p align=\"center\">\n  <img src=\"assets/banner.svg\" alt=\"StatCraft Banner\" width=\"100%\" />\n</p>"
       },
-      "id": "blk_native_paragraph_1794404903803165700",
+      "id": "blk_native_paragraph_1795702921470175700",
       "managed_by": "project_parser",
       "type": "paragraph"
     },
     {
       "data": {
-        "text": "<div align=\"center\">\n  <p>\n    <a href=\"README.md\"><strong>English</strong></a> |\n    <a href=\"README.ru.md\">Русский</a>\n  </p>"
+        "text": "<div align=\"center\">\n  <h3>\n    <a href=\"https://statcraft-mu.vercel.app/\">🌐 https://statcraft-mu.vercel.app/</a>\n  </h3>\n  <p>\n    <strong>Official Website, Web Documentation & Binary Releases</strong>\n  </p>"
       },
-      "id": "blk_native_paragraph_1794404903803170800",
+      "id": "blk_native_paragraph_1795702921470179700",
       "managed_by": "project_parser",
       "type": "paragraph"
     },
     {
       "data": {
-        "text": "<p>\n    <a href=\"https://www.rust-lang.org/\"><img src=\"https://img.shields.io/badge/Rust-1.80%2B-orange?logo=rust\" alt=\"Rust 1.80+\" /></a>\n    <a href=\"LICENSE-MIT\"><img src=\"https://img.shields.io/badge/License-MIT%20OR%20Apache--2.0-blue.svg\" alt=\"License: MIT OR Apache-2.0\" /></a>\n    <img src=\"https://img.shields.io/badge/Platform-Windows%20%7C%20Linux%20%7C%20macOS-lightgrey.svg\" alt=\"Platform: Windows | Linux | macOS\" />\n    <img src=\"https://img.shields.io/badge/Architecture-100%25%20Safe%20Rust-brightgreen.svg\" alt=\"100% Safe Rust\" />\n    <img src=\"https://img.shields.io/badge/Tests-Passing%20(90%2B)-success.svg\" alt=\"Tests: 90+ Passing\" />\n    <img src=\"https://img.shields.io/badge/i18n-EN%20%7C%20RU-informational.svg\" alt=\"i18n: EN | RU\" />\n    <a href=\"#4-statcraft-bridge--ai-agents-model-context-protocol--code-mode\"><img src=\"https://img.shields.io/badge/MCP-Live%20GUI%20Bridge%20%26%20Code%20Mode-6366F1?logo=anthropic&logoColor=white\" alt=\"MCP: Live GUI Bridge & Code Mode\" /></a>\n    <a href=\"https://remade.wiki/projects/statcraft/\"><img src=\"https://remade.wiki/badges/listed-on-remade-classic.svg\" alt=\"Listed on Remade\" /></a>\n    <a href=\"https://app.lava.top/kobaltgit\"><img src=\"https://img.shields.io/badge/Sponsor-Lava.top-FF5C35?logo=githubsponsors&logoColor=white\" alt=\"Sponsor: Lava.top\" /></a>\n  </p>\n</div>"
+        "text": "<p>\n    <a href=\"README.md\"><strong>English</strong></a> |\n    <a href=\"README.ru.md\">Русский</a>\n  </p>"
       },
-      "id": "blk_native_paragraph_1794404903803174800",
+      "id": "blk_native_paragraph_1795702921470181500",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    },
+    {
+      "data": {
+        "text": "<p>\n    <a href=\"https://statcraft-mu.vercel.app/\"><img src=\"https://img.shields.io/badge/Website-statcraft--mu.vercel.app-007ACC?logo=vercel&logoColor=white\" alt=\"Website: statcraft-mu.vercel.app\" /></a>\n    <a href=\"https://www.rust-lang.org/\"><img src=\"https://img.shields.io/badge/Rust-1.80%2B-orange?logo=rust\" alt=\"Rust 1.80+\" /></a>\n    <a href=\"LICENSE-MIT\"><img src=\"https://img.shields.io/badge/License-MIT%20OR%20Apache--2.0-blue.svg\" alt=\"License: MIT OR Apache-2.0\" /></a>\n    <img src=\"https://img.shields.io/badge/Platform-Windows%20%7C%20Linux%20%7C%20macOS-lightgrey.svg\" alt=\"Platform: Windows | Linux | macOS\" />\n    <img src=\"https://img.shields.io/badge/Architecture-100%25%20Safe%20Rust-brightgreen.svg\" alt=\"100% Safe Rust\" />\n    <img src=\"https://img.shields.io/badge/Tests-770%2B%20Passing-success.svg\" alt=\"Tests: 770+ Passing\" />\n    <img src=\"https://img.shields.io/badge/Oracle-SciPy%20(Δ%20%3C%2010⁻⁶)-blueviolet.svg\" alt=\"Oracle: SciPy (Δ < 10⁻⁶)\" />\n    <img src=\"https://img.shields.io/badge/i18n-EN%20%7C%20RU-informational.svg\" alt=\"i18n: EN | RU\" />\n    <a href=\"#4-statcraft-bridge--ai-agents-model-context-protocol--code-mode\"><img src=\"https://img.shields.io/badge/MCP-Live%20Bridge%20%26%20Code%20Mode-6366F1?logo=anthropic&logoColor=white\" alt=\"MCP: Live Bridge & Code Mode\" /></a>\n    <a href=\"https://remade.wiki/projects/statcraft/\"><img src=\"https://remade.wiki/badges/listed-on-remade-classic.svg\" alt=\"Listed on Remade\" /></a>\n    <a href=\"https://app.lava.top/kobaltgit\"><img src=\"https://img.shields.io/badge/Sponsor-Lava.top-FF5C35?logo=githubsponsors&logoColor=white\" alt=\"Sponsor: Lava.top\" /></a>\n  </p>\n</div>"
+      },
+      "id": "blk_native_paragraph_1795702921470185500",
       "managed_by": "project_parser",
       "type": "paragraph"
     },
@@ -66,7 +74,7 @@ Content-Disposition: inline; filename="canvas_state.json"
       "data": {
         "text": "---"
       },
-      "id": "blk_native_paragraph_1794404903803176100",
+      "id": "blk_native_paragraph_1795702921470187100",
       "managed_by": "project_parser",
       "type": "paragraph"
     },
@@ -75,23 +83,41 @@ Content-Disposition: inline; filename="canvas_state.json"
         "level": 2,
         "text": "Overview"
       },
-      "id": "blk_native_heading_1794404903803176700",
+      "id": "blk_native_heading_1795702921470188500",
       "managed_by": "project_parser",
       "type": "heading"
     },
     {
       "data": {
-        "text": "**StatCraft** is a free, modern, open-source statistical software package built entirely in **100% pure Safe Rust**. Designed as an uncompromising, clean-room alternative to proprietary statistical suites such as IBM SPSS Statistics, StatCraft combines academic precision, instantaneous launch times, and guaranteed crash immunity."
+        "icon": "info",
+        "text": "[!NOTE]"
       },
-      "id": "blk_native_paragraph_1794404903803178700",
+      "id": "blk_native_callout_1795702921470189600",
+      "managed_by": "project_parser",
+      "type": "callout"
+    },
+    {
+      "data": {
+        "icon": "info",
+        "text": "🔬 **Academic Notice:** StatCraft is an independent open-science software project. It is not affiliated with or certified by IBM SPSS Statistics. Do not use for clinical diagnostic decisions or legal compliance without independent statistical replication."
+      },
+      "id": "blk_native_callout_1795702921470190500",
+      "managed_by": "project_parser",
+      "type": "callout"
+    },
+    {
+      "data": {
+        "text": "**StatCraft** is an experimental alternative for statistical data analysis built in **100% pure Safe Rust**. Developed as an open-science computational project, it combines a clean-room mathematical engine on Apache Arrow and Polars with native Model Context Protocol (MCP) integration for AI-assisted empirical research."
+      },
+      "id": "blk_native_paragraph_1795702921470192400",
       "managed_by": "project_parser",
       "type": "paragraph"
     },
     {
       "data": {
-        "text": "Whether you are conducting psychological research, analyzing clinical trials, teaching university statistics, or manipulating enterprise datasets, StatCraft provides an intuitive graphical interface alongside a deterministic, syntax-driven analytical engine."
+        "text": "We do not claim StatCraft is a ready-made commercial replacement. It is an open-science computational experiment. We invite researchers, statisticians, and developers to explore the calculations, test edge cases against legacy suites (SPSS, R, Stata), and help make scientific computing transparent, verifiable, and reproducible."
       },
-      "id": "blk_native_paragraph_1794404903803180000",
+      "id": "blk_native_paragraph_1795702921470194100",
       "managed_by": "project_parser",
       "type": "paragraph"
     },
@@ -99,7 +125,7 @@ Content-Disposition: inline; filename="canvas_state.json"
       "data": {
         "text": "<p align=\"center\">\n  <img src=\"assets/screenshot.png\" alt=\"StatCraft Graphical Interface\" width=\"100%\" />\n  <br>\n  <em>Interactive workspace: Variable View metadata dictionary, syntax execution log, and canonical SPSS-style Output Viewer with structured pivot tables.</em>\n</p>"
       },
-      "id": "blk_native_paragraph_1794404903803181900",
+      "id": "blk_native_paragraph_1795702921470195900",
       "managed_by": "project_parser",
       "type": "paragraph"
     },
@@ -107,24 +133,32 @@ Content-Disposition: inline; filename="canvas_state.json"
       "data": {
         "text": "---"
       },
-      "id": "blk_native_paragraph_1794404903803182800",
+      "id": "blk_native_paragraph_1795702921470196900",
       "managed_by": "project_parser",
       "type": "paragraph"
     },
     {
       "data": {
         "level": 2,
-        "text": "Core Pillars & Design Principles"
+        "text": "Core Pillars & Architectural Principles"
       },
-      "id": "blk_native_heading_1794404903803183600",
+      "id": "blk_native_heading_1795702921470197700",
       "managed_by": "project_parser",
       "type": "heading"
     },
     {
       "data": {
-        "text": "* **100% Safe Rust & Never Crash Guarantee:** Zero `unsafe` blocks, zero panics (`panic!`, `unwrap()`, `expect()`). Malformed datasets, empty samples, or division by zero yield explicit, typed `Result<T, E>` errors rather than application crashes.\n* **Commands, Not Handlers:** Every analytical procedure and user interaction is an atomic engine command (`EngineCommand`). All commands support non-destructive Undo/Redo, serialize to standard SPSS syntax (`.sps`), and can be scripted headlessly.\n* **Agent-Ready & MCP Bridge (Code Mode):** Built-in local IPC socket (port 18493) and Model Context Protocol (MCP) server (`--mcp` flag). Enables external autonomous AI agents (Antigravity, Claude, ChatGPT, Ollama) to inspect metadata, execute batch syntax, perform mathematical computations, and stream live results into the Output Viewer.\n* **SPSS-Style Canonical Output Viewer:** Hierarchical navigation outline tree paired with authentic multi-level pivot tables. Results can be copied to the clipboard with one click as structured TSV data that pastes cleanly into Microsoft Excel without distorted columns or unwanted date conversions.\n* **Vector-First UI:** Rendered with native `egui` via `ui.painter()` and vector SVG icons. Strict zero-emoji and zero-unsupported Unicode symbol policy eliminates tofu squares (`□`) across all platforms.\n* **Zero-Hardcode i18n:** 100% of user-facing strings are decoupled into Project Fluent catalogs (`locales/en.ftl`, `locales/ru.ftl`) with real-time runtime language switching.\n* **Resource Guard:** Thread-limited builds (`-j 1`, `codegen-units = 1`) protect development workstations from memory exhaustion."
+        "text": "Statistical software must never crash mid-calculation or produce silent numerical errors. StatCraft enforces strict memory safety, layered dependencies, and a zero-panic contract:"
       },
-      "id": "blk_native_paragraph_1794404903803186300",
+      "id": "blk_native_paragraph_1795702921470198800",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    },
+    {
+      "data": {
+        "text": "* **Zero-Panic Contract (100% Safe Rust):** All non-test code strictly forbids `unwrap()`, `expect()`, `panic!()`, and `unsafe`. Potential errors (singular matrices, division by zero, insufficient sample size) are propagated through typed `Result<T, StatError>` rather than application crashes.\n* **Clean-Room Implementation:** Developed without proprietary IBM SPSS code or assets. Algorithms are derived from published academic papers, ISO standards, and GNU PSPP specifications, independently verified against a SciPy Golden Oracle ($\\Delta < 10^{-6}$).\n* **Commands, Not Handlers:** Every analytical procedure and user interaction is an atomic engine command (`EngineCommand`). All commands support non-destructive Undo/Redo, serialize to standard SPSS syntax (`.sps`), and can be scripted headlessly.\n* **Arrow Columnar Memory:** Datasets live in contiguous Apache Arrow arrays. Numerical transformations and filtering execute via SIMD-accelerated Polars engines with zero garbage collection pauses.\n* **Canonical SPSS-Style Output Viewer:** Hierarchical navigation outline tree paired with authentic multi-level pivot tables. Results copy to clipboard as structured TSV that pastes into Microsoft Excel cleanly without distorted columns or unwanted date conversions.\n* **Vector-First UI:** Rendered with native `egui` via `ui.painter()` and vector SVG icons. Strict zero-emoji and zero-unsupported Unicode symbol policy eliminates tofu squares (`□`) across all platforms.\n* **Zero-Hardcode i18n:** 100% of user-facing strings are decoupled into Project Fluent catalogs (`locales/en.ftl`, `locales/ru.ftl`) with real-time runtime language switching.\n* **Resource Guard:** Thread-limited compilation (`-j 1`, `codegen-units = 1`) protects development workstations from memory exhaustion."
+      },
+      "id": "blk_native_paragraph_1795702921470200900",
       "managed_by": "project_parser",
       "type": "paragraph"
     },
@@ -132,7 +166,7 @@ Content-Disposition: inline; filename="canvas_state.json"
       "data": {
         "text": "---"
       },
-      "id": "blk_native_paragraph_1794404903803187100",
+      "id": "blk_native_paragraph_1795702921470202000",
       "managed_by": "project_parser",
       "type": "paragraph"
     },
@@ -141,7 +175,7 @@ Content-Disposition: inline; filename="canvas_state.json"
         "level": 2,
         "text": "Key Features"
       },
-      "id": "blk_native_heading_1794404903803187700",
+      "id": "blk_native_heading_1795702921470202800",
       "managed_by": "project_parser",
       "type": "heading"
     },
@@ -150,7 +184,7 @@ Content-Disposition: inline; filename="canvas_state.json"
         "icon": "info",
         "text": "[!TIP]"
       },
-      "id": "blk_native_callout_1794404903803188400",
+      "id": "blk_native_callout_1795702921470203800",
       "managed_by": "project_parser",
       "type": "callout"
     },
@@ -159,7 +193,7 @@ Content-Disposition: inline; filename="canvas_state.json"
         "icon": "info",
         "text": "📖 **Comprehensive Feature Guide:** An exhaustive reference of all available analytical procedures, data manipulations, transformation algorithms, and keyboard shortcuts is available in **[FEATURES.md](docs/FEATURES.md)** (English) and **[FEATURES_RU.md](docs/FEATURES_RU.md)** (Русский)."
       },
-      "id": "blk_native_callout_1794404903803189600",
+      "id": "blk_native_callout_1795702921470204800",
       "managed_by": "project_parser",
       "type": "callout"
     },
@@ -168,15 +202,15 @@ Content-Disposition: inline; filename="canvas_state.json"
         "level": 3,
         "text": "1. Dual-View Data Management"
       },
-      "id": "blk_native_heading_1794404903803190900",
+      "id": "blk_native_heading_1795702921470205500",
       "managed_by": "project_parser",
       "type": "heading"
     },
     {
       "data": {
-        "text": "* **Data View:** High-performance, virtualized tabular grid displaying cases and variables. Supports instant toggling between raw numeric values and human-readable value labels (`1/A`).\n* **Variable View:** Comprehensive metadata dictionary managing:\n  - **Name:** Normalized variable identifiers.\n  - **Type:** 9 canonical SPSS types (Numeric, Comma, Dot, Scientific, Date, Dollar, Custom Currency, String, Restricted Numeric).\n  - **Width & Decimals:** Visual width and precision control with custom vector spinners.\n  - **Labels:** Descriptive variable titles displayed in dialogs and tables.\n  - **Values:** Discrete and range value labels with dedicated modal editors.\n  - **Missing Values:** Configurable discrete missing values and continuous missing ranges.\n  - **Columns & Align:** Table layout and alignment (Left, Center, Right).\n  - **Measure:** Measurement level classification (Scale, Ordinal, Nominal) with custom vector scale icons."
+        "text": "* **Data View (Virtualized 4-Quadrant 2D Grid):**\n  - **Spatial 4-Quadrant Architecture:** Fixed top-left corner, pinned column headers (scrolls horizontally), pinned row headers (scrolls vertically), and central cell grid (2D scrolling). Row numbers remain visible at all times.\n  - **High-Performance Prefix Indexing (`LineIndex`):** $O(\\log N)$ coordinate searches with zero heap allocation in uniform mode for hundreds of thousands of cases.\n  - **Interactive Column Resizing & Auto-Fit:** Drag-to-resize column boundaries with visual guidelines; double-click on separator triggers instant Auto-fit to content width; synchronized with SPSS dictionary metadata (`VariableMetadata.columns`).\n  - **Range Selection & Keyboard Ergonomics:** Fluid marquee mouse selection, Shift-click/Shift-drag expansion, arrow navigation, Tab/Enter workflows, and **Direct Typing** (instantly starts inline editing on alphanumeric keystrokes).\n  - **Rectangular TSV/CSV Clipboard:** Native clipboard copy/paste (`Ctrl+C` / `Ctrl+V`) interoperable with Excel, Google Sheets, and LibreOffice with automatic row expansion.\n  - **Series Auto-Fill (Fill Handle):** Bottom-right corner marker computes linear arithmetic progressions for numeric series and repetition for categorical data.\n  - **Column AutoFilter & Dropdowns:** Header filter button with vector chevron/funnel opening a dropdown with live search, checkboxes, and \"(Blanks)\" handling.\n  - **Quick Sort via CommandBus:** Instant Ascending (A–Z) and Descending (Z–A) sorting via canonical `data.sort_cases` with 100% reversible Undo/Redo and SPSS syntax logging.\n  - **Cell Context Menu:** Right-click menu for filtering by cell value, clearing filters, sorting, and clipboard operations.\n  - **Data Integrity Guards:** Automated detection of numbers stored as text (`is_number_stored_as_text`) with Excel-parity green corner triangle and 1-click conversion to numeric.\n  - **Value Labels Toggle (`1/A`):** Toolbar button for instant toggling between raw numeric codes and human-readable descriptive text labels.\n* **Variable View:** Comprehensive metadata dictionary managing:\n  - **Name:** Normalized variable identifiers.\n  - **Type:** 9 canonical SPSS types (Numeric, Comma, Dot, Scientific, Date, Dollar, Custom Currency, String, Restricted Numeric).\n  - **Width & Decimals:** Visual width and precision control with custom vector spinners.\n  - **Labels:** Descriptive variable titles displayed in dialogs and tables.\n  - **Values:** Discrete and range value labels with dedicated modal editors.\n  - **Missing Values:** Configurable discrete missing values and continuous missing ranges.\n  - **Columns & Align:** Table layout and alignment (Left, Center, Right).\n  - **Measure:** Measurement level classification (Scale, Ordinal, Nominal) with custom vector scale icons."
       },
-      "id": "blk_native_paragraph_1794404903803193500",
+      "id": "blk_native_paragraph_1795702921470210100",
       "managed_by": "project_parser",
       "type": "paragraph"
     },
@@ -185,7 +219,7 @@ Content-Disposition: inline; filename="canvas_state.json"
         "level": 3,
         "text": "2. Parametric & Descriptive Statistical Procedures"
       },
-      "id": "blk_native_heading_1794404903803194800",
+      "id": "blk_native_heading_1795702921470211000",
       "managed_by": "project_parser",
       "type": "heading"
     },
@@ -193,7 +227,7 @@ Content-Disposition: inline; filename="canvas_state.json"
       "data": {
         "text": "* **Descriptive Statistics:** Mean, Std. Error Mean, Standard Deviation, Variance, Minimum, Maximum, Range, Sum, Skewness (with SE), Kurtosis (with SE), and Valid N (listwise).\n* **Frequencies:** Frequency counts, percentages, valid percentages, cumulative percentages, discrete missing value breakdown, percentiles, and quartiles.\n* **One-Sample T-Test:** Student's $t$-test against customizable test values, degrees of freedom, two-tailed significance, mean differences, confidence intervals ($95\\%$ default or user-defined), and dual-table SPSS output.\n* **Independent-Samples T-Test:** Two-group comparison with automatic Levene's Test for Equality of Variances ($F$, $p$), Student's $t$-test (Equal Variances Assumed), Welch's $t$-test (Equal Variances Not Assumed), and full Group Statistics table.\n* **Paired-Samples T-Test:** Dependent group comparison providing Paired Samples Statistics, Pearson Correlation coefficients ($r$, $p$), and Paired Differences test tables.\n* **One-Way ANOVA:** One-Way Analysis of Variance with Fisher's $F$-test, between-groups and within-groups sums of squares, Levene's Test of Homogeneity of Variances, and descriptive statistics."
       },
-      "id": "blk_native_paragraph_1794404903803197200",
+      "id": "blk_native_paragraph_1795702921470213000",
       "managed_by": "project_parser",
       "type": "paragraph"
     },
@@ -202,7 +236,7 @@ Content-Disposition: inline; filename="canvas_state.json"
         "level": 3,
         "text": "3. Canonical Output Viewer"
       },
-      "id": "blk_native_heading_1794404903803198400",
+      "id": "blk_native_heading_1795702921470213900",
       "managed_by": "project_parser",
       "type": "heading"
     },
@@ -210,7 +244,7 @@ Content-Disposition: inline; filename="canvas_state.json"
       "data": {
         "text": "* **Outline Tree Navigation:** Interactive document tree on the left panel to jump directly to any procedure, log, or table.\n* **Pivot Tables:** Multi-tier nested tables with authentic SPSS headers, alternating row striping, and right-aligned numeric formatting.\n* **TSV Clipboard Export:** One-click `[ Copy Table (TSV) ]` button with instant visual feedback and right-click context menus. Exports tables with clean headers and row separators specifically structured for Excel import.\n* **Execution Protocols:** Monospace log blocks documenting executed SPSS syntax (`GET DATA`, `DESCRIPTIVES`, `T-TEST`, `ONEWAY`)."
       },
-      "id": "blk_native_paragraph_1794404903803200000",
+      "id": "blk_native_paragraph_1795702921470215200",
       "managed_by": "project_parser",
       "type": "paragraph"
     },
@@ -219,96 +253,88 @@ Content-Disposition: inline; filename="canvas_state.json"
         "level": 3,
         "text": "4. StatCraft Bridge & AI Agents (Model Context Protocol / Code Mode)"
       },
-      "id": "blk_native_heading_1794404903803200600",
+      "id": "blk_native_heading_1795702921470215900",
       "managed_by": "project_parser",
       "type": "heading"
     },
     {
       "data": {
-        "text": "StatCraft is the world's first statistical software package natively equipped with the **Model Context Protocol (MCP)** and direct two-way control via autonomous AI agents (Antigravity, Claude, ChatGPT, Ollama, and local LLMs)."
+        "text": "StatCraft features native **Model Context Protocol (MCP)** integration and a local IPC socket (port 18493) for bidirectional communication with AI assistants (Antigravity, Claude, ChatGPT, Ollama, and local LLMs)."
       },
-      "id": "blk_native_paragraph_1794404903803201600",
+      "id": "blk_native_paragraph_1795702921470216900",
       "managed_by": "project_parser",
       "type": "paragraph"
     },
     {
       "data": {
-        "text": "<details>\n<summary><b>🔍 Why StatCraft Bridge? Zero SPSS Experience Required (Click to expand)</b></summary>"
+        "text": "<details>\n<summary><b>🔍 How the StatCraft Bridge Works (Click to expand)</b></summary>"
       },
-      "id": "blk_native_paragraph_1794404903803202600",
+      "id": "blk_native_paragraph_1795702921470217500",
       "managed_by": "project_parser",
       "type": "paragraph"
     },
     {
       "data": {
-        "text": "#### You No Longer Need to Learn SPSS: Statistical Analysis in Natural Language"
+        "text": "#### Natural Language Statistical Analysis with Deterministic Execution"
       },
-      "id": "blk_native_paragraph_1794404903803203700",
+      "id": "blk_native_paragraph_1795702921470218400",
       "managed_by": "project_parser",
       "type": "paragraph"
     },
     {
       "data": {
-        "text": "Historically, performing rigorous statistical analysis required mastering legacy statistical GUI suites (SPSS, SAS, Stata) or writing complex code in R and Python. Researchers had to memorize arcane syntax commands (`DESCRIPTIVES VARIABLES=...`), navigate dozens of nested dialog boxes, or write data wrangling scripts from scratch."
+        "text": "StatCraft Bridge allows researchers to connect external AI agents directly to the local analytical engine. Instead of manually writing scripts or navigating complex dialog boxes, users can query and analyze datasets via conversational prompts:"
       },
-      "id": "blk_native_paragraph_1794404903803204500",
-      "managed_by": "project_parser",
-      "type": "paragraph"
-    },
-    {
-      "data": {
-        "text": "**With StatCraft Bridge, that barrier is completely gone:** Connect your favorite AI assistant to StatCraft and describe what you want in plain human language:"
-      },
-      "id": "blk_native_paragraph_1794404903803205400",
+      "id": "blk_native_paragraph_1795702921470219300",
       "managed_by": "project_parser",
       "type": "paragraph"
     },
     {
       "data": {
         "icon": "info",
-        "text": "*\"Inspect the loaded survey dataset. Compare the mean salary between males and females using an independent-samples t-test, check Levene's test for equality of variances, and explain in simple terms whether the difference is statistically significant.\"*"
+        "text": "*\"Inspect the loaded survey dataset. Compare the mean salary between males and females using an independent-samples t-test, check Levene's test for equality of variances, and report whether the difference is statistically significant.\"*"
       },
-      "id": "blk_native_callout_1794404903803205900",
+      "id": "blk_native_callout_1795702921470220000",
       "managed_by": "project_parser",
       "type": "callout"
     },
     {
       "data": {
-        "text": "The AI agent will autonomously:\n1. Query dataset metadata and variable dictionaries via the bridge;\n2. Generate and execute commands through StatCraft's core;\n3. Retrieve verified mathematical output tables;\n4. Present a plain-language summary with effect sizes and $p$-value interpretations."
+        "text": "The connected AI agent:\n1. Queries dataset metadata, measurement scales, and variable labels through the MCP bridge;\n2. Formulates and executes atomic commands via StatCraft's core;\n3. Retrieves validated mathematical output tables;\n4. Generates an empirical summary with effect sizes, test statistics, and $p$-value interpretations."
       },
-      "id": "blk_native_paragraph_1794404903803207600",
+      "id": "blk_native_paragraph_1795702921470223100",
       "managed_by": "project_parser",
       "type": "paragraph"
     },
     {
       "data": {
-        "text": "#### Why Use StatCraft Bridge Instead of Plain LLM Chat?"
+        "text": "#### Key Architectural Advantages:"
       },
-      "id": "blk_native_paragraph_1794404903803208800",
+      "id": "blk_native_paragraph_1795702921470226600",
       "managed_by": "project_parser",
       "type": "paragraph"
     },
     {
       "data": {
-        "text": "1. **Absolute Mathematical Exactness vs. LLM Hallucinations:**\n   Large Language Models frequently hallucinate when processing thousands of numbers, calculating means, or estimating non-linear test statistics. StatCraft serves as the **deterministic calculation oracle**: the LLM guides the inquiry, while native Rust handles the math with $\\le 10^{-6}$ precision verified against SciPy and SPSS algorithms.\n2. **Real-Time Visual Synchronization on Your Screen:**\n   As the agent executes procedures, the StatCraft desktop GUI updates live in front of you. Authentic Pivot Tables appear in the Output Viewer, syntax logs record the audit trail, and all results can be copied into Excel with a single click.\n3. **100% Local & Privacy-Preserving:**\n   The socket bridge runs locally (`127.0.0.1:18493`). Your medical, corporate, or private research data never leaves your workstation.\n4. **Autonomous Code Mode:**\n   Agents can run arbitrary SPSS syntax scripts (`.sps`), sort cases, filter subsets, recode scales, handle missing values, and trigger any of StatCraft's statistical modeling procedures."
+        "text": "1. **Deterministic Computation vs. LLM Arithmetic Errors:**\n   Large Language Models frequently hallucinate or approximate numbers when aggregating raw data or estimating test statistics. StatCraft serves as the **deterministic calculation oracle**: the LLM guides the workflow, while native Rust executes verified mathematics ($\\Delta < 10^{-6}$ vs. SciPy).\n2. **Real-Time Visual Synchronization in the GUI:**\n   As procedures run, the desktop interface updates live. Structured Pivot Tables appear in the Output Viewer, syntax logs record the audit trail, and tables can be copied directly into spreadsheets.\n3. **100% Local & Privacy-Preserving:**\n   The bridge operates over a local IPC socket (`127.0.0.1:18493`). Research, clinical, and proprietary datasets remain strictly on your machine.\n4. **Autonomous Code Mode:**\n   Agents can execute batch SPSS syntax scripts (`.sps`), sort cases, filter subsets, recode variables, and run statistical procedures programmatically."
       },
-      "id": "blk_native_paragraph_1794404903803210300",
+      "id": "blk_native_paragraph_1795702921470229000",
       "managed_by": "project_parser",
       "type": "paragraph"
     },
     {
       "data": {
-        "text": "#### How to Connect Your AI Agent"
+        "text": "#### How to Connect"
       },
-      "id": "blk_native_paragraph_1794404903803211500",
+      "id": "blk_native_paragraph_1795702921470229900",
       "managed_by": "project_parser",
       "type": "paragraph"
     },
     {
       "data": {
-        "text": "* **Desktop GUI:** Open `Extensions -> MCP Bridge / Copilot` in StatCraft. The dialog provides live server status, activity logs, and one-click configuration snippets for Antigravity, Claude Desktop, and Cursor.\n* **Headless CLI (stdio MCP):** Configure `statcraft.exe --mcp` inside your MCP client settings.\n</details>"
+        "text": "* **Desktop GUI:** Open `Extensions -> MCP Bridge / Copilot` in StatCraft. The dialog displays connection status, live logs, and one-click setup snippets for Antigravity, Claude Desktop, and Cursor.\n* **Headless CLI (stdio MCP):** Launch `statcraft.exe --mcp` inside your client's MCP configuration.\n</details>"
       },
-      "id": "blk_native_paragraph_1794404903803212700",
+      "id": "blk_native_paragraph_1795702921470231200",
       "managed_by": "project_parser",
       "type": "paragraph"
     },
@@ -316,7 +342,40 @@ Content-Disposition: inline; filename="canvas_state.json"
       "data": {
         "text": "---"
       },
-      "id": "blk_native_paragraph_1794404903803213900",
+      "id": "blk_native_paragraph_1795702921470232000",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    },
+    {
+      "data": {
+        "level": 2,
+        "text": "🔬 Open Invitation to Researchers & Developers"
+      },
+      "id": "blk_native_heading_1795702921470232500",
+      "managed_by": "project_parser",
+      "type": "heading"
+    },
+    {
+      "data": {
+        "text": "We do not claim StatCraft is a complete commercial replacement. It is an open-science computational experiment. We welcome domain expertise, empirical datasets, and rigorous scrutiny to make scientific computing transparent and reproducible:"
+      },
+      "id": "blk_native_paragraph_1795702921470233300",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    },
+    {
+      "data": {
+        "text": "* **For Statisticians & Researchers:** Challenge our numbers. Run your empirical datasets through StatCraft and compare results against SPSS, R, or Stata. Found a discrepancy ($\\Delta > 10^{-6}$)? Report it directly on **[statcraft-mu.vercel.app](https://statcraft-mu.vercel.app/)** or open an issue on GitHub.\n* **For Systems Engineers:** Help build safe, high-performance computational foundations in Safe Rust (optimizing linear algebra via `faer` and `statrs` without `unsafe`, contributing new procedures, and expanding the MCP toolset)."
+      },
+      "id": "blk_native_paragraph_1795702921470234700",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    },
+    {
+      "data": {
+        "text": "---"
+      },
+      "id": "blk_native_paragraph_1795702921470235600",
       "managed_by": "project_parser",
       "type": "paragraph"
     },
@@ -325,7 +384,7 @@ Content-Disposition: inline; filename="canvas_state.json"
         "level": 2,
         "text": "Layered Architecture (L0 – L6)"
       },
-      "id": "blk_native_heading_1794404903803214600",
+      "id": "blk_native_heading_1795702921470236100",
       "managed_by": "project_parser",
       "type": "heading"
     },
@@ -333,7 +392,7 @@ Content-Disposition: inline; filename="canvas_state.json"
       "data": {
         "text": "StatCraft is engineered in strict compliance with the **ArtCraft Layering Law**. Dependencies flow strictly downwards:"
       },
-      "id": "blk_native_paragraph_1794404903803215400",
+      "id": "blk_native_paragraph_1795702921470237100",
       "managed_by": "project_parser",
       "type": "paragraph"
     },
@@ -342,7 +401,7 @@ Content-Disposition: inline; filename="canvas_state.json"
         "code": "L6: statcraft_app        Desktop GUI (egui / eframe / DialogKit / Output Viewer)\n └── L5: statcraft_syntax CommandBus, SPS syntax parser, engine transactions\n      ├── L4: statcraft_reporting Pivot table models, TSV / HTML / Text export\n      └── L2: statcraft_algo      Pure statistical math (Golden Oracle vs SciPy)\n           └── L1: statcraft_core In-memory dataset, RawTable, VariableDictionary\n                └── L0: statcraft_io  Data codecs (CSV/TSV streaming, Excel .xlsx/.xls/.ods, SPSS .sav/.zsav)\n\nCross-cutting utility crates:\n* statcraft_bridge Local IPC socket (18493) and Model Context Protocol (MCP) server\n* statcraft_i18n   Fluent localization engine with zero hardcoded strings\n* xtask            Developer tools: file-guard, layers, design-guard, parity, test-corpus",
         "language": "text"
       },
-      "id": "blk_native_code_1794404903803217200",
+      "id": "blk_native_code_1795702921470239100",
       "managed_by": "project_parser",
       "type": "code"
     },
@@ -350,7 +409,7 @@ Content-Disposition: inline; filename="canvas_state.json"
       "data": {
         "text": "---"
       },
-      "id": "blk_native_paragraph_1794404903803218600",
+      "id": "blk_native_paragraph_1795702921470240700",
       "managed_by": "project_parser",
       "type": "paragraph"
     },
@@ -359,7 +418,7 @@ Content-Disposition: inline; filename="canvas_state.json"
         "level": 2,
         "text": "Getting Started"
       },
-      "id": "blk_native_heading_1794404903803219200",
+      "id": "blk_native_heading_1795702921470241400",
       "managed_by": "project_parser",
       "type": "heading"
     },
@@ -368,7 +427,7 @@ Content-Disposition: inline; filename="canvas_state.json"
         "level": 3,
         "text": "Prerequisites"
       },
-      "id": "blk_native_heading_1794404903803219800",
+      "id": "blk_native_heading_1795702921470242300",
       "managed_by": "project_parser",
       "type": "heading"
     },
@@ -376,7 +435,7 @@ Content-Disposition: inline; filename="canvas_state.json"
       "data": {
         "text": "* [Rust toolchain](https://rustup.rs/) (version 1.80 or newer recommended)."
       },
-      "id": "blk_native_paragraph_1794404903803220600",
+      "id": "blk_native_paragraph_1795702921470243100",
       "managed_by": "project_parser",
       "type": "paragraph"
     },
@@ -385,7 +444,7 @@ Content-Disposition: inline; filename="canvas_state.json"
         "level": 3,
         "text": "Building and Running"
       },
-      "id": "blk_native_heading_1794404903803221200",
+      "id": "blk_native_heading_1795702921470243800",
       "managed_by": "project_parser",
       "type": "heading"
     },
@@ -393,7 +452,7 @@ Content-Disposition: inline; filename="canvas_state.json"
       "data": {
         "text": "Clone the repository and launch the desktop application:"
       },
-      "id": "blk_native_paragraph_1794404903803222100",
+      "id": "blk_native_paragraph_1795702921470244800",
       "managed_by": "project_parser",
       "type": "paragraph"
     },
@@ -402,7 +461,7 @@ Content-Disposition: inline; filename="canvas_state.json"
         "code": "git clone https://github.com/kobaltgit/StatCraft.git\ncd StatCraft\n\n# Run StatCraft in release mode (strictly single-threaded compiler guard)\ncargo run --package statcraft_app --release -j 1",
         "language": "bash"
       },
-      "id": "blk_native_code_1794404903803223200",
+      "id": "blk_native_code_1795702921470246100",
       "managed_by": "project_parser",
       "type": "code"
     },
@@ -411,7 +470,7 @@ Content-Disposition: inline; filename="canvas_state.json"
         "level": 3,
         "text": "Running Tests and Quality Guards"
       },
-      "id": "blk_native_heading_1794404903803224200",
+      "id": "blk_native_heading_1795702921470247200",
       "managed_by": "project_parser",
       "type": "heading"
     },
@@ -419,16 +478,16 @@ Content-Disposition: inline; filename="canvas_state.json"
       "data": {
         "text": "StatCraft enforces a strict **Definition of Done (DoD)**. All tests and architectural linters must pass with zero warnings:"
       },
-      "id": "blk_native_paragraph_1794404903803225200",
+      "id": "blk_native_paragraph_1795702921470248000",
       "managed_by": "project_parser",
       "type": "paragraph"
     },
     {
       "data": {
-        "code": "# Run all workspace unit, integration, and golden oracle tests\ncargo test --workspace -j 1\n\n# Check file size limits across all crates (anti-monolith guard)\ncargo run -p xtask -j 1 -- file-guard\n\n# Check architectural layering rules (L0 - L6 strict downwards dependencies)\ncargo run -p xtask -j 1 -- layers\n\n# Check dialog UI design system compliance (DialogKit guard)\ncargo run -p xtask -j 1 -- design-guard\n\n# Verify SPSS feature parity status\ncargo run -p xtask -j 1 -- parity",
+        "code": "# Run all workspace unit, integration, and golden oracle tests\ncargo test --workspace -j 1\n\n# Check file size limits across all crates (anti-monolith guard)\ncargo run -p xtask -j 1 -- file-guard\n\n# Check architectural layering rules (L0 - L6 strict downwards dependencies)\ncargo run -p xtask -j 1 -- layers\n\n# Check dialog UI design system compliance (DialogKit guard)\ncargo run -p xtask -j 1 -- design-guard\n\n# Verify SPSS feature parity status\ncargo run -p xtask -j 1 -- parity\n\n# Check website benchmark matrix and documentation parity\ncargo run -p xtask -j 1 -- sync-site --check",
         "language": "bash"
       },
-      "id": "blk_native_code_1794404903803226900",
+      "id": "blk_native_code_1795702921470249700",
       "managed_by": "project_parser",
       "type": "code"
     },
@@ -436,7 +495,7 @@ Content-Disposition: inline; filename="canvas_state.json"
       "data": {
         "text": "---"
       },
-      "id": "blk_native_paragraph_1794404903803228300",
+      "id": "blk_native_paragraph_1795702921470251300",
       "managed_by": "project_parser",
       "type": "paragraph"
     },
@@ -445,15 +504,15 @@ Content-Disposition: inline; filename="canvas_state.json"
         "level": 2,
         "text": "Project Structure"
       },
-      "id": "blk_native_heading_1794404903803229000",
+      "id": "blk_native_heading_1795702921470252000",
       "managed_by": "project_parser",
       "type": "heading"
     },
     {
       "data": {
-        "text": "| Crate / Path | Responsibility |\n|---|---|\n| [`crates/statcraft_app`](crates/statcraft_app) | Desktop user interface, docking windows, DialogKit, data grid, output viewer |\n| [`crates/statcraft_syntax`](crates/statcraft_syntax) | Engine command bus, transactions, undo/redo, SPSS syntax serializer |\n| [`crates/statcraft_algo`](crates/statcraft_algo) | Pure mathematical algorithms (t-tests, ANOVA, regression, correlations, factor PCA, nonparametrics, frequencies) |\n| [`crates/statcraft_core`](crates/statcraft_core) | In-memory `DataSet`, `RawTable`, `VariableDictionary`, measurement scales, metadata |\n| [`crates/statcraft_io`](crates/statcraft_io) | Data codecs: streaming CSV/TSV, Excel workbooks (.xlsx/.xls/.ods), and SPSS files (.sav/.zsav) |\n| [`crates/statcraft_i18n`](crates/statcraft_i18n) | Localization engine powered by Project Fluent (`locales/*.ftl`) |\n| [`xtask`](xtask) | CI/CD automation: `file-guard`, `layers`, `design-guard`, `parity` |\n| [`docs/`](docs) | Architecture guides, design specs, roadmaps, and development chronicle |"
+        "text": "| Crate / Path | Responsibility |\n|---|---|\n| [`crates/statcraft_app`](crates/statcraft_app) | Desktop user interface, docking windows, DialogKit, data grid, output viewer |\n| [`crates/statcraft_syntax`](crates/statcraft_syntax) | Engine command bus, transactions, undo/redo, SPSS syntax serializer |\n| [`crates/statcraft_algo`](crates/statcraft_algo) | Pure mathematical algorithms (t-tests, ANOVA, regression, correlations, factor PCA, nonparametrics, frequencies) |\n| [`crates/statcraft_core`](crates/statcraft_core) | In-memory `DataSet`, `RawTable`, `VariableDictionary`, measurement scales, metadata |\n| [`crates/statcraft_io`](crates/statcraft_io) | Data codecs: streaming CSV/TSV, Excel workbooks (.xlsx/.xls/.ods), and SPSS files (.sav/.zsav) |\n| [`crates/statcraft_reporting`](crates/statcraft_reporting) | Pivot table models, hierarchical presentation, TSV, HTML, and text rendering |\n| [`crates/statcraft_bridge`](crates/statcraft_bridge) | Local IPC socket server (port 18493) and Model Context Protocol (MCP) server |\n| [`crates/statcraft_i18n`](crates/statcraft_i18n) | Localization engine powered by Project Fluent (`locales/*.ftl`) |\n| [`website/`](website) | Official web portal, interactive docs, benchmarks, and binary release downloads ([statcraft-mu.vercel.app](https://statcraft-mu.vercel.app/)) |\n| [`xtask`](xtask) | CI/CD automation: `file-guard`, `layers`, `design-guard`, `parity`, `sync-site` |\n| [`docs/`](docs) | Architecture guides, design specs, roadmaps, and development chronicle |"
       },
-      "id": "blk_native_paragraph_1794404903803230800",
+      "id": "blk_native_paragraph_1795702921470254300",
       "managed_by": "project_parser",
       "type": "paragraph"
     },
@@ -461,7 +520,7 @@ Content-Disposition: inline; filename="canvas_state.json"
       "data": {
         "text": "---"
       },
-      "id": "blk_native_paragraph_1794404903803231800",
+      "id": "blk_native_paragraph_1795702921470255300",
       "managed_by": "project_parser",
       "type": "paragraph"
     },
@@ -470,15 +529,15 @@ Content-Disposition: inline; filename="canvas_state.json"
         "level": 2,
         "text": "Documentation"
       },
-      "id": "blk_native_heading_1794404903803232400",
+      "id": "blk_native_heading_1795702921470256000",
       "managed_by": "project_parser",
       "type": "heading"
     },
     {
       "data": {
-        "text": "* **[Comprehensive Feature Guide (FEATURES.md)](docs/FEATURES.md)** / **[Справочник возможностей (RU)](docs/FEATURES_RU.md)** — Exhaustive catalog of all implemented statistical procedures, data transformations, formulas, and UI tools.\n* [Contributor Guide (CONTRIBUTING.md)](CONTRIBUTING.md) — Comprehensive development regulations, Resource Guard (-j 1), architecture rules, and Definition of Done.\n* [SPSS Feature Parity Checklist](docs/parity-checklist.md) — Comprehensive tracking of implemented SPSS commands and menus.\n* [SPSS Algorithms Mathematical Audit](docs/SPSS_ALGORITHMS_AUDIT.md) — Rigorous Clean-Room verification against IBM SPSS 24 Algorithms guide via [Craft Anything](https://github.com/storytold/craft-anything).\n* [Strategic Roadmap](docs/ROADMAP.md) — Long-term technical phases and module milestones.\n* [Canonical Design Guide](docs/DESIGN_GUIDE.md) — Standard layout specifications for all modal dialogs (`DialogKit`).\n* [Development Chronicle (EN)](docs/CHRONICLE.en.md) / [Хроника разработки (RU)](docs/CHRONICLE.md) — Detailed historical devlog of every architectural milestone."
+        "text": "* **[Official Website & Web Documentation (statcraft-mu.vercel.app)](https://statcraft-mu.vercel.app/)** — Interactive web documentation, Golden Oracle benchmark matrix vs IBM SPSS 24, OS auto-detection for release binaries, and discrepancy reporting.\n* **[Comprehensive Feature Guide (FEATURES.md)](docs/FEATURES.md)** / **[Справочник возможностей (RU)](docs/FEATURES_RU.md)** — Exhaustive catalog of all implemented statistical procedures, data transformations, formulas, and UI tools.\n* [Contributor Guide (CONTRIBUTING.md)](CONTRIBUTING.md) — Comprehensive development regulations, Resource Guard (-j 1), architecture rules, and Definition of Done.\n* [SPSS Feature Parity Checklist](docs/parity-checklist.md) — Comprehensive tracking of implemented SPSS commands and menus.\n* [SPSS Algorithms Mathematical Audit](docs/SPSS_ALGORITHMS_AUDIT.md) — Rigorous Clean-Room verification against IBM SPSS 24 Algorithms guide via [Craft Anything](https://github.com/storytold/craft-anything).\n* [Strategic Roadmap](docs/ROADMAP.md) — Long-term technical phases and module milestones.\n* [Canonical Design Guide](docs/DESIGN_GUIDE.md) — Standard layout specifications for all modal dialogs (`DialogKit`).\n* [Development Chronicle (EN)](docs/CHRONICLE.en.md) / [Хроника разработки (RU)](docs/CHRONICLE.md) — Detailed historical devlog of every architectural milestone."
       },
-      "id": "blk_native_paragraph_1794404903803234600",
+      "id": "blk_native_paragraph_1795702921470257900",
       "managed_by": "project_parser",
       "type": "paragraph"
     },
@@ -486,7 +545,7 @@ Content-Disposition: inline; filename="canvas_state.json"
       "data": {
         "text": "---"
       },
-      "id": "blk_native_paragraph_1794404903803235400",
+      "id": "blk_native_paragraph_1795702921470258900",
       "managed_by": "project_parser",
       "type": "paragraph"
     },
@@ -495,23 +554,23 @@ Content-Disposition: inline; filename="canvas_state.json"
         "level": 2,
         "text": "💖 Support & Sponsorship"
       },
-      "id": "blk_native_heading_1794404903803236000",
+      "id": "blk_native_heading_1795702921470259500",
       "managed_by": "project_parser",
       "type": "heading"
     },
     {
       "data": {
-        "text": "**StatCraft** is an ambitious, mathematically rigorous, clean-room statistical suite built in **100% pure Safe Rust** with zero legacy C/Fortran code. Developing clean-room analytical algorithms (parametric & non-parametric tests, ANOVA, Levene, regression, syntax pipelines, and canonical pivot tables) requires immense research and mathematical verification."
+        "text": "**StatCraft** is an independent open-science software project built in **100% pure Safe Rust** with zero legacy C/Fortran code. Implementing clean-room statistical algorithms, verifiable matrix algebra, and authentic pivot tables requires sustained research, verification, and engineering effort."
       },
-      "id": "blk_native_paragraph_1794404903803237300",
+      "id": "blk_native_paragraph_1795702921470260800",
       "managed_by": "project_parser",
       "type": "paragraph"
     },
     {
       "data": {
-        "text": "If **StatCraft** helps your academic research, university coursework, or statistical workflows, and you would like to support its ongoing development:"
+        "text": "If **StatCraft** is helpful to your empirical research, coursework, or data workflows, you can support its continued open development:"
       },
-      "id": "blk_native_paragraph_1794404903803238100",
+      "id": "blk_native_paragraph_1795702921470261700",
       "managed_by": "project_parser",
       "type": "paragraph"
     },
@@ -519,7 +578,7 @@ Content-Disposition: inline; filename="canvas_state.json"
       "data": {
         "text": "<div align=\"center\">"
       },
-      "id": "blk_native_paragraph_1794404903803238800",
+      "id": "blk_native_paragraph_1795702921470262500",
       "managed_by": "project_parser",
       "type": "paragraph"
     },
@@ -527,7 +586,7 @@ Content-Disposition: inline; filename="canvas_state.json"
       "data": {
         "text": "[![Support on Lava.top](https://img.shields.io/badge/Support_Project-Lava.top-FF5C35?style=for-the-badge&logo=heart&logoColor=white)](https://app.lava.top/kobaltgit)"
       },
-      "id": "blk_native_paragraph_1794404903803239800",
+      "id": "blk_native_paragraph_1795702921470263700",
       "managed_by": "project_parser",
       "type": "paragraph"
     },
@@ -535,7 +594,7 @@ Content-Disposition: inline; filename="canvas_state.json"
       "data": {
         "text": "**👉 [https://app.lava.top/kobaltgit](https://app.lava.top/kobaltgit)**"
       },
-      "id": "blk_native_paragraph_1794404903803240400",
+      "id": "blk_native_paragraph_1795702921470264600",
       "managed_by": "project_parser",
       "type": "paragraph"
     },
@@ -543,7 +602,7 @@ Content-Disposition: inline; filename="canvas_state.json"
       "data": {
         "text": "*(Accepts Russian cards, CIS, and international payment options)*"
       },
-      "id": "blk_native_paragraph_1794404903803241200",
+      "id": "blk_native_paragraph_1795702921470265400",
       "managed_by": "project_parser",
       "type": "paragraph"
     },
@@ -551,7 +610,7 @@ Content-Disposition: inline; filename="canvas_state.json"
       "data": {
         "text": "</div>"
       },
-      "id": "blk_native_paragraph_1794404903803241900",
+      "id": "blk_native_paragraph_1795702921470266200",
       "managed_by": "project_parser",
       "type": "paragraph"
     },
@@ -559,7 +618,7 @@ Content-Disposition: inline; filename="canvas_state.json"
       "data": {
         "text": "---"
       },
-      "id": "blk_native_paragraph_1794404903803242600",
+      "id": "blk_native_paragraph_1795702921470266800",
       "managed_by": "project_parser",
       "type": "paragraph"
     },
@@ -568,7 +627,7 @@ Content-Disposition: inline; filename="canvas_state.json"
         "level": 2,
         "text": "License"
       },
-      "id": "blk_native_heading_1794404903803243600",
+      "id": "blk_native_heading_1795702921470267200",
       "managed_by": "project_parser",
       "type": "heading"
     },
@@ -576,7 +635,7 @@ Content-Disposition: inline; filename="canvas_state.json"
       "data": {
         "text": "This project is dual-licensed under:\n* **MIT License** ([LICENSE-MIT](LICENSE-MIT))\n* **Apache License, Version 2.0** ([LICENSE-APACHE](LICENSE-APACHE))"
       },
-      "id": "blk_native_paragraph_1794404903803244700",
+      "id": "blk_native_paragraph_1795702921470268500",
       "managed_by": "project_parser",
       "type": "paragraph"
     },
@@ -584,7 +643,7 @@ Content-Disposition: inline; filename="canvas_state.json"
       "data": {
         "text": "You may choose either license at your option."
       },
-      "id": "blk_native_paragraph_1794404903803245500",
+      "id": "blk_native_paragraph_1795702921470269100",
       "managed_by": "project_parser",
       "type": "paragraph"
     },
@@ -592,18 +651,18 @@ Content-Disposition: inline; filename="canvas_state.json"
       "data": {
         "text": "All brand assets and logos in `assets/` are property of the **StatCraft** project (kobaltGIT)."
       },
-      "id": "blk_native_paragraph_1794404903803246200",
+      "id": "blk_native_paragraph_1795702921470269800",
       "managed_by": "project_parser",
       "type": "paragraph"
     }
   ]
 }
 
---BOUNDARY_PAYLOAD_1Y7R287DGR
+--BOUNDARY_PAYLOAD_KDWZLLDGRN
 Content-Type: text/html; charset="utf-8"
 Content-Disposition: inline
 
-<!doctype html><html><head><meta charset="utf-8"><meta name="generator" content="CapsuleCraft Native"></head><body style="font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;max-width:720px;margin:32px auto;line-height:1.55;color:#23201c;background:#faf8f4;"><h1>📚 StatCraft / README</h1><p><em>[callout block — open in CapsuleCraft web for its canvas]</em></p><p>&lt;p align=&quot;center&quot;&gt;<br>  &lt;img src=&quot;assets/banner.svg&quot; alt=&quot;StatCraft Banner&quot; width=&quot;100%&quot; /&gt;<br>&lt;/p&gt;</p><p>&lt;div align=&quot;center&quot;&gt;<br>  &lt;p&gt;<br>    &lt;a href=&quot;README.md&quot;&gt;&lt;strong&gt;English&lt;/strong&gt;&lt;/a&gt; |<br>    &lt;a href=&quot;README.ru.md&quot;&gt;Русский&lt;/a&gt;<br>  &lt;/p&gt;</p><p>&lt;p&gt;<br>    &lt;a href=&quot;https://www.rust-lang.org/&quot;&gt;&lt;img src=&quot;https://img.shields.io/badge/Rust-1.80%2B-orange?logo=rust&quot; alt=&quot;Rust 1.80+&quot; /&gt;&lt;/a&gt;<br>    &lt;a href=&quot;LICENSE-MIT&quot;&gt;&lt;img src=&quot;https://img.shields.io/badge/License-MIT%20OR%20Apache--2.0-blue.svg&quot; alt=&quot;License: MIT OR Apache-2.0&quot; /&gt;&lt;/a&gt;<br>    &lt;img src=&quot;https://img.shields.io/badge/Platform-Windows%20%7C%20Linux%20%7C%20macOS-lightgrey.svg&quot; alt=&quot;Platform: Windows | Linux | macOS&quot; /&gt;<br>    &lt;img src=&quot;https://img.shields.io/badge/Architecture-100%25%20Safe%20Rust-brightgreen.svg&quot; alt=&quot;100% Safe Rust&quot; /&gt;<br>    &lt;img src=&quot;https://img.shields.io/badge/Tests-Passing%20(90%2B)-success.svg&quot; alt=&quot;Tests: 90+ Passing&quot; /&gt;<br>    &lt;img src=&quot;https://img.shields.io/badge/i18n-EN%20%7C%20RU-informational.svg&quot; alt=&quot;i18n: EN | RU&quot; /&gt;<br>    &lt;a href=&quot;#4-statcraft-bridge--ai-agents-model-context-protocol--code-mode&quot;&gt;&lt;img src=&quot;https://img.shields.io/badge/MCP-Live%20GUI%20Bridge%20%26%20Code%20Mode-6366F1?logo=anthropic&amp;logoColor=white&quot; alt=&quot;MCP: Live GUI Bridge &amp; Code Mode&quot; /&gt;&lt;/a&gt;<br>    &lt;a href=&quot;https://remade.wiki/projects/statcraft/&quot;&gt;&lt;img src=&quot;https://remade.wiki/badges/listed-on-remade-classic.svg&quot; alt=&quot;Listed on Remade&quot; /&gt;&lt;/a&gt;<br>    &lt;a href=&quot;https://app.lava.top/kobaltgit&quot;&gt;&lt;img src=&quot;https://img.shields.io/badge/Sponsor-Lava.top-FF5C35?logo=githubsponsors&amp;logoColor=white&quot; alt=&quot;Sponsor: Lava.top&quot; /&gt;&lt;/a&gt;<br>  &lt;/p&gt;<br>&lt;/div&gt;</p><p>---</p><h2>Overview</h2><p>**StatCraft** is a free, modern, open-source statistical software package built entirely in **100% pure Safe Rust**. Designed as an uncompromising, clean-room alternative to proprietary statistical suites such as IBM SPSS Statistics, StatCraft combines academic precision, instantaneous launch times, and guaranteed crash immunity.</p><p>Whether you are conducting psychological research, analyzing clinical trials, teaching university statistics, or manipulating enterprise datasets, StatCraft provides an intuitive graphical interface alongside a deterministic, syntax-driven analytical engine.</p><p>&lt;p align=&quot;center&quot;&gt;<br>  &lt;img src=&quot;assets/screenshot.png&quot; alt=&quot;StatCraft Graphical Interface&quot; width=&quot;100%&quot; /&gt;<br>  &lt;br&gt;<br>  &lt;em&gt;Interactive workspace: Variable View metadata dictionary, syntax execution log, and canonical SPSS-style Output Viewer with structured pivot tables.&lt;/em&gt;<br>&lt;/p&gt;</p><p>---</p><h2>Core Pillars &amp; Design Principles</h2><p>* **100% Safe Rust &amp; Never Crash Guarantee:** Zero `unsafe` blocks, zero panics (`panic!`, `unwrap()`, `expect()`). Malformed datasets, empty samples, or division by zero yield explicit, typed `Result&lt;T, E&gt;` errors rather than application crashes.<br>* **Commands, Not Handlers:** Every analytical procedure and user interaction is an atomic engine command (`EngineCommand`). All commands support non-destructive Undo/Redo, serialize to standard SPSS syntax (`.sps`), and can be scripted headlessly.<br>* **Agent-Ready &amp; MCP Bridge (Code Mode):** Built-in local IPC socket (port 18493) and Model Context Protocol (MCP) server (`--mcp` flag). Enables external autonomous AI agents (Antigravity, Claude, ChatGPT, Ollama) to inspect metadata, execute batch syntax, perform mathematical computations, and stream live results into the Output Viewer.<br>* **SPSS-Style Canonical Output Viewer:** Hierarchical navigation outline tree paired with authentic multi-level pivot tables. Results can be copied to the clipboard with one click as structured TSV data that pastes cleanly into Microsoft Excel without distorted columns or unwanted date conversions.<br>* **Vector-First UI:** Rendered with native `egui` via `ui.painter()` and vector SVG icons. Strict zero-emoji and zero-unsupported Unicode symbol policy eliminates tofu squares (`□`) across all platforms.<br>* **Zero-Hardcode i18n:** 100% of user-facing strings are decoupled into Project Fluent catalogs (`locales/en.ftl`, `locales/ru.ftl`) with real-time runtime language switching.<br>* **Resource Guard:** Thread-limited builds (`-j 1`, `codegen-units = 1`) protect development workstations from memory exhaustion.</p><p>---</p><h2>Key Features</h2><p><em>[callout block — open in CapsuleCraft web for its canvas]</em></p><p><em>[callout block — open in CapsuleCraft web for its canvas]</em></p><h3>1. Dual-View Data Management</h3><p>* **Data View:** High-performance, virtualized tabular grid displaying cases and variables. Supports instant toggling between raw numeric values and human-readable value labels (`1/A`).<br>* **Variable View:** Comprehensive metadata dictionary managing:<br>  - **Name:** Normalized variable identifiers.<br>  - **Type:** 9 canonical SPSS types (Numeric, Comma, Dot, Scientific, Date, Dollar, Custom Currency, String, Restricted Numeric).<br>  - **Width &amp; Decimals:** Visual width and precision control with custom vector spinners.<br>  - **Labels:** Descriptive variable titles displayed in dialogs and tables.<br>  - **Values:** Discrete and range value labels with dedicated modal editors.<br>  - **Missing Values:** Configurable discrete missing values and continuous missing ranges.<br>  - **Columns &amp; Align:** Table layout and alignment (Left, Center, Right).<br>  - **Measure:** Measurement level classification (Scale, Ordinal, Nominal) with custom vector scale icons.</p><h3>2. Parametric &amp; Descriptive Statistical Procedures</h3><p>* **Descriptive Statistics:** Mean, Std. Error Mean, Standard Deviation, Variance, Minimum, Maximum, Range, Sum, Skewness (with SE), Kurtosis (with SE), and Valid N (listwise).<br>* **Frequencies:** Frequency counts, percentages, valid percentages, cumulative percentages, discrete missing value breakdown, percentiles, and quartiles.<br>* **One-Sample T-Test:** Student&#39;s $t$-test against customizable test values, degrees of freedom, two-tailed significance, mean differences, confidence intervals ($95\%$ default or user-defined), and dual-table SPSS output.<br>* **Independent-Samples T-Test:** Two-group comparison with automatic Levene&#39;s Test for Equality of Variances ($F$, $p$), Student&#39;s $t$-test (Equal Variances Assumed), Welch&#39;s $t$-test (Equal Variances Not Assumed), and full Group Statistics table.<br>* **Paired-Samples T-Test:** Dependent group comparison providing Paired Samples Statistics, Pearson Correlation coefficients ($r$, $p$), and Paired Differences test tables.<br>* **One-Way ANOVA:** One-Way Analysis of Variance with Fisher&#39;s $F$-test, between-groups and within-groups sums of squares, Levene&#39;s Test of Homogeneity of Variances, and descriptive statistics.</p><h3>3. Canonical Output Viewer</h3><p>* **Outline Tree Navigation:** Interactive document tree on the left panel to jump directly to any procedure, log, or table.<br>* **Pivot Tables:** Multi-tier nested tables with authentic SPSS headers, alternating row striping, and right-aligned numeric formatting.<br>* **TSV Clipboard Export:** One-click `[ Copy Table (TSV) ]` button with instant visual feedback and right-click context menus. Exports tables with clean headers and row separators specifically structured for Excel import.<br>* **Execution Protocols:** Monospace log blocks documenting executed SPSS syntax (`GET DATA`, `DESCRIPTIVES`, `T-TEST`, `ONEWAY`).</p><h3>4. StatCraft Bridge &amp; AI Agents (Model Context Protocol / Code Mode)</h3><p>StatCraft is the world&#39;s first statistical software package natively equipped with the **Model Context Protocol (MCP)** and direct two-way control via autonomous AI agents (Antigravity, Claude, ChatGPT, Ollama, and local LLMs).</p><p>&lt;details&gt;<br>&lt;summary&gt;&lt;b&gt;🔍 Why StatCraft Bridge? Zero SPSS Experience Required (Click to expand)&lt;/b&gt;&lt;/summary&gt;</p><p>#### You No Longer Need to Learn SPSS: Statistical Analysis in Natural Language</p><p>Historically, performing rigorous statistical analysis required mastering legacy statistical GUI suites (SPSS, SAS, Stata) or writing complex code in R and Python. Researchers had to memorize arcane syntax commands (`DESCRIPTIVES VARIABLES=...`), navigate dozens of nested dialog boxes, or write data wrangling scripts from scratch.</p><p>**With StatCraft Bridge, that barrier is completely gone:** Connect your favorite AI assistant to StatCraft and describe what you want in plain human language:</p><p><em>[callout block — open in CapsuleCraft web for its canvas]</em></p><p>The AI agent will autonomously:<br>1. Query dataset metadata and variable dictionaries via the bridge;<br>2. Generate and execute commands through StatCraft&#39;s core;<br>3. Retrieve verified mathematical output tables;<br>4. Present a plain-language summary with effect sizes and $p$-value interpretations.</p><p>#### Why Use StatCraft Bridge Instead of Plain LLM Chat?</p><p>1. **Absolute Mathematical Exactness vs. LLM Hallucinations:**<br>   Large Language Models frequently hallucinate when processing thousands of numbers, calculating means, or estimating non-linear test statistics. StatCraft serves as the **deterministic calculation oracle**: the LLM guides the inquiry, while native Rust handles the math with $\le 10^{-6}$ precision verified against SciPy and SPSS algorithms.<br>2. **Real-Time Visual Synchronization on Your Screen:**<br>   As the agent executes procedures, the StatCraft desktop GUI updates live in front of you. Authentic Pivot Tables appear in the Output Viewer, syntax logs record the audit trail, and all results can be copied into Excel with a single click.<br>3. **100% Local &amp; Privacy-Preserving:**<br>   The socket bridge runs locally (`127.0.0.1:18493`). Your medical, corporate, or private research data never leaves your workstation.<br>4. **Autonomous Code Mode:**<br>   Agents can run arbitrary SPSS syntax scripts (`.sps`), sort cases, filter subsets, recode scales, handle missing values, and trigger any of StatCraft&#39;s statistical modeling procedures.</p><p>#### How to Connect Your AI Agent</p><p>* **Desktop GUI:** Open `Extensions -&gt; MCP Bridge / Copilot` in StatCraft. The dialog provides live server status, activity logs, and one-click configuration snippets for Antigravity, Claude Desktop, and Cursor.<br>* **Headless CLI (stdio MCP):** Configure `statcraft.exe --mcp` inside your MCP client settings.<br>&lt;/details&gt;</p><p>---</p><h2>Layered Architecture (L0 – L6)</h2><p>StatCraft is engineered in strict compliance with the **ArtCraft Layering Law**. Dependencies flow strictly downwards:</p><p><em>[code block — open in CapsuleCraft web for its canvas]</em></p><p>---</p><h2>Getting Started</h2><h3>Prerequisites</h3><p>* [Rust toolchain](https://rustup.rs/) (version 1.80 or newer recommended).</p><h3>Building and Running</h3><p>Clone the repository and launch the desktop application:</p><p><em>[code block — open in CapsuleCraft web for its canvas]</em></p><h3>Running Tests and Quality Guards</h3><p>StatCraft enforces a strict **Definition of Done (DoD)**. All tests and architectural linters must pass with zero warnings:</p><p><em>[code block — open in CapsuleCraft web for its canvas]</em></p><p>---</p><h2>Project Structure</h2><p>| Crate / Path | Responsibility |<br>|---|---|<br>| [`crates/statcraft_app`](crates/statcraft_app) | Desktop user interface, docking windows, DialogKit, data grid, output viewer |<br>| [`crates/statcraft_syntax`](crates/statcraft_syntax) | Engine command bus, transactions, undo/redo, SPSS syntax serializer |<br>| [`crates/statcraft_algo`](crates/statcraft_algo) | Pure mathematical algorithms (t-tests, ANOVA, regression, correlations, factor PCA, nonparametrics, frequencies) |<br>| [`crates/statcraft_core`](crates/statcraft_core) | In-memory `DataSet`, `RawTable`, `VariableDictionary`, measurement scales, metadata |<br>| [`crates/statcraft_io`](crates/statcraft_io) | Data codecs: streaming CSV/TSV, Excel workbooks (.xlsx/.xls/.ods), and SPSS files (.sav/.zsav) |<br>| [`crates/statcraft_i18n`](crates/statcraft_i18n) | Localization engine powered by Project Fluent (`locales/*.ftl`) |<br>| [`xtask`](xtask) | CI/CD automation: `file-guard`, `layers`, `design-guard`, `parity` |<br>| [`docs/`](docs) | Architecture guides, design specs, roadmaps, and development chronicle |</p><p>---</p><h2>Documentation</h2><p>* **[Comprehensive Feature Guide (FEATURES.md)](docs/FEATURES.md)** / **[Справочник возможностей (RU)](docs/FEATURES_RU.md)** — Exhaustive catalog of all implemented statistical procedures, data transformations, formulas, and UI tools.<br>* [Contributor Guide (CONTRIBUTING.md)](CONTRIBUTING.md) — Comprehensive development regulations, Resource Guard (-j 1), architecture rules, and Definition of Done.<br>* [SPSS Feature Parity Checklist](docs/parity-checklist.md) — Comprehensive tracking of implemented SPSS commands and menus.<br>* [SPSS Algorithms Mathematical Audit](docs/SPSS_ALGORITHMS_AUDIT.md) — Rigorous Clean-Room verification against IBM SPSS 24 Algorithms guide via [Craft Anything](https://github.com/storytold/craft-anything).<br>* [Strategic Roadmap](docs/ROADMAP.md) — Long-term technical phases and module milestones.<br>* [Canonical Design Guide](docs/DESIGN_GUIDE.md) — Standard layout specifications for all modal dialogs (`DialogKit`).<br>* [Development Chronicle (EN)](docs/CHRONICLE.en.md) / [Хроника разработки (RU)](docs/CHRONICLE.md) — Detailed historical devlog of every architectural milestone.</p><p>---</p><h2>💖 Support &amp; Sponsorship</h2><p>**StatCraft** is an ambitious, mathematically rigorous, clean-room statistical suite built in **100% pure Safe Rust** with zero legacy C/Fortran code. Developing clean-room analytical algorithms (parametric &amp; non-parametric tests, ANOVA, Levene, regression, syntax pipelines, and canonical pivot tables) requires immense research and mathematical verification.</p><p>If **StatCraft** helps your academic research, university coursework, or statistical workflows, and you would like to support its ongoing development:</p><p>&lt;div align=&quot;center&quot;&gt;</p><p>[![Support on Lava.top](https://img.shields.io/badge/Support_Project-Lava.top-FF5C35?style=for-the-badge&amp;logo=heart&amp;logoColor=white)](https://app.lava.top/kobaltgit)</p><p>**👉 [https://app.lava.top/kobaltgit](https://app.lava.top/kobaltgit)**</p><p>*(Accepts Russian cards, CIS, and international payment options)*</p><p>&lt;/div&gt;</p><p>---</p><h2>License</h2><p>This project is dual-licensed under:<br>* **MIT License** ([LICENSE-MIT](LICENSE-MIT))<br>* **Apache License, Version 2.0** ([LICENSE-APACHE](LICENSE-APACHE))</p><p>You may choose either license at your option.</p><p>All brand assets and logos in `assets/` are property of the **StatCraft** project (kobaltGIT).</p><hr><p style="color:#8a8175;font-size:12px">Exported from CapsuleCraft Native · &lt;doc-statcraft-readme_md@capsuleos.local&gt;</p></body></html>
+<!doctype html><html><head><meta charset="utf-8"><meta name="generator" content="CapsuleCraft Native"></head><body style="font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;max-width:720px;margin:32px auto;line-height:1.55;color:#23201c;background:#faf8f4;"><h1>📚 StatCraft / README</h1><p><em>[callout block — open in CapsuleCraft web for its canvas]</em></p><p>&lt;p align=&quot;center&quot;&gt;<br>  &lt;img src=&quot;assets/banner.svg&quot; alt=&quot;StatCraft Banner&quot; width=&quot;100%&quot; /&gt;<br>&lt;/p&gt;</p><p>&lt;div align=&quot;center&quot;&gt;<br>  &lt;h3&gt;<br>    &lt;a href=&quot;https://statcraft-mu.vercel.app/&quot;&gt;🌐 https://statcraft-mu.vercel.app/&lt;/a&gt;<br>  &lt;/h3&gt;<br>  &lt;p&gt;<br>    &lt;strong&gt;Official Website, Web Documentation &amp; Binary Releases&lt;/strong&gt;<br>  &lt;/p&gt;</p><p>&lt;p&gt;<br>    &lt;a href=&quot;README.md&quot;&gt;&lt;strong&gt;English&lt;/strong&gt;&lt;/a&gt; |<br>    &lt;a href=&quot;README.ru.md&quot;&gt;Русский&lt;/a&gt;<br>  &lt;/p&gt;</p><p>&lt;p&gt;<br>    &lt;a href=&quot;https://statcraft-mu.vercel.app/&quot;&gt;&lt;img src=&quot;https://img.shields.io/badge/Website-statcraft--mu.vercel.app-007ACC?logo=vercel&amp;logoColor=white&quot; alt=&quot;Website: statcraft-mu.vercel.app&quot; /&gt;&lt;/a&gt;<br>    &lt;a href=&quot;https://www.rust-lang.org/&quot;&gt;&lt;img src=&quot;https://img.shields.io/badge/Rust-1.80%2B-orange?logo=rust&quot; alt=&quot;Rust 1.80+&quot; /&gt;&lt;/a&gt;<br>    &lt;a href=&quot;LICENSE-MIT&quot;&gt;&lt;img src=&quot;https://img.shields.io/badge/License-MIT%20OR%20Apache--2.0-blue.svg&quot; alt=&quot;License: MIT OR Apache-2.0&quot; /&gt;&lt;/a&gt;<br>    &lt;img src=&quot;https://img.shields.io/badge/Platform-Windows%20%7C%20Linux%20%7C%20macOS-lightgrey.svg&quot; alt=&quot;Platform: Windows | Linux | macOS&quot; /&gt;<br>    &lt;img src=&quot;https://img.shields.io/badge/Architecture-100%25%20Safe%20Rust-brightgreen.svg&quot; alt=&quot;100% Safe Rust&quot; /&gt;<br>    &lt;img src=&quot;https://img.shields.io/badge/Tests-770%2B%20Passing-success.svg&quot; alt=&quot;Tests: 770+ Passing&quot; /&gt;<br>    &lt;img src=&quot;https://img.shields.io/badge/Oracle-SciPy%20(Δ%20%3C%2010⁻⁶)-blueviolet.svg&quot; alt=&quot;Oracle: SciPy (Δ &lt; 10⁻⁶)&quot; /&gt;<br>    &lt;img src=&quot;https://img.shields.io/badge/i18n-EN%20%7C%20RU-informational.svg&quot; alt=&quot;i18n: EN | RU&quot; /&gt;<br>    &lt;a href=&quot;#4-statcraft-bridge--ai-agents-model-context-protocol--code-mode&quot;&gt;&lt;img src=&quot;https://img.shields.io/badge/MCP-Live%20Bridge%20%26%20Code%20Mode-6366F1?logo=anthropic&amp;logoColor=white&quot; alt=&quot;MCP: Live Bridge &amp; Code Mode&quot; /&gt;&lt;/a&gt;<br>    &lt;a href=&quot;https://remade.wiki/projects/statcraft/&quot;&gt;&lt;img src=&quot;https://remade.wiki/badges/listed-on-remade-classic.svg&quot; alt=&quot;Listed on Remade&quot; /&gt;&lt;/a&gt;<br>    &lt;a href=&quot;https://app.lava.top/kobaltgit&quot;&gt;&lt;img src=&quot;https://img.shields.io/badge/Sponsor-Lava.top-FF5C35?logo=githubsponsors&amp;logoColor=white&quot; alt=&quot;Sponsor: Lava.top&quot; /&gt;&lt;/a&gt;<br>  &lt;/p&gt;<br>&lt;/div&gt;</p><p>---</p><h2>Overview</h2><p><em>[callout block — open in CapsuleCraft web for its canvas]</em></p><p><em>[callout block — open in CapsuleCraft web for its canvas]</em></p><p>**StatCraft** is an experimental alternative for statistical data analysis built in **100% pure Safe Rust**. Developed as an open-science computational project, it combines a clean-room mathematical engine on Apache Arrow and Polars with native Model Context Protocol (MCP) integration for AI-assisted empirical research.</p><p>We do not claim StatCraft is a ready-made commercial replacement. It is an open-science computational experiment. We invite researchers, statisticians, and developers to explore the calculations, test edge cases against legacy suites (SPSS, R, Stata), and help make scientific computing transparent, verifiable, and reproducible.</p><p>&lt;p align=&quot;center&quot;&gt;<br>  &lt;img src=&quot;assets/screenshot.png&quot; alt=&quot;StatCraft Graphical Interface&quot; width=&quot;100%&quot; /&gt;<br>  &lt;br&gt;<br>  &lt;em&gt;Interactive workspace: Variable View metadata dictionary, syntax execution log, and canonical SPSS-style Output Viewer with structured pivot tables.&lt;/em&gt;<br>&lt;/p&gt;</p><p>---</p><h2>Core Pillars &amp; Architectural Principles</h2><p>Statistical software must never crash mid-calculation or produce silent numerical errors. StatCraft enforces strict memory safety, layered dependencies, and a zero-panic contract:</p><p>* **Zero-Panic Contract (100% Safe Rust):** All non-test code strictly forbids `unwrap()`, `expect()`, `panic!()`, and `unsafe`. Potential errors (singular matrices, division by zero, insufficient sample size) are propagated through typed `Result&lt;T, StatError&gt;` rather than application crashes.<br>* **Clean-Room Implementation:** Developed without proprietary IBM SPSS code or assets. Algorithms are derived from published academic papers, ISO standards, and GNU PSPP specifications, independently verified against a SciPy Golden Oracle ($\Delta &lt; 10^{-6}$).<br>* **Commands, Not Handlers:** Every analytical procedure and user interaction is an atomic engine command (`EngineCommand`). All commands support non-destructive Undo/Redo, serialize to standard SPSS syntax (`.sps`), and can be scripted headlessly.<br>* **Arrow Columnar Memory:** Datasets live in contiguous Apache Arrow arrays. Numerical transformations and filtering execute via SIMD-accelerated Polars engines with zero garbage collection pauses.<br>* **Canonical SPSS-Style Output Viewer:** Hierarchical navigation outline tree paired with authentic multi-level pivot tables. Results copy to clipboard as structured TSV that pastes into Microsoft Excel cleanly without distorted columns or unwanted date conversions.<br>* **Vector-First UI:** Rendered with native `egui` via `ui.painter()` and vector SVG icons. Strict zero-emoji and zero-unsupported Unicode symbol policy eliminates tofu squares (`□`) across all platforms.<br>* **Zero-Hardcode i18n:** 100% of user-facing strings are decoupled into Project Fluent catalogs (`locales/en.ftl`, `locales/ru.ftl`) with real-time runtime language switching.<br>* **Resource Guard:** Thread-limited compilation (`-j 1`, `codegen-units = 1`) protects development workstations from memory exhaustion.</p><p>---</p><h2>Key Features</h2><p><em>[callout block — open in CapsuleCraft web for its canvas]</em></p><p><em>[callout block — open in CapsuleCraft web for its canvas]</em></p><h3>1. Dual-View Data Management</h3><p>* **Data View (Virtualized 4-Quadrant 2D Grid):**<br>  - **Spatial 4-Quadrant Architecture:** Fixed top-left corner, pinned column headers (scrolls horizontally), pinned row headers (scrolls vertically), and central cell grid (2D scrolling). Row numbers remain visible at all times.<br>  - **High-Performance Prefix Indexing (`LineIndex`):** $O(\log N)$ coordinate searches with zero heap allocation in uniform mode for hundreds of thousands of cases.<br>  - **Interactive Column Resizing &amp; Auto-Fit:** Drag-to-resize column boundaries with visual guidelines; double-click on separator triggers instant Auto-fit to content width; synchronized with SPSS dictionary metadata (`VariableMetadata.columns`).<br>  - **Range Selection &amp; Keyboard Ergonomics:** Fluid marquee mouse selection, Shift-click/Shift-drag expansion, arrow navigation, Tab/Enter workflows, and **Direct Typing** (instantly starts inline editing on alphanumeric keystrokes).<br>  - **Rectangular TSV/CSV Clipboard:** Native clipboard copy/paste (`Ctrl+C` / `Ctrl+V`) interoperable with Excel, Google Sheets, and LibreOffice with automatic row expansion.<br>  - **Series Auto-Fill (Fill Handle):** Bottom-right corner marker computes linear arithmetic progressions for numeric series and repetition for categorical data.<br>  - **Column AutoFilter &amp; Dropdowns:** Header filter button with vector chevron/funnel opening a dropdown with live search, checkboxes, and &quot;(Blanks)&quot; handling.<br>  - **Quick Sort via CommandBus:** Instant Ascending (A–Z) and Descending (Z–A) sorting via canonical `data.sort_cases` with 100% reversible Undo/Redo and SPSS syntax logging.<br>  - **Cell Context Menu:** Right-click menu for filtering by cell value, clearing filters, sorting, and clipboard operations.<br>  - **Data Integrity Guards:** Automated detection of numbers stored as text (`is_number_stored_as_text`) with Excel-parity green corner triangle and 1-click conversion to numeric.<br>  - **Value Labels Toggle (`1/A`):** Toolbar button for instant toggling between raw numeric codes and human-readable descriptive text labels.<br>* **Variable View:** Comprehensive metadata dictionary managing:<br>  - **Name:** Normalized variable identifiers.<br>  - **Type:** 9 canonical SPSS types (Numeric, Comma, Dot, Scientific, Date, Dollar, Custom Currency, String, Restricted Numeric).<br>  - **Width &amp; Decimals:** Visual width and precision control with custom vector spinners.<br>  - **Labels:** Descriptive variable titles displayed in dialogs and tables.<br>  - **Values:** Discrete and range value labels with dedicated modal editors.<br>  - **Missing Values:** Configurable discrete missing values and continuous missing ranges.<br>  - **Columns &amp; Align:** Table layout and alignment (Left, Center, Right).<br>  - **Measure:** Measurement level classification (Scale, Ordinal, Nominal) with custom vector scale icons.</p><h3>2. Parametric &amp; Descriptive Statistical Procedures</h3><p>* **Descriptive Statistics:** Mean, Std. Error Mean, Standard Deviation, Variance, Minimum, Maximum, Range, Sum, Skewness (with SE), Kurtosis (with SE), and Valid N (listwise).<br>* **Frequencies:** Frequency counts, percentages, valid percentages, cumulative percentages, discrete missing value breakdown, percentiles, and quartiles.<br>* **One-Sample T-Test:** Student&#39;s $t$-test against customizable test values, degrees of freedom, two-tailed significance, mean differences, confidence intervals ($95\%$ default or user-defined), and dual-table SPSS output.<br>* **Independent-Samples T-Test:** Two-group comparison with automatic Levene&#39;s Test for Equality of Variances ($F$, $p$), Student&#39;s $t$-test (Equal Variances Assumed), Welch&#39;s $t$-test (Equal Variances Not Assumed), and full Group Statistics table.<br>* **Paired-Samples T-Test:** Dependent group comparison providing Paired Samples Statistics, Pearson Correlation coefficients ($r$, $p$), and Paired Differences test tables.<br>* **One-Way ANOVA:** One-Way Analysis of Variance with Fisher&#39;s $F$-test, between-groups and within-groups sums of squares, Levene&#39;s Test of Homogeneity of Variances, and descriptive statistics.</p><h3>3. Canonical Output Viewer</h3><p>* **Outline Tree Navigation:** Interactive document tree on the left panel to jump directly to any procedure, log, or table.<br>* **Pivot Tables:** Multi-tier nested tables with authentic SPSS headers, alternating row striping, and right-aligned numeric formatting.<br>* **TSV Clipboard Export:** One-click `[ Copy Table (TSV) ]` button with instant visual feedback and right-click context menus. Exports tables with clean headers and row separators specifically structured for Excel import.<br>* **Execution Protocols:** Monospace log blocks documenting executed SPSS syntax (`GET DATA`, `DESCRIPTIVES`, `T-TEST`, `ONEWAY`).</p><h3>4. StatCraft Bridge &amp; AI Agents (Model Context Protocol / Code Mode)</h3><p>StatCraft features native **Model Context Protocol (MCP)** integration and a local IPC socket (port 18493) for bidirectional communication with AI assistants (Antigravity, Claude, ChatGPT, Ollama, and local LLMs).</p><p>&lt;details&gt;<br>&lt;summary&gt;&lt;b&gt;🔍 How the StatCraft Bridge Works (Click to expand)&lt;/b&gt;&lt;/summary&gt;</p><p>#### Natural Language Statistical Analysis with Deterministic Execution</p><p>StatCraft Bridge allows researchers to connect external AI agents directly to the local analytical engine. Instead of manually writing scripts or navigating complex dialog boxes, users can query and analyze datasets via conversational prompts:</p><p><em>[callout block — open in CapsuleCraft web for its canvas]</em></p><p>The connected AI agent:<br>1. Queries dataset metadata, measurement scales, and variable labels through the MCP bridge;<br>2. Formulates and executes atomic commands via StatCraft&#39;s core;<br>3. Retrieves validated mathematical output tables;<br>4. Generates an empirical summary with effect sizes, test statistics, and $p$-value interpretations.</p><p>#### Key Architectural Advantages:</p><p>1. **Deterministic Computation vs. LLM Arithmetic Errors:**<br>   Large Language Models frequently hallucinate or approximate numbers when aggregating raw data or estimating test statistics. StatCraft serves as the **deterministic calculation oracle**: the LLM guides the workflow, while native Rust executes verified mathematics ($\Delta &lt; 10^{-6}$ vs. SciPy).<br>2. **Real-Time Visual Synchronization in the GUI:**<br>   As procedures run, the desktop interface updates live. Structured Pivot Tables appear in the Output Viewer, syntax logs record the audit trail, and tables can be copied directly into spreadsheets.<br>3. **100% Local &amp; Privacy-Preserving:**<br>   The bridge operates over a local IPC socket (`127.0.0.1:18493`). Research, clinical, and proprietary datasets remain strictly on your machine.<br>4. **Autonomous Code Mode:**<br>   Agents can execute batch SPSS syntax scripts (`.sps`), sort cases, filter subsets, recode variables, and run statistical procedures programmatically.</p><p>#### How to Connect</p><p>* **Desktop GUI:** Open `Extensions -&gt; MCP Bridge / Copilot` in StatCraft. The dialog displays connection status, live logs, and one-click setup snippets for Antigravity, Claude Desktop, and Cursor.<br>* **Headless CLI (stdio MCP):** Launch `statcraft.exe --mcp` inside your client&#39;s MCP configuration.<br>&lt;/details&gt;</p><p>---</p><h2>🔬 Open Invitation to Researchers &amp; Developers</h2><p>We do not claim StatCraft is a complete commercial replacement. It is an open-science computational experiment. We welcome domain expertise, empirical datasets, and rigorous scrutiny to make scientific computing transparent and reproducible:</p><p>* **For Statisticians &amp; Researchers:** Challenge our numbers. Run your empirical datasets through StatCraft and compare results against SPSS, R, or Stata. Found a discrepancy ($\Delta &gt; 10^{-6}$)? Report it directly on **[statcraft-mu.vercel.app](https://statcraft-mu.vercel.app/)** or open an issue on GitHub.<br>* **For Systems Engineers:** Help build safe, high-performance computational foundations in Safe Rust (optimizing linear algebra via `faer` and `statrs` without `unsafe`, contributing new procedures, and expanding the MCP toolset).</p><p>---</p><h2>Layered Architecture (L0 – L6)</h2><p>StatCraft is engineered in strict compliance with the **ArtCraft Layering Law**. Dependencies flow strictly downwards:</p><p><em>[code block — open in CapsuleCraft web for its canvas]</em></p><p>---</p><h2>Getting Started</h2><h3>Prerequisites</h3><p>* [Rust toolchain](https://rustup.rs/) (version 1.80 or newer recommended).</p><h3>Building and Running</h3><p>Clone the repository and launch the desktop application:</p><p><em>[code block — open in CapsuleCraft web for its canvas]</em></p><h3>Running Tests and Quality Guards</h3><p>StatCraft enforces a strict **Definition of Done (DoD)**. All tests and architectural linters must pass with zero warnings:</p><p><em>[code block — open in CapsuleCraft web for its canvas]</em></p><p>---</p><h2>Project Structure</h2><p>| Crate / Path | Responsibility |<br>|---|---|<br>| [`crates/statcraft_app`](crates/statcraft_app) | Desktop user interface, docking windows, DialogKit, data grid, output viewer |<br>| [`crates/statcraft_syntax`](crates/statcraft_syntax) | Engine command bus, transactions, undo/redo, SPSS syntax serializer |<br>| [`crates/statcraft_algo`](crates/statcraft_algo) | Pure mathematical algorithms (t-tests, ANOVA, regression, correlations, factor PCA, nonparametrics, frequencies) |<br>| [`crates/statcraft_core`](crates/statcraft_core) | In-memory `DataSet`, `RawTable`, `VariableDictionary`, measurement scales, metadata |<br>| [`crates/statcraft_io`](crates/statcraft_io) | Data codecs: streaming CSV/TSV, Excel workbooks (.xlsx/.xls/.ods), and SPSS files (.sav/.zsav) |<br>| [`crates/statcraft_reporting`](crates/statcraft_reporting) | Pivot table models, hierarchical presentation, TSV, HTML, and text rendering |<br>| [`crates/statcraft_bridge`](crates/statcraft_bridge) | Local IPC socket server (port 18493) and Model Context Protocol (MCP) server |<br>| [`crates/statcraft_i18n`](crates/statcraft_i18n) | Localization engine powered by Project Fluent (`locales/*.ftl`) |<br>| [`website/`](website) | Official web portal, interactive docs, benchmarks, and binary release downloads ([statcraft-mu.vercel.app](https://statcraft-mu.vercel.app/)) |<br>| [`xtask`](xtask) | CI/CD automation: `file-guard`, `layers`, `design-guard`, `parity`, `sync-site` |<br>| [`docs/`](docs) | Architecture guides, design specs, roadmaps, and development chronicle |</p><p>---</p><h2>Documentation</h2><p>* **[Official Website &amp; Web Documentation (statcraft-mu.vercel.app)](https://statcraft-mu.vercel.app/)** — Interactive web documentation, Golden Oracle benchmark matrix vs IBM SPSS 24, OS auto-detection for release binaries, and discrepancy reporting.<br>* **[Comprehensive Feature Guide (FEATURES.md)](docs/FEATURES.md)** / **[Справочник возможностей (RU)](docs/FEATURES_RU.md)** — Exhaustive catalog of all implemented statistical procedures, data transformations, formulas, and UI tools.<br>* [Contributor Guide (CONTRIBUTING.md)](CONTRIBUTING.md) — Comprehensive development regulations, Resource Guard (-j 1), architecture rules, and Definition of Done.<br>* [SPSS Feature Parity Checklist](docs/parity-checklist.md) — Comprehensive tracking of implemented SPSS commands and menus.<br>* [SPSS Algorithms Mathematical Audit](docs/SPSS_ALGORITHMS_AUDIT.md) — Rigorous Clean-Room verification against IBM SPSS 24 Algorithms guide via [Craft Anything](https://github.com/storytold/craft-anything).<br>* [Strategic Roadmap](docs/ROADMAP.md) — Long-term technical phases and module milestones.<br>* [Canonical Design Guide](docs/DESIGN_GUIDE.md) — Standard layout specifications for all modal dialogs (`DialogKit`).<br>* [Development Chronicle (EN)](docs/CHRONICLE.en.md) / [Хроника разработки (RU)](docs/CHRONICLE.md) — Detailed historical devlog of every architectural milestone.</p><p>---</p><h2>💖 Support &amp; Sponsorship</h2><p>**StatCraft** is an independent open-science software project built in **100% pure Safe Rust** with zero legacy C/Fortran code. Implementing clean-room statistical algorithms, verifiable matrix algebra, and authentic pivot tables requires sustained research, verification, and engineering effort.</p><p>If **StatCraft** is helpful to your empirical research, coursework, or data workflows, you can support its continued open development:</p><p>&lt;div align=&quot;center&quot;&gt;</p><p>[![Support on Lava.top](https://img.shields.io/badge/Support_Project-Lava.top-FF5C35?style=for-the-badge&amp;logo=heart&amp;logoColor=white)](https://app.lava.top/kobaltgit)</p><p>**👉 [https://app.lava.top/kobaltgit](https://app.lava.top/kobaltgit)**</p><p>*(Accepts Russian cards, CIS, and international payment options)*</p><p>&lt;/div&gt;</p><p>---</p><h2>License</h2><p>This project is dual-licensed under:<br>* **MIT License** ([LICENSE-MIT](LICENSE-MIT))<br>* **Apache License, Version 2.0** ([LICENSE-APACHE](LICENSE-APACHE))</p><p>You may choose either license at your option.</p><p>All brand assets and logos in `assets/` are property of the **StatCraft** project (kobaltGIT).</p><hr><p style="color:#8a8175;font-size:12px">Exported from CapsuleCraft Native · &lt;doc-statcraft-readme_md@capsuleos.local&gt;</p></body></html>
 
---BOUNDARY_PAYLOAD_1Y7R287DGR--
---BOUNDARY_ROOT_RD76NLDFB5--
+--BOUNDARY_PAYLOAD_KDWZLLDGRN--
+--BOUNDARY_ROOT_P5IS33DFB1--

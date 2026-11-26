@@ -1,0 +1,76 @@
+From: CapsuleCraft Code Ingest <system@capsulecraft.local>
+To: Vault <vault@capsuleos.local>
+Subject: 📄 StatCraft / crates/statcraft_core/src/dataset/merge/mod.rs
+Date: Thu, 26 Nov 2026 14:22:01 +0000
+Message-ID: <module-crates_statcraft_core_src_dataset_merge_mod_rs@capsuleos.local>
+In-Reply-To: <subsystem-statcraft-crates_statcraft_core@capsuleos.local>
+X-Capsule-Page-Parent: <subsystem-statcraft-crates_statcraft_core@capsuleos.local>
+References: <project-index-statcraft@capsuleos.local> <subsystem-statcraft-crates_statcraft_core@capsuleos.local>
+X-Capsule-Tags: project, statcraft, module
+X-Capsule-Status: Active
+MIME-Version: 1.0
+Content-Type: multipart/mixed; boundary="BOUNDARY_ROOT_T1HA2HFVC2"
+
+--BOUNDARY_ROOT_T1HA2HFVC2
+Content-Type: multipart/alternative; boundary="BOUNDARY_PAYLOAD_FN1RWVFY2Z"
+
+--BOUNDARY_PAYLOAD_FN1RWVFY2Z
+Content-Type: application/json; name="canvas_state.json"
+Content-Disposition: inline; filename="canvas_state.json"
+
+{
+  "version": "1.0",
+  "generator": "CapsuleCraft Native egui prototype (Zero-DB Pure-MIME)",
+  "messageId": "<module-crates_statcraft_core_src_dataset_merge_mod_rs@capsuleos.local>",
+  "subject": "📄 StatCraft / crates/statcraft_core/src/dataset/merge/mod.rs",
+  "tags": [
+    "project",
+    "statcraft",
+    "module"
+  ],
+  "blocks": [
+    {
+      "data": {
+        "level": 1,
+        "text": "📄 mod.rs"
+      },
+      "id": "blk_native_heading_1795702921373372500",
+      "managed_by": "project_parser",
+      "type": "heading"
+    },
+    {
+      "data": {
+        "text": "Path: `crates/statcraft_core/src/dataset/merge/mod.rs` · 140 lines of code\nBelongs to project: [[📦 StatCraft (Overview) | 📦 StatCraft (Overview)]]"
+      },
+      "id": "blk_native_paragraph_1795702921373374100",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    },
+    {
+      "data": {
+        "level": 2,
+        "text": "Internal Dependencies"
+      },
+      "id": "blk_native_heading_1795702921373374700",
+      "managed_by": "project_parser",
+      "type": "heading"
+    },
+    {
+      "data": {
+        "text": "- `super::*`\n- `crate::dataset::DataSet`\n"
+      },
+      "id": "blk_native_paragraph_1795702921373375700",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    }
+  ]
+}
+
+--BOUNDARY_PAYLOAD_FN1RWVFY2Z
+Content-Type: text/html; charset="utf-8"
+Content-Disposition: inline
+
+<!doctype html><html><head><meta charset="utf-8"><meta name="generator" content="CapsuleCraft Native"></head><body style="font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;max-width:720px;margin:32px auto;line-height:1.55;color:#23201c;background:#faf8f4;"><h1>📄 StatCraft / crates/statcraft_core/src/dataset/merge/mod.rs</h1><h1>📄 mod.rs</h1><p>Path: `crates/statcraft_core/src/dataset/merge/mod.rs` · 140 lines of code<br>Belongs to project: [[📦 StatCraft (Overview) | 📦 StatCraft (Overview)]]</p><h2>Internal Dependencies</h2><p>- `super::*`<br>- `crate::dataset::DataSet`<br></p><hr><p style="color:#8a8175;font-size:12px">Exported from CapsuleCraft Native · &lt;module-crates_statcraft_core_src_dataset_merge_mod_rs@capsuleos.local&gt;</p></body></html>
+
+--BOUNDARY_PAYLOAD_FN1RWVFY2Z--
+--BOUNDARY_ROOT_T1HA2HFVC2--

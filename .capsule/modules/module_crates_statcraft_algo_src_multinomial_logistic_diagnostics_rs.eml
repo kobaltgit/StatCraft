@@ -1,0 +1,94 @@
+From: CapsuleCraft Code Ingest <system@capsulecraft.local>
+To: Vault <vault@capsuleos.local>
+Subject: 📄 StatCraft / crates/statcraft_algo/src/multinomial_logistic/diagnostics.rs
+Date: Thu, 26 Nov 2026 14:22:01 +0000
+Message-ID: <module-crates_statcraft_algo_src_multinomial_logistic_diagnostics_rs@capsuleos.local>
+In-Reply-To: <subsystem-statcraft-crates_statcraft_algo@capsuleos.local>
+X-Capsule-Page-Parent: <subsystem-statcraft-crates_statcraft_algo@capsuleos.local>
+References: <project-index-statcraft@capsuleos.local> <subsystem-statcraft-crates_statcraft_algo@capsuleos.local>
+X-Capsule-Tags: project, statcraft, module
+X-Capsule-Status: Active
+MIME-Version: 1.0
+Content-Type: multipart/mixed; boundary="BOUNDARY_ROOT_F9KQ3XH62T"
+
+--BOUNDARY_ROOT_F9KQ3XH62T
+Content-Type: multipart/alternative; boundary="BOUNDARY_PAYLOAD_1V8WE9FH9D"
+
+--BOUNDARY_PAYLOAD_1V8WE9FH9D
+Content-Type: application/json; name="canvas_state.json"
+Content-Disposition: inline; filename="canvas_state.json"
+
+{
+  "version": "1.0",
+  "generator": "CapsuleCraft Native egui prototype (Zero-DB Pure-MIME)",
+  "messageId": "<module-crates_statcraft_algo_src_multinomial_logistic_diagnostics_rs@capsuleos.local>",
+  "subject": "📄 StatCraft / crates/statcraft_algo/src/multinomial_logistic/diagnostics.rs",
+  "tags": [
+    "project",
+    "statcraft",
+    "module"
+  ],
+  "blocks": [
+    {
+      "data": {
+        "level": 1,
+        "text": "📄 diagnostics.rs"
+      },
+      "id": "blk_native_heading_1795702921279518600",
+      "managed_by": "project_parser",
+      "type": "heading"
+    },
+    {
+      "data": {
+        "text": "Path: `crates/statcraft_algo/src/multinomial_logistic/diagnostics.rs` · 349 lines of code\nBelongs to project: [[📦 StatCraft (Overview) | 📦 StatCraft (Overview)]]"
+      },
+      "id": "blk_native_paragraph_1795702921279520400",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    },
+    {
+      "data": {
+        "level": 2,
+        "text": "Public Interface"
+      },
+      "id": "blk_native_heading_1795702921279521100",
+      "managed_by": "project_parser",
+      "type": "heading"
+    },
+    {
+      "data": {
+        "code": "pub fn compute_model_fitting_info( engine: &MultinomialEngineOutput, n: usize, m: usize, p: usize, include_constant: bool, ) -> ModelFittingInfo\npub fn compute_goodness_of_fit( x: &[Vec<f64>], y_indices: &[usize], predicted_probs: &[Vec<f64>], num_categories: usize, p: usize, ) -> GoodnessOfFit\npub fn compute_pseudo_r_squared( minus_2ll_null: f64, minus_2ll_final: f64, n: usize, ) -> PseudoRSquared\npub fn compute_classification_table( y_indices: &[usize], predicted_probs: &[Vec<f64>], categories: &[f64], labels: &[Option<String>], ) -> MultinomialClassificationTable\npub fn compute_parameter_estimates( engine: &MultinomialEngineOutput, categories: &[f64], labels: &[Option<String>], param_names: &[String], m: usize, p: usize, ref_idx: usize,\npub fn compute_likelihood_ratio_tests( x: &[Vec<f64>], y_indices: &[usize], category_counts: &[usize], m: usize, effect_cols: &[(String, Vec<usize>)], full_minus_2ll: f64, options: &MultinomialLogisticOptions,",
+        "language": "rust"
+      },
+      "id": "blk_native_code_1795702921279522200",
+      "managed_by": "project_parser",
+      "type": "code"
+    },
+    {
+      "data": {
+        "level": 2,
+        "text": "Internal Dependencies"
+      },
+      "id": "blk_native_heading_1795702921279523000",
+      "managed_by": "project_parser",
+      "type": "heading"
+    },
+    {
+      "data": {
+        "text": "- `crate::logistic::math::{chisq_p_value, normal_critical_value}`\n- `crate::multinomial_logistic::engine::{fit_multinomial_engine, MultinomialEngineOutput}`\n- `crate::multinomial_logistic::types::{`\n"
+      },
+      "id": "blk_native_paragraph_1795702921279524900",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    }
+  ]
+}
+
+--BOUNDARY_PAYLOAD_1V8WE9FH9D
+Content-Type: text/html; charset="utf-8"
+Content-Disposition: inline
+
+<!doctype html><html><head><meta charset="utf-8"><meta name="generator" content="CapsuleCraft Native"></head><body style="font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;max-width:720px;margin:32px auto;line-height:1.55;color:#23201c;background:#faf8f4;"><h1>📄 StatCraft / crates/statcraft_algo/src/multinomial_logistic/diagnostics.rs</h1><h1>📄 diagnostics.rs</h1><p>Path: `crates/statcraft_algo/src/multinomial_logistic/diagnostics.rs` · 349 lines of code<br>Belongs to project: [[📦 StatCraft (Overview) | 📦 StatCraft (Overview)]]</p><h2>Public Interface</h2><p><em>[code block — open in CapsuleCraft web for its canvas]</em></p><h2>Internal Dependencies</h2><p>- `crate::logistic::math::{chisq_p_value, normal_critical_value}`<br>- `crate::multinomial_logistic::engine::{fit_multinomial_engine, MultinomialEngineOutput}`<br>- `crate::multinomial_logistic::types::{`<br></p><hr><p style="color:#8a8175;font-size:12px">Exported from CapsuleCraft Native · &lt;module-crates_statcraft_algo_src_multinomial_logistic_diagnostics_rs@capsuleos.local&gt;</p></body></html>
+
+--BOUNDARY_PAYLOAD_1V8WE9FH9D--
+--BOUNDARY_ROOT_F9KQ3XH62T--

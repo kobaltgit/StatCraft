@@ -1,0 +1,94 @@
+From: CapsuleCraft Code Ingest <system@capsulecraft.local>
+To: Vault <vault@capsuleos.local>
+Subject: 📄 StatCraft / crates/statcraft_app/src/grid/selection.rs
+Date: Thu, 26 Nov 2026 14:22:01 +0000
+Message-ID: <module-crates_statcraft_app_src_grid_selection_rs@capsuleos.local>
+In-Reply-To: <subsystem-statcraft-crates_statcraft_app@capsuleos.local>
+X-Capsule-Page-Parent: <subsystem-statcraft-crates_statcraft_app@capsuleos.local>
+References: <project-index-statcraft@capsuleos.local> <subsystem-statcraft-crates_statcraft_app@capsuleos.local>
+X-Capsule-Tags: project, statcraft, module
+X-Capsule-Status: Active
+MIME-Version: 1.0
+Content-Type: multipart/mixed; boundary="BOUNDARY_ROOT_1798DTFJJG"
+
+--BOUNDARY_ROOT_1798DTFJJG
+Content-Type: multipart/alternative; boundary="BOUNDARY_PAYLOAD_A0IVD3FM50"
+
+--BOUNDARY_PAYLOAD_A0IVD3FM50
+Content-Type: application/json; name="canvas_state.json"
+Content-Disposition: inline; filename="canvas_state.json"
+
+{
+  "version": "1.0",
+  "generator": "CapsuleCraft Native egui prototype (Zero-DB Pure-MIME)",
+  "messageId": "<module-crates_statcraft_app_src_grid_selection_rs@capsuleos.local>",
+  "subject": "📄 StatCraft / crates/statcraft_app/src/grid/selection.rs",
+  "tags": [
+    "project",
+    "statcraft",
+    "module"
+  ],
+  "blocks": [
+    {
+      "data": {
+        "level": 1,
+        "text": "📄 selection.rs"
+      },
+      "id": "blk_native_heading_1795702921329489800",
+      "managed_by": "project_parser",
+      "type": "heading"
+    },
+    {
+      "data": {
+        "text": "Path: `crates/statcraft_app/src/grid/selection.rs` · 331 lines of code\nBelongs to project: [[📦 StatCraft (Overview) | 📦 StatCraft (Overview)]]"
+      },
+      "id": "blk_native_paragraph_1795702921329491500",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    },
+    {
+      "data": {
+        "level": 2,
+        "text": "Public Interface"
+      },
+      "id": "blk_native_heading_1795702921329492100",
+      "managed_by": "project_parser",
+      "type": "heading"
+    },
+    {
+      "data": {
+        "code": "pub struct CellRange\npub fn from_corners(r0: usize, c0: usize, r1: usize, c1: usize) -> Self\npub fn single(row: usize, col: usize) -> Self\npub fn full_col(col: usize, total_rows: usize) -> Self\npub fn full_row(row: usize, total_cols: usize) -> Self\npub fn all(total_rows: usize, total_cols: usize) -> Self\npub fn contains_cell(&self, row: usize, col: usize) -> bool\npub fn row_count(&self) -> usize\npub fn col_count(&self) -> usize\npub fn cell_count(&self) -> usize\npub fn is_single_cell(&self) -> bool\npub struct GridSelection\npub fn single(row: usize, col: usize) -> Self\npub fn from_anchor_and_active(anchor: (usize, usize), active: (usize, usize)) -> Self\npub fn select_col(col: usize, total_rows: usize) -> Self\npub fn select_row(row: usize, total_cols: usize) -> Self\npub fn select_all(total_rows: usize, total_cols: usize) -> Self\npub fn extend_to(&mut self, active_row: usize, active_col: usize)\npub fn contains(&self, row: usize, col: usize) -> bool\npub fn contains_row(&self, row: usize) -> bool\npub fn contains_col(&self, col: usize) -> bool\npub fn bounding_rect(&self, geo: &Geo) -> Option<Rect>\npub fn fill_handle_rect(&self, geo: &Geo) -> Option<Rect>\npub fn hit_test_fill_handle(&self, geo: &Geo, pos: Pos2, tolerance: f32) -> bool\npub fn paint_selection(painter: &Painter, geo: &Geo, selection: &GridSelection)",
+        "language": "rust"
+      },
+      "id": "blk_native_code_1795702921329493300",
+      "managed_by": "project_parser",
+      "type": "code"
+    },
+    {
+      "data": {
+        "level": 2,
+        "text": "Internal Dependencies"
+      },
+      "id": "blk_native_heading_1795702921329494600",
+      "managed_by": "project_parser",
+      "type": "heading"
+    },
+    {
+      "data": {
+        "text": "- `super::geo::Geo`\n- `crate::theme::Tokens`\n- `super::*`\n- `crate::grid::line_index::LineIndex`\n"
+      },
+      "id": "blk_native_paragraph_1795702921329496200",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    }
+  ]
+}
+
+--BOUNDARY_PAYLOAD_A0IVD3FM50
+Content-Type: text/html; charset="utf-8"
+Content-Disposition: inline
+
+<!doctype html><html><head><meta charset="utf-8"><meta name="generator" content="CapsuleCraft Native"></head><body style="font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;max-width:720px;margin:32px auto;line-height:1.55;color:#23201c;background:#faf8f4;"><h1>📄 StatCraft / crates/statcraft_app/src/grid/selection.rs</h1><h1>📄 selection.rs</h1><p>Path: `crates/statcraft_app/src/grid/selection.rs` · 331 lines of code<br>Belongs to project: [[📦 StatCraft (Overview) | 📦 StatCraft (Overview)]]</p><h2>Public Interface</h2><p><em>[code block — open in CapsuleCraft web for its canvas]</em></p><h2>Internal Dependencies</h2><p>- `super::geo::Geo`<br>- `crate::theme::Tokens`<br>- `super::*`<br>- `crate::grid::line_index::LineIndex`<br></p><hr><p style="color:#8a8175;font-size:12px">Exported from CapsuleCraft Native · &lt;module-crates_statcraft_app_src_grid_selection_rs@capsuleos.local&gt;</p></body></html>
+
+--BOUNDARY_PAYLOAD_A0IVD3FM50--
+--BOUNDARY_ROOT_1798DTFJJG--

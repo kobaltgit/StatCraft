@@ -1,0 +1,68 @@
+From: CapsuleCraft Code Ingest <system@capsulecraft.local>
+To: Vault <vault@capsuleos.local>
+Subject: 📄 StatCraft / website/next-env.d.ts
+Date: Thu, 26 Nov 2026 14:22:01 +0000
+Message-ID: <module-website_next_env_d_ts@capsuleos.local>
+In-Reply-To: <subsystem-statcraft-website@capsuleos.local>
+X-Capsule-Page-Parent: <subsystem-statcraft-website@capsuleos.local>
+References: <project-index-statcraft@capsuleos.local> <subsystem-statcraft-website@capsuleos.local>
+X-Capsule-Tags: project, statcraft, module
+X-Capsule-Status: Active
+MIME-Version: 1.0
+Content-Type: multipart/mixed; boundary="BOUNDARY_ROOT_1CW9TO7DUW"
+
+--BOUNDARY_ROOT_1CW9TO7DUW
+Content-Type: multipart/alternative; boundary="BOUNDARY_PAYLOAD_BQ7W01DWPH"
+
+--BOUNDARY_PAYLOAD_BQ7W01DWPH
+Content-Type: application/json; name="canvas_state.json"
+Content-Disposition: inline; filename="canvas_state.json"
+
+{
+  "version": "1.0",
+  "generator": "CapsuleCraft Native egui prototype (Zero-DB Pure-MIME)",
+  "messageId": "<module-website_next_env_d_ts@capsuleos.local>",
+  "subject": "📄 StatCraft / website/next-env.d.ts",
+  "tags": [
+    "project",
+    "statcraft",
+    "module"
+  ],
+  "blocks": [
+    {
+      "data": {
+        "level": 1,
+        "text": "📄 next-env.d.ts"
+      },
+      "id": "blk_native_heading_1795702921473767600",
+      "managed_by": "project_parser",
+      "type": "heading"
+    },
+    {
+      "data": {
+        "text": "Path: `website/next-env.d.ts` · 6 lines of code\nBelongs to project: [[📦 StatCraft (Overview) | 📦 StatCraft (Overview)]]"
+      },
+      "id": "blk_native_paragraph_1795702921473769600",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    },
+    {
+      "data": {
+        "icon": "info",
+        "text": "<reference types=\"next\" />\n<reference types=\"next/image-types/global\" />\n<reference path=\"./.next/types/routes.d.ts\" />"
+      },
+      "id": "blk_native_callout_1795702921473770300",
+      "managed_by": "project_parser",
+      "type": "callout"
+    }
+  ]
+}
+
+--BOUNDARY_PAYLOAD_BQ7W01DWPH
+Content-Type: text/html; charset="utf-8"
+Content-Disposition: inline
+
+<!doctype html><html><head><meta charset="utf-8"><meta name="generator" content="CapsuleCraft Native"></head><body style="font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;max-width:720px;margin:32px auto;line-height:1.55;color:#23201c;background:#faf8f4;"><h1>📄 StatCraft / website/next-env.d.ts</h1><h1>📄 next-env.d.ts</h1><p>Path: `website/next-env.d.ts` · 6 lines of code<br>Belongs to project: [[📦 StatCraft (Overview) | 📦 StatCraft (Overview)]]</p><p><em>[callout block — open in CapsuleCraft web for its canvas]</em></p><hr><p style="color:#8a8175;font-size:12px">Exported from CapsuleCraft Native · &lt;module-website_next_env_d_ts@capsuleos.local&gt;</p></body></html>
+
+--BOUNDARY_PAYLOAD_BQ7W01DWPH--
+--BOUNDARY_ROOT_1CW9TO7DUW--

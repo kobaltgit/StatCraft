@@ -1,0 +1,94 @@
+From: CapsuleCraft Code Ingest <system@capsulecraft.local>
+To: Vault <vault@capsuleos.local>
+Subject: 📄 StatCraft / crates/statcraft_algo/src/frequencies/table.rs
+Date: Thu, 26 Nov 2026 14:22:01 +0000
+Message-ID: <module-crates_statcraft_algo_src_frequencies_table_rs@capsuleos.local>
+In-Reply-To: <subsystem-statcraft-crates_statcraft_algo@capsuleos.local>
+X-Capsule-Page-Parent: <subsystem-statcraft-crates_statcraft_algo@capsuleos.local>
+References: <project-index-statcraft@capsuleos.local> <subsystem-statcraft-crates_statcraft_algo@capsuleos.local>
+X-Capsule-Tags: project, statcraft, module
+X-Capsule-Status: Active
+MIME-Version: 1.0
+Content-Type: multipart/mixed; boundary="BOUNDARY_ROOT_E27G0LFVHX"
+
+--BOUNDARY_ROOT_E27G0LFVHX
+Content-Type: multipart/alternative; boundary="BOUNDARY_PAYLOAD_11L7BLNFY8"
+
+--BOUNDARY_PAYLOAD_11L7BLNFY8
+Content-Type: application/json; name="canvas_state.json"
+Content-Disposition: inline; filename="canvas_state.json"
+
+{
+  "version": "1.0",
+  "generator": "CapsuleCraft Native egui prototype (Zero-DB Pure-MIME)",
+  "messageId": "<module-crates_statcraft_algo_src_frequencies_table_rs@capsuleos.local>",
+  "subject": "📄 StatCraft / crates/statcraft_algo/src/frequencies/table.rs",
+  "tags": [
+    "project",
+    "statcraft",
+    "module"
+  ],
+  "blocks": [
+    {
+      "data": {
+        "level": 1,
+        "text": "📄 table.rs"
+      },
+      "id": "blk_native_heading_1795702921273074700",
+      "managed_by": "project_parser",
+      "type": "heading"
+    },
+    {
+      "data": {
+        "text": "Path: `crates/statcraft_algo/src/frequencies/table.rs` · 489 lines of code\nBelongs to project: [[📦 StatCraft (Overview) | 📦 StatCraft (Overview)]]"
+      },
+      "id": "blk_native_paragraph_1795702921273076200",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    },
+    {
+      "data": {
+        "level": 2,
+        "text": "Public Interface"
+      },
+      "id": "blk_native_heading_1795702921273076800",
+      "managed_by": "project_parser",
+      "type": "heading"
+    },
+    {
+      "data": {
+        "code": "pub struct FrequencyCategory\npub fn frequency(&self) -> usize\npub fn display_label(&self) -> &str\npub struct FrequencyResult\npub fn display_title(&self) -> String\npub fn display_label_or_name(&self) -> &str\npub type FrequencyTable = FrequencyResult\npub struct FrequencyInputItem\npub fn compute_frequencies(var_name: &str, values: &[Option<String>]) -> FrequencyResult\npub fn compute_frequencies_detailed( var_name: &str, items: &[FrequencyInputItem], ) -> FrequencyResult\npub fn compute_frequencies_full( var_name: &str, items: &[FrequencyInputItem], stats_options: Option<&FrequenciesStatisticsOptions>, ) -> FrequencyResult\npub fn sort_categories(categories: &mut [FrequencyCategory], order: CategoryOrder)\npub fn recalculate_cumulative_percents(categories: &mut [FrequencyCategory])\npub fn apply_format_options(result: &mut FrequencyResult, format: &FrequenciesFormatOptions)",
+        "language": "rust"
+      },
+      "id": "blk_native_code_1795702921273077700",
+      "managed_by": "project_parser",
+      "type": "code"
+    },
+    {
+      "data": {
+        "level": 2,
+        "text": "Internal Dependencies"
+      },
+      "id": "blk_native_heading_1795702921273078500",
+      "managed_by": "project_parser",
+      "type": "heading"
+    },
+    {
+      "data": {
+        "text": "- `super::bootstrap::FrequenciesBootstrapResult`\n- `super::charts::FrequencyChartResult`\n- `super::options::{`\n- `super::percentiles::compute_quartiles`\n- `super::stats::{compute_frequencies_statistics, FrequenciesStatisticsResult}`\n- `super::*`\n"
+      },
+      "id": "blk_native_paragraph_1795702921273080400",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    }
+  ]
+}
+
+--BOUNDARY_PAYLOAD_11L7BLNFY8
+Content-Type: text/html; charset="utf-8"
+Content-Disposition: inline
+
+<!doctype html><html><head><meta charset="utf-8"><meta name="generator" content="CapsuleCraft Native"></head><body style="font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;max-width:720px;margin:32px auto;line-height:1.55;color:#23201c;background:#faf8f4;"><h1>📄 StatCraft / crates/statcraft_algo/src/frequencies/table.rs</h1><h1>📄 table.rs</h1><p>Path: `crates/statcraft_algo/src/frequencies/table.rs` · 489 lines of code<br>Belongs to project: [[📦 StatCraft (Overview) | 📦 StatCraft (Overview)]]</p><h2>Public Interface</h2><p><em>[code block — open in CapsuleCraft web for its canvas]</em></p><h2>Internal Dependencies</h2><p>- `super::bootstrap::FrequenciesBootstrapResult`<br>- `super::charts::FrequencyChartResult`<br>- `super::options::{`<br>- `super::percentiles::compute_quartiles`<br>- `super::stats::{compute_frequencies_statistics, FrequenciesStatisticsResult}`<br>- `super::*`<br></p><hr><p style="color:#8a8175;font-size:12px">Exported from CapsuleCraft Native · &lt;module-crates_statcraft_algo_src_frequencies_table_rs@capsuleos.local&gt;</p></body></html>
+
+--BOUNDARY_PAYLOAD_11L7BLNFY8--
+--BOUNDARY_ROOT_E27G0LFVHX--

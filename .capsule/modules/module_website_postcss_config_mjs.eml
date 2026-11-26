@@ -1,0 +1,77 @@
+From: CapsuleCraft Code Ingest <system@capsulecraft.local>
+To: Vault <vault@capsuleos.local>
+Subject: 📄 StatCraft / website/postcss.config.mjs
+Date: Thu, 26 Nov 2026 14:22:01 +0000
+Message-ID: <module-website_postcss_config_mjs@capsuleos.local>
+In-Reply-To: <subsystem-statcraft-website@capsuleos.local>
+X-Capsule-Page-Parent: <subsystem-statcraft-website@capsuleos.local>
+References: <project-index-statcraft@capsuleos.local> <subsystem-statcraft-website@capsuleos.local>
+X-Capsule-Tags: project, statcraft, module
+X-Capsule-Status: Active
+MIME-Version: 1.0
+Content-Type: multipart/mixed; boundary="BOUNDARY_ROOT_83XJTWE94L"
+
+--BOUNDARY_ROOT_83XJTWE94L
+Content-Type: multipart/alternative; boundary="BOUNDARY_PAYLOAD_ZRO22EEB4O"
+
+--BOUNDARY_PAYLOAD_ZRO22EEB4O
+Content-Type: application/json; name="canvas_state.json"
+Content-Disposition: inline; filename="canvas_state.json"
+
+{
+  "version": "1.0",
+  "generator": "CapsuleCraft Native egui prototype (Zero-DB Pure-MIME)",
+  "messageId": "<module-website_postcss_config_mjs@capsuleos.local>",
+  "subject": "📄 StatCraft / website/postcss.config.mjs",
+  "tags": [
+    "project",
+    "statcraft",
+    "module"
+  ],
+  "blocks": [
+    {
+      "data": {
+        "level": 1,
+        "text": "📄 postcss.config.mjs"
+      },
+      "id": "blk_native_heading_1795702921474562100",
+      "managed_by": "project_parser",
+      "type": "heading"
+    },
+    {
+      "data": {
+        "text": "Path: `website/postcss.config.mjs` · 5 lines of code\nBelongs to project: [[📦 StatCraft (Overview) | 📦 StatCraft (Overview)]]"
+      },
+      "id": "blk_native_paragraph_1795702921474563800",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    },
+    {
+      "data": {
+        "level": 2,
+        "text": "Public Interface"
+      },
+      "id": "blk_native_heading_1795702921474564500",
+      "managed_by": "project_parser",
+      "type": "heading"
+    },
+    {
+      "data": {
+        "code": "export default",
+        "language": "text"
+      },
+      "id": "blk_native_code_1795702921474565300",
+      "managed_by": "project_parser",
+      "type": "code"
+    }
+  ]
+}
+
+--BOUNDARY_PAYLOAD_ZRO22EEB4O
+Content-Type: text/html; charset="utf-8"
+Content-Disposition: inline
+
+<!doctype html><html><head><meta charset="utf-8"><meta name="generator" content="CapsuleCraft Native"></head><body style="font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;max-width:720px;margin:32px auto;line-height:1.55;color:#23201c;background:#faf8f4;"><h1>📄 StatCraft / website/postcss.config.mjs</h1><h1>📄 postcss.config.mjs</h1><p>Path: `website/postcss.config.mjs` · 5 lines of code<br>Belongs to project: [[📦 StatCraft (Overview) | 📦 StatCraft (Overview)]]</p><h2>Public Interface</h2><p><em>[code block — open in CapsuleCraft web for its canvas]</em></p><hr><p style="color:#8a8175;font-size:12px">Exported from CapsuleCraft Native · &lt;module-website_postcss_config_mjs@capsuleos.local&gt;</p></body></html>
+
+--BOUNDARY_PAYLOAD_ZRO22EEB4O--
+--BOUNDARY_ROOT_83XJTWE94L--

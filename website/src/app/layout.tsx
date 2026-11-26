@@ -13,7 +13,7 @@ export const metadata: Metadata = {
   },
   openGraph: {
     title: 'StatCraft // Open-Science Statistical Computing',
-    description: '100% Safe Rust, Apache Arrow & Polars engine, verified against SciPy Golden Oracle to 10⁻⁶ precision.',
+    description: '100% Safe Rust clean-room statistical engine, verified against SciPy Golden Oracle to 10⁻⁶ precision.',
     images: ['/github-preview.png'],
   },
 };

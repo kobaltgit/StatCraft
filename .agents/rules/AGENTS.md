@@ -64,9 +64,9 @@ L6: statcraft_app        (Десктопный GUI на egui / eframe / egui_doc
  └── L5: statcraft_syntax (Командная шина CommandBus, парсер синтаксиса .sps)
       ├── L4: statcraft_reporting (Модель Pivot Tables, экспорт PDF / DOCX / LaTeX)
       ├── L3: statcraft_charts    (Векторные графики egui_plot, Brushing & Linking)
-      └── L2: statcraft_algo      (Математика, тесты, алгоритмы, statrs, faer)
-           └── L1: statcraft_core (Apache Arrow/Polars, DataSet, VariableDictionary)
-                └── L0: statcraft_io (Кодеки .stc Parquet, SPSS .sav, CSV, Excel)
+      └── L2: statcraft_algo      (Математика, тесты, алгоритмы на Safe Rust)
+           └── L1: statcraft_core (DataSet, VariableDictionary, DeltaBuffer)
+                └── L0: statcraft_io (Кодеки .stc Container, SPSS .sav, CSV, Excel)
 
 Вспомогательные сквозные модули:
 * statcraft_i18n   (Движок локализации без хардкода строк)
@@ -147,8 +147,8 @@ L6: statcraft_app        (Десктопный GUI на egui / eframe / egui_doc
 
 ## 11. Проактивная оркестрация субагентов
 Для сохранения чистоты контекста Главного агента-оркестратора разработка делится между специализированными ролями:
-* **`stat-math-specialist`**: реализация математических алгоритмов на Rust (`faer`, `statrs`) и валидация через Golden Oracle против SciPy;
-* **`data-engine-specialist`**: структуры данных в памяти (Arrow/Polars, буфер правок, `VariableDictionary`);
+* **`stat-math-specialist`**: реализация математических алгоритмов на чистом Safe Rust и валидация через Golden Oracle против SciPy;
+* **`data-engine-specialist`**: структуры данных в памяти (DataSet, буфер правок, `VariableDictionary`);
 * **`ui-specialist`**: интерфейс на `egui`, докинг `egui_dock`, виртуализированный грид таблицы, сводные Pivot Tables;
 * **`i18n-specialist`**: каталоги переводов (Fluent), модуль `statcraft_i18n`, линтер отсутствия хардкода строк;
 * **`quality-auditor`**: прогон тестов строго с `-j 1`, линтеры, слои (`xtask layers`), соответствие Definition of Done;

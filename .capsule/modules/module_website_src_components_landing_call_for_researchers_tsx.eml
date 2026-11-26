@@ -1,0 +1,94 @@
+From: CapsuleCraft Code Ingest <system@capsulecraft.local>
+To: Vault <vault@capsuleos.local>
+Subject: 📄 StatCraft / website/src/components/landing/call-for-researchers.tsx
+Date: Thu, 26 Nov 2026 14:22:01 +0000
+Message-ID: <module-website_src_components_landing_call_for_researchers_tsx@capsuleos.local>
+In-Reply-To: <subsystem-statcraft-website_src@capsuleos.local>
+X-Capsule-Page-Parent: <subsystem-statcraft-website_src@capsuleos.local>
+References: <project-index-statcraft@capsuleos.local> <subsystem-statcraft-website_src@capsuleos.local>
+X-Capsule-Tags: project, statcraft, module
+X-Capsule-Status: Active
+MIME-Version: 1.0
+Content-Type: multipart/mixed; boundary="BOUNDARY_ROOT_1R1HBTVGMX"
+
+--BOUNDARY_ROOT_1R1HBTVGMX
+Content-Type: multipart/alternative; boundary="BOUNDARY_PAYLOAD_1RDBR65GQ0"
+
+--BOUNDARY_PAYLOAD_1RDBR65GQ0
+Content-Type: application/json; name="canvas_state.json"
+Content-Disposition: inline; filename="canvas_state.json"
+
+{
+  "version": "1.0",
+  "generator": "CapsuleCraft Native egui prototype (Zero-DB Pure-MIME)",
+  "messageId": "<module-website_src_components_landing_call_for_researchers_tsx@capsuleos.local>",
+  "subject": "📄 StatCraft / website/src/components/landing/call-for-researchers.tsx",
+  "tags": [
+    "project",
+    "statcraft",
+    "module"
+  ],
+  "blocks": [
+    {
+      "data": {
+        "level": 1,
+        "text": "📄 call-for-researchers.tsx"
+      },
+      "id": "blk_native_heading_1795702921481821000",
+      "managed_by": "project_parser",
+      "type": "heading"
+    },
+    {
+      "data": {
+        "text": "Path: `website/src/components/landing/call-for-researchers.tsx` · 174 lines of code\nBelongs to project: [[📦 StatCraft (Overview) | 📦 StatCraft (Overview)]]"
+      },
+      "id": "blk_native_paragraph_1795702921481822600",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    },
+    {
+      "data": {
+        "level": 2,
+        "text": "Public Interface"
+      },
+      "id": "blk_native_heading_1795702921481823200",
+      "managed_by": "project_parser",
+      "type": "heading"
+    },
+    {
+      "data": {
+        "code": "export function CallForResearchers(",
+        "language": "typescript"
+      },
+      "id": "blk_native_code_1795702921481823900",
+      "managed_by": "project_parser",
+      "type": "code"
+    },
+    {
+      "data": {
+        "level": 2,
+        "text": "Internal Dependencies"
+      },
+      "id": "blk_native_heading_1795702921481824600",
+      "managed_by": "project_parser",
+      "type": "heading"
+    },
+    {
+      "data": {
+        "text": "- `React, { useState } from 'react`\n- `{ SectionShell } from '../section-shell`\n- `{ ModalReportIssue } from '../modal-report-issue`\n- `{ FlaskConical, Code2, ShieldAlert, HeartHandshake, ArrowRight, MessageSquarePlus, ExternalLink } from 'lucide-react`\n"
+      },
+      "id": "blk_native_paragraph_1795702921481826400",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    }
+  ]
+}
+
+--BOUNDARY_PAYLOAD_1RDBR65GQ0
+Content-Type: text/html; charset="utf-8"
+Content-Disposition: inline
+
+<!doctype html><html><head><meta charset="utf-8"><meta name="generator" content="CapsuleCraft Native"></head><body style="font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;max-width:720px;margin:32px auto;line-height:1.55;color:#23201c;background:#faf8f4;"><h1>📄 StatCraft / website/src/components/landing/call-for-researchers.tsx</h1><h1>📄 call-for-researchers.tsx</h1><p>Path: `website/src/components/landing/call-for-researchers.tsx` · 174 lines of code<br>Belongs to project: [[📦 StatCraft (Overview) | 📦 StatCraft (Overview)]]</p><h2>Public Interface</h2><p><em>[code block — open in CapsuleCraft web for its canvas]</em></p><h2>Internal Dependencies</h2><p>- `React, { useState } from &#39;react`<br>- `{ SectionShell } from &#39;../section-shell`<br>- `{ ModalReportIssue } from &#39;../modal-report-issue`<br>- `{ FlaskConical, Code2, ShieldAlert, HeartHandshake, ArrowRight, MessageSquarePlus, ExternalLink } from &#39;lucide-react`<br></p><hr><p style="color:#8a8175;font-size:12px">Exported from CapsuleCraft Native · &lt;module-website_src_components_landing_call_for_researchers_tsx@capsuleos.local&gt;</p></body></html>
+
+--BOUNDARY_PAYLOAD_1RDBR65GQ0--
+--BOUNDARY_ROOT_1R1HBTVGMX--

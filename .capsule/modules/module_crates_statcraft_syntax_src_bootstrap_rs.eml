@@ -1,0 +1,94 @@
+From: CapsuleCraft Code Ingest <system@capsulecraft.local>
+To: Vault <vault@capsuleos.local>
+Subject: 📄 StatCraft / crates/statcraft_syntax/src/bootstrap.rs
+Date: Thu, 26 Nov 2026 14:22:01 +0000
+Message-ID: <module-crates_statcraft_syntax_src_bootstrap_rs@capsuleos.local>
+In-Reply-To: <subsystem-statcraft-crates_statcraft_syntax@capsuleos.local>
+X-Capsule-Page-Parent: <subsystem-statcraft-crates_statcraft_syntax@capsuleos.local>
+References: <project-index-statcraft@capsuleos.local> <subsystem-statcraft-crates_statcraft_syntax@capsuleos.local>
+X-Capsule-Tags: project, statcraft, module
+X-Capsule-Status: Active
+MIME-Version: 1.0
+Content-Type: multipart/mixed; boundary="BOUNDARY_ROOT_MOFFSVFDXV"
+
+--BOUNDARY_ROOT_MOFFSVFDXV
+Content-Type: multipart/alternative; boundary="BOUNDARY_PAYLOAD_7QKMUHFGGQ"
+
+--BOUNDARY_PAYLOAD_7QKMUHFGGQ
+Content-Type: application/json; name="canvas_state.json"
+Content-Disposition: inline; filename="canvas_state.json"
+
+{
+  "version": "1.0",
+  "generator": "CapsuleCraft Native egui prototype (Zero-DB Pure-MIME)",
+  "messageId": "<module-crates_statcraft_syntax_src_bootstrap_rs@capsuleos.local>",
+  "subject": "📄 StatCraft / crates/statcraft_syntax/src/bootstrap.rs",
+  "tags": [
+    "project",
+    "statcraft",
+    "module"
+  ],
+  "blocks": [
+    {
+      "data": {
+        "level": 1,
+        "text": "📄 bootstrap.rs"
+      },
+      "id": "blk_native_heading_1795702921383971700",
+      "managed_by": "project_parser",
+      "type": "heading"
+    },
+    {
+      "data": {
+        "text": "Path: `crates/statcraft_syntax/src/bootstrap.rs` · 351 lines of code\nBelongs to project: [[📦 StatCraft (Overview) | 📦 StatCraft (Overview)]]"
+      },
+      "id": "blk_native_paragraph_1795702921383973500",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    },
+    {
+      "data": {
+        "level": 2,
+        "text": "Public Interface"
+      },
+      "id": "blk_native_heading_1795702921383974100",
+      "managed_by": "project_parser",
+      "type": "heading"
+    },
+    {
+      "data": {
+        "code": "pub fn parse_bootstrap_options( params: &Value, cmd_id: &'static str, ) -> Result<Option<BootstrapOptions>, CommandError>\npub fn build_strata_keys( ds: &DataSet, active_rows: &[usize], strata_vars: &[String], cmd_id: &'static str, ) -> Result<Vec<String>, CommandError>\npub fn extract_strata_keys( ds: &DataSet, active_rows: &[usize], boot_options: Option<&BootstrapOptions>, cmd_id: &'static str, ) -> Result<Option<Vec<String>>, CommandError>\npub fn bootstrap_param_schema() -> Value\npub fn bootstrap_to_sps(opts: &BootstrapOptions) -> String\npub fn parse_set_mtindex(cmd: &ParsedCommand) -> Result<Option<Option<u64>>, SyntaxError>\npub fn parse_bootstrap_command(cmd: &ParsedCommand) -> Result<BootstrapOptions, SyntaxError>",
+        "language": "rust"
+      },
+      "id": "blk_native_code_1795702921383975000",
+      "managed_by": "project_parser",
+      "type": "code"
+    },
+    {
+      "data": {
+        "level": 2,
+        "text": "Internal Dependencies"
+      },
+      "id": "blk_native_heading_1795702921383975900",
+      "managed_by": "project_parser",
+      "type": "heading"
+    },
+    {
+      "data": {
+        "text": "- `crate::command::CommandError`\n- `crate::syntax_parser::error::SyntaxError`\n- `crate::syntax_parser::parser::ParsedCommand`\n"
+      },
+      "id": "blk_native_paragraph_1795702921383977400",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    }
+  ]
+}
+
+--BOUNDARY_PAYLOAD_7QKMUHFGGQ
+Content-Type: text/html; charset="utf-8"
+Content-Disposition: inline
+
+<!doctype html><html><head><meta charset="utf-8"><meta name="generator" content="CapsuleCraft Native"></head><body style="font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;max-width:720px;margin:32px auto;line-height:1.55;color:#23201c;background:#faf8f4;"><h1>📄 StatCraft / crates/statcraft_syntax/src/bootstrap.rs</h1><h1>📄 bootstrap.rs</h1><p>Path: `crates/statcraft_syntax/src/bootstrap.rs` · 351 lines of code<br>Belongs to project: [[📦 StatCraft (Overview) | 📦 StatCraft (Overview)]]</p><h2>Public Interface</h2><p><em>[code block — open in CapsuleCraft web for its canvas]</em></p><h2>Internal Dependencies</h2><p>- `crate::command::CommandError`<br>- `crate::syntax_parser::error::SyntaxError`<br>- `crate::syntax_parser::parser::ParsedCommand`<br></p><hr><p style="color:#8a8175;font-size:12px">Exported from CapsuleCraft Native · &lt;module-crates_statcraft_syntax_src_bootstrap_rs@capsuleos.local&gt;</p></body></html>
+
+--BOUNDARY_PAYLOAD_7QKMUHFGGQ--
+--BOUNDARY_ROOT_MOFFSVFDXV--

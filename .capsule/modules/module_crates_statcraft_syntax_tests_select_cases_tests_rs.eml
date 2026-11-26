@@ -1,7 +1,7 @@
 From: CapsuleCraft Code Ingest <system@capsulecraft.local>
 To: Vault <vault@capsuleos.local>
 Subject: 📄 StatCraft / crates/statcraft_syntax/tests/select_cases_tests.rs
-Date: Fri, 6 Nov 2026 14:13:33 +0000
+Date: Thu, 26 Nov 2026 14:22:01 +0000
 Message-ID: <module-crates_statcraft_syntax_tests_select_cases_tests_rs@capsuleos.local>
 In-Reply-To: <subsystem-statcraft-crates_statcraft_syntax@capsuleos.local>
 X-Capsule-Page-Parent: <subsystem-statcraft-crates_statcraft_syntax@capsuleos.local>
@@ -34,7 +34,7 @@ Content-Disposition: inline; filename="canvas_state.json"
         "level": 1,
         "text": "📄 select_cases_tests.rs"
       },
-      "id": "blk_native_heading_1793974413974463400",
+      "id": "blk_native_heading_1795702921410820800",
       "managed_by": "project_parser",
       "type": "heading"
     },
@@ -42,7 +42,7 @@ Content-Disposition: inline; filename="canvas_state.json"
       "data": {
         "text": "Path: `crates/statcraft_syntax/tests/select_cases_tests.rs` · 127 lines of code\nBelongs to project: [[📦 StatCraft (Overview) | 📦 StatCraft (Overview)]]"
       },
-      "id": "blk_native_paragraph_1793974413974465000",
+      "id": "blk_native_paragraph_1795702921410822400",
       "managed_by": "project_parser",
       "type": "paragraph"
     }

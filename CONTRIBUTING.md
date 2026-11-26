@@ -104,9 +104,9 @@ L6: statcraft_app        (Desktop GUI: egui, eframe, egui_dock, DialogKit, Viewp
  └── L5: statcraft_syntax (Engine CommandBus, .sps syntax parser & serializer)
       ├── L4: statcraft_reporting (Multi-level Pivot Tables, HTML/TSV/TXT/MD export)
       ├── L3: statcraft_charts    (Vector plotting, egui_plot, Brushing & Linking)
-      └── L2: statcraft_algo      (Pure statistical algorithms, statrs, faer)
+      └── L2: statcraft_algo      (Pure statistical algorithms in Safe Rust)
            └── L1: statcraft_core (In-memory structures: DataSet, VariableDictionary)
-                └── L0: statcraft_io (Codecs: Parquet .stc, SPSS .sav, CSV, Excel .xlsx)
+                └── L0: statcraft_io (Codecs: .stc Container, SPSS .sav, CSV, Excel .xlsx)
 
 Cross-Cutting Modules:
 * statcraft_i18n   (Zero-hardcode Fluent localization engine)

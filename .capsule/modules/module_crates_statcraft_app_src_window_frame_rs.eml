@@ -1,0 +1,103 @@
+From: CapsuleCraft Code Ingest <system@capsulecraft.local>
+To: Vault <vault@capsuleos.local>
+Subject: 📄 StatCraft / crates/statcraft_app/src/window_frame.rs
+Date: Thu, 26 Nov 2026 14:22:01 +0000
+Message-ID: <module-crates_statcraft_app_src_window_frame_rs@capsuleos.local>
+In-Reply-To: <subsystem-statcraft-crates_statcraft_app@capsuleos.local>
+X-Capsule-Page-Parent: <subsystem-statcraft-crates_statcraft_app@capsuleos.local>
+References: <project-index-statcraft@capsuleos.local> <subsystem-statcraft-crates_statcraft_app@capsuleos.local>
+X-Capsule-Tags: project, statcraft, module
+X-Capsule-Status: Active
+MIME-Version: 1.0
+Content-Type: multipart/mixed; boundary="BOUNDARY_ROOT_1GC1Y5CFDQ"
+
+--BOUNDARY_ROOT_1GC1Y5CFDQ
+Content-Type: multipart/alternative; boundary="BOUNDARY_PAYLOAD_162SX1EFG9"
+
+--BOUNDARY_PAYLOAD_162SX1EFG9
+Content-Type: application/json; name="canvas_state.json"
+Content-Disposition: inline; filename="canvas_state.json"
+
+{
+  "version": "1.0",
+  "generator": "CapsuleCraft Native egui prototype (Zero-DB Pure-MIME)",
+  "messageId": "<module-crates_statcraft_app_src_window_frame_rs@capsuleos.local>",
+  "subject": "📄 StatCraft / crates/statcraft_app/src/window_frame.rs",
+  "tags": [
+    "project",
+    "statcraft",
+    "module"
+  ],
+  "blocks": [
+    {
+      "data": {
+        "level": 1,
+        "text": "📄 window_frame.rs"
+      },
+      "id": "blk_native_heading_1795702921360610800",
+      "managed_by": "project_parser",
+      "type": "heading"
+    },
+    {
+      "data": {
+        "text": "Path: `crates/statcraft_app/src/window_frame.rs` · 410 lines of code\nBelongs to project: [[📦 StatCraft (Overview) | 📦 StatCraft (Overview)]]"
+      },
+      "id": "blk_native_paragraph_1795702921360613200",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    },
+    {
+      "data": {
+        "icon": "info",
+        "text": "Keeps the custom (undecorated) title bar window truly borderless on Windows.\n\nwinit gives an undecorated window the `WS_CAPTION | WS_BORDER` styles and hides the\nnon-client area by spreading the client rect over it (`WM_NCCALCSIZE`). On Windows 10\nthe desktop compositor still reserves that frame for the window surface: the content\nis drawn offset by the caption and border, leaving black bars at the window's top-left,\nwhile the pointer keeps the un-offset client coordinates, so mouse clicks and hovers\nare vertically shifted.\n\n[`service`] strips `WS_CAPTION` and `WS_BORDER` and forces Windows to recalculate the frame.\nwinit puts them back whenever it changes the window flags (maximize, restore, etc.),\nso the returned guard checks and reapplies every frame."
+      },
+      "id": "blk_native_callout_1795702921360614000",
+      "managed_by": "project_parser",
+      "type": "callout"
+    },
+    {
+      "data": {
+        "level": 2,
+        "text": "Public Interface"
+      },
+      "id": "blk_native_heading_1795702921360615000",
+      "managed_by": "project_parser",
+      "type": "heading"
+    },
+    {
+      "data": {
+        "code": "pub type WindowFrameFn = Box<dyn FnMut() + 'static>\npub fn service(cc: &eframe::CreationContext<'_>) -> Option<WindowFrameFn>\npub fn service(_cc: &eframe::CreationContext<'_>) -> Option<WindowFrameFn>",
+        "language": "rust"
+      },
+      "id": "blk_native_code_1795702921360615800",
+      "managed_by": "project_parser",
+      "type": "code"
+    },
+    {
+      "data": {
+        "level": 2,
+        "text": "Internal Dependencies"
+      },
+      "id": "blk_native_heading_1795702921360616800",
+      "managed_by": "project_parser",
+      "type": "heading"
+    },
+    {
+      "data": {
+        "text": "- `super::WindowFrameFn`\n- `super::{borderless, clamped_rect, short_of_autohide_taskbars, taskbar_edge, Edge}`\n- `super::WindowFrameFn`\n"
+      },
+      "id": "blk_native_paragraph_1795702921360618500",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    }
+  ]
+}
+
+--BOUNDARY_PAYLOAD_162SX1EFG9
+Content-Type: text/html; charset="utf-8"
+Content-Disposition: inline
+
+<!doctype html><html><head><meta charset="utf-8"><meta name="generator" content="CapsuleCraft Native"></head><body style="font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;max-width:720px;margin:32px auto;line-height:1.55;color:#23201c;background:#faf8f4;"><h1>📄 StatCraft / crates/statcraft_app/src/window_frame.rs</h1><h1>📄 window_frame.rs</h1><p>Path: `crates/statcraft_app/src/window_frame.rs` · 410 lines of code<br>Belongs to project: [[📦 StatCraft (Overview) | 📦 StatCraft (Overview)]]</p><p><em>[callout block — open in CapsuleCraft web for its canvas]</em></p><h2>Public Interface</h2><p><em>[code block — open in CapsuleCraft web for its canvas]</em></p><h2>Internal Dependencies</h2><p>- `super::WindowFrameFn`<br>- `super::{borderless, clamped_rect, short_of_autohide_taskbars, taskbar_edge, Edge}`<br>- `super::WindowFrameFn`<br></p><hr><p style="color:#8a8175;font-size:12px">Exported from CapsuleCraft Native · &lt;module-crates_statcraft_app_src_window_frame_rs@capsuleos.local&gt;</p></body></html>
+
+--BOUNDARY_PAYLOAD_162SX1EFG9--
+--BOUNDARY_ROOT_1GC1Y5CFDQ--

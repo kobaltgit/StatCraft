@@ -713,12 +713,12 @@ Beyond isolated unit testing, StatCraft enforces mathematical and architectural 
 
 #### 13.4. Native Container Format `.stc`
 * **Implementation:** [`crates/statcraft_io/src/stc_codec.rs`](../crates/statcraft_io/src/stc_codec.rs)
-* **Specification:** *StatCraft Container Format (JSON Metadata Header + Apache Parquet Data Chunk)*
+* **Specification:** *StatCraft Container Format (JSON Metadata Header + Compressed Data Payload)*
 * **Golden Oracle Tests:** `stc_codec::tests::test_stc_container_roundtrip`, `test_stc_container_with_project_data_roundtrip`
 * **Craft Anything Hypotheses:** `hyp_30` / `hyp_31` (supported)
 * **Algorithmic Invariants:**
   * Preserves 100% of dataset attributes (`VariableDictionary`, `ValueLabels`, `MissingValues`, `Measure`, active filters, case weights, split-file configuration).
-  * High-performance columnar compression via Apache Parquet (Snappy/Zstd).
+  * High-performance compressed container format (Gzip/JSON).
 * **Verdict:** **100% Verified Specification.**
 
 ---
@@ -1118,7 +1118,7 @@ All 20 primary mathematical, transformation, data management, I/O, and reporting
 16. **Advanced Regression & Partial Correlations (Block 16 / Plan 1):** 100% Verified (Schur complement for partial correlations, IRLS Newton-Raphson binary logistic regression with Hosmer-Lemeshow and classification matrix, 6 CURVEFIT estimation models; Golden Oracle vs SciPy and Statsmodels).
 17. **General Linear Model: GLM / UNIANOVA, MANOVA & Repeated Measures (Block 17 / Plan 2):** 100% Verified (orthogonal design matrix with deviation contrasts and OLS Jacobi SVD, Type III Sum of Squares, $F$-statistics, Partial $\eta^2$; $E^{-1/2} H E^{-1/2}$ spectral analysis for MANOVA with 4 criteria: Wilks' $\Lambda$, Pillai, Hotelling-Lawley, Roy with Rao $F$-approximation; Repeated Measures with Helmert contrast matrix, Mauchly's sphericity test, Greenhouse-Geisser, Huynh-Feldt and lower-bound corrections; Golden Oracle vs Statsmodels).
 18. **Clustering, Reports & Survival Analysis (Block 18 / Plan 3):** 100% Verified (`QUICK CLUSTER` K-Means with Maximin initialization, ANOVA between-cluster $F$-tests, dynamic `QCL_1`/`QCL_2` variable insertion with 100% reversible undo; `CODEBOOK` metadata extraction and HAVERAGE quartiles; `SUMMARIZE` case listing and group subtotals; `KM` Kaplan-Meier survival curve with Greenwood variance and Mantel-Cox log-rank test; `SURVIVAL` actuarial life tables with $n'_k, q_k, p_k, P_k, f_k, h_k$; Golden Oracle vs SciPy and Lifelines $\le 10^{-6}$).
-19. **Multinomial Logistic Regression (Block 19 / Feature 009):** 100% Verified (Generalized Logits with baseline category $J$, Newton-Raphson/Fisher Scoring on `faer` with Ridge Hessian damping $\lambda = 10^{-6}$ Never Crash guarantee, LRT tests per effect, Pearson & Deviance goodness-of-fit across subpopulation patterns, Cox & Snell, Nagelkerke, McFadden pseudo $R^2$, parameter estimates with $\text{Exp}(B)$ and 95% Wald CI, classification table, categorical factors with dummy coding; Golden Oracle vs Statsmodels $\le 10^{-6}$).
+19. **Multinomial Logistic Regression (Block 19 / Feature 009):** 100% Verified (Generalized Logits with baseline category $J$, Newton-Raphson/Fisher Scoring in pure Safe Rust with Ridge Hessian damping $\lambda = 10^{-6}$ Never Crash guarantee, LRT tests per effect, Pearson & Deviance goodness-of-fit across subpopulation patterns, Cox & Snell, Nagelkerke, McFadden pseudo $R^2$, parameter estimates with $\text{Exp}(B)$ and 95% Wald CI, classification table, categorical factors with dummy coding; Golden Oracle vs Statsmodels $\le 10^{-6}$).
 20. **Cox Proportional Hazards Regression (Block 20 / Feature 010):** 100% Verified (Partial Likelihood Newton-Raphson optimization, Breslow & Efron tie handling, stratification across clinical strata, -2LL omnibus tests, parameter estimates with Wald tests and 95% CI for $\text{Exp}(B)$, Breslow cumulative baseline hazard and survival at mean of covariates, vector step plot; Golden Oracle vs Lifelines $\le 10^{-6}$).
 
 Every verified formula, degrees of freedom calculation, tie-adjustment variance formula, asymptotic/exact $p$-value generator, AST expression evaluator, calendar interval engine, time-series difference operator, recoding dictionary synthesizer, data management subset filter, I/O codec, and cross-algorithm metadata/filtering invariant has been thoroughly audited with exact code line references, test evidence, and open issues recorded in the audit registry.

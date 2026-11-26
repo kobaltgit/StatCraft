@@ -1,0 +1,77 @@
+From: CapsuleCraft Code Ingest <system@capsulecraft.local>
+To: Vault <vault@capsuleos.local>
+Subject: 📁 StatCraft / website/src
+Date: Thu, 26 Nov 2026 14:24:32 +0000
+Message-ID: <subsystem-statcraft-website_src@capsuleos.local>
+In-Reply-To: <project-index-statcraft@capsuleos.local>
+X-Capsule-Page-Parent: <project-index-statcraft@capsuleos.local>
+References: <project-index-statcraft@capsuleos.local>
+X-Capsule-Tags: project, statcraft, subsystem
+X-Capsule-Status: Active
+MIME-Version: 1.0
+Content-Type: multipart/mixed; boundary="BOUNDARY_ROOT_58W24RE0UW"
+
+--BOUNDARY_ROOT_58W24RE0UW
+Content-Type: multipart/alternative; boundary="BOUNDARY_PAYLOAD_15AVPJPE2J"
+
+--BOUNDARY_PAYLOAD_15AVPJPE2J
+Content-Type: application/json; name="canvas_state.json"
+Content-Disposition: inline; filename="canvas_state.json"
+
+{
+  "version": "1.0",
+  "generator": "CapsuleCraft Native egui prototype (Zero-DB Pure-MIME)",
+  "messageId": "<subsystem-statcraft-website_src@capsuleos.local>",
+  "subject": "📁 StatCraft / website/src",
+  "tags": [
+    "project",
+    "statcraft",
+    "subsystem"
+  ],
+  "blocks": [
+    {
+      "data": {
+        "level": 1,
+        "text": "📁 Subsystem: website/src"
+      },
+      "id": "blk_native_heading_1795703072850656200",
+      "managed_by": "project_parser",
+      "type": "heading"
+    },
+    {
+      "data": {
+        "icon": "folder",
+        "text": "Part of [[📦 StatCraft (Overview) | 📦 StatCraft (Overview)]]\nContains 37 source module(s)."
+      },
+      "id": "blk_native_callout_1795703072850657800",
+      "managed_by": "project_parser",
+      "type": "callout"
+    },
+    {
+      "data": {
+        "level": 2,
+        "text": "Modules in this Subsystem"
+      },
+      "id": "blk_native_heading_1795703072850658400",
+      "managed_by": "project_parser",
+      "type": "heading"
+    },
+    {
+      "data": {
+        "text": "- [[📄 StatCraft / website/src/app/api/create-issue/route.ts]] (`website/src/app/api/create-issue/route.ts`)\n- [[📄 StatCraft / website/src/app/api/release/route.ts]] (`website/src/app/api/release/route.ts`)\n- [[📄 StatCraft / website/src/app/docs/layout.tsx]] (`website/src/app/docs/layout.tsx`)\n- [[📄 StatCraft / website/src/app/docs/page.tsx]] (`website/src/app/docs/page.tsx`)\n- [[📄 StatCraft / website/src/app/docs/[slug]/page.tsx]] (`website/src/app/docs/[slug]/page.tsx`)\n- [[📄 StatCraft / website/src/app/globals.css]] (`website/src/app/globals.css`)\n- [[📄 StatCraft / website/src/app/layout.tsx]] (`website/src/app/layout.tsx`)\n- [[📄 StatCraft / website/src/app/page.tsx]] (`website/src/app/page.tsx`)\n- [[📄 StatCraft / website/src/app/ru/docs/layout.tsx]] (`website/src/app/ru/docs/layout.tsx`)\n- [[📄 StatCraft / website/src/app/ru/docs/page.tsx]] (`website/src/app/ru/docs/page.tsx`)\n- [[📄 StatCraft / website/src/app/ru/docs/[slug]/page.tsx]] (`website/src/app/ru/docs/[slug]/page.tsx`)\n- [[📄 StatCraft / website/src/app/ru/page.tsx]] (`website/src/app/ru/page.tsx`)\n- [[📄 StatCraft / website/src/components/docs/doc-page-view.tsx]] (`website/src/components/docs/doc-page-view.tsx`)\n- [[📄 StatCraft / website/src/components/docs/docs-shell.tsx]] (`website/src/components/docs/docs-shell.tsx`)\n- [[📄 StatCraft / website/src/components/docs/docs-sidebar.tsx]] (`website/src/components/docs/docs-sidebar.tsx`)\n- [[📄 StatCraft / website/src/components/docs/docs-toc.tsx]] (`website/src/components/docs/docs-toc.tsx`)\n- [[📄 StatCraft / website/src/components/docs/markdown-renderer.tsx]] (`website/src/components/docs/markdown-renderer.tsx`)\n- [[📄 StatCraft / website/src/components/docs/spss-syntax-block.tsx]] (`website/src/components/docs/spss-syntax-block.tsx`)\n- [[📄 StatCraft / website/src/components/download-button.tsx]] (`website/src/components/download-button.tsx`)\n- [[📄 StatCraft / website/src/components/fixed-corner-nav.tsx]] (`website/src/components/fixed-corner-nav.tsx`)\n- [[📄 StatCraft / website/src/components/landing/agent-lab.tsx]] (`website/src/components/landing/agent-lab.tsx`)\n- [[📄 StatCraft / website/src/components/landing/architecture-guarantee.tsx]] (`website/src/components/landing/architecture-guarantee.tsx`)\n- [[📄 StatCraft / website/src/components/landing/call-for-researchers.tsx]] (`website/src/components/landing/call-for-researchers.tsx`)\n- [[📄 StatCraft / website/src/components/landing/hero.tsx]] (`website/src/components/landing/hero.tsx`)\n- [[📄 StatCraft / website/src/components/landing/oracle-benchmark.tsx]] (`website/src/components/landing/oracle-benchmark.tsx`)\n- [[📄 StatCraft / website/src/components/locale-detector.tsx]] (`website/src/components/locale-detector.tsx`)\n- [[📄 StatCraft / website/src/components/math-view.tsx]] (`website/src/components/math-view.tsx`)\n- [[📄 StatCraft / website/src/components/modal-report-issue.tsx]] (`website/src/components/modal-report-issue.tsx`)\n- [[📄 StatCraft / website/src/components/section-shell.tsx]] (`website/src/components/section-shell.tsx`)\n- [[📄 StatCraft / website/src/components/site-footer.tsx]] (`website/src/components/site-footer.tsx`)\n- [[📄 StatCraft / website/src/components/site-nav.tsx]] (`website/src/components/site-nav.tsx`)\n- [[📄 StatCraft / website/src/lib/audit-data.ts]] (`website/src/lib/audit-data.ts`)\n- [[📄 StatCraft / website/src/lib/docs-data.ts]] (`website/src/lib/docs-data.ts`)\n- [[📄 StatCraft / website/src/lib/features-docs.ts]] (`website/src/lib/features-docs.ts`)\n- [[📄 StatCraft / website/src/lib/release.ts]] (`website/src/lib/release.ts`)\n- [[📄 StatCraft / website/src/lib/use-release.ts]] (`website/src/lib/use-release.ts`)\n- [[📄 StatCraft / website/src/middleware.ts]] (`website/src/middleware.ts`)\n"
+      },
+      "id": "blk_native_paragraph_1795703072850673700",
+      "managed_by": "project_parser",
+      "type": "paragraph"
+    }
+  ]
+}
+
+--BOUNDARY_PAYLOAD_15AVPJPE2J
+Content-Type: text/html; charset="utf-8"
+Content-Disposition: inline
+
+<!doctype html><html><head><meta charset="utf-8"><meta name="generator" content="CapsuleCraft Native"></head><body style="font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;max-width:720px;margin:32px auto;line-height:1.55;color:#23201c;background:#faf8f4;"><h1>📁 StatCraft / website/src</h1><h1>📁 Subsystem: website/src</h1><p><em>[callout block — open in CapsuleCraft web for its canvas]</em></p><h2>Modules in this Subsystem</h2><p>- [[📄 StatCraft / website/src/app/api/create-issue/route.ts]] (`website/src/app/api/create-issue/route.ts`)<br>- [[📄 StatCraft / website/src/app/api/release/route.ts]] (`website/src/app/api/release/route.ts`)<br>- [[📄 StatCraft / website/src/app/docs/layout.tsx]] (`website/src/app/docs/layout.tsx`)<br>- [[📄 StatCraft / website/src/app/docs/page.tsx]] (`website/src/app/docs/page.tsx`)<br>- [[📄 StatCraft / website/src/app/docs/[slug]/page.tsx]] (`website/src/app/docs/[slug]/page.tsx`)<br>- [[📄 StatCraft / website/src/app/globals.css]] (`website/src/app/globals.css`)<br>- [[📄 StatCraft / website/src/app/layout.tsx]] (`website/src/app/layout.tsx`)<br>- [[📄 StatCraft / website/src/app/page.tsx]] (`website/src/app/page.tsx`)<br>- [[📄 StatCraft / website/src/app/ru/docs/layout.tsx]] (`website/src/app/ru/docs/layout.tsx`)<br>- [[📄 StatCraft / website/src/app/ru/docs/page.tsx]] (`website/src/app/ru/docs/page.tsx`)<br>- [[📄 StatCraft / website/src/app/ru/docs/[slug]/page.tsx]] (`website/src/app/ru/docs/[slug]/page.tsx`)<br>- [[📄 StatCraft / website/src/app/ru/page.tsx]] (`website/src/app/ru/page.tsx`)<br>- [[📄 StatCraft / website/src/components/docs/doc-page-view.tsx]] (`website/src/components/docs/doc-page-view.tsx`)<br>- [[📄 StatCraft / website/src/components/docs/docs-shell.tsx]] (`website/src/components/docs/docs-shell.tsx`)<br>- [[📄 StatCraft / website/src/components/docs/docs-sidebar.tsx]] (`website/src/components/docs/docs-sidebar.tsx`)<br>- [[📄 StatCraft / website/src/components/docs/docs-toc.tsx]] (`website/src/components/docs/docs-toc.tsx`)<br>- [[📄 StatCraft / website/src/components/docs/markdown-renderer.tsx]] (`website/src/components/docs/markdown-renderer.tsx`)<br>- [[📄 StatCraft / website/src/components/docs/spss-syntax-block.tsx]] (`website/src/components/docs/spss-syntax-block.tsx`)<br>- [[📄 StatCraft / website/src/components/download-button.tsx]] (`website/src/components/download-button.tsx`)<br>- [[📄 StatCraft / website/src/components/fixed-corner-nav.tsx]] (`website/src/components/fixed-corner-nav.tsx`)<br>- [[📄 StatCraft / website/src/components/landing/agent-lab.tsx]] (`website/src/components/landing/agent-lab.tsx`)<br>- [[📄 StatCraft / website/src/components/landing/architecture-guarantee.tsx]] (`website/src/components/landing/architecture-guarantee.tsx`)<br>- [[📄 StatCraft / website/src/components/landing/call-for-researchers.tsx]] (`website/src/components/landing/call-for-researchers.tsx`)<br>- [[📄 StatCraft / website/src/components/landing/hero.tsx]] (`website/src/components/landing/hero.tsx`)<br>- [[📄 StatCraft / website/src/components/landing/oracle-benchmark.tsx]] (`website/src/components/landing/oracle-benchmark.tsx`)<br>- [[📄 StatCraft / website/src/components/locale-detector.tsx]] (`website/src/components/locale-detector.tsx`)<br>- [[📄 StatCraft / website/src/components/math-view.tsx]] (`website/src/components/math-view.tsx`)<br>- [[📄 StatCraft / website/src/components/modal-report-issue.tsx]] (`website/src/components/modal-report-issue.tsx`)<br>- [[📄 StatCraft / website/src/components/section-shell.tsx]] (`website/src/components/section-shell.tsx`)<br>- [[📄 StatCraft / website/src/components/site-footer.tsx]] (`website/src/components/site-footer.tsx`)<br>- [[📄 StatCraft / website/src/components/site-nav.tsx]] (`website/src/components/site-nav.tsx`)<br>- [[📄 StatCraft / website/src/lib/audit-data.ts]] (`website/src/lib/audit-data.ts`)<br>- [[📄 StatCraft / website/src/lib/docs-data.ts]] (`website/src/lib/docs-data.ts`)<br>- [[📄 StatCraft / website/src/lib/features-docs.ts]] (`website/src/lib/features-docs.ts`)<br>- [[📄 StatCraft / website/src/lib/release.ts]] (`website/src/lib/release.ts`)<br>- [[📄 StatCraft / website/src/lib/use-release.ts]] (`website/src/lib/use-release.ts`)<br>- [[📄 StatCraft / website/src/middleware.ts]] (`website/src/middleware.ts`)<br></p><hr><p style="color:#8a8175;font-size:12px">Exported from CapsuleCraft Native · &lt;subsystem-statcraft-website_src@capsuleos.local&gt;</p></body></html>
+
+--BOUNDARY_PAYLOAD_15AVPJPE2J--
+--BOUNDARY_ROOT_58W24RE0UW--
