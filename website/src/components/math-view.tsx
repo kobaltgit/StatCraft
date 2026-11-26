@@ -13,6 +13,7 @@ export function MathView({ math, block = false, className = '' }: MathViewProps)
     html = katex.renderToString(math, {
       displayMode: block,
       throwOnError: false,
+      output: 'html',
     });
   } catch {
     html = `<span class="text-rose-400 font-mono text-xs">${math}</span>`;
@@ -20,7 +21,7 @@ export function MathView({ math, block = false, className = '' }: MathViewProps)
 
   return (
     <span
-      className={className}
+      className={`inline-block max-w-full ${className}`.trim()}
       dangerouslySetInnerHTML={{ __html: html }}
     />
   );
