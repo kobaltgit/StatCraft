@@ -7,6 +7,7 @@ import React, { useState } from "react";
 import { ModalReportIssue } from "./modal-report-issue";
 import { DownloadButton } from "./download-button";
 import { useRelease } from "@/lib/use-release";
+import { AUDIT_BLOCKS } from "@/lib/audit-data";
 
 interface SiteNavProps {
   lang?: "en" | "ru";
@@ -61,7 +62,7 @@ export function SiteNav({ lang = "en" }: SiteNavProps) {
     },
     {
       id: "benchmark",
-      label: isRu ? "Оракул 20 блоков" : "Oracle Matrix",
+      label: isRu ? `Оракул ${AUDIT_BLOCKS.length} блоков` : "Oracle Matrix",
       href: isRu ? "/ru#benchmark" : "/#benchmark",
       icon: <Binary className="w-4 h-4 text-emerald" />,
     },

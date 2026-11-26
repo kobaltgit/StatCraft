@@ -1,4 +1,5 @@
 import { FEATURE_SECTIONS } from './features-docs';
+import { AUDIT_BLOCKS } from './audit-data';
 
 export interface DocSection {
   slug: string;
@@ -126,10 +127,10 @@ $$df = \\frac{\\left(\\frac{s_1^2}{n_1} + \\frac{s_2^2}{n_2}\\right)^2}{\\frac{(
     category: "audit",
     categoryTitleEn: "Open Math Audit",
     categoryTitleRu: "Открытый математический аудит",
-    titleEn: "20-Block Verification Protocol",
-    titleRu: "20 блоков доказательного аудита",
-    descriptionEn: "Complete specification of all 20 verified computational and analytical blocks.",
-    descriptionRu: "Исчерпывающая спецификация всех 20 проверенных блоков математического ядра.",
+    titleEn: `${AUDIT_BLOCKS.length}-Block Verification Protocol`,
+    titleRu: `${AUDIT_BLOCKS.length} блоков доказательного аудита`,
+    descriptionEn: `Complete specification of all ${AUDIT_BLOCKS.length} verified computational and analytical blocks.`,
+    descriptionRu: `Исчерпывающая спецификация всех ${AUDIT_BLOCKS.length} проверенных блоков математического ядра.`,
     oracleStatus: "100% Golden Oracle Verified (≤ 10⁻⁶)",
     spssPage: "IBM SPSS Statistics 24 Algorithms (1,271 pp.)",
     toc: [
@@ -138,11 +139,12 @@ $$df = \\frac{\\left(\\frac{s_1^2}{n_1} + \\frac{s_2^2}{n_2}\\right)^2}{\\frac{(
       { id: "golden-oracle", titleEn: "3. Golden Oracle Pipeline", titleRu: "3. Пайплайн Золотого оракула" },
     ],
     contentEn: `### 1. Audit Progress Matrix
-All 20 mathematical, transformation, I/O, and reporting blocks of StatCraft have undergone rigorous, line-by-line Clean-Room auditing against the official *IBM SPSS Statistics 24 Algorithms Guide* (1,271 pp.):
+All ${AUDIT_BLOCKS.length} mathematical, transformation, I/O, and reporting blocks of StatCraft have undergone rigorous, line-by-line Clean-Room auditing against the official *IBM SPSS Statistics 24 Algorithms Guide* (1,271 pp.):
 * **Block 1–4:** Basic Statistics, Mean Comparisons, Correlations & Nonparametric Tests;
 * **Block 5–12:** Transformations, Automated Data Preparation, Expression Evaluator (Kleene 3VL), Time Series, Date Wizard, Recoding & Subsetting;
 * **Block 13–15:** I/O Codecs (.sav/.zsav, Excel, CSV), Pivot Tables & Exploratory Data Analysis (Shapiro-Wilk Royston, Lilliefors KS);
-* **Block 16–20:** Advanced Regression (Partial Corr, Binary Logistic, Curvefit), General Linear Model (UNIANOVA, MANOVA, Repeated Measures), Clustering, Multinomial Logistic (NOMREG) and Cox Proportional Hazards (COXREG).
+* **Block 16–20:** Advanced Regression (Partial Corr, Binary Logistic, Curvefit), General Linear Model (UNIANOVA, MANOVA, Repeated Measures), Clustering, Multinomial Logistic (NOMREG) and Cox Proportional Hazards (COXREG);
+* **Block 21–${AUDIT_BLOCKS.length}:** Robust, Deming & TURF Procedures (Theil-Sen, Siegel, Passing-Bablok / Deming Errors-in-Variables, Total Unduplicated Reach and Frequency).
 
 ### 2. Clean-Room Methodology
 In accordance with Rule 1.3 of our project charter:
@@ -150,11 +152,12 @@ In accordance with Rule 1.3 of our project charter:
 * All behaviors and formulas are derived strictly from open academic publications and public algorithm guides;
 * Automatic regression suites run under strict thread restrictions (\`-j 1\`) with Golden Oracle tolerances $\\le 10^{-6}$.`,
     contentRu: `### 1. Сводная матрица аудита
-Все 20 ключевых блоков математического ядра, преобразований данных, кодеков и сводных отчетов StatCraft прошли исчерпывающий инструментальный Clean-Room аудит против руководства *IBM SPSS Statistics 24 Algorithms Guide* (1271 стр.):
+Все ${AUDIT_BLOCKS.length} ключевых блоков математического ядра, преобразований данных, кодеков и сводных отчетов StatCraft прошли исчерпывающий инструментальный Clean-Room аудит против руководства *IBM SPSS Statistics 24 Algorithms Guide* (1271 стр.):
 * **Блоки 1–4:** Базовые дескриптивные статистики, сравнение средних, парные корреляции и непараметрика;
 * **Блоки 5–12:** Трансформации данных, ADP, оценщик выражений (логика Клини 3VL), временные ряды, мастер дат, перекодирование и фильтрация;
 * **Блоки 13–15:** Кодеки ввода-вывода (.sav/.zsav, Excel, CSV), сводные Pivot Tables и эксплораторный анализ (Шапиро-Уилк по Ройстону, Колмогоров-Смирнов / Лиллиефорс);
-* **Блоки 16–20:** Продвинутая регрессия (частные корреляции, бинарная логистика, подгонка кривых), общая линейная модель GLM (UNIANOVA, MANOVA, повторные измерения), кластеризация, мультиномиальная логистика (NOMREG) и регрессия Кокса (COXREG).
+* **Блоки 16–20:** Продвинутая регрессия (частные корреляции, бинарная логистика, подгонка кривых), общая линейная модель GLM (UNIANOVA, MANOVA, повторные измерения), кластеризация, мультиномиальная логистика (NOMREG) и регрессия Кокса (COXREG);
+* **Блоки 21–${AUDIT_BLOCKS.length}:** Робастные процедуры, регрессия Деминга и TURF (Тейл-Сена, Зигеля, Деминга с ошибками в обеих переменных, анализ общего недублированного охвата и частоты).
 
 ### 2. Методология чистой комнаты (Clean-Room)
 В строгом соответствии с каноном экосистемы:

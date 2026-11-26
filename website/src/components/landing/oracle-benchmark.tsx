@@ -27,6 +27,7 @@ export function OracleBenchmark({ lang = 'en' }: OracleBenchmarkProps) {
       searchPlaceholder: 'Filter by procedure (e.g. T-TEST, LOGISTIC, ANOVA) or keyword...',
       allVerifiedBadge: `${verifiedBlocks} OF ${totalBlocks} VERIFIED`,
       toleranceBadge: 'PRECISION TOLERANCE: Δ ≤ 10⁻⁶',
+      proceduresHeader: 'Audited Procedures',
       referenceText: 'IBM Manual Reference',
       crateFilesText: 'Rust Algo Files',
       formulasHeader: 'Key Formulas & Estimators',
@@ -40,6 +41,7 @@ export function OracleBenchmark({ lang = 'en' }: OracleBenchmarkProps) {
       searchPlaceholder: 'Поиск по процедуре (напр. T-TEST, LOGISTIC, ANOVA) или названию...',
       allVerifiedBadge: `${verifiedBlocks} ИЗ ${totalBlocks} ПРОВЕРЕНО`,
       toleranceBadge: 'ДОПУСК ТОЧНОСТИ: Δ ≤ 10⁻⁶',
+      proceduresHeader: 'Проверенные процедуры',
       referenceText: 'Страницы алгоритмов IBM',
       crateFilesText: 'Файлы алгоритмов Rust',
       formulasHeader: 'Ключевые формулы и оценки',
@@ -130,7 +132,7 @@ export function OracleBenchmark({ lang = 'en' }: OracleBenchmarkProps) {
                       {title}
                     </span>
                     <div className="hidden sm:flex items-center gap-1.5 shrink-0 flex-wrap">
-                      {block.procedures.slice(0, 3).map((p) => (
+                      {(isExpanded ? block.procedures : block.procedures.slice(0, 3)).map((p) => (
                         <span
                           key={p}
                           className="px-2 py-0.5 rounded text-[11px] font-mono bg-bg-sunken border border-line text-blue-300"
@@ -138,7 +140,7 @@ export function OracleBenchmark({ lang = 'en' }: OracleBenchmarkProps) {
                           {p}
                         </span>
                       ))}
-                      {block.procedures.length > 3 && (
+                      {!isExpanded && block.procedures.length > 3 && (
                         <span className="text-[11px] font-mono text-text-muted">
                           +{block.procedures.length - 3}
                         </span>
@@ -162,6 +164,23 @@ export function OracleBenchmark({ lang = 'en' }: OracleBenchmarkProps) {
                 {/* Expanded Details */}
                 {isExpanded && (
                   <div className="px-4 sm:px-5 pb-5 pt-2 border-t border-line/60 space-y-5">
+                    {/* Audited Procedures row */}
+                    <div className="p-3 rounded bg-bg-sunken border border-line overflow-hidden">
+                      <div className="text-xs font-mono uppercase tracking-wider text-text-muted mb-2">
+                        {t.proceduresHeader} ({block.procedures.length})
+                      </div>
+                      <div className="flex flex-wrap gap-1.5">
+                        {block.procedures.map((p) => (
+                          <span
+                            key={p}
+                            className="px-2.5 py-1 rounded text-xs font-mono bg-bg-raised border border-line/80 text-blue-300 font-medium"
+                          >
+                            {p}
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+
                     {/* Meta info */}
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs font-mono">
                       <div className="p-3 rounded bg-bg-sunken border border-line overflow-hidden min-w-0">

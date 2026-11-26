@@ -167,6 +167,126 @@ pub fn verify_files_exist(
     Ok(())
 }
 
+pub fn check_line_for_hardcoded_block_counts(line: &str) -> Option<String> {
+    let lower = line.to_lowercase();
+
+    // 1. Check for <digit>-block or <digit>-блок (e.g. "20-block", "23-block", "20-блок")
+    for keyword in &["-block", "-блок"] {
+        let mut start = 0;
+        while let Some(pos) = lower[start..].find(keyword) {
+            let abs_pos = start + pos;
+            if abs_pos > 0 {
+                let prev_char = lower[..abs_pos].chars().last();
+                if let Some(c) = prev_char {
+                    if c.is_ascii_digit() {
+                        return Some(format!("Hardcoded '{}{}' pattern", c, keyword));
+                    }
+                }
+            }
+            start = abs_pos + keyword.len();
+        }
+    }
+
+    // 2. Check for "оракул <digits> блок" or "oracle <digits> block"
+    for phrase in &["оракул", "oracle"] {
+        if let Some(pos) = lower.find(phrase) {
+            let rest = &lower[pos + phrase.len()..];
+            let trimmed = rest.trim_start();
+            let digits_len = trimmed.chars().take_while(|c| c.is_ascii_digit()).count();
+            if digits_len > 0 {
+                let after_digits = trimmed[digits_len..].trim_start();
+                if after_digits.starts_with("блок") || after_digits.starts_with("block") {
+                    return Some(format!("Hardcoded '{} <N> block' phrase", phrase));
+                }
+            }
+        }
+    }
+
+    // 3. Check for "<digits> блоков доказательного" or "всех <digits> проверенных блоков"
+    // or "все <digits> ключевых блоков" or "all <digits> mathematical" or "all <digits> verified"
+    for prefix in &["всех", "все", "all"] {
+        if let Some(pos) = lower.find(prefix) {
+            let rest = &lower[pos + prefix.len()..];
+            let trimmed = rest.trim_start();
+            let digits_len = trimmed.chars().take_while(|c| c.is_ascii_digit()).count();
+            if digits_len > 0 {
+                let after_digits = trimmed[digits_len..].trim_start();
+                if after_digits.starts_with("проверенных блоков")
+                    || after_digits.starts_with("ключевых блоков")
+                    || after_digits.starts_with("mathematical")
+                    || after_digits.starts_with("verified")
+                    || after_digits.starts_with("блоков")
+                    || after_digits.starts_with("blocks")
+                {
+                    return Some(format!("Hardcoded '{} <N> blocks' phrase", prefix));
+                }
+            }
+        }
+    }
+
+    // 4. Check for "<digits> блоков доказательного"
+    if lower.contains("блоков доказательного") {
+        if let Some(pos) = lower.find("блоков доказательного") {
+            let before = lower[..pos].trim_end();
+            if let Some(c) = before.chars().last() {
+                if c.is_ascii_digit() {
+                    return Some("Hardcoded '<N> блоков доказательного' phrase".to_string());
+                }
+            }
+        }
+    }
+
+    None
+}
+
+fn collect_source_files(dir: &Path, files: &mut Vec<std::path::PathBuf>) {
+    if !dir.is_dir() {
+        return;
+    }
+    if let Ok(entries) = fs::read_dir(dir) {
+        for entry in entries.flatten() {
+            let path = entry.path();
+            if path.is_dir() {
+                collect_source_files(&path, files);
+            } else if let Some(ext) = path.extension().and_then(|s| s.to_str()) {
+                if ext == "ts" || ext == "tsx" {
+                    files.push(path);
+                }
+            }
+        }
+    }
+}
+
+pub fn check_no_hardcoded_block_counts(workspace_root: &Path) -> Result<(), String> {
+    let components_dir = workspace_root.join("website/src/components");
+    let docs_data_path = workspace_root.join("website/src/lib/docs-data.ts");
+
+    let mut files_to_check = Vec::new();
+    collect_source_files(&components_dir, &mut files_to_check);
+    if docs_data_path.exists() {
+        files_to_check.push(docs_data_path);
+    }
+
+    for file_path in files_to_check {
+        let content = fs::read_to_string(&file_path)
+            .map_err(|e| format!("Failed to read {}: {}", file_path.display(), e))?;
+        for (line_no, line) in content.lines().enumerate() {
+            if let Some(violation) = check_line_for_hardcoded_block_counts(line) {
+                let rel_path = file_path.strip_prefix(workspace_root).unwrap_or(&file_path);
+                return Err(format!(
+                    "Hardcoded audit block count detected in {}:{} - {} (line: '{}'). Use dynamic count (e.g. AUDIT_BLOCKS.length) instead.",
+                    rel_path.display(),
+                    line_no + 1,
+                    violation,
+                    line.trim()
+                ));
+            }
+        }
+    }
+
+    Ok(())
+}
+
 pub fn sync_site(workspace_root: &Path, check_only: bool) -> Result<(), String> {
     let audit_md_path = workspace_root.join("docs/SPSS_ALGORITHMS_AUDIT.md");
     let audit_ts_path = workspace_root.join("website/src/lib/audit-data.ts");
@@ -250,7 +370,10 @@ pub fn sync_site(workspace_root: &Path, check_only: bool) -> Result<(), String> 
         }
     }
 
-    // 6. Synchronize / validate features documentation generated from docs/FEATURES.md
+    // 6. Check that website components and docs have no hardcoded block counts
+    check_no_hardcoded_block_counts(workspace_root)?;
+
+    // 7. Synchronize / validate features documentation generated from docs/FEATURES.md
     crate::sync_features::sync_features(workspace_root, check_only)?;
 
     if check_only {
@@ -306,5 +429,52 @@ export const AUDIT_BLOCKS: AuditBlock[] = [
         assert_eq!(blocks.len(), 1);
         assert_eq!(blocks[0].0, 1);
         assert_eq!(blocks[0].1, vec!["DESCRIPTIVES", "FREQUENCIES"]);
+    }
+
+    #[test]
+    fn test_check_line_for_hardcoded_block_counts_detects_violations() {
+        assert!(check_line_for_hardcoded_block_counts("Оракул 20 блоков").is_some());
+        assert!(check_line_for_hardcoded_block_counts("02 / 20-BLOCK ORACLE").is_some());
+        assert!(check_line_for_hardcoded_block_counts(
+            "titleEn: \"20-Block Verification Protocol\""
+        )
+        .is_some());
+        assert!(check_line_for_hardcoded_block_counts(
+            "titleRu: \"20 блоков доказательного аудита\""
+        )
+        .is_some());
+        assert!(check_line_for_hardcoded_block_counts("All 20 mathematical blocks").is_some());
+        assert!(check_line_for_hardcoded_block_counts("Все 20 ключевых блоков").is_some());
+        assert!(check_line_for_hardcoded_block_counts("Всех 23 проверенных блоков").is_some());
+    }
+
+    #[test]
+    fn test_check_line_for_hardcoded_block_counts_allows_dynamic() {
+        assert!(check_line_for_hardcoded_block_counts(
+            "label: `Оракул ${AUDIT_BLOCKS.length} блоков`"
+        )
+        .is_none());
+        assert!(check_line_for_hardcoded_block_counts(
+            "label: `02 / ${AUDIT_BLOCKS.length}-BLOCK ORACLE`"
+        )
+        .is_none());
+        assert!(check_line_for_hardcoded_block_counts(
+            "titleEn: `${AUDIT_BLOCKS.length}-Block Verification Protocol`"
+        )
+        .is_none());
+        assert!(check_line_for_hardcoded_block_counts(
+            "All ${AUDIT_BLOCKS.length} mathematical..."
+        )
+        .is_none());
+        assert!(
+            check_line_for_hardcoded_block_counts("* **Block 1–4:** Basic Statistics").is_none()
+        );
+        assert!(
+            check_line_for_hardcoded_block_counts("* **Block 16–20:** Advanced Regression")
+                .is_none()
+        );
+        assert!(
+            check_line_for_hardcoded_block_counts("<div className=\"block text-xs\">").is_none()
+        );
     }
 }

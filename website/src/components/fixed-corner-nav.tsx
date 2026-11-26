@@ -1,10 +1,11 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { AUDIT_BLOCKS } from "@/lib/audit-data";
 
 const SECTIONS_EN = [
   { id: "manifest", label: "01 / MANIFEST" },
-  { id: "benchmark", label: "02 / 20-BLOCK ORACLE" },
+  { id: "benchmark", label: `02 / ${AUDIT_BLOCKS.length}-BLOCK ORACLE` },
   { id: "ai-lab", label: "03 / AI & MCP LAB" },
   { id: "why-rust", label: "04 / SAFE RUST" },
   { id: "researchers", label: "05 / PARTICIPATE" },
@@ -12,7 +13,7 @@ const SECTIONS_EN = [
 
 const SECTIONS_RU = [
   { id: "manifest", label: "01 / МАНИФЕСТ" },
-  { id: "benchmark", label: "02 / ОРАКУЛ 20 БЛОКОВ" },
+  { id: "benchmark", label: `02 / ОРАКУЛ ${AUDIT_BLOCKS.length} БЛОКОВ` },
   { id: "ai-lab", label: "03 / ИИ И MCP" },
   { id: "why-rust", label: "04 / SAFE RUST" },
   { id: "researchers", label: "05 / УЧАСТИЕ" },

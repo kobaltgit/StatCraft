@@ -4,6 +4,7 @@ import React from "react";
 import Link from "next/link";
 import { ExternalLink, ShieldCheck, Download, Coffee } from "lucide-react";
 import { useRelease } from "@/lib/use-release";
+import { AUDIT_BLOCKS } from "@/lib/audit-data";
 
 interface SiteFooterProps {
   lang?: "en" | "ru";
@@ -60,7 +61,7 @@ export function SiteFooter({ lang = "en" }: SiteFooterProps) {
               </li>
               <li>
                 <Link href={isRu ? "/ru#benchmark" : "/#benchmark"} className="hover:text-ink transition">
-                  {isRu ? "Оракул 20 блоков" : "Oracle Matrix"}
+                  {isRu ? `Оракул ${AUDIT_BLOCKS.length} блоков` : "Oracle Matrix"}
                 </Link>
               </li>
               <li>
