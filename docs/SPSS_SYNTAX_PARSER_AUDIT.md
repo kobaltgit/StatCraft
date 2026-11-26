@@ -98,6 +98,8 @@ Verified in `crates/statcraft_syntax/tests/syntax_roundtrip_and_fuzz_tests.rs`:
 * `test_roundtrip_weight_cases` — PASSED
 * `test_roundtrip_select_cases` — PASSED
 * `test_roundtrip_ttest_independent` — PASSED
+* `turf_cmd::tests::test_turf_command_execute_and_to_sps_roundtrip` — PASSED (`SPSSINC TURF VARIABLES=... FORCE=... /OPTIONS ... /HEATS ... /IMPORTANCE ...`)
+* `mappers::stats::turf::tests::test_map_spssinc_turf_and_alias` — PASSED (`SPSSINC TURF` and `TURF` alias)
 
 ### 3.2. Fuzzing & Never-Crash Verification
 Fuzzing across malformed, truncated, and corrupted syntax inputs:

@@ -171,6 +171,7 @@ menu-analyze-frequencies = Частоты...
 menu-analyze-descriptives = Описательные...
 menu-analyze-explore = Исследовать...
 menu-analyze-crosstabs = Таблицы сопряженности...
+menu-analyze-turf = TURF-анализ...
 menu-analyze-compare-means = Сравнение средних
 menu-analyze-ttest = Т-критерий для независимых выборок...
 menu-analyze-ttest-one-sample = Одновыборочный T-критерий...
@@ -1589,6 +1590,7 @@ dialog-explore-power-square = Квадрат
 dialog-explore-power-cube = Куб
 
 output-explore-title = Исследовать
+output-explore-variable = Переменная
 output-explore-case-processing = Сводка обработки наблюдений
 output-explore-descriptives = Описательные статистики
 output-explore-normality = Критерии нормальности
@@ -2358,3 +2360,75 @@ output-notes-label-dataset = Активный массив данных
 output-notes-label-cases = Число активных наблюдений
 output-notes-label-vars = Число переменных
 output-notes-session = Сессия
+
+status-turf-executed = TURF-анализ выполнен для { $count } переменных.
+
+# TURF Analysis Dialog
+dialog-turf-title = TURF-анализ
+dialog-turf-vars-source = Переменные:
+dialog-turf-vars-target = Переменные для анализа:
+dialog-turf-max-combinations = Максимальное число комбинаций переменных:
+dialog-turf-num-to-display = Число отображаемых комбинаций:
+dialog-turf-min-positive-pct = Минимальный процент положительных ответов:
+dialog-turf-positive-values = Значения положительных ответов:
+dialog-turf-always-required = Число обязательных переменных:
+dialog-turf-removal-cycles = Число циклов исключения лучших переменных:
+dialog-turf-reach-frequency-chart = Диаграмма охвата и частоты
+dialog-turf-show-only-max-combo = Показывать результаты только для максимальной комбинации переменных
+dialog-turf-limit-group = Ограничение размера
+dialog-turf-limit-abort = Не выполнять, если число операций превышает лимит
+dialog-turf-limit-max-ops = Максимальное число операций:
+dialog-turf-btn-weights = Веса...
+dialog-turf-btn-advanced = Расширенный выбор...
+
+# TURF Analysis: Importance Weights Subdialog
+dialog-turf-weights-title = TURF-анализ: Веса важности
+dialog-turf-weights-desc = Задайте веса переменных для учета их относительной важности.
+dialog-turf-weights-group-checking = Проверка весов
+dialog-turf-weights-strict-all = Все переменные должны быть перечислены ниже
+dialog-turf-weights-strict-default1 = Переменные не из списка имеют вес 1
+dialog-turf-weights-spec-label = Спецификации весов:
+dialog-turf-weights-spec-hint = Укажите имена переменных и веса парами через пробел.
+
+# TURF Analysis: Advanced Selection Subdialog
+dialog-turf-advanced-title = TURF-анализ: Расширенный выбор
+dialog-turf-advanced-desc = Настройка эвристик для больших наборов переменных.
+dialog-turf-advanced-use-checkbox = Использовать расширенный выбор для больших задач
+dialog-turf-advanced-group-params = Параметры расширенного выбора
+dialog-turf-advanced-auto = Автоматически
+dialog-turf-advanced-specify = Задать
+dialog-turf-advanced-size-label = Размер расширенного выбора:
+dialog-turf-advanced-winners-label = Число победителей:
+
+# TURF Analysis: Output Viewer
+output-turf-title = TURF-анализ
+output-turf-summary-title = Сводка наблюдений и параметров
+output-turf-reach-freq-title = Охват и частота
+output-turf-reach-freq-cycle = Цикл исключения { $cycle }
+output-turf-removed-vars = Исключенные переменные: { $vars }
+output-turf-col-combo-size = Размер
+output-turf-col-variables = Переменные
+output-turf-col-reach = Охват
+output-turf-col-reach-pct = % наблюдений
+output-turf-col-frequency = Частота
+output-turf-col-frequency-pct = % ответов
+output-turf-col-mean-responses = Среднее ответов
+output-turf-col-score = Взвешенный балл
+output-turf-param-valid-n = Валидные наблюдения
+output-turf-param-positive-vals = Значения положительных ответов
+output-turf-param-excluded-vars = Отфильтрованные переменные (< мин. %)
+output-turf-param-none = (Нет)
+output-turf-param-est-ops = Оценка числа операций
+output-turf-param-advanced-heats = Расширенный выбор (заезды)
+output-turf-param-removal-cycles = Число циклов исключения
+output-turf-param-always-required = Число обязательных переменных
+output-turf-param-yes = Да
+output-turf-param-no = Нет
+output-turf-chart-title = Охват и частота по размеру комбинации
+output-turf-chart-reach-legend = Охват (%)
+output-turf-chart-freq-legend = Частота (%)
+output-turf-chart-size-axis = Размер комбинации
+output-turf-chart-pct-axis = Процент (%)
+output-turf-col-param = Параметр
+output-turf-col-value = Значение
+output-turf-heats-detail = { $yes } (группа={ $size }, победителей={ $winners })

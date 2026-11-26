@@ -31,6 +31,9 @@ pub enum StatusMessage {
     CrosstabsExecuted {
         count: usize,
     },
+    TurfExecuted {
+        count: usize,
+    },
     CorrelationsExecuted {
         count: usize,
     },
@@ -267,6 +270,9 @@ impl StatusMessage {
             }
             StatusMessage::CrosstabsExecuted { count } => {
                 t!("output-crosstabs-executed", count = *count)
+            }
+            StatusMessage::TurfExecuted { count } => {
+                t!("status-turf-executed", count = *count)
             }
             StatusMessage::CorrelationsExecuted { count } => {
                 t!("output-correlations-executed", count = *count)

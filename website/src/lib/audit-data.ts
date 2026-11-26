@@ -619,4 +619,31 @@ export const AUDIT_BLOCKS: AuditBlock[] = [
     notesEn: "Includes orthogonal residual SD, Pearson r, PRE/RES dataset saving with Undo, Y=X identity line scatter plot, and bootstrap.",
     notesRu: "Включает СКО ортогональных остатков, r Пирсона, сохранение PRE/RES в датасет с Undo, график рассеяния с линией Y=X и бутстреп.",
   },
+  {
+    id: "block-23",
+    number: 23,
+    titleEn: "TURF Analysis",
+    titleRu: "TURF-анализ",
+    procedures: ["SPSSINC TURF"],
+    referencePage: "Total Unduplicated Reach and Frequency",
+    implementationFiles: ["turf.rs", "turf_types.rs", "turf_heats.rs"],
+    status: "verified",
+    oraclePrecision: "≤ 10⁻⁶ (Golden Oracle)",
+    formulas: [
+      {
+        name: "Unduplicated Reach & Frequency",
+        latex: "\\mathrm{Reach}(S) = \\sum_{i \\in \\bigcup_{j \\in S} R_j} w_i, \\quad \\mathrm{Freq}(S) = \\sum_{j \\in S} \\sum_{i \\in R_j} w_i",
+        descriptionEn: "Bitwise OR packed union for reach and additive item frequency with sampling weights",
+        descriptionRu: "Битовое OR объединение масок для охвата и аддитивная частота с учетом весов наблюдений",
+      },
+      {
+        name: "Importance Weighted Score",
+        latex: "\\mathrm{Score}(S) = \\sum_{j \\in S} \\mathrm{weight}_j \\cdot \\mathrm{Freq}(j)",
+        descriptionEn: "Optional importance weight scoring across items in combination bundles",
+        descriptionRu: "Взвешенный балл важности комбинации с учетом индивидуальных весов переменных",
+      },
+    ],
+    notesEn: "Includes FORCE prefix, MINPERCENT screening, REMOVALCYCLES, MAXSETS limit guard, and Tournament Heats heuristics.",
+    notesRu: "Включает обязательные переменные FORCE, фильтрацию MINPERCENT, циклы исключения, защиту MAXSETS и эвристику заездов.",
+  },
 ];

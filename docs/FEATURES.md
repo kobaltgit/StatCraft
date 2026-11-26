@@ -179,6 +179,14 @@ All statistical algorithms in StatCraft are implemented in **100% pure Safe Rust
   * Observed counts, expected counts, small-count suppression, column proportions $z$-test (with optional Bonferroni adjustment), row/column/total percentages, and 3 residual types (unstandardized, standardized, adjusted standardized).
   * Pearson Chi-Square ($\chi^2$), Likelihood Ratio ($G^2$), Linear-by-Linear Association, Yates continuity correction & Fisher's exact ($2 \times 2$), Monte Carlo Patefield $r \times c$, and bounded Exact $r \times c$.
   * Full association suite: Phi ($\phi$), Cramér's $V$, Contingency Coefficient $C$, $\lambda$, Uncertainty Coefficient $U$, $\gamma$, Somers' $d$, Kendall's $\tau_b$ & $\tau_c$, $\eta$, Pearson's $r$, Spearman's $\rho$, Cohen's $\kappa$, Risk Estimate (OR/RR with 95% CI), McNemar/Bowker, and stratified $2 \times 2 \times K$ Cochran's & Mantel-Haenszel / Breslow-Day / Tarone's tests.
+* **TURF Analysis (`TURF Analysis`):**
+  * Total Unduplicated Reach and Frequency combinatorial optimization evaluating $C(n, k)$ item bundles for optimal marketing/survey assortment.
+  * Combinatorial search for $k = 1 \dots K_{\max}$, reach count, reach percentage (% of cases), frequency count, frequency percentage (% of responses), and mean responses per reached case.
+  * Configurable positive criteria (numeric or string codes), minimum positive percentage filtering (`MINPERCENT`), always required variables (`FORCE`), and iterative removal cycles (`REMOVALCYCLES`) to identify second-tier and replacement choices.
+  * Importance weights (`IMPORTANCE`) per variable with strict or fallback validation and weighted score ranking.
+  * Advanced Selection heuristics (`HEATS`) with heat size and winners configuration for massive combinatorial spaces ($n > 20$).
+  * SPSS-style DialogKit UI with `Importance Weights...` and `Advanced Selection...` subdialogs, `DialogSize::Compute`, and full `SPSSINC TURF` / `TURF` syntax round-trip.
+  * Output Viewer: Case & Parameter Summary table, Reach & Frequency Pivot Tables per cycle and size, vector Reach & Frequency curves (`egui_plot` style with dual curves and legend), and TSV/HTML export.
 
 ### 4.2. Mean Comparisons & Analysis of Variance (Compare Means)
 *Note: All procedures below (`Means`, `One-Sample T Test`, `Independent-Samples T Test`, `Paired-Samples T Test`, and `One-Way ANOVA`) support the reusable `Bootstrap` subdialog (`Percentile` / `BCa`, `Simple` / `Stratified`, `MT19937` seed) with `Bootstrap Specifications` and CI/Bias/SE tables in Output Viewer & TSV export.*

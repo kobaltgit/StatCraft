@@ -18,8 +18,9 @@ use crate::dialogs::{
     RankCasesDialogState, RecodeDialogState, ReliabilityDialogState, RepeatedGlmDialogState,
     ReplaceMissingDialogState, SelectCasesDialogState, ShiftValuesDialogState,
     SortCasesDialogState, SortVariablesDialogState, SplitFileDialogState, SummarizeDialogState,
-    TimeSeriesDialogState, TransposeDialogState, UnivariateGlmDialogState, ValueLabelsDialogState,
-    VariableTypeDialogState, VisualBinningDialogState, WeightCasesDialogState,
+    TimeSeriesDialogState, TransposeDialogState, TurfDialogState, UnivariateGlmDialogState,
+    ValueLabelsDialogState, VariableTypeDialogState, VisualBinningDialogState,
+    WeightCasesDialogState,
 };
 use crate::recent_files::RecentFiles;
 use crate::views::{
@@ -106,6 +107,7 @@ pub struct StatCraftApp {
     pub frequencies_dialog_state: FrequenciesDialogState,
     pub explore_dialog_state: ExploreDialogState,
     pub crosstabs_dialog_state: CrosstabsDialogState,
+    pub turf_dialog_state: TurfDialogState,
     pub correlations_dialog_state: CorrelationsDialogState,
     pub nonparam_twosample_dialog_state: NonparamTwoSampleDialogState,
     pub kruskal_wallis_dialog_state: KruskalWallisDialogState,
@@ -208,6 +210,7 @@ impl StatCraftApp {
             frequencies_dialog_state: FrequenciesDialogState::default(),
             explore_dialog_state: ExploreDialogState::default(),
             crosstabs_dialog_state: CrosstabsDialogState::default(),
+            turf_dialog_state: TurfDialogState::default(),
             correlations_dialog_state: CorrelationsDialogState::default(),
             nonparam_twosample_dialog_state: NonparamTwoSampleDialogState::default(),
             kruskal_wallis_dialog_state: KruskalWallisDialogState::default(),

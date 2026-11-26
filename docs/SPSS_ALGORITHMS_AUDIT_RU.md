@@ -98,6 +98,7 @@
 | **Блок 20** | Регрессия пропорциональных рисков Кокса (`COXREG`) | `cox/` (`baseline.rs`, `engine.rs`, `mod.rs`, `types.rs`) | **100% Верифицировано** | $\le 10^{-6}$ |
 | **Блок 21** | Робастная регрессия Тейла — Сена (`THEIL SEN`) | `theil_sen/` (`engine.rs`, `types.rs`, `mod.rs`) | **100% Верифицировано** | $\le 10^{-6}$ (Sen 1968 и SciPy) |
 | **Блок 22** | Ортогональная регрессия и Деминга (`ORTHOGONAL REGRESSION`) | `deming_regression/` (`engine.rs`, `types.rs`, `mod.rs`) | **100% Верифицировано** | $\le 10^{-6}$ (Deming и `scipy.odr`) |
+| **Блок 23** | TURF-анализ (`SPSSINC TURF`) | `turf.rs`, `turf_types.rs`, `turf_heats.rs` | **100% Верифицировано** | $\le 10^{-6}$ (Golden Oracle) |
 
 ---
 
@@ -1089,6 +1090,18 @@
   * **Наклон и свободный член Деминга:** $\hat{\beta}_1 = \frac{(s_{yy} - \lambda s_{xx}) + \sqrt{(s_{yy} - \lambda s_{xx})^2 + 4\lambda s_{xy}^2}}{2 s_{xy}}$ (с обработкой вырожденного случая $s_{xy} = 0$ и $s_{xx} = s_{yy} = 0$), $\hat{\beta}_0 = \bar{y} - \hat{\beta}_1 \bar{x}$ для произвольного $\lambda = \sigma_y^2 / \sigma_x^2 > 0$.
   * **Leave-One-Out Jackknife SE и $t$-ДИ:** $\text{SE}_{\text{JK}} = \sqrt{\frac{n-1}{n}\sum_{i=1}^n (\hat{\theta}_{(-i)} - \bar{\theta}_{\text{JK}})^2}$, двусторонние $t$-интервалы ($df = n - 2$), СКО ортогональных остатков и непараметрический бутстреп.
 * **Вердикт:** **100% математическая эквивалентность аналитическому Демингу и `scipy.odr` ($\le 10^{-6}$).**
+
+---
+
+### Блок 23: TURF-анализ (Feature 034 — `SPSSINC TURF`)
+
+#### 23.1. `SPSSINC TURF` (Total Unduplicated Reach and Frequency)
+* **Реализация:** [`crates/statcraft_algo/src/turf.rs`](../crates/statcraft_algo/src/turf.rs), [`turf_types.rs`](../crates/statcraft_algo/src/turf_types.rs), [`turf_heats.rs`](../crates/statcraft_algo/src/turf_heats.rs)
+* **Тесты Golden Oracle:** `turf_tests::{golden_oracle_exact_reach_and_frequency, test_weight_and_filter_respect, test_force_minpercent_and_removal_cycles, test_importance_weights_strict_and_ranking, test_max_operations_abort_and_heats_fallback}`
+* **Верификация математических формул:**
+  * **Битовый охват и частота:** упакованные маски `Vec<u64>` по респондентам (с учётом `WEIGHT BY` и `filter_$`), точное побитовое `OR` объединение подмножеств со взвешенным popcount для Reach ($\sum_{i \in \bigcup_{j \in S} R_j} w_i$) и суммарной частотой ($\sum_{j \in S} \sum_{i \in R_j} w_i$).
+  * **Веса важности и турнирные забеги (Heats):** взвешенная оценка $\sum_{j \in S} w_j f_j$ с проверкой `STRICT`, обязательные переменные `FORCE`, фильтрация `MINPERCENT`, циклы удаления `REMOVALCYCLES`, защита `MAXSETS` на `u128` и детерминированный турнирный отбор `Tournament Heats` для больших $n$.
+* **Вердикт:** **100% верифицировано на эталонных матрицах опросов Golden Oracle ($\le 10^{-6}$).**
 
 ---
 

@@ -3,6 +3,7 @@ use crate::views::output_view::tables_bootstrap::{
     bootstrap_column_headers, format_bootstrap_cells,
 };
 use statcraft_algo::{ExploreOutputDisplay, ExploreResult, LeveneBasis};
+use statcraft_i18n::t;
 use statcraft_reporting::{CellAlignment, ReportTable};
 
 pub fn explore_to_report_tables(res: &ExploreResult) -> Vec<ReportTable> {
@@ -48,7 +49,7 @@ fn var_group_label(var: &str, factor: &Option<String>) -> String {
 }
 
 fn build_case_processing_report_table(res: &ExploreResult) -> ReportTable {
-    let mut t = ReportTable::new("Case Processing Summary");
+    let mut t = ReportTable::new(t!("output-explore-case-processing"));
     t.headers = vec![
         "Variable",
         "Valid N",
@@ -88,11 +89,13 @@ fn build_case_processing_report_table(res: &ExploreResult) -> ReportTable {
 }
 
 fn build_descriptives_report_table(res: &ExploreResult) -> Option<ReportTable> {
-    let mut t = ReportTable::new("Descriptives");
-    t.headers = vec!["Variable", "Statistic", "Value", "Std. Error"]
-        .into_iter()
-        .map(String::from)
-        .collect();
+    let mut t = ReportTable::new(t!("output-explore-descriptives"));
+    t.headers = vec![
+        t!("output-explore-variable"),
+        t!("output-explore-statistic"),
+        t!("output-explore-value"),
+        t!("output-explore-std-error"),
+    ];
     t.alignments = vec![
         CellAlignment::Left,
         CellAlignment::Left,
@@ -140,7 +143,7 @@ fn build_descriptives_report_table(res: &ExploreResult) -> Option<ReportTable> {
 }
 
 fn build_m_estimators_report_table(res: &ExploreResult) -> Option<ReportTable> {
-    let mut t = ReportTable::new("M-Estimators");
+    let mut t = ReportTable::new(t!("output-explore-m-estimators"));
     t.headers = vec![
         "Variable",
         "Huber's M-Estimator",
@@ -175,7 +178,7 @@ fn build_m_estimators_report_table(res: &ExploreResult) -> Option<ReportTable> {
 }
 
 fn build_percentiles_report_table(res: &ExploreResult) -> Option<ReportTable> {
-    let mut t = ReportTable::new("Percentiles");
+    let mut t = ReportTable::new(t!("output-explore-percentiles"));
     t.headers = vec![
         "Variable",
         "Statistic",
@@ -234,7 +237,7 @@ fn build_percentiles_report_table(res: &ExploreResult) -> Option<ReportTable> {
 }
 
 fn build_normality_report_table(res: &ExploreResult) -> Option<ReportTable> {
-    let mut t = ReportTable::new("Tests of Normality");
+    let mut t = ReportTable::new(t!("output-explore-normality"));
     t.headers = vec![
         "Variable",
         "KS Statistic",
@@ -301,18 +304,22 @@ fn build_extremes_report_table(res: &ExploreResult) -> Option<ReportTable> {
             })
         })
     });
-    let mut t = ReportTable::new("Extreme Values");
-    t.headers = vec!["Variable".into(), "Order".into(), "Case Number".into()];
+    let mut t = ReportTable::new(t!("output-explore-extremes"));
+    t.headers = vec![
+        t!("output-explore-variable"),
+        t!("output-explore-order"),
+        t!("output-explore-case-number"),
+    ];
     t.alignments = vec![
         CellAlignment::Left,
         CellAlignment::Left,
         CellAlignment::Right,
     ];
     if has_labels {
-        t.headers.push("Case Label".into());
+        t.headers.push(t!("output-explore-case-label"));
         t.alignments.push(CellAlignment::Left);
     }
-    t.headers.push("Value".into());
+    t.headers.push(t!("output-explore-value"));
     t.alignments.push(CellAlignment::Right);
 
     for var in &res.variables {
@@ -350,7 +357,7 @@ fn build_extremes_report_table(res: &ExploreResult) -> Option<ReportTable> {
 }
 
 fn build_levene_report_table(res: &ExploreResult) -> Option<ReportTable> {
-    let mut t = ReportTable::new("Test of Homogeneity of Variance");
+    let mut t = ReportTable::new(t!("output-explore-homogeneity-title"));
     t.headers = vec![
         "Variable",
         "Based on",
@@ -396,7 +403,7 @@ fn build_levene_report_table(res: &ExploreResult) -> Option<ReportTable> {
 fn build_bootstrap_report_table(res: &ExploreResult) -> Option<ReportTable> {
     let boot = res.bootstrap.as_ref()?;
     let b_cols = bootstrap_column_headers(boot.options.ci_level);
-    let mut t = ReportTable::new("Bootstrap for Descriptives");
+    let mut t = ReportTable::new(t!("output-explore-bootstrap-title"));
     t.headers = vec![
         "Variable".to_string(),
         "Statistic".to_string(),

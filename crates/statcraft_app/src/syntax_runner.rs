@@ -180,6 +180,27 @@ pub fn run_syntax_batch(
                     output_view.add_generic_result(&parsed.name, &block.raw_text, &res_val);
                 }
             }
+            "SPSSINC TURF" | "TURF" => {
+                if let Ok(result) = serde_json::from_value::<statcraft_algo::TurfResult>(res_val) {
+                    if let Ok(Some((_, params))) =
+                        statcraft_syntax::syntax_parser::mappers::map_stat_command(
+                            &parsed,
+                            dataset.as_ref(),
+                        )
+                    {
+                        if let Ok(options) =
+                            serde_json::from_value::<statcraft_algo::TurfOptions>(params)
+                        {
+                            output_view.add_turf_with_dataset(
+                                result,
+                                options,
+                                block.raw_text.trim().to_string(),
+                                dataset.as_ref(),
+                            );
+                        }
+                    }
+                }
+            }
             _ => {
                 if parsed.name != "COMMENT" && parsed.name != "EXECUTE" {
                     output_view.add_generic_result(&parsed.name, &block.raw_text, &res_val);

@@ -7,6 +7,7 @@ mod corpus;
 mod design_guard;
 mod file_guard;
 mod hooks;
+mod i18n_guard;
 mod icon;
 mod layers;
 mod parity;
@@ -63,6 +64,12 @@ fn main() {
         }
         "design-guard" => {
             if let Err(e) = design_guard::check_dialog_design(&workspace_root) {
+                eprintln!("[ERROR] {}", e);
+                std::process::exit(1);
+            }
+        }
+        "i18n-guard" => {
+            if let Err(e) = i18n_guard::check_i18n(&workspace_root) {
                 eprintln!("[ERROR] {}", e);
                 std::process::exit(1);
             }

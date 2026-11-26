@@ -71,6 +71,11 @@ pub mod time_series;
 pub mod ttest_indep;
 pub mod ttest_onesample;
 pub mod ttest_paired;
+pub mod turf;
+pub mod turf_heats;
+#[cfg(test)]
+mod turf_tests;
+pub mod turf_types;
 pub mod variable_sort;
 
 pub use adp::*;
@@ -231,4 +236,6 @@ pub use ttest_paired::{
     PairedCorrelation, PairedDataInput, PairedDifferences, PairedSliceInput, PairedTTestBootstrap,
     PairedTTestResult, PairedVarStats,
 };
+pub use turf::{compute_turf, estimate_turf_operations};
+pub use turf_types::{TurfCombinationRow, TurfCycleResult, TurfOptions, TurfResult};
 pub use variable_sort::{compute_variable_sort_permutation, VariableSortAttribute};

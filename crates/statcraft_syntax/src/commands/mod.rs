@@ -62,6 +62,7 @@ pub mod transpose_cmd;
 pub mod ttest_indep_cmd;
 pub mod ttest_onesample_cmd;
 pub mod ttest_paired_cmd;
+pub mod turf_cmd;
 pub mod var_cmds;
 pub mod var_format_cmds;
 pub mod var_metadata_cmds;
@@ -134,6 +135,7 @@ pub use transpose_cmd::TransposeCommand;
 pub use ttest_indep_cmd::IndependentSamplesTTestCommand;
 pub use ttest_onesample_cmd::OneSampleTTestCommand;
 pub use ttest_paired_cmd::PairedSamplesTTestCommand;
+pub use turf_cmd::TurfCommand;
 pub use var_cmds::{
     SetLabelCommand, SetMeasureCommand, VarRenameCommand, VarSetAlignCommand,
     VarSetDecimalsCommand, VarSetTypeCommand, VarSetWidthCommand,

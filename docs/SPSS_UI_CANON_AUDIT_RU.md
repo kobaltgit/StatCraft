@@ -247,3 +247,15 @@
   * Главный диалог построен на `DialogShell::standard`, `render_variable_list_panel`, `TransferButton`, одиночных полях `Dependent`/`Independent`, 5-кнопочной боковой панели `SubdialogSidebar` (`Параметры...`, `Графики...`, `Сохранить...`, `Стиль...`, `Бутстреп...`) и `DialogActionBar`.
   * Поддиалоги (`Options` с переключателем Orthogonal $\lambda=1.0$ / Custom $\lambda$, `Plots` с диагональю $Y=X$, `Save`) и переиспользуемые `table_style_dialog` / `bootstrap_dialog` построены на `DialogKit` (`DialogShell::subdialog`, `GroupBox`, `SubdialogActionBar`) с нулевым хардкодом строк.
   * Проверено через `file-guard`, `design-guard`, `dialog_invariants` (52/52), `output_viewer_invariants` (12/12), `fmt --check` и `clippy -- -D warnings`.
+
+---
+
+### Обновление Stage 2: Диалог TURF-анализа и поддиалоги (`specs/035-turf-dialog-parity`)
+* **Файлы реализации:** `crates/statcraft_app/src/dialogs/turf_dialog/` (`mod.rs`, `state.rs`, `subdialogs.rs`), `app_dialogs_stats.rs`, `app_menus/analyze_etc.rs`
+* **Проверенные инварианты:**
+  * Главный диалог построен на `DialogShell::new(..., DialogSize::Compute)`, `render_variable_list_panel`, `TransferButton`, списке `Variables to Analyze`, 6 параметрах (`max_combinations`, `num_to_display`, `min_positive_pct`, `positive_values`, `always_required`, `removal_cycles`), 2 чекбоксах (`Reach and Frequency chart`, `Show only results for maximum combination`), `GroupBox` («Ограничение размера» с флагом отмены и `max_operations`), `SubdialogSidebar` (`Веса...`, `Расширенный выбор...`) и `DialogActionBar`.
+  * Поддиалог 1 (`Importance Weights`): на базе `DialogShell::subdialog`, `GroupBox` («Проверка весов» с радиокнопками `Strict` / `Default 1`), многострочного ввода спецификаций весов с подсказкой и `SubdialogActionBar` с транзакционным откатом при `Cancel`.
+  * Поддиалог 2 (`Advanced Selection`): на базе `DialogShell::subdialog`, чекбокса активации эвристик, `GroupBox` («Параметры расширенного выбора» с радиокнопками `Автоматически` / `Задать` и зависимыми полями размера и победителей) и `SubdialogActionBar` с транзакционным откатом при `Cancel`.
+  * Интеграция в меню **Анализ > Описательные статистики > TURF-анализ...** (`menu-analyze-turf`), неактивно при пустом датасете.
+  * 100% локализация через Fluent (`locales/en.ftl`, `locales/ru.ftl`) без строкового хардкода.
+  * Проверено через `cargo run -p xtask -j 1 -- design-guard`, `file-guard`, `cargo test -p statcraft_app --test dialog_invariants -j 1` (53/53) и `clippy -p statcraft_app -j 1 -- -D warnings`.

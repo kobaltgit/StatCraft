@@ -36,6 +36,7 @@ pub mod tables_theil_sen;
 pub mod tables_ttest_indep;
 pub mod tables_ttest_onesample;
 pub mod tables_ttest_paired;
+pub mod tables_turf;
 pub mod view;
 
 pub use blocks::{render_item_context_menu, render_log_block, render_notes_block};
@@ -89,6 +90,7 @@ pub use tables_theil_sen::{render_spss_theil_sen, theil_sen_to_tsv, TheilSenOutp
 pub use tables_ttest_indep::{indep_ttest_to_tsv, render_spss_indep_ttest_tables};
 pub use tables_ttest_onesample::{onesample_ttest_to_tsv, render_spss_onesample_ttest_tables};
 pub use tables_ttest_paired::{paired_ttest_to_tsv, render_spss_paired_ttest_tables};
+pub use tables_turf::{render_spss_turf, turf_to_report_tables, turf_to_tsv, TurfOutputItem};
 pub use view::{render_output_view, render_output_view_with_workspace};
 
 pub fn extract_item_tsv(kind: &OutputItemKind) -> Option<String> {
@@ -114,6 +116,7 @@ pub fn extract_item_tsv(kind: &OutputItemKind) -> Option<String> {
         OutputItemKind::LinearRegression(res) => Some(regression_to_tsv(res)),
         OutputItemKind::TheilSen(item) => Some(theil_sen_to_tsv(item)),
         OutputItemKind::DemingRegression(item) => Some(deming_regression_to_tsv(item)),
+        OutputItemKind::Turf(item) => Some(turf_to_tsv(item)),
         OutputItemKind::PartialCorrelations(res) => Some(partial_corr_to_tsv(res)),
         OutputItemKind::LogisticRegression(res) => Some(logistic_to_tsv(res)),
         OutputItemKind::MultinomialLogistic(res) => Some(multinomial_logistic_to_tsv(res)),

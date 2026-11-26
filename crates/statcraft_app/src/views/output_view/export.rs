@@ -1,5 +1,6 @@
 use super::extract_item_tsv;
 use super::model::{OutputItemKind, OutputProcedure, OutputViewerState};
+use statcraft_i18n::t;
 use statcraft_reporting::{
     export_document_to_html, export_document_to_tsv, export_document_to_txt, CellAlignment,
     ReportDocument, ReportItem, ReportNotes, ReportSection, ReportTable,
@@ -35,7 +36,8 @@ pub fn procedures_to_report_document(procedures: &[OutputProcedure]) -> ReportDo
                 }
                 OutputItemKind::DatasetSummary { name, rows, cols } => {
                     let mut table = ReportTable::new(item.title());
-                    table.headers = vec!["Property".to_string(), "Value".to_string()];
+                    table.headers =
+                        vec![t!("output-adp-summary-property"), t!("output-common-value")];
                     table.alignments = vec![CellAlignment::Left, CellAlignment::Left];
                     table.rows = vec![
                         vec!["Active Dataset".to_string(), name.clone()],
@@ -61,6 +63,11 @@ pub fn procedures_to_report_document(procedures: &[OutputProcedure]) -> ReportDo
                         for table in super::tables_crosstabs::crosstabs_to_report_tables(res) {
                             section.add_item(ReportItem::Table(table));
                         }
+                    }
+                }
+                OutputItemKind::Turf(item) => {
+                    for table in super::tables_turf::turf_to_report_tables(item) {
+                        section.add_item(ReportItem::Table(table));
                     }
                 }
                 _ => {

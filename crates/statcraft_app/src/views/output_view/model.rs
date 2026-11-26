@@ -92,6 +92,7 @@ pub enum OutputItemKind {
     LinearRegression(Box<LinearRegressionResult>),
     TheilSen(Box<super::tables_theil_sen::TheilSenOutputItem>),
     DemingRegression(Box<super::tables_deming_regression::DemingRegressionOutputItem>),
+    Turf(Box<super::tables_turf::TurfOutputItem>),
     PartialCorrelations(Box<PartialCorrResult>),
     LogisticRegression(Box<LogisticRegressionResult>),
     MultinomialLogistic(Box<MultinomialLogisticResult>),

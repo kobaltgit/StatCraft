@@ -1,8 +1,8 @@
 use super::app::{StatCraftApp, StatusMessage};
 use super::dialogs::{
     render_crosstabs_dialog, render_descriptives_dialog, render_explore_dialog,
-    render_frequencies_dialog, CrosstabsDialogAction, DescriptivesDialogAction,
-    ExploreDialogAction, FrequenciesDialogAction,
+    render_frequencies_dialog, render_turf_dialog, CrosstabsDialogAction, DescriptivesDialogAction,
+    ExploreDialogAction, FrequenciesDialogAction, TurfDialogAction,
 };
 use serde_json::json;
 use statcraft_i18n::t;
@@ -408,6 +408,55 @@ impl StatCraftApp {
                 self.output_view_state.add_entry(t!("output-log"), sps);
             }
             CrosstabsDialogAction::None => {}
+        }
+
+        // 5. TURF Dialog
+        let turf_action =
+            render_turf_dialog(ctx, self.dataset.as_ref(), &mut self.turf_dialog_state);
+
+        match turf_action {
+            TurfDialogAction::Run { options } => {
+                let sps_log = statcraft_syntax::commands::TurfCommand::to_sps(&options);
+                match serde_json::to_value(&options) {
+                    Ok(params) => {
+                        match self
+                            .command_bus
+                            .execute("stat.turf", &mut self.dataset, params)
+                        {
+                            Ok(result_val) => {
+                                match serde_json::from_value::<statcraft_algo::TurfResult>(
+                                    result_val,
+                                ) {
+                                    Ok(result) => {
+                                        let count = options.variables.len();
+                                        self.output_view_state.add_turf_with_dataset(
+                                            result,
+                                            options,
+                                            sps_log,
+                                            self.dataset.as_ref(),
+                                        );
+                                        self.status_message = StatusMessage::TurfExecuted { count };
+                                    }
+                                    Err(e) => {
+                                        self.status_message = StatusMessage::Error(e.to_string());
+                                    }
+                                }
+                            }
+                            Err(e) => {
+                                self.status_message = StatusMessage::Error(e.to_string());
+                            }
+                        }
+                    }
+                    Err(e) => {
+                        self.status_message = StatusMessage::Error(e.to_string());
+                    }
+                }
+            }
+            TurfDialogAction::Paste { options } => {
+                let sps = statcraft_syntax::commands::TurfCommand::to_sps(&options);
+                self.output_view_state.add_entry(t!("output-log"), sps);
+            }
+            TurfDialogAction::None => {}
         }
     }
 }

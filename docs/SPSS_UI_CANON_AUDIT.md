@@ -247,3 +247,15 @@ Phase 3 concludes the comprehensive audit of StatCraft, evaluating the user-faci
   * Main dialog uses `DialogShell::standard`, `render_variable_list_panel`, `TransferButton`, single-variable `Dependent`/`Independent` target boxes, 5-button `SubdialogSidebar` (`Options...`, `Plots...`, `Save...`, `Style...`, `Bootstrap...`), and `DialogActionBar`.
   * Subdialogs (`Options` with Orthogonal $\lambda=1.0$ / Custom $\lambda$ radio toggle, `Plots` with $Y=X$ identity line toggle, `Save`) and reusable `table_style_dialog` / `bootstrap_dialog` use `DialogKit` (`DialogShell::subdialog`, `GroupBox`, `SubdialogActionBar`) with zero hardcoded strings.
   * Verified with `file-guard`, `design-guard`, `dialog_invariants` (52/52), `output_viewer_invariants` (12/12), `fmt --check`, and `clippy -- -D warnings`.
+
+---
+
+### Stage 2 Update: TURF Analysis Dialog & Subdialogs (`specs/035-turf-dialog-parity`)
+* **Implementation:** `crates/statcraft_app/src/dialogs/turf_dialog/` (`mod.rs`, `state.rs`, `subdialogs.rs`), `app_dialogs_stats.rs`, `app_menus/analyze_etc.rs`
+* **Audited Invariants:**
+  * Main dialog uses `DialogShell::new(..., DialogSize::Compute)`, `render_variable_list_panel`, `TransferButton`, target list `Variables to Analyze`, 6 parameter fields (`max_combinations`, `num_to_display`, `min_positive_pct`, `positive_values`, `always_required`, `removal_cycles`), 2 checkboxes (`Reach and Frequency chart`, `Show only results for maximum combination`), `GroupBox` ("Limit size" with abort checkbox and `max_operations`), `SubdialogSidebar` (`Weights...`, `Advanced Selection...`), and `DialogActionBar`.
+  * Subdialog 1 (`Importance Weights`): built on `DialogShell::subdialog`, `GroupBox` ("Weight Checking" with `Strict` / `Default 1` radio buttons), multiline text specification, hint label, and `SubdialogActionBar` with transactional `Cancel` state restoration.
+  * Subdialog 2 (`Advanced Selection`): built on `DialogShell::subdialog`, checkbox `Use advanced selection for large problems`, `GroupBox` ("Advanced Selection Parameters" with `Automatic` / `Specify` radio buttons and conditional `advanced_size` / `advanced_winners` text inputs), and `SubdialogActionBar` with transactional `Cancel` state restoration.
+  * Menu integration under **Analyze > Descriptive Statistics > TURF Analysis...** (`menu-analyze-turf`), disabled when no dataset is loaded.
+  * 100% Fluent localization (`locales/en.ftl`, `locales/ru.ftl`) with zero hardcoded strings.
+  * Verified with `cargo run -p xtask -j 1 -- design-guard`, `file-guard`, `cargo test -p statcraft_app --test dialog_invariants -j 1` (53/53), and `clippy -p statcraft_app -j 1 -- -D warnings`.

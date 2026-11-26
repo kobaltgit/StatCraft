@@ -1552,6 +1552,33 @@
   - [x] Диалог `DemingRegressionDialog` на `DialogKit` с `SubdialogSidebar` (`Options...`, `Plots...`, `Save...`, `Style...`, `Bootstrap...`), пункт меню `Analyze → Regression → Orthogonal / Deming...` и обработчик в `app_dialogs_deming.rs`;
   - [x] Вывод таблиц, векторных графиков (Scatter + Deming Line + пунктир $Y = X$, Orth. Residuals vs. Fitted) в `tables_deming_regression/`, экспорт TSV/HTML/TXT и ключи в `locales/en.ftl` / `locales/ru.ftl`.
 
+## 88. TURF-анализ: Ядро и синтаксис SPSS (Stage 1, `specs/034-turf-core-and-syntax`)
+- [x] **L2 `statcraft_algo` (`turf_types.rs`, `turf.rs`, `turf_heats.rs`, `turf_tests.rs` $\le 500$ строк):**
+  - [x] Упакованный битовый движок охвата (Unduplicated Reach) и частоты (Frequency) на `Vec<u64>` с поддержкой `WEIGHT BY`, `filter_$`, `FORCE`, `MINPERCENT`, `REMOVALCYCLES`, `MAXSETS` (checked `u128`) и `/IMPORTANCE` (`STRICT`);
+  - [x] Эвристика турнирных забегов `Tournament Heats` (`USEHEATS`, `HEATSIZE`, `NUMWINNERS`, `AUTO`) и Golden Oracle тесты (`<= 1e-6`).
+- [x] **L5 `statcraft_syntax` (`turf_cmd.rs`, `syntax_parser/mappers/stats/turf.rs`):**
+  - [x] Команда `TurfCommand` (`stat.turf`) с JSON-схемой параметров, предикатом `enabled` и генерацией `SPSSINC TURF`;
+  - [x] Парсер `SPSSINC TURF` (и алиас `TURF`) с подкомандами `FORCE`, `/OPTIONS`, `/HEATS`, `/IMPORTANCE` и тестами round-trip.
+
+## 89. TURF-анализ: Диалоговые окна и интеграция UI (Stage 2, `specs/035-turf-dialog-parity`)
+- [x] **L6 `statcraft_app` (`dialogs/turf_dialog/` — `mod.rs`, `state.rs`, `subdialogs.rs` $\le 500$ строк):**
+  - [x] Главный диалог `TurfDialog` на `DialogShell` (`DialogSize::Compute`), `VariablePicker`, `TransferButton`, `GroupBox` («Ограничение размера»), 6 числовых/текстовых параметров (`BESTN`, `NUMBERTODISPLAY`, `MINPERCENT`, `CRITERIA`, `FORCE`, `REMOVALCYCLES`), 2 флага и `DialogActionBar`;
+  - [x] Поддиалог 1 `Importance Weights`: `DialogShell::subdialog`, радиокнопки `Weight Checking` (strict / default=1), поле ввода спецификаций весов с подсказкой и транзакционный откат при отмене через `SubdialogActionBar`;
+  - [x] Поддиалог 2 `Advanced Selection`: `DialogShell::subdialog`, флаг активации эвристик, группа `Automatic` / `Specify` с блокировкой полей размера и победителей, транзакционный откат при отмене через `SubdialogActionBar`;
+  - [x] Меню **Analyze > Descriptive Statistics > TURF Analysis...** (`menu-analyze-turf`), интеграция в `app_dialogs_stats.rs` и статус-сообщение `StatusMessage::TurfExecuted`;
+  - [x] Локализация в `locales/en.ftl` и `locales/ru.ftl` с нулевым хардкодом строк;
+  - [x] Автоматические тесты в `dialog_invariants.rs` (53/53), валидация через `design-guard`, `file-guard` и `clippy`.
+
+## 90. TURF-анализ: Таблицы Output Viewer, векторный график, экспорт и паритет (Stage 3, `specs/036-turf-output-and-charts`)
+- [x] **L6 `statcraft_app` (`views/output_view/tables_turf/` — `mod.rs`, `charts.rs`, `export.rs` $\le 500$ строк):**
+  - [x] Таблица `Case & Parameter Summary`: вывод валидного $N$, значений положительных ответов (`CRITERIA`), отфильтрованных переменных (`MINPERCENT`), оценки числа операций (`MAXSETS`), параметров эвристик (`HEATS`), числа обязательных переменных (`FORCE`) и циклов исключения (`REMOVALCYCLES`);
+  - [x] Таблицы `Reach and Frequency` per removal cycle и combination size: столбцы `Variables`, `Reach`, `% of Cases`, `Frequency`, `% of Responses`, `Mean Responses` и `Weighted Score` (при наличии весов);
+  - [x] Векторный график `Reach and Frequency` на `ui.painter()` / `Tokens`: две кривые (Accent Blue для Reach % и Coral для Frequency %), маркеры точек, координатная сетка, легенда, оси и 100% векторная отрисовка без сторонних зависимостей и эмодзи/тофу;
+  - [x] Экспорт отчетов: TSV (`turf_to_tsv`) и `ReportTable` (`turf_to_report_tables`) с поддержкой HTML и текстового экспорта Output Viewer;
+  - [x] Интеграция: диспетчеризация в `model.rs`, `mod.rs`, `view.rs`, `export.rs`, `app_dialogs_stats.rs` и `syntax_runner.rs` (`SPSSINC TURF` / `TURF`);
+  - [x] Автоматические тесты инвариантов: `test_turf_stage3_output_invariants_and_export` в `output_viewer_invariants/turf.rs`;
+  - [x] Обновление `docs/parity-checklist.md` (`Analyze > Descriptive Statistics > TURF Analysis` | `stat.turf` | `Done`), прохождение `cargo run -p xtask -j 1 -- parity`.
+
 
 ## 20. Планы будущих релизов (Backlog / Planned Features)
 - [ ] Мультимониторный режим рабочего пространства (Multi-Monitor Viewports & Pop-out Tabs):

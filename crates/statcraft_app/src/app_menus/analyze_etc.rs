@@ -73,6 +73,12 @@ impl StatCraftApp {
                             self.crosstabs_dialog_state.is_open = true;
                             ui.close_menu();
                         }
+                        if render_menu_item(ui, t!("menu-analyze-turf"), requires_dataset_status)
+                            .clicked()
+                        {
+                            self.turf_dialog_state.is_open = true;
+                            ui.close_menu();
+                        }
                     });
                     ui.menu_button(t!("menu-analyze-compare-means"), |ui| {
                         if render_menu_item(ui, t!("menu-analyze-means"), requires_dataset_status)

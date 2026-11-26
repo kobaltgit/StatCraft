@@ -122,6 +122,7 @@ impl SyntaxParser {
                 Some("SURVIVAL")
             }
             ("KAPLAN", Some(s)) if s.eq_ignore_ascii_case("MEIER") => Some("KM"),
+            ("SPSSINC", Some(s)) if s.eq_ignore_ascii_case("TURF") => Some("SPSSINC TURF"),
             _ => None,
         };
 

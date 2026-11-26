@@ -171,6 +171,7 @@ menu-analyze-frequencies = Frequencies...
 menu-analyze-descriptives = Descriptives...
 menu-analyze-explore = Explore...
 menu-analyze-crosstabs = Crosstabs...
+menu-analyze-turf = TURF Analysis...
 menu-analyze-compare-means = Compare Means
 menu-analyze-ttest = Independent-Samples T-Test...
 menu-analyze-ttest-one-sample = One-Sample T Test...
@@ -1589,6 +1590,7 @@ dialog-explore-power-square = Square
 dialog-explore-power-cube = Cube
 
 output-explore-title = Explore
+output-explore-variable = Variable
 output-explore-case-processing = Case Processing Summary
 output-explore-descriptives = Descriptives
 output-explore-normality = Tests of Normality
@@ -2358,3 +2360,75 @@ output-notes-label-dataset = Active Dataset
 output-notes-label-cases = N of Active Cases
 output-notes-label-vars = N of Variables
 output-notes-session = Session
+
+status-turf-executed = TURF analysis executed for { $count } variable(s).
+
+# TURF Analysis Dialog
+dialog-turf-title = TURF Analysis
+dialog-turf-vars-source = Variables:
+dialog-turf-vars-target = Variables to Analyze:
+dialog-turf-max-combinations = Maximum number of variable combinations:
+dialog-turf-num-to-display = Number of combinations to display:
+dialog-turf-min-positive-pct = Minimum percentage of positive responses:
+dialog-turf-positive-values = Positive response value(s):
+dialog-turf-always-required = Number of Analyze Variables Always Required:
+dialog-turf-removal-cycles = Number of times to remove best variables and rerun:
+dialog-turf-reach-frequency-chart = Reach and Frequency chart
+dialog-turf-show-only-max-combo = Show only results for maximum combination of variables
+dialog-turf-limit-group = Limit size
+dialog-turf-limit-abort = Do not run if operations count exceeds limit
+dialog-turf-limit-max-ops = Maximum operations:
+dialog-turf-btn-weights = Weights...
+dialog-turf-btn-advanced = Advanced Selection...
+
+# TURF Analysis: Importance Weights Subdialog
+dialog-turf-weights-title = TURF Analysis: Importance Weights
+dialog-turf-weights-desc = Specify weights for variables to account for relative importance.
+dialog-turf-weights-group-checking = Weight Checking
+dialog-turf-weights-strict-all = All variables must be listed below
+dialog-turf-weights-strict-default1 = Variables not in list are assumed to have weight 1
+dialog-turf-weights-spec-label = Weight specifications:
+dialog-turf-weights-spec-hint = List variable names and weights in pairs separated by spaces.
+
+# TURF Analysis: Advanced Selection Subdialog
+dialog-turf-advanced-title = TURF Analysis: Advanced Selection
+dialog-turf-advanced-desc = Configure heuristics for large variable sets.
+dialog-turf-advanced-use-checkbox = Use advanced selection for large problems
+dialog-turf-advanced-group-params = Advanced Selection Parameters
+dialog-turf-advanced-auto = Automatic
+dialog-turf-advanced-specify = Specify
+dialog-turf-advanced-size-label = Advanced selection size:
+dialog-turf-advanced-winners-label = Number of winners:
+
+# TURF Analysis: Output Viewer
+output-turf-title = TURF Analysis
+output-turf-summary-title = Case & Parameter Summary
+output-turf-reach-freq-title = Reach and Frequency
+output-turf-reach-freq-cycle = Removal Cycle { $cycle }
+output-turf-removed-vars = Removed Variables: { $vars }
+output-turf-col-combo-size = Size
+output-turf-col-variables = Variables
+output-turf-col-reach = Reach
+output-turf-col-reach-pct = % of Cases
+output-turf-col-frequency = Frequency
+output-turf-col-frequency-pct = % of Responses
+output-turf-col-mean-responses = Mean Responses
+output-turf-col-score = Weighted Score
+output-turf-param-valid-n = Valid Cases
+output-turf-param-positive-vals = Positive Response Values
+output-turf-param-excluded-vars = Excluded Variables (< min %)
+output-turf-param-none = (None)
+output-turf-param-est-ops = Operations Estimate
+output-turf-param-advanced-heats = Advanced Selection (Heats)
+output-turf-param-removal-cycles = Removal Cycles
+output-turf-param-always-required = Always Required Count
+output-turf-param-yes = Yes
+output-turf-param-no = No
+output-turf-chart-title = Reach and Frequency by Combination Size
+output-turf-chart-reach-legend = Reach (%)
+output-turf-chart-freq-legend = Frequency (%)
+output-turf-chart-size-axis = Combination Size
+output-turf-chart-pct-axis = Percent (%)
+output-turf-col-param = Parameter
+output-turf-col-value = Value
+output-turf-heats-detail = { $yes } (size={ $size }, winners={ $winners })

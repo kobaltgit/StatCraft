@@ -1,4 +1,4 @@
-# StatCraft v0.4.9
+# StatCraft v0.4.10
 
 [English](#english) | [Русский](#русский)
 
@@ -7,34 +7,32 @@
 <a name="english"></a>
 ## English
 
-StatCraft v0.4.9 adds two new robust/errors-in-variables regression procedures requested by the community (GitHub Issue #4), **Linux AppImage** packaging, and important Output Viewer & i18n polish.
+StatCraft v0.4.10 introduces **TURF (Total Unduplicated Reach and Frequency) Analysis** (`SPSSINC TURF`, Features 034–036) for market research and assortment optimization, along with a global static **`i18n-guard`** CI linter and Output Viewer variable label improvements.
 
-### 📈 New Regression Procedures (Features 032–033)
-* **Theil–Sen Robust Linear Regression (`THEIL SEN`):**
-  * Non-parametric outlier-resistant simple linear regression (~29.3% breakdown point) with Sen (1968) tie-corrected confidence intervals, Mann–Kendall trend test ($\tau_b, Z, p$), MAD of residuals, and `MAX_EXACT_PAIRS_N = 5000` safety guard.
-  * Full `DialogKit` UI with 5 applicable subdialogs (`Options...`, `Plots...`, `Save...`, `Style...`, `Bootstrap...`), `PRE_n`/`RES_n` dataset saving with `Undo`, vector scatter & residual plots, and `.sps` syntax round-trip.
-* **Orthogonal / Deming Regression (`ORTHOGONAL REGRESSION`):**
-  * Closed-form errors-in-variables regression supporting **Orthogonal (Total Least Squares, $\lambda = 1.0$)** and general **Deming Regression** ($\lambda = \sigma_y^2 / \sigma_x^2 > 0$).
-  * Leave-One-Out **Jackknife** standard errors and Student-$t$ confidence intervals ($df = N - 2$), orthogonal residual SD, Pearson's $r$, `PRE_n`/`RES_n` saving with `Undo`, scatter plot with clipped $Y = X$ identity line, `Bootstrap`, and `.sps` syntax round-trip.
+### 📊 TURF Analysis (`SPSSINC TURF`, Features 034–036)
+* **Combinatorial Reach & Frequency Engine:**
+  * Packed `Vec<u64>` respondent bitset evaluation for $k = 1 \dots K_{\max}$ combinations (`BESTN`), computing **Unduplicated Reach** (count & `% of Cases`), **Frequency** (count, `% of Responses`, and **Mean Responses** per reached case).
+  * Respects active dataset case weights (`WEIGHT BY`) and case filters (`SELECT IF` / `filter_$`).
+  * Supports positive response criteria (`CRITERIA`), minimum positive percentage screening (`MINPERCENT`), always required items (`FORCE`), iterative `REMOVALCYCLES`, `MAXSETS` checked `u128` operation guard, **Importance Weights** (`/IMPORTANCE STRICT`), and **Tournament Heats** (`/HEATS USEHEATS`, `HEATSIZE`, `NUMWINNERS`) for large variable pools.
+* **DialogKit UI & Canonical `.sps` Syntax:**
+  * Added **Analyze > Descriptive Statistics > TURF Analysis...** (`TurfDialog`) with **Importance Weights...** and **Advanced Selection...** subdialogs, plus full `SPSSINC TURF` / `TURF` syntax round-trip.
+* **Output Viewer & Export:**
+  * Case & Parameter Summary table, Reach & Frequency Pivot Tables per cycle and size with human-readable variable `Label`s, vector Reach & Frequency curves, and TSV/HTML/TXT export.
 
-### 🐧 Linux AppImage & Output Viewer Polish
-* **Linux AppImage:** Added `statcraft-linux-x64.AppImage` to the automated release pipeline alongside `.deb` and `.tar.gz`.
-* **Output Viewer & i18n:**
-  * Localized the `Notes` metadata table (`Output Created`, `Active Dataset`, `N of Active Cases`, `N of Variables`, `Session`).
-  * Display human-readable variable `Label`s in regression tables and plot axes when defined.
-  * Fixed $Y = X$ identity line scaling in Deming scatter plots, added axis padding & Y-axis numeric ticks, normalized `-0.0000` formatting, and auto-sized table columns to fit long variable labels.
+### 🛡️ Global i18n Guard & Output Viewer Polish
+* **Global `xtask i18n-guard`:** Integrated a static UI localization linter into `cargo xtask ci` to permanently prevent hardcoded strings in dialog widgets and Output Viewer table headers.
+* **Fixes:** Corrected TURF `% of Responses` calculation (ratio to total positive responses), localized all TURF/Explore table headers, and fixed `TurfDialog` sidebar button wrapping.
 
-### 📋 Full Changelog for v0.4.9
+### 📋 Full Changelog for v0.4.10
 ```markdown
-## [0.4.9] - 2026-11-25
+## [0.4.10] - 2026-11-26
 
 ### Added
-- **Theil–Sen Estimator (Feature 032):** Robust simple linear regression, Mann-Kendall trend test, Bootstrap, PRE/RES saving, scatter/residual plots, and THEIL SEN .sps syntax.
-- **Orthogonal / Deming Regression (Feature 033):** Closed-form Deming (lambda = 1.0 & custom lambda > 0), Jackknife SE & t-CI, Bootstrap, PRE/RES saving, scatter plot with Y=X line, and ORTHOGONAL REGRESSION .sps syntax.
-- **Linux AppImage:** Automated `statcraft-linux-x64.AppImage` build in GitHub Releases.
+- **TURF Analysis (Features 034–036):** Clean-room combinatorial TURF engine (`stat.turf`), Importance Weights, Tournament Heats, Removal Cycles, DialogKit UI + subdialogs, `SPSSINC TURF` .sps round-trip, Pivot Tables with variable labels, Reach & Frequency chart, and TSV/HTML/TXT export.
+- **Global Static i18n Linter (`xtask i18n-guard`):** Enforces zero hardcoded UI strings and table headers across all dialogs and views in CI.
 
 ### Fixed
-- **Output Viewer & i18n:** Translated hardcoded Notes labels, fixed Deming Y=X plot scaling, added axis padding & Y-ticks, eliminated `-0.0000`, auto-fitted table column widths, and rendered variable Labels.
+- **TURF & Output Viewer:** Fixed `% of Responses` denominator, localized all TURF and Explore report table headers, and fixed `TurfDialog` right sidebar layout.
 ```
 
 ---
@@ -42,26 +40,29 @@ StatCraft v0.4.9 adds two new robust/errors-in-variables regression procedures r
 <a name="русский"></a>
 ## Русский
 
-Релиз StatCraft v0.4.9 добавляет две новые регрессионные процедуры по запросу сообщества (GitHub Issue #4), сборку **Linux AppImage**, а также важные улучшения Output Viewer и локализации.
+Релиз StatCraft v0.4.10 добавляет **TURF-анализ** (*Total Unduplicated Reach and Frequency*, `SPSSINC TURF`, Features 034–036) для маркетинговых исследований и оптимизации продуктовых линеек, а также глобальный статический линтер локализации **`i18n-guard`** и отображение меток переменных в выводе TURF.
 
-### 📈 Новые регрессионные процедуры (Features 032–033)
-* **Робастная регрессия Тейла — Сена (`THEIL SEN`):**
-  * Непараметрическая, устойчивая к выбросам простая линейная регрессия (точка срыва ~29.3%) с ДИ по методу Sen (1968) с поправкой на связки, критерием тренда Манна — Кендалла ($\tau_b, Z, p$), MAD остатков и защитой `MAX_EXACT_PAIRS_N = 5000`.
-  * Интерфейс на `DialogKit` с 5 применимыми поддиалогами (`Параметры...`, `Графики...`, `Сохранить...`, `Стиль...`, `Бутстреп...`), сохранение `PRE_n`/`RES_n` в датасет с `Undo`, векторные графики и полный `.sps` round-trip.
-* **Ортогональная регрессия и регрессия Деминга (`ORTHOGONAL REGRESSION`):**
-  * Аналитическая регрессия с ошибками в обеих переменных для **ортогональной регрессии (Total Least Squares, $\lambda = 1.0$)** и общей **регрессии Деминга** ($\lambda = \sigma_y^2 / \sigma_x^2 > 0$).
-  * Стандартные ошибки методом **Jackknife** и $t$-доверительные интервалы ($df = N - 2$), СКО ортогональных остатков, $r$ Пирсона, сохранение `PRE_n`/`RES_n` с `Undo`, график рассеяния с линией $Y = X$, `Бутстреп...` и `.sps` round-trip.
+### 📊 TURF-анализ (`SPSSINC TURF`, Features 034–036)
+* **Комбинаторный движок охвата и частоты:**
+  * Быстрый битовый расчёт на `Vec<u64>` для комбинаций размера $k = 1 \dots K_{\max}$ (`BESTN`): **Недублированный охват** (количество и `% наблюдений`), **Частота** (количество, `% ответов` и **Среднее ответов** на достигнутого респондента).
+  * Учёт весов наблюдений (`WEIGHT BY`) и фильтра (`filter_$`), критериев положительных ответов (`CRITERIA`), порога отсечения (`MINPERCENT`), обязательных переменных (`FORCE`), циклов исключения (`REMOVALCYCLES`), лимита операций (`MAXSETS`), **Весов важности** (`/IMPORTANCE STRICT`) и эвристики **Расширенного выбора / Заездов** (`/HEATS`).
+* **Интерфейс `DialogKit` и синтаксис `.sps`:**
+  * Пункт меню **Анализ > Описательные статистики > TURF-анализ...** с поддиалогами **Веса...** и **Расширенный выбор...**, а также полный round-trip синтаксиса `SPSSINC TURF` / `TURF`.
+* **Просмотр вывода и экспорт:**
+  * Таблица сводки параметров, сводные таблицы «Охват и частота» по циклам и размерам с подстановкой текстовых меток переменных из словаря, векторный график охвата и частоты, экспорт в TSV/HTML/TXT.
 
-### 🐧 Linux AppImage и исправления Output Viewer
-* **Linux AppImage:** в пайплайн авторелизов добавлен универсальный пакет `statcraft-linux-x64.AppImage` в дополнение к `.deb` и `.tar.gz`.
-* **Output Viewer и локализация:**
-  * Локализована таблица `Примечания` (`Вывод создан`, `Активный массив данных`, `Число активных наблюдений`, `Число переменных`, `Сессия`).
-  * В таблицах и на осях графиков новых регрессий отображаются человекочитаемые метки переменных (`Label`).
-  * Исправлено масштабирование оси Y при включённой линии $Y = X$ в Deming, добавлены отступы и числовые деления оси Y, убран `-0.0000`, настроена автоширина колонок под длинные названия.
+### 🛡️ Глобальный запрет сырых строк (`i18n-guard`) и исправления
+* **Статический линтер `xtask i18n-guard`:** Встроен в `cargo xtask ci` и pre-push hook — автоматически блокирует любые нелокализованные заголовки таблиц и строки интерфейса в `dialogs/` и `views/`.
+* **Исправления:** Исправлен расчёт `% ответов` (доля от общего числа положительных ответов), локализованы все заголовки таблиц TURF и Explore, исправлена ширина правой колонки кнопок в диалоге `TURF-анализ`.
 
----
+### 📋 Полный список изменений v0.4.10
+```markdown
+## [0.4.10] - 2026-11-26
 
-### 📦 Дистрибутивы релиза (Artifacts)
-* **Windows (x64):** Автономный инсталлятор (`statcraft-windows-x64-installer.exe`) + Портативный архив (`statcraft-windows-x64.zip`).
-* **Linux (x64):** AppImage (`statcraft-linux-x64.AppImage`) + Пакет Debian (`statcraft-linux-x64.deb`) + Портативный TAR.GZ (`statcraft-linux-x64.tar.gz`).
-* **macOS (Apple Silicon & Intel):** Подписанный DMG-образ (`statcraft-macos-arm64.dmg`, `statcraft-macos-x64.dmg`).
+### Added
+- **TURF Analysis (Features 034–036):** Чистый комбинаторный движок TURF (`stat.turf`), веса важности, заезды (Heats), циклы исключения, диалог и поддиалоги на `DialogKit`, синтаксис `SPSSINC TURF`, сводные таблицы с метками переменных, векторный график и экспорт TSV/HTML/TXT.
+- **Global Static i18n Linter (`xtask i18n-guard`):** Автоматический запрет сырых строк интерфейса и заголовков таблиц в `ci`.
+
+### Fixed
+- **TURF & Output Viewer:** Исправлен знаменатель `% ответов`, локализованы заголовки таблиц TURF и Explore, исправлена верстка правой колонки в `TurfDialog`.
+```

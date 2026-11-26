@@ -3,6 +3,7 @@ pub mod deming_regression;
 pub mod frequencies;
 pub mod theil_sen;
 pub mod ttest;
+pub mod turf;
 
 pub use frequencies::map_frequencies;
 pub use ttest::{map_ttest, parse_ci_from_criteria};
@@ -30,6 +31,7 @@ pub fn map_stat_command(
         "RELIABILITY" => map_reliability(cmd, dataset),
         "FACTOR" => map_factor(cmd, dataset),
         "MEANS" => map_means(cmd, dataset),
+        "SPSSINC TURF" | "TURF" => turf::map_turf(cmd, dataset),
         _ => Ok(None),
     }
 }

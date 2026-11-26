@@ -98,6 +98,7 @@ Beyond isolated unit testing, StatCraft enforces mathematical and architectural 
 | **Block 20** | Cox Proportional Hazards Regression (`COXREG`) | `cox/` (`baseline.rs`, `engine.rs`, `mod.rs`, `types.rs`) | **100% Verified** | $\le 10^{-6}$ |
 | **Block 21** | Theil–Sen Robust Linear Regression (`THEIL SEN`) | `theil_sen/` (`engine.rs`, `types.rs`, `mod.rs`) | **100% Verified** | $\le 10^{-6}$ (Sen 1968 & SciPy) |
 | **Block 22** | Orthogonal / Deming Regression (`ORTHOGONAL REGRESSION`) | `deming_regression/` (`engine.rs`, `types.rs`, `mod.rs`) | **100% Verified** | $\le 10^{-6}$ (Deming & `scipy.odr`) |
+| **Block 23** | TURF Analysis (`SPSSINC TURF`) | `turf.rs`, `turf_types.rs`, `turf_heats.rs` | **100% Verified** | $\le 10^{-6}$ (Golden Oracle) |
 
 ---
 
@@ -1081,6 +1082,18 @@ Beyond isolated unit testing, StatCraft enforces mathematical and architectural 
   * **Deming Slope & Intercept:** $\hat{\beta}_1 = \frac{(s_{yy} - \lambda s_{xx}) + \sqrt{(s_{yy} - \lambda s_{xx})^2 + 4\lambda s_{xy}^2}}{2 s_{xy}}$ (with degenerate $s_{xy} = 0$ and $s_{xx} = s_{yy} = 0$ guards), $\hat{\beta}_0 = \bar{y} - \hat{\beta}_1 \bar{x}$, for any $\lambda = \sigma_y^2 / \sigma_x^2 > 0$.
   * **Leave-One-Out Jackknife SE & $t$-CI:** $\text{SE}_{\text{JK}} = \sqrt{\frac{n-1}{n}\sum_{i=1}^n (\hat{\theta}_{(-i)} - \bar{\theta}_{\text{JK}})^2}$, two-sided $t$-intervals with $df = n - 2$, orthogonal residual SD, and non-parametric bootstrap.
 * **Verdict:** **100% Mathematical Equivalence to Deming Closed-Form & `scipy.odr` ($\le 10^{-6}$).**
+
+---
+
+### Block 23: TURF Analysis (Feature 034 — `SPSSINC TURF`)
+
+#### 23.1. `SPSSINC TURF` (Total Unduplicated Reach and Frequency)
+* **Implementation:** [`crates/statcraft_algo/src/turf.rs`](../crates/statcraft_algo/src/turf.rs), [`turf_types.rs`](../crates/statcraft_algo/src/turf_types.rs), [`turf_heats.rs`](../crates/statcraft_algo/src/turf_heats.rs)
+* **Golden Oracle Tests:** `turf_tests::{golden_oracle_exact_reach_and_frequency, test_weight_and_filter_respect, test_force_minpercent_and_removal_cycles, test_importance_weights_strict_and_ranking, test_max_operations_abort_and_heats_fallback}`
+* **Mathematical Formula Verification:**
+  * **Bitset Unduplicated Reach & Frequency:** Packed `Vec<u64>` respondent-reach masks per item (respecting `WEIGHT BY` and `filter_$`), exact bitwise `OR` subset union with weighted popcount for Reach ($\sum_{i \in \bigcup_{j \in S} R_j} w_i$) and additive Frequency ($\sum_{j \in S} \sum_{i \in R_j} w_i$).
+  * **Importance Weights & Tournament Heats:** Weighted score $\sum_{j \in S} w_j f_j$ with `STRICT` validation, `FORCE` required prefix variables, `MINPERCENT` screening, `REMOVALCYCLES`, `MAXSETS` checked `u128` operation estimator, and deterministic Tournament Heats partitioning for large $n$.
+* **Verdict:** **100% Verified against Golden Oracle survey matrices ($\le 10^{-6}$).**
 
 ---
 

@@ -16,10 +16,10 @@ use crate::commands::{
     RecodeIntoSameCommand, RelatedSamplesTestCommand, ReliabilityCommand, RepeatedGlmCommand,
     ReplaceMissingCommand, SaveFileCommand, SelectCasesCommand, SetLabelCommand, SetMeasureCommand,
     ShiftValuesCommand, SortCasesCommand, SortVariablesCommand, SplitFileCommand, SummarizeCommand,
-    TheilSenCommand, TransposeCommand, UnivariateGlmCommand, VarAddCommand, VarDeleteCommand,
-    VarRenameCommand, VarSetAlignCommand, VarSetDecimalsCommand, VarSetMissingValuesCommand,
-    VarSetTypeCommand, VarSetValueLabelsCommand, VarSetWidthCommand, VisualBinningCommand,
-    WeightCasesCommand,
+    TheilSenCommand, TransposeCommand, TurfCommand, UnivariateGlmCommand, VarAddCommand,
+    VarDeleteCommand, VarRenameCommand, VarSetAlignCommand, VarSetDecimalsCommand,
+    VarSetMissingValuesCommand, VarSetTypeCommand, VarSetValueLabelsCommand, VarSetWidthCommand,
+    VisualBinningCommand, WeightCasesCommand,
 };
 use serde::{Deserialize, Serialize};
 use serde_json::{json, Value};
@@ -79,6 +79,7 @@ impl CommandBus {
         bus.register(Box::new(LinearRegressionCommand));
         bus.register(Box::new(TheilSenCommand::new()));
         bus.register(Box::new(DemingRegressionCommand::new()));
+        bus.register(Box::new(TurfCommand));
         bus.register(Box::new(LogisticRegressionCommand));
         bus.register(Box::new(MultinomialLogisticCommand));
         bus.register(Box::new(CurveFitCommand));

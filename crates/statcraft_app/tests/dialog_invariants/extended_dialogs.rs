@@ -4,16 +4,17 @@ use statcraft_app::dialogs::{
     render_dummy_dialog, render_factor_dialog, render_linear_regression_dialog,
     render_means_dialog, render_optimal_binning_dialog, render_random_seed_dialog,
     render_rank_cases_dialog, render_reliability_dialog, render_replace_missing_dialog,
-    render_shift_values_dialog, render_time_series_dialog, render_visual_binning_dialog,
-    render_weight_cases_dialog, ConfirmSaveAction, ConfirmSaveDialogState, CountValuesDialogAction,
-    CountValuesDialogState, DateTimeDialogAction, DateTimeDialogState, DateTimeDialogTask,
-    DialogImputeMethod, DummyDialogAction, DummyDialogState, FactorDialogAction, FactorDialogState,
-    LinearRegressionDialogAction, LinearRegressionDialogState, MeansDialogAction, MeansDialogState,
-    OptimalBinningDialogAction, OptimalBinningDialogState, RandomSeedDialogAction,
-    RandomSeedDialogState, RankCasesDialogAction, RankCasesDialogState, ReliabilityDialogAction,
-    ReliabilityDialogState, ReplaceMissingDialogAction, ReplaceMissingDialogState,
-    ReplaceMissingItem, ShiftValuesDialogAction, ShiftValuesDialogState, TimeSeriesDialogAction,
-    TimeSeriesDialogState, TimeSeriesFnType, TimeSeriesItem, VisualBinningDialogAction,
+    render_shift_values_dialog, render_time_series_dialog, render_turf_dialog,
+    render_visual_binning_dialog, render_weight_cases_dialog, ConfirmSaveAction,
+    ConfirmSaveDialogState, CountValuesDialogAction, CountValuesDialogState, DateTimeDialogAction,
+    DateTimeDialogState, DateTimeDialogTask, DialogImputeMethod, DummyDialogAction,
+    DummyDialogState, FactorDialogAction, FactorDialogState, LinearRegressionDialogAction,
+    LinearRegressionDialogState, MeansDialogAction, MeansDialogState, OptimalBinningDialogAction,
+    OptimalBinningDialogState, RandomSeedDialogAction, RandomSeedDialogState,
+    RankCasesDialogAction, RankCasesDialogState, ReliabilityDialogAction, ReliabilityDialogState,
+    ReplaceMissingDialogAction, ReplaceMissingDialogState, ReplaceMissingItem,
+    ShiftValuesDialogAction, ShiftValuesDialogState, TimeSeriesDialogAction, TimeSeriesDialogState,
+    TimeSeriesFnType, TimeSeriesItem, TurfDialogAction, TurfDialogState, VisualBinningDialogAction,
     VisualBinningDialogState, WeightCasesDialogAction, WeightCasesDialogState,
 };
 
@@ -438,4 +439,49 @@ fn test_headless_render_mcp_bridge_dialog() {
     });
 
     assert!(state.is_open);
+}
+
+#[test]
+fn test_headless_render_turf_dialog_and_subdialogs() {
+    let ds = create_test_dataset();
+    let ctx = egui::Context::default();
+    let mut state = TurfDialogState {
+        is_open: true,
+        weights_open: true,
+        advanced_open: true,
+        ..Default::default()
+    };
+
+    assert!(!state.can_execute());
+
+    let _ = ctx.run(Default::default(), |ctx| {
+        let action = render_turf_dialog(ctx, Some(&ds), &mut state);
+        assert_eq!(action, TurfDialogAction::None);
+    });
+
+    assert!(state.is_open);
+    assert!(state.weights_open);
+    assert!(state.advanced_open);
+
+    // Test subdialog rollback on cancel
+    state.weights_strict = false;
+    state.weights_spec_text = "salary 2.0".to_string();
+    state.close_weights(false);
+    assert!(state.weights_strict);
+    assert_eq!(state.weights_spec_text, "");
+
+    state.use_advanced_selection = false;
+    state.advanced_size_text = "30".to_string();
+    state.close_advanced(false);
+    assert!(state.use_advanced_selection);
+    assert_eq!(state.advanced_size_text, "18");
+
+    // Test selecting a variable enables execution
+    state.selected_vars.push("salary".to_string());
+    assert!(state.can_execute());
+    let opts = state.build_options().expect("build options ok");
+    assert_eq!(opts.variables, vec!["salary".to_string()]);
+    assert_eq!(opts.num_to_display, Some(10));
+    assert_eq!(opts.positive_values, vec!["1".to_string()]);
+    assert_eq!(opts.max_operations, 5_000_000);
 }

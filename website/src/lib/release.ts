@@ -23,7 +23,7 @@ export interface ReleaseData {
 }
 
 export const GITHUB_REPO = 'kobaltgit/StatCraft';
-export const DEFAULT_VERSION = '0.4.9';
+export const DEFAULT_VERSION = '0.4.10';
 export const DEFAULT_TAG = `v${DEFAULT_VERSION}`;
 
 /**

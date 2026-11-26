@@ -4301,24 +4301,62 @@
    * Пройдены тесты `theil_sen` в `statcraft_algo` (4/4) и `statcraft_syntax` (2/2), `statcraft_i18n` (14/14 + 4/4), `dialog_invariants` (52/52), `output_viewer_invariants` (12/12), `xtask layers`, `file-guard`, `design-guard`, `fmt --check` и `clippy -- -D warnings`.
    * Обновлены `docs/FEATURES*.md`, `docs/parity-checklist.md`, `docs/SPSS_ALGORITHMS_AUDIT*.md`, `docs/SPSS_UI_CANON_AUDIT*.md`, `docs/CHECKLIST.md`, `website/src/lib/audit-data.ts` и хроника.
 
+---
+
+### Фаза 128: TURF-анализ — математическое ядро и синтаксис SPSS (Этап 1, `specs/034-turf-core-and-syntax`)
+*Время: 26 ноября 2026, 09:15 (~15 минут)*
+
+Реализован Этап 1 (вычислительное ядро и синтаксический слой без UI) для процедуры **TURF (Total Unduplicated Reach and Frequency) Analysis** по спецификации `specs/034-turf-core-and-syntax`:
+1. **Вычислительное ядро L2 (`crates/statcraft_algo/`):**
+   * Созданы 4 листовых модуля $\le 500$ строк (`turf_types.rs`, `turf.rs`, `turf_heats.rs`, `turf_tests.rs`) на 100% Safe Rust без `unwrap`/`expect`/`panic!`;
+   * Реализовано битовое представление откликов респондентов (`Vec<u64>`) с быстрым побитовым объединением `OR` и взвешенным `popcount`, поддержкой `WEIGHT BY` и `filter_$`;
+   * Поддержаны параметры `CRITERIA`, `BESTN`, `NUMBERTODISPLAY`, `MINPERCENT`, `FORCE`, `REMOVALCYCLES`, `MAXSETS` (защита переполнения на `u128`), веса важности `/IMPORTANCE` (`STRICT`) и детерминированная эвристика `Tournament Heats` (`/HEATS`);
+   * Пройдены модульные и Golden Oracle тесты (`turf_tests.rs`).
+2. **Командная шина и синтаксис L5 (`crates/statcraft_syntax/`):**
+   * Реализована команда `TurfCommand` (`stat.turf`) в `commands/turf_cmd.rs` с регистрацией в `CommandBus` и генератором канонического синтаксиса `SPSSINC TURF`;
+   * Добавлен парсинг двухсловной команды `SPSSINC TURF` (и короткого алиаса `TURF`) в `parser.rs` и `mappers/stats/turf.rs` с поддержкой `FORCE`, `/OPTIONS`, `/HEATS` и `/IMPORTANCE`.
+3. **Документация и верификация:**
+   * Обновлены `specs/034-turf-core-and-syntax/spec.md`, `docs/SPSS_ALGORITHMS_AUDIT*.md`, `docs/SPSS_SYNTAX_PARSER_AUDIT*.md`, `docs/CHECKLIST.md` и хроника.
 
 ---
 
-### Фаза 127: Ортогональная регрессия и регрессия Деминга (Feature 033 — `ORTHOGONAL REGRESSION`)
-*Время: 25 ноября 2026, 21:30 (~25 минут)*
+### Фаза 129: Диалоговые окна TURF-анализа и интеграция UI (Этап 2, `specs/035-turf-dialog-parity`)
+*Время: 26 ноября 2026, 09:45 (~20 минут)*
 
-Реализована регрессия с ошибками в обеих переменных **Orthogonal / Deming Regression** (Total Least Squares при $\lambda = 1.0$ и общая регрессия Деминга при произвольном $\lambda > 0$) по спецификации `specs/033-orthogonal-deming-regression`:
-1. **Вычислительное ядро L2 (`crates/statcraft_algo/src/deming_regression/`):**
-   * `types.rs`, `engine.rs`, `mod.rs`, `tests.rs` (все файлы $\le 500$ строк, 100% Safe Rust без `unwrap`/`expect`/`panic!`);
-   * Аналитическая формула Деминга через выборочные моменты $(s_{xx}, s_{yy}, s_{xy})$ с обработкой вырожденных случаев ($s_{xy} = 0$, $N < 3$, $\lambda \le 0$);
-   * Leave-One-Out **Jackknife** для `slope_se`, `intercept_se` и $t$-доверительных интервалов ($df = N - 2$), СКО ортогональных остатков, корреляция Пирсона $r$, бутстреп-обёртка `compute_deming_regression_bootstrap` и Golden Oracle тесты (`<= 1e-6`).
-2. **Командная шина и синтаксис L5 (`crates/statcraft_syntax/`):**
-   * Реализована команда `DemingRegressionCommand` (`stat.regression.orthogonal`) в `commands/deming_regression_cmd.rs` с сохранением `PRE_n`/`RES_n` в `DataSet` с полной поддержкой `undo`;
-   * Добавлен парсинг двухсловной команды `ORTHOGONAL REGRESSION` в `parser.rs` и `mappers/stats/deming_regression.rs`.
-3. **Интерфейс, вывод и локализация L6 (`crates/statcraft_app/`, `locales/`):**
-   * Создан диалог `DemingRegressionDialog` (`dialogs/deming_regression_dialog/`) на `DialogKit` с 5-кнопочной панелью `SubdialogSidebar` (`Параметры...`, `Графики...`, `Сохранить...`, `Стиль...`, `Бутстреп...`), обработчиком в `app_dialogs_deming.rs` и пунктом меню `Анализ → Регрессия → Ортогональная / Деминга...`;
-   * В `views/output_view/tables_deming_regression/{mod.rs, plots.rs}` реализованы таблицы *Model Summary*, *Parameter Estimates (Jackknife SE)*, *Bootstrap*, векторные графики (Scatter + линия Деминга + пунктирная диагональ $Y = X$, Orth. Residuals vs. Fitted) и экспорт в TSV / HTML / TXT;
-   * Добавлены синхронные ключи локализации в `locales/en.ftl` и `locales/ru.ftl`.
-4. **Верификация и документация (DoD):**
-   * Пройдены тесты `deming_regression` в `statcraft_algo` (4/4) и `statcraft_syntax` (2/2), `dialog_invariants` (52/52), `output_viewer_invariants` (12/12), `xtask layers`, `file-guard`, `design-guard`, `fmt --check` и `clippy -- -D warnings`.
-   * Обновлены `docs/FEATURES*.md`, `docs/parity-checklist.md`, `docs/SPSS_ALGORITHMS_AUDIT*.md`, `docs/SPSS_UI_CANON_AUDIT*.md`, `docs/CHECKLIST.md`, `website/src/lib/audit-data.ts` и хроника.
+Реализован Этап 2 (пользовательский интерфейс, диалоговые окна и интеграция в приложение) для процедуры **TURF (Total Unduplicated Reach and Frequency) Analysis** по спецификации `specs/035-turf-dialog-parity`:
+1. **Диалоговые окна L6 (`crates/statcraft_app/src/dialogs/turf_dialog/`):**
+   * Созданы 3 листовых модуля $\le 500$ строк (`state.rs`, `subdialogs.rs`, `mod.rs`) строго по стандартам `DialogKit` и 100% Safe Rust без паник;
+   * Главный диалог `TurfDialog`: размер `DialogSize::Compute`, двухколоночный выбор переменных `VariablePicker` (`render_variable_list_panel`) с векторными стрелками переноса `TransferButton`, блок `GroupBox` («Ограничение размера») с чекбоксом прерывания при превышении лимита операций и полем `max_operations`, 6 полей числовых и строковых параметров (`max_combinations`, `num_to_display`, `min_positive_pct`, `positive_values`, `always_required`, `removal_cycles`), чекбоксы `Reach and Frequency chart` и `Show only results for maximum combination of variables`, боковая панель `SubdialogSidebar` и нижняя панель действий `DialogActionBar` (`OK`, `Paste`, `Reset`, `Cancel`, `Help`);
+   * Поддиалог `Importance Weights`: построен на `DialogShell::subdialog`, группа `GroupBox` («Проверка весов») с радиокнопками `Strict` / `Default 1`, многострочный ввод пар «переменная вес», подсказка формата и `SubdialogActionBar` с транзакционным откатом при отмене;
+   * Поддиалог `Advanced Selection`: построен на `DialogShell::subdialog`, чекбокс эвристики для больших задач, группа параметров с переключением `Automatic` / `Specify`, полями размера выборки и числа победителей, и `SubdialogActionBar` с транзакционным откатом при отмене.
+2. **Интеграция в приложение и локализация:**
+   * Добавлен пункт меню **Анализ > Описательные статистики > TURF-анализ...** (`menu-analyze-turf`), неактивный при пустом датасете;
+   * Реализован обработчик в `app_dialogs_stats.rs` со статусом `StatusMessage::TurfExecuted` и логированием синтаксиса `SPSSINC TURF` в Output Viewer;
+   * Добавлены ключи локализации в `locales/en.ftl` и `locales/ru.ftl` с нулевым строковым хардкодом.
+3. **Верификация и DoD:**
+   * Успешно пройдены тесты `dialog_invariants` (53/53, включая headless-тест `test_headless_render_turf_dialog_and_subdialogs`);
+   * Линтеры `design-guard`, `file-guard` и `clippy -- -D warnings` завершились без единого замечания;
+   * Обновлены `docs/SPSS_UI_CANON_AUDIT*.md`, `docs/CHECKLIST.md` и двуязычная хроника.
+
+---
+
+### Фаза 130: TURF-анализ — Таблицы Output Viewer, векторный график, экспорт и паритет (Этап 3, `specs/036-turf-output-and-charts`)
+*Время: 26 ноября 2026, 10:20 (~25 минут)*
+
+Реализован Этап 3 (сводные таблицы Output Viewer, векторный график кривых Reach и Frequency на базе egui painter, экспорт в TSV/HTML и паритет) для процедуры **TURF (Total Unduplicated Reach and Frequency) Analysis** по спецификации `specs/036-turf-output-and-charts`:
+1. **Сводные таблицы и визуализация L6 (`crates/statcraft_app/src/views/output_view/tables_turf/`):**
+   * Созданы 3 изолированных модуля $\le 500$ строк (`mod.rs`, `charts.rs`, `export.rs`) на 100% Safe Rust без паник;
+   * Таблица `Case & Parameter Summary`: сводка валидного числа наблюдений $N$, положительных значений (`CRITERIA`), отфильтрованных переменных по порогу `MINPERCENT`, оценки операций (`MAXSETS`), параметров эвристик `HEATS`, обязательных переменных `FORCE` и циклов исключения `REMOVALCYCLES`;
+   * Таблицы `Reach and Frequency Table(s)`: интерактивные сводные таблицы по циклам исключения и размерам комбинаций $k = 1 \dots K_{\max}$ со столбцами `Size`, `Variables`, `Reach`, `% of Cases`, `Frequency`, `% of Responses`, `Mean Responses` и `Weighted Score` (при наличии весов);
+   * Векторный график `Reach and Frequency Chart`: 100% векторная отрисовка на `ui.painter()` и токенах дизайн-системы `Tokens` (кривая Reach % цветом Accent Blue с круглыми маркерами, кривая Frequency % цветом Coral с квадратными маркерами, координатная сетка 0..100%, тики, легенда, оси, ноль эмодзи/тофу);
+   * Экспорт данных: TSV-генератор `turf_to_tsv` и модель отчетов `turf_to_report_tables` для встроенного экспорта в HTML и TXT.
+2. **Интеграция в движок представления и синтаксиса:**
+   * Добавлен вариант `OutputItemKind::Turf(Box<TurfOutputItem>)` в `model.rs`;
+   * Подключен вызов `add_turf` в `app_dialogs_stats.rs` при выполнении из диалогового окна и в `syntax_runner.rs` при пакетном исполнении синтаксиса `SPSSINC TURF` / `TURF`;
+   * Реализована отрисовка в `view.rs`, экспорт в `export.rs` и `extract_item_tsv` в `mod.rs`.
+3. **Верификация, паритет и DoD:**
+   * Написан комплексный регрессионный тест `test_turf_stage3_output_invariants_and_export` в `output_viewer_invariants/turf.rs`;
+   * Зарегистрирован пункт в `docs/parity-checklist.md` (`Analyze > Descriptive Statistics > TURF Analysis` | `stat.turf` | `Done`), обновлен трекер `cargo run -p xtask -j 1 -- parity`;
+   * Обновлены `docs/FEATURES.md`, `docs/FEATURES_RU.md`, `docs/ROADMAP.md`, `docs/ROADMAP.en.md`, `docs/CHECKLIST.md` и хроники;
+   * Пройдены все проверки Quality Gate (`file-guard`, `design-guard`, `layers`, `clippy`, `cargo test`).
+

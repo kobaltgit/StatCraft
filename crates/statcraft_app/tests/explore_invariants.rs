@@ -126,10 +126,10 @@ fn test_explore_output_viewer_invariants() {
 
     // Verify TSV export contents
     let tsv = explore_to_tsv(&result);
-    assert!(tsv.contains("Case Processing Summary"));
-    assert!(tsv.contains("Descriptives"));
-    assert!(tsv.contains("Tests of Normality"));
-    assert!(tsv.contains("Extreme Values"));
+    assert!(tsv.contains(&statcraft_i18n::t!("output-explore-case-processing")));
+    assert!(tsv.contains(&statcraft_i18n::t!("output-explore-descriptives")));
+    assert!(tsv.contains(&statcraft_i18n::t!("output-explore-normality")));
+    assert!(tsv.contains(&statcraft_i18n::t!("output-explore-extremes")));
     assert!(tsv.contains("Lilliefors"));
 
     // Verify OutputViewer UI rendering without panics
@@ -180,22 +180,22 @@ fn test_explore_stage3_tables_plots_bootstrap_and_exports() {
     result.bootstrap = Some(boot);
 
     let tsv = explore_to_tsv(&result);
-    assert!(tsv.contains("M-Estimators"));
-    assert!(tsv.contains("Percentiles"));
-    assert!(tsv.contains("Test of Homogeneity of Variance"));
-    assert!(tsv.contains("Case Label"));
-    assert!(tsv.contains("Bootstrap for Descriptives"));
+    assert!(tsv.contains(&statcraft_i18n::t!("output-explore-m-estimators")));
+    assert!(tsv.contains(&statcraft_i18n::t!("output-explore-percentiles")));
+    assert!(tsv.contains(&statcraft_i18n::t!("output-explore-homogeneity-title")));
+    assert!(tsv.contains(&statcraft_i18n::t!("output-explore-case-label")));
+    assert!(tsv.contains(&statcraft_i18n::t!("output-explore-bootstrap-title")));
 
     let mut state = OutputViewerState::new();
     state.add_explore(result);
 
     let html = export_output_to_html(&state);
-    assert!(html.contains("M-Estimators"));
-    assert!(html.contains("Test of Homogeneity of Variance"));
+    assert!(html.contains(&statcraft_i18n::t!("output-explore-m-estimators")));
+    assert!(html.contains(&statcraft_i18n::t!("output-explore-homogeneity-title")));
 
     let txt = export_output_to_txt(&state);
-    assert!(txt.contains("Percentiles"));
-    assert!(txt.contains("Bootstrap for Descriptives"));
+    assert!(txt.contains(&statcraft_i18n::t!("output-explore-percentiles")));
+    assert!(txt.contains(&statcraft_i18n::t!("output-explore-bootstrap-title")));
 
     let ctx = Context::default();
     let _ = ctx.run(Default::default(), |ctx| {

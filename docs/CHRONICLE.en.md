@@ -4609,24 +4609,62 @@ Implemented non-parametric robust simple linear regression **Theil–Sen Estimat
    * Passed `theil_sen` tests in `statcraft_algo` (4/4) and `statcraft_syntax` (2/2), `statcraft_i18n` (14/14 + 4/4), `dialog_invariants` (52/52), `output_viewer_invariants` (12/12), `xtask layers`, `file-guard`, `design-guard`, `fmt --check`, and `clippy -- -D warnings`.
    * Updated `docs/FEATURES*.md`, `docs/parity-checklist.md`, `docs/SPSS_ALGORITHMS_AUDIT*.md`, `docs/SPSS_UI_CANON_AUDIT*.md`, `docs/CHECKLIST.md`, `website/src/lib/audit-data.ts`, and both chronicles.
 
+---
+
+### Phase 128: TURF Analysis Core Engine & SPSS Syntax (Stage 1, `specs/034-turf-core-and-syntax`)
+*Time: November 26, 2026, 09:15 (~15 minutes)*
+
+Implemented Stage 1 (zero-UI computational engine and syntax layer) for **TURF (Total Unduplicated Reach and Frequency) Analysis** per `specs/034-turf-core-and-syntax`:
+1. **L2 Mathematical Engine (`crates/statcraft_algo/`):**
+   * Added 4 leaf modules $\le 500$ lines (`turf_types.rs`, `turf.rs`, `turf_heats.rs`, `turf_tests.rs`) in 100% Safe Rust with zero `unwrap`/`expect`/`panic!`;
+   * Implemented packed `Vec<u64>` respondent bitsets with fast bitwise `OR` subset unions and weighted popcount, respecting `WEIGHT BY` and `filter_$`;
+   * Supported `CRITERIA`, `BESTN`, `NUMBERTODISPLAY`, `MINPERCENT`, `FORCE`, `REMOVALCYCLES`, `MAXSETS` (checked `u128` estimator), `/IMPORTANCE` weights (`STRICT`), and deterministic `Tournament Heats` (`/HEATS`) heuristic;
+   * Verified with unit and Golden Oracle tests (`turf_tests.rs`).
+2. **L5 Command Bus & Syntax (`crates/statcraft_syntax/`):**
+   * Implemented `TurfCommand` (`stat.turf`) in `commands/turf_cmd.rs`, registered in `CommandBus`, with canonical `SPSSINC TURF` emission in `to_sps()`;
+   * Added two-word `SPSSINC TURF` (and `TURF` alias) parsing in `parser.rs` and `mappers/stats/turf.rs` covering `FORCE`, `/OPTIONS`, `/HEATS`, and `/IMPORTANCE`.
+3. **Documentation & Verification:**
+   * Updated `specs/034-turf-core-and-syntax/spec.md`, `docs/SPSS_ALGORITHMS_AUDIT*.md`, `docs/SPSS_SYNTAX_PARSER_AUDIT*.md`, `docs/CHECKLIST.md`, and both chronicles.
 
 ---
 
-### Phase 127: Orthogonal / Deming Regression (Feature 033 — `ORTHOGONAL REGRESSION`)
-*Time: November 25, 2026, 21:30 (~25 minutes)*
+### Phase 129: TURF Analysis Dialog & UI Integration (Stage 2, `specs/035-turf-dialog-parity`)
+*Time: November 26, 2026, 09:45 (~20 minutes)*
 
-Implemented errors-in-variables **Orthogonal / Deming Regression** (Total Least Squares at $\lambda = 1.0$ and general Deming regression for arbitrary $\lambda > 0$) per `specs/033-orthogonal-deming-regression`:
-1. **L2 Mathematical Engine (`crates/statcraft_algo/src/deming_regression/`):**
-   * `types.rs`, `engine.rs`, `mod.rs`, `tests.rs` (all files $\le 500$ lines, 100% Safe Rust with zero `unwrap`/`expect`/`panic!`);
-   * Closed-form Deming estimator via sample moments $(s_{xx}, s_{yy}, s_{xy})$ with degenerate-case guards ($s_{xy} = 0$, $N < 3$, $\lambda \le 0$);
-   * Leave-One-Out **Jackknife** for `slope_se`, `intercept_se`, and $t$-confidence intervals ($df = N - 2$), orthogonal residual SD, Pearson $r$, `compute_deming_regression_bootstrap`, and Golden Oracle tests (`<= 1e-6`).
-2. **L5 Command Bus & Syntax (`crates/statcraft_syntax/`):**
-   * Implemented `DemingRegressionCommand` (`stat.regression.orthogonal`) in `commands/deming_regression_cmd.rs` with `PRE_n`/`RES_n` dataset saving and full `undo` support;
-   * Added two-word `ORTHOGONAL REGRESSION` parsing in `parser.rs` and `mappers/stats/deming_regression.rs`.
-3. **L6 UI, Output & Localization (`crates/statcraft_app/`, `locales/`):**
-   * Built `DemingRegressionDialog` (`dialogs/deming_regression_dialog/`) using `DialogKit` with a 5-button `SubdialogSidebar` (`Options...`, `Plots...`, `Save...`, `Style...`, `Bootstrap...`), handler in `app_dialogs_deming.rs`, and menu entry `Analyze → Regression → Orthogonal / Deming...`;
-   * Implemented *Model Summary*, *Parameter Estimates (Jackknife SE)*, *Bootstrap* table, vector plots (Scatter + Deming Line + dashed $Y = X$ identity line, Orth. Residuals vs. Fitted), and TSV/HTML/TXT export in `views/output_view/tables_deming_regression/{mod.rs, plots.rs}`;
-   * Added complete Fluent keys in `locales/en.ftl` and `locales/ru.ftl`.
-4. **Verification & DoD:**
-   * Passed `deming_regression` tests in `statcraft_algo` (4/4) and `statcraft_syntax` (2/2), `dialog_invariants` (52/52), `output_viewer_invariants` (12/12), `xtask layers`, `file-guard`, `design-guard`, `fmt --check`, and `clippy -- -D warnings`.
-   * Updated `docs/FEATURES*.md`, `docs/parity-checklist.md`, `docs/SPSS_ALGORITHMS_AUDIT*.md`, `docs/SPSS_UI_CANON_AUDIT*.md`, `docs/CHECKLIST.md`, `website/src/lib/audit-data.ts`, and both chronicles.
+Implemented Stage 2 (user interface, modal dialogs, and application wiring) for **TURF (Total Unduplicated Reach and Frequency) Analysis** per `specs/035-turf-dialog-parity`:
+1. **L6 Dialogs (`crates/statcraft_app/src/dialogs/turf_dialog/`):**
+   * Built 3 leaf modules $\le 500$ lines (`state.rs`, `subdialogs.rs`, `mod.rs`) strictly following `DialogKit` standards in 100% Safe Rust without panics;
+   * Main dialog `TurfDialog`: `DialogSize::Compute`, dual-list variable picker via `VariablePicker` (`render_variable_list_panel`) and vector `TransferButton`, `GroupBox` ("Limit size") with abort checkbox and `max_operations`, 6 parameter inputs (`max_combinations`, `num_to_display`, `min_positive_pct`, `positive_values`, `always_required`, `removal_cycles`), `Reach and Frequency chart` and `Show only results for maximum combination` checkboxes, `SubdialogSidebar`, and standard `DialogActionBar` (`OK`, `Paste`, `Reset`, `Cancel`, `Help`);
+   * Subdialog `Importance Weights`: `DialogShell::subdialog`, `GroupBox` ("Weight Checking") with `Strict` / `Default 1` radio buttons, multiline weight specification input with helper hint, and `SubdialogActionBar` with transactional rollback on Cancel;
+   * Subdialog `Advanced Selection`: `DialogShell::subdialog`, large problems heuristic checkbox, parameter group with `Automatic` / `Specify` toggle and conditional size/winner inputs, and `SubdialogActionBar` with transactional rollback on Cancel.
+2. **App Wiring & Localization:**
+   * Added menu item under **Analyze > Descriptive Statistics > TURF Analysis...** (`menu-analyze-turf`), disabled when no dataset is loaded;
+   * Integrated runner in `app_dialogs_stats.rs` with `StatusMessage::TurfExecuted` and canonical `SPSSINC TURF` syntax logging into Output Viewer;
+   * Added complete Fluent translation keys in `locales/en.ftl` and `locales/ru.ftl` with zero hardcoded strings.
+3. **Verification & DoD:**
+   * Passed `dialog_invariants` test suite (53/53, including headless test `test_headless_render_turf_dialog_and_subdialogs`);
+   * Linters `design-guard`, `file-guard`, and `clippy -- -D warnings` passed with zero errors or warnings;
+   * Synchronized `docs/SPSS_UI_CANON_AUDIT*.md`, `docs/CHECKLIST.md`, and both chronicles.
+
+---
+
+### Phase 130: TURF Analysis Output Tables, Vector Chart, Export & Parity (Stage 3, `specs/036-turf-output-and-charts`)
+*Time: November 26, 2026, 10:20 (~25 minutes)*
+
+Implemented Stage 3 (Output Viewer Pivot Tables, vector Reach & Frequency chart via egui painter, TSV/HTML export, and parity tracking) for **TURF (Total Unduplicated Reach and Frequency) Analysis** per `specs/036-turf-output-and-charts`:
+1. **Pivot Tables & Visualizations L6 (`crates/statcraft_app/src/views/output_view/tables_turf/`):**
+   * Created 3 isolated leaf modules $\le 500$ lines (`mod.rs`, `charts.rs`, `export.rs`) in 100% Safe Rust without panics;
+   * `Case & Parameter Summary` Table: summary of valid cases $N$, positive response criteria (`CRITERIA`), excluded variables filtered by `MINPERCENT`, operations estimate (`MAXSETS`), heuristic parameters (`HEATS`), always required variables (`FORCE`), and removal cycles (`REMOVALCYCLES`);
+   * `Reach and Frequency Table(s)`: interactive pivot tables per removal cycle and combination size $k = 1 \dots K_{\max}$ with columns `Size`, `Variables`, `Reach`, `% of Cases`, `Frequency`, `% of Responses`, `Mean Responses`, and `Weighted Score` (when weights are configured);
+   * `Reach and Frequency Chart`: 100% vector rendering using `ui.painter()` and `Tokens` design system (Accent Blue Reach % curve with circle markers, Coral Frequency % curve with square markers, 0..100% coordinate grid, ticks, legend, axes, zero emoji/tofu glyphs);
+   * Report Export: TSV generator `turf_to_tsv` and report model `turf_to_report_tables` powering full document HTML and TXT export.
+2. **Presentation & Syntax Integration:**
+   * Added `OutputItemKind::Turf(Box<TurfOutputItem>)` variant to `model.rs`;
+   * Wired `add_turf` dispatch in `app_dialogs_stats.rs` upon dialog execution and in `syntax_runner.rs` for `SPSSINC TURF` / `TURF` batch execution;
+   * Hooked up display rendering in `view.rs`, document export in `export.rs`, and TSV clipboard extraction in `mod.rs`.
+3. **Verification, Parity & DoD:**
+   * Added comprehensive regression test `test_turf_stage3_output_invariants_and_export` in `output_viewer_invariants/turf.rs`;
+   * Registered `Analyze > Descriptive Statistics > TURF Analysis` | `stat.turf` | `Done` in `docs/parity-checklist.md`, verified via `cargo run -p xtask -j 1 -- parity`;
+   * Updated `docs/FEATURES.md`, `docs/FEATURES_RU.md`, `docs/ROADMAP.md`, `docs/ROADMAP.en.md`, `docs/CHECKLIST.md`, and both chronicles;
+   * Passed all Quality Gate checks (`file-guard`, `design-guard`, `layers`, `clippy`, `cargo test`).
+

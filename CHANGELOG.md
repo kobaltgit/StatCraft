@@ -7,6 +7,34 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [0.4.10] - 2026-11-26
+
+### Added
+- **TURF Analysis (`SPSSINC TURF`) Full SPSS Parity (Features 034–036):**
+  - Implemented clean-room combinatorial Total Unduplicated Reach and Frequency engine in `statcraft_algo` (`turf.rs`, `turf_types.rs`, `turf_heats.rs`, `turf_tests.rs`) using packed `Vec<u64>` respondent bitsets, `WEIGHT BY` and `filter_$` support, `FORCE`, `MINPERCENT`, `REMOVALCYCLES`, `MAXSETS` checked `u128` operation guard, `IMPORTANCE` weights (`STRICT=YES/NO`), and deterministic Tournament Heats (`HEATSIZE`, `NUMWINNERS`) for large variable sets.
+  - Added `stat.turf` `CommandBus` command (`turf_cmd.rs`) and full `SPSSINC TURF` / `TURF` `.sps` syntax round-trip (`CRITERIA=`, `BESTN=`, `NUMBERTODISPLAY=`, `MINPERCENT=`, `PLOT=`, `REMOVALCYCLES=`, `MAXSETS=`, `/HEATS`, `/IMPORTANCE`).
+  - Added `TurfDialog` with `Importance Weights...` and `Advanced Selection...` subdialogs using `DialogKit` (`DialogSize::Compute`) under **Analyze > Descriptive Statistics > TURF Analysis...**.
+  - Added Output Viewer Pivot Tables (Case & Parameter Summary, Reach and Frequency per cycle/size with variable `Label` resolution), vector Reach & Frequency curves, and TSV/HTML/TXT export.
+- **Global Static i18n Linter (`xtask i18n-guard`):**
+  - Added `xtask/src/i18n_guard.rs` and integrated it into `xtask ci` to enforce zero raw UI strings or unlocalized table headers across all dialogs and views.
+
+### Fixed
+- **TURF & Output Viewer:** Fixed `frequency_pct` (`% of Responses`) denominator to divide by total positive responses across active variables instead of valid case count, localized all TURF and Explore report table headers (`Parameter | Value`, etc.), and fixed `TurfDialog` right sidebar column width.
+
+---
+
+## [0.4.9] - 2026-11-25
+
+### Added
+- **Theil–Sen Estimator (Feature 032):** Robust simple linear regression, Mann–Kendall trend test, Bootstrap, PRE/RES saving, scatter/residual plots, and `THEIL SEN` `.sps` syntax.
+- **Orthogonal / Deming Regression (Feature 033):** Closed-form Deming (`lambda = 1.0` & custom `lambda > 0`), Jackknife SE & t-CI, Bootstrap, PRE/RES saving, scatter plot with `Y=X` line, and `ORTHOGONAL REGRESSION` `.sps` syntax.
+- **Linux AppImage:** Automated `statcraft-linux-x64.AppImage` build in GitHub Releases.
+
+### Fixed
+- **Output Viewer & i18n:** Translated hardcoded Notes labels, fixed Deming `Y=X` plot scaling, added axis padding & Y-ticks, eliminated `-0.0000`, auto-fitted table column widths, and rendered variable `Label`s.
+
+---
+
 ## [0.4.8] - 2026-11-25
 
 ### Added

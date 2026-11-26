@@ -63,6 +63,7 @@ pub mod ttest_indep_define_groups;
 pub mod ttest_indep_dialog;
 pub mod ttest_onesample_dialog;
 pub mod ttest_paired_dialog;
+pub mod turf_dialog;
 pub mod value_labels_dialog;
 pub mod variable_type_dialog;
 pub mod weight_cases_dialog;
@@ -231,6 +232,7 @@ pub use ttest_onesample_dialog::{
 pub use ttest_paired_dialog::{
     render_ttest_paired_dialog, PairedSamplesTTestDialogAction, PairedSamplesTTestDialogState,
 };
+pub use turf_dialog::{render_turf_dialog, TurfDialogAction, TurfDialogState};
 pub use value_labels_dialog::{
     render_value_labels_dialog, ValueLabelsDialogAction, ValueLabelsDialogState,
 };

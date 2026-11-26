@@ -98,6 +98,8 @@ $$\text{Диалог / Команда} \xrightarrow{\text{to\_sps}} \text{Стр
 * `test_roundtrip_weight_cases` — ПРОЙДЕН
 * `test_roundtrip_select_cases` — ПРОЙДЕН
 * `test_roundtrip_ttest_independent` — ПРОЙДЕН
+* `turf_cmd::tests::test_turf_command_execute_and_to_sps_roundtrip` — ПРОЙДЕН (`SPSSINC TURF VARIABLES=... FORCE=... /OPTIONS ... /HEATS ... /IMPORTANCE ...`)
+* `mappers::stats::turf::tests::test_map_spssinc_turf_and_alias` — ПРОЙДЕН (`SPSSINC TURF` и алиас `TURF`)
 
 ### 3.2. Фаззинг и проверка инварианта Never-Crash
 Тестирование на 20+ некорректных, обрезанных и зашумленных синтаксических фрагментах:

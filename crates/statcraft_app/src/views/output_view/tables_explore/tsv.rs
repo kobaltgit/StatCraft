@@ -117,7 +117,7 @@ mod tests {
         };
 
         let tsv = explore_to_tsv(&res);
-        assert!(tsv.contains("Case Processing Summary"));
+        assert!(tsv.contains(&statcraft_i18n::t!("output-explore-case-processing")));
         assert!(tsv.contains("salary\t10\t100.0%\t0\t0.0%\t10\t100.0%"));
     }
 }

@@ -255,6 +255,9 @@ pub fn render_output_view_with_workspace(
                                     OutputItemKind::DemingRegression(item) => {
                                         render_spss_deming_regression(ui, item);
                                     }
+                                    OutputItemKind::Turf(item) => {
+                                        super::tables_turf::render_spss_turf(ui, item);
+                                    }
                                     OutputItemKind::PartialCorrelations(res) => {
                                         render_spss_partial_corr_tables(ui, res);
                                     }

@@ -60,6 +60,11 @@ pub fn run_ci(root: &Path) -> Result<(), String> {
     crate::design_guard::check_dialog_design(root)?;
     println!(">>> [OK] Design system standards");
 
+    // 5b. i18n guard (Zero-Hardcode UI strings)
+    println!("\n=== [CI Gate] i18n Guard (xtask i18n-guard) ===");
+    crate::i18n_guard::check_i18n(root)?;
+    println!(">>> [OK] Zero hardcoded UI strings");
+
     // 6. Full workspace test suite with -j 1
     let mut test_cmd = Command::new("cargo");
     test_cmd
