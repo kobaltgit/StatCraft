@@ -102,8 +102,8 @@ StatCraft enforces a strict downward dependency hierarchy. Upward or circular de
 ```text
 L6: statcraft_app        (Desktop GUI: egui, eframe, egui_dock, DialogKit, Viewports)
  └── L5: statcraft_syntax (Engine CommandBus, .sps syntax parser & serializer)
-      ├── L4: statcraft_reporting (Multi-level Pivot Tables, HTML/TSV/TXT/MD export)
-      ├── L3: statcraft_charts    (Vector plotting, egui_plot, Brushing & Linking)
+      ├── L4: statcraft_reporting (Multi-level Pivot Tables, TSV/HTML/TXT export)
+      ├── L3: statcraft_charts [Planned] (Vector plotting, currently rendered in statcraft_app)
       └── L2: statcraft_algo      (Pure statistical algorithms in Safe Rust)
            └── L1: statcraft_core (In-memory structures: DataSet, VariableDictionary)
                 └── L0: statcraft_io (Codecs: .stc Container, SPSS .sav, CSV, Excel .xlsx)

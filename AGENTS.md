@@ -62,8 +62,8 @@
 ```text
 L6: statcraft_app        (Десктопный GUI на egui / eframe / egui_dock)
  └── L5: statcraft_syntax (Командная шина CommandBus, парсер синтаксиса .sps)
-      ├── L4: statcraft_reporting (Модель Pivot Tables, экспорт PDF / DOCX / LaTeX)
-      ├── L3: statcraft_charts    (Векторные графики egui_plot, Brushing & Linking)
+      ├── L4: statcraft_reporting (Модель Pivot Tables, экспорт TSV / HTML / TXT)
+      ├── L3: statcraft_charts [Planned] (Графика egui_plot, пока внутри statcraft_app)
       └── L2: statcraft_algo      (Математика, тесты, алгоритмы на Safe Rust)
            └── L1: statcraft_core (DataSet, VariableDictionary, DeltaBuffer)
                 └── L0: statcraft_io (Кодеки .stc Container, SPSS .sav, CSV, Excel)

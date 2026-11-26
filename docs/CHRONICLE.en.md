@@ -3836,9 +3836,9 @@ Architected and deployed the official web platform and high-usability Wiki/Docum
 2. **Architectural Drafting Aesthetic (Blueprint Style):**
    * Adapted PhotoCraft Companion's drafting visual identity to StatCraft's theme tokens (`crates/statcraft_app/src/theme.rs`): dark graphite backgrounds `#14161a` / `#0c0d10`, hairline rules, `.tick` crosshairs, sticky `.hud-label` eyebrows, and measure scale accents (Scale `#4696e6`, Ordinal `#e6a028`, Nominal `#46be78`).
 3. **Interactive Landing Page Modules:**
-   * `Hero`: academic manifesto, v0.4.3 build status, 4 architectural guarantee chips (20/20 SciPy Oracle blocks, 0 panics, Safe Rust, socket 18492);
+   * `Hero`: academic manifesto, v0.4.3 build status, 4 architectural guarantee chips (20/20 SciPy Oracle blocks, 0 panics, Safe Rust, socket 18493);
    * `OracleBenchmark`: searchable and filterable 20-block verification matrix with live KaTeX mathematical formula rendering, IBM algorithm references, and inline discrepancy report triggers;
-   * `AgentLab`: interactive terminal demonstrating Model Context Protocol (MCP) and local JSON-RPC socket 18492 integration with AI assistants (Claude, Antigravity, local LLMs);
+   * `AgentLab`: interactive terminal demonstrating Model Context Protocol (MCP) and local JSON-RPC socket 18493 integration with AI assistants (Claude, Antigravity, local LLMs);
    * `ArchitectureGuarantee`: L0–L6 layered hierarchy blueprint and comparative advantages of 100% Safe Rust over legacy C++ codebases;
    * `CallForResearchers`: scholarly collaboration guidelines with privacy-first protocols for sharing mock cases and covariance matrices.
 4. **Ergonomic 3-Column Wiki / Knowledge Portal (`/docs` & `/ru/docs`):**

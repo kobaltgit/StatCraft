@@ -15,9 +15,9 @@ export function AgentLab({ lang = 'en' }: AgentLabProps) {
   const t = {
     en: {
       eyebrow: '03 / AGENT-FIRST PROTOCOL',
-      title: 'Model Context Protocol (MCP) & Local IPC Socket 18492',
+      title: 'Model Context Protocol (MCP) & Local IPC Socket 18493',
       lead: 'StatCraft is built from the ground up for the agentic era. Any AI assistant—Antigravity, Claude, or local LLMs—can autonomously inspect variables, execute commands, and write peer-reviewed interpretations directly into the Output Viewer.',
-      badgeSocket: 'LOCAL IPC SOCKET: 127.0.0.1:18492',
+      badgeSocket: 'LOCAL IPC SOCKET: 127.0.0.1:18493',
       badgeStd: 'MODEL CONTEXT PROTOCOL (MCP 1.0)',
       tab1: 'MCP Tool Call',
       tab2: 'Raw JSON-RPC',
@@ -31,9 +31,9 @@ export function AgentLab({ lang = 'en' }: AgentLabProps) {
     },
     ru: {
       eyebrow: '03 / AGENT-FIRST АРХИТЕКТУРА',
-      title: 'Model Context Protocol (MCP) и сокет IPC 18492',
+      title: 'Model Context Protocol (MCP) и сокет IPC 18493',
       lead: 'StatCraft спроектирован для эпохи ИИ-агентов. Любой ассистент — Antigravity, Claude или локальная LLM — может исследовать переменные в памяти, выполнять команды и вставлять научные интерпретации прямо в Output Viewer.',
-      badgeSocket: 'ЛОКАЛЬНЫЙ СОКЕТ IPC: 127.0.0.1:18492',
+      badgeSocket: 'ЛОКАЛЬНЫЙ СОКЕТ IPC: 127.0.0.1:18493',
       badgeStd: 'ПРОТОКОЛ MODEL CONTEXT PROTOCOL (MCP 1.0)',
       tab1: 'Вызов инструмента MCP',
       tab2: 'Сырой JSON-RPC',
@@ -226,9 +226,9 @@ An independent-samples t-test was conducted to compare cholesterol levels in con
             <div className="px-4 py-2 bg-[#14161a] border-t border-line text-[11px] font-mono text-text-muted flex flex-col sm:flex-row sm:items-center justify-between gap-1">
               <span className="flex items-center gap-1.5 text-emerald">
                 <CheckCircle2 className="w-3.5 h-3.5 shrink-0" />
-                <span>Socket 18492 Ready (Async Tokio)</span>
+                <span>Socket 18493 Ready (Threaded std::net)</span>
               </span>
-              <span className="text-text-muted/70">L5 / statcraft_bridge</span>
+              <span className="text-text-muted/70">statcraft_bridge</span>
             </div>
           </div>
         </div>

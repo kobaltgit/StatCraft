@@ -364,7 +364,7 @@ export const AUDIT_BLOCKS: AuditBlock[] = [
     referencePage: "Record Types 1,2,3/4,7 & RFC 4180",
     implementationFiles: ["spss_loader/", "excel_loader.rs", "csv_loader.rs", "csv_writer.rs", "stc_codec.rs"],
     status: "verified",
-    oraclePrecision: "Lossless Roundtrip Guarantee",
+    oraclePrecision: ".sav Decoder & .stc/.csv Roundtrip",
     formulas: [
       {
         name: "SPSS Binary Record Parser",

@@ -175,7 +175,7 @@ In accordance with Rule 1.3 of our project charter:
     descriptionEn: "Complete specification for connecting Claude Code, Antigravity, and local LLMs to StatCraft.",
     descriptionRu: "Исчерпывающая спецификация подключения Claude Code, Antigravity и локальных LLM к StatCraft.",
     oracleStatus: "MCP 1.0 JSON-RPC Specification",
-    spssPage: "Crates: statcraft_bridge / tokio async socket",
+    spssPage: "Crates: statcraft_bridge (std::net threaded socket)",
     syntaxExample: `{
   "method": "statcraft.procedure.execute",
   "params": {
@@ -188,7 +188,7 @@ In accordance with Rule 1.3 of our project charter:
       { id: "output-injection", titleEn: "3. Direct Output Injection", titleRu: "3. Вставка результатов в Output Viewer" },
     ],
     contentEn: `### 1. Local IPC Architecture
-When StatCraft is launched, the \`statcraft_bridge\` module spins up an asynchronous JSON-RPC 2.0 server bound to localhost port \`18492\`.
+When StatCraft is launched, the \`statcraft_bridge\` module spins up a local JSON-RPC 2.0 server bound to localhost port \`18493\`.
 This allows local AI assistants to establish a secure, zero-cloud connection to the running dataset session without exposing sensitive patient or research data over the public internet.
 
 ### 2. MCP Toolset Specification
@@ -202,7 +202,7 @@ External agents utilize the standard Model Context Protocol (MCP) to interact wi
 ### 3. Direct Output Injection
 Unlike generic chatbots where analytical results remain trapped in the chat sidebar, StatCraft AI integrations write directly into the official scientific report tree, creating persistent, printable, and exportable research artifacts.`,
     contentRu: `### 1. Архитектура локального сокета
-При запуске StatCraft модуль \`statcraft_bridge\` инициализирует асинхронный сервер JSON-RPC 2.0 на порту \`18492\` (localhost).
+При запуске StatCraft модуль \`statcraft_bridge\` инициализирует локальный сервер JSON-RPC 2.0 на порту \`18493\` (localhost).
 Это позволяет локальным ИИ-ассистентам безопасно взаимодействовать с текущей сессией данных без передачи конфиденциальной информации в публичные облака.
 
 ### 2. Спецификация инструментов MCP
@@ -278,22 +278,20 @@ StatCraft организует датасет в виде типизирован
     category: "data-management",
     categoryTitleEn: "Data Management & IO",
     categoryTitleRu: "Управление данными и ввод-вывод",
-    titleEn: "SPSS .sav & .zsav Codecs",
-    titleRu: "Кодеки файлов SPSS .sav и .zsav",
-    descriptionEn: "Streaming binary reader and writer for classical and zlib-compressed SPSS system files.",
-    descriptionRu: "Потоковое чтение и запись бинарных системных файлов SPSS с компрессией zlib.",
+    titleEn: "SPSS .sav & .zsav Decoder",
+    titleRu: "Декодер файлов SPSS .sav и .zsav",
+    descriptionEn: "Streaming binary reader for classical and zlib-compressed SPSS system files.",
+    descriptionRu: "Потоковое чтение бинарных системных файлов SPSS с компрессией zlib.",
     oracleStatus: "Clean-Room GNU PSPP Spec Verified",
     spssPage: "Crates: statcraft_io",
-    syntaxExample: `GET FILE='survey_2026.sav'.
-SAVE OUTFILE='survey_cleaned.zsav'
-  /COMPRESSED.`,
+    syntaxExample: `GET FILE='survey_2026.sav'.`,
     toc: [
       { id: "sav-architecture", titleEn: "1. Binary Record Structure", titleRu: "1. Структура бинарных записей" },
       { id: "compression", titleEn: "2. Compression Schemes (Bytecode & ZLIB)", titleRu: "2. Схемы сжатия (Байткод и ZLIB)" },
-      { id: "roundtrip", titleEn: "3. Lossless Roundtrip Guarantee", titleRu: "3. Гарантия обратимости без потерь" },
+      { id: "metadata", titleEn: "3. Dictionary Metadata Decoding", titleRu: "3. Декодирование метаданных словаря" },
     ],
     contentEn: `### 1. Binary Record Structure
-The \`statcraft_io\` crate implements a complete binary parser and writer for SPSS system files without external C libraries:
+The \`statcraft_io\` crate implements a complete binary parser for SPSS system files without external C libraries:
 * **Record Type 1**: General file header (release number, weight variable index, case count, timestamp);
 * **Record Type 2**: Variable dictionary (type, print/write format, 8-character legacy name);
 * **Record Type 3/4**: Value labels dictionary and variable assignment bindings;
@@ -303,10 +301,10 @@ The \`statcraft_io\` crate implements a complete binary parser and writer for SP
 * **Uncompressed & Bytecode**: Standard 8-byte chunks packed into 8-element instruction blocks;
 * **Zstandard / ZLIB (.zsav)**: Block-based stream decompression enabling sub-second loads for million-row files.
 
-### 3. Lossless Roundtrip Guarantee
-Files written by StatCraft open flawlessly in IBM SPSS Statistics 20–29 with all variable labels, categorical coding schemes, and missing value definitions 100% preserved.`,
+### 3. Dictionary Metadata Decoding
+StatCraft decodes all variable labels, categorical coding schemes, missing value definitions, and display formats directly into the internal \`VariableDictionary\`.`,
     contentRu: `### 1. Структура бинарных записей
-Крейт \`statcraft_io\` реализует полный бинарный парсер и генератор системных файлов SPSS без сторонних C-библиотек:
+Крейт \`statcraft_io\` реализует полный бинарный парсер системных файлов SPSS без сторонних C-библиотек:
 * **Запись Тип 1**: Заголовок файла (номер версии, индекс весовой переменной, число наблюдений);
 * **Запись Тип 2**: Словарь переменных (тип, формат отображения, 8-символьное имя);
 * **Записи Тип 3/4**: Словари меток значений и привязка к переменным;
@@ -316,8 +314,8 @@ Files written by StatCraft open flawlessly in IBM SPSS Statistics 20–29 with a
 * **Стандартный байткод**: Упаковка 8-байтовых чисел в блоки инструкций;
 * **ZLIB компрессия (.zsav)**: Блочная декомпрессия, обеспечивающая открытие миллионных массивов за доли секунды.
 
-### 3. Гарантия обратимости без потерь
-Файлы, сохраненные в StatCraft, открываются в IBM SPSS Statistics версий 20–29 с полным сохранением меток, шкал и кодов пропусков.`,
+### 3. Декодирование метаданных словаря
+StatCraft извлекает все метки переменных, словари категориальных кодировок, правила пропусков и форматы отображения во внутренний \`VariableDictionary\`.`,
   },
   {
     slug: "oneway-anova-procedure",

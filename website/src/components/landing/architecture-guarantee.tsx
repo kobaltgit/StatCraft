@@ -45,8 +45,8 @@ export function ArchitectureGuarantee({ lang = 'en' }: ArchitectureGuaranteeProp
   const layers = [
     { code: 'L6', name: 'statcraft_app', desc: 'Desktop GUI (egui / eframe / egui_dock / DialogKit)', color: 'text-rose-400' },
     { code: 'L5', name: 'statcraft_syntax', desc: 'CommandBus, .sps parser & command history', color: 'text-amber' },
-    { code: 'L4', name: 'statcraft_reporting', desc: 'Pivot Tables model, export (PDF, DOCX, LaTeX)', color: 'text-yellow-400' },
-    { code: 'L3', name: 'statcraft_charts', desc: 'Vector charts (egui_plot, brushing & linking)', color: 'text-emerald' },
+    { code: 'L4', name: 'statcraft_reporting', desc: 'Pivot Tables model, export (TSV, HTML, Text)', color: 'text-yellow-400' },
+    { code: 'L3', name: 'statcraft_charts [Planned]', desc: 'Vector plotting (currently rendered in statcraft_app)', color: 'text-emerald' },
     { code: 'L2', name: 'statcraft_algo', desc: 'Numerical tests, linear algebra in pure Safe Rust', color: 'text-blue-400' },
     { code: 'L1', name: 'statcraft_core', desc: 'Clean-room DataSet, DeltaBuffer & VariableDictionary', color: 'text-indigo-400' },
     { code: 'L0', name: 'statcraft_io', desc: 'Codecs: .stc Container, SPSS .sav, CSV, Excel', color: 'text-purple-400' },

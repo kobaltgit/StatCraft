@@ -32,16 +32,16 @@ export function Hero({ lang = 'en' }: HeroProps) {
       btnReport: 'Report Discrepancy',
       stat1Val: `${verifiedBlocks} / ${totalBlocks}`,
       stat1Lbl: 'Audit Blocks Verified',
-      stat1Desc: 'Independent validation against SciPy Golden Oracle (Δ < 10⁻⁶)',
+      stat1Desc: 'Automated cross-validation against SciPy Golden Oracle (Δ < 10⁻⁶)',
       stat2Val: '0 Panics',
       stat2Lbl: '100% Safe Rust Architecture',
       stat2Desc: 'No unwrap, no unsafe, typed Result<T, E> error propagation',
       stat3Val: '100% Safe Rust',
       stat3Lbl: 'Columnar Data Engine',
-      stat3Desc: 'Pure Safe Rust math, transactional DeltaBuffer, SPSS .sav codec',
+      stat3Desc: 'Pure Safe Rust math, transactional DeltaBuffer, SPSS .sav reader',
       stat4Val: 'MCP & IPC',
       stat4Lbl: 'Autonomous Agent Bridge',
-      stat4Desc: 'Real-time JSON-RPC socket 18492 for Antigravity, Claude, and local LLMs',
+      stat4Desc: 'Real-time JSON-RPC socket 18493 for Antigravity, Claude, and local LLMs',
     },
     ru: {
       badge: `АКАДЕМИЧЕСКИЙ ЭКСПЕРИМЕНТ // СБОРКА ${version}`,
@@ -64,7 +64,7 @@ export function Hero({ lang = 'en' }: HeroProps) {
       stat3Desc: 'Чистая математика на Rust, транзакционный DeltaBuffer, открытый парсер .sav',
       stat4Val: 'MCP и сокет',
       stat4Lbl: 'Мост для ИИ-агентов',
-      stat4Desc: 'IPC-сокет 18492 и Model Context Protocol для Antigravity, Claude и локальных LLM',
+      stat4Desc: 'IPC-сокет 18493 и Model Context Protocol для Antigravity, Claude и локальных LLM',
     },
   }[lang];
 

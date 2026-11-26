@@ -186,7 +186,7 @@ The central operational hub for data manipulation, bidirectional command history
   * *Tab 2: Data Grid:* decimal separator selection (dot `12.5` vs. comma `12,5`), new variable defaults (width 8, decimals 2), show value labels by default;
   * *Tab 3: Fonts & Scale:* table grid font size (9–14 pt), UI scaling factor (100%, 125%, 150% for HiDPI/4K);
   * *Tab 4: Output:* pivot table visual style (Classic SPSS, Academic APA), $p$-value styling (`* p < .05`, `** p < .01`);
-  * *Tab 5: AI & MCP Bridge:* MCP server socket port (18492), dataset access permissions, interpretation verbosity.
+  * *Tab 5: AI & MCP Bridge:* MCP server socket port (18493), dataset access permissions, interpretation verbosity.
 
 ### 4.6. "View" Menu Architecture
 
@@ -319,7 +319,7 @@ The open scientific ecosystem bridge integrating external community packages, cu
 * **Install Local Extension (.scpl)...:** Offline package installer for StatCraft Plugin archives (`.scpl`) adhering to the *Zero-Core Hardcoding* canon;
 * **Custom Dialog Builder...:** Graphical form designer enabling analysts without low-level Rust experience to construct bespoke dialog modals rendered natively on `egui` and mapped to syntax/Python pipelines;
 * **AI & Model Context Protocol (MCP) Hub...:** Operational console monitoring the internal MCP server, exposing tools for autonomous orchestration by external AI agents (Antigravity, Claude, local LLMs);
-* **Scripting Runtime Bridge (Python & R Bridge via `statcraft_bridge`)...:** IPC socket management (18492) and runtime environment path binding for executing custom statistical scripts with safe IPC memory sharing.
+* **Scripting Runtime Bridge (Python & R Bridge via `statcraft_bridge`)...:** IPC socket management (18493) and runtime environment path binding for executing custom statistical scripts with safe IPC memory sharing.
 
 ### 4.14. "Window" Menu Architecture — Docking Management & Layout Presets
 
